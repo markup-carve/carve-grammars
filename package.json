@@ -1,0 +1,41 @@
+{
+  "name": "carve-grammars",
+  "version": "0.1.0",
+  "description": "Tiptap integration (editor kit + serializer) for the Carve markup language",
+  "type": "module",
+  "main": "tiptap/index.js",
+  "scripts": {
+    "test": "node tests/serializer-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markup-carve/carve-grammars.git"
+  },
+  "keywords": [
+    "carve",
+    "tiptap",
+    "prosemirror",
+    "wysiwyg",
+    "serializer",
+    "markup"
+  ],
+  "author": "markup-carve",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markup-carve/carve-grammars/issues"
+  },
+  "homepage": "https://github.com/markup-carve/carve-grammars#readme",
+  "files": [
+    "tiptap/",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    "./tiptap": "./tiptap/index.js",
+    "./tiptap/*": "./tiptap/*"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^2",
+    "@tiptap/starter-kit": "^2"
+  }
+}
