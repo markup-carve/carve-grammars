@@ -71,12 +71,17 @@ function validateToken(tok, path) {
     }
 }
 
-// Load the Prism grammar against a stub so it registers without the real lib.
-const prismStub = { languages: {} };
-globalThis.Prism = prismStub;
+// Load the Prism grammar exactly once. If prismjs is installed, register
+// against it (so the real tokenizer/highlighter is available below); otherwise
+// register against a minimal stub. The grammar reads globalThis.Prism at import
+// time, so the host is chosen before the single import - no query-string
+// cache-busting (which Node's ESM loader rejects on some versions).
+const realPrism = (() => { try { return require('prismjs'); } catch { return null; } })();
+const prismHost = realPrism || { languages: {} };
+globalThis.Prism = prismHost;
 await import('../prism/carve.js');
-const carvePrism = prismStub.languages.carve;
 delete globalThis.Prism;
+const carvePrism = prismHost.languages.carve;
 
 ok('prism: grammar registered on Prism.languages.carve', () => {
     assert.ok(carvePrism, 'Prism.languages.carve not defined');
@@ -101,19 +106,11 @@ ok('prism: every token pattern is a valid RegExp', () => {
     }
 });
 
-// Regression: top-of-file front matter followed by a body must tokenize as
-// front-matter (not typography), and a `%%% format` opener must be a raw block
-// (not swallowed by the bare-fence comment rule).
-await (async () => {
-    const realPrismMod = (() => { try { return require('prismjs'); } catch { return null; } })();
-    if (!realPrismMod) {
-        console.log('  – (prismjs not installed, skipping tokenizer regression tests)');
-        return;
-    }
-    globalThis.Prism = realPrismMod;
-    await import('../prism/carve.js?regress');
-    delete globalThis.Prism;
-    const typesOf = (src) => realPrismMod.tokenize(src, realPrismMod.languages.carve)
+// Regression tokenizer tests (need the real Prism engine). Front matter before
+// a body must tokenize as front-matter, a `%%% format` opener must be a raw
+// block (not the bare-fence comment), and math spans keep their closing $.
+if (realPrism) {
+    const typesOf = (src) => realPrism.tokenize(src, carvePrism)
         .filter((t) => typeof t !== 'string')
         .map((t) => t.type);
 
@@ -134,12 +131,14 @@ await (async () => {
     });
 
     ok('prism: math spans include the trailing $ / $$', () => {
-        const html = realPrismMod.highlight('$`x`$ and $$`y`$$', realPrismMod.languages.carve, 'carve');
+        const html = realPrism.highlight('$`x`$ and $$`y`$$', carvePrism, 'carve');
         // both closing delimiters must be inside a token span, not bare text
         assert.ok(!/`<\/span>\$/.test(html), `trailing $ left outside math token: ${html}`);
         assert.ok(html.includes('`x`$</span>') || html.includes('`x`$'), `inline math close missing: ${html}`);
     });
-})();
+} else {
+    console.log('  – (prismjs not installed, skipping tokenizer regression tests)');
+}
 
 // ----- highlight.js -----
 // Import the ESM shim (carve.js is UMD with no default export; the package
@@ -188,15 +187,10 @@ ok('hljs: every mode begin/end is RegExp or string', () => {
 });
 
 // ----- Optional real-library smoke tests -----
-let realPrism = null;
-try { realPrism = require('prismjs'); } catch { /* not installed */ }
+// realPrism + carvePrism are already set up above (single registration).
 if (realPrism) {
-    // Register against the real Prism (the grammar reads globalThis.Prism).
-    globalThis.Prism = realPrism;
-    await import('../prism/carve.js?real');
-    delete globalThis.Prism;
     ok('prism: real highlight produces token markup', () => {
-        const html = realPrism.highlight(SAMPLE, realPrism.languages.carve, 'carve');
+        const html = realPrism.highlight(SAMPLE, carvePrism, 'carve');
         assert.ok(html.length > SAMPLE.length, 'expected wrapped token markup');
         assert.ok(html.includes('token'), 'expected Prism token spans');
     });

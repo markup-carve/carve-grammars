@@ -48,23 +48,27 @@
             pattern: /\/\*(?=\S)[^*]+\*\//,
             alias: 'important',
         },
+        // The "no leading/trailing space" rule is expressed without JS
+        // lookbehind (unsupported on Safari < 16.4 and some engines): the first
+        // and last content chars are required to be non-space directly.
         'bold': {
-            pattern: /\*(?=\S)[^*\n]+?(?<=\S)\*/,
+            pattern: /\*[^*\s\n](?:[^*\n]*?[^*\s\n])?\*/,
             alias: 'bold',
         },
         'italic': {
-            // not preceded/followed by a word char or `/` (avoids URLs, paths)
-            pattern: /(^|[^\w/])\/(?=\S)[^/\n]+?(?<=\S)\/(?![\w/])/,
+            // leading guard via Prism lookbehind (avoids URLs, paths); the
+            // trailing `(?![\w/])` lookahead is fine (lookahead is universal).
+            pattern: /(^|[^\w/])\/[^/\s\n](?:[^/\n]*?[^/\s\n])?\/(?![\w/])/,
             lookbehind: true,
             alias: 'italic',
         },
         'underline': {
-            pattern: /(^|[^\w_])_(?=\S)[^_\n]+?(?<=\S)_(?![\w_])/,
+            pattern: /(^|[^\w_])_[^_\s\n](?:[^_\n]*?[^_\s\n])?_(?![\w_])/,
             lookbehind: true,
             alias: 'underline',
         },
         'strike': {
-            pattern: /~(?=\S)[^~\n]+?(?<=\S)~/,
+            pattern: /~[^~\s\n](?:[^~\n]*?[^~\s\n])?~/,
             alias: 'deleted',
         },
         'highlight': {
@@ -95,8 +99,10 @@
                 greedy: true,
             },
             {
-                // trailing comment after whitespace
-                pattern: /(?<=[ \t])%%.*$/m,
+                // trailing comment after whitespace (Prism lookbehind, no JS
+                // lookbehind: the leading space is captured and excluded).
+                pattern: /([ \t])%%.*$/m,
+                lookbehind: true,
                 greedy: true,
             },
         ],
@@ -169,8 +175,13 @@
         'table': {
             pattern: /^[ \t]*\|.*$/m,
             inside: Object.assign({
+                // rowspan `^` / colspan `<` markers - must precede `punctuation`
+                // so the surrounding `|` is not consumed first.
+                'operator': {
+                    pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
+                    lookbehind: true,
+                },
                 'punctuation': /\|=|\|/,
-                'operator': /(?<=\|)[ \t]*[\^<](?=[ \t]*\|)/,
                 'attributes': attributes,
                 'url': /\[[^\]]+\]\([^\s)]+\)/,
             }, inline),

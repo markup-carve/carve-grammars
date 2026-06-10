@@ -89,15 +89,22 @@ CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 
 ### Prism
 
+The grammar registers itself against the global `Prism`, so `Prism` must be
+global before the grammar module runs. Because static `import` statements are
+hoisted (they all evaluate before any top-level assignment), load the grammar
+with a dynamic `import` after assigning `globalThis.Prism`:
+
 ```js
 import Prism from 'prismjs'
-import 'carve-grammars/prism/carve.js' // registers Prism.languages.carve
+
+globalThis.Prism = Prism                       // grammar reads the global Prism
+await import('carve-grammars/prism/carve.js')  // registers Prism.languages.carve
 
 const html = Prism.highlight(source, Prism.languages.carve, 'carve')
 ```
 
-In the browser, load `prismjs` first, then `carve-grammars/prism/carve.js` - it
-picks up the global `Prism` automatically.
+In the browser, load `prismjs` first (it sets the global `Prism`), then load
+`carve-grammars/prism/carve.js`.
 
 ### highlight.js
 
