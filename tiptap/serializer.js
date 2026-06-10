@@ -12,6 +12,16 @@
  * // Get Carve output
  * const carveText = serializeToCarve(editor.getJSON())
  * ```
+ *
+ * Round-trip escaping (see escapeCarve) is verified against the carve-js
+ * reference parser for all realistic inputs. Two pathological residuals are not
+ * handled, as they would need either whole-paragraph flanking analysis or much
+ * noisier escaping:
+ * - CriticMarkup content that literally contains its own closing delimiter
+ *   (`+}` / `-}`) - Carve provides no escape for it at all.
+ * - A literal doubled delimiter directly abutting an emphasized sibling with no
+ *   space (e.g. literal `**` immediately followed by bold text) - the run
+ *   merges into a longer literal delimiter run on reparse.
  */
 
 /**
@@ -111,7 +121,8 @@ export function serializeToCarve(doc) {
             case 'image':
                 const imgAlt = node.attrs?.alt || '';
                 const imgSrc = node.attrs?.src || '';
-                output += '![' + imgAlt + '](' + imgSrc + ')\n';
+                const imgTitle = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
+                output += '![' + imgAlt + '](' + imgSrc + imgTitle + ')\n';
                 break;
 
             case 'table':
@@ -234,7 +245,7 @@ export function serializeToCarve(doc) {
         if (!content) return '';
         let result = '';
 
-        content.forEach(node => {
+        content.forEach((node, idx) => {
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
@@ -258,10 +269,45 @@ export function serializeToCarve(doc) {
                 // Tokens target carve-php's PARSER (the contract): `code`, ,,sub,,,
                 // ^sup^, {+ins+}, {-del-}, ~strike~ -> <s>, ==mark==, _underline_,
                 // /em/, *strong*.
-                let t = text;
-                if (hasCode) t = '`' + t + '`';
+                const isEmphasized = hasBold || hasItalic || hasUnderline || hasStrike
+                    || hasHighlight || hasSup || hasSub;
+                let t;
+                if (hasCode) {
+                    // Code content is raw (no escaping inside code), so a literal
+                    // backtick is handled by widening the fence to one more than
+                    // the longest internal backtick run, padding if it touches an
+                    // edge - e.g. `` `a`b` `` -> `` ``a`b`` ``.
+                    const longest = (text.match(/`+/g) || []).reduce((m, r) => Math.max(m, r.length), 0);
+                    const fence = '`'.repeat(longest + 1);
+                    const pad = (text.startsWith('`') || text.endsWith('`') || text === '') ? ' ' : '';
+                    t = fence + pad + text + pad + fence;
+                } else if (isEmphasized) {
+                    // Inside an emphasis span ANY literal delimiter closes it
+                    // early (`*a*b*`), so escape every emphasis delimiter char.
+                    t = escapeStructural(text).replace(/[*/_~^=,]/g, '\\$&');
+                } else {
+                    // Plain text: structural + pair-aware emphasis-opener escaping.
+                    t = escapeCarve(text);
+                    // A lone emphasis delimiter at this run's edge can pair with
+                    // one in an adjacent inline node across the mark boundary
+                    // (`*` + linked `bold` + `*` -> `*[bold](u)*`). Escape an
+                    // unescaped, non-doubled edge delimiter when a sibling abuts it.
+                    if (idx < content.length - 1) t = escapeTrailingDelimiter(t);
+                    if (idx > 0) t = escapeLeadingDelimiter(t);
+                }
+                // If this run will be wrapped in a bracket label (link / span /
+                // abbreviation), escape literal `]` from the original text now -
+                // before mark wrapping adds its own brackets - so a `]` in the
+                // content does not terminate the label, without touching the
+                // brackets of an inner already-serialized mark.
+                if ((link || carveSpan || abbr) && !hasCode) {
+                    t = t.replace(/]/g, '\\]');
+                }
                 if (hasSub) t = ',,' + t + ',,';
                 if (hasSup) t = '^' + t + '^';
+                // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
+                // so insert/delete content that literally contains `+}` / `-}`
+                // cannot round-trip - a Carve limitation, not fixable here.
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
                 if (hasStrike && !hasDelete) t = '~' + t + '~';
@@ -269,7 +315,10 @@ export function serializeToCarve(doc) {
                 if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
-                if (link) t = '[' + t + '](' + link.attrs.href + ')';
+                if (link) {
+                    const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
+                    t = '[' + t + '](' + link.attrs.href + title + ')';
+                }
                 if (carveSpan) t = '[' + t + ']{.' + (carveSpan.attrs?.class || 'class') + '}';
                 if (abbr) t = '[' + t + ']{abbr="' + (abbr.attrs?.title || '') + '"}';
 
@@ -279,7 +328,8 @@ export function serializeToCarve(doc) {
             } else if (node.type === 'image') {
                 const alt = node.attrs?.alt || '';
                 const src = node.attrs?.src || '';
-                result += '![' + alt + '](' + src + ')';
+                const title = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
+                result += '![' + alt + '](' + src + title + ')';
             } else if (node.type === 'carveFootnote') {
                 const label = node.attrs?.label || 'note';
                 result += '[^' + label + ']';
@@ -294,23 +344,97 @@ export function serializeToCarve(doc) {
 }
 
 /**
- * Escape special Carve characters in text
+ * Escape the "structural" Carve constructs in a text run - the ones whose
+ * delimiters are unambiguous regardless of flanking. Used for both plain and
+ * marked text (marked text additionally escapes the emphasis delimiters).
  *
- * @param {string} text - Plain text to escape
- * @returns {string} Escaped text safe for Carve
+ * - inline code `` `...` ``
+ * - links / reference links / spans / footnotes: `[text](`, `[text][`,
+ *   `[text]{`, `[text]:`, `[^label]`
+ * - CriticMarkup / attribute / raw / comment braces: `{+ {- {~ {# {= {%`
+ * - mentions `@name`, tags `#tag`, emoji `:name:` (not modeled by CarveKit)
+ */
+function escapeStructural(text) {
+    return text
+        // A backslash that would otherwise escape a following escapable char.
+        .replace(/\\(?=[\\`*_/~^=,{}[\]()<>@#%!|.+-])/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\[(?=\^)/g, '\\[')
+        .replace(/\[(?=[^\]\n]*\][([{:])/g, '\\[')
+        .replace(/\{(?=[+\-~#=%])/g, '\\{')
+        .replace(/(^|[^\w.])@(?=[A-Za-z0-9_])/g, '$1\\@')
+        .replace(/(^|[^\w])#(?=[A-Za-z0-9_])/g, '$1\\#')
+        .replace(/:(?=[A-Za-z0-9_+-]+:)/g, '\\:');
+}
+
+/**
+ * Escape the *opening* delimiter of any complete emphasis span in plain text so
+ * the span round-trips as literal text. Two subtleties, both verified against
+ * the carve-js reference parser:
+ *
+ * - A lone (unpaired) delimiter is inert and left untouched, so ordinary prose
+ *   stays clean (`price * 2`, `5^2`, `http://a/b/c`).
+ * - Only a *single* delimiter forms a span; doubled delimiters are literal in
+ *   Carve (`**bold**`, `~~s~~`, `__u__`), so a delimiter adjacent to the same
+ *   character is left alone - escaping one of the pair would *create* a span.
+ *
+ * `* ~ ^` can open intraword; `/ _` only at a word boundary; `== ,,` are
+ * two-char delimiters.
+ */
+function escapeEmphasisOpeners(text) {
+    return text
+        .replace(/(?<!\*)\*(?=[^*\s\n](?:[^*\n]*[^*\s\n])?\*(?!\*))/g, '\\*')
+        .replace(/(?<!~)~(?=[^~\s\n](?:[^~\n]*[^~\s\n])?~(?!~))/g, '\\~')
+        .replace(/(?<!\^)\^(?=[^^\s\n](?:[^^\n]*[^^\s\n])?\^(?!\^))/g, '\\^')
+        .replace(/==(?=[^=\s\n](?:[^=\n]*[^=\s\n])?==)/g, '\\==')
+        .replace(/,,(?=[^,\s\n](?:[^,\n]*[^,\s\n])?,,)/g, '\\,,')
+        .replace(/(^|[\s([{<"'])(?<!\/)\/(?=[^/\s\n](?:[^/\n]*[^/\s\n])?\/(?!\/))/g, '$1\\/')
+        .replace(/(^|[\s([{<"'])(?<!_)_(?=[^_\s\n](?:[^_\n]*[^_\s\n])?_(?!_))/g, '$1\\_');
+}
+
+/** Escape a lone emphasis delimiter at the start of a run (cross-node closer). */
+function escapeLeadingDelimiter(s) {
+    return s
+        .replace(/^\*(?!\*)/, '\\*')
+        .replace(/^~(?!~)/, '\\~')
+        .replace(/^\^(?!\^)/, '\\^')
+        .replace(/^\/(?!\/)/, '\\/')
+        .replace(/^_(?!_)/, '\\_')
+        .replace(/^==(?!=)/, '\\==')
+        .replace(/^,,(?!,)/, '\\,,');
+}
+
+/** Escape a lone emphasis delimiter at the end of a run (cross-node opener). */
+function escapeTrailingDelimiter(s) {
+    return s
+        .replace(/(?<![*\\])\*$/, '\\*')
+        .replace(/(?<![~\\])~$/, '\\~')
+        .replace(/(?<![\^\\])\^$/, '\\^')
+        .replace(/(?<![/\\])\/$/, '\\/')
+        .replace(/(?<![_\\])_$/, '\\_')
+        .replace(/(?<![=\\])==$/, '\\==')
+        .replace(/(?<![,\\]),,$/, '\\,,');
+}
+
+/**
+ * Escape a text run so it round-trips as literal Carve text instead of being
+ * re-parsed as markup. Combines structural escaping with emphasis-opener
+ * escaping. Used by `serializeToCarve` for unmarked text; exported for callers
+ * that build Carve by hand.
+ *
+ * @param {string} text - Plain text to escape.
+ * @returns {string} Text safe to emit as a Carve inline run.
  */
 export function escapeCarve(text) {
-    return text
-        .replace(/\\/g, '\\\\')
-        .replace(/\*/g, '\\*')
-        .replace(/_/g, '\\_')
-        .replace(/\[/g, '\\[')
-        .replace(/\]/g, '\\]')
-        .replace(/\{/g, '\\{')
-        .replace(/\}/g, '\\}')
-        .replace(/\^/g, '\\^')
-        .replace(/~/g, '\\~')
-        .replace(/`/g, '\\`');
+    return escapeEmphasisOpeners(escapeStructural(text));
+}
+
+/**
+ * Escape a quoted link/image title so a `"` or `\` in it cannot terminate or
+ * corrupt the `"..."` title.
+ */
+function escapeTitle(title) {
+    return title.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
 
 export default serializeToCarve;
