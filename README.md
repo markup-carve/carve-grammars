@@ -1,10 +1,18 @@
 # Carve Grammars
 
-Tiptap integration for the [Carve](https://github.com/markup-carve/carve) markup language: an editor kit plus a serializer that turns a Tiptap/ProseMirror document into Carve markup.
+Grammars for the [Carve](https://github.com/markup-carve/carve) markup language:
 
-Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The mark mapping mirrors `carve-php`'s `HtmlToCarve` converter, which is the canonical HTML-element to Carve-token reference.
+- a **Tiptap** integration (editor kit + serializer) that turns a Tiptap/ProseMirror document into Carve markup;
+- **Prism** and **highlight.js** syntax-highlighting grammars for rendering Carve source on the web.
 
-> **Status:** Tiptap integration plus a highlight.js grammar. TextMate / Prism grammars are not ported yet.
+Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The Tiptap mark mapping mirrors `carve-php`'s `HtmlToCarve` converter; the highlighting grammars mirror the canonical token set in [`carve/resources/grammar.ebnf`](https://github.com/markup-carve/carve) and the TextMate grammar in [vscode-carve](https://github.com/markup-carve/vscode-carve).
+
+> **Status:** Tiptap integration, plus Prism and highlight.js grammars.
+> Sibling editor grammars live in their own repos: **TextMate** in
+> [vscode-carve](https://github.com/markup-carve/vscode-carve) and
+> [intellij-carve](https://github.com/markup-carve/intellij-carve);
+> **Tree-sitter** in [tree-sitter-carve](https://github.com/markup-carve/tree-sitter-carve)
+> and [zed-carve](https://github.com/markup-carve/zed-carve).
 
 ## Install
 
@@ -12,11 +20,14 @@ Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), ada
 npm install carve-grammars
 ```
 
-Peer dependencies: `@tiptap/core` and `@tiptap/starter-kit` (v2). `CarveKit`
-also pulls in several standalone Tiptap marks/extensions (highlight, subscript,
-superscript, underline, link, image, table, task-list); install the
-`@tiptap/extension-*` packages you use, or disable them via `CarveKit.configure({
-underline: false, ... })`.
+All peer dependencies are optional - install only what you use:
+`@tiptap/core` + `@tiptap/starter-kit` (v2) for the editor, `prismjs` (v1) for
+Prism, `highlight.js` (v11) for highlight.js.
+
+`CarveKit` also pulls in several standalone Tiptap marks/extensions (highlight,
+subscript, superscript, underline, link, image, table, task-list); install the
+`@tiptap/extension-*` packages you use, or disable them via
+`CarveKit.configure({ underline: false, ... })`.
 
 ## Usage
 
@@ -45,25 +56,6 @@ const editor = new Editor({
 })
 ```
 
-## Syntax highlighting (highlight.js)
-
-`highlightjs/carve.js` registers a `carve` language with [highlight.js](https://highlightjs.org/). Loaded as a plain `<script>` after highlight.js it self-registers; it also exports the definition for module systems.
-
-```html
-<script src="highlight.min.js"></script>
-<script src="node_modules/carve-grammars/highlightjs/carve.js"></script>
-<script>hljs.highlightAll();</script>
-```
-
-```js
-import hljs from 'highlight.js/lib/core'
-import carve from 'carve-grammars/highlightjs/carve.js'
-
-hljs.registerLanguage('carve', carve)
-```
-
-Highlights Carve inline tokens (`*strong*`, `/emphasis/`, `_underline_`, `~strike~`, `==highlight==`, `,,sub,,`, `^sup^`, `` `code` ``, `{+ins+}`, `{-del-}`), headings, fenced code, container divs (`:::`), tables, links/references, attributes, and autolinks.
-
 ## Mark mapping
 
 | Tiptap mark | Carve token | Renders as |
@@ -91,6 +83,53 @@ strikethrough, subscript is `,,text,,`, and highlight is `==text==`.
 Headings (`#`), bullet / ordered / task lists, blockquotes (`>`), fenced code
 blocks (`` ``` lang ``), horizontal rules (`---`), tables, container divs
 (`::: class`), and definition lists.
+
+## Syntax highlighting
+
+Render Carve source as highlighted HTML on the web. Both grammars cover the full
+Carve token set: headings, lists, tables, blockquotes, fenced/raw blocks,
+container divs, front matter and comments, plus inline emphasis
+(`*bold*` `/italic/` `_underline_` `~strike~` `==highlight==` `^sup^` `,,sub,,`),
+code, links, images, spans, attributes, footnotes, math (`` $`x`$ ``),
+CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
+
+### Prism
+
+The grammar registers itself against the global `Prism`, so `Prism` must be
+global before the grammar module runs. Because static `import` statements are
+hoisted (they all evaluate before any top-level assignment), load the grammar
+with a dynamic `import` after assigning `globalThis.Prism`:
+
+```js
+import Prism from 'prismjs'
+
+globalThis.Prism = Prism                       // grammar reads the global Prism
+await import('carve-grammars/prism/carve.js')  // registers Prism.languages.carve
+
+const html = Prism.highlight(source, Prism.languages.carve, 'carve')
+```
+
+In the browser, load `prismjs` first (it sets the global `Prism`), then load
+`carve-grammars/prism/carve.js`.
+
+### highlight.js
+
+```js
+import hljs from 'highlight.js'
+import carve from 'carve-grammars/highlightjs/carve.js'
+
+hljs.registerLanguage('carve', carve)
+const { value } = hljs.highlight(source, { language: 'carve' })
+```
+
+Loaded as a classic `<script>` after highlight.js, it self-registers against
+the global `hljs`:
+
+```html
+<script src="highlight.min.js"></script>
+<script src="node_modules/carve-grammars/highlightjs/carve.js"></script>
+<script>hljs.highlightAll();</script>
+```
 
 ## API
 
