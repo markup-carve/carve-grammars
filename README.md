@@ -92,8 +92,9 @@ exposed as `escapeCarve(text)`.
 ## Block elements
 
 Headings (`#`), bullet / ordered / task lists, blockquotes (`>`), fenced code
-blocks (`` ``` lang ``), horizontal rules (`---`), tables, container divs
-(`::: class`), and definition lists.
+blocks (`` ``` lang ``), horizontal rules (`---`), tables (with `|=` header
+cells and `^` / `<` row / column spans), container divs (`::: class`), and
+definition lists.
 
 ## Syntax highlighting
 

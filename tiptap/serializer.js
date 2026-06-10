@@ -195,21 +195,46 @@ export function serializeToCarve(doc) {
         const rows = table.content || [];
         if (rows.length === 0) return;
 
-        rows.forEach((row, rowIndex) => {
+        // Carve marks header cells with `|=`, and reconstructs ProseMirror
+        // colspan/rowspan with filler cells: `<` continues the cell to its left
+        // (colspan) and `^` continues the cell above (rowspan). ProseMirror omits
+        // a cell node for grid positions covered by a span, so we rebuild the grid
+        // row by row, carrying rowspans forward per column.
+        const rowspanCarry = []; // rowspanCarry[col] = remaining rows to fill with `^`
+        rows.forEach(row => {
             const cells = row.content || [];
-            const cellTexts = cells.map(cell => {
+            const out = []; // { header, content } per grid column, incl. `^`/`<` fillers
+            let col = 0;
+            let ci = 0;
+            while (ci < cells.length || rowspanCarry.slice(col).some(c => c > 0)) {
+                if (rowspanCarry[col] > 0) {
+                    out.push({ header: false, content: '^' });
+                    rowspanCarry[col]--;
+                    col++;
+                    continue;
+                }
+                if (ci >= cells.length) break;
+                const cell = cells[ci++];
+                const colspan = cell.attrs?.colspan || 1;
+                const rowspan = cell.attrs?.rowspan || 1;
+                const header = cell.type === 'tableHeader';
                 const content = (cell.content || [])
                     .map(p => serializeInline(p.content))
                     .join(' ');
-                return content;
-            });
-            output += '| ' + cellTexts.join(' | ') + ' |\n';
-
-            // Add separator after header row
-            if (rowIndex === 0) {
-                const separator = cells.map(() => '---').join(' | ');
-                output += '| ' + separator + ' |\n';
+                out.push({ header, content });
+                if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                col++;
+                for (let k = 1; k < colspan; k++) {
+                    out.push({ header: false, content: '<' });
+                    if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                    col++;
+                }
             }
+            let line = '';
+            for (const c of out) {
+                line += (c.header ? '|= ' : '| ') + c.content + ' ';
+            }
+            output += line + '|\n';
         });
     }
 

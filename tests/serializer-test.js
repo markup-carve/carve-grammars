@@ -145,4 +145,29 @@ check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
     'a\n\n---\n\nb');
 
+// Tables: header cells use `|=`; colspan/rowspan rebuild Carve filler cells.
+const cell = (t, type = 'tableCell', attrs = {}) => ({ type, attrs, content: [para(text(t))] });
+const row = (...cells) => ({ type: 'tableRow', content: cells });
+
+check('table header row uses |=',
+    doc({ type: 'table', content: [
+        row(cell('H1', 'tableHeader'), cell('H2', 'tableHeader')),
+        row(cell('a'), cell('b')),
+    ] }),
+    '|= H1 |= H2 |\n| a | b |');
+
+check('table colspan emits a < filler cell',
+    doc({ type: 'table', content: [
+        row(cell('wide', 'tableCell', { colspan: 2 })),
+        row(cell('a'), cell('b')),
+    ] }),
+    '| wide | < |\n| a | b |');
+
+check('table rowspan emits a ^ filler cell',
+    doc({ type: 'table', content: [
+        row(cell('tall', 'tableCell', { rowspan: 2 }), cell('b')),
+        row(cell('d')),
+    ] }),
+    '| tall | b |\n| ^ | d |');
+
 console.log(`\n${passed} passed`);
