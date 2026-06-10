@@ -69,7 +69,8 @@ const editor = new Editor({
 | subscript   | `,,text,,`  | `<sub>`    |
 | superscript | `^text^`    | `<sup>`    |
 | insert      | `{+text+}`  | `<ins>`    |
-| link        | `[text](url)` | `<a>`    |
+| link        | `[text](url)` / `[text](url "title")` | `<a>` |
+| image       | `![alt](src)` / `![alt](src "title")` | `<img>` |
 | span        | `[text]{.class}` | `<span class>` |
 | abbreviation | `[text]{abbr="..."}` | `<span abbr>` |
 
@@ -77,6 +78,16 @@ The tokens target carve-php's **parser** (the contract: serialized Carve must pa
 back to the same elements). Carve's inline syntax differs notably from Djot's:
 emphasis is `/text/` (Djot uses `_`), `_text_` is underline, `~text~` is
 strikethrough, subscript is `,,text,,`, and highlight is `==text==`.
+
+### Escaping
+
+To honor that round-trip contract, `serializeToCarve` escapes literal Carve
+syntax in plain text so it parses back as text rather than markup - inline code,
+links, footnotes, CriticMarkup, mentions/tags/emoji, and an emphasis delimiter
+appearing inside its own span. Escaping is **contextual**: Carve's flanking rules
+already make most lone delimiters inert (`price * 2`, intraword `x_1`,
+`comma,, two`, `C:\path`, `a@b.com`), so those stay clean. The same logic is
+exposed as `escapeCarve(text)`.
 
 ## Block elements
 
@@ -134,7 +145,7 @@ the global `hljs`:
 ## API
 
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
-- `escapeCarve(text)` - escape Carve special characters in plain text.
+- `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
 - Individual extensions: `CarveInsert`, `CarveDelete`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
 
