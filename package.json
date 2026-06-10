@@ -40,6 +40,12 @@
   },
   "peerDependencies": {
     "@tiptap/core": "^2",
-    "@tiptap/starter-kit": "^2"
+    "@tiptap/starter-kit": "^2",
+    "@tiptap/extension-underline": "^2"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/extension-underline": {
+      "optional": true
+    }
   }
 }

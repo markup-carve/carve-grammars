@@ -12,7 +12,11 @@ Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), ada
 npm install carve-grammars
 ```
 
-Peer dependencies: `@tiptap/core` and `@tiptap/starter-kit` (v2).
+Peer dependencies: `@tiptap/core` and `@tiptap/starter-kit` (v2). `CarveKit`
+also pulls in several standalone Tiptap marks/extensions (highlight, subscript,
+superscript, underline, link, image, table, task-list); install the
+`@tiptap/extension-*` packages you use, or disable them via `CarveKit.configure({
+underline: false, ... })`.
 
 ## Usage
 
@@ -66,6 +70,7 @@ Highlights Carve inline tokens (`*strong*`, `/emphasis/`, `_underline_`, `~strik
 |-------------|-------------|------------|
 | bold        | `*text*`    | `<strong>` |
 | italic      | `/text/`    | `<em>`     |
+| underline   | `_text_`    | `<u>`      |
 | code        | `` `text` `` | `<code>`  |
 | highlight   | `==text==`  | `<mark>`   |
 | strike      | `~text~`    | `<s>`      |

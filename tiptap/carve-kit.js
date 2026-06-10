@@ -4,6 +4,7 @@ import CodeBlock from '@tiptap/extension-code-block';
 import Highlight from '@tiptap/extension-highlight';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
+import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Table from '@tiptap/extension-table';
@@ -184,12 +185,12 @@ export const CarveKit = Extension.create({
             extensions.push(CustomListItem.configure(this.options.listItem ?? {}));
         }
 
-        // Highlight mark (built-in, maps to {=text=})
+        // Highlight mark (built-in, maps to ==text==)
         if (this.options.highlight !== false) {
             extensions.push(Highlight.configure(this.options.highlight ?? {}));
         }
 
-        // Subscript mark (maps to ~text~)
+        // Subscript mark (maps to ,,text,,)
         if (this.options.subscript !== false) {
             extensions.push(Subscript.configure(this.options.subscript ?? {}));
         }
@@ -197,6 +198,11 @@ export const CarveKit = Extension.create({
         // Superscript mark (maps to ^text^)
         if (this.options.superscript !== false) {
             extensions.push(Superscript.configure(this.options.superscript ?? {}));
+        }
+
+        // Underline mark (maps to _text_)
+        if (this.options.underline !== false) {
+            extensions.push(Underline.configure(this.options.underline ?? {}));
         }
 
         // Link extension with keyboard shortcut
