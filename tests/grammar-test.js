@@ -8,6 +8,8 @@
  */
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
+import vm from 'node:vm';
+import { readFileSync } from 'node:fs';
 
 const require = createRequire(import.meta.url);
 
@@ -140,13 +142,28 @@ await (async () => {
 })();
 
 // ----- highlight.js -----
-const hljsDef = (await import('../highlightjs/carve.js')).default;
+// Import the ESM shim (carve.js is UMD with no default export; the package
+// `exports` map routes `import` of carve.js here in real consumers).
+const hljsDef = (await import('../highlightjs/carve.mjs')).default;
 
 ok('hljs: default export is a language factory', () => {
     assert.strictEqual(typeof hljsDef, 'function', 'export must be a function');
 });
 
 const def = hljsDef({});
+
+ok('hljs: carve.js loads as a classic <script> and self-registers', () => {
+    // Regression: the file must remain a classic-script-safe UMD (no top-level
+    // `export`), so a browser <script src=".../carve.js"> still registers.
+    const code = readFileSync(new URL('../highlightjs/carve.js', import.meta.url), 'utf8');
+    let registered = null;
+    const sandbox = { hljs: { registerLanguage: (name, fn) => { registered = { name, fn }; } } };
+    vm.createContext(sandbox);
+    vm.runInContext(code, sandbox); // must not throw a SyntaxError
+    assert.ok(registered && registered.name === 'carve', 'classic script did not register the carve language');
+    assert.strictEqual(typeof registered.fn, 'function', 'registered value is not a language factory');
+    assert.strictEqual(typeof sandbox.carveHljs, 'function', 'globalThis.carveHljs not exposed for the ESM shim');
+});
 
 ok('hljs: definition has name, aliases, contains', () => {
     assert.strictEqual(def.name, 'Carve');

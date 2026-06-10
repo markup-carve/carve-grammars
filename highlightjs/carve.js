@@ -7,25 +7,41 @@
  * ==text== (Djot uses {=text=}). Strong (*text*), superscript (^text^),
  * insert ({+text+}) and delete ({-text-}) match Djot.
  *
- * Usage (ESM):
+ * This file is a UMD module so it works in every documented integration:
  *
- * ```js
- * import hljs from 'highlight.js';
- * import carve from 'carve-grammars/highlightjs/carve.js';
+ * - ESM: `import carve from 'carve-grammars/highlightjs/carve.js'` (resolved to
+ *   the carve.mjs shim via the package `exports` map), then
+ *   `hljs.registerLanguage('carve', carve)`.
+ * - Classic `<script src=".../highlightjs/carve.js">` after highlight.js: it
+ *   self-registers against the global `hljs` (and exposes `globalThis.carveHljs`).
+ * - CommonJS contexts that load this file as CommonJS get the factory on
+ *   `module.exports`.
  *
- * hljs.registerLanguage('carve', carve);
- * const { value } = hljs.highlight(src, { language: 'carve' });
- * ```
- *
- * Loaded as a classic `<script>` after highlight.js, it also self-registers
- * against the global `hljs`.
+ * A top-level `export default` is intentionally NOT used: that would be a
+ * syntax error when the file is loaded as a classic browser script.
  *
  * @see https://github.com/markup-carve/carve for the Carve specification
- * @param {object} [hljs] - the highlight.js instance (unused, kept for the
- *   standard language-definition signature).
- * @returns {object} a highlight.js language definition.
  */
-export default function carve(hljs) {
+(function (root, factory) {
+    var carve = factory();
+    if (typeof module === 'object' && module.exports) {
+        module.exports = carve;
+    }
+    if (root) {
+        // Exposed for the ESM shim (carve.mjs) and for classic <script> use.
+        root.carveHljs = carve;
+        if (root.hljs && typeof root.hljs.registerLanguage === 'function') {
+            root.hljs.registerLanguage('carve', carve);
+        }
+    }
+}(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+    'use strict';
+    /**
+     * @param {object} [hljs] - the highlight.js instance (unused, kept for the
+     *   standard language-definition signature).
+     * @returns {object} a highlight.js language definition.
+     */
+    return function carve(hljs) {
     // Block attributes: {.class #id key=value} or boolean {reversed}
     // Excludes special inline syntax like {= {+ {- {%
     const ATTRIBUTE = {
@@ -415,10 +431,5 @@ export default function carve(hljs) {
             HARD_BREAK,
         ],
     };
-}
-
-// Optional auto-registration for classic <script> usage (a global `hljs`).
-if (typeof globalThis !== 'undefined' && globalThis.hljs &&
-    typeof globalThis.hljs.registerLanguage === 'function') {
-    globalThis.hljs.registerLanguage('carve', carve);
-}
+    };
+}));

@@ -43,7 +43,10 @@
     "./tiptap/*": "./tiptap/*",
     "./prism/carve.js": "./prism/carve.js",
     "./prism/*": "./prism/*",
-    "./highlightjs/carve.js": "./highlightjs/carve.js",
+    "./highlightjs/carve.js": {
+      "import": "./highlightjs/carve.mjs",
+      "default": "./highlightjs/carve.js"
+    },
     "./highlightjs/*": "./highlightjs/*"
   },
   "peerDependencies": {
