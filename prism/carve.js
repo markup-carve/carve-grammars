@@ -16,8 +16,9 @@
  * const html = Prism.highlight(src, Prism.languages.carve, 'carve');
  * ```
  *
- * Usage (browser / CommonJS): load `prismjs` first, then this file. It picks up
- * the global `Prism` (or a CommonJS `require('prismjs')`) automatically.
+ * Usage (browser / bundler): load `prismjs` first (which sets the global
+ * `Prism`), then import this file for its side effect - it reads the global
+ * `Prism` (`globalThis` / `window` / `global`) and registers the grammar.
  *
  * @module carve-grammars/prism/carve
  */
@@ -360,13 +361,11 @@
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
     Prism.languages.carvemd = Prism.languages.carve;
 })(
-    typeof globalThis !== 'undefined' && globalThis.Prism
+    (typeof globalThis !== 'undefined' && globalThis.Prism)
         ? globalThis.Prism
-        : (typeof global !== 'undefined' && global.Prism)
-            ? global.Prism
-            : (typeof window !== 'undefined' && window.Prism)
-                ? window.Prism
-                : (typeof module !== 'undefined' && module.exports)
-                    ? (function () { try { return require('prismjs'); } catch (e) { return undefined; } })()
-                    : undefined
+        : (typeof window !== 'undefined' && window.Prism)
+            ? window.Prism
+            : (typeof global !== 'undefined' && global.Prism)
+                ? global.Prism
+                : undefined
 );
