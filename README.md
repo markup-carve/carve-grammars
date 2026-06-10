@@ -109,6 +109,15 @@ hljs.registerLanguage('carve', carve)
 const { value } = hljs.highlight(source, { language: 'carve' })
 ```
 
+Loaded as a classic `<script>` after highlight.js, it self-registers against
+the global `hljs`:
+
+```html
+<script src="highlight.min.js"></script>
+<script src="node_modules/carve-grammars/highlightjs/carve.js"></script>
+<script>hljs.highlightAll();</script>
+```
+
 ## API
 
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.

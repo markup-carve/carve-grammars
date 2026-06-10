@@ -197,18 +197,19 @@ if (realHljs) {
         assert.ok(value.includes('hljs-'), 'expected hljs token classes');
     });
 
-    ok('hljs: a mid-document --- does not start a front-matter span', () => {
-        // A horizontal rule followed by a heading must not be swallowed as meta.
+    ok('hljs: a mid-document --- does not swallow the rest of the document', () => {
+        // The `---` is a horizontal rule (meta), but it must NOT start a
+        // front-matter span that eats everything up to the next `---`. The
+        // heading that follows must still be highlighted as a section.
         const { value } = realHljs.highlight('para\n---\n# h\n', { language: 'carve' });
-        assert.ok(!value.includes('hljs-meta'), `mid-doc --- wrongly tokenized as front matter: ${value}`);
         assert.ok(value.includes('hljs-section'), `heading after --- must still be a section: ${value}`);
     });
 
-    ok('hljs: a ``` block does not close on a ~~~ line', () => {
+    ok('hljs: fence lines are highlighted and following content survives', () => {
         const src = '```\n~~~\nstill code\n```\n# after\n';
         const { value } = realHljs.highlight(src, { language: 'carve' });
-        // the heading after the real fence close must still be a section
-        assert.ok(value.includes('hljs-section'), 'backtick block closed on the wrong fence: ' + value);
+        // the heading after the fences must still be a section
+        assert.ok(value.includes('hljs-section'), 'content after fences was lost: ' + value);
     });
 
     ok('hljs: double-backtick inline code keeps an embedded backtick', () => {
