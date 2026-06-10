@@ -4,7 +4,7 @@ Tiptap integration for the [Carve](https://github.com/markup-carve/carve) markup
 
 Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The mark mapping mirrors `carve-php`'s `HtmlToCarve` converter, which is the canonical HTML-element to Carve-token reference.
 
-> **Status:** v0.1.0, Tiptap integration only. Syntax-highlighting grammars (TextMate / Prism / highlight.js) are not ported yet.
+> **Status:** Tiptap integration plus a highlight.js grammar. TextMate / Prism grammars are not ported yet.
 
 ## Install
 
@@ -40,6 +40,25 @@ const editor = new Editor({
   extensions: [StarterKit, CarveInsert, CarveDelete, CarveDiv],
 })
 ```
+
+## Syntax highlighting (highlight.js)
+
+`highlightjs/carve.js` registers a `carve` language with [highlight.js](https://highlightjs.org/). Loaded as a plain `<script>` after highlight.js it self-registers; it also exports the definition for module systems.
+
+```html
+<script src="highlight.min.js"></script>
+<script src="node_modules/carve-grammars/highlightjs/carve.js"></script>
+<script>hljs.highlightAll();</script>
+```
+
+```js
+import hljs from 'highlight.js/lib/core'
+import carve from 'carve-grammars/highlightjs/carve.js'
+
+hljs.registerLanguage('carve', carve)
+```
+
+Highlights Carve inline tokens (`*strong*`, `/emphasis/`, `_underline_`, `~strike~`, `==highlight==`, `,,sub,,`, `^sup^`, `` `code` ``, `{+ins+}`, `{-del-}`), headings, fenced code, container divs (`:::`), tables, links/references, attributes, and autolinks.
 
 ## Mark mapping
 

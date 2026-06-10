@@ -1,7 +1,7 @@
 {
   "name": "carve-grammars",
-  "version": "0.1.0",
-  "description": "Tiptap integration (editor kit + serializer) for the Carve markup language",
+  "version": "0.2.0",
+  "description": "Tiptap integration (editor kit + serializer) and syntax-highlighting grammars for the Carve markup language",
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
@@ -17,7 +17,9 @@
     "prosemirror",
     "wysiwyg",
     "serializer",
-    "markup"
+    "markup",
+    "syntax-highlighting",
+    "highlight.js"
   ],
   "author": "markup-carve",
   "license": "MIT",
@@ -27,12 +29,14 @@
   "homepage": "https://github.com/markup-carve/carve-grammars#readme",
   "files": [
     "tiptap/",
+    "highlightjs/",
     "README.md",
     "LICENSE"
   ],
   "exports": {
     "./tiptap": "./tiptap/index.js",
-    "./tiptap/*": "./tiptap/*"
+    "./tiptap/*": "./tiptap/*",
+    "./highlightjs/carve.js": "./highlightjs/carve.js"
   },
   "peerDependencies": {
     "@tiptap/core": "^2",
