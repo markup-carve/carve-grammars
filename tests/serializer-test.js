@@ -57,6 +57,68 @@ check('link',
     doc(para({ type: 'text', text: 'site', marks: [{ type: 'link', attrs: { href: 'https://example.com' } }] })),
     '[site](https://example.com)');
 
+check('link with title',
+    doc(para({ type: 'text', text: 'site', marks: [{ type: 'link', attrs: { href: 'https://example.com', title: 'Home' } }] })),
+    '[site](https://example.com "Home")');
+
+check('inline image with title',
+    doc(para({ type: 'image', attrs: { alt: 'logo', src: 'a.png', title: 'Logo' } })),
+    '![logo](a.png "Logo")');
+
+// Escaping: literal Carve constructs in plain text must round-trip as text.
+// (Verified against the carve-js reference parser.)
+check('escapes literal inline code / link / footnote',
+    doc(para(text('use `npm test`, see [a](http://b) and [^1]'))),
+    'use \\`npm test\\`, see \\[a](http://b) and \\[^1]');
+
+check('escapes literal critic / mention / tag / emoji',
+    doc(para(text('apply {+x+} {-y-} for @bob #tag :wave:'))),
+    'apply \\{+x+} \\{-y-} for \\@bob \\#tag \\:wave:');
+
+check('leaves flanking-safe prose unescaped',
+    doc(para(text('price * 2, x_1, C:\\path, mail a@b.com, 3:30'))),
+    'price * 2, x_1, C:\\path, mail a@b.com, 3:30');
+
+check('escapes the emphasis delimiter inside its own span',
+    doc(para(text('a*b', 'bold'), text(' '), text('c/d', 'italic'))),
+    '*a\\*b* /c\\/d/');
+
+check('escapes a complete emphasis span sitting in plain text',
+    doc(para(text('see *bold*, /em/, ==hi== and 2*3*4'))),
+    'see \\*bold\\*, \\/em/, \\==hi== and 2\\*3*4');
+
+check('does not escape an unpaired delimiter in plain text',
+    doc(para(text('price * 2, exp 5^2, end~'))),
+    'price * 2, exp 5^2, end~');
+
+check('leaves doubled delimiters (literal in Carve) unescaped',
+    doc(para(text('see **bold**, __u__ and a~~s~~b'))),
+    'see **bold**, __u__ and a~~s~~b');
+
+check('escapes quote and backslash in a link title',
+    doc(para({ type: 'text', text: 'site', marks: [{ type: 'link', attrs: { href: 'http://x', title: 'A "q" \\ b' } }] })),
+    '[site](http://x "A \\"q\\" \\\\ b")');
+
+check('widens the code fence when content has a backtick',
+    doc(para(text('a`b', 'code'))),
+    '``a`b``');
+
+check('pads the code fence when content touches a backtick',
+    doc(para(text('`x`', 'code'))),
+    '`` `x` ``');
+
+check('escapes a closing bracket inside a link label',
+    doc(para({ type: 'text', text: 'a]b', marks: [{ type: 'link', attrs: { href: 'http://x' } }] })),
+    '[a\\]b](http://x)');
+
+check('escapes edge delimiters that would pair across an inline mark boundary',
+    doc(para(
+        text('*'),
+        { type: 'text', text: 'bold', marks: [{ type: 'link', attrs: { href: 'http://u' } }] },
+        text('*'),
+    )),
+    '\\*[bold](http://u)\\*');
+
 check('bullet list',
     doc({ type: 'bulletList', content: [
         { type: 'listItem', content: [para(text('one'))] },
