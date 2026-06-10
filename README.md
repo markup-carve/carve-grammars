@@ -24,6 +24,11 @@ All peer dependencies are optional - install only what you use:
 `@tiptap/core` + `@tiptap/starter-kit` (v2) for the editor, `prismjs` (v1) for
 Prism, `highlight.js` (v11) for highlight.js.
 
+`CarveKit` also pulls in several standalone Tiptap marks/extensions (highlight,
+subscript, superscript, underline, link, image, table, task-list); install the
+`@tiptap/extension-*` packages you use, or disable them via
+`CarveKit.configure({ underline: false, ... })`.
+
 ## Usage
 
 ```js
@@ -57,6 +62,7 @@ const editor = new Editor({
 |-------------|-------------|------------|
 | bold        | `*text*`    | `<strong>` |
 | italic      | `/text/`    | `<em>`     |
+| underline   | `_text_`    | `<u>`      |
 | code        | `` `text` `` | `<code>`  |
 | highlight   | `==text==`  | `<mark>`   |
 | strike      | `~text~`    | `<s>`      |

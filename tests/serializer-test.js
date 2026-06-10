@@ -40,9 +40,14 @@ check('inline marks map to Carve tokens',
         text('d', 'highlight'), text(' '),
         text('e', 'strike'), text(' '),
         text('f', 'subscript'), text(' '),
-        text('g', 'superscript'),
+        text('g', 'superscript'), text(' '),
+        text('h', 'underline'),
     )),
-    '*a* /b/ `c` ==d== ~e~ ,,f,, ^g^');
+    '*a* /b/ `c` ==d== ~e~ ,,f,, ^g^ _h_');
+
+check('underline maps to _.._',
+    doc(para(text('x', 'underline'))),
+    '_x_');
 
 check('insert maps to {+..+}',
     doc(para(text('x', 'carveInsert'))),
