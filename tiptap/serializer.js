@@ -249,13 +249,15 @@ export function serializeToCarve(doc) {
                 const hasSup = marks.some(m => m.type === 'superscript');
                 const hasSub = marks.some(m => m.type === 'subscript');
                 const hasStrike = marks.some(m => m.type === 'strike');
+                const hasUnderline = marks.some(m => m.type === 'underline');
                 const link = marks.find(m => m.type === 'link');
                 const carveSpan = marks.find(m => m.type === 'carveSpan');
                 const abbr = marks.find(m => m.type === 'carveAbbreviation');
 
                 // Apply marks from innermost to outermost.
-                // Tokens target carve-php's PARSER (the contract): /em/, *strong*,
-                // ~strike~ -> <s>, {~sub~} -> <sub>, ^sup^, {=mark=}, {+ins+}, {-del-}.
+                // Tokens target carve-php's PARSER (the contract): `code`, ,,sub,,,
+                // ^sup^, {+ins+}, {-del-}, ~strike~ -> <s>, ==mark==, _underline_,
+                // /em/, *strong*.
                 let t = text;
                 if (hasCode) t = '`' + t + '`';
                 if (hasSub) t = ',,' + t + ',,';
@@ -264,6 +266,7 @@ export function serializeToCarve(doc) {
                 if (hasDelete) t = '{-' + t + '-}';
                 if (hasStrike && !hasDelete) t = '~' + t + '~';
                 if (hasHighlight) t = '==' + t + '==';
+                if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
                 if (link) t = '[' + t + '](' + link.attrs.href + ')';

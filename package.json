@@ -52,6 +52,7 @@
   "peerDependencies": {
     "@tiptap/core": "^2",
     "@tiptap/starter-kit": "^2",
+    "@tiptap/extension-underline": "^2",
     "prismjs": "^1",
     "highlight.js": "^11"
   },
@@ -60,6 +61,9 @@
       "optional": true
     },
     "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/extension-underline": {
       "optional": true
     },
     "prismjs": {
