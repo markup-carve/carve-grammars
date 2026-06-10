@@ -22,6 +22,8 @@ import { CarveDelete } from './extensions/carve-delete.js';
 import { CarveDiv } from './extensions/carve-div.js';
 import { CarveSpan } from './extensions/carve-span.js';
 import { CarveFootnote } from './extensions/carve-footnote.js';
+import { CarveMath } from './extensions/carve-math.js';
+import { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
 import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
@@ -326,6 +328,16 @@ export const CarveKit = Extension.create({
         // Footnote reference node (maps to [^label])
         if (this.options.carveFootnote !== false) {
             extensions.push(CarveFootnote.configure(this.options.carveFootnote ?? {}));
+        }
+
+        // Math node (maps to $`x`$ inline, $$`x`$$ display)
+        if (this.options.carveMath !== false) {
+            extensions.push(CarveMath.configure(this.options.carveMath ?? {}));
+        }
+
+        // Footnote definition block (maps to [^label]: body)
+        if (this.options.carveFootnoteDefinition !== false) {
+            extensions.push(CarveFootnoteDefinition.configure(this.options.carveFootnoteDefinition ?? {}));
         }
 
         // Embed node (preserves videos, oEmbed content)

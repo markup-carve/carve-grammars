@@ -170,4 +170,38 @@ check('table rowspan emits a ^ filler cell',
     ] }),
     '| tall | b |\n| ^ | d |');
 
+// Attributes: span id/class, heading id, image class.
+check('span serializes id and class',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'note', id: 'me' } }] })),
+    '[x]{#me .note}');
+
+check('heading serializes an id',
+    doc({ type: 'heading', attrs: { level: 2, id: 'slug' }, content: [text('Title')] }),
+    '## Title {#slug}');
+
+check('image serializes a class',
+    doc(para({ type: 'image', attrs: { alt: 'a', src: 's.png', class: 'wide' } })),
+    '![a](s.png){.wide}');
+
+// Math: inline $`x`$, display $$`x`$$, backtick-safe fence.
+check('inline math',
+    doc(para({ type: 'carveMath', attrs: { src: 'E=mc^2' } })),
+    '$`E=mc^2`$');
+
+check('display math',
+    doc(para({ type: 'carveMath', attrs: { src: 'a+b', display: true } })),
+    '$$`a+b`$$');
+
+check('math widens fence for an internal backtick',
+    doc(para({ type: 'carveMath', attrs: { src: 'a`b' } })),
+    '$``a`b``$');
+
+// Footnote definition: [^label]: body
+check('footnote definition',
+    doc(
+        para(text('see '), { type: 'carveFootnote', attrs: { label: '1' } }),
+        { type: 'carveFootnoteDefinition', attrs: { label: '1' }, content: [para(text('the body'))] },
+    ),
+    'see [^1]\n\n[^1]: the body');
+
 console.log(`\n${passed} passed`);
