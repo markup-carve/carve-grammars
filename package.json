@@ -1,11 +1,11 @@
 {
   "name": "carve-grammars",
   "version": "0.1.0",
-  "description": "Tiptap integration (editor kit + serializer) for the Carve markup language",
+  "description": "Grammars for the Carve markup language: Tiptap editor kit + serializer, plus Prism and highlight.js syntax-highlighting grammars",
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/serializer-test.js"
+    "test": "node tests/serializer-test.js && node tests/grammar-test.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,12 @@
     "prosemirror",
     "wysiwyg",
     "serializer",
-    "markup"
+    "markup",
+    "prism",
+    "prismjs",
+    "highlight.js",
+    "hljs",
+    "syntax-highlighting"
   ],
   "author": "markup-carve",
   "license": "MIT",
@@ -27,15 +32,38 @@
   "homepage": "https://github.com/markup-carve/carve-grammars#readme",
   "files": [
     "tiptap/",
+    "prism/",
+    "highlightjs/",
     "README.md",
     "LICENSE"
   ],
   "exports": {
+    ".": "./tiptap/index.js",
     "./tiptap": "./tiptap/index.js",
-    "./tiptap/*": "./tiptap/*"
+    "./tiptap/*": "./tiptap/*",
+    "./prism/carve.js": "./prism/carve.js",
+    "./prism/*": "./prism/*",
+    "./highlightjs/carve.js": "./highlightjs/carve.js",
+    "./highlightjs/*": "./highlightjs/*"
   },
   "peerDependencies": {
     "@tiptap/core": "^2",
-    "@tiptap/starter-kit": "^2"
+    "@tiptap/starter-kit": "^2",
+    "prismjs": "^1",
+    "highlight.js": "^11"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "prismjs": {
+      "optional": true
+    },
+    "highlight.js": {
+      "optional": true
+    }
   }
 }
