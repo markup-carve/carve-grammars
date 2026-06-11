@@ -43,7 +43,7 @@ check('inline marks map to Carve tokens',
         text('g', 'superscript'), text(' '),
         text('h', 'underline'),
     )),
-    '*a* /b/ `c` {=d=} ~e~ {,f,} ^g^ _h_');
+    '*a* /b/ `c` {=d=} ~e~ {,f,} {^g^} _h_');
 
 check('underline maps to _.._',
     doc(para(text('x', 'underline'))),

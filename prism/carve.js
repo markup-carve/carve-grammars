@@ -5,7 +5,9 @@
  * (`resources/grammar.ebnf`) and the TextMate grammar in vscode-carve
  * (`syntaxes/carve.tmLanguage.json`). Carve's inline delimiters differ from
  * Markdown/Djot: emphasis is `/italic/`, `*bold*`, `_underline_`,
- * `~strike~`, `==highlight==`, `^sup^`, `,,sub,,`.
+ * `~strike~`, `=highlight=`, `^sup^`, `,sub,` (the doubled forms `==x==` /
+ * `,,x,,` are literal in Carve; the forced brace forms `{=x=}` / `{,x,}` /
+ * `{^x^}` render intraword).
  *
  * Usage (ESM):
  *
@@ -72,15 +74,15 @@
             alias: 'deleted',
         },
         'highlight': {
-            pattern: /==[^=\n]+?==/,
+            pattern: /\{=(?=\S)[^\n]*?=\}|(?<![\w=])=(?=\S)[^=\n]+?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         'superscript': {
-            pattern: /\^(?=\S)[^\s^\n]+?\^/,
+            pattern: /\{\^(?=\S)[^\n]*?\^\}|\^(?=\S)[^\s^\n]+?\^/,
             alias: 'important',
         },
         'subscript': {
-            pattern: /,,(?=\S),[^,\n]*?,,|,,(?=\S)[^,\n]+?,,/,
+            pattern: /\{,(?=\S)[^\n]*?,\}|(?<![\w,]),(?=\S)[^,\n]+?(?<=\S),(?![\w,])/,
             alias: 'important',
         },
     };
