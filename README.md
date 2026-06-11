@@ -93,8 +93,9 @@ exposed as `escapeCarve(text)`.
 ## Block elements
 
 Headings (`#`), bullet / ordered / task lists, blockquotes (`>`), fenced code
-blocks (`` ``` lang ``), horizontal rules (`---`), tables, container divs
-(`::: class`), and definition lists.
+blocks (`` ``` lang ``), horizontal rules (`---`), tables (with `|=` header
+cells and `^` / `<` row / column spans), container divs (`::: class`), and
+definition lists.
 
 ## Syntax highlighting
 
@@ -148,7 +149,18 @@ the global `hljs`:
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
-- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
+- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
+
+## Attributes, math and footnotes
+
+- **Attributes** - spans, headings and images serialize an `id` and `class`
+  (and any extra non-structural attrs) as a `{#id .class key="val"}` block, e.g.
+  `[text]{#me .note}`, `# Title {#slug}`, `![alt](src){.wide}`.
+- **Math** - `CarveMath` (inline atom) serializes to `` $`x`$ `` and, with
+  `display: true`, `` $$`x`$$ ``.
+- **Footnotes** - `CarveFootnote` is the inline `[^label]` reference;
+  `CarveFootnoteDefinition` is the matching body block, serialized as
+  `[^label]: body`.
 
 ## Tests
 

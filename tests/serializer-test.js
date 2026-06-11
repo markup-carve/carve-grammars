@@ -145,4 +145,63 @@ check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
     'a\n\n---\n\nb');
 
+// Tables: header cells use `|=`; colspan/rowspan rebuild Carve filler cells.
+const cell = (t, type = 'tableCell', attrs = {}) => ({ type, attrs, content: [para(text(t))] });
+const row = (...cells) => ({ type: 'tableRow', content: cells });
+
+check('table header row uses |=',
+    doc({ type: 'table', content: [
+        row(cell('H1', 'tableHeader'), cell('H2', 'tableHeader')),
+        row(cell('a'), cell('b')),
+    ] }),
+    '|= H1 |= H2 |\n| a | b |');
+
+check('table colspan emits a < filler cell',
+    doc({ type: 'table', content: [
+        row(cell('wide', 'tableCell', { colspan: 2 })),
+        row(cell('a'), cell('b')),
+    ] }),
+    '| wide | < |\n| a | b |');
+
+check('table rowspan emits a ^ filler cell',
+    doc({ type: 'table', content: [
+        row(cell('tall', 'tableCell', { rowspan: 2 }), cell('b')),
+        row(cell('d')),
+    ] }),
+    '| tall | b |\n| ^ | d |');
+
+// Attributes: span id/class, heading id, image class.
+check('span serializes id and class',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'note', id: 'me' } }] })),
+    '[x]{#me .note}');
+
+check('heading serializes an id',
+    doc({ type: 'heading', attrs: { level: 2, id: 'slug' }, content: [text('Title')] }),
+    '## Title {#slug}');
+
+check('image serializes a class',
+    doc(para({ type: 'image', attrs: { alt: 'a', src: 's.png', class: 'wide' } })),
+    '![a](s.png){.wide}');
+
+// Math: inline $`x`$, display $$`x`$$, backtick-safe fence.
+check('inline math',
+    doc(para({ type: 'carveMath', attrs: { src: 'E=mc^2' } })),
+    '$`E=mc^2`$');
+
+check('display math',
+    doc(para({ type: 'carveMath', attrs: { src: 'a+b', display: true } })),
+    '$$`a+b`$$');
+
+check('math widens fence for an internal backtick',
+    doc(para({ type: 'carveMath', attrs: { src: 'a`b' } })),
+    '$``a`b``$');
+
+// Footnote definition: [^label]: body
+check('footnote definition',
+    doc(
+        para(text('see '), { type: 'carveFootnote', attrs: { label: '1' } }),
+        { type: 'carveFootnoteDefinition', attrs: { label: '1' }, content: [para(text('the body'))] },
+    ),
+    'see [^1]\n\n[^1]: the body');
+
 console.log(`\n${passed} passed`);

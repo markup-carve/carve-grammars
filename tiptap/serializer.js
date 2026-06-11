@@ -56,9 +56,12 @@ export function serializeToCarve(doc) {
                 output += serializeInline(node.content) + '\n';
                 break;
 
-            case 'heading':
-                output += '#'.repeat(node.attrs?.level || 1) + ' ' + serializeInline(node.content) + '\n';
+            case 'heading': {
+                const headAttrs = serializeAttributes(node.attrs, ['level']);
+                output += '#'.repeat(node.attrs?.level || 1) + ' ' + serializeInline(node.content)
+                    + (headAttrs ? ' ' + headAttrs : '') + '\n';
                 break;
+            }
 
             case 'bulletList':
             case 'orderedList':
@@ -118,12 +121,14 @@ export function serializeToCarve(doc) {
                 output += '\\\n';
                 break;
 
-            case 'image':
+            case 'image': {
                 const imgAlt = node.attrs?.alt || '';
                 const imgSrc = node.attrs?.src || '';
                 const imgTitle = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
-                output += '![' + imgAlt + '](' + imgSrc + imgTitle + ')\n';
+                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title']);
+                output += '![' + imgAlt + '](' + imgSrc + imgTitle + ')' + imgAttrs + '\n';
                 break;
+            }
 
             case 'table':
                 serializeTable(node);
@@ -155,6 +160,16 @@ export function serializeToCarve(doc) {
                     output += embedSrc + '\n';
                 }
                 break;
+
+            case 'carveFootnoteDefinition': {
+                const fnLabel = node.attrs?.label || 'note';
+                const paras = (node.content || []).map(b => serializeInline(b.content || []));
+                // First paragraph on the marker line; further paragraphs are
+                // indented continuation lines.
+                output += '[^' + fnLabel + ']: ' + (paras.shift() || '') + '\n';
+                paras.forEach(p => { output += '  ' + p + '\n'; });
+                break;
+            }
 
             case 'definitionList':
                 serializeDefinitionList(node);
@@ -195,21 +210,46 @@ export function serializeToCarve(doc) {
         const rows = table.content || [];
         if (rows.length === 0) return;
 
-        rows.forEach((row, rowIndex) => {
+        // Carve marks header cells with `|=`, and reconstructs ProseMirror
+        // colspan/rowspan with filler cells: `<` continues the cell to its left
+        // (colspan) and `^` continues the cell above (rowspan). ProseMirror omits
+        // a cell node for grid positions covered by a span, so we rebuild the grid
+        // row by row, carrying rowspans forward per column.
+        const rowspanCarry = []; // rowspanCarry[col] = remaining rows to fill with `^`
+        rows.forEach(row => {
             const cells = row.content || [];
-            const cellTexts = cells.map(cell => {
+            const out = []; // { header, content } per grid column, incl. `^`/`<` fillers
+            let col = 0;
+            let ci = 0;
+            while (ci < cells.length || rowspanCarry.slice(col).some(c => c > 0)) {
+                if (rowspanCarry[col] > 0) {
+                    out.push({ header: false, content: '^' });
+                    rowspanCarry[col]--;
+                    col++;
+                    continue;
+                }
+                if (ci >= cells.length) break;
+                const cell = cells[ci++];
+                const colspan = cell.attrs?.colspan || 1;
+                const rowspan = cell.attrs?.rowspan || 1;
+                const header = cell.type === 'tableHeader';
                 const content = (cell.content || [])
                     .map(p => serializeInline(p.content))
                     .join(' ');
-                return content;
-            });
-            output += '| ' + cellTexts.join(' | ') + ' |\n';
-
-            // Add separator after header row
-            if (rowIndex === 0) {
-                const separator = cells.map(() => '---').join(' | ');
-                output += '| ' + separator + ' |\n';
+                out.push({ header, content });
+                if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                col++;
+                for (let k = 1; k < colspan; k++) {
+                    out.push({ header: false, content: '<' });
+                    if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                    col++;
+                }
             }
+            let line = '';
+            for (const c of out) {
+                line += (c.header ? '|= ' : '| ') + c.content + ' ';
+            }
+            output += line + '|\n';
         });
     }
 
@@ -319,7 +359,11 @@ export function serializeToCarve(doc) {
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
                     t = '[' + t + '](' + link.attrs.href + title + ')';
                 }
-                if (carveSpan) t = '[' + t + ']{.' + (carveSpan.attrs?.class || 'class') + '}';
+                if (carveSpan) {
+                    const spanAttrs = serializeAttributes(carveSpan.attrs)
+                        || ('{.' + (carveSpan.attrs?.class || 'class') + '}');
+                    t = '[' + t + ']' + spanAttrs;
+                }
                 if (abbr) t = '[' + t + ']{abbr="' + (abbr.attrs?.title || '') + '"}';
 
                 result += t;
@@ -329,10 +373,20 @@ export function serializeToCarve(doc) {
                 const alt = node.attrs?.alt || '';
                 const src = node.attrs?.src || '';
                 const title = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
-                result += '![' + alt + '](' + src + title + ')';
+                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title']);
+                result += '![' + alt + '](' + src + title + ')' + imgAttrs;
             } else if (node.type === 'carveFootnote') {
                 const label = node.attrs?.label || 'note';
                 result += '[^' + label + ']';
+            } else if (node.type === 'carveMath') {
+                // Math source is raw; widen the backtick fence past any internal
+                // run and pad if it touches an edge. Inline `$`x`$`, display `$$`x`$$`.
+                const mathSrc = node.attrs?.src || '';
+                const longest = (mathSrc.match(/`+/g) || []).reduce((m, r) => Math.max(m, r.length), 0);
+                const fence = '`'.repeat(longest + 1);
+                const pad = (mathSrc.startsWith('`') || mathSrc.endsWith('`') || mathSrc === '') ? ' ' : '';
+                const dollars = node.attrs?.display ? '$$' : '$';
+                result += dollars + fence + pad + mathSrc + pad + fence + dollars;
             }
         });
 
@@ -435,6 +489,34 @@ export function escapeCarve(text) {
  */
 function escapeTitle(title) {
     return title.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+/**
+ * Build a Carve attribute block `{#id .class key="val"}` from node/mark attrs.
+ * Emits `#id` and `.class` (space-separated classes each become a `.token`);
+ * any remaining non-structural attrs are emitted as `key="val"`. Returns '' when
+ * there is nothing to emit. The `class` default of `'custom'` (CarveSpan's
+ * placeholder) is treated as absent.
+ *
+ * @param {object} attrs
+ * @param {string[]} [skip] - attribute keys to ignore (structural node attrs).
+ * @returns {string}
+ */
+function serializeAttributes(attrs, skip = []) {
+    if (!attrs) return '';
+    const ignore = new Set(['id', 'class', ...skip]);
+    const parts = [];
+    if (attrs.id) parts.push('#' + attrs.id);
+    if (attrs.class && attrs.class !== 'custom') {
+        for (const c of String(attrs.class).split(/\s+/).filter(Boolean)) {
+            parts.push('.' + c);
+        }
+    }
+    for (const [k, v] of Object.entries(attrs)) {
+        if (ignore.has(k) || v == null || v === false || v === '') continue;
+        parts.push(k + '="' + String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"');
+    }
+    return parts.length ? '{' + parts.join(' ') + '}' : '';
 }
 
 export default serializeToCarve;

@@ -36,6 +36,14 @@ export const CarveSpan = Mark.create({
                     return { 'data-carve-class': attributes.class };
                 },
             },
+            id: {
+                default: null,
+                parseHTML: element => element.getAttribute('id') || null,
+                renderHTML: attributes => {
+                    if (!attributes.id) return {};
+                    return { id: attributes.id };
+                },
+            },
         };
     },
 
