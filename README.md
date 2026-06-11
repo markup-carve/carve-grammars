@@ -102,7 +102,7 @@ definition lists.
 Render Carve source as highlighted HTML on the web. Both grammars cover the full
 Carve token set: headings, lists, tables, blockquotes, fenced/raw blocks,
 container divs, front matter and comments, plus inline emphasis
-(`*bold*` `/italic/` `_underline_` `~strike~` `==highlight==` `^sup^` `,,sub,,`),
+(`*bold*` `/italic/` `_underline_` `~strike~` `=highlight=` `^sup^` `,sub,`),
 code, links, images, spans, attributes, footnotes, math (`` $`x`$ ``),
 CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 

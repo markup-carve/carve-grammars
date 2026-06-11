@@ -344,7 +344,7 @@ export function serializeToCarve(doc) {
                     t = t.replace(/]/g, '\\]');
                 }
                 if (hasSub) t = '{,' + t + ',}';
-                if (hasSup) t = '^' + t + '^';
+                if (hasSup) t = '{^' + t + '^}';
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
                 // so insert/delete content that literally contains `+}` / `-}`
                 // cannot round-trip - a Carve limitation, not fixable here.
