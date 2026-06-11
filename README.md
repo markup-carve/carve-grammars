@@ -64,9 +64,9 @@ const editor = new Editor({
 | italic      | `/text/`    | `<em>`     |
 | underline   | `_text_`    | `<u>`      |
 | code        | `` `text` `` | `<code>`  |
-| highlight   | `==text==`  | `<mark>`   |
+| highlight   | `{=text=}`  | `<mark>`   |
 | strike      | `~text~`    | `<s>`      |
-| subscript   | `,,text,,`  | `<sub>`    |
+| subscript   | `{,text,}`  | `<sub>`    |
 | superscript | `^text^`    | `<sup>`    |
 | insert      | `{+text+}`  | `<ins>`    |
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
@@ -77,7 +77,8 @@ const editor = new Editor({
 The tokens target carve-php's **parser** (the contract: serialized Carve must parse
 back to the same elements). Carve's inline syntax differs notably from Djot's:
 emphasis is `/text/` (Djot uses `_`), `_text_` is underline, `~text~` is
-strikethrough, subscript is `,,text,,`, and highlight is `==text==`.
+strikethrough, subscript is `,text,`, and highlight is `=text=` (single-char
+delimiters since carve #108; use the forced `{=text=}` / `{,text,}` form intraword).
 
 ### Escaping
 

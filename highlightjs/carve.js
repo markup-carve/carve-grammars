@@ -3,8 +3,8 @@
  *
  * Carve is a Djot-derived markup language with distinct inline delimiters:
  * emphasis is /text/ (not _text_), underline is _text_, strikethrough is
- * ~text~ (Djot uses ~ for subscript), subscript is ,,text,, and highlight is
- * ==text== (Djot uses {=text=}). Strong (*text*), superscript (^text^),
+ * ~text~ (Djot uses ~ for subscript), subscript is ,text, and highlight is
+ * =text= (Djot uses {=text=}). Strong (*text*), superscript (^text^),
  * insert ({+text+}) and delete ({-text-}) match Djot.
  *
  * This file is a UMD module so it works in every documented integration:
@@ -85,11 +85,11 @@
         contains: [EMPHASIS, UNDERLINE],
     };
 
-    // Highlight (Carve): ==text==
+    // Highlight (Carve): =text= (single-char; intraword as {=text=})
     const HIGHLIGHT = {
         className: 'addition',
-        begin: /==(?=\S)/,
-        end: /==/,
+        begin: /(?<![=\w])=(?=\S)/,
+        end: /=(?![=\w])/,
         relevance: 3,
     };
 
@@ -117,11 +117,11 @@
         relevance: 2,
     };
 
-    // Subscript (Carve): ,,text,,
+    // Subscript (Carve): ,text, (single-char; intraword as {,text,})
     const SUBSCRIPT = {
         className: 'built_in',
-        begin: /,,(?=\S)/,
-        end: /,,/,
+        begin: /(?<!\w),(?=\S)/,
+        end: /,(?!\w)/,
         relevance: 3,
     };
 
@@ -415,8 +415,8 @@
             INSERT,            // {+text+}
             DELETE,            // {-text-}
             INLINE_COMMENT,    // {% %} - must be before ATTRIBUTE
-            HIGHLIGHT,         // ==text==
-            SUBSCRIPT,         // ,,text,,
+            HIGHLIGHT,         // =text=
+            SUBSCRIPT,         // ,text,
             SUPERSCRIPT,       // ^text^
             STRONG,
             EMPHASIS,          // /text/

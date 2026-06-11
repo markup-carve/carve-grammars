@@ -303,7 +303,7 @@ export function serializeToCarve(doc) {
                 if ((link || carveSpan || abbr) && !hasCode) {
                     t = t.replace(/]/g, '\\]');
                 }
-                if (hasSub) t = ',,' + t + ',,';
+                if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '^' + t + '^';
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
                 // so insert/delete content that literally contains `+}` / `-}`
@@ -311,7 +311,7 @@ export function serializeToCarve(doc) {
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
                 if (hasStrike && !hasDelete) t = '~' + t + '~';
-                if (hasHighlight) t = '==' + t + '==';
+                if (hasHighlight) t = '{=' + t + '=}';
                 if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
