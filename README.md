@@ -155,7 +155,9 @@ the global `hljs`:
 
 - **Attributes** - spans, headings and images serialize an `id` and `class`
   (and any extra non-structural attrs) as a `{#id .class key="val"}` block, e.g.
-  `[text]{#me .note}`, `# Title {#slug}`, `![alt](src){.wide}`.
+  `[text]{#me .note}`, `![alt](src){.wide}`. Inline attrs trail their target;
+  block attrs (headings) sit on the **preceding** line (strict djot), e.g.
+  `{#slug}` then `# Title`.
 - **Math** - `CarveMath` (inline atom) serializes to `` $`x`$ `` and, with
   `display: true`, `` $$`x`$$ ``.
 - **Footnotes** - `CarveFootnote` is the inline `[^label]` reference;
