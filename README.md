@@ -69,6 +69,7 @@ const editor = new Editor({
 | subscript   | `,text,` / `{,text,}` | `<sub>`    |
 | superscript | `^text^` / `{^text^}` | `<sup>`    |
 | insert      | `{+text+}`  | `<ins>`    |
+| delete      | `{-text-}`  | `<del>`    |
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
 | image       | `![alt](src)` / `![alt](src "title")` | `<img>` |
 | span        | `[text]{.class}` | `<span class>` |
