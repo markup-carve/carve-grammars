@@ -73,7 +73,7 @@ const editor = new Editor({
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
 | image       | `![alt](src)` / `![alt](src "title")` | `<img>` |
 | span        | `[text]{.class}` | `<span class>` |
-| abbreviation | `[text]{abbr="..."}` | `<span abbr>` |
+| abbreviation | `:abbr[text]{title="..."}` | `<span class="ext-abbr" title>` |
 
 The tokens target carve-php's **parser** (the contract: serialized Carve must parse
 back to the same elements). Carve's inline syntax differs notably from Djot's:
