@@ -364,7 +364,12 @@ export function serializeToCarve(doc) {
                         || ('{.' + (carveSpan.attrs?.class || 'class') + '}');
                     t = '[' + t + ']' + spanAttrs;
                 }
-                if (abbr) t = '[' + t + ']{abbr="' + (abbr.attrs?.title || '') + '"}';
+                // Carve has no inline <abbr> token, so emit the `:abbr[…]`
+                // extension carrying the expansion as a real `title` (renders
+                // <span class="ext-abbr" title="…">) -- accessible and
+                // round-trippable, unlike the old `{abbr="…"}` which produced an
+                // inert `abbr` attribute on a <span>.
+                if (abbr) t = ':abbr[' + t + ']{title="' + escapeTitle(abbr.attrs?.title || '') + '"}';
 
                 result += t;
             } else if (node.type === 'hardBreak') {

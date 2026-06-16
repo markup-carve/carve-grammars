@@ -3,8 +3,14 @@ import { Mark, mergeAttributes } from '@tiptap/core';
 /**
  * Carve Abbreviation extension for Tiptap
  *
- * Renders inline abbreviations with the `<abbr>` tag.
- * Serializes to Carve as: [ABBR]{abbr="Full Text"}
+ * Renders inline abbreviations with the `<abbr>` tag in the editor.
+ * Serializes to Carve as: :abbr[ABBR]{title="Full Text"}
+ *
+ * Carve has no inline `<abbr>` token, so the expansion is carried as a real
+ * `title` on the `:abbr[…]` extension span (carve-php renders
+ * `<span class="ext-abbr" title="…">`). parseHTML matches both a native
+ * `<abbr title>` and that round-tripped span, so the mark survives an
+ * editor -> Carve -> HTML -> editor cycle.
  *
  * @example
  * ```js
@@ -12,7 +18,7 @@ import { Mark, mergeAttributes } from '@tiptap/core';
  * <abbr title="HyperText Markup Language">HTML</abbr>
  *
  * // Carve output
- * [HTML]{abbr="HyperText Markup Language"}
+ * :abbr[HTML]{title="HyperText Markup Language"}
  * ```
  */
 export const CarveAbbreviation = Mark.create({
@@ -35,6 +41,12 @@ export const CarveAbbreviation = Mark.create({
         return [
             {
                 tag: 'abbr[title]',
+                priority: 51,
+            },
+            {
+                // carve-php renders `:abbr[…]{title="…"}` as this span; matching
+                // it closes the editor -> Carve -> HTML -> editor round-trip.
+                tag: 'span.ext-abbr[title]',
                 priority: 51,
             },
         ];

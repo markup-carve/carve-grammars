@@ -183,6 +183,12 @@ check('image serializes a class',
     doc(para({ type: 'image', attrs: { alt: 'a', src: 's.png', class: 'wide' } })),
     '![a](s.png){.wide}');
 
+// Abbreviation: the `:abbr[…]` extension carries the expansion as a title
+// (Carve has no inline <abbr>); the title is escaped like a link title.
+check('abbreviation serializes as the :abbr extension with a title',
+    doc(para({ type: 'text', text: 'HTML', marks: [{ type: 'carveAbbreviation', attrs: { title: 'HyperText Markup Language' } }] })),
+    ':abbr[HTML]{title="HyperText Markup Language"}');
+
 // Math: inline $`x`$, display $$`x`$$, backtick-safe fence.
 check('inline math',
     doc(para({ type: 'carveMath', attrs: { src: 'E=mc^2' } })),
