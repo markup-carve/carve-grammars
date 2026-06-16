@@ -175,9 +175,9 @@ check('span serializes id and class',
     doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'note', id: 'me' } }] })),
     '[x]{#me .note}');
 
-check('heading serializes an id',
+check('heading serializes an id on the preceding line (strict djot)',
     doc({ type: 'heading', attrs: { level: 2, id: 'slug' }, content: [text('Title')] }),
-    '## Title {#slug}');
+    '{#slug}\n## Title');
 
 check('image serializes a class',
     doc(para({ type: 'image', attrs: { alt: 'a', src: 's.png', class: 'wide' } })),
