@@ -184,7 +184,3 @@ the global `hljs`:
 ```bash
 npm test
 ```
-
-## License
-
-MIT
