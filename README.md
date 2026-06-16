@@ -60,14 +60,14 @@ const editor = new Editor({
 
 | Tiptap mark | Carve token | Renders as |
 |-------------|-------------|------------|
-| bold        | `*text*`    | `<strong>` |
-| italic      | `/text/`    | `<em>`     |
-| underline   | `_text_`    | `<u>`      |
+| bold        | `*text*` / `{*text*}` | `<strong>` |
+| italic      | `/text/` / `{/text/}` | `<em>`     |
+| underline   | `_text_` / `{_text_}` | `<u>`      |
 | code        | `` `text` `` | `<code>`  |
-| highlight   | `{=text=}`  | `<mark>`   |
-| strike      | `~text~`    | `<s>`      |
-| subscript   | `{,text,}`  | `<sub>`    |
-| superscript | `^text^`    | `<sup>`    |
+| highlight   | `=text=` / `{=text=}` | `<mark>`   |
+| strike      | `~text~` / `{~text~}` | `<s>`      |
+| subscript   | `,text,` / `{,text,}` | `<sub>`    |
+| superscript | `^text^` / `{^text^}` | `<sup>`    |
 | insert      | `{+text+}`  | `<ins>`    |
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
 | image       | `![alt](src)` / `![alt](src "title")` | `<img>` |
@@ -78,7 +78,15 @@ The tokens target carve-php's **parser** (the contract: serialized Carve must pa
 back to the same elements). Carve's inline syntax differs notably from Djot's:
 emphasis is `/text/` (Djot uses `_`), `_text_` is underline, `~text~` is
 strikethrough, subscript is `,text,`, and highlight is `=text=` (single-char
-delimiters since carve #108; use the forced `{=text=}` / `{,text,}` form intraword).
+delimiters since carve #108).
+
+Each single-char delimiter has two equivalent forms: a **bare** form
+(`=text=`) and a **forced brace** form (`{=text=}`) that also works intraword;
+both parse to the same element. The two columns above list bare / forced.
+`serializeToCarve` emits the bare form for `* / _ ~` and the forced `{…}` form
+for `= , ^` (round-trip-safe — those delimiters are likelier to be inert bare);
+`{+…+}` / `{-…-}` (insert / delete) have only the brace form, since `+` / `-`
+are not emphasis delimiters.
 
 ### Escaping
 
