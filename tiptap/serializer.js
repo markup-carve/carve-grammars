@@ -57,9 +57,13 @@ export function serializeToCarve(doc) {
                 break;
 
             case 'heading': {
+                // Strict djot: block attributes live on the preceding line, never
+                // trailing the heading text (a trailing `{...}` reparses as literal).
                 const headAttrs = serializeAttributes(node.attrs, ['level']);
-                output += '#'.repeat(node.attrs?.level || 1) + ' ' + serializeInline(node.content)
-                    + (headAttrs ? ' ' + headAttrs : '') + '\n';
+                if (headAttrs) {
+                    output += headAttrs + '\n';
+                }
+                output += '#'.repeat(node.attrs?.level || 1) + ' ' + serializeInline(node.content) + '\n';
                 break;
             }
 
