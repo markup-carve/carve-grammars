@@ -368,12 +368,11 @@ export function serializeToCarve(doc) {
                         || ('{.' + (carveSpan.attrs?.class || 'class') + '}');
                     t = '[' + t + ']' + spanAttrs;
                 }
-                // Carve has no inline <abbr> token, so emit the `:abbr[…]`
-                // extension carrying the expansion as a real `title` (renders
-                // <span class="ext-abbr" title="…">) -- accessible and
-                // round-trippable, unlike the old `{abbr="…"}` which produced an
-                // inert `abbr` attribute on a <span>.
-                if (abbr) t = ':abbr[' + t + ']{title="' + escapeTitle(abbr.attrs?.title || '') + '"}';
+                // `[text]{abbr="…"}` is carve/djot-php's SemanticSpanExtension
+                // syntax: with that extension enabled the `abbr` attribute is
+                // promoted to a real `<abbr title="…">`; without it, it stays a
+                // `<span abbr="…">`. (Title escaped like a link title.)
+                if (abbr) t = '[' + t + ']{abbr="' + escapeTitle(abbr.attrs?.title || '') + '"}';
 
                 result += t;
             } else if (node.type === 'hardBreak') {
