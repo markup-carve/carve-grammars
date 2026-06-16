@@ -4,13 +4,11 @@ import { Mark, mergeAttributes } from '@tiptap/core';
  * Carve Abbreviation extension for Tiptap
  *
  * Renders inline abbreviations with the `<abbr>` tag in the editor.
- * Serializes to Carve as: :abbr[ABBR]{title="Full Text"}
+ * Serializes to Carve as: [ABBR]{abbr="Full Text"}
  *
- * Carve has no inline `<abbr>` token, so the expansion is carried as a real
- * `title` on the `:abbr[…]` extension span (carve-php renders
- * `<span class="ext-abbr" title="…">`). parseHTML matches both a native
- * `<abbr title>` and that round-tripped span, so the mark survives an
- * editor -> Carve -> HTML -> editor cycle.
+ * This is carve/djot-php's SemanticSpanExtension syntax: with that extension
+ * enabled, `[ABBR]{abbr="…"}` renders a real `<abbr title="…">` (which this
+ * mark's parseHTML reads back); without it, carve renders a `<span abbr="…">`.
  *
  * @example
  * ```js
@@ -18,7 +16,7 @@ import { Mark, mergeAttributes } from '@tiptap/core';
  * <abbr title="HyperText Markup Language">HTML</abbr>
  *
  * // Carve output
- * :abbr[HTML]{title="HyperText Markup Language"}
+ * [HTML]{abbr="HyperText Markup Language"}
  * ```
  */
 export const CarveAbbreviation = Mark.create({
@@ -41,12 +39,6 @@ export const CarveAbbreviation = Mark.create({
         return [
             {
                 tag: 'abbr[title]',
-                priority: 51,
-            },
-            {
-                // carve-php renders `:abbr[…]{title="…"}` as this span; matching
-                // it closes the editor -> Carve -> HTML -> editor round-trip.
-                tag: 'span.ext-abbr[title]',
                 priority: 51,
             },
         ];

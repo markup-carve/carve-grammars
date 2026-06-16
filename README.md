@@ -73,7 +73,13 @@ const editor = new Editor({
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
 | image       | `![alt](src)` / `![alt](src "title")` | `<img>` |
 | span        | `[text]{.class}` | `<span class>` |
-| abbreviation | `:abbr[text]{title="..."}` | `<span class="ext-abbr" title>` |
+| abbreviation | `[text]{abbr="..."}` | `<abbr title>` \*\*\* |
+
+\*\*\* `[text]{abbr="..."}` renders a real `<abbr title>` only when carve's
+`SemanticSpanExtension` is enabled (the same opt-in extension also maps `{kbd}`
+-> `<kbd>`, `{dfn}` -> `<dfn>`, `{samp}` -> `<samp>`, `{var}` -> `<var>`).
+Without it, the attribute stays literal: `<span abbr="...">`. The mark's
+`parseHTML` reads back the `<abbr title>` form.
 
 The tokens target carve-php's **parser** (the contract: serialized Carve must parse
 back to the same elements). Carve's inline syntax differs notably from Djot's:
