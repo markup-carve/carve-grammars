@@ -38,7 +38,7 @@ import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } 
  * - CarveSpan: [text]{.class}
  * - CarveFootnote: [^label]
  * - CarveEmbed: video/iframe embeds
- * - CarveAbbreviation: [ABBR]{abbr="expansion"}
+ * - CarveAbbreviation: :abbr[ABBR]{title="expansion"}
  * - CarveDefinitionList: : term with definition
  *
  * @example
@@ -345,7 +345,7 @@ export const CarveKit = Extension.create({
             extensions.push(CarveEmbed.configure(this.options.carveEmbed ?? {}));
         }
 
-        // Abbreviation mark (maps to [ABBR]{abbr="expansion"})
+        // Abbreviation mark (maps to :abbr[ABBR]{title="expansion"})
         if (this.options.carveAbbreviation !== false) {
             extensions.push(CarveAbbreviation.configure(this.options.carveAbbreviation ?? {}));
         }
