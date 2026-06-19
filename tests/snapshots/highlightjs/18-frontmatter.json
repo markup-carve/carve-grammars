@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\ntitle: My Document\nauthor: Jane Doe\ndate: 2026-03-15\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n\nContent begins here.\n"
+  }
+]

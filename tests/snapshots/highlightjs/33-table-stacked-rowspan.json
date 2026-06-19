@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Tier |= User |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Gold   | Ann  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| ^      | Bo   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| ^      | Cy   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "text\n"
+  },
+  {
+    "scope": "string",
+    "text": "| a | b |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

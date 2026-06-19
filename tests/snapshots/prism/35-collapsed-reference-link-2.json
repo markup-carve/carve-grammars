@@ -1,0 +1,50 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "Other"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".ext"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " for details.\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[Other]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /other"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

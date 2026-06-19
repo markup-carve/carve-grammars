@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "| Name | Score |{.head}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|------|-------|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Ann  | 9     |{.win}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

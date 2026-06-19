@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "A note^[see "
+  },
+  {
+    "type": "bold",
+    "text": "*later*"
+  },
+  {
+    "type": "text",
+    "text": "] inline. And a ref"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " reference body."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

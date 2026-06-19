@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "("
+  },
+  {
+    "type": "italic",
+    "text": "/x/"
+  },
+  {
+    "type": "text",
+    "text": ") and a."
+  },
+  {
+    "type": "italic",
+    "text": "/b/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

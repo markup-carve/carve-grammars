@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold",
+    "text": "*a*"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "bold",
+    "text": "*b*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

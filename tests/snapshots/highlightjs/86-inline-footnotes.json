@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "A note"
+  },
+  {
+    "scope": "built_in",
+    "text": "^[see *later*] inline. And a ref[^"
+  },
+  {
+    "scope": null,
+    "text": "a].\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]: reference body."
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

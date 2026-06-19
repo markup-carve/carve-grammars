@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "para "
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " more\n"
+  }
+]

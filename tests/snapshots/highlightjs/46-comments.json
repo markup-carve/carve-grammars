@@ -1,0 +1,6 @@
+[
+  {
+    "scope": null,
+    "text": "Visible.\n\n%% this line is a comment\n\n%%%\na hidden\nblock\n%%%\n\nAlso visible.\n"
+  }
+]

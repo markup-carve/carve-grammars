@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "Other Page"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " for details.\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[Other Page]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /other-page"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

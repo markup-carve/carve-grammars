@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.note}"
+  },
+  {
+    "scope": null,
+    "text": "\nThis paragraph gets the class.\n"
+  }
+]

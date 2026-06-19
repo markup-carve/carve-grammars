@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "A "
+  },
+  {
+    "scope": "string",
+    "text": "[styled run]{.hl}"
+  },
+  {
+    "scope": null,
+    "text": " here.\n"
+  }
+]

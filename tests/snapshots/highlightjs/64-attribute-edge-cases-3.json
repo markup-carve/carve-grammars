@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]{data-x=\"{y}"
+  },
+  {
+    "scope": null,
+    "text": "\"}\n"
+  }
+]

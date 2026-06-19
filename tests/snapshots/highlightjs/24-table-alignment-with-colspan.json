@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|=> Category |= Item   |= Price |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Fruit       | Apple    | $1      |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Total       | <        | $1.50   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

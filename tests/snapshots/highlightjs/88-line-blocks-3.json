@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "::: |\nStanza one,\nstill one.\n\nStanza two.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

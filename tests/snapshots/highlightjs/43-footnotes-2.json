@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "See the note"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^m]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^m]: First line of the note"
+  },
+  {
+    "scope": null,
+    "text": "\n   and a continuation line.\n"
+  }
+]

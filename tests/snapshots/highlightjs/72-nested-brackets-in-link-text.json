@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "[a [b] c]("
+  },
+  {
+    "scope": "emphasis",
+    "text": "/u)\n"
+  }
+]

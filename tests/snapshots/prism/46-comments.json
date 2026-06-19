@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Visible.\n\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% this line is a comment"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%\na hidden\nblock\n%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n\nAlso visible.\n"
+  }
+]

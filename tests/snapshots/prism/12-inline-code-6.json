@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold",
+    "text": "*a ` b*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

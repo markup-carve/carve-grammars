@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "strong",
+    "text": "*a*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "strong",
+    "text": "*b*"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

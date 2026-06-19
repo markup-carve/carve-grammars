@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Visit "
+  },
+  {
+    "scope": "link",
+    "text": "<https://example.com>"
+  },
+  {
+    "scope": null,
+    "text": " or write "
+  },
+  {
+    "scope": "link",
+    "text": "<hello@example.com>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

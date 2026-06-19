@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]{.123}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "string",
+    "text": "[y]{12=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

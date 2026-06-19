@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.large #intro}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Title"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA paragraph with "
+  },
+  {
+    "scope": "link",
+    "text": "[a styled link](url){.btn .primary}"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

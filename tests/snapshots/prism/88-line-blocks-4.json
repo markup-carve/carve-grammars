@@ -1,0 +1,38 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " |"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "bold",
+    "text": "*Bold*"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "italic",
+    "text": "/italic/"
+  },
+  {
+    "type": "text",
+    "text": ",\nplain line.\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

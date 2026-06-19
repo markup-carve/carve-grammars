@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "deletion",
+    "text": "~old~"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "addition",
+    "text": "=new="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

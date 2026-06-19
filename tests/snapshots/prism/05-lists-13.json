@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Liste:\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "eins\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "zwei\n"
+  }
+]

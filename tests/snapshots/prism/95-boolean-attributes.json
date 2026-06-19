@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "Press "
+  },
+  {
+    "type": "span",
+    "text": "[Tab]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "kbd"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " to indent.\n"
+  }
+]

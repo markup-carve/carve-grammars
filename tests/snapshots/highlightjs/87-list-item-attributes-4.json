@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " [ ] A classed task item.\n"
+  }
+]

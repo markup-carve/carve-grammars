@@ -1,0 +1,66 @@
+[
+  {
+    "type": "italic",
+    "text": "/italic/"
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "bold-italic",
+    "text": "/*bold italic*/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "underline",
+    "text": "_underline_"
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "strike",
+    "text": "~strikethrough~"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "superscript",
+    "text": "^super^"
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "subscript",
+    "text": ",sub,"
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "highlight",
+    "text": "=highlight="
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

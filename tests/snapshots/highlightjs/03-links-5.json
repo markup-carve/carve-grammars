@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "link",
+    "text": "<https://example.com>"
+  },
+  {
+    "scope": "attr",
+    "text": "{.ext}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

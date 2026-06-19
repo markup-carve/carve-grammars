@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "section",
+    "text": "# Café Notes"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Über uns"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# 2024 Recap"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "## Setup"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "## Setup"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#api-v2}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# API"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#cafe-notes>, </"
+  },
+  {
+    "scope": null,
+    "text": "#section-2024-recap>, <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#setup-2>, and </"
+  },
+  {
+    "scope": null,
+    "text": "#api-v2>.\n"
+  }
+]

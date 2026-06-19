@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: _box"
+  },
+  {
+    "scope": null,
+    "text": "\ncontent\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "Press "
+  },
+  {
+    "type": "extension>function",
+    "text": ":kbd"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "Ctrl+C"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " to copy.\n"
+  }
+]

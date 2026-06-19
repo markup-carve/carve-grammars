@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "See the note."
+  },
+  {
+    "type": "footnote",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^n]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " First paragraph of the note."
+  },
+  {
+    "type": "text",
+    "text": "\n\n    Second paragraph, indented under the definition.\n"
+  }
+]

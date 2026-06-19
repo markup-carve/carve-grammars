@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "::: |\nRoses are red,\nViolets are blue.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> p one"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> - item"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

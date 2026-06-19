@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "list",
+    "text": "2. "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  },
+  {
+    "type": "list",
+    "text": "3. "
+  },
+  {
+    "type": "text",
+    "text": "z\n"
+  }
+]

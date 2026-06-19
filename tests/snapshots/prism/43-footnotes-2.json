@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "See the note"
+  },
+  {
+    "type": "footnote",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^m]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " First line of the note"
+  },
+  {
+    "type": "text",
+    "text": "\n   and a continuation line.\n"
+  }
+]

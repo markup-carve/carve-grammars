@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "strong",
+    "text": "*bold with "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/italic/"
+  },
+  {
+    "scope": "strong",
+    "text": " inside*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/italic with *bold* inside/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

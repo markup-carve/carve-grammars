@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " outer\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   1."
+  },
+  {
+    "scope": null,
+    "text": " inner\nlazy\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   2."
+  },
+  {
+    "scope": null,
+    "text": " sibling\n"
+  }
+]

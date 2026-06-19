@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "a[r]\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " http://x"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

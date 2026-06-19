@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|=         |= Diameter (km) |= Size vs Earth |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|= Mercury | 4,879.4         | 38%            |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|= Venus   | 12,104          | 95%            |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

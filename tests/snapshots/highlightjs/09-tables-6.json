@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Style    |= Sample      |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| italic    | /soft/        |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| strong    | *firm*        |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| code      | `literal`     |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "The string "
+  },
+  {
+    "type": "code",
+    "text": "`*not bold*`"
+  },
+  {
+    "type": "text",
+    "text": " is literal.\n"
+  }
+]

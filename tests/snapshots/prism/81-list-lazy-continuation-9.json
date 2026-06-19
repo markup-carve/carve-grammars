@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n"
+  },
+  {
+    "type": "div",
+    "text": "  "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": "note"
+  },
+  {
+    "type": "text",
+    "text": "\n  body\n"
+  },
+  {
+    "type": "div",
+    "text": "  "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

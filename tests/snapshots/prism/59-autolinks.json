@@ -1,0 +1,18 @@
+[
+  {
+    "type": "url",
+    "text": "<https://example.com>"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "url",
+    "text": "<a@b.com>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

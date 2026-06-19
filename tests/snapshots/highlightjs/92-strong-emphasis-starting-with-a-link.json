@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "See *"
+  },
+  {
+    "scope": "link",
+    "text": "[the docs](url)"
+  },
+  {
+    "scope": null,
+    "text": " for more* info.\n"
+  }
+]

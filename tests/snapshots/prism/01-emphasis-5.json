@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold",
+    "text": "*bold with /italic/ inside*"
+  },
+  {
+    "type": "text",
+    "text": " and /italic with "
+  },
+  {
+    "type": "bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "text",
+    "text": " inside/\n"
+  }
+]

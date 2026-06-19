@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Hey "
+  },
+  {
+    "type": "mention",
+    "text": "@alice"
+  },
+  {
+    "type": "text",
+    "text": ", see "
+  },
+  {
+    "type": "tag",
+    "text": "#release-1"
+  },
+  {
+    "type": "text",
+    "text": ".0.\n"
+  }
+]

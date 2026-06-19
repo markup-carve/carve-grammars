@@ -1,0 +1,34 @@
+[
+  {
+    "type": "highlight",
+    "text": "=x="
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "y"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " both mark.\n"
+  }
+]

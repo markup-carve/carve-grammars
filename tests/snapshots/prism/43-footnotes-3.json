@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

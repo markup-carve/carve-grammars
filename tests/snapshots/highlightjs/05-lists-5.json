@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " setup\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " clone\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " install\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "2."
+  },
+  {
+    "scope": null,
+    "text": " build\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "Run "
+  },
+  {
+    "scope": "code",
+    "text": "`a %% b`"
+  },
+  {
+    "scope": null,
+    "text": " then done. %% gone\n"
+  }
+]

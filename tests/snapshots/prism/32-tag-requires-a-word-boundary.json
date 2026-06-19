@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "A "
+  },
+  {
+    "type": "tag",
+    "text": "#tag"
+  },
+  {
+    "type": "text",
+    "text": " here, but not in foo#bar.\n"
+  }
+]

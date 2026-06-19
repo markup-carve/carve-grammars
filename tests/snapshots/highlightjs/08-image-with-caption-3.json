@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.gallery}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![Apollo 11](apollo.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure 1: First moon landing"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

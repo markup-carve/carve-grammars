@@ -1,0 +1,34 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "todo\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[x]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "done\n"
+  }
+]

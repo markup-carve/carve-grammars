@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "outer\n"
+  },
+  {
+    "type": "list",
+    "text": "   1. "
+  },
+  {
+    "type": "text",
+    "text": "inner\nlazy\n"
+  },
+  {
+    "type": "list",
+    "text": "   2. "
+  },
+  {
+    "type": "text",
+    "text": "sibling\n"
+  }
+]

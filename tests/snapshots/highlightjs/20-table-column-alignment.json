@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Name |=> Age |=~ City |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Alice  | 28     | NYC     |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Bob    | 34     | London  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

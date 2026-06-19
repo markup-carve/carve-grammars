@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "keyword",
+    "text": ":::: note"
+  },
+  {
+    "scope": null,
+    "text": "\nOuter.\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: tip"
+  },
+  {
+    "scope": null,
+    "text": "\nNested.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::::\n"
+  }
+]

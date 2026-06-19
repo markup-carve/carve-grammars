@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Use "
+  },
+  {
+    "type": "raw-inline",
+    "text": "`<br>`{=html}"
+  },
+  {
+    "type": "text",
+    "text": " to break, and "
+  },
+  {
+    "type": "raw-inline",
+    "text": "`\\foo`{=latex}"
+  },
+  {
+    "type": "text",
+    "text": " is dropped.\n"
+  }
+]

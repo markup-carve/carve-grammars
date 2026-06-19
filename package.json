@@ -5,7 +5,11 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/serializer-test.js && node tests/grammar-test.js"
+    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/grammar-test.js",
+    "test:coverage": "node tests/coverage-test.js",
+    "test:snapshot": "node tests/snapshot-test.js",
+    "test:roundtrip": "node tests/roundtrip-test.js",
+    "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js"
   },
   "repository": {
     "type": "git",
@@ -51,10 +55,10 @@
   },
   "peerDependencies": {
     "@tiptap/core": "^2",
-    "@tiptap/starter-kit": "^2",
     "@tiptap/extension-underline": "^2",
-    "prismjs": "^1",
-    "highlight.js": "^11"
+    "@tiptap/starter-kit": "^2",
+    "highlight.js": "^11",
+    "prismjs": "^1"
   },
   "peerDependenciesMeta": {
     "@tiptap/core": {
@@ -72,5 +76,10 @@
     "highlight.js": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "@markup-carve/carve": "github:markup-carve/carve-js",
+    "highlight.js": "^11.11.1",
+    "prismjs": "^1.30.0"
   }
 }

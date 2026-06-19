@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "| < | b |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| c | d |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

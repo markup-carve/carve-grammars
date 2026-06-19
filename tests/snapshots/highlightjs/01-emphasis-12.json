@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "foo"
+  },
+  {
+    "scope": "attr",
+    "text": "{*bar*}"
+  },
+  {
+    "scope": null,
+    "text": "baz and my"
+  },
+  {
+    "scope": "attr",
+    "text": "{_path_}"
+  },
+  {
+    "scope": null,
+    "text": "name and a"
+  },
+  {
+    "scope": "attr",
+    "text": "{/b/}"
+  },
+  {
+    "scope": null,
+    "text": "c\n"
+  }
+]
