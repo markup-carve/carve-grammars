@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " A classed item.\n-"
+  },
+  {
+    "scope": "attr",
+    "text": "{#intro}"
+  },
+  {
+    "scope": null,
+    "text": " An item with an id.\n"
+  }
+]

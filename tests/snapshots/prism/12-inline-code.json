@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "Run "
+  },
+  {
+    "type": "code",
+    "text": "`npm install`"
+  },
+  {
+    "type": "text",
+    "text": " first.\n"
+  }
+]

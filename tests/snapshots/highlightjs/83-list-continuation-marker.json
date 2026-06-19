@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " Build the image\n+\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```sh"
+  },
+  {
+    "scope": null,
+    "text": "\ndocker build -t app .\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " Push it\n"
+  }
+]

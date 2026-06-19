@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "strong",
+    "text": "*a, b*"
+  },
+  {
+    "scope": null,
+    "text": "!\n"
+  }
+]

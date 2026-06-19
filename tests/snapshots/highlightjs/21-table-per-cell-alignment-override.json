@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Item     |=> Qty |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Apple      | 12     |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Subtotal   |< 12    |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

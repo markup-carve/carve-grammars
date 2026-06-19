@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "*a "
+  },
+  {
+    "type": "code",
+    "text": "`x`"
+  },
+  {
+    "type": "text",
+    "text": " b*\n"
+  }
+]

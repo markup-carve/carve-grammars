@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": "note"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

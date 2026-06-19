@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Carve has footnotes."
+  },
+  {
+    "scope": "symbol",
+    "text": "[^fn]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^fn]: Defined anywhere; resolved by label."
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

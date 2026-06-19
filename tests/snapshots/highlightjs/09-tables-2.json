@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Heading |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Row 1    |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Row 2    |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

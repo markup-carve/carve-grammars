@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "--- toml\ntitle = \"My Document\"\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n\nContent begins here.\n"
+  }
+]

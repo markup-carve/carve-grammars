@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "{"
+  },
+  {
+    "type": "tag",
+    "text": "#id"
+  },
+  {
+    "type": "text",
+    "text": "\n .foo}\nText\n"
+  }
+]

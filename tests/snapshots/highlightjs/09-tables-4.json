@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Symbol |= Meaning  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| \\|      | pipe char |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/italic/"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/*bold italic*/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_underline_"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "deletion",
+    "text": "~strikethrough~"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "built_in",
+    "text": "^super^"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "built_in",
+    "text": ",sub,"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "addition",
+    "text": "=highlight="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

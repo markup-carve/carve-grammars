@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "re"
+  },
+  {
+    "scope": "attr",
+    "text": "{~view~}"
+  },
+  {
+    "scope": null,
+    "text": " it, then "
+  },
+  {
+    "scope": "attr",
+    "text": "{~old~>new~}"
+  },
+  {
+    "scope": null,
+    "text": ", and {"
+  },
+  {
+    "scope": "addition",
+    "text": "=mark="
+  },
+  {
+    "scope": null,
+    "text": "} it.\n"
+  }
+]

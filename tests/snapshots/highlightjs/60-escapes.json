@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": "lit"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\["
+  },
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\#"
+  },
+  {
+    "scope": null,
+    "text": "h "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\@"
+  },
+  {
+    "scope": null,
+    "text": "u\n"
+  }
+]

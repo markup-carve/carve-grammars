@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]{title=\"a b\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

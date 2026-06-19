@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#lst-greet}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```python"
+  },
+  {
+    "scope": null,
+    "text": "\ndef greet():\n    return 1\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Listing #: a greeting"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#lst-greet>.\n"
+  }
+]

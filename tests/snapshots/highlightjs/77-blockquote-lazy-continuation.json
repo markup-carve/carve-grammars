@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> quoted"
+  },
+  {
+    "scope": null,
+    "text": "\ncontinued\n"
+  }
+]

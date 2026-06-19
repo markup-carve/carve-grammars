@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "outer\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "inner\n"
+  }
+]

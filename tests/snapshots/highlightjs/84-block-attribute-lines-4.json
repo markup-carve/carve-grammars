@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.data}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|= A |= B |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| 1  | 2  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

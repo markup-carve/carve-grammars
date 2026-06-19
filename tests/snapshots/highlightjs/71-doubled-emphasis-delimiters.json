@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "strong",
+    "text": "**a*"
+  },
+  {
+    "scope": null,
+    "text": "* "
+  },
+  {
+    "scope": "deletion",
+    "text": "~~b~"
+  },
+  {
+    "scope": null,
+    "text": "~ "
+  },
+  {
+    "scope": "built_in",
+    "text": "^^"
+  },
+  {
+    "scope": null,
+    "text": "c"
+  },
+  {
+    "scope": "built_in",
+    "text": "^^"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

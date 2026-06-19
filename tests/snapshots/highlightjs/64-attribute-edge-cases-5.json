@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](u){k=\"{y}"
+  },
+  {
+    "scope": null,
+    "text": "\"}\n"
+  }
+]

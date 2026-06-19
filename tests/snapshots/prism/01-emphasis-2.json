@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "foo"
+  },
+  {
+    "type": "bold",
+    "text": "*bar*"
+  },
+  {
+    "type": "text",
+    "text": "baz and a/b/c stay literal.\n"
+  }
+]

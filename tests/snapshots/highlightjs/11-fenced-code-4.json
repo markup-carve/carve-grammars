@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.fancy #x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```php"
+  },
+  {
+    "scope": null,
+    "text": "\ncode\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

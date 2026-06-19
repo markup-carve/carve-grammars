@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "text\n"
+  },
+  {
+    "scope": "link",
+    "text": "![a](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

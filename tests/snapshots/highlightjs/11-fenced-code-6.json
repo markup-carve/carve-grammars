@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "```js title=\"x\"\ncode\n``"
+  },
+  {
+    "scope": "code",
+    "text": "`\n"
+  }
+]

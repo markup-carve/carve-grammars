@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "link",
+    "text": "![one](a.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: one"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "![two](b.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: two"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

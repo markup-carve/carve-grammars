@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "foo "
+  },
+  {
+    "type": "comment",
+    "text": "%% note"
+  },
+  {
+    "type": "text",
+    "text": "\nbar\n"
+  }
+]

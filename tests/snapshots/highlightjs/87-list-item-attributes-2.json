@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "3."
+  },
+  {
+    "scope": "attr",
+    "text": "{#x k=v}"
+  },
+  {
+    "scope": null,
+    "text": " A numbered item with id and key-value.\n"
+  }
+]

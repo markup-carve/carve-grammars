@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|= A |= B |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| `a|b` | z |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

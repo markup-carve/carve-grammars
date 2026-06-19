@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "//a/"
+  },
+  {
+    "scope": null,
+    "text": " and snake_/case/\n"
+  }
+]

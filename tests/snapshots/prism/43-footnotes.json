@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "Carve has footnotes."
+  },
+  {
+    "type": "footnote",
+    "text": "[^fn]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^fn]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " Defined anywhere; resolved by label."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

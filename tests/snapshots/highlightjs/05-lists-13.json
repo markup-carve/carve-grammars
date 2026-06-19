@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Liste:\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " eins\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " zwei\n"
+  }
+]

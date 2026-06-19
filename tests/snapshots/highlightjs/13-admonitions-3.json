@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "::: hint \"Heads up\"\nCustom call-out.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

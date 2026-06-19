@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": null,
+    "text": "literal"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": "not bold"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> quoted"
+  },
+  {
+    "scope": null,
+    "text": "\n+\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> more"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

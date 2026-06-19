@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "| Value |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| ^2^   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> ```"
+  },
+  {
+    "scope": null,
+    "text": "\ncode no marker\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> still"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "Use "
+  },
+  {
+    "scope": "code",
+    "text": "`ls | grep foo`"
+  },
+  {
+    "scope": null,
+    "text": " to filter.\n"
+  }
+]

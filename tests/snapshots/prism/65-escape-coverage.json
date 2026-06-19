@@ -1,0 +1,130 @@
+[
+  {
+    "type": "escape",
+    "text": "\\!"
+  },
+  {
+    "type": "text",
+    "text": "\\\""
+  },
+  {
+    "type": "escape",
+    "text": "\\#"
+  },
+  {
+    "type": "text",
+    "text": "\\$"
+  },
+  {
+    "type": "escape",
+    "text": "\\%"
+  },
+  {
+    "type": "text",
+    "text": "\\&\\'"
+  },
+  {
+    "type": "escape",
+    "text": "\\("
+  },
+  {
+    "type": "escape",
+    "text": "\\)"
+  },
+  {
+    "type": "escape",
+    "text": "\\*"
+  },
+  {
+    "type": "escape",
+    "text": "\\+"
+  },
+  {
+    "type": "escape",
+    "text": "\\,"
+  },
+  {
+    "type": "escape",
+    "text": "\\-"
+  },
+  {
+    "type": "escape",
+    "text": "\\."
+  },
+  {
+    "type": "escape",
+    "text": "\\/"
+  },
+  {
+    "type": "text",
+    "text": "\\:\\;"
+  },
+  {
+    "type": "escape",
+    "text": "\\<"
+  },
+  {
+    "type": "escape",
+    "text": "\\="
+  },
+  {
+    "type": "escape",
+    "text": "\\>"
+  },
+  {
+    "type": "text",
+    "text": "\\?"
+  },
+  {
+    "type": "escape",
+    "text": "\\@"
+  },
+  {
+    "type": "escape",
+    "text": "\\["
+  },
+  {
+    "type": "escape",
+    "text": "\\\\"
+  },
+  {
+    "type": "escape",
+    "text": "\\]"
+  },
+  {
+    "type": "escape",
+    "text": "\\^"
+  },
+  {
+    "type": "escape",
+    "text": "\\_"
+  },
+  {
+    "type": "escape",
+    "text": "\\`"
+  },
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "\\|\\"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "escape",
+    "text": "\\~"
+  },
+  {
+    "type": "text",
+    "text": " done\n"
+  }
+]

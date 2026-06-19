@@ -1,0 +1,34 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " "
+  },
+  {
+    "type": "div>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "div>attributes>class-name",
+    "text": ".sidebar"
+  },
+  {
+    "type": "div>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\nnot a div\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

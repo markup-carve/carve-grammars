@@ -1,0 +1,22 @@
+[
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": " toml\ntitle = \"My Document\"\n"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "text",
+    "text": "\nContent begins here.\n"
+  }
+]

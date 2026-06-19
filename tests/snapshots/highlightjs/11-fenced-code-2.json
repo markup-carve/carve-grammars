@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n\tindented with a tab\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

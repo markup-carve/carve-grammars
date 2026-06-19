@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": ":kbd"
+  },
+  {
+    "scope": "string",
+    "text": "[x]{k=\"{y}"
+  },
+  {
+    "scope": null,
+    "text": "\"}\n"
+  }
+]

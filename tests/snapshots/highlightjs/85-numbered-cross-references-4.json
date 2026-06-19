@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#tbl-r}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|= Item |= Qty |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Apple | 3 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Table #: Stock"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#tbl-r>.\n"
+  }
+]

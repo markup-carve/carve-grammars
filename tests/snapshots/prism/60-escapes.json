@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "bold",
+    "text": "*lit\\*"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "escape",
+    "text": "\\["
+  },
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "escape",
+    "text": "\\]"
+  },
+  {
+    "type": "text",
+    "text": " \\"
+  },
+  {
+    "type": "tag",
+    "text": "#h"
+  },
+  {
+    "type": "text",
+    "text": " \\"
+  },
+  {
+    "type": "mention",
+    "text": "@u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "See "
+  },
+  {
+    "scope": "link",
+    "text": "[Other Page][]"
+  },
+  {
+    "scope": null,
+    "text": " for details.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[Other Page]: /other-page"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

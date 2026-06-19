@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "italic",
+    "text": "/literal\\/"
+  },
+  {
+    "type": "text",
+    "text": " and \\"
+  },
+  {
+    "type": "bold",
+    "text": "*not bold\\*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

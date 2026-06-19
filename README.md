@@ -184,3 +184,23 @@ the global `hljs`:
 ```bash
 npm test
 ```
+
+The suite holds all three grammars to one source of truth: the shared corpus
+from the [`markup-carve/carve`](https://github.com/markup-carve/carve) spec,
+vendored as the `spec/` git submodule (`git submodule update --init`).
+
+- `npm run test:coverage` - the coverage matrix. Each grammar (prism,
+  highlightjs, tiptap) declares a covered-category set and a skip set (with a
+  reason per skip); the test fails if the two do not partition every corpus
+  category, so a new spec category forces a deliberate decision.
+- `npm run test:snapshot` - golden token snapshots. Each covered `.crv` is
+  tokenized with Prism's and highlight.js's own tokenizers and the token stream
+  (type + text) is compared against a committed golden in `tests/snapshots/`.
+  Refresh intended changes with `npm run snapshots:update`.
+- `npm run test:roundtrip` - the Tiptap serializer round-trip. Each covered
+  `.crv` runs `parse -> ProseMirror JSON -> serializeToCarve -> parse` and the
+  two parsed ASTs must be identical, catching serializer drift. Categories the
+  serializer cannot represent are skipped with a reason.
+
+`npm test` runs all of the above plus the structural grammar and serializer
+unit tests. CI runs the same on Node 18, 20 and 22.

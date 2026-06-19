@@ -1,0 +1,62 @@
+[
+  {
+    "type": "text",
+    "text": "Ping "
+  },
+  {
+    "type": "mention",
+    "text": "@john-doe"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "mention",
+    "text": "@john_doe"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "mention",
+    "text": "@john"
+  },
+  {
+    "type": "text",
+    "text": ".doe about "
+  },
+  {
+    "type": "tag",
+    "text": "#release-1"
+  },
+  {
+    "type": "text",
+    "text": ".0 today.\n\nReach "
+  },
+  {
+    "type": "mention",
+    "text": "@john"
+  },
+  {
+    "type": "text",
+    "text": ". That is "
+  },
+  {
+    "type": "mention",
+    "text": "@john"
+  },
+  {
+    "type": "text",
+    "text": "'s idea, "
+  },
+  {
+    "type": "mention",
+    "text": "@john"
+  },
+  {
+    "type": "text",
+    "text": "!\n"
+  }
+]

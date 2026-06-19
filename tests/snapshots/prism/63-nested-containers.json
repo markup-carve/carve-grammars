@@ -1,0 +1,42 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\nOuter.\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " tip"
+  },
+  {
+    "type": "text",
+    "text": "\nNested.\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

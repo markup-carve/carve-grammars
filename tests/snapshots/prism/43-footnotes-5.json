@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "See"
+  },
+  {
+    "type": "footnote",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": " and again"
+  },
+  {
+    "type": "footnote",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^m]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " One note, two refs."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

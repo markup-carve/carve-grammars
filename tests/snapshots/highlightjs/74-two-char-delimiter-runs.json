@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "addition",
+    "text": "==x=="
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "built_in",
+    "text": ",,y,"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "addition",
+    "text": "=z="
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "built_in",
+    "text": ",w,"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# not a heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/not italic/"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "strong",
+    "text": "*not bold*"
+  },
+  {
+    "scope": null,
+    "text": "  #notatag\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

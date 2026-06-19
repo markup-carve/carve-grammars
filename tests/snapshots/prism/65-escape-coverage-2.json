@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "\\a and \\« and a"
+  },
+  {
+    "type": "escape",
+    "text": "\\\\"
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  }
+]
