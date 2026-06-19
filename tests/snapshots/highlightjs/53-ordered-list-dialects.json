@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "a."
+  },
+  {
+    "scope": null,
+    "text": " apple\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "b."
+  },
+  {
+    "scope": null,
+    "text": " banana\n"
+  }
+]

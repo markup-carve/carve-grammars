@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "inserted",
+    "text": "{+ins+}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "deleted",
+    "text": "{-del-}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "changed",
+    "text": "{~old~>new~}"
+  },
+  {
+    "type": "text",
+    "text": " b"
+  },
+  {
+    "type": "critic-comment",
+    "text": "{# note #}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[Site](https://example.com \"Hover text\")"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

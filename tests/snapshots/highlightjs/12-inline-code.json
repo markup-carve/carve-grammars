@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "Run "
+  },
+  {
+    "scope": "code",
+    "text": "`npm install`"
+  },
+  {
+    "scope": null,
+    "text": " first.\n"
+  }
+]

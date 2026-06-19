@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "::: |\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*Bold*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/italic/"
+  },
+  {
+    "scope": null,
+    "text": ",\nplain line.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

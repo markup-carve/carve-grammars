@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "3. "
+  },
+  {
+    "type": "text",
+    "text": "third\n"
+  },
+  {
+    "type": "list",
+    "text": "4. "
+  },
+  {
+    "type": "text",
+    "text": "fourth\n"
+  }
+]

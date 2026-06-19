@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "text": "Read the "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "intro"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".ext"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " first.\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[x]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /intro"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

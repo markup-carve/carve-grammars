@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nA plain box.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#s .sidebar}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nA div with attributes.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

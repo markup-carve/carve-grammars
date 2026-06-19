@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#fig-sun}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![A sunset](sun.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: A sunset"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#fig-sun> for the colors.\n"
+  }
+]

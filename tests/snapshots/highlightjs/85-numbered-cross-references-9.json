@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#eq-emc}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "$$`E = mc^2`\n^ Equation #: mass-energy\n\nSee </#eq-emc>.\n"
+  }
+]

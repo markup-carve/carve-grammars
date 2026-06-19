@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Issue "
+  },
+  {
+    "type": "tag",
+    "text": "#123"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "tag",
+    "text": "#v2"
+  },
+  {
+    "type": "text",
+    "text": " here.\n"
+  }
+]

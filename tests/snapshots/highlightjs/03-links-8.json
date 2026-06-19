@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[some text]{.highlight #note key=val}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

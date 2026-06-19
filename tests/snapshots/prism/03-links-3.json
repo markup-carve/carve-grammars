@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "[A](/a 'plain') and "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "B"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/b "
+  },
+  {
+    "type": "url>string",
+    "text": "\"Bob's\""
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

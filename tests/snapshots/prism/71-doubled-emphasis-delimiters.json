@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "*"
+  },
+  {
+    "type": "bold",
+    "text": "*a*"
+  },
+  {
+    "type": "text",
+    "text": "* ~"
+  },
+  {
+    "type": "strike",
+    "text": "~b~"
+  },
+  {
+    "type": "text",
+    "text": "~ ^"
+  },
+  {
+    "type": "superscript",
+    "text": "^c^"
+  },
+  {
+    "type": "text",
+    "text": "^\n"
+  }
+]

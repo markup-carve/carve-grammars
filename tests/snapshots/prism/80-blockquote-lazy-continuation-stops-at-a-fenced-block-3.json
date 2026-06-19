@@ -1,0 +1,26 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " ```"
+  },
+  {
+    "type": "text",
+    "text": "\ncode no marker\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " still"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

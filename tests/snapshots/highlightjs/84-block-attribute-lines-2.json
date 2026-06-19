@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#id}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{key=val}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.foo .bar}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{key=val2}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.baz}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#id2}"
+  },
+  {
+    "scope": null,
+    "text": "\nOkay\n"
+  }
+]

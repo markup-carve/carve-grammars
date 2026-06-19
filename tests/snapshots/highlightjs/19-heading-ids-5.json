@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "section",
+    "text": "# ١٢٣ heading"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# ²super"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Ⅷ chapter"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

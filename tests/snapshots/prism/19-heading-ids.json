@@ -1,0 +1,114 @@
+[
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Café Notes"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Über uns"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " 2024 Recap"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "##"
+  },
+  {
+    "type": "title",
+    "text": " Setup"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "##"
+  },
+  {
+    "type": "title",
+    "text": " Setup"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#api-v2"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " API"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee <"
+  },
+  {
+    "type": "italic",
+    "text": "/#cafe-notes>, </"
+  },
+  {
+    "type": "tag",
+    "text": "#section-2024-recap"
+  },
+  {
+    "type": "text",
+    "text": ">, <"
+  },
+  {
+    "type": "italic",
+    "text": "/#setup-2>, and </"
+  },
+  {
+    "type": "tag",
+    "text": "#api-v2"
+  },
+  {
+    "type": "text",
+    "text": ">.\n"
+  }
+]

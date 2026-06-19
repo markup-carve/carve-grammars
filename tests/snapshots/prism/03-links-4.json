@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Visit "
+  },
+  {
+    "type": "url",
+    "text": "<https://example.com>"
+  },
+  {
+    "type": "text",
+    "text": " or write "
+  },
+  {
+    "type": "url",
+    "text": "<hello@example.com>"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

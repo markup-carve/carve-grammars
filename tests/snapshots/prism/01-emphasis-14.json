@@ -1,0 +1,10 @@
+[
+  {
+    "type": "highlight",
+    "text": "=marked="
+  },
+  {
+    "type": "text",
+    "text": " here, but ==doubled== is literal.\n"
+  }
+]

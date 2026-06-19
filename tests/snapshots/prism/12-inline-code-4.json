@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "Use "
+  },
+  {
+    "type": "code",
+    "text": "`ls | grep foo`"
+  },
+  {
+    "type": "text",
+    "text": " to filter.\n"
+  }
+]

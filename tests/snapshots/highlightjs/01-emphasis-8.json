@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "("
+  },
+  {
+    "scope": "emphasis",
+    "text": "/x/"
+  },
+  {
+    "scope": null,
+    "text": ") and a."
+  },
+  {
+    "scope": "emphasis",
+    "text": "/b/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

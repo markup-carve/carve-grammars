@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "\nmore\n"
+  }
+]

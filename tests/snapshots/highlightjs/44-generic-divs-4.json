@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: 123"
+  },
+  {
+    "scope": null,
+    "text": "\nnot a div\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

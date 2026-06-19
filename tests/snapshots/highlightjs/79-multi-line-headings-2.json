@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "section",
+    "text": "## A"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "## still A"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# B"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

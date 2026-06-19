@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " [-] dropped\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- [_]"
+  },
+  {
+    "scope": null,
+    "text": " paused\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " [>] deferred\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " [?] maybe\n"
+  }
+]

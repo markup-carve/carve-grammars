@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "Escaped "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\-"
+  },
+  {
+    "scope": null,
+    "text": "> and "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\."
+  },
+  {
+    "scope": null,
+    "text": ".. stay; code "
+  },
+  {
+    "scope": "code",
+    "text": "`a -- b ...`"
+  },
+  {
+    "scope": null,
+    "text": " stays.\n"
+  }
+]

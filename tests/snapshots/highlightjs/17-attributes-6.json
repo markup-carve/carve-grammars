@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[label]{key=c .a #b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

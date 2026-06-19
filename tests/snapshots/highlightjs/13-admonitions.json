@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\nHeads up — this is important.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

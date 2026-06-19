@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "Press "
+  },
+  {
+    "scope": "string",
+    "text": "[Tab]{kbd}"
+  },
+  {
+    "scope": null,
+    "text": " to indent.\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "code",
+    "text": "`code`"
+  },
+  {
+    "scope": "attr",
+    "text": "{.cls}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

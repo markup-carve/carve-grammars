@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[A](/a 'plain')"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[B](/b \"Bob's\")"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

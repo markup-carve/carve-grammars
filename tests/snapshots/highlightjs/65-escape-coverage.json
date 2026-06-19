@@ -1,0 +1,134 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\!"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\\""
+  },
+  {
+    "scope": "symbol",
+    "text": "\\#"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\$"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\%"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\&"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\'"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\("
+  },
+  {
+    "scope": "symbol",
+    "text": "\\)"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\+"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\,"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\-"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\."
+  },
+  {
+    "scope": "symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\:"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\;"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\<"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\="
+  },
+  {
+    "scope": "symbol",
+    "text": "\\>"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\?"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\@"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\["
+  },
+  {
+    "scope": "symbol",
+    "text": "\\\\"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\]"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\^"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\_"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\`"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\{"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\|"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\}"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\~"
+  },
+  {
+    "scope": null,
+    "text": " done\n"
+  }
+]

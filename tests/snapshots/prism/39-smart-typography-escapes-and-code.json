@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "Escaped "
+  },
+  {
+    "type": "escape",
+    "text": "\\-"
+  },
+  {
+    "type": "text",
+    "text": "> and "
+  },
+  {
+    "type": "escape",
+    "text": "\\."
+  },
+  {
+    "type": "text",
+    "text": ".. stay; code "
+  },
+  {
+    "type": "code",
+    "text": "`a -- b ...`"
+  },
+  {
+    "type": "text",
+    "text": " stays.\n"
+  }
+]

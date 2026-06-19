@@ -1,0 +1,22 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " hint \"Heads up\""
+  },
+  {
+    "type": "text",
+    "text": "\nCustom call-out.\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

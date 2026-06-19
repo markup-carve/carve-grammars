@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "Text"
+  },
+  {
+    "scope": "built_in",
+    "text": "^[note]{.ref}.\n"
+  }
+]

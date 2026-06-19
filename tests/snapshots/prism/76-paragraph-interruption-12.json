@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "a"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "u"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

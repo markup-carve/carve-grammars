@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "| a |> 9  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| b |> 10 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

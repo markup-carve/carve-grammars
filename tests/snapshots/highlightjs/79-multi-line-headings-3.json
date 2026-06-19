@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "section",
+    "text": "# Title"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  }
+]

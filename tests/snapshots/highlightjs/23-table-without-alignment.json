@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Name     |= Age |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Alice     |   28 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Bob       |   34 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

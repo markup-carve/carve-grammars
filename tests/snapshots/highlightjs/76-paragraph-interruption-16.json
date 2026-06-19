@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a[r]\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: http://x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

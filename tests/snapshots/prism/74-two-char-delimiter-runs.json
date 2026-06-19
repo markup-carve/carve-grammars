@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "==x== ,,y,, "
+  },
+  {
+    "type": "highlight",
+    "text": "=z="
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "subscript",
+    "text": ",w,"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

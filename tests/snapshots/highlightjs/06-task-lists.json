@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- [ ]"
+  },
+  {
+    "scope": null,
+    "text": " todo\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- [x]"
+  },
+  {
+    "scope": null,
+    "text": " done\n"
+  }
+]

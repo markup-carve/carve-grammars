@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "Use "
+  },
+  {
+    "scope": "code",
+    "text": "`<br>`"
+  },
+  {
+    "scope": "meta",
+    "text": "{=html}"
+  },
+  {
+    "scope": null,
+    "text": " to break, and "
+  },
+  {
+    "scope": "code",
+    "text": "`\\foo`"
+  },
+  {
+    "scope": "meta",
+    "text": "{=latex}"
+  },
+  {
+    "scope": null,
+    "text": " is dropped.\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Read the "
+  },
+  {
+    "scope": "link",
+    "text": "[intro][x]{.ext}"
+  },
+  {
+    "scope": null,
+    "text": " first.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[x]: /intro"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

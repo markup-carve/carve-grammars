@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "text": "re"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "~view~"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " it, then "
+  },
+  {
+    "type": "changed",
+    "text": "{~old~>new~}"
+  },
+  {
+    "type": "text",
+    "text": ", and "
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "mark"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " it.\n"
+  }
+]

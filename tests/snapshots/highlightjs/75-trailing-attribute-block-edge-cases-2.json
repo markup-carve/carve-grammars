@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](/i){???}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

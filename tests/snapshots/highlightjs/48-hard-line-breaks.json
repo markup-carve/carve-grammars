@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "line one"
+  },
+  {
+    "scope": "meta",
+    "text": "\\"
+  },
+  {
+    "scope": null,
+    "text": "\nline two\n"
+  }
+]

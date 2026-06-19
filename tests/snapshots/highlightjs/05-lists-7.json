@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " outer\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  1."
+  },
+  {
+    "scope": null,
+    "text": " inner\n"
+  }
+]

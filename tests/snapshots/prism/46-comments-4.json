@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Run "
+  },
+  {
+    "type": "code",
+    "text": "`a %% b`"
+  },
+  {
+    "type": "text",
+    "text": " then done. "
+  },
+  {
+    "type": "comment",
+    "text": "%% gone"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

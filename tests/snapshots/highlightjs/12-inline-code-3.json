@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "The string "
+  },
+  {
+    "scope": "code",
+    "text": "`*not bold*`"
+  },
+  {
+    "scope": null,
+    "text": " is literal.\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.real}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

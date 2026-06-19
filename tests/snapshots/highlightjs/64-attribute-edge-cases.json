@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[note]{.a .b #n key=val}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

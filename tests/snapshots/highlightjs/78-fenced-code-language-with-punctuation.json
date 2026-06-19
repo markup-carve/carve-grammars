@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "```c++\nint main() {}\n``"
+  },
+  {
+    "scope": "code",
+    "text": "`\n"
+  }
+]

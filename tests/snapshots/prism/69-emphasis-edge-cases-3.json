@@ -1,0 +1,18 @@
+[
+  {
+    "type": "strike",
+    "text": "~old~"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "highlight",
+    "text": "=new="
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

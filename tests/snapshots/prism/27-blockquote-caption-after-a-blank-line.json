@@ -1,0 +1,14 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote text"
+  },
+  {
+    "type": "text",
+    "text": "\n\n^ Source: Someone\n"
+  }
+]

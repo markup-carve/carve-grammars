@@ -1,0 +1,42 @@
+[
+  {
+    "type": "text",
+    "text": "Read the "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "introduction"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "intro"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " first.\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[intro]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " https://example.com/intro \"Introduction\""
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

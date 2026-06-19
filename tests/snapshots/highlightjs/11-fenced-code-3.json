@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\nplain text\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

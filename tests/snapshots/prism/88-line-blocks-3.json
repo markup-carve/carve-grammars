@@ -1,0 +1,22 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " |"
+  },
+  {
+    "type": "text",
+    "text": "\nStanza one,\nstill one.\n\nStanza two.\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "keyword",
+    "text": "````markdown"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```python"
+  },
+  {
+    "scope": null,
+    "text": "\nprint(\"hi\")\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "````\n"
+  }
+]

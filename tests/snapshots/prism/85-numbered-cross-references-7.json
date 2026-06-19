@@ -1,0 +1,34 @@
+[
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "price"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "p.jpg"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n^ Costs "
+  },
+  {
+    "type": "escape",
+    "text": "\\#"
+  },
+  {
+    "type": "text",
+    "text": " units\n"
+  }
+]

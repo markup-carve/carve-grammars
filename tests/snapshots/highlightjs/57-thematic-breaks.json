@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "a\n\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n\nb\n\n"
+  },
+  {
+    "scope": "meta",
+    "text": "***"
+  },
+  {
+    "scope": null,
+    "text": "\n\nc\n\n"
+  },
+  {
+    "scope": "meta",
+    "text": "___"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

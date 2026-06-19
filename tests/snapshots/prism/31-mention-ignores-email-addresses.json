@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "Write me@example.com or ping "
+  },
+  {
+    "type": "mention",
+    "text": "@markus"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

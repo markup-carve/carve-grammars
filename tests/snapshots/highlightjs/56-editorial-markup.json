@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "addition",
+    "text": "{+ins+}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "deletion",
+    "text": "{-del-}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{~old~>new~}"
+  },
+  {
+    "scope": null,
+    "text": " b"
+  },
+  {
+    "scope": "attr",
+    "text": "{# note #}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

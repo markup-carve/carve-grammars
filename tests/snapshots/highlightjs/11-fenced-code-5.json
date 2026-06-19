@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "```php [NPM]\nnpm install x\n``"
+  },
+  {
+    "scope": "code",
+    "text": "`\n"
+  }
+]

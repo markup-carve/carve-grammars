@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "---json\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{\"title\": \"My Document\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n\nContent begins here.\n"
+  }
+]

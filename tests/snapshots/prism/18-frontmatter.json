@@ -1,0 +1,22 @@
+[
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\ntitle: My Document\nauthor: Jane Doe\ndate: 2026-03-15\n"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "text",
+    "text": "\nContent begins here.\n"
+  }
+]
