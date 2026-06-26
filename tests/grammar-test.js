@@ -29,6 +29,7 @@ const SAMPLE = [
     '',
     'Text with ==mark==, ~strike~, ^sup^, ,,sub,, and `code`.',
     'A {+ins+}, {-del-}, [span]{.note}, [^fn] and a [link](https://example.com).',
+    'See [@smith2020] and [+@jones2021, p. 5].',
     '',
     '- item',
     '- [x] done',
@@ -36,8 +37,10 @@ const SAMPLE = [
     '> quote',
     '',
     '```' + ' php',
-    'echo 1;',
+    'echo 1;  <1>',
     '```',
+    '',
+    '<1> the first marked line',
     '',
     '::: warning',
     'body',
@@ -93,6 +96,7 @@ ok('prism: required token names present', () => {
         'table', 'blockquote', 'list', 'math', 'code', 'image', 'footnote',
         'url', 'span', 'inserted', 'deleted', 'bold', 'italic', 'underline',
         'strike', 'highlight', 'superscript', 'subscript', 'escape',
+        'citation', 'code-callout',
     ];
     for (const key of required) {
         assert.ok(key in carvePrism, `prism grammar missing token: ${key}`);
@@ -135,6 +139,41 @@ if (realPrism) {
         // both closing delimiters must be inside a token span, not bare text
         assert.ok(!/`<\/span>\$/.test(html), `trailing $ left outside math token: ${html}`);
         assert.ok(html.includes('`x`$</span>') || html.includes('`x`$'), `inline math close missing: ${html}`);
+    });
+
+    ok('prism: citation [@key] is a citation token', () => {
+        const types = typesOf('See [@smith2020] for details.');
+        assert.ok(types.includes('citation'), `expected citation token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: citation [+@key] integral form is a citation token', () => {
+        const types = typesOf('[+@jones2021] argues that...');
+        assert.ok(types.includes('citation'), `expected citation token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: citation with locator [@key, p.10] is a citation token', () => {
+        const types = typesOf('As noted in [@doe2019, p. 42].');
+        assert.ok(types.includes('citation'), `expected citation token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: citation with multiple items [@a; @b] is a citation token', () => {
+        const types = typesOf('See [@alpha; @beta].');
+        assert.ok(types.includes('citation'), `expected citation token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: link [text](url) is NOT a citation', () => {
+        const types = typesOf('[text](https://example.com)');
+        assert.ok(!types.includes('citation'), `link was wrongly classified as citation: ${types.join(',')}`);
+    });
+
+    ok('prism: code callout <1> is a code-callout token', () => {
+        const types = typesOf('    echo hello  <1>');
+        assert.ok(types.includes('code-callout'), `expected code-callout token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: callout list item <1> text is a code-callout token', () => {
+        const types = typesOf('<2> the second marked line');
+        assert.ok(types.includes('code-callout'), `expected code-callout token, got: ${types.join(',')}`);
     });
 } else {
     console.log('  – (prismjs not installed, skipping tokenizer regression tests)');
@@ -229,6 +268,22 @@ if (realHljs) {
         const m = value.match(/<span class="hljs-code">([\s\S]*?)<\/span>/);
         assert.ok(m, 'expected an inline code span: ' + value);
         assert.ok(m[1].includes('`'), 'inline code span dropped the embedded backtick: ' + value);
+    });
+
+    ok('hljs: citation [@key] produces a symbol span', () => {
+        const { value } = realHljs.highlight('See [@smith2020] and [@jones].', { language: 'carve' });
+        assert.ok(value.includes('hljs-symbol'), `citation did not get a symbol class: ${value}`);
+    });
+
+    ok('hljs: link [text](url) is not classified as citation', () => {
+        const { value } = realHljs.highlight('[click here](https://example.com)', { language: 'carve' });
+        // should be hljs-link, not hljs-symbol from the citation mode
+        assert.ok(value.includes('hljs-link'), `link did not get link class: ${value}`);
+    });
+
+    ok('hljs: code callout <1> produces a symbol span', () => {
+        const { value } = realHljs.highlight('    echo hello  <1>', { language: 'carve' });
+        assert.ok(value.includes('hljs-symbol'), `code callout did not get symbol class: ${value}`);
     });
 } else {
     console.log('  – (highlight.js not installed, skipping real highlight test)');

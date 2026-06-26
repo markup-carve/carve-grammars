@@ -14,12 +14,15 @@
 // serialize/reparse cycle. `order` is carve-js's record of the textual order in
 // which `.class`/`#id` attribute tokens appeared; the serializer emits a
 // canonical `#id .class` order, so the *set* of attributes is what matters, not
-// their original spelling order.
+// their original spelling order. `srcByteLength` records the byte size of the
+// source string, which legitimately differs between the original and the
+// re-serialized form even when the document structure is identical.
 const VOLATILE_KEYS = new Set([
     'pos',
     'startLine', 'endLine', 'startColumn', 'endColumn', 'startOffset', 'endOffset',
     'line', 'column', 'offset',
     'order',
+    'srcByteLength',
 ]);
 
 const EMPTY_ARRAY_KEYS = new Set(['children', 'items', 'cells', 'rows']);
