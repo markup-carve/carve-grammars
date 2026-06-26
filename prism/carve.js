@@ -272,6 +272,31 @@
             alias: 'symbol',
         },
 
+        // Citations (Tier-2 §22): [@key], [+@key], [@key, p.10], [@a; @b; @c]
+        // Distinguished from links/spans/refs by the absence of a trailing
+        // `(url)`, `[ref]`, or `{attrs}` suffix. The bracket MUST contain at
+        // least one `@key` item.
+        'citation': {
+            pattern: /\[\+?(?:[^\]@]*@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*(?:[^\]]*)?)\](?!\(|\[|\{)/,
+            greedy: true,
+            alias: 'string',
+            inside: {
+                // Integral marker `+` and suppress-author `-`
+                'operator': /(?<=^\[)\+|(?<=[@;]\s*)-(?=@)/,
+                // The `@key` itself
+                'function': /@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*/,
+                // Separators and locator punctuation
+                'punctuation': /\[|\]|;|,/,
+            },
+        },
+
+        // Code callouts (Tier-2 §10): <n> markers trailing a code-fence line
+        // or leading a callout-list item. Only pure-digit content.
+        'code-callout': {
+            pattern: /<\d+>/,
+            alias: 'symbol',
+        },
+
         // Inline links: [text](url "title") and reference [text][id]
         'url': [
             {
