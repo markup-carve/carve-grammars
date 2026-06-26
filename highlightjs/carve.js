@@ -222,6 +222,25 @@
         relevance: 5,
     };
 
+    // Citations (Tier-2 §22): [@key], [+@key], [@key, p.10], [@a; @b]
+    // A bracket whose content holds at least one `@key` with no trailing
+    // `(url)`, `[ref]`, or `{attrs}` suffix. The negative lookahead is handled
+    // by position in the contains array (SPAN and REFERENCE_LINK are checked
+    // first to claim those suffixed forms).
+    const CITATION = {
+        className: 'symbol',
+        begin: /\[\+?(?:[^\]@]*@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*[^\]]*)\](?!\(|\[|\{)/,
+        relevance: 8,
+    };
+
+    // Code callouts (Tier-2 §10): <n> markers trailing a code-fence line or
+    // leading a callout-list item.
+    const CODE_CALLOUT = {
+        className: 'symbol',
+        begin: /<\d+>/,
+        relevance: 5,
+    };
+
     // Footnote definitions: [^note]: content
     const FOOTNOTE_DEF = {
         className: 'symbol',
@@ -408,6 +427,8 @@
             IMAGE,             // Must be before LINK (starts with !)
             SPAN,              // Must be before LINK ([text]{attr} vs [text](url))
             REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
+            CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
+            CODE_CALLOUT,      // <n> callout markers
             LINK,
             AUTOLINK,
             EMAIL_AUTOLINK,
