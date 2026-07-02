@@ -30,7 +30,11 @@ export const CarveDiv = Node.create({
         return {
             class: {
                 default: null,
-                parseHTML: element => element.getAttribute('data-carve-class') || element.className.replace('carve-div', '').trim() || null,
+                parseHTML: element => element.getAttribute('data-carve-class')
+                    // Drop the framing classes so an <aside class="admonition note">
+                    // (carve-php / carve-js output) yields just "note".
+                    || element.className.replace(/\b(carve-div|admonition)\b/g, '').replace(/\s+/g, ' ').trim()
+                    || null,
                 renderHTML: attributes => {
                     if (!attributes.class) return {};
                     return { 'data-carve-class': attributes.class };
@@ -42,6 +46,9 @@ export const CarveDiv = Node.create({
     parseHTML() {
         return [
             { tag: 'div.carve-div' },
+            // Admonitions render as <aside class="admonition TYPE"> (carve-php,
+            // carve-js). Match highest so it wins over the generic rules.
+            { tag: 'aside.admonition', priority: 60 },
             // Also match common container classes rendered by carve-php
             { tag: 'div.note' },
             { tag: 'div.tip' },
