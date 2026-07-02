@@ -141,6 +141,10 @@ check('code block with language',
     doc({ type: 'codeBlock', attrs: { language: 'php' }, content: [{ type: 'text', text: 'echo 1;' }] }),
     '```php\necho 1;\n```');
 
+check('code block strips one trailing newline (no blank line before fence)',
+    doc({ type: 'codeBlock', attrs: { language: 'php' }, content: [{ type: 'text', text: 'echo 1;\n' }] }),
+    '```php\necho 1;\n```');
+
 check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
     'a\n\n---\n\nb');

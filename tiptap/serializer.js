@@ -109,13 +109,15 @@ export function serializeToCarve(doc) {
                 });
                 break;
 
-            case 'codeBlock':
+            case 'codeBlock': {
                 const lang = node.attrs?.language || '';
                 // Carve info string sits directly after the fence: ```php
-                output += '```' + lang + '\n';
-                output += (node.content || []).map(c => c.text || '').join('') + '\n';
-                output += '```\n';
+                // Strip one trailing newline from the code text (carve-php renders
+                // <code>…\n</code>) so we don't emit a blank line before the fence.
+                const code = (node.content || []).map(c => c.text || '').join('').replace(/\n$/, '');
+                output += '```' + lang + '\n' + code + '\n```\n';
                 break;
+            }
 
             case 'horizontalRule':
                 output += '---\n';

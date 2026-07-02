@@ -46,6 +46,7 @@ export { CarveDelete } from './extensions/carve-delete.js';
 export { CarveDiv } from './extensions/carve-div.js';
 export { CarveMath } from './extensions/carve-math.js';
 export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
+export { CarveKeymap } from './extensions/carve-keymap.js';
 
 // Serializer
 export { serializeToCarve, escapeCarve } from './serializer.js';

@@ -27,6 +27,7 @@ import { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.
 import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
+import { CarveKeymap } from './extensions/carve-keymap.js';
 
 /**
  * CarveKit - A Tiptap extension bundle for Carve markup
@@ -355,6 +356,12 @@ export const CarveKit = Extension.create({
             extensions.push(CarveDefinitionList.configure(this.options.definitionList ?? {}));
             extensions.push(CarveDefinitionTerm.configure(this.options.definitionTerm ?? {}));
             extensions.push(CarveDefinitionDescription.configure(this.options.definitionDescription ?? {}));
+        }
+
+        // Keyboard shortcuts (Ctrl/Cmd+1..6 headings, clear formatting, Enter
+        // reset, ...). Opt out with CarveKit.configure({ keymap: false }).
+        if (this.options.keymap !== false) {
+            extensions.push(CarveKeymap.configure(this.options.keymap ?? {}));
         }
 
         return extensions;
