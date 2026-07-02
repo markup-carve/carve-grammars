@@ -36,7 +36,9 @@ export const CarveEmbed = Node.create({
                     // Check for data-carve-src first
                     const carveSrc = element.getAttribute('data-carve-src');
                     if (carveSrc) return carveSrc;
-                    // Check for iframe src
+                    // The element may BE the iframe (matched by the tag rule) or
+                    // wrap one.
+                    if (element.tagName === 'IFRAME') return element.getAttribute('src');
                     const iframe = element.querySelector('iframe');
                     if (iframe) return iframe.getAttribute('src');
                     // Check for video source
