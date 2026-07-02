@@ -2,6 +2,13 @@
 
 All notable changes to `carve-grammars` are documented here.
 
+## 0.2.0 - 2026-07-02
+
+### Added
+- CarveEmbed: an inline "Edit" control in the node view to change a media
+  embed's URL / video id in place (previously only editable in source). Updates
+  the canonical directive and re-renders the preview live.
+
 ## 0.1.0 - 2026-07-02
 
 Initial release. Syntax + editor integration for the Carve markup language.
