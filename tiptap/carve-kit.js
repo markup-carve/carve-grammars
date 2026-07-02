@@ -28,6 +28,7 @@ import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveKeymap } from './extensions/carve-keymap.js';
+import { CarveMention, CarveTag } from './extensions/carve-mention.js';
 
 // Languages offered by the code-block picker. The current language is always
 // shown even if it is not in this list.
@@ -457,6 +458,14 @@ export const CarveKit = Extension.create({
             extensions.push(CarveDefinitionList.configure(this.options.definitionList ?? {}));
             extensions.push(CarveDefinitionTerm.configure(this.options.definitionTerm ?? {}));
             extensions.push(CarveDefinitionDescription.configure(this.options.definitionDescription ?? {}));
+        }
+
+        // Mentions (@name) and tags (#tag); citations [@key] use a mention.
+        if (this.options.mention !== false) {
+            extensions.push(CarveMention.configure(this.options.mention ?? {}));
+        }
+        if (this.options.tag !== false) {
+            extensions.push(CarveTag.configure(this.options.tag ?? {}));
         }
 
         // Keyboard shortcuts (Ctrl/Cmd+1..6 headings, clear formatting, Enter

@@ -55,6 +55,18 @@ check('inline math span round-trips',
     '<p>a <span class="math inline">\\(x^2\\)</span> b</p>',
     'a $`x^2` b');
 
+check('citation [@key] round-trips (mention)',
+    '<p>See [<span class="mention"><strong>@smith2020</strong></span>].</p>',
+    'See [@smith2020].');
+
+check('tag #topic round-trips',
+    '<p>a <span class="tag"><strong>#topic</strong></span> b</p>',
+    'a #topic b');
+
+check('flanked superscript is bare, not braced',
+    '<p>a <sup>x</sup> b</p>',
+    'a ^x^ b');
+
 check('footnote ref + section round-trips',
     'Text.<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a>'
     + '<section role="doc-endnotes"><hr><ol><li id="fn1"><p>Note body.'

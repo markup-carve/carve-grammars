@@ -380,7 +380,19 @@ export function serializeToCarve(doc) {
                     t = t.replace(/]/g, '\\]');
                 }
                 if (hasSub) t = '{,' + t + ',}';
-                if (hasSup) t = '{^' + t + '^}';
+                if (hasSup) {
+                    // `^x^` only forms a superscript when flanked by a boundary;
+                    // intraword (`mc^2^`) is literal and needs the braced `{^x^}`.
+                    // Emit the clean bare form when this run is alone and flanked,
+                    // matching how strike (`~x~`) already serializes.
+                    const supAlone = !hasBold && !hasItalic && !hasUnderline && !hasStrike
+                        && !hasHighlight && !hasInsert && !hasDelete && !link && !carveSpan && !abbr;
+                    const before = result.slice(-1);
+                    const after = (content[idx + 1] && content[idx + 1].text) ? content[idx + 1].text[0] : '';
+                    const flanked = (!before || /[\s([{<"']/.test(before))
+                        && (!after || /[\s)\]}>"'.,;:!?]/.test(after));
+                    t = (supAlone && flanked) ? '^' + t + '^' : '{^' + t + '^}';
+                }
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
                 // so insert/delete content that literally contains `+}` / `-}`
                 // cannot round-trip - a Carve limitation, not fixable here.
@@ -415,6 +427,10 @@ export function serializeToCarve(doc) {
                 const title = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
                 const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title']);
                 result += '![' + alt + '](' + src + title + ')' + imgAttrs;
+            } else if (node.type === 'carveMention') {
+                result += '@' + (node.attrs?.id || '');
+            } else if (node.type === 'carveTag') {
+                result += '#' + (node.attrs?.id || '');
             } else if (node.type === 'carveFootnote') {
                 const label = node.attrs?.label || 'note';
                 result += '[^' + label + ']';
@@ -447,7 +463,8 @@ export function serializeToCarve(doc) {
  * - links / reference links / spans / footnotes: `[text](`, `[text][`,
  *   `[text]{`, `[text]:`, `[^label]`
  * - CriticMarkup / attribute / raw / comment braces: `{+ {- {~ {# {= {%`
- * - mentions `@name`, tags `#tag`, emoji `:name:` (not modeled by CarveKit)
+ * - mentions `@name`, tags `#tag` (nodes; escaped here for literal prose),
+ *   emoji `:name:` (not modeled by CarveKit)
  */
 function escapeStructural(text) {
     return text
