@@ -30,12 +30,23 @@ export const CarveMath = Node.create({
         return {
             src: {
                 default: '',
-                parseHTML: element => element.getAttribute('data-carve-math') || element.textContent || '',
+                parseHTML: element => {
+                    const explicit = element.getAttribute('data-carve-math');
+                    if (explicit) return explicit;
+                    // carve-php renders <span class="math ...">\(TEX\)</span> or
+                    // \[TEX\] for display; recover the raw TeX by stripping the
+                    // \( \) / \[ \] delimiters.
+                    return (element.textContent || '')
+                        .trim()
+                        .replace(/^\\[([]/, '')
+                        .replace(/\\[)\]]$/, '')
+                        .trim();
+                },
                 renderHTML: attributes => ({ 'data-carve-math': attributes.src }),
             },
             display: {
                 default: false,
-                parseHTML: element => element.getAttribute('data-display') === 'true',
+                parseHTML: element => element.getAttribute('data-display') === 'true' || element.classList.contains('display'),
                 renderHTML: attributes => (attributes.display ? { 'data-display': 'true' } : {}),
             },
         };
@@ -44,6 +55,8 @@ export const CarveMath = Node.create({
     parseHTML() {
         return [
             { tag: 'span[data-carve-math]' },
+            // carve-php rendered output.
+            { tag: 'span.math' },
         ];
     },
 
