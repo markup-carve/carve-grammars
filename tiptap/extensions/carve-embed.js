@@ -66,7 +66,15 @@ export const CarveEmbed = Node.create({
             },
             html: {
                 default: null,
-                parseHTML: element => element.innerHTML,
+                // Keep the full original embed markup so the editor previews the
+                // real player (all iframe attributes: allow, referrerpolicy, ...),
+                // not a stripped-down reconstruction.
+                parseHTML: element => {
+                    if (element.tagName === 'IFRAME') return element.outerHTML;
+                    const iframe = element.querySelector('iframe');
+                    if (iframe) return iframe.outerHTML;
+                    return element.innerHTML || null;
+                },
                 renderHTML: () => ({}),
             },
         };
