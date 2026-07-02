@@ -332,9 +332,11 @@ export const CarveKit = Extension.create({
             );
         }
 
-        // Image extension
+        // Image extension. Inline by default so `text ![alt](x) more` stays one
+        // paragraph (Carve images are inline); a block-level image just becomes a
+        // paragraph containing the inline image.
         if (this.options.image !== false) {
-            extensions.push(Image.configure(this.options.image ?? {}));
+            extensions.push(Image.configure({ inline: true, ...(this.options.image ?? {}) }));
         }
 
         // Table extensions

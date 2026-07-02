@@ -47,6 +47,10 @@ check('admonition (aside) round-trips',
     '<aside class="admonition note"><p>Body.</p></aside>',
     '::: note\nBody.\n:::');
 
+check('inline image stays in its paragraph',
+    '<p>text <img src="i.png" alt="a"> end.</p>',
+    'text ![a](i.png) end.');
+
 check('inline math span round-trips',
     '<p>a <span class="math inline">\\(x^2\\)</span> b</p>',
     'a $`x^2` b');
