@@ -139,7 +139,7 @@ check('blockquote',
 
 check('code block with language',
     doc({ type: 'codeBlock', attrs: { language: 'php' }, content: [{ type: 'text', text: 'echo 1;' }] }),
-    '```' + ' php\necho 1;\n```');
+    '```php\necho 1;\n```');
 
 check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
@@ -189,18 +189,18 @@ check('abbreviation serializes with the abbr semantic-span attribute',
     doc(para({ type: 'text', text: 'HTML', marks: [{ type: 'carveAbbreviation', attrs: { title: 'HyperText Markup Language' } }] })),
     '[HTML]{abbr="HyperText Markup Language"}');
 
-// Math: inline $`x`$, display $$`x`$$, backtick-safe fence.
+// Math: inline $`x`, display $$`x`, backtick-safe fence (no trailing $).
 check('inline math',
     doc(para({ type: 'carveMath', attrs: { src: 'E=mc^2' } })),
-    '$`E=mc^2`$');
+    '$`E=mc^2`');
 
 check('display math',
     doc(para({ type: 'carveMath', attrs: { src: 'a+b', display: true } })),
-    '$$`a+b`$$');
+    '$$`a+b`');
 
 check('math widens fence for an internal backtick',
     doc(para({ type: 'carveMath', attrs: { src: 'a`b' } })),
-    '$``a`b``$');
+    '$``a`b``');
 
 // Footnote definition: [^label]: body
 check('footnote definition',

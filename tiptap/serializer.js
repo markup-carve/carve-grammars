@@ -111,8 +111,8 @@ export function serializeToCarve(doc) {
 
             case 'codeBlock':
                 const lang = node.attrs?.language || '';
-                // Carve uses space between ``` and language
-                output += '```' + (lang ? ' ' + lang : '') + '\n';
+                // Carve info string sits directly after the fence: ```php
+                output += '```' + lang + '\n';
                 output += (node.content || []).map(c => c.text || '').join('') + '\n';
                 output += '```\n';
                 break;
@@ -388,13 +388,14 @@ export function serializeToCarve(doc) {
                 result += '[^' + label + ']';
             } else if (node.type === 'carveMath') {
                 // Math source is raw; widen the backtick fence past any internal
-                // run and pad if it touches an edge. Inline `$`x`$`, display `$$`x`$$`.
+                // run and pad if it touches an edge. Inline $`x`, display $$`x`
+                // (the leading $/$$ opens; a trailing $ would render literally).
                 const mathSrc = node.attrs?.src || '';
                 const longest = (mathSrc.match(/`+/g) || []).reduce((m, r) => Math.max(m, r.length), 0);
                 const fence = '`'.repeat(longest + 1);
                 const pad = (mathSrc.startsWith('`') || mathSrc.endsWith('`') || mathSrc === '') ? ' ' : '';
                 const dollars = node.attrs?.display ? '$$' : '$';
-                result += dollars + fence + pad + mathSrc + pad + fence + dollars;
+                result += dollars + fence + pad + mathSrc + pad + fence;
             }
         });
 
