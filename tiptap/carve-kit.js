@@ -208,6 +208,10 @@ export const CarveKit = Extension.create({
                         });
 
                         const code = document.createElement('code');
+                        const applyLangClass = (lang) => {
+                            code.className = lang ? `language-${lang}` : '';
+                        };
+                        applyLangClass(node.attrs.language || '');
                         pre.appendChild(select);
                         pre.appendChild(code);
 
@@ -222,6 +226,7 @@ export const CarveKit = Extension.create({
                                 if (select.value !== (updated.attrs.language || '')) {
                                     fill(updated.attrs.language || '');
                                 }
+                                applyLangClass(updated.attrs.language || '');
                                 return true;
                             },
                             // The <select> is chrome, not editable content.
