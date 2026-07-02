@@ -85,7 +85,7 @@ check('escapes the emphasis delimiter inside its own span',
 
 check('escapes a complete emphasis span sitting in plain text',
     doc(para(text('see *bold*, /em/, ==hi== and 2*3*4'))),
-    'see \\*bold\\*, \\/em/, \\==hi== and 2\\*3*4');
+    'see \\*bold\\*, \\/em/, ==hi== and 2\\*3*4');
 
 check('does not escape an unpaired delimiter in plain text',
     doc(para(text('price * 2, exp 5^2, end~'))),
@@ -173,6 +173,28 @@ check('table rowspan emits a ^ filler cell',
         row(cell('d')),
     ] }),
     '| tall | b |\n| ^ | d |');
+
+check('table cell escapes a literal pipe',
+    doc({ type: 'table', content: [
+        row(cell('a | b', 'tableHeader'), cell('c', 'tableHeader')),
+        row(cell('1'), cell('2')),
+    ] }),
+    '|= a \\| b |= c |\n| 1 | 2 |');
+
+// Definition list: `:: term` then `:  def` on the next line (no blank between).
+check('definition list uses :: term / :  def',
+    doc({ type: 'definitionList', content: [
+        { type: 'definitionTerm', content: [text('Term A')] },
+        { type: 'definitionDescription', content: [para(text('Def A.'))] },
+        { type: 'definitionTerm', content: [text('Term B')] },
+        { type: 'definitionDescription', content: [para(text('Def B.'))] },
+    ] }),
+    ':: Term A\n:  Def A.\n\n:: Term B\n:  Def B.');
+
+// Bare == and ,, are literal in Carve (highlight is {= =}, sub {, ,}); do not escape.
+check('literal == and ,, are not escaped',
+    doc(para(text('a ==x== and ,,y,, b'))),
+    'a ==x== and ,,y,, b');
 
 // Attributes: span id/class, heading id, image class.
 check('span serializes id and class',

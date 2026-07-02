@@ -211,22 +211,23 @@ export function serializeToCarve(doc) {
         let afterDescription = false;
         children.forEach(child => {
             if (child.type === 'definitionTerm') {
-                // Add blank line before term if we just finished a description
+                // Blank line between pairs (but not before the first term).
                 if (afterDescription) {
                     output += '\n';
                 }
-                output += ': ' + serializeInline(child.content) + '\n';
+                // Carve term marker is `:: `; the description is `:  ` on the very
+                // next line (a blank line between them would end the list).
+                output += ':: ' + serializeInline(child.content) + '\n';
                 afterDescription = false;
             } else if (child.type === 'definitionDescription') {
-                output += '\n';
                 (child.content || []).forEach(block => {
                     if (block.type === 'paragraph') {
-                        output += '  ' + serializeInline(block.content) + '\n';
+                        output += ':  ' + serializeInline(block.content) + '\n';
                     } else {
-                        // For other block types, serialize with indentation
+                        // For other block types, serialize with indentation.
                         const blockText = serializeNodeToString(block);
                         blockText.split('\n').filter(l => l).forEach(line => {
-                            output += '  ' + line + '\n';
+                            output += ':  ' + line + '\n';
                         });
                     }
                 });
@@ -264,7 +265,11 @@ export function serializeToCarve(doc) {
                 const header = cell.type === 'tableHeader';
                 const content = (cell.content || [])
                     .map(p => serializeInline(p.content))
-                    .join(' ');
+                    .join(' ')
+                    // A cell is one line; fold newlines and escape pipes so a `|`
+                    // in the text is not read as a column separator.
+                    .replace(/\n/g, ' ')
+                    .replace(/\|/g, '\\|');
                 out.push({ header, content });
                 if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
                 col++;
@@ -353,7 +358,9 @@ export function serializeToCarve(doc) {
                 } else if (isEmphasized) {
                     // Inside an emphasis span ANY literal delimiter closes it
                     // early (`*a*b*`), so escape every emphasis delimiter char.
-                    t = escapeStructural(text).replace(/[*/_~^=,]/g, '\\$&');
+                    // (`=` and `,` are NOT delimiters - highlight/sub use the
+                    // braced `{= =}` / `{, ,}`, and bare `==` / `,,` are literal.)
+                    t = escapeStructural(text).replace(/[*/_~^]/g, '\\$&');
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
                     t = escapeCarve(text);
@@ -466,16 +473,15 @@ function escapeStructural(text) {
  *   Carve (`**bold**`, `~~s~~`, `__u__`), so a delimiter adjacent to the same
  *   character is left alone - escaping one of the pair would *create* a span.
  *
- * `* ~ ^` can open intraword; `/ _` only at a word boundary; `== ,,` are
- * two-char delimiters.
+ * `* ~ ^` can open intraword; `/ _` only at a word boundary. (`== ,,` are NOT
+ * delimiters - bare `==` / `,,` are literal in both carve-js and carve-php;
+ * highlight is `{= =}` and subscript `{, ,}`.)
  */
 function escapeEmphasisOpeners(text) {
     return text
         .replace(/(?<!\*)\*(?=[^*\s\n](?:[^*\n]*[^*\s\n])?\*(?!\*))/g, '\\*')
         .replace(/(?<!~)~(?=[^~\s\n](?:[^~\n]*[^~\s\n])?~(?!~))/g, '\\~')
         .replace(/(?<!\^)\^(?=[^^\s\n](?:[^^\n]*[^^\s\n])?\^(?!\^))/g, '\\^')
-        .replace(/==(?=[^=\s\n](?:[^=\n]*[^=\s\n])?==)/g, '\\==')
-        .replace(/,,(?=[^,\s\n](?:[^,\n]*[^,\s\n])?,,)/g, '\\,,')
         .replace(/(^|[\s([{<"'])(?<!\/)\/(?=[^/\s\n](?:[^/\n]*[^/\s\n])?\/(?!\/))/g, '$1\\/')
         .replace(/(^|[\s([{<"'])(?<!_)_(?=[^_\s\n](?:[^_\n]*[^_\s\n])?_(?!_))/g, '$1\\_');
 }
@@ -487,9 +493,7 @@ function escapeLeadingDelimiter(s) {
         .replace(/^~(?!~)/, '\\~')
         .replace(/^\^(?!\^)/, '\\^')
         .replace(/^\/(?!\/)/, '\\/')
-        .replace(/^_(?!_)/, '\\_')
-        .replace(/^==(?!=)/, '\\==')
-        .replace(/^,,(?!,)/, '\\,,');
+        .replace(/^_(?!_)/, '\\_');
 }
 
 /** Escape a lone emphasis delimiter at the end of a run (cross-node opener). */
@@ -499,9 +503,7 @@ function escapeTrailingDelimiter(s) {
         .replace(/(?<![~\\])~$/, '\\~')
         .replace(/(?<![\^\\])\^$/, '\\^')
         .replace(/(?<![/\\])\/$/, '\\/')
-        .replace(/(?<![_\\])_$/, '\\_')
-        .replace(/(?<![=\\])==$/, '\\==')
-        .replace(/(?<![,\\]),,$/, '\\,,');
+        .replace(/(?<![_\\])_$/, '\\_');
 }
 
 /**
