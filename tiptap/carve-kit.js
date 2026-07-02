@@ -29,6 +29,25 @@ import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveKeymap } from './extensions/carve-keymap.js';
 
+// Languages offered by the code-block picker. The current language is always
+// shown even if it is not in this list.
+const CODE_LANGS = [
+    { value: '', label: 'Plain text' },
+    { value: 'php', label: 'PHP' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'html', label: 'HTML' },
+    { value: 'css', label: 'CSS' },
+    { value: 'json', label: 'JSON' },
+    { value: 'bash', label: 'Bash' },
+    { value: 'python', label: 'Python' },
+    { value: 'sql', label: 'SQL' },
+    { value: 'yaml', label: 'YAML' },
+    { value: 'markdown', label: 'Markdown' },
+    { value: 'rust', label: 'Rust' },
+    { value: 'go', label: 'Go' },
+];
+
 /**
  * CarveKit - A Tiptap extension bundle for Carve markup
  *
@@ -134,6 +153,81 @@ export const CarveKit = Extension.create({
                                 return { 'data-language-raw': attributes.languageRaw };
                             },
                         },
+                    };
+                },
+
+                // Floating language picker: a <select> in the corner of every
+                // code block that shows the current language and edits it in
+                // place (the toolbar can't show a per-block value). Disable with
+                // CarveKit.configure({ codeBlock: { languagePicker: false } }).
+                addNodeView() {
+                    if (this.options.languagePicker === false) {
+                        return null;
+                    }
+                    return ({ node, editor, getPos }) => {
+                        let current = node;
+                        const pre = document.createElement('pre');
+                        if (node.attrs.languageRaw) {
+                            pre.setAttribute('data-language-raw', node.attrs.languageRaw);
+                        }
+
+                        const select = document.createElement('select');
+                        select.className = 'carve-code-lang';
+                        select.contentEditable = 'false';
+                        select.setAttribute('aria-label', 'Code language');
+                        const fill = (lang) => {
+                            select.innerHTML = '';
+                            const opts = CODE_LANGS.slice();
+                            if (lang && !opts.some(o => o.value === lang)) {
+                                opts.push({ value: lang, label: lang });
+                            }
+                            for (const o of opts) {
+                                const el = document.createElement('option');
+                                el.value = o.value;
+                                el.textContent = o.label;
+                                if ((lang || '') === o.value) {
+                                    el.selected = true;
+                                }
+                                select.appendChild(el);
+                            }
+                        };
+                        fill(node.attrs.language || '');
+                        // Keep clicks/keys inside the select from reaching PM.
+                        select.addEventListener('mousedown', e => e.stopPropagation());
+                        select.addEventListener('change', () => {
+                            if (typeof getPos !== 'function') {
+                                return;
+                            }
+                            editor.chain().focus().command(({ tr }) => {
+                                tr.setNodeMarkup(getPos(), undefined, {
+                                    ...current.attrs,
+                                    language: select.value || null,
+                                });
+                                return true;
+                            }).run();
+                        });
+
+                        const code = document.createElement('code');
+                        pre.appendChild(select);
+                        pre.appendChild(code);
+
+                        return {
+                            dom: pre,
+                            contentDOM: code,
+                            update: (updated) => {
+                                if (updated.type !== current.type) {
+                                    return false;
+                                }
+                                current = updated;
+                                if (select.value !== (updated.attrs.language || '')) {
+                                    fill(updated.attrs.language || '');
+                                }
+                                return true;
+                            },
+                            // The <select> is chrome, not editable content.
+                            ignoreMutation: (m) => select.contains(m.target),
+                            stopEvent: (e) => select.contains(e.target),
+                        };
                     };
                 },
             });
