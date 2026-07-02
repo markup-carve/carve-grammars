@@ -253,8 +253,17 @@ export const CarveKit = Extension.create({
                         {
                             tag: 'ul',
                             getAttrs: element => {
-                                // Don't match task-list - let TaskList handle those
+                                // Don't match task lists - let TaskList handle them.
+                                // carve-php renders them as a plain <ul> whose items
+                                // carry a checkbox (no .task-list class), so detect
+                                // that shape too.
                                 if (element.classList.contains('task-list')) {
+                                    return false;
+                                }
+                                const hasCheckbox = Array.from(element.children).some(
+                                    (li) => li.tagName === 'LI' && li.querySelector('input[type="checkbox"]'),
+                                );
+                                if (hasCheckbox) {
                                     return false;
                                 }
                                 return {};
@@ -359,6 +368,14 @@ export const CarveKit = Extension.create({
                     return [
                         { tag: 'ul[data-type="taskList"]', priority: 60 },
                         { tag: 'ul.task-list', priority: 60 },
+                        // carve-php: a plain <ul> whose items carry a checkbox.
+                        {
+                            tag: 'ul',
+                            priority: 55,
+                            getAttrs: (element) => Array.from(element.children).some(
+                                (li) => li.tagName === 'LI' && li.querySelector('input[type="checkbox"]'),
+                            ) ? {} : false,
+                        },
                     ];
                 },
             });

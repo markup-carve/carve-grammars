@@ -67,6 +67,15 @@ check('flanked superscript is bare, not braced',
     '<p>a <sup>x</sup> b</p>',
     'a ^x^ b');
 
+check('tight list with a sub-list stays tight',
+    '<ul><li>a</li><li>b<ul><li>c</li></ul></li></ul>',
+    '- a\n- b\n  - c');
+
+check('task list (carve-php plain ul + checkboxes) round-trips',
+    '<ul><li><input type="checkbox" disabled> t1</li>'
+    + '<li><input type="checkbox" checked disabled> t2</li></ul>',
+    '- [ ] t1\n- [x] t2');
+
 check('footnote ref + section round-trips',
     'Text.<a id="fnref1" href="#fn1" role="doc-noteref"><sup>1</sup></a>'
     + '<section role="doc-endnotes"><hr><ol><li id="fn1"><p>Note body.'

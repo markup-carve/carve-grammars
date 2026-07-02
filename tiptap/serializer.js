@@ -89,10 +89,16 @@ export function serializeToCarve(doc) {
             case 'bulletList':
             case 'orderedList':
             case 'taskList':
-                // Check if list is "loose" (any item has multiple blocks)
-                const isLoose = (node.content || []).some(item =>
-                    (item.content || []).length > 1
-                );
+                // A list is "loose" when an item holds more than one
+                // paragraph-level block. A nested sub-list does NOT count - an
+                // item of `paragraph + sublist` is still tight, so don't let it
+                // force blank lines that would turn the whole list loose.
+                const isLoose = (node.content || []).some((item) => {
+                    const blocks = (item.content || []).filter(
+                        (b) => !['bulletList', 'orderedList', 'taskList'].includes(b.type),
+                    );
+                    return blocks.length > 1;
+                });
                 let num = node.attrs?.start || 1;
                 (node.content || []).forEach((item, i) => {
                     const indent = '  '.repeat(depth);
@@ -301,8 +307,11 @@ export function serializeToCarve(doc) {
         content.forEach((child, i) => {
             if (child.type === 'paragraph') {
                 output += serializeInline(child.content) + '\n';
-                // Add blank line after paragraph if followed by more content (nested list, etc.)
-                if (i < content.length - 1) {
+                // Blank line before a following *paragraph-level* block (loose
+                // item), but NOT before a nested list - that stays tight
+                // (`- b` directly followed by `  - c`).
+                const next = content[i + 1];
+                if (next && !['bulletList', 'orderedList', 'taskList'].includes(next.type)) {
                     output += '\n';
                 }
             } else if (['bulletList', 'orderedList', 'taskList'].includes(child.type)) {
