@@ -49,4 +49,4 @@ export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.
 export { CarveKeymap } from './extensions/carve-keymap.js';
 
 // Serializer
-export { serializeToCarve, escapeCarve } from './serializer.js';
+export { serializeToCarve, escapeCarve, carveMediaDirective } from './serializer.js';

@@ -206,6 +206,23 @@ check('math widens fence for an internal backtick',
     doc(para({ type: 'carveMath', attrs: { src: 'a`b' } })),
     '$``a`b``');
 
+// Media embeds: iframe src -> Carve media directive.
+check('embed: youtube embed url -> :youtube[id]',
+    doc({ type: 'carveEmbed', attrs: { src: '//www.youtube.com/embed/dQw4w9WgXcQ?wmode=transparent' } }),
+    ':youtube[dQw4w9WgXcQ]');
+
+check('embed: youtu.be short url -> :youtube[id]',
+    doc({ type: 'carveEmbed', attrs: { src: 'https://youtu.be/dQw4w9WgXcQ' } }),
+    ':youtube[dQw4w9WgXcQ]');
+
+check('embed: vimeo player url -> :vimeo[id]',
+    doc({ type: 'carveEmbed', attrs: { src: '//player.vimeo.com/video/123456?wmode=transparent' } }),
+    ':vimeo[123456]');
+
+check('embed: other provider -> :media[url]',
+    doc({ type: 'carveEmbed', attrs: { src: '//www.dailymotion.com/embed/video/x7tgz2' } }),
+    ':media[https://www.dailymotion.com/embed/video/x7tgz2]');
+
 // Footnote definition: [^label]: body
 check('footnote definition',
     doc(

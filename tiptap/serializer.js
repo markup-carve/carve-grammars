@@ -30,6 +30,25 @@
  * @param {Object} doc - The document JSON from editor.getJSON()
  * @returns {string} Carve markup
  */
+/**
+ * Turn an embed src into a Carve media directive. YouTube/Vimeo map to the
+ * idiomatic :youtube[id] / :vimeo[id]; anything else falls back to :media[url]
+ * so it round-trips through the carve-php-media-embed extension.
+ *
+ * @param {string} src - iframe / embed URL (may be protocol-relative).
+ * @returns {string} Carve directive, or '' for an empty src.
+ */
+export function carveMediaDirective(src) {
+    if (!src) return '';
+    const clean = src.replace(/^https?:/i, '').replace(/^\/\//, '');
+    let m = clean.match(/(?:youtube(?:-nocookie)?\.com\/(?:embed\/|watch\?(?:.*&)?v=)|youtu\.be\/)([\w-]+)/i);
+    if (m) return `:youtube[${m[1]}]`;
+    m = clean.match(/(?:player\.)?vimeo\.com\/(?:video\/)?(\d+)/i);
+    if (m) return `:vimeo[${m[1]}]`;
+    const url = src.startsWith('//') ? `https:${src}` : src;
+    return `:media[${url}]`;
+}
+
 export function serializeToCarve(doc) {
     let output = '';
 
@@ -159,13 +178,15 @@ export function serializeToCarve(doc) {
                 output += ':::\n';
                 break;
 
-            case 'carveEmbed':
-                // Output the original source URL (YouTube, Vimeo, etc.)
-                const embedSrc = node.attrs?.src || '';
-                if (embedSrc) {
-                    output += embedSrc + '\n';
+            case 'carveEmbed': {
+                // Emit a Carve media directive (:youtube[id] / :vimeo[id] /
+                // :media[url]) so it round-trips through carve-php-media-embed.
+                const directive = carveMediaDirective(node.attrs?.src || '');
+                if (directive) {
+                    output += directive + '\n';
                 }
                 break;
+            }
 
             case 'carveFootnoteDefinition': {
                 const fnLabel = node.attrs?.label || 'note';
