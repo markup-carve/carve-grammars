@@ -30,6 +30,19 @@ export const CarveEmbed = Node.create({
 
     addAttributes() {
         return {
+            // The exact Carve source stamped by the renderer (data-carve-source),
+            // e.g. ":youtube[id]" or ":media[url]". When present it is emitted
+            // verbatim on serialize - lossless for every provider, no guessing.
+            carveSource: {
+                default: null,
+                parseHTML: element => element.getAttribute('data-carve-source')
+                    || element.querySelector('[data-carve-source]')?.getAttribute('data-carve-source')
+                    || null,
+                renderHTML: attributes => {
+                    if (!attributes.carveSource) return {};
+                    return { 'data-carve-source': attributes.carveSource };
+                },
+            },
             src: {
                 default: null,
                 parseHTML: element => {
@@ -67,6 +80,8 @@ export const CarveEmbed = Node.create({
             // Match wpcarve-embed class
             { tag: 'figure.wpcarve-embed' },
             { tag: 'div.wpcarve-embed' },
+            // A source-stamped element round-trips exactly - match it first.
+            { tag: '[data-carve-source]', priority: 60 },
             // Match elements with data-carve-src
             { tag: '[data-carve-src]' },
             // Match iframes that look like video embeds
@@ -99,10 +114,29 @@ export const CarveEmbed = Node.create({
         return ({ node }) => {
             const dom = document.createElement('figure');
             dom.classList.add('wpcarve-embed');
+            dom.contentEditable = 'false';
             if (node.attrs.src) {
                 dom.setAttribute('data-carve-src', node.attrs.src);
             }
-            dom.innerHTML = node.attrs.html || `<p>Embedded: ${node.attrs.src || 'unknown'}</p>`;
+            if (node.attrs.carveSource) {
+                dom.setAttribute('data-carve-source', node.attrs.carveSource);
+            }
+            if (node.attrs.html) {
+                // Full embed markup was captured - show it as-is.
+                dom.innerHTML = node.attrs.html;
+            } else if (node.attrs.src) {
+                // Reconstruct a live iframe so the editor previews the video.
+                const iframe = document.createElement('iframe');
+                iframe.src = node.attrs.src.startsWith('//') ? `https:${node.attrs.src}` : node.attrs.src;
+                iframe.setAttribute('loading', 'lazy');
+                iframe.setAttribute('allowfullscreen', '');
+                iframe.setAttribute('frameborder', '0');
+                iframe.width = '480';
+                iframe.height = '270';
+                dom.appendChild(iframe);
+            } else {
+                dom.innerHTML = `<p>Embedded: ${node.attrs.carveSource || 'unknown'}</p>`;
+            }
             return { dom };
         };
     },

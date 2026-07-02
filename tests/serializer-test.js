@@ -206,7 +206,16 @@ check('math widens fence for an internal backtick',
     doc(para({ type: 'carveMath', attrs: { src: 'a`b' } })),
     '$``a`b``');
 
-// Media embeds: iframe src -> Carve media directive.
+// Media embeds: a stamped source round-trips verbatim (any provider, lossless).
+check('embed: stamped carveSource wins over src',
+    doc({ type: 'carveEmbed', attrs: { carveSource: ':twitch[monstercat]', src: '//player.twitch.tv/?channel=monstercat' } }),
+    ':twitch[monstercat]');
+
+check('embed: stamped :media[] source round-trips verbatim',
+    doc({ type: 'carveEmbed', attrs: { carveSource: ':media[https://example.com/v/42]', src: '//embed.example.com/42' } }),
+    ':media[https://example.com/v/42]');
+
+// Media embeds: iframe src -> Carve media directive (fallback for un-stamped).
 check('embed: youtube embed url -> :youtube[id]',
     doc({ type: 'carveEmbed', attrs: { src: '//www.youtube.com/embed/dQw4w9WgXcQ?wmode=transparent' } }),
     ':youtube[dQw4w9WgXcQ]');

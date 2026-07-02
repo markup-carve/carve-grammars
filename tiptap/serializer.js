@@ -179,9 +179,11 @@ export function serializeToCarve(doc) {
                 break;
 
             case 'carveEmbed': {
-                // Emit a Carve media directive (:youtube[id] / :vimeo[id] /
-                // :media[url]) so it round-trips through carve-php-media-embed.
-                const directive = carveMediaDirective(node.attrs?.src || '');
+                // Prefer the exact source the renderer stamped (data-carve-source):
+                // lossless for every provider. Fall back to reconstructing a
+                // directive from the URL only for un-stamped embeds (e.g. a raw
+                // iframe the user pasted).
+                const directive = node.attrs?.carveSource || carveMediaDirective(node.attrs?.src || '');
                 if (directive) {
                     output += directive + '\n';
                 }
