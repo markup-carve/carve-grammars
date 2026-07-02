@@ -33,7 +33,10 @@ export const CarveFootnoteDefinition = Node.create({
         return {
             label: {
                 default: 'note',
-                parseHTML: element => element.getAttribute('data-footnote-label') || 'note',
+                parseHTML: element => element.getAttribute('data-footnote-label')
+                    // carve-php / carve-js reference: id="fnN".
+                    || element.id.replace(/^fn/, '')
+                    || 'note',
                 renderHTML: attributes => ({ 'data-footnote-label': attributes.label }),
             },
         };
@@ -43,6 +46,15 @@ export const CarveFootnoteDefinition = Node.create({
         return [
             { tag: 'li[data-footnote-label]' },
             { tag: 'section.carve-footnotes > ol > li' },
+            // carve-php / carve-js render the footnote section as
+            // <section role="doc-endnotes"><hr><ol><li id="fnN"><p>body
+            // <a role="doc-backlink">↩</a></p></li></ol></section>. Take each li
+            // as a definition; unwrap the <ol>, drop the <hr> and the back-link
+            // so only the body survives.
+            { tag: 'section[role="doc-endnotes"] li', priority: 60 },
+            { tag: 'section[role="doc-endnotes"] ol', skip: true, priority: 60 },
+            { tag: 'section[role="doc-endnotes"] hr', ignore: true, priority: 60 },
+            { tag: 'a[role="doc-backlink"]', ignore: true, priority: 60 },
         ];
     },
 

@@ -30,7 +30,11 @@ export const CarveFootnote = Node.create({
         return {
             label: {
                 default: 'note',
-                parseHTML: element => element.getAttribute('data-footnote-label') || element.textContent?.replace(/[[\]^]/g, '') || 'note',
+                parseHTML: element => element.getAttribute('data-footnote-label')
+                    || element.textContent?.replace(/[[\]^]/g, '').trim()
+                    // carve-php / carve-js reference: id="fnrefN".
+                    || element.id.replace(/^fnref/, '')
+                    || 'note',
                 renderHTML: attributes => {
                     return { 'data-footnote-label': attributes.label };
                 },
@@ -42,6 +46,9 @@ export const CarveFootnote = Node.create({
         return [
             { tag: 'sup.carve-footnote' },
             { tag: 'span.carve-footnote-ref' },
+            // carve-php / carve-js render the reference as
+            // <a id="fnrefN" role="doc-noteref"><sup>N</sup></a>. Beat Link to it.
+            { tag: 'a[role="doc-noteref"]', priority: 60 },
         ];
     },
 
