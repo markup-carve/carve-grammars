@@ -47,6 +47,22 @@ check('admonition (aside) round-trips',
     '<aside class="admonition note"><p>Body.</p></aside>',
     '::: note\nBody.\n:::');
 
+check('titled admonition keeps its quoted title',
+    '<aside class="admonition note"><p class="admonition-title">Custom</p><p>Body.</p></aside>',
+    '::: note "Custom"\nBody.\n:::');
+
+check('titled details div keeps its quoted title (wp-carve editor seed)',
+    '<div class="details">\n  <p class="admonition-title">More</p>\n  <p>Body text.</p>\n</div>',
+    '::: details "More"\nBody text.\n:::');
+
+check('double quote in a title degrades to a single quote (opener grammar has no escapes)',
+    '<div class="spoiler"><p class="admonition-title">Say "hi"</p><p>Secret.</p></div>',
+    '::: spoiler "Say \'hi\'"\nSecret.\n:::');
+
+check('explicitly empty title round-trips (suppresses the default title)',
+    '<aside class="admonition note"><p class="admonition-title"></p><p>Body.</p></aside>',
+    '::: note ""\nBody.\n:::');
+
 check('inline image stays in its paragraph',
     '<p>text <img src="i.png" alt="a"> end.</p>',
     'text ![a](i.png) end.');

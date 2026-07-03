@@ -1,9 +1,37 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 
 /**
+ * First direct child that carries the admonition-title class (carve-php and
+ * carve-js render a quoted container title as such a paragraph).
+ */
+function findTitleChild(element) {
+    for (const child of element.children || []) {
+        if (child.classList && child.classList.contains('admonition-title')) {
+            return child;
+        }
+    }
+    return null;
+}
+
+/**
+ * Content for the node: everything except the title paragraph, which is
+ * captured as the `title` attribute instead (else it would duplicate into the
+ * body and the quoted summary would be lost on serialization).
+ */
+function contentWithoutTitle(element) {
+    if (!findTitleChild(element)) {
+        return element;
+    }
+    const clone = element.cloneNode(true);
+    findTitleChild(clone).remove();
+    return clone;
+}
+
+/**
  * Carve Div container node extension for Tiptap
  *
- * Renders as ::: class in Carve markup
+ * Renders as ::: class in Carve markup, with an optional quoted title
+ * (::: note "Custom title") kept in the `title` attribute
  *
  * @example
  * ```js
@@ -40,24 +68,40 @@ export const CarveDiv = Node.create({
                     return { 'data-carve-class': attributes.class };
                 },
             },
+            title: {
+                default: null,
+                // An empty string is meaningful (::: note "" suppresses the
+                // default title), so only a missing title maps to null.
+                parseHTML: element => {
+                    const attr = element.getAttribute('data-carve-title');
+                    if (attr !== null) return attr;
+                    const child = findTitleChild(element);
+                    return child ? child.textContent.trim() : null;
+                },
+                renderHTML: attributes => {
+                    if (attributes.title == null) return {};
+                    return { 'data-carve-title': attributes.title };
+                },
+            },
         };
     },
 
     parseHTML() {
         return [
-            { tag: 'div.carve-div' },
+            { tag: 'div.carve-div', contentElement: contentWithoutTitle },
             // Admonitions render as <aside class="admonition TYPE"> (carve-php,
             // carve-js). Match highest so it wins over the generic rules.
-            { tag: 'aside.admonition', priority: 60 },
+            { tag: 'aside.admonition', priority: 60, contentElement: contentWithoutTitle },
             // Also match common container classes rendered by carve-php
-            { tag: 'div.note' },
-            { tag: 'div.tip' },
-            { tag: 'div.warning' },
-            { tag: 'div.danger' },
-            { tag: 'div.info' },
+            { tag: 'div.note', contentElement: contentWithoutTitle },
+            { tag: 'div.tip', contentElement: contentWithoutTitle },
+            { tag: 'div.warning', contentElement: contentWithoutTitle },
+            { tag: 'div.danger', contentElement: contentWithoutTitle },
+            { tag: 'div.info', contentElement: contentWithoutTitle },
             // Match any div with a single class (likely a ::: container)
             {
                 tag: 'div[class]',
+                contentElement: contentWithoutTitle,
                 getAttrs: element => {
                     // Only match divs with a simple class (not complex component divs)
                     const className = element.className;
