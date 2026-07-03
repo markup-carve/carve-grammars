@@ -167,7 +167,16 @@ export function serializeToCarve(doc) {
 
             case 'carveDiv':
                 const divClass = node.attrs?.class || '';
-                output += ':::' + (divClass ? ' ' + divClass : '') + '\n';
+                // Quoted container title (::: note "Custom title"), captured from
+                // the rendered admonition-title paragraph by the CarveDiv node.
+                // The opener grammar is "[^"]*" after a type token: no escapes and
+                // no inner double quotes (degrade those to single quotes), an
+                // empty title is meaningful, and a bare ::: cannot carry a title.
+                const rawDivTitle = node.attrs?.title;
+                const divTitle = divClass && rawDivTitle != null
+                    ? ' "' + String(rawDivTitle).replace(/"/g, "'") + '"'
+                    : '';
+                output += ':::' + (divClass ? ' ' + divClass : '') + divTitle + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, depth);
