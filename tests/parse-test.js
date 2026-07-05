@@ -63,6 +63,10 @@ check('a literal title attribute (carve-js {title=...} rendering) is captured',
     '<div class="details" title="Say &quot;hi&quot;"><p>Body text.</p></div>',
     '{title="Say \\"hi\\""}\n::: details\nBody text.\n:::');
 
+check('the editor DOM shape (visible title + body wrapper) re-parses without duplication',
+    '<div class="carve-div details" data-carve-title="More"><p class="admonition-title" contenteditable="false">More</p><div class="carve-div-body"><p>Body text.</p></div></div>',
+    '::: details "More"\nBody text.\n:::');
+
 check('explicitly empty title round-trips (suppresses the default title)',
     '<aside class="admonition note"><p class="admonition-title"></p><p>Body.</p></aside>',
     '::: note ""\nBody.\n:::');
