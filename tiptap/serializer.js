@@ -167,15 +167,25 @@ export function serializeToCarve(doc) {
 
             case 'carveDiv':
                 const divClass = node.attrs?.class || '';
-                // Quoted container title (::: note "Custom title"), captured from
-                // the rendered admonition-title paragraph by the CarveDiv node.
-                // The opener grammar is "[^"]*" after a type token: no escapes and
-                // no inner double quotes (degrade those to single quotes), an
-                // empty title is meaningful, and a bare ::: cannot carry a title.
+                // Container title, captured from the rendered admonition-title
+                // paragraph by the CarveDiv node. Canonical form is the quoted
+                // opener (::: note "Custom title"), whose grammar is "[^"]*"
+                // after a type token: no escapes and no inner double quotes.
+                // A title CONTAINING a double quote is emitted as a block
+                // attribute line ({title="Say \"hi\""}) instead - carve-php's
+                // attribute parser supports backslash escapes there, so the
+                // text survives losslessly. An empty title is meaningful, and
+                // a bare ::: cannot carry a title.
                 const rawDivTitle = node.attrs?.title;
-                const divTitle = divClass && rawDivTitle != null
-                    ? ' "' + String(rawDivTitle).replace(/"/g, "'") + '"'
-                    : '';
+                let divTitle = '';
+                if (divClass && rawDivTitle != null) {
+                    const t = String(rawDivTitle);
+                    if (t.includes('"')) {
+                        output += '{title="' + t.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"}\n';
+                    } else {
+                        divTitle = ' "' + t + '"';
+                    }
+                }
                 output += ':::' + (divClass ? ' ' + divClass : '') + divTitle + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {

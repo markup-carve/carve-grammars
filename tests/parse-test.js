@@ -55,9 +55,9 @@ check('titled details div keeps its quoted title (wp-carve editor seed)',
     '<div class="details">\n  <p class="admonition-title">More</p>\n  <p>Body text.</p>\n</div>',
     '::: details "More"\nBody text.\n:::');
 
-check('double quote in a title degrades to a single quote (opener grammar has no escapes)',
+check('double quote in a title serializes as an escaped attribute line (opener grammar has no escapes)',
     '<div class="spoiler"><p class="admonition-title">Say "hi"</p><p>Secret.</p></div>',
-    '::: spoiler "Say \'hi\'"\nSecret.\n:::');
+    '{title="Say \\"hi\\""}\n::: spoiler\nSecret.\n:::');
 
 check('explicitly empty title round-trips (suppresses the default title)',
     '<aside class="admonition note"><p class="admonition-title"></p><p>Body.</p></aside>',
