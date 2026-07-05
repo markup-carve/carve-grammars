@@ -76,7 +76,12 @@ export const CarveDiv = Node.create({
                     const attr = element.getAttribute('data-carve-title');
                     if (attr !== null) return attr;
                     const child = findTitleChild(element);
-                    return child ? child.textContent.trim() : null;
+                    if (child) return child.textContent.trim();
+                    // carve-js renders an authored {title="..."} block attribute
+                    // as a literal title attribute on the container (carve-php
+                    // promotes it to an admonition-title paragraph instead);
+                    // capture it so the title survives that engine's seed too.
+                    return element.getAttribute('title');
                 },
                 renderHTML: attributes => {
                     if (attributes.title == null) return {};

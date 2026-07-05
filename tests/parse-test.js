@@ -59,6 +59,10 @@ check('double quote in a title serializes as an escaped attribute line (opener g
     '<div class="spoiler"><p class="admonition-title">Say "hi"</p><p>Secret.</p></div>',
     '{title="Say \\"hi\\""}\n::: spoiler\nSecret.\n:::');
 
+check('a literal title attribute (carve-js {title=...} rendering) is captured',
+    '<div class="details" title="Say &quot;hi&quot;"><p>Body text.</p></div>',
+    '{title="Say \\"hi\\""}\n::: details\nBody text.\n:::');
+
 check('explicitly empty title round-trips (suppresses the default title)',
     '<aside class="admonition note"><p class="admonition-title"></p><p>Body.</p></aside>',
     '::: note ""\nBody.\n:::');
