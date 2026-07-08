@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+# Keep the Composer dist lean: PHP consumers only need the TextMate grammar
+# (textmate/), composer.json, LICENSE and README. Everything else here is the
+# npm side (Tiptap kit, Prism/highlight.js defs, tests, the spec submodule).
+/.github export-ignore
+/.gitignore export-ignore
+/.gitmodules export-ignore
+/CHANGELOG.md export-ignore
+/renovate.json export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
+/tiptap export-ignore
+/prism export-ignore
+/highlightjs export-ignore
+/tests export-ignore
+/spec export-ignore
