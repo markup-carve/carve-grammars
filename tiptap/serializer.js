@@ -49,6 +49,30 @@ export function carveMediaDirective(src) {
     return `:media[${url}]`;
 }
 
+// Carve closes a `:::` block at the first fence of the SAME OR GREATER length,
+// so a div that contains other divs must open with a longer fence than any div
+// nested inside it (`:::: tabs` wrapping `::: tab`). Compute a carveDiv's fence
+// length as one more colon than its longest descendant carveDiv fence (min 3),
+// mirroring how code/math fences widen past their content.
+function carveDivFenceLength(node) {
+    let maxInner = 0;
+    const scan = (n) => {
+        if (!n || typeof n !== 'object') return;
+        for (const child of n.content || []) {
+            if (child?.type === 'carveDiv') {
+                // The child's own fence length already covers its whole subtree,
+                // so recurse via carveDivFenceLength and don't descend again here.
+                maxInner = Math.max(maxInner, carveDivFenceLength(child));
+            } else {
+                scan(child);
+            }
+        }
+    };
+    scan(node);
+
+    return maxInner ? maxInner + 1 : 3;
+}
+
 export function serializeToCarve(doc) {
     let output = '';
 
@@ -186,7 +210,8 @@ export function serializeToCarve(doc) {
                         divTitle = ' "' + t + '"';
                     }
                 }
-                output += ':::' + (divClass ? ' ' + divClass : '') + divTitle + '\n';
+                const divFence = ':'.repeat(carveDivFenceLength(node));
+                output += divFence + (divClass ? ' ' + divClass : '') + divTitle + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, depth);
@@ -200,7 +225,7 @@ export function serializeToCarve(doc) {
                         }
                     }
                 });
-                output += ':::\n';
+                output += divFence + '\n';
                 break;
 
             case 'carveEmbed': {

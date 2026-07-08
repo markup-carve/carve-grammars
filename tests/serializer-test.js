@@ -262,4 +262,25 @@ check('footnote definition',
     ),
     'see [^1]\n\n[^1]: the body');
 
+const div = (cls, ...content) => ({ type: 'carveDiv', attrs: { class: cls }, content });
+
+check('flat div keeps a 3-colon fence',
+    doc(div('note', para(text('A note.')))),
+    '::: note\nA note.\n:::');
+
+check('a div containing a div widens the outer fence to ::::',
+    doc(div('tabs',
+        div('tab', para(text('First.'))),
+        div('tab', para(text('Second.'))),
+    )),
+    ':::: tabs\n::: tab\nFirst.\n:::\n\n::: tab\nSecond.\n:::\n::::');
+
+check('three levels of nesting widen fences 5/4/3',
+    doc(div('outer', div('middle', div('inner', para(text('deep.')))))),
+    '::::: outer\n:::: middle\n::: inner\ndeep.\n:::\n::::\n:::::');
+
+check('sibling divs do not inflate each other (both stay 3)',
+    doc(div('note', para(text('one.'))), div('tip', para(text('two.')))),
+    '::: note\none.\n:::\n\n::: tip\ntwo.\n:::');
+
 console.log(`\n${passed} passed`);
