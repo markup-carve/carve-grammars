@@ -283,4 +283,17 @@ check('sibling divs do not inflate each other (both stay 3)',
     doc(div('note', para(text('one.'))), div('tip', para(text('two.')))),
     '::: note\none.\n:::\n\n::: tip\ntwo.\n:::');
 
+check('tab set widens its fence and emits labels + selected on attribute lines',
+    doc({ type: 'carveTabSet', content: [
+        { type: 'carveTab', attrs: { label: 'First' }, content: [para(text('Alpha.'))] },
+        { type: 'carveTab', attrs: { label: 'Second', selected: true }, content: [para(text('Beta.'))] },
+    ] }),
+    ':::: tabs\n{label="First"}\n::: tab\nAlpha.\n:::\n\n{label="Second" selected}\n::: tab\nBeta.\n:::\n::::');
+
+check('a tab with no label emits a bare ::: tab',
+    doc({ type: 'carveTabSet', content: [
+        { type: 'carveTab', content: [para(text('X.'))] },
+    ] }),
+    ':::: tabs\n::: tab\nX.\n:::\n::::');
+
 console.log(`\n${passed} passed`);
