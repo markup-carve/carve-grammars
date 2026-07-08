@@ -1,0 +1,28 @@
+{
+    "name": "markup-carve/carve-grammars",
+    "description": "Syntax-highlighting grammars for the Carve markup language (TextMate grammar for Torchlight / phiki, plus Prism and highlight.js definitions)",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark Scherer",
+            "homepage": "https://www.dereuromark.de"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "homepage": "https://github.com/markup-carve/carve-grammars",
+    "keywords": [
+        "carve",
+        "syntax-highlighting",
+        "grammar",
+        "textmate",
+        "phiki",
+        "torchlight"
+    ],
+    "support": {
+        "issues": "https://github.com/markup-carve/carve-grammars/issues",
+        "source": "https://github.com/markup-carve/carve-grammars"
+    }
+}
