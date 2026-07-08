@@ -20,6 +20,7 @@ import HardBreak from '@tiptap/extension-hard-break';
 import { CarveInsert } from './extensions/carve-insert.js';
 import { CarveDelete } from './extensions/carve-delete.js';
 import { CarveDiv } from './extensions/carve-div.js';
+import { CarveTabSet, CarveTab } from './extensions/carve-tabs.js';
 import { CarveSpan } from './extensions/carve-span.js';
 import { CarveFootnote } from './extensions/carve-footnote.js';
 import { CarveMath } from './extensions/carve-math.js';
@@ -438,6 +439,14 @@ export const CarveKit = Extension.create({
 
         if (this.options.carveDiv !== false) {
             extensions.push(CarveDiv.configure(this.options.carveDiv ?? {}));
+        }
+
+        // Tab sets (:::: tabs / ::: tab). Registered after CarveDiv but their
+        // div.tabs / div.tab parse rules use a higher priority, so a tab set is
+        // claimed here instead of by CarveDiv's generic div[class] rule.
+        if (this.options.carveTabs !== false) {
+            extensions.push(CarveTabSet.configure(this.options.carveTabs ?? {}));
+            extensions.push(CarveTab.configure(this.options.carveTabs ?? {}));
         }
 
         // Span with class mark (maps to [text]{.class})

@@ -54,12 +54,16 @@ export function carveMediaDirective(src) {
 // nested inside it (`:::: tabs` wrapping `::: tab`). Compute a carveDiv's fence
 // length as one more colon than its longest descendant carveDiv fence (min 3),
 // mirroring how code/math fences widen past their content.
+// Node types that serialize to a `:::` fenced container, so a fence surrounding
+// them must be longer than theirs.
+const FENCE_CONTAINERS = new Set(['carveDiv', 'carveTabSet', 'carveTab']);
+
 function carveDivFenceLength(node) {
     let maxInner = 0;
     const scan = (n) => {
         if (!n || typeof n !== 'object') return;
         for (const child of n.content || []) {
-            if (child?.type === 'carveDiv') {
+            if (FENCE_CONTAINERS.has(child?.type)) {
                 // The child's own fence length already covers its whole subtree,
                 // so recurse via carveDivFenceLength and don't descend again here.
                 maxInner = Math.max(maxInner, carveDivFenceLength(child));
@@ -227,6 +231,45 @@ export function serializeToCarve(doc) {
                 });
                 output += divFence + '\n';
                 break;
+
+            case 'carveTabSet': {
+                const setFence = ':'.repeat(carveDivFenceLength(node));
+                output += setFence + ' tabs\n';
+                (node.content || []).forEach((child, i) => {
+                    serializeNode(child, depth);
+                    // Tabs are always distinct-type siblings, so separate them
+                    // with a blank line (matching authored `::: tab` blocks).
+                    if (i < (node.content || []).length - 1) output += '\n';
+                });
+                output += setFence + '\n';
+                break;
+            }
+
+            case 'carveTab': {
+                // Label and selected flag ride on the attribute line before the
+                // opener: {label="First" selected}. Quotes/backslashes escape the
+                // same way carve-php's attribute parser expects.
+                const tabAttrs = [];
+                if (node.attrs?.label != null) {
+                    const l = String(node.attrs.label).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                    tabAttrs.push('label="' + l + '"');
+                }
+                if (node.attrs?.selected) tabAttrs.push('selected');
+                if (tabAttrs.length) output += '{' + tabAttrs.join(' ') + '}\n';
+                const tabFence = ':'.repeat(carveDivFenceLength(node));
+                output += tabFence + ' tab\n';
+                (node.content || []).forEach((child, i) => {
+                    serializeNode(child, depth);
+                    if (i < (node.content || []).length - 1) {
+                        const curr = child.type;
+                        const next = node.content[i + 1]?.type;
+                        const bothSameList = curr === next && ['bulletList', 'orderedList', 'taskList'].includes(curr);
+                        if (!bothSameList) output += '\n';
+                    }
+                });
+                output += tabFence + '\n';
+                break;
+            }
 
             case 'carveEmbed': {
                 // Prefer the exact source the renderer stamped (data-carve-source):
