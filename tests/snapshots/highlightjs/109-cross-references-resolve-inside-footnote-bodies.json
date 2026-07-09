@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "section",
+    "text": "# H"
+  },
+  {
+    "scope": null,
+    "text": "\n\nBody"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]: see </#h>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

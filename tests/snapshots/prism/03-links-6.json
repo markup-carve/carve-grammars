@@ -1,27 +1,19 @@
 [
   {
-    "type": "text",
-    "text": "\\"
-  },
-  {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
     "type": "url",
-    "text": "not a link\\"
+    "text": "<https://example.com>"
   },
   {
-    "type": "url>punctuation",
-    "text": "]("
+    "type": "attributes>punctuation",
+    "text": "{"
   },
   {
-    "type": "url",
-    "text": "https://example.com"
+    "type": "attributes>class-name",
+    "text": ".ext"
   },
   {
-    "type": "url>punctuation",
-    "text": ")"
+    "type": "attributes>punctuation",
+    "text": "}"
   },
   {
     "type": "text",

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[x](http://a/b(c)"
+  },
+  {
+    "scope": null,
+    "text": ")\n"
+  }
+]

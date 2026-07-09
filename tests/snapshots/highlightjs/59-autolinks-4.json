@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "<http://a.com/p?x=1>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

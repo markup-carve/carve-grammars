@@ -1,7 +1,7 @@
 [
   {
     "scope": "code",
-    "text": "```js title=\"x\"\ncode\n``"
+    "text": "```php \"src/Auth.php\"\n$ok = true;\n``"
   },
   {
     "scope": "code",

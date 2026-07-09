@@ -1,0 +1,62 @@
+[
+  {
+    "scope": null,
+    "text": "Intro"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": " and"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: footnotes"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "## After"
+  },
+  {
+    "scope": null,
+    "text": "\n\nMore text.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]: first note"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]: second note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

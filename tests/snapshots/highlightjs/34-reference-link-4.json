@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " [ref]: "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/url\n\nSee [it][ref].\n"
+  }
+]

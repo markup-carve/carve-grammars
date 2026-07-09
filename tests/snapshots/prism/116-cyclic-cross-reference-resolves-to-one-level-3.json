@@ -1,0 +1,22 @@
+[
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Intro"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
+  },
+  {
+    "type": "tag",
+    "text": "#intro"
+  },
+  {
+    "type": "text",
+    "text": ">.\n"
+  }
+]

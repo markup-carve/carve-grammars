@@ -5,7 +5,7 @@
   },
   {
     "type": "code-block",
-    "text": "\n# not a heading\n/not italic/  *not bold*  #notatag\n"
+    "text": "js \"*.config.js\"\nexport default {}\n"
   },
   {
     "type": "code-block>punctuation",

@@ -5,7 +5,7 @@
   },
   {
     "type": "code-block",
-    "text": "js title=\"x\"\ncode\n"
+    "text": "php \"src/Auth.php\"\n$ok = true;\n"
   },
   {
     "type": "code-block>punctuation",

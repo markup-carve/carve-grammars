@@ -255,13 +255,14 @@
             greedy: true,
         },
 
-        // Images: ![alt](src "title")
+        // Images: ![alt](src "title"); the title may contain
+        // backslash-escaped quotes like the link title.
         'image': {
-            pattern: /!\[[^\]]*\]\([^\s)]+(?:[ \t]+"[^"]*")?\)/,
+            pattern: /!\[[^\]]*\]\([^\s)]+(?:[ \t]+"(?:[^"\\]|\\[\s\S])*")?\)/,
             greedy: true,
             alias: 'url',
             inside: {
-                'string': /"[^"]*"/,
+                'string': /"(?:[^"\\]|\\[\s\S])*"/,
                 'punctuation': /!\[|\]\(|\)/,
             },
         },
@@ -300,10 +301,13 @@
         // Inline links: [text](url "title") and reference [text][id]
         'url': [
             {
-                pattern: /\[[^\]]+\]\([^\s)]+(?:[ \t]+"[^"]*")?\)/,
+                // The link text may be empty ([](url), spec corpus 03-links-8)
+                // and the title may contain backslash-escaped quotes:
+                // [t](/url "ti\"tle") (spec corpus 03-links-4).
+                pattern: /\[[^\]]*\]\([^\s)]+(?:[ \t]+"(?:[^"\\]|\\[\s\S])*")?\)/,
                 greedy: true,
                 inside: {
-                    'string': /"[^"]*"/,
+                    'string': /"(?:[^"\\]|\\[\s\S])*"/,
                     'punctuation': /\[|\]\(|\)/,
                 },
             },

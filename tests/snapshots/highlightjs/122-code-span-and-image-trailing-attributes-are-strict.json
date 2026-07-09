@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "code",
+    "text": "`x`"
+  },
+  {
+    "scope": "attr",
+    "text": "{2=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

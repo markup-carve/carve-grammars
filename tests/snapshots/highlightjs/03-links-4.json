@@ -1,22 +1,10 @@
 [
   {
-    "scope": null,
-    "text": "Visit "
-  },
-  {
     "scope": "link",
-    "text": "<https://example.com>"
+    "text": "[t](/url \"ti\\\"tle\")"
   },
   {
     "scope": null,
-    "text": " or write "
-  },
-  {
-    "scope": "link",
-    "text": "<hello@example.com>"
-  },
-  {
-    "scope": null,
-    "text": ".\n"
+    "text": "\n"
   }
 ]

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "y"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[y]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u \"a\\\"b\\\"c\""
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

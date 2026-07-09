@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "~~~yaml"
+  },
+  {
+    "scope": null,
+    "text": "\nkey: value\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "~~~\n"
+  }
+]

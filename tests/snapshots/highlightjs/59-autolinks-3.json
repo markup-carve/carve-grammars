@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "<http://a.com/\"q\">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

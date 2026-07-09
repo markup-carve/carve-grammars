@@ -1,43 +1,19 @@
 [
   {
-    "type": "span",
-    "text": "[some text]"
+    "type": "url>punctuation",
+    "text": "["
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
+    "type": "url>punctuation",
+    "text": "]("
   },
   {
-    "type": "attributes>class-name",
-    "text": ".highlight"
+    "type": "url",
+    "text": "https://example.com"
   },
   {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>id",
-    "text": "#note"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "key"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes",
-    "text": "val"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "url>punctuation",
+    "text": ")"
   },
   {
     "type": "text",

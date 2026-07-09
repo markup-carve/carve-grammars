@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": ":1[x]\n"
+  },
+  {
+    "type": "extension>function",
+    "text": ":a1"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "x"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

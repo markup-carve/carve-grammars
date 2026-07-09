@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %% indented comment"
+  },
+  {
+    "type": "text",
+    "text": "\ny\n"
+  }
+]

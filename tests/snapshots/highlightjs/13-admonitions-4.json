@@ -1,11 +1,7 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: warning"
-  },
-  {
     "scope": null,
-    "text": "\nMind the gap.\n"
+    "text": "::: tip \"Pro Tip\" [Build]\nSave early, save often.\n"
   },
   {
     "scope": "keyword",

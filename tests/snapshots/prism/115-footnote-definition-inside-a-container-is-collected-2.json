@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " note body"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,22 +1,30 @@
 [
   {
-    "type": "text",
-    "text": "Visit "
+    "type": "url>punctuation",
+    "text": "["
   },
   {
     "type": "url",
-    "text": "<https://example.com>"
+    "text": "t"
   },
   {
-    "type": "text",
-    "text": " or write "
+    "type": "url>punctuation",
+    "text": "]("
   },
   {
     "type": "url",
-    "text": "<hello@example.com>"
+    "text": "/url "
+  },
+  {
+    "type": "url>string",
+    "text": "\"ti\\\"tle\""
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
   },
   {
     "type": "text",
-    "text": ".\n"
+    "text": "\n"
   }
 ]

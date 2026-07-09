@@ -1,23 +1,11 @@
 [
   {
-    "type": "title>punctuation",
-    "text": "#"
-  },
-  {
-    "type": "title",
-    "text": " H"
-  },
-  {
-    "type": "text",
-    "text": "\n\n"
-  },
-  {
     "type": "url>punctuation",
     "text": "["
   },
   {
     "type": "url",
-    "text": "see </#H>"
+    "text": "pre <http://h> post"
   },
   {
     "type": "url>punctuation",
@@ -25,7 +13,7 @@
   },
   {
     "type": "url",
-    "text": "/outer"
+    "text": "/u"
   },
   {
     "type": "url>punctuation",

@@ -1,22 +1,22 @@
 [
   {
+    "type": "text",
+    "text": "Visit "
+  },
+  {
     "type": "url",
     "text": "<https://example.com>"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
+    "type": "text",
+    "text": " or write "
   },
   {
-    "type": "attributes>class-name",
-    "text": ".ext"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "url",
+    "text": "<hello@example.com>"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ".\n"
   }
 ]

@@ -1,0 +1,78 @@
+[
+  {
+    "type": "text",
+    "text": "Intro"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": " and"
+  },
+  {
+    "type": "footnote",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " footnotes"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "##"
+  },
+  {
+    "type": "title",
+    "text": " After"
+  },
+  {
+    "type": "text",
+    "text": "\n\nMore text.\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " first note"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^b]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " second note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

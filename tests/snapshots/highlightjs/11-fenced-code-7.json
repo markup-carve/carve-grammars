@@ -1,14 +1,10 @@
 [
   {
-    "scope": "keyword",
-    "text": "~~~yaml"
+    "scope": "code",
+    "text": "```php \"src/Auth.php\" [Composer]\ncomposer require x\n``"
   },
   {
-    "scope": null,
-    "text": "\nkey: value\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "~~~\n"
+    "scope": "code",
+    "text": "`\n"
   }
 ]

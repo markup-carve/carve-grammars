@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "addition",
+    "text": "{++a++}"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

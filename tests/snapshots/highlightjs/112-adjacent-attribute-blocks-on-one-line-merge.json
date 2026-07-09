@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# H"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

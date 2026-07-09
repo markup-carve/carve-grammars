@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": ":::[First]\nFirst panel.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

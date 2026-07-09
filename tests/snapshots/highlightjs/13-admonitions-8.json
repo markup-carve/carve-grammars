@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: tip"
+  },
+  {
+    "scope": null,
+    "text": "\nQuick steps:\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " read the docs\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " run the demo\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::\n"
+  }
+]

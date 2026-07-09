@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[safe](https://example.com){href=\"javascript:steal\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,18 +1,14 @@
 [
   {
-    "scope": "symbol",
-    "text": "\\["
+    "scope": "link",
+    "text": "<https://example.com>"
+  },
+  {
+    "scope": "attr",
+    "text": "{.ext}"
   },
   {
     "scope": null,
-    "text": "not a link"
-  },
-  {
-    "scope": "symbol",
-    "text": "\\]"
-  },
-  {
-    "scope": null,
-    "text": "(https://example.com)\n"
+    "text": "\n"
   }
 ]

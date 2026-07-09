@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "A "
+  },
+  {
+    "type": "span",
+    "text": "[danger]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "srcdoc"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"<script>\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " span.\n"
+  }
+]

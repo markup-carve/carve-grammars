@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "```php [Composer] \"x\"\ncode\n``"
+  },
+  {
+    "scope": "code",
+    "text": "`\n"
+  }
+]

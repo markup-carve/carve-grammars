@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[t](a\\b)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

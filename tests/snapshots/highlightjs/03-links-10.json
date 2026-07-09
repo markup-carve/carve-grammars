@@ -1,10 +1,18 @@
 [
   {
-    "scope": "link",
-    "text": "[[x](y)"
+    "scope": "string",
+    "text": "[a /b/ c]{.x}"
   },
   {
     "scope": null,
-    "text": "](z)\n"
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[t](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

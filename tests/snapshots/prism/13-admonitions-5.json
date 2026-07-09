@@ -5,27 +5,11 @@
   },
   {
     "type": "div",
-    "text": " tip"
+    "text": " [First]"
   },
   {
     "type": "text",
-    "text": "\nQuick steps:\n\n"
-  },
-  {
-    "type": "list",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "read the docs\n"
-  },
-  {
-    "type": "list",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "run the demo\n"
+    "text": "\nFirst panel.\n"
   },
   {
     "type": "div>punctuation",

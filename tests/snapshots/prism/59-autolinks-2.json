@@ -1,0 +1,10 @@
+[
+  {
+    "type": "url",
+    "text": "<http://a.com/<script>"
+  },
+  {
+    "type": "text",
+    "text": ">\n"
+  }
+]

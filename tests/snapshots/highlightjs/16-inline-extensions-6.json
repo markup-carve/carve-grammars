@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": ":foo"
+  },
+  {
+    "scope": "string",
+    "text": "[a]{.cls}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -36,7 +36,6 @@ const TIPTAP_COVERED = [
     '26-fenced-code-shorter-inner-fence',
     '28-table-cell-escaped-pipe',
     '29-table-cell-pipe-inside-code-span',
-    '37-smart-typography-dashes-and-quotes',
     '40-table-multi-line-cell-continuation',
     '48-hard-line-breaks',
     '49-non-breaking-space',
@@ -54,6 +53,13 @@ const TIPTAP_COVERED = [
     '94-literal-less-than-in-prose',
     '100-block-quote-continuation-marker',
     '102-paragraph-trailing-whitespace',
+    '111-a-pipe-pair-with-no-cell-is-not-a-table',
+    '113-a-continuation-row-needs-a-body-row',
+    '117-trojan-source-heading-ids-are-nfc-normalized-and-strip-invisible-controls',
+    '118-trojan-source-rendered-text-and-code-strip-bidi-override-controls',
+    '121-classes-are-deduplicated',
+    '123-a-bare-attribute-block-on-its-own-line-is-literal',
+    '124-a-backslash-in-a-link-destination-is-a-literal-character',
 ];
 
 // Categories the tiptap serializer cannot round-trip, with the concrete reason.
@@ -90,6 +96,7 @@ const TIPTAP_SKIP = new Map([
     ['34-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
     ['35-collapsed-reference-link', 'reference-link definitions are not represented'],
     ['36-unresolved-reference-link', 'unresolved reference syntax is not represented'],
+    ['37-smart-typography-dashes-and-quotes', 'smart-typography output is lossy on reparse (quote-context edge cases added with spec 750ddfa)'],
     ['38-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
     ['39-smart-typography-escapes-and-code', 'smart-typography output is lossy on reparse'],
     ['41-table-rowspan-with-multi-line-content', 'rowspan filler cells are not reconstructed'],
@@ -138,6 +145,23 @@ const TIPTAP_SKIP = new Map([
     ['98-table-row-attributes', 'per-row attributes are lossy through the serializer'],
     ['99-table-header-cell-rowspan', 'header-cell rowspan filler cells are not reconstructed'],
     ['101-heading-marker-column-zero', 'an indented (literal) # is re-emitted column-0 as a heading on reparse'],
+    ['103-marker-line-nested-lists', 'marker-line nested lists (- - A) are lossy on reparse'],
+    ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],
+    ['105-colspan-marker-scans-left-past-a-consumed-cell', 'table span-marker cells are not modeled'],
+    ['106-security-hardening', 'autolink and key/value span inline nodes are not modeled; one variant is lossy'],
+    ['107-link-destination-stops-at-the-first-parenthesis', 'a destination-split variant is lossy on reparse'],
+    ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
+    ['109-cross-references-resolve-inside-footnote-bodies', 'footnote definition bodies are lossy on reparse'],
+    ['110-unquoted-attribute-values-may-contain-dots-and-colons', 'key/value spans are not modeled'],
+    ['112-adjacent-attribute-blocks-on-one-line-merge', 'headings with merged attribute blocks are not represented'],
+    ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
+    ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
+    ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
+    ['119-scheme-probe-strips-unicode-whitespace', 'a sanitized-link variant is lossy on reparse'],
+    ['120-footnotes-placement', 'admonition blocks are not modeled'],
+    ['122-code-span-and-image-trailing-attributes-are-strict', 'literal trailing attribute text is lossy on reparse'],
+    ['125-autolink-display-keeps-the-raw-content', 'autolink inline nodes are not modeled'],
+    ['126-editorial-markup-takes-a-trailing-attribute', 'editorial markup with a trailing attribute is lossy on reparse'],
 ]);
 
 export const COVERAGE = {

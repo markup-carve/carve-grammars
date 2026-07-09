@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]{k=v.w}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

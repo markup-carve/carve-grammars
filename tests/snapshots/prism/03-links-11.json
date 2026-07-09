@@ -4,8 +4,12 @@
     "text": "["
   },
   {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
     "type": "url",
-    "text": "pre <http://h> post"
+    "text": "x"
   },
   {
     "type": "url>punctuation",
@@ -13,7 +17,7 @@
   },
   {
     "type": "url",
-    "text": "/u"
+    "text": "y"
   },
   {
     "type": "url>punctuation",
@@ -21,6 +25,6 @@
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "](z)\n"
   }
 ]

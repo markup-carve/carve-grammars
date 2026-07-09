@@ -1,0 +1,26 @@
+[
+  {
+    "type": "url",
+    "text": "<a@b>"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "url",
+    "text": "<a@b.com>"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "url",
+    "text": "<x@y:z>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

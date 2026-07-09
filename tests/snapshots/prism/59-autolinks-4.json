@@ -1,0 +1,10 @@
+[
+  {
+    "type": "url",
+    "text": "<http://a.com/p?x=1>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

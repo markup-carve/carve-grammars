@@ -1,0 +1,10 @@
+[
+  {
+    "type": "url",
+    "text": "<mailto:a@b>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

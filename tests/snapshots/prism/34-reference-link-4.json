@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[ref]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /url"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "it"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "ref"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

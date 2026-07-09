@@ -1,15 +1,7 @@
 [
   {
-    "scope": "section",
-    "text": "# H"
-  },
-  {
-    "scope": null,
-    "text": "\n\n"
-  },
-  {
     "scope": "link",
-    "text": "[see </#H>](/outer)"
+    "text": "[pre <http://h> post](/u)"
   },
   {
     "scope": null,

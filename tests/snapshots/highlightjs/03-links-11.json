@@ -1,10 +1,10 @@
 [
   {
     "scope": "link",
-    "text": "[pre <http://h> post](/u)"
+    "text": "[[x](y)"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "](z)\n"
   }
 ]

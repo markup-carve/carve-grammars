@@ -1,7 +1,7 @@
 [
   {
-    "scope": "string",
-    "text": "[some text]{.highlight #note key=val}"
+    "scope": "link",
+    "text": "[](https://example.com)"
   },
   {
     "scope": null,

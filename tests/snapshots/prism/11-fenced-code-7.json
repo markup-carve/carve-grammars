@@ -1,15 +1,15 @@
 [
   {
     "type": "code-block>punctuation",
-    "text": "~~~"
+    "text": "```"
   },
   {
     "type": "code-block",
-    "text": "yaml\nkey: value\n"
+    "text": "php \"src/Auth.php\" [Composer]\ncomposer require x\n"
   },
   {
     "type": "code-block>punctuation",
-    "text": "~~~"
+    "text": "```"
   },
   {
     "type": "text",

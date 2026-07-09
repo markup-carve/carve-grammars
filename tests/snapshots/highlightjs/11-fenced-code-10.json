@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{title=\"from the attribute line\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code",
+    "text": "```php \"from the header\"\ncode\n``"
+  },
+  {
+    "scope": "code",
+    "text": "`\n"
+  }
+]

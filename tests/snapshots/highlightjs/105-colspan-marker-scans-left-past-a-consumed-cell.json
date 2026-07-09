@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "string",
+    "text": "| p | q | r | s |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|---|---|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| a | b | c | d |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| p | ^ | < | e |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "````"
+  },
+  {
+    "type": "code-block",
+    "text": "markdown\n```python\nprint(\"hi\")\n```\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "````"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

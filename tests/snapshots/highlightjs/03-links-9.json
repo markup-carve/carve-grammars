@@ -1,15 +1,7 @@
 [
   {
     "scope": "string",
-    "text": "[a /b/ c]{.x}"
-  },
-  {
-    "scope": null,
-    "text": " and "
-  },
-  {
-    "scope": "link",
-    "text": "[t](u)"
+    "text": "[some text]{.highlight #note key=val}"
   },
   {
     "scope": null,

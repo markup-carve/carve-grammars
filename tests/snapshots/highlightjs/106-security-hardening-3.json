@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[a](ms-office:ofe|u|http://evil/x.docm)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

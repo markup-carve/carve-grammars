@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[x][y]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[y]: /u \"a\\\"b\\\"c\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

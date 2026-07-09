@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> [ref]: /url"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[it][ref]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

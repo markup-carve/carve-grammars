@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "<a@b> "
+  },
+  {
+    "scope": "link",
+    "text": "<a@b.com>"
+  },
+  {
+    "scope": null,
+    "text": " <x@y:z>\n"
+  }
+]

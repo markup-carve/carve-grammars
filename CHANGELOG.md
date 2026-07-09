@@ -7,6 +7,13 @@ All notable changes to `carve-grammars` are documented here.
 ### Added
 - CarveEmbed: inline "Edit" control in the node view to change a media embed's URL / video id in place.
 
+### Changed
+- Spec corpus submodule bumped from 7c41ccc to 750ddfa (126 categories, 24 new).
+  New categories classified in the per-grammar coverage matrix; snapshot goldens
+  refreshed for the changed and added corpus files.
+- Prism: inline link/image titles now match backslash-escaped quotes
+  (`[t](/url "ti\"tle")`), and links with empty text (`[](url)`) are highlighted.
+
 ## 0.1.0 - 2026-07-02
 
 Initial release. Syntax + editor integration for the Carve markup language.

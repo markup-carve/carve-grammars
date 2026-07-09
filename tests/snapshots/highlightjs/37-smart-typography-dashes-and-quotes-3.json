@@ -1,6 +1,10 @@
 [
   {
     "scope": null,
-    "text": "a---- b----- c------\n"
+    "text": "}\"q\"\n)\"q\"\n]\"q\"\n.\"q\"\n"
+  },
+  {
+    "scope": "built_in",
+    "text": ",\"q\"\na\"b\n\"\"\n"
   }
 ]

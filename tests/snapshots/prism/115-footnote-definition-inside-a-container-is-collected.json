@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^a]: note body"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

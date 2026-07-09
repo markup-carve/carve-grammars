@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "('q')\n['q']\n"
+  },
+  {
+    "scope": "addition",
+    "text": "='q'\n:'q'\n-'q'\n/'q'\n"
+  }
+]

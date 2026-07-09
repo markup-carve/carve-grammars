@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "A "
+  },
+  {
+    "scope": "string",
+    "text": "[danger]{style=\"x:expression(steal())\"}"
+  },
+  {
+    "scope": null,
+    "text": " span.\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]{.a .a .b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
