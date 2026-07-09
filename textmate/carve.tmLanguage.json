@@ -16,9 +16,9 @@
     { "include": "#abbreviation" },
     { "include": "#caption" },
     { "include": "#table_row" },
+    { "include": "#list_continuation" },
     { "include": "#multiline_cell" },
     { "include": "#task_item" },
-    { "include": "#list_continuation" },
     { "include": "#list_item" },
     { "include": "#numbered_item" },
     { "include": "#inline" }
