@@ -182,6 +182,7 @@
     },
     "inline": {
       "patterns": [
+        { "include": "#code_inline_multi" },
         { "include": "#code_inline" },
         { "include": "#trailing_comment" },
         { "include": "#image" },
@@ -215,8 +216,18 @@
       "match": "\\\\[\\\\`*_{}\\[\\]()#+\\-.!~^/<>@%|=,]",
       "name": "constant.character.escape.carve"
     },
+    "code_inline_multi": {
+      "comment": "Two or more backticks: inline code that may itself contain single backticks; closed by the same run length (\\1).",
+      "match": "(`{2,})(.+?)(\\1)",
+      "captures": {
+        "1": { "name": "punctuation.definition.raw.carve" },
+        "2": { "name": "markup.raw.inline.carve" },
+        "3": { "name": "punctuation.definition.raw.carve" }
+      },
+      "name": "markup.raw.inline.carve"
+    },
     "code_inline": {
-      "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+      "match": "(`)([^`\\n]+)(`)",
       "captures": {
         "1": { "name": "punctuation.definition.raw.carve" },
         "2": { "name": "markup.raw.inline.carve" },
