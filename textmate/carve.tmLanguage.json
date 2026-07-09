@@ -140,6 +140,13 @@
           }
         },
         {
+          "comment": "Column alignment markers (:--, --:, :-:, ---) between pipes. Matched before #inline so smart-typography does not swallow the dashes.",
+          "match": "(?<=\\|)\\s*(:?-+:?)\\s*(?=\\|)",
+          "captures": {
+            "1": { "name": "keyword.operator.table.alignment.carve" }
+          }
+        },
+        {
           "match": "\\|",
           "name": "punctuation.separator.table.carve"
         },
