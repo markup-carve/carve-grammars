@@ -2,7 +2,7 @@
 
 All notable changes to `carve-grammars` are documented here.
 
-## 0.1.1 - Unreleased
+## 0.1.1 - 2026-07-12
 
 ### Added
 - Shiki kit: inline emphasis delimiters (`*` `/` `_` `~` `^` `,` `=`) render
