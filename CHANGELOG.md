@@ -5,6 +5,9 @@ All notable changes to `carve-grammars` are documented here.
 ## 0.1.1 - Unreleased
 
 ### Added
+- `carve-grammars/shiki`: shared Shiki/VitePress kit (grammar + GitHub themes
+  extended with Carve scope colors + styling transformer + companion CSS), so
+  all Carve docs sites configure highlighting from one import.
 - TextMate grammar shipped in the npm package (`textmate/carve.tmLanguage.json`).
 - TextMate: bare subscript (`,text,`), brace superscript (`{^text^}`) and brace
   highlight (`{=text=}`) forms; inline/display math (`$` + backtick), inline
