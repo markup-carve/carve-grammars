@@ -246,18 +246,22 @@ export function serializeToCarve(doc) {
             }
 
             case 'carveTab': {
-                // Label and selected flag ride on the attribute line before the
-                // opener: {label="First" selected}. Quotes/backslashes escape the
-                // same way carve-php's attribute parser expects.
+                // Canonical opener: `::: tab [Label]`. The `selected` flag (and
+                // a label containing `]`, which the opener token cannot carry)
+                // rides the attribute line before the opener.
                 const tabAttrs = [];
-                if (node.attrs?.label != null) {
-                    const l = String(node.attrs.label).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+                let opener = ' tab';
+                const label = node.attrs?.label != null ? String(node.attrs.label) : null;
+                if (label !== null && label !== '' && !label.includes(']') && !label.includes('\n')) {
+                    opener += ' [' + label + ']';
+                } else if (label !== null) {
+                    const l = label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                     tabAttrs.push('label="' + l + '"');
                 }
                 if (node.attrs?.selected) tabAttrs.push('selected');
                 if (tabAttrs.length) output += '{' + tabAttrs.join(' ') + '}\n';
                 const tabFence = ':'.repeat(carveDivFenceLength(node));
-                output += tabFence + ' tab\n';
+                output += tabFence + opener + '\n';
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, depth);
                     if (i < (node.content || []).length - 1) {
@@ -454,8 +458,9 @@ export function serializeToCarve(doc) {
                 } else if (isEmphasized) {
                     // Inside an emphasis span ANY literal delimiter closes it
                     // early (`*a*b*`), so escape every emphasis delimiter char.
-                    // (`=` and `,` are NOT delimiters - highlight/sub use the
-                    // braced `{= =}` / `{, ,}`, and bare `==` / `,,` are literal.)
+                    // (Bare `=x=` / `,x,` ARE single-char delimiters at word
+                    // boundaries; doubled `==` / `,,` stay literal, and the
+                    // braced `{= =}` / `{, ,}` forms work intraword.)
                     t = escapeStructural(text).replace(/[*/_~^]/g, '\\$&');
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
@@ -475,7 +480,24 @@ export function serializeToCarve(doc) {
                 if ((link || carveSpan || abbr) && !hasCode) {
                     t = t.replace(/]/g, '\\]');
                 }
-                if (hasSub) t = '{,' + t + ',}';
+                const bareable = (delim) => {
+                    // Bare single-char form only when this run is the sole mark,
+                    // is flanked by boundaries, and the content cannot re-close
+                    // early or double the delimiter (doubled = literal).
+                    const alone = !hasBold && !hasItalic && !hasUnderline && !hasStrike
+                        && !hasHighlight && !hasSub && !hasSup && !hasInsert && !hasDelete
+                        && !link && !carveSpan && !abbr
+                        || (delim === '=' && hasHighlight) || (delim === ',' && hasSub);
+                    const soleMark = marks.length === 1;
+                    const before = result.slice(-1);
+                    const after = (content[idx + 1] && content[idx + 1].text) ? content[idx + 1].text[0] : '';
+                    const flanked = (!before || /[\s([{<"']/.test(before))
+                        && (!after || /[\s)\]}>"'.,;:!?]/.test(after) && after !== delim);
+                    return soleMark && alone && flanked
+                        && t.length > 0 && !t.includes(delim) && !t.includes('\n')
+                        && !/^\s|\s$/.test(t);
+                };
+                if (hasSub) t = bareable(',') ? ',' + t + ',' : '{,' + t + ',}';
                 if (hasSup) {
                     // `^x^` only forms a superscript when flanked by a boundary;
                     // intraword (`mc^2^`) is literal and needs the braced `{^x^}`.
@@ -495,7 +517,7 @@ export function serializeToCarve(doc) {
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
                 if (hasStrike && !hasDelete) t = '~' + t + '~';
-                if (hasHighlight) t = '{=' + t + '=}';
+                if (hasHighlight) t = bareable('=') ? '=' + t + '=' : '{=' + t + '=}';
                 if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
