@@ -1,22 +1,18 @@
 [
   {
-    "type": "div>punctuation",
-    "text": ":::"
+    "type": "text",
+    "text": "::: "
   },
   {
-    "type": "div",
-    "text": " "
-  },
-  {
-    "type": "div>attributes>punctuation",
+    "type": "attributes>punctuation",
     "text": "{"
   },
   {
-    "type": "div>attributes>class-name",
+    "type": "attributes>class-name",
     "text": ".sidebar"
   },
   {
-    "type": "div>attributes>punctuation",
+    "type": "attributes>punctuation",
     "text": "}"
   },
   {

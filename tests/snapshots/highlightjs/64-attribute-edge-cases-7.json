@@ -9,14 +9,18 @@
   },
   {
     "scope": "keyword",
-    "text": ":::\nbody"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nbody\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
   },
   {
     "scope": null,
     "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::\n"
   }
 ]

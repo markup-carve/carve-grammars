@@ -1,7 +1,11 @@
 [
   {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
     "scope": null,
-    "text": "::: |\n"
+    "text": "\n"
   },
   {
     "scope": "strong",
@@ -21,6 +25,10 @@
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

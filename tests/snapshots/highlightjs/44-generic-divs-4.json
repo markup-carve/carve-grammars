@@ -1,14 +1,14 @@
 [
   {
+    "scope": null,
+    "text": "::: 123\nnot a div\n"
+  },
+  {
     "scope": "keyword",
-    "text": "::: 123"
+    "text": ":::"
   },
   {
     "scope": null,
-    "text": "\nnot a div\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::\n"
+    "text": "\n"
   }
 ]

@@ -1,10 +1,18 @@
 [
   {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
     "scope": null,
-    "text": "::: |\nRoses are red,\n  Violets are blue.\n"
+    "text": "\nRoses are red,\n  Violets are blue.\n"
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

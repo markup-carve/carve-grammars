@@ -9,11 +9,11 @@
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\n\n"
   },
   {
     "scope": "attr",
@@ -33,6 +33,10 @@
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]
