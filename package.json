@@ -5,7 +5,7 @@
     "type": "module",
     "main": "tiptap/index.js",
     "scripts": {
-        "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js",
+        "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/textmate-sweep-test.js",
         "test:coverage": "node tests/coverage-test.js",
         "test:snapshot": "node tests/snapshot-test.js",
         "test:roundtrip": "node tests/roundtrip-test.js",
@@ -59,12 +59,12 @@
         "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json"
     },
     "peerDependencies": {
+        "@shikijs/themes": "^2 || ^3",
         "@tiptap/core": "^2",
         "@tiptap/extension-underline": "^2",
         "@tiptap/starter-kit": "^2",
         "highlight.js": "^11",
-        "prismjs": "^1",
-        "@shikijs/themes": "^2 || ^3"
+        "prismjs": "^1"
     },
     "peerDependenciesMeta": {
         "@tiptap/core": {
@@ -88,6 +88,7 @@
     },
     "devDependencies": {
         "@markup-carve/carve": "github:markup-carve/carve-js",
+        "@shikijs/themes": "^3.13.0",
         "@tiptap/core": "^2.27.2",
         "@tiptap/extension-bullet-list": "^2.27.2",
         "@tiptap/extension-code-block": "^2.27.2",
@@ -110,6 +111,6 @@
         "happy-dom": "^20.10.6",
         "highlight.js": "^11.11.1",
         "prismjs": "^1.30.0",
-        "@shikijs/themes": "^3.13.0"
+        "shiki": "^4.3.1"
     }
 }
