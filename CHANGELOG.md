@@ -5,6 +5,13 @@ All notable changes to `carve-grammars` are documented here.
 ## 0.1.1 - Unreleased
 
 ### Added
+- TextMate grammar shipped in the npm package (`textmate/carve.tmLanguage.json`).
+- TextMate: bare subscript (`,text,`), brace superscript (`{^text^}`) and brace
+  highlight (`{=text=}`) forms; inline/display math (`$` + backtick), inline
+  footnotes (`^[...]`), cross-references (`</#id>`), hard breaks, definition
+  lists, the full task-state set (`[-] [_] [>] [?]`), fence info strings
+  (`"Title"` / `[Label]` / `=format`), and table alignment glyphs (`|=>`,
+  glued `|<` overrides) now tokenize. Full 67-construct sweep passes.
 - CarveEmbed: inline "Edit" control in the node view to change a media embed's URL / video id in place.
 
 ### Changed
