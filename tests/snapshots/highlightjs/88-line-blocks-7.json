@@ -1,11 +1,7 @@
 [
   {
-    "scope": null,
-    "text": ":::: "
-  },
-  {
-    "scope": "meta",
-    "text": "\\"
+    "scope": "keyword",
+    "text": ":::: \\"
   },
   {
     "scope": null,
@@ -29,6 +25,10 @@
   },
   {
     "scope": "keyword",
-    "text": "::::\n"
+    "text": "::::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

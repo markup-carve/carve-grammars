@@ -1,10 +1,18 @@
 [
   {
+    "scope": "keyword",
+    "text": "::: hint \"Heads up\""
+  },
+  {
     "scope": null,
-    "text": "::: hint \"Heads up\"\nCustom call-out.\n"
+    "text": "\nCustom call-out.\n"
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

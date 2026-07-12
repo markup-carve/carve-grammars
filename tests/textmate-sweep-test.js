@@ -67,6 +67,11 @@ const CASES = [
   ['admonition open', '::: note\nbody\n:::', 'admonition', 'note'],
   ['admonition custom', '::: myclass\nbody\n:::', 'admonition', 'myclass'],
   ['layout pipe', '::: |\nRoses\n:::', 'admonition', '|'],
+  ['admonition title', '::: note "Custom Title"\nbody\n:::', 'string.quoted.double.admonition.title', 'Custom Title'],
+  ['admonition title and label', '::: tip "Pro Tip" [Build]\nbody\n:::', 'constant.other.label.admonition', '[Build]'],
+  ['admonition label only', '::: tab [Overview]\nbody\n:::', 'constant.other.label.admonition', '[Overview]'],
+  ['typeless flush label', ':::[First]\nbody\n:::', 'constant.other.label.admonition', '[First]'],
+  ['nested longer fence', ':::: tabs\nbody\n::::', 'admonition', 'tabs'],
   ['table header cell', '|= Name |= Age |', 'keyword.operator.table.header', '|='],
   ['table sep', '| a | b |', 'punctuation.separator.table', '|'],
   ['table align', '|=> Age |', 'keyword.operator.table.alignment', '>'],
@@ -128,6 +133,9 @@ const NEGATIVE = [
   ['intraword italic literal', 'a/b/c stays', 'markup.italic'],
   ['intraword sub literal', 'x,y,z stays', 'markup.subscript'],
   ['intraword highlight literal', 'key=value=x stays', 'markup.highlight'],
+  ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
+  ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
+  ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
 ]
 let negPass = 0
 for (const [label, sample, badScope] of NEGATIVE) {

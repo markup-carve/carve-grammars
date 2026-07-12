@@ -5,7 +5,11 @@
   },
   {
     "type": "div",
-    "text": " hint \"Heads up\""
+    "text": " hint "
+  },
+  {
+    "type": "div>string",
+    "text": "\"Heads up\""
   },
   {
     "type": "text",

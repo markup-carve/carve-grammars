@@ -1,10 +1,18 @@
 [
   {
+    "scope": "keyword",
+    "text": "::: [First]"
+  },
+  {
     "scope": null,
-    "text": "::: [First]\nFirst panel.\n"
+    "text": "\nFirst panel.\n"
   },
   {
     "scope": "keyword",
-    "text": ":::\n"
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

@@ -5,7 +5,11 @@
   },
   {
     "type": "div",
-    "text": " [First]"
+    "text": " "
+  },
+  {
+    "type": "div>symbol",
+    "text": "[First]"
   },
   {
     "type": "text",

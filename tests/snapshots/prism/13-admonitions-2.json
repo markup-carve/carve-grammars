@@ -5,7 +5,11 @@
   },
   {
     "type": "div",
-    "text": " tip \"Pro Tip\""
+    "text": " tip "
+  },
+  {
+    "type": "div>string",
+    "text": "\"Pro Tip\""
   },
   {
     "type": "text",

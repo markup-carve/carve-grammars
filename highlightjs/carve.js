@@ -315,10 +315,12 @@
         relevance: 10,
     };
 
-    // Div block opening: ::: with optional class
+    // Div block opening: ::: with optional type, "title", [label], or the
+    // | / \ layout tokens. Strict shapes only - unquoted or curly-quoted
+    // trailing text is a paragraph, not a fence, and must not highlight.
     const DIV_BLOCK_START = {
         className: 'keyword',
-        begin: /^:{3,}\s*\w*$/,
+        begin: /^:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
         relevance: 10,
     };
 

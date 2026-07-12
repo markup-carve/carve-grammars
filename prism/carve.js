@@ -160,16 +160,21 @@
         },
 
         // Container divs ::: class  /  :::
+        // Strict opener shapes only: type word, optional "title" (straight
+        // quotes), optional [label], the | / \ layout tokens, or a typeless
+        // [label]. Trailing junk makes the line a paragraph, so it must not
+        // highlight as a fence.
         'div': {
-            pattern: /^[ \t]*:{3,}[ \t]*[^\s{]*.*$/m,
+            pattern: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
             alias: 'tag',
             inside: {
                 'punctuation': /:{3,}/,
+                'string': /"[^"\n]*"/,
+                'symbol': /\[[^\]\n]*\]/,
                 'class-name': {
-                    pattern: /(^[ \t]*:{3,}[ \t]*)[^\s{]+/,
+                    pattern: /(^[ \t]*:{3,}[ \t]*)(?:[a-zA-Z_][\w-]*|\||\\)/,
                     lookbehind: true,
                 },
-                'attributes': attributes,
             },
         },
 
