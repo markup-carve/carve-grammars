@@ -73,6 +73,9 @@ export const carveLightExtras = [
     { scope: 'constant.other.reference.link', settings: { foreground: '#005cc5', fontStyle: 'bold' } },
     { scope: 'markup.math', settings: { foreground: '#6f42c1' } },
     { scope: 'punctuation.definition.math', settings: { foreground: '#959da5' } },
+    // Inline emphasis delimiters recede like code backticks: the content
+    // already carries the styling (bold, italic, raised, lowered, marked).
+    { scope: ['punctuation.definition.bold', 'punctuation.definition.italic', 'punctuation.definition.bold-italic', 'punctuation.definition.underline', 'punctuation.definition.strike', 'punctuation.definition.superscript', 'punctuation.definition.subscript', 'punctuation.definition.highlight'], settings: { foreground: '#959da5' } },
 ]
 
 export const carveDarkExtras = [
@@ -111,6 +114,7 @@ export const carveDarkExtras = [
     { scope: 'constant.other.reference.link', settings: { foreground: '#79b8ff', fontStyle: 'bold' } },
     { scope: 'markup.math', settings: { foreground: '#b392f0' } },
     { scope: 'punctuation.definition.math', settings: { foreground: '#6a737d' } },
+    { scope: ['punctuation.definition.bold', 'punctuation.definition.italic', 'punctuation.definition.bold-italic', 'punctuation.definition.underline', 'punctuation.definition.strike', 'punctuation.definition.superscript', 'punctuation.definition.subscript', 'punctuation.definition.highlight'], settings: { foreground: '#6a737d' } },
 ]
 
 /** Extend any Shiki theme object with extra token-color rules. */

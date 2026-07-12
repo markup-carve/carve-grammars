@@ -5,6 +5,8 @@ All notable changes to `carve-grammars` are documented here.
 ## 0.1.1 - Unreleased
 
 ### Added
+- Shiki kit: inline emphasis delimiters (`*` `/` `_` `~` `^` `,` `=`) render
+  muted gray like code backticks; the content carries the styling.
 - TextMate: word-boundary guards on bare `*bold*`, `~strike~` and `^sup^` so
   intraword delimiters stay literal per spec (matching italic/underline/highlight).
 - Full TextMate sweep test (67 positive + 6 intraword-negative cases via Shiki)
