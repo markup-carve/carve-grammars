@@ -3,12 +3,13 @@
 Grammars for the [Carve](https://github.com/markup-carve/carve) markup language:
 
 - a **Tiptap** integration (editor kit + serializer) that turns a Tiptap/ProseMirror document into Carve markup;
-- **Prism** and **highlight.js** syntax-highlighting grammars for rendering Carve source on the web.
+- **Prism** and **highlight.js** syntax-highlighting grammars for rendering Carve source on the web;
+- a **TextMate** grammar (`textmate/carve.tmLanguage.json`) for TextMate-based highlighters such as Shiki (used by VitePress).
 
 Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The Tiptap mark mapping mirrors `carve-php`'s `HtmlToCarve` converter; the highlighting grammars mirror the canonical token set in [`carve/resources/grammar.ebnf`](https://github.com/markup-carve/carve) and the TextMate grammar in [vscode-carve](https://github.com/markup-carve/vscode-carve).
 
-> **Status:** Tiptap integration, plus Prism and highlight.js grammars.
-> Sibling editor grammars live in their own repos: **TextMate** in
+> **Status:** Tiptap integration, plus Prism, highlight.js and TextMate grammars.
+> Sibling editor grammars live in their own repos: editor-bundled **TextMate** copies in
 > [vscode-carve](https://github.com/markup-carve/vscode-carve) and
 > [intellij-carve](https://github.com/markup-carve/intellij-carve);
 > **Tree-sitter** in [tree-sitter-carve](https://github.com/markup-carve/tree-sitter-carve)
