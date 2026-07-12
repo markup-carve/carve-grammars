@@ -2,6 +2,20 @@
 
 All notable changes to `carve-grammars` are documented here.
 
+## 0.1.2 - Unreleased
+
+### Changed
+- Tiptap serializer emits bare `=highlight=` / `,subscript,` at word boundaries
+  (brace forms stay for intraword), and the canonical `::: tab [Label]` opener
+  instead of a `{label="..."}` attribute line (kept as fallback for labels
+  containing `]`).
+- `carveTab` ingest lifts the `[label]` opener's rendered `div-label` paragraph
+  into the label attribute, so canonical tabs round-trip through the editor.
+
+### Fixed
+- `carveDelete` / `carveInsert` outrank StarterKit's Strike for `<del>` parsing;
+  `{-...-}` no longer degrades to `~...~` after an HTML round-trip.
+
 ## 0.1.1 - 2026-07-12
 
 ### Added

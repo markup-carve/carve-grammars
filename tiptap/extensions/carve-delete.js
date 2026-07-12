@@ -20,6 +20,11 @@ import { Mark, mergeAttributes } from '@tiptap/core';
 export const CarveDelete = Mark.create({
     name: 'carveDelete',
 
+    // Outrank StarterKit's Strike, whose parseHTML also claims <del> - at
+    // default priority the strike mark wins and {-...-} degrades to ~...~
+    // after an HTML round-trip.
+    priority: 101,
+
     parseHTML() {
         return [
             { tag: 'del' },

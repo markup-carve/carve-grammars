@@ -43,7 +43,7 @@ check('inline marks map to Carve tokens',
         text('g', 'superscript'), text(' '),
         text('h', 'underline'),
     )),
-    '*a* /b/ `c` {=d=} ~e~ {,f,} ^g^ _h_');
+    '*a* /b/ `c` =d= ~e~ ,f, ^g^ _h_');
 
 check('underline maps to _.._',
     doc(para(text('x', 'underline'))),
@@ -283,12 +283,18 @@ check('sibling divs do not inflate each other (both stay 3)',
     doc(div('note', para(text('one.'))), div('tip', para(text('two.')))),
     '::: note\none.\n:::\n\n::: tip\ntwo.\n:::');
 
-check('tab set widens its fence and emits labels + selected on attribute lines',
+check('tab set widens its fence and emits canonical [label] openers',
     doc({ type: 'carveTabSet', content: [
         { type: 'carveTab', attrs: { label: 'First' }, content: [para(text('Alpha.'))] },
         { type: 'carveTab', attrs: { label: 'Second', selected: true }, content: [para(text('Beta.'))] },
     ] }),
-    ':::: tabs\n{label="First"}\n::: tab\nAlpha.\n:::\n\n{label="Second" selected}\n::: tab\nBeta.\n:::\n::::');
+    ':::: tabs\n::: tab [First]\nAlpha.\n:::\n\n{selected}\n::: tab [Second]\nBeta.\n:::\n::::');
+
+check('a tab label containing ] falls back to the attribute line',
+    doc({ type: 'carveTabSet', content: [
+        { type: 'carveTab', attrs: { label: 'A]B' }, content: [para(text('X.'))] },
+    ] }),
+    ':::: tabs\n{label="A]B"}\n::: tab\nX.\n:::\n::::');
 
 check('a tab with no label emits a bare ::: tab',
     doc({ type: 'carveTabSet', content: [

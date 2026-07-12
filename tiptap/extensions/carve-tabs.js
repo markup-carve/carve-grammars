@@ -111,7 +111,17 @@ export const CarveTab = Node.create({
         return {
             label: {
                 default: null,
-                parseHTML: element => element.getAttribute('label'),
+                // Attribute form (`{label="..."}` -> label="...") or the
+                // canonical opener form (`::: tab [Label]`), which both engines
+                // render as a leading <p class="div-label"> child.
+                parseHTML: element => {
+                    const attr = element.getAttribute('label');
+                    if (attr != null) return attr;
+                    const first = element.firstElementChild;
+                    return first && first.tagName === 'P' && first.classList.contains('div-label')
+                        ? first.textContent
+                        : null;
+                },
                 renderHTML: attributes => (attributes.label == null ? {} : { label: attributes.label }),
             },
             // `selected` is a boolean flag: present (any value, incl. "") means
@@ -125,7 +135,21 @@ export const CarveTab = Node.create({
     },
 
     parseHTML() {
-        return [{ tag: 'div.tab', priority: 60 }];
+        return [{
+            tag: 'div.tab',
+            priority: 60,
+            // The div-label paragraph becomes the label attr above; keep it
+            // out of the editable panel content.
+            contentElement: element => {
+                const first = element.firstElementChild;
+                if (!first || first.tagName !== 'P' || !first.classList.contains('div-label')) {
+                    return element;
+                }
+                const clone = element.cloneNode(true);
+                clone.removeChild(clone.firstElementChild);
+                return clone;
+            },
+        }];
     },
 
     renderHTML({ HTMLAttributes }) {
