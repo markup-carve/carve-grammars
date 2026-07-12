@@ -5,7 +5,7 @@
     "type": "module",
     "main": "tiptap/index.js",
     "scripts": {
-        "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js",
+        "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js",
         "test:coverage": "node tests/coverage-test.js",
         "test:snapshot": "node tests/snapshot-test.js",
         "test:roundtrip": "node tests/roundtrip-test.js",
@@ -38,6 +38,7 @@
         "tiptap/",
         "prism/",
         "highlightjs/",
+        "shiki/",
         "textmate/",
         "README.md",
         "LICENSE"
@@ -52,14 +53,18 @@
             "import": "./highlightjs/carve.mjs",
             "default": "./highlightjs/carve.js"
         },
-        "./highlightjs/*": "./highlightjs/*"
+        "./highlightjs/*": "./highlightjs/*",
+        "./shiki": "./shiki/index.js",
+        "./shiki/carve.css": "./shiki/carve.css",
+        "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json"
     },
     "peerDependencies": {
         "@tiptap/core": "^2",
         "@tiptap/extension-underline": "^2",
         "@tiptap/starter-kit": "^2",
         "highlight.js": "^11",
-        "prismjs": "^1"
+        "prismjs": "^1",
+        "@shikijs/themes": "^2 || ^3"
     },
     "peerDependenciesMeta": {
         "@tiptap/core": {
@@ -75,6 +80,9 @@
             "optional": true
         },
         "highlight.js": {
+            "optional": true
+        },
+        "@shikijs/themes": {
             "optional": true
         }
     },
@@ -101,6 +109,7 @@
         "@tiptap/starter-kit": "^2.27.2",
         "happy-dom": "^20.10.6",
         "highlight.js": "^11.11.1",
-        "prismjs": "^1.30.0"
+        "prismjs": "^1.30.0",
+        "@shikijs/themes": "^3.13.0"
     }
 }

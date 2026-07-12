@@ -160,6 +160,37 @@ the global `hljs`:
 <script>hljs.highlightAll();</script>
 ```
 
+### Shiki / VitePress
+
+`carve-grammars/shiki` is the shared kit every Carve docs site uses, so
+highlighting stays identical across them: the TextMate grammar, GitHub
+light/dark themes extended with Carve scope colors, and a transformer + CSS
+pair that bridges what Shiki's HTML emitter cannot express (strikethrough,
+sub/superscript positioning, highlight background).
+
+```ts
+// .vitepress/config.ts
+import { defineConfig } from 'vitepress'
+import { carveMarkdown } from 'carve-grammars/shiki'
+
+export default defineConfig({
+  markdown: {
+    ...carveMarkdown(),
+    // carveMarkdown({ light, dark, languages }) to override base themes
+    // or register extra grammars
+  },
+})
+```
+
+```ts
+// .vitepress/theme/index.ts
+import 'carve-grammars/shiki/carve.css'
+```
+
+Named exports for other setups: `carveGrammar`, `carveLightExtras` /
+`carveDarkExtras`, `carveLightTheme` / `carveDarkTheme`, `extendTheme`,
+`carveStylingTransformer`.
+
 ## API
 
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.

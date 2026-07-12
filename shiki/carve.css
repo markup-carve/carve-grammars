@@ -1,0 +1,46 @@
+/**
+ * Companion CSS for carve-grammars/shiki.
+ *
+ * Applies the Shiki dual-theme CSS variables (VitePress emits them but
+ * only applies color by default) and styles the data-carve-* attributes
+ * emitted by the carveStylingTransformer.
+ */
+
+/* Apply Shiki font-style, font-weight and text-decoration CSS variables */
+.vp-code span {
+  font-style: var(--shiki-light-font-style, inherit);
+  font-weight: var(--shiki-light-font-weight, inherit);
+  text-decoration: var(--shiki-light-text-decoration, inherit);
+}
+
+.dark .vp-code span {
+  font-style: var(--shiki-dark-font-style, inherit);
+  font-weight: var(--shiki-dark-font-weight, inherit);
+  text-decoration: var(--shiki-dark-text-decoration, inherit);
+}
+
+/* Carve token styling the Shiki HTML emitter can't express directly.
+   Use html prefix to outrank `html.dark .vp-code span` (specificity 0,2,2). */
+html .vp-code span[data-carve-strike] {
+  text-decoration: line-through;
+}
+
+html .vp-code span[data-carve-super] {
+  vertical-align: super;
+  font-size: 0.75em;
+}
+
+html .vp-code span[data-carve-sub] {
+  vertical-align: sub;
+  font-size: 0.75em;
+}
+
+html .vp-code span[data-carve-highlight] {
+  background: rgba(255, 213, 0, 0.35);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+html.dark .vp-code span[data-carve-highlight] {
+  background: rgba(255, 213, 0, 0.18);
+}
