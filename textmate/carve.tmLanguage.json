@@ -617,7 +617,7 @@
             }
         },
         "strong": {
-            "match": "(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)",
+            "match": "(?<![\\w*])(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)(?![\\w*])",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.bold.carve"
@@ -659,7 +659,7 @@
             }
         },
         "strike": {
-            "match": "(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)",
+            "match": "(?<![\\w~])(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)(?![\\w~])",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.strike.carve"
@@ -721,7 +721,7 @@
                     }
                 },
                 {
-                    "match": "(\\^)(?=\\S)([^\\s^\\n]+?)(\\^)",
+                    "match": "(?<![\\w^])(\\^)(?=\\S)([^\\s^\\n]+?)(\\^)(?![\\w^])",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.superscript.carve"
