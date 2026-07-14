@@ -4,19 +4,7 @@
     "text": "[*x*]"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "???"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "{???}\n"
   }
 ]

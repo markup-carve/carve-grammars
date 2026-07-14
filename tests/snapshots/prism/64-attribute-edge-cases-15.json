@@ -4,23 +4,7 @@
     "text": "[x]"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".a"
-  },
-  {
-    "type": "attributes",
-    "text": "!b"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "{.a!b}\n"
   }
 ]

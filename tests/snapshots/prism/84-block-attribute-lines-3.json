@@ -1,14 +1,26 @@
 [
   {
-    "type": "text",
+    "type": "attributes>punctuation",
     "text": "{"
   },
   {
-    "type": "tag",
+    "type": "attributes>id",
     "text": "#id"
   },
   {
+    "type": "attributes",
+    "text": "\n "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".foo"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
-    "text": "\n .foo}\nText\n"
+    "text": "\nText\n"
   }
 ]

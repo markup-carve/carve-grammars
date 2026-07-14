@@ -20,16 +20,8 @@
     "text": "="
   },
   {
-    "type": "attributes",
-    "text": "\""
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "y"
+    "type": "attributes>string",
+    "text": "\"{y}\""
   },
   {
     "type": "attributes>punctuation",
@@ -37,6 +29,6 @@
   },
   {
     "type": "text",
-    "text": "\"}\n"
+    "text": "\n"
   }
 ]

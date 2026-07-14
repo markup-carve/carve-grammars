@@ -17,22 +17,14 @@
   },
   {
     "scope": null,
-    "text": " "
+    "text": " {"
   },
   {
-    "scope": "attr",
-    "text": "{~old~>new~}"
-  },
-  {
-    "scope": null,
-    "text": " b"
-  },
-  {
-    "scope": "attr",
-    "text": "{# note #}"
+    "scope": "deletion",
+    "text": "~old~"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": ">new~} b{# note #}\n"
   }
 ]

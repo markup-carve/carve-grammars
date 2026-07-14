@@ -44,9 +44,19 @@
     return function carve(hljs) {
     // Block attributes: {.class #id key=value} or boolean {reversed}
     // Excludes special inline syntax like {= {+ {- {%
+    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
+    // start with a digit, so `{2=v}` stays literal text rather than scoping as
+    // an attribute block. An unquoted value may contain dots and colons.
+    const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    const ATTRIBUTE_EMPTY = {
+        className: 'attr',
+        // Valid only glued to a preceding `]` (`[x]{}`); a bare `{}` is literal.
+        begin: /(?<=\])\{\s*\}/,
+        relevance: 5,
+    };
     const ATTRIBUTE = {
         className: 'attr',
-        begin: /\{(?![=+\-%])[^}]+\}/,
+        begin: new RegExp('\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'),
         relevance: 5,
     };
 
@@ -275,7 +285,8 @@
     // Bullet list items: - or *
     const LIST_BULLET = {
         className: 'bullet',
-        begin: /^[ \t]*[-*](?=\s)/,
+        // A marker line may carry several markers (`- - A`, corpus 103).
+        begin: /^[ \t]*(?:[-*][ \t]+)*[-*](?=\s)/,
         relevance: 0,
     };
 
@@ -449,6 +460,7 @@
             MATH_INLINE,       // $`...`$
             INLINE_CODE_DOUBLE, // ``code`` - before single
             INLINE_CODE_SINGLE, // `code`
+            ATTRIBUTE_EMPTY,
             ATTRIBUTE,
             ESCAPE,
             HARD_BREAK,

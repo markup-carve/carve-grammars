@@ -4,32 +4,16 @@
     "text": "H"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": ",2,"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "subscript",
+    "text": "{,2,}"
   },
   {
     "type": "text",
     "text": "O and E=mc"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "^2^"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "superscript",
+    "text": "{^2^}"
   },
   {
     "type": "text",

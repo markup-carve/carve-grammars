@@ -1,23 +1,15 @@
 [
   {
     "type": "text",
-    "text": "re"
+    "text": "re{"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
+    "type": "strike",
     "text": "~view~"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": " it, then "
+    "text": "} it, then "
   },
   {
     "type": "changed",
@@ -28,24 +20,8 @@
     "text": ", and "
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "mark"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "highlight",
+    "text": "{=mark=}"
   },
   {
     "type": "text",

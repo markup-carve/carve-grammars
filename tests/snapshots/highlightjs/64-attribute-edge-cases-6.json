@@ -1,11 +1,11 @@
 [
   {
     "scope": "attr",
-    "text": "{k=\"{y}"
+    "text": "{k=\"{y}\"}"
   },
   {
     "scope": null,
-    "text": "\"}\n"
+    "text": "\n"
   },
   {
     "scope": "section",
