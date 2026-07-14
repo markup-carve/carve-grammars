@@ -455,7 +455,7 @@
     // `a : b : c` stays text)
     const SYMBOL = {
         className: 'symbol',
-        begin: /:[A-Za-z0-9][\w+-]*:/,
+        begin: /(?<!\w):[A-Za-z0-9+-][\w+-]*:/,
         relevance: 0,
     };
 

@@ -4,6 +4,12 @@ All notable changes to `carve-grammars` are documented here.
 
 ## 0.1.2 - Unreleased
 
+### Changed
+- Symbol shortcodes match the refined parser shape (carve#261): the first
+  name character may be `+` or `-` (so `:+1:` / `:-1:` tokenize), and a
+  left word-boundary guard keeps a colon glued to a word (`word:+1:`) from
+  opening a symbol. TextMate, Prism and highlight.js updated together.
+
 ### Added
 - TextMate: `:name:` symbol shortcodes (e.g. emoji) tokenize
   (`constant.language.symbol` name, `punctuation.definition.symbol` colons),
