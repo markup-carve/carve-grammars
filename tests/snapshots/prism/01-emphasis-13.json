@@ -1,14 +1,18 @@
 [
   {
-    "type": "text",
-    "text": "{/a/b/} and {/italic "
-  },
-  {
-    "type": "bold",
-    "text": "*bold*"
+    "type": "forced-italic",
+    "text": "{/a/b/}"
   },
   {
     "type": "text",
-    "text": "/}\n"
+    "text": " and "
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/italic *bold*/}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

@@ -1,15 +1,15 @@
 [
   {
     "type": "text",
-    "text": "re{"
+    "text": "re"
   },
   {
-    "type": "strike",
-    "text": "~view~"
+    "type": "forced-strike",
+    "text": "{~view~}"
   },
   {
     "type": "text",
-    "text": "} it, then "
+    "text": " it, then "
   },
   {
     "type": "changed",

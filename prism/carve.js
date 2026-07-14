@@ -70,6 +70,26 @@
         // The "no leading/trailing space" rule is expressed without JS
         // lookbehind (unsupported on Safari < 16.4 and some engines): the first
         // and last content chars are required to be non-space directly.
+        // Forced intraword family (PART 9 S22): `{*x*}` `{/x/}` `{_x_}` `{~x~}`.
+        // Content may contain the delimiter -- `{/a/b/}` is <em>a/b</em> -- so the
+        // run ends at the closing `X}`. These MUST precede 'attributes', or
+        // `{_path_}` reads as a boolean attribute instead of <u>path</u>.
+        'forced-bold': {
+            pattern: /\{\*(?=\S)[^\n]*?\*\}/,
+            alias: 'bold',
+        },
+        'forced-italic': {
+            pattern: /\{\/(?=\S)[^\n]*?\/\}/,
+            alias: 'italic',
+        },
+        'forced-underline': {
+            pattern: /\{_(?=\S)[^\n]*?_\}/,
+            alias: 'underline',
+        },
+        'forced-strike': {
+            pattern: /\{~(?=\S)(?:(?!~>)[^\n])*?~\}/,
+            alias: 'deleted',
+        },
         'bold': {
             pattern: /\*[^*\s\n](?:[^*\n]*?[^*\s\n])?\*/,
             alias: 'bold',
@@ -388,6 +408,12 @@
             pattern: /\{#[^}]*#\}/,
             alias: 'comment',
         },
+
+        // Forced brace emphasis must beat the attribute rule (`{_path_}`).
+        'forced-bold': inline['forced-bold'],
+        'forced-italic': inline['forced-italic'],
+        'forced-underline': inline['forced-underline'],
+        'forced-strike': inline['forced-strike'],
 
         // Attribute blocks attached to the preceding element
         'attributes': attributes,
