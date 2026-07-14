@@ -390,6 +390,18 @@
                     "include": "#superscript"
                 },
                 {
+                    "include": "#forced_strong"
+                },
+                {
+                    "include": "#forced_italic"
+                },
+                {
+                    "include": "#forced_underline"
+                },
+                {
+                    "include": "#forced_strike"
+                },
+                {
                     "include": "#attributes_empty"
                 },
                 {
@@ -592,8 +604,9 @@
             "name": "markup.deleted.carve"
         },
         "critic_sub": {
-            "match": "\\{~[^}]*~\\}",
-            "name": "markup.changed.carve"
+            "match": "\\{~[^}]*~>[^}]*~\\}",
+            "name": "markup.changed.carve",
+            "comment": "Editorial substitution requires the `~>` arrow; a `{~x~}` with no arrow is forced strikethrough (PART 9 S22)."
         },
         "critic_highlight": {
             "match": "\\{=[^}]*=\\}",
@@ -602,6 +615,66 @@
         "critic_comment": {
             "match": "\\{#[^}]*#\\}",
             "name": "comment.block.critic.carve"
+        },
+        "forced_strong": {
+            "comment": "Forced intraword bold (PART 9 S22). Content may contain the delimiter; the span ends at the closing `\\*}`.",
+            "match": "(\\{\\*)(?=\\S)([^\\n]*?)(\\*\\})",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.bold.carve"
+                },
+                "2": {
+                    "name": "markup.bold.carve"
+                },
+                "3": {
+                    "name": "punctuation.definition.bold.carve"
+                }
+            }
+        },
+        "forced_italic": {
+            "comment": "Forced intraword italic (PART 9 S22). Content may contain the delimiter; the span ends at the closing `/}`.",
+            "match": "(\\{/)(?=\\S)([^\\n]*?)(/\\})",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.italic.carve"
+                },
+                "2": {
+                    "name": "markup.italic.carve"
+                },
+                "3": {
+                    "name": "punctuation.definition.italic.carve"
+                }
+            }
+        },
+        "forced_underline": {
+            "comment": "Forced intraword underline (PART 9 S22). Content may contain the delimiter; the span ends at the closing `_}`.",
+            "match": "(\\{_)(?=\\S)([^\\n]*?)(_\\})",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.underline.carve"
+                },
+                "2": {
+                    "name": "markup.underline.carve"
+                },
+                "3": {
+                    "name": "punctuation.definition.underline.carve"
+                }
+            }
+        },
+        "forced_strike": {
+            "comment": "Forced intraword strikethrough (PART 9 S22). Content may contain the delimiter; the span ends at the closing `~}`.",
+            "match": "(\\{~)(?=\\S)([^\\n]*?)(~\\})",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.strikethrough.carve"
+                },
+                "2": {
+                    "name": "markup.strikethrough.carve"
+                },
+                "3": {
+                    "name": "punctuation.definition.strikethrough.carve"
+                }
+            }
         },
         "attributes_empty": {
             "comment": "An empty attribute block is only valid glued to a preceding `]` (`[x]{}` -> <span>x</span>); a bare `{}` in prose is literal text (corpus 123).",

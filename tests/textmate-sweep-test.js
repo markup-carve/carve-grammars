@@ -37,6 +37,14 @@ const CASES = [
   ['footnote ref', 'text[^1] end', 'constant.other.footnote', '1'],
   ['inline footnote', 'a ^[inline note] b', 'string.other.footnote.inline', 'inline note'],
   ['span attr', '[span]{.class}', 'attributes', '.class'],
+  // Forced brace family (PART 9 S22). `{_x_}` must beat the attribute rule (a
+  // bare boolean key is shape-identical), and the content may contain the
+  // delimiter: `{/a/b/}` is <em>a/b</em>.
+  ['forced bold', 'foo{*bar*}baz', 'markup.bold', 'bar'],
+  ['forced italic', 'a{/b/}c', 'markup.italic', 'b'],
+  ['forced underline', 'my{_path_}name', 'markup.underline', 'path'],
+  ['forced strike', 'x{~gone~}y', 'markup.strikethrough', 'gone'],
+  ['forced italic spanning its own delimiter', '{/a/b/}', 'markup.italic', 'a/b'],
   // Link titles admit an escaped quote; a `[^"]*` title run truncated at the
   // backslash and dropped link scoping for the whole construct (corpus 03-links-4).
   ['escaped-quote link title', '[t](/url "ti\\"tle")', 'markup.underline.link', '/url'],

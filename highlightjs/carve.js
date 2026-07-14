@@ -48,6 +48,14 @@
     // start with a digit, so `{2=v}` stays literal text rather than scoping as
     // an attribute block. An unquoted value may contain dots and colons.
     const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // Forced intraword family (PART 9 S22). Content may contain the delimiter
+    // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
+    // must precede ATTRIBUTE, or `{_path_}` reads as a boolean attribute.
+    const FORCED_STRONG = { className: 'strong', begin: /\{\*(?=\S)/, end: /\*\}/, relevance: 5 };
+    const FORCED_EMPHASIS = { className: 'emphasis', begin: /\{\/(?=\S)/, end: /\/\}/, relevance: 5 };
+    const FORCED_UNDERLINE = { className: 'emphasis', begin: /\{_(?=\S)/, end: /_\}/, relevance: 5 };
+    const FORCED_STRIKE = { className: 'deletion', begin: /\{~(?=\S)(?!.*~>)/, end: /~\}/, relevance: 5 };
+
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
         // Valid only glued to a preceding `]` (`[x]{}`); a bare `{}` is literal.
@@ -460,6 +468,10 @@
             MATH_INLINE,       // $`...`$
             INLINE_CODE_DOUBLE, // ``code`` - before single
             INLINE_CODE_SINGLE, // `code`
+            FORCED_STRONG,
+            FORCED_EMPHASIS,
+            FORCED_UNDERLINE,
+            FORCED_STRIKE,
             ATTRIBUTE_EMPTY,
             ATTRIBUTE,
             ESCAPE,

@@ -1,22 +1,18 @@
 [
   {
+    "scope": "emphasis",
+    "text": "{/a/b/}"
+  },
+  {
     "scope": null,
-    "text": "{"
+    "text": " and "
   },
   {
     "scope": "emphasis",
-    "text": "/a/b/"
+    "text": "{/italic *bold*/}"
   },
   {
     "scope": null,
-    "text": "} and {"
-  },
-  {
-    "scope": "emphasis",
-    "text": "/italic *bold*/"
-  },
-  {
-    "scope": null,
-    "text": "}\n"
+    "text": "\n"
   }
 ]

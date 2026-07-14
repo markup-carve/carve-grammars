@@ -1,38 +1,30 @@
 [
   {
     "type": "text",
-    "text": "foo{"
+    "text": "foo"
   },
   {
-    "type": "bold",
-    "text": "*bar*"
-  },
-  {
-    "type": "text",
-    "text": "}baz and my"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "_path_"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "forced-bold",
+    "text": "{*bar*}"
   },
   {
     "type": "text",
-    "text": "name and a{"
+    "text": "baz and my"
   },
   {
-    "type": "italic",
-    "text": "/b/"
+    "type": "forced-underline",
+    "text": "{_path_}"
   },
   {
     "type": "text",
-    "text": "}c\n"
+    "text": "name and a"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/b/}"
+  },
+  {
+    "type": "text",
+    "text": "c\n"
   }
 ]
