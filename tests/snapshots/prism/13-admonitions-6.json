@@ -4,12 +4,16 @@
     "text": ":::"
   },
   {
-    "type": "div>symbol",
-    "text": "[First]"
+    "type": "div",
+    "text": " note "
+  },
+  {
+    "type": "div>string",
+    "text": "\"Install *now* via `npm`\""
   },
   {
     "type": "text",
-    "text": "\nFirst panel.\n"
+    "text": "\nBody.\n"
   },
   {
     "type": "div>punctuation",

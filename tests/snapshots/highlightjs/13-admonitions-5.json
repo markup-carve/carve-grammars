@@ -1,11 +1,19 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: [First]"
+    "scope": "attr",
+    "text": "{title=\"attr title\"}"
   },
   {
     "scope": null,
-    "text": "\nFirst panel.\n"
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note \"opener title\""
+  },
+  {
+    "scope": null,
+    "text": "\nBody.\n"
   },
   {
     "scope": "keyword",

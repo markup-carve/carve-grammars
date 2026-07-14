@@ -87,9 +87,14 @@ check('tag #topic round-trips',
     '<p>a <span class="tag"><strong>#topic</strong></span> b</p>',
     'a #topic b');
 
-check('flanked superscript is bare, not braced',
+// Sup/sub have no bare form: braced even when flanked by whitespace.
+check('superscript is always braced',
     '<p>a <sup>x</sup> b</p>',
-    'a ^x^ b');
+    'a {^x^} b');
+
+check('subscript is always braced',
+    '<p>a <sub>x</sub> b</p>',
+    'a {,x,} b');
 
 check('tight list with a sub-list stays tight',
     '<ul><li>a</li><li>b<ul><li>c</li></ul></li></ul>',

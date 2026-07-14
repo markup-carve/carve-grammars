@@ -67,8 +67,8 @@ const editor = new Editor({
 | code        | `` `text` `` | `<code>`  |
 | highlight   | `=text=` / `{=text=}` | `<mark>`   |
 | strike      | `~text~` / `{~text~}` | `<s>`      |
-| subscript   | `,text,` / `{,text,}` | `<sub>`    |
-| superscript | `^text^` / `{^text^}` | `<sup>`    |
+| subscript   | `{,text,}` (braced only) | `<sub>`    |
+| superscript | `{^text^}` (braced only) | `<sup>`    |
 | insert      | `{+text+}`  | `<ins>`    |
 | delete      | `{-text-}`  | `<del>`    |
 | link        | `[text](url)` / `[text](url "title")` | `<a>` |
@@ -85,8 +85,9 @@ Without it, the attribute stays literal: `<span abbr="...">`. The mark's
 The tokens target carve-php's **parser** (the contract: serialized Carve must parse
 back to the same elements). Carve's inline syntax differs notably from Djot's:
 emphasis is `/text/` (Djot uses `_`), `_text_` is underline, `~text~` is
-strikethrough, subscript is `,text,`, and highlight is `=text=` (single-char
-delimiters since carve #108).
+strikethrough, highlight is `=text=`, and subscript/superscript are the
+braced `{,text,}` / `{^text^}` only (a bare `,` or `^` is literal text since
+carve #259).
 
 Each single-char delimiter has two equivalent forms: a **bare** form
 (`=text=`) and a **forced brace** form (`{=text=}`) that also works intraword;
@@ -118,7 +119,8 @@ definition lists.
 Render Carve source as highlighted HTML on the web. Both grammars cover the full
 Carve token set: headings, lists, tables, blockquotes, fenced/raw blocks,
 container divs, front matter and comments, plus inline emphasis
-(`*bold*` `/italic/` `_underline_` `~strike~` `=highlight=` `^sup^` `,sub,`),
+(`*bold*` `/italic/` `_underline_` `~strike~` `=highlight=`, braced
+`{^sup^}` `{,sub,}`),
 code, links, images, spans, attributes, footnotes, math (`` $`x`$ ``),
 CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 

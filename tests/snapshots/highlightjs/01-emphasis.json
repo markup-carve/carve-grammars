@@ -40,24 +40,24 @@
     "text": "\n"
   },
   {
-    "scope": "built_in",
-    "text": "^super^"
-  },
-  {
-    "scope": null,
-    "text": "  "
-  },
-  {
-    "scope": "built_in",
-    "text": ",sub,"
-  },
-  {
-    "scope": null,
-    "text": "  "
-  },
-  {
     "scope": "addition",
     "text": "=highlight="
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "built_in",
+    "text": "{^super^}"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "built_in",
+    "text": "{,sub,}"
   },
   {
     "scope": null,

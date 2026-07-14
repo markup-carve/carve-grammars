@@ -17,14 +17,6 @@
   },
   {
     "type": "text",
-    "text": "~ ^"
-  },
-  {
-    "type": "superscript",
-    "text": "^c^"
-  },
-  {
-    "type": "text",
-    "text": "^\n"
+    "text": "~ ^^c^^\n"
   }
 ]

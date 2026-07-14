@@ -21,23 +21,7 @@
   },
   {
     "type": "table",
-    "text": " "
-  },
-  {
-    "type": "table>attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "table>attributes",
-    "text": "^2^"
-  },
-  {
-    "type": "table>attributes>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "table",
-    "text": " "
+    "text": " ^2^   "
   },
   {
     "type": "table>punctuation",

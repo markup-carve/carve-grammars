@@ -440,9 +440,9 @@ export function serializeToCarve(doc) {
                 const abbr = marks.find(m => m.type === 'carveAbbreviation');
 
                 // Apply marks from innermost to outermost.
-                // Tokens target carve-php's PARSER (the contract): `code`, ,,sub,,,
-                // ^sup^, {+ins+}, {-del-}, ~strike~ -> <s>, ==mark==, _underline_,
-                // /em/, *strong*.
+                // Tokens target carve-php's PARSER (the contract): `code`,
+                // braced {,sub,} / {^sup^}, {+ins+}, {-del-}, ~strike~ -> <s>,
+                // =mark=, _underline_, /em/, *strong*.
                 const isEmphasized = hasBold || hasItalic || hasUnderline || hasStrike
                     || hasHighlight || hasSup || hasSub;
                 let t;
@@ -458,9 +458,9 @@ export function serializeToCarve(doc) {
                 } else if (isEmphasized) {
                     // Inside an emphasis span ANY literal delimiter closes it
                     // early (`*a*b*`), so escape every emphasis delimiter char.
-                    // (Bare `=x=` / `,x,` ARE single-char delimiters at word
-                    // boundaries; doubled `==` / `,,` stay literal, and the
-                    // braced `{= =}` / `{, ,}` forms work intraword.)
+                    // (Bare `=x=` IS a single-char delimiter at a word
+                    // boundary; a bare `^` / `,` is literal text - sup/sub are
+                    // the braced `{^ ^}` / `{, ,}` forms only.)
                     t = escapeStructural(text).replace(/[*/_~^]/g, '\\$&');
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
@@ -487,7 +487,7 @@ export function serializeToCarve(doc) {
                     const alone = !hasBold && !hasItalic && !hasUnderline && !hasStrike
                         && !hasHighlight && !hasSub && !hasSup && !hasInsert && !hasDelete
                         && !link && !carveSpan && !abbr
-                        || (delim === '=' && hasHighlight) || (delim === ',' && hasSub);
+                        || (delim === '=' && hasHighlight);
                     const soleMark = marks.length === 1;
                     const before = result.slice(-1);
                     const after = (content[idx + 1] && content[idx + 1].text) ? content[idx + 1].text[0] : '';
@@ -497,20 +497,10 @@ export function serializeToCarve(doc) {
                         && t.length > 0 && !t.includes(delim) && !t.includes('\n')
                         && !/^\s|\s$/.test(t);
                 };
-                if (hasSub) t = bareable(',') ? ',' + t + ',' : '{,' + t + ',}';
-                if (hasSup) {
-                    // `^x^` only forms a superscript when flanked by a boundary;
-                    // intraword (`mc^2^`) is literal and needs the braced `{^x^}`.
-                    // Emit the clean bare form when this run is alone and flanked,
-                    // matching how strike (`~x~`) already serializes.
-                    const supAlone = !hasBold && !hasItalic && !hasUnderline && !hasStrike
-                        && !hasHighlight && !hasInsert && !hasDelete && !link && !carveSpan && !abbr;
-                    const before = result.slice(-1);
-                    const after = (content[idx + 1] && content[idx + 1].text) ? content[idx + 1].text[0] : '';
-                    const flanked = (!before || /[\s([{<"']/.test(before))
-                        && (!after || /[\s)\]}>"'.,;:!?]/.test(after));
-                    t = (supAlone && flanked) ? '^' + t + '^' : '{^' + t + '^}';
-                }
+                // Superscript and subscript have NO bare form: a bare `^` or `,`
+                // is literal text, so both always serialize braced.
+                if (hasSub) t = '{,' + t + ',}';
+                if (hasSup) t = '{^' + t + '^}';
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
                 // so insert/delete content that literally contains `+}` / `-}`
                 // cannot round-trip - a Carve limitation, not fixable here.

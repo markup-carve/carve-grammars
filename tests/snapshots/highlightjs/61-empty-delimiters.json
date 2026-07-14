@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": " and "
-  },
-  {
-    "scope": "built_in",
-    "text": "^^"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": " and ^^\n"
   }
 ]

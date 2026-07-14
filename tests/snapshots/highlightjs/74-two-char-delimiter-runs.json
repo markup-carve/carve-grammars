@@ -8,12 +8,12 @@
     "text": " "
   },
   {
-    "scope": "built_in",
-    "text": ",,y,"
+    "scope": "deletion",
+    "text": "~~y~"
   },
   {
     "scope": null,
-    "text": ", "
+    "text": "~ "
   },
   {
     "scope": "addition",
@@ -24,8 +24,8 @@
     "text": " "
   },
   {
-    "scope": "built_in",
-    "text": ",w,"
+    "scope": "deletion",
+    "text": "~w~"
   },
   {
     "scope": null,

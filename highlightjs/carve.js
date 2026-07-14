@@ -117,20 +117,20 @@
         relevance: 2,
     };
 
-    // Subscript (Carve): ,text, (single-char; intraword as {,text,})
+    // Subscript (Carve): braced-only `{,text,}` - a bare `,` is literal text.
     const SUBSCRIPT = {
         className: 'built_in',
-        begin: /(?<!\w),(?=\S)/,
-        end: /,(?!\w)/,
+        begin: /\{,(?=\S)/,
+        end: /,\}/,
         relevance: 3,
     };
 
-    // Superscript: ^text^
+    // Superscript (Carve): braced-only `{^text^}` - a bare `^` is literal text.
     const SUPERSCRIPT = {
         className: 'built_in',
-        begin: /\^(?!\s)/,
-        end: /\^/,
-        relevance: 2,
+        begin: /\{\^(?=\S)/,
+        end: /\^\}/,
+        relevance: 3,
     };
 
     // Math: $$`...`$$ (display) and $`...`$ (inline). Must precede the inline

@@ -77,12 +77,13 @@
             pattern: /\{=(?=\S)[^\n]*?=\}|(?<![\w=])=(?=\S)[^=\n]+?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
+        // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
         'superscript': {
-            pattern: /\{\^(?=\S)[^\n]*?\^\}|\^(?=\S)[^\s^\n]+?\^/,
+            pattern: /\{\^(?=\S)[^\n]*?\^\}/,
             alias: 'important',
         },
         'subscript': {
-            pattern: /\{,(?=\S)[^\n]*?,\}|(?<![\w,]),(?=\S)[^,\n]+?(?<=\S),(?![\w,])/,
+            pattern: /\{,(?=\S)[^\n]*?,\}/,
             alias: 'important',
         },
     };

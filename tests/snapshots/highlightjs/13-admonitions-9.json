@@ -1,11 +1,11 @@
 [
   {
     "scope": "keyword",
-    "text": "::: [First]"
+    "text": "::: warning"
   },
   {
     "scope": null,
-    "text": "\nFirst panel.\n"
+    "text": "\nMind the gap.\n"
   },
   {
     "scope": "keyword",
