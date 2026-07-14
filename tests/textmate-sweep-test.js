@@ -55,6 +55,7 @@ const CASES = [
   ['tag', 'a #tagname here', 'tag', '#tagname'],
   ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],
   ['symbol punct', 'Great :rocket: end', 'punctuation.definition.symbol', ':'],
+  ['symbol leading plus', 'Vote :+1: now', 'constant.language.symbol', '+1'],
   ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
   ['smart typography', 'a -- b', 'typography', '--'],
   ['hard break', 'line\\\n next', 'hard-break', '\\'],
@@ -160,8 +161,9 @@ const NEGATIVE = [
   // attribute block, it is literal text (corpus 122).
   ['digit-first attr key literal', '`x`{2=v}', 'meta.attributes'],
   ['empty attr block literal', 'a {} b', 'meta.attributes'],
-  // Parser rejects a leading `+` in a symbol name and whitespace inside
-  ['symbol leading plus literal', 'a :+1: b stays', 'symbol.carve'],
+  // A symbol only opens at a word boundary, so a colon glued to a word does
+  // not; whitespace inside never tokenizes either.
+  ['symbol after word literal', 'word:+1: stays', 'symbol.carve'],
   ['spaced colons literal', 'a : b : c stays', 'symbol.carve'],
   // A definition-list line must not read `:: term` as symbol punctuation
   ['def list not symbol', ':: term\n:  definition', 'symbol.carve'],

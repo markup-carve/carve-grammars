@@ -626,7 +626,7 @@
             }
         },
         "symbol": {
-            "match": "(:)([a-zA-Z0-9][\\w+-]*)(:)",
+            "match": "(?<!\\w)(:)([a-zA-Z0-9+-][\\w+-]*)(:)",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.symbol.carve"

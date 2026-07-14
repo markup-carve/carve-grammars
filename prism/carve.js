@@ -442,7 +442,8 @@
         'symbol': {
             // Symbol shortcode (e.g. emoji). Parser shape: name starts
             // alphanumeric, then word chars, `+` or `-` (`:+1:` stays literal).
-            pattern: /:[A-Za-z0-9][\w+-]*:/,
+            pattern: /(^|[^\w]):[A-Za-z0-9+-][\w+-]*:/,
+            lookbehind: true,
             alias: 'constant',
         },
 
