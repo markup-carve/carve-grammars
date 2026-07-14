@@ -1,19 +1,43 @@
 [
   {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "title"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"attr title\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
     "type": "div>punctuation",
     "text": ":::"
   },
   {
     "type": "div",
-    "text": " "
+    "text": " note "
   },
   {
-    "type": "div>symbol",
-    "text": "[First]"
+    "type": "div>string",
+    "text": "\"opener title\""
   },
   {
     "type": "text",
-    "text": "\nFirst panel.\n"
+    "text": "\nBody.\n"
   },
   {
     "type": "div>punctuation",

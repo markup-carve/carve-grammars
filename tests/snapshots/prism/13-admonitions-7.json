@@ -5,11 +5,15 @@
   },
   {
     "type": "div",
-    "text": " warning"
+    "text": " "
+  },
+  {
+    "type": "div>symbol",
+    "text": "[First]"
   },
   {
     "type": "text",
-    "text": "\nMind the gap.\n"
+    "text": "\nFirst panel.\n"
   },
   {
     "type": "div>punctuation",

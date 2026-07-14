@@ -4,7 +4,7 @@
     "text": "H"
   },
   {
-    "scope": "attr",
+    "scope": "built_in",
     "text": "{,2,}"
   },
   {
@@ -12,7 +12,7 @@
     "text": "O and E=mc"
   },
   {
-    "scope": "attr",
+    "scope": "built_in",
     "text": "{^2^}"
   },
   {

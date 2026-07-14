@@ -4,12 +4,12 @@
     "text": ":::"
   },
   {
-    "type": "div>symbol",
-    "text": "[First]"
+    "type": "div",
+    "text": " warning"
   },
   {
     "type": "text",
-    "text": "\nFirst panel.\n"
+    "text": "\nMind the gap.\n"
   },
   {
     "type": "div>punctuation",

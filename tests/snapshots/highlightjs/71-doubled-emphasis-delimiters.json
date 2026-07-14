@@ -13,22 +13,6 @@
   },
   {
     "scope": null,
-    "text": "~ "
-  },
-  {
-    "scope": "built_in",
-    "text": "^^"
-  },
-  {
-    "scope": null,
-    "text": "c"
-  },
-  {
-    "scope": "built_in",
-    "text": "^^"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "~ ^^c^^\n"
   }
 ]

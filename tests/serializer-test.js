@@ -43,7 +43,12 @@ check('inline marks map to Carve tokens',
         text('g', 'superscript'), text(' '),
         text('h', 'underline'),
     )),
-    '*a* /b/ `c` =d= ~e~ ,f, ^g^ _h_');
+    '*a* /b/ `c` =d= ~e~ {,f,} {^g^} _h_');
+
+// Sup/sub have no bare form: braced everywhere, including at a word boundary.
+check('subscript and superscript are always braced',
+    doc(para(text('x', 'subscript'), text(' '), text('y', 'superscript'))),
+    '{,x,} {^y^}');
 
 check('underline maps to _.._',
     doc(para(text('x', 'underline'))),

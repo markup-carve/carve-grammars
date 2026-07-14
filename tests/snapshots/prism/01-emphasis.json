@@ -40,24 +40,40 @@
     "text": "\n"
   },
   {
-    "type": "superscript",
+    "type": "highlight",
+    "text": "=highlight="
+  },
+  {
+    "type": "text",
+    "text": "  "
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
     "text": "^super^"
   },
   {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
     "text": "  "
   },
   {
-    "type": "subscript",
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
     "text": ",sub,"
   },
   {
-    "type": "text",
-    "text": "  "
-  },
-  {
-    "type": "highlight",
-    "text": "=highlight="
+    "type": "attributes>punctuation",
+    "text": "}"
   },
   {
     "type": "text",

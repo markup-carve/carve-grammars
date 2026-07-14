@@ -5,8 +5,12 @@ All notable changes to `carve-grammars` are documented here.
 ## 0.1.2 - Unreleased
 
 ### Changed
-- Tiptap serializer emits bare `=highlight=` / `,subscript,` at word boundaries
-  (brace forms stay for intraword), and the canonical `::: tab [Label]` opener
+- **BREAKING (follows carve #259): no bare superscript/subscript.** `^text^` and
+  `,text,` are literal text; sup/sub are the braced `{^text^}` / `{,text,}` only.
+  TextMate, Prism, highlight.js grammars drop their bare sup/sub patterns; the
+  Tiptap serializer always emits the braced forms.
+- Tiptap serializer emits bare `=highlight=` at word boundaries
+  (brace form stays for intraword), and the canonical `::: tab [Label]` opener
   instead of a `{label="..."}` attribute line (kept as fallback for labels
   containing `]`).
 - `carveTab` ingest lifts the `[label]` opener's rendered `div-label` paragraph

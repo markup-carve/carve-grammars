@@ -728,20 +728,6 @@
                             "name": "punctuation.definition.superscript.carve"
                         }
                     }
-                },
-                {
-                    "match": "(?<![\\w^])(\\^)(?=\\S)([^\\s^\\n]+?)(\\^)(?![\\w^])",
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.superscript.carve"
-                        },
-                        "2": {
-                            "name": "markup.superscript.carve"
-                        },
-                        "3": {
-                            "name": "punctuation.definition.superscript.carve"
-                        }
-                    }
                 }
             ]
         },
@@ -749,20 +735,6 @@
             "patterns": [
                 {
                     "match": "(\\{,)(?=\\S)([^,\\n]+?)(,\\})",
-                    "captures": {
-                        "1": {
-                            "name": "punctuation.definition.subscript.carve"
-                        },
-                        "2": {
-                            "name": "markup.subscript.carve"
-                        },
-                        "3": {
-                            "name": "punctuation.definition.subscript.carve"
-                        }
-                    }
-                },
-                {
-                    "match": "(?<![\\w,])(,)(?=\\S)([^,\\n]+?)(?<=\\S)(,)(?![\\w,])",
                     "captures": {
                         "1": {
                             "name": "punctuation.definition.subscript.carve"
