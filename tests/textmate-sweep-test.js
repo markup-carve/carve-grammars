@@ -19,10 +19,11 @@ const CASES = [
   ['bold-italic', 'some /*both*/ text', 'markup.bold.italic', 'both'],
   ['underline', 'some _under_ text', 'markup.underline', 'under'],
   ['strike', 'some ~strike~ text', 'markup.strikethrough', 'strike'],
-  ['superscript bare', 'a ^sup^ end', 'markup.superscript', 'sup'],
+  // Sup/sub are braced-only: a bare `^` / `,` is literal text.
   ['superscript brace', 'mc{^2^} end', 'markup.superscript', '2'],
-  ['subscript bare', 'water ,sub, here', 'markup.subscript', 'sub'],
+  ['superscript brace flanked', 'a {^sup^} end', 'markup.superscript', 'sup'],
   ['subscript brace', 'H{,2,}O', 'markup.subscript', '2'],
+  ['subscript brace flanked', 'water {,sub,} here', 'markup.subscript', 'sub'],
   ['highlight bare', 'a =mark= b', 'markup.highlight', 'mark'],
   ['highlight brace', 'wo{=mark=}rd', 'markup.highlight', 'mark'],
   ['inline code', 'a `code` b', 'markup.raw.inline', 'code'],
