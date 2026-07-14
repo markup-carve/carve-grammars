@@ -35,6 +35,13 @@ const CASES = [
   ['cross-ref', 'see </#section-id> here', 'markup.underline.link.cross-reference', 'section-id'],
   ['image', '![alt](img.jpg)', 'punctuation.definition.image', '!['],
   ['footnote ref', 'text[^1] end', 'constant.other.footnote', '1'],
+  // Citations and code callouts (ported from the intellij-carve grammar, which
+  // already covered them; the highlight.js grammar here did too, TextMate did not).
+  ['citation key', 'see [@smith2020] here', 'variable.other.citation.key', 'smith2020'],
+  ['citation integral', 'see [+@smith2020] here', 'keyword.operator.citation.integral', '+'],
+  ['citation punct', 'see [@smith2020] here', 'punctuation.definition.citation', '['],
+  ['callout annotation', '<1> explains the line', 'constant.numeric.callout', '1'],
+  ['callout marker in fence', '``` js\nconst a = 1 <1>\n```', 'constant.numeric.callout', '1'],
   ['inline footnote', 'a ^[inline note] b', 'string.other.footnote.inline', 'inline note'],
   ['span attr', '[span]{.class}', 'attributes', '.class'],
   // Forced brace family (PART 9 S22). `{_x_}` must beat the attribute rule (a
