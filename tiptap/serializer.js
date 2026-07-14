@@ -584,7 +584,10 @@ function escapeStructural(text) {
         .replace(/\{(?=[+\-~#=%])/g, '\\{')
         .replace(/(^|[^\w.])@(?=[A-Za-z0-9_])/g, '$1\\@')
         .replace(/(^|[^\w])#(?=[A-Za-z0-9_])/g, '$1\\#')
-        .replace(/:(?=[A-Za-z0-9_+-]+:)/g, '\\:');
+        // A `:name:` symbol only opens at a word boundary, and its name starts
+        // with a letter, digit, `+` or `-` (never `_`). Escape the opening `:`
+        // only where a symbol would actually form, so plain text round-trips.
+        .replace(/(^|[^\w]):(?=[A-Za-z0-9+-][\w+-]*:)/g, '$1\\:');
 }
 
 /**
