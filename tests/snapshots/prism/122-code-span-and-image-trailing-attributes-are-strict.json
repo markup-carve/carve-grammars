@@ -4,27 +4,7 @@
     "text": "`x`"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "2"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes",
-    "text": "v"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "{2=v}\n"
   }
 ]

@@ -1,23 +1,15 @@
 [
   {
     "type": "text",
-    "text": "foo"
+    "text": "foo{"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
+    "type": "bold",
     "text": "*bar*"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "baz and my"
+    "text": "}baz and my"
   },
   {
     "type": "attributes>punctuation",
@@ -33,22 +25,14 @@
   },
   {
     "type": "text",
-    "text": "name and a"
+    "text": "name and a{"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
+    "type": "italic",
     "text": "/b/"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "c\n"
+    "text": "}c\n"
   }
 ]

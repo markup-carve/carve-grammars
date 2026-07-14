@@ -1,11 +1,11 @@
 [
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "- -"
   },
   {
     "scope": null,
-    "text": " - A\n\n    second\n"
+    "text": " A\n\n    second\n"
   },
   {
     "scope": "bullet",

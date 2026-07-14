@@ -31,8 +31,25 @@
 
     // Inline attribute block: {#id .class key="val"} - reused by spans, divs,
     // headings and extension calls.
+    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
+    // start with a digit, so `{2=v}` stays literal text rather than scoping as
+    // an attribute block. An unquoted value may contain dots and colons.
+    var attrItem = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
+    // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
+    // An EMPTY attribute block is valid only where it is glued to a preceding
+    // `]` (`[x]{}` -> <span>x</span>); a bare `{}` in prose is literal text
+    // (corpus 123). Prism tokenizes left to right, so the span and its empty
+    // block have to be ONE rule -- a lookbehind would lose its `]` to the span.
+    var spanEmptyAttrs = {
+        pattern: /\[[^\^\]][^\]]*\]\{\s*\}/,
+        inside: {
+            'attr-value': { pattern: /\{\s*\}/, inside: { 'punctuation': /[{}]/ } },
+            'string': /\[[^\]]*\]/,
+        },
+    };
     var attributes = {
-        pattern: /\{[^}\n]+\}/,
+        pattern: RegExp('\\{\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'),
         alias: 'attr-value',
         inside: {
             'id': /#[A-Za-z_][\w-]*/,
@@ -211,7 +228,7 @@
 
         // List markers: -, *, ordered (1. a) i.), task [ ]/[x], definition `: `
         'list': {
-            pattern: /^[ \t]*(?:[-*][ \t]+(?:\[[ xX]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
+            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX]\]/,
@@ -330,6 +347,12 @@
                 greedy: true,
             },
         ],
+
+        // An EMPTY attribute block, only where it is glued to a preceding `]`
+        // (`[x]{}` -> <span>x</span>). A bare `{}` in prose is literal text
+        // (corpus 123). Must precede 'span', which would otherwise consume the
+        // `]` this rule anchors on.
+        'span-empty-attrs': spanEmptyAttrs,
 
         // Bracketed span with attributes: [text]{.class}
         'span': {

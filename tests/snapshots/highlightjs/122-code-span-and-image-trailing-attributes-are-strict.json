@@ -4,11 +4,7 @@
     "text": "`x`"
   },
   {
-    "scope": "attr",
-    "text": "{2=v}"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "{2=v}\n"
   }
 ]

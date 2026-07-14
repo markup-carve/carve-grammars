@@ -1,15 +1,15 @@
 [
   {
     "scope": null,
-    "text": "foo"
+    "text": "foo{"
   },
   {
-    "scope": "attr",
-    "text": "{*bar*}"
+    "scope": "strong",
+    "text": "*bar*"
   },
   {
     "scope": null,
-    "text": "baz and my"
+    "text": "}baz and my"
   },
   {
     "scope": "attr",
@@ -17,14 +17,14 @@
   },
   {
     "scope": null,
-    "text": "name and a"
+    "text": "name and a{"
   },
   {
-    "scope": "attr",
-    "text": "{/b/}"
+    "scope": "emphasis",
+    "text": "/b/"
   },
   {
     "scope": null,
-    "text": "c\n"
+    "text": "}c\n"
   }
 ]

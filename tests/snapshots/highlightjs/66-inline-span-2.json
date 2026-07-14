@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "[x]{}\n"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

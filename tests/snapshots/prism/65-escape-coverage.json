@@ -104,20 +104,16 @@
     "text": "\\`"
   },
   {
-    "type": "text",
-    "text": "\\"
+    "type": "escape",
+    "text": "\\{"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
+    "type": "escape",
+    "text": "\\|"
   },
   {
-    "type": "attributes",
-    "text": "\\|\\"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "escape",
+    "text": "\\}"
   },
   {
     "type": "escape",
