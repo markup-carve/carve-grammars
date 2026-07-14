@@ -37,6 +37,12 @@ const CASES = [
   ['footnote ref', 'text[^1] end', 'constant.other.footnote', '1'],
   ['inline footnote', 'a ^[inline note] b', 'string.other.footnote.inline', 'inline note'],
   ['span attr', '[span]{.class}', 'attributes', '.class'],
+  // Link titles admit an escaped quote; a `[^"]*` title run truncated at the
+  // backslash and dropped link scoping for the whole construct (corpus 03-links-4).
+  ['escaped-quote link title', '[t](/url "ti\\"tle")', 'markup.underline.link', '/url'],
+  ['empty link title', '[x](u "")', 'markup.underline.link', 'u'],
+  // A marker line may open several lists at once (corpus 103).
+  ['nested list markers on one line', '- - A', 'punctuation.definition.list.unnumbered', '- '],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
   ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
@@ -137,6 +143,10 @@ const NEGATIVE = [
   ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
   ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
   ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
+  // Strict attribute identifier (PART 9 S14): a digit-first key is not an
+  // attribute block, it is literal text (corpus 122).
+  ['digit-first attr key literal', '`x`{2=v}', 'meta.attributes'],
+  ['empty attr block literal', 'a {} b', 'meta.attributes'],
 ]
 let negPass = 0
 for (const [label, sample, badScope] of NEGATIVE) {

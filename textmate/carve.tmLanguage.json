@@ -314,12 +314,16 @@
             }
         },
         "list_item": {
-            "match": "^(\\s*)([-*])(\\s+)",
+            "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)",
             "captures": {
                 "2": {
                     "name": "punctuation.definition.list.unnumbered.carve"
+                },
+                "4": {
+                    "name": "punctuation.definition.list.unnumbered.carve"
                 }
-            }
+            },
+            "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first."
         },
         "numbered_item": {
             "match": "^(\\s*)(\\d+\\.)(\\s+)",
@@ -465,7 +469,7 @@
             "name": "markup.raw.inline.carve"
         },
         "image": {
-            "match": "(!\\[)([^\\]]*)(\\])(\\()([^)\\s]+)(?:\\s+\"([^\"]*)\")?(\\))",
+            "match": "(!\\[)([^\\]]*)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.image.carve"
@@ -491,7 +495,7 @@
             }
         },
         "link_inline": {
-            "match": "(\\[)([^\\]]+)(\\])(\\()([^)\\s]+)(?:\\s+\"([^\"]*)\")?(\\))",
+            "match": "(\\[)([^\\]]+)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.link.carve"
@@ -597,7 +601,7 @@
             "name": "comment.block.critic.carve"
         },
         "attributes": {
-            "match": "(\\{)([^}\\n]+)(\\})",
+            "match": "(\\{)(\\s*(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?)(?:\\s+(?:[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
             "captures": {
                 "1": {
                     "name": "punctuation.definition.attributes.carve"
@@ -609,7 +613,8 @@
                     "name": "punctuation.definition.attributes.carve"
                 }
             },
-            "name": "meta.attributes.carve"
+            "name": "meta.attributes.carve",
+            "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons."
         },
         "bold_italic": {
             "match": "(/\\*)([^*]+)(\\*/)",
