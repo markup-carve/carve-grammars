@@ -18,7 +18,7 @@ Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), ada
 ## Install
 
 ```bash
-npm install carve-grammars
+npm install @markup-carve/carve-grammars
 ```
 
 All peer dependencies are optional - install only what you use:
@@ -34,7 +34,7 @@ subscript, superscript, underline, link, image, table, task-list); install the
 
 ```js
 import { Editor } from '@tiptap/core'
-import { CarveKit, serializeToCarve } from 'carve-grammars/tiptap'
+import { CarveKit, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
 
 const editor = new Editor({
   element: document.getElementById('editor'),
@@ -50,7 +50,7 @@ const editor = new Editor({
 
 ```js
 import StarterKit from '@tiptap/starter-kit'
-import { CarveInsert, CarveDelete, CarveDiv, serializeToCarve } from 'carve-grammars/tiptap'
+import { CarveInsert, CarveDelete, CarveDiv, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
 
 const editor = new Editor({
   extensions: [StarterKit, CarveInsert, CarveDelete, CarveDiv],
@@ -135,19 +135,19 @@ with a dynamic `import` after assigning `globalThis.Prism`:
 import Prism from 'prismjs'
 
 globalThis.Prism = Prism                       // grammar reads the global Prism
-await import('carve-grammars/prism/carve.js')  // registers Prism.languages.carve
+await import('@markup-carve/carve-grammars/prism/carve.js')  // registers Prism.languages.carve
 
 const html = Prism.highlight(source, Prism.languages.carve, 'carve')
 ```
 
 In the browser, load `prismjs` first (it sets the global `Prism`), then load
-`carve-grammars/prism/carve.js`.
+`@markup-carve/carve-grammars/prism/carve.js`.
 
 ### highlight.js
 
 ```js
 import hljs from 'highlight.js'
-import carve from 'carve-grammars/highlightjs/carve.js'
+import carve from '@markup-carve/carve-grammars/highlightjs/carve.js'
 
 hljs.registerLanguage('carve', carve)
 const { value } = hljs.highlight(source, { language: 'carve' })
@@ -158,13 +158,13 @@ the global `hljs`:
 
 ```html
 <script src="highlight.min.js"></script>
-<script src="node_modules/carve-grammars/highlightjs/carve.js"></script>
+<script src="node_modules/@markup-carve/carve-grammars/highlightjs/carve.js"></script>
 <script>hljs.highlightAll();</script>
 ```
 
 ### Shiki / VitePress
 
-`carve-grammars/shiki` is the shared kit every Carve docs site uses, so
+`@markup-carve/carve-grammars/shiki` is the shared kit every Carve docs site uses, so
 highlighting stays identical across them: the TextMate grammar, GitHub
 light/dark themes extended with Carve scope colors, and a transformer + CSS
 pair that bridges what Shiki's HTML emitter cannot express (strikethrough,
@@ -173,7 +173,7 @@ sub/superscript positioning, highlight background).
 ```ts
 // .vitepress/config.ts
 import { defineConfig } from 'vitepress'
-import { carveMarkdown } from 'carve-grammars/shiki'
+import { carveMarkdown } from '@markup-carve/carve-grammars/shiki'
 
 export default defineConfig({
   markdown: {
@@ -186,7 +186,7 @@ export default defineConfig({
 
 ```ts
 // .vitepress/theme/index.ts
-import 'carve-grammars/shiki/carve.css'
+import '@markup-carve/carve-grammars/shiki/carve.css'
 ```
 
 Named exports for other setups: `carveGrammar`, `carveLightExtras` /
