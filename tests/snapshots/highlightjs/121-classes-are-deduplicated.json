@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[x]{.a .a .b}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a .a .b}"
   },
   {
     "scope": null,

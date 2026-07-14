@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "para\n%% c\n"
+    "text": "para\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%% c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

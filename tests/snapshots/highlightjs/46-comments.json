@@ -1,6 +1,22 @@
 [
   {
     "scope": null,
-    "text": "Visible.\n\n%% this line is a comment\n\n%%%\na hidden\nblock\n%%%\n\nAlso visible.\n"
+    "text": "Visible.\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%% this line is a comment"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%%%\na hidden\nblock\n%%%\n"
+  },
+  {
+    "scope": null,
+    "text": "\nAlso visible.\n"
   }
 ]

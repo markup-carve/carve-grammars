@@ -1,116 +1,116 @@
 {
-    "name": "carve-grammars",
-    "version": "0.1.1",
-    "description": "Grammars for the Carve markup language: Tiptap editor kit + serializer, plus Prism, highlight.js and TextMate syntax-highlighting grammars",
-    "type": "module",
-    "main": "tiptap/index.js",
-    "scripts": {
-        "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/textmate-sweep-test.js",
-        "test:coverage": "node tests/coverage-test.js",
-        "test:snapshot": "node tests/snapshot-test.js",
-        "test:roundtrip": "node tests/roundtrip-test.js",
-        "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js"
+  "name": "carve-grammars",
+  "version": "0.1.1",
+  "description": "Grammars for the Carve markup language: Tiptap editor kit + serializer, plus Prism, highlight.js and TextMate syntax-highlighting grammars",
+  "type": "module",
+  "main": "tiptap/index.js",
+  "scripts": {
+    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js",
+    "test:coverage": "node tests/coverage-test.js",
+    "test:snapshot": "node tests/snapshot-test.js",
+    "test:roundtrip": "node tests/roundtrip-test.js",
+    "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markup-carve/carve-grammars.git"
+  },
+  "keywords": [
+    "carve",
+    "tiptap",
+    "prosemirror",
+    "wysiwyg",
+    "serializer",
+    "markup",
+    "syntax-highlighting",
+    "prism",
+    "prismjs",
+    "highlight.js",
+    "hljs"
+  ],
+  "author": "markup-carve",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/markup-carve/carve-grammars/issues"
+  },
+  "homepage": "https://github.com/markup-carve/carve-grammars#readme",
+  "files": [
+    "tiptap/",
+    "prism/",
+    "highlightjs/",
+    "shiki/",
+    "textmate/",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./tiptap/index.js",
+    "./tiptap": "./tiptap/index.js",
+    "./tiptap/*": "./tiptap/*",
+    "./prism/carve.js": "./prism/carve.js",
+    "./prism/*": "./prism/*",
+    "./highlightjs/carve.js": {
+      "import": "./highlightjs/carve.mjs",
+      "default": "./highlightjs/carve.js"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/markup-carve/carve-grammars.git"
+    "./highlightjs/*": "./highlightjs/*",
+    "./shiki": "./shiki/index.js",
+    "./shiki/carve.css": "./shiki/carve.css",
+    "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json"
+  },
+  "peerDependencies": {
+    "@shikijs/themes": "^2 || ^3",
+    "@tiptap/core": "^2",
+    "@tiptap/extension-underline": "^2",
+    "@tiptap/starter-kit": "^2",
+    "highlight.js": "^11",
+    "prismjs": "^1"
+  },
+  "peerDependenciesMeta": {
+    "@tiptap/core": {
+      "optional": true
     },
-    "keywords": [
-        "carve",
-        "tiptap",
-        "prosemirror",
-        "wysiwyg",
-        "serializer",
-        "markup",
-        "syntax-highlighting",
-        "prism",
-        "prismjs",
-        "highlight.js",
-        "hljs"
-    ],
-    "author": "markup-carve",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/markup-carve/carve-grammars/issues"
+    "@tiptap/starter-kit": {
+      "optional": true
     },
-    "homepage": "https://github.com/markup-carve/carve-grammars#readme",
-    "files": [
-        "tiptap/",
-        "prism/",
-        "highlightjs/",
-        "shiki/",
-        "textmate/",
-        "README.md",
-        "LICENSE"
-    ],
-    "exports": {
-        ".": "./tiptap/index.js",
-        "./tiptap": "./tiptap/index.js",
-        "./tiptap/*": "./tiptap/*",
-        "./prism/carve.js": "./prism/carve.js",
-        "./prism/*": "./prism/*",
-        "./highlightjs/carve.js": {
-            "import": "./highlightjs/carve.mjs",
-            "default": "./highlightjs/carve.js"
-        },
-        "./highlightjs/*": "./highlightjs/*",
-        "./shiki": "./shiki/index.js",
-        "./shiki/carve.css": "./shiki/carve.css",
-        "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json"
+    "@tiptap/extension-underline": {
+      "optional": true
     },
-    "peerDependencies": {
-        "@shikijs/themes": "^2 || ^3",
-        "@tiptap/core": "^2",
-        "@tiptap/extension-underline": "^2",
-        "@tiptap/starter-kit": "^2",
-        "highlight.js": "^11",
-        "prismjs": "^1"
+    "prismjs": {
+      "optional": true
     },
-    "peerDependenciesMeta": {
-        "@tiptap/core": {
-            "optional": true
-        },
-        "@tiptap/starter-kit": {
-            "optional": true
-        },
-        "@tiptap/extension-underline": {
-            "optional": true
-        },
-        "prismjs": {
-            "optional": true
-        },
-        "highlight.js": {
-            "optional": true
-        },
-        "@shikijs/themes": {
-            "optional": true
-        }
+    "highlight.js": {
+      "optional": true
     },
-    "devDependencies": {
-        "@markup-carve/carve": "github:markup-carve/carve-js",
-        "@shikijs/themes": "^3.13.0",
-        "@tiptap/core": "^2.27.2",
-        "@tiptap/extension-bullet-list": "^2.27.2",
-        "@tiptap/extension-code-block": "^2.27.2",
-        "@tiptap/extension-hard-break": "^2.27.2",
-        "@tiptap/extension-highlight": "^2.27.2",
-        "@tiptap/extension-image": "^2.27.2",
-        "@tiptap/extension-link": "^2.27.2",
-        "@tiptap/extension-list-item": "^2.27.2",
-        "@tiptap/extension-subscript": "^2.27.2",
-        "@tiptap/extension-superscript": "^2.27.2",
-        "@tiptap/extension-table": "^2.27.2",
-        "@tiptap/extension-table-cell": "^2.27.2",
-        "@tiptap/extension-table-header": "^2.27.2",
-        "@tiptap/extension-table-row": "^2.27.2",
-        "@tiptap/extension-task-item": "^2.27.2",
-        "@tiptap/extension-task-list": "^2.27.2",
-        "@tiptap/extension-underline": "^2.27.2",
-        "@tiptap/pm": "^2.27.2",
-        "@tiptap/starter-kit": "^2.27.2",
-        "happy-dom": "^20.10.6",
-        "highlight.js": "^11.11.1",
-        "prismjs": "^1.30.0",
-        "shiki": "^4.3.1"
+    "@shikijs/themes": {
+      "optional": true
     }
+  },
+  "devDependencies": {
+    "@markup-carve/carve": "github:markup-carve/carve-js",
+    "@shikijs/themes": "^3.13.0",
+    "@tiptap/core": "^2.27.2",
+    "@tiptap/extension-bullet-list": "^2.27.2",
+    "@tiptap/extension-code-block": "^2.27.2",
+    "@tiptap/extension-hard-break": "^2.27.2",
+    "@tiptap/extension-highlight": "^2.27.2",
+    "@tiptap/extension-image": "^2.27.2",
+    "@tiptap/extension-link": "^2.27.2",
+    "@tiptap/extension-list-item": "^2.27.2",
+    "@tiptap/extension-subscript": "^2.27.2",
+    "@tiptap/extension-superscript": "^2.27.2",
+    "@tiptap/extension-table": "^2.27.2",
+    "@tiptap/extension-table-cell": "^2.27.2",
+    "@tiptap/extension-table-header": "^2.27.2",
+    "@tiptap/extension-table-row": "^2.27.2",
+    "@tiptap/extension-task-item": "^2.27.2",
+    "@tiptap/extension-task-list": "^2.27.2",
+    "@tiptap/extension-underline": "^2.27.2",
+    "@tiptap/pm": "^2.27.2",
+    "@tiptap/starter-kit": "^2.27.2",
+    "happy-dom": "^20.10.6",
+    "highlight.js": "^11.11.1",
+    "prismjs": "^1.30.0",
+    "shiki": "^4.3.1"
+  }
 }

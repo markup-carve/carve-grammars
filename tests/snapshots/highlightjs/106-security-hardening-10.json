@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[danger]{srcdoc=\"<script>\"}"
+    "text": "[danger]"
+  },
+  {
+    "scope": "attr",
+    "text": "{srcdoc=\"<script>\"}"
   },
   {
     "scope": null,

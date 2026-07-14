@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[x]{title=\"a\\\"b\"}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"a\\\"b\"}"
   },
   {
     "scope": null,

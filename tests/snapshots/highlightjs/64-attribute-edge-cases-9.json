@@ -1,10 +1,14 @@
 [
   {
     "scope": "string",
-    "text": "[x]{k='{y}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{k='{y}'}"
   },
   {
     "scope": null,
-    "text": "'}\n"
+    "text": "\n"
   }
 ]

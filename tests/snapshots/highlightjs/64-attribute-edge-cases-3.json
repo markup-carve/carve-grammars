@@ -1,10 +1,14 @@
 [
   {
     "scope": "string",
-    "text": "[x]{data-x=\"{y}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{data-x=\"{y}\"}"
   },
   {
     "scope": null,
-    "text": "\"}\n"
+    "text": "\n"
   }
 ]

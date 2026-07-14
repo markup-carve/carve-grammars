@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[x]{ }"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{ }"
   },
   {
     "scope": null,

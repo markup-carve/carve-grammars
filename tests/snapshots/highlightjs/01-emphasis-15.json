@@ -9,15 +9,15 @@
   },
   {
     "scope": null,
-    "text": "} it, then {"
+    "text": "} it, then "
   },
   {
-    "scope": "deletion",
-    "text": "~old~"
+    "scope": "meta",
+    "text": "{~old~>new~}"
   },
   {
     "scope": null,
-    "text": ">new~}, and {"
+    "text": ", and {"
   },
   {
     "scope": "addition",

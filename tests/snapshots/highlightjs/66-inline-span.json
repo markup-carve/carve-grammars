@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[styled run]{.hl}"
+    "text": "[styled run]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.hl}"
   },
   {
     "scope": null,

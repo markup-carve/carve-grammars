@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[note]{.a .b #n key=val}"
+    "text": "[note]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a .b #n key=val}"
   },
   {
     "scope": null,

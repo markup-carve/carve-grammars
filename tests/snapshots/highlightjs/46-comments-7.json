@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "x\n  %% indented comment\ny\n"
+    "text": "x\n  "
+  },
+  {
+    "scope": "comment",
+    "text": "%% indented comment"
+  },
+  {
+    "scope": null,
+    "text": "\ny\n"
   }
 ]

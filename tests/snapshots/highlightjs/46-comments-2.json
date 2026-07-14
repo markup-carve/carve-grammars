@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Also visible. %% this tail is a comment\n"
+    "text": "Also visible. "
+  },
+  {
+    "scope": "comment",
+    "text": "%% this tail is a comment"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

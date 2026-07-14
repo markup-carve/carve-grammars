@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[danger]{onclick=\"steal()\"}"
+    "text": "[danger]"
+  },
+  {
+    "scope": "attr",
+    "text": "{onclick=\"steal()\"}"
   },
   {
     "scope": null,

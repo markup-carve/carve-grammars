@@ -17,14 +17,22 @@
   },
   {
     "scope": null,
-    "text": " {"
+    "text": " "
   },
   {
-    "scope": "deletion",
-    "text": "~old~"
+    "scope": "meta",
+    "text": "{~old~>new~}"
   },
   {
     "scope": null,
-    "text": ">new~} b{# note #}\n"
+    "text": " b"
+  },
+  {
+    "scope": "comment",
+    "text": "{# note #}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

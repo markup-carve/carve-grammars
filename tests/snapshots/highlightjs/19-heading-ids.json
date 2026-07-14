@@ -60,15 +60,23 @@
     "text": "/#cafe-notes>, </"
   },
   {
+    "scope": "symbol",
+    "text": "#section-2024-recap"
+  },
+  {
     "scope": null,
-    "text": "#section-2024-recap>, <"
+    "text": ">, <"
   },
   {
     "scope": "emphasis",
     "text": "/#setup-2>, and </"
   },
   {
+    "scope": "symbol",
+    "text": "#api-v2"
+  },
+  {
     "scope": null,
-    "text": "#api-v2>.\n"
+    "text": ">.\n"
   }
 ]

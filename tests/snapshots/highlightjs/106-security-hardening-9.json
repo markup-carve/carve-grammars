@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[danger]{style=\"x:expression(steal())\"}"
+    "text": "[danger]"
+  },
+  {
+    "scope": "attr",
+    "text": "{style=\"x:expression(steal())\"}"
   },
   {
     "scope": null,

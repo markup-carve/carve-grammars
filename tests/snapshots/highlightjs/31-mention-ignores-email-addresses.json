@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Write me@example.com or ping @markus.\n"
+    "text": "Write me@example.com or ping "
+  },
+  {
+    "scope": "symbol",
+    "text": "@markus"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

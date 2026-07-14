@@ -1,6 +1,22 @@
 [
   {
     "scope": null,
-    "text": "Issue #123 and #v2 here.\n"
+    "text": "Issue "
+  },
+  {
+    "scope": "symbol",
+    "text": "#123"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "#v2"
+  },
+  {
+    "scope": null,
+    "text": " here.\n"
   }
 ]
