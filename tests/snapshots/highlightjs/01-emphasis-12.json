@@ -4,7 +4,7 @@
     "text": "foo"
   },
   {
-    "scope": "attr",
+    "scope": "strong",
     "text": "{*bar*}"
   },
   {
@@ -12,7 +12,7 @@
     "text": "baz and my"
   },
   {
-    "scope": "attr",
+    "scope": "emphasis",
     "text": "{_path_}"
   },
   {
@@ -20,7 +20,7 @@
     "text": "name and a"
   },
   {
-    "scope": "attr",
+    "scope": "emphasis",
     "text": "{/b/}"
   },
   {

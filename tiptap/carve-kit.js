@@ -303,12 +303,12 @@ export const CarveKit = Extension.create({
             extensions.push(Highlight.configure(this.options.highlight ?? {}));
         }
 
-        // Subscript mark (maps to ,,text,,)
+        // Subscript mark (maps to the braced {,text,})
         if (this.options.subscript !== false) {
             extensions.push(Subscript.configure(this.options.subscript ?? {}));
         }
 
-        // Superscript mark (maps to ^text^)
+        // Superscript mark (maps to the braced {^text^})
         if (this.options.superscript !== false) {
             extensions.push(Superscript.configure(this.options.superscript ?? {}));
         }

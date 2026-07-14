@@ -16,11 +16,15 @@ All notable changes to `carve-grammars` are documented here.
 - Shiki kit: light/dark token colors for the symbol scopes.
 
 ### Changed
+- **BREAKING (follows carve #259): no bare superscript/subscript.** `^text^` and
+  `,text,` are literal text; sup/sub are the braced `{^text^}` / `{,text,}` only.
+  TextMate, Prism, highlight.js grammars drop their bare sup/sub patterns; the
+  Tiptap serializer always emits the braced forms.
 - Prism: the former `emoji` token is now `symbol` and matches the parser
   shape exactly (a leading `+` or `_` in the name no longer tokenizes;
   `:+1:` stays literal).
-- Tiptap serializer emits bare `=highlight=` / `,subscript,` at word boundaries
-  (brace forms stay for intraword), and the canonical `::: tab [Label]` opener
+- Tiptap serializer emits bare `=highlight=` at word boundaries
+  (brace form stays for intraword), and the canonical `::: tab [Label]` opener
   instead of a `{label="..."}` attribute line (kept as fallback for labels
   containing `]`).
 - `carveTab` ingest lifts the `[label]` opener's rendered `div-label` paragraph

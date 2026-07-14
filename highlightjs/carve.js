@@ -44,9 +44,27 @@
     return function carve(hljs) {
     // Block attributes: {.class #id key=value} or boolean {reversed}
     // Excludes special inline syntax like {= {+ {- {%
+    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
+    // start with a digit, so `{2=v}` stays literal text rather than scoping as
+    // an attribute block. An unquoted value may contain dots and colons.
+    const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // Forced intraword family (PART 9 S22). Content may contain the delimiter
+    // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
+    // must precede ATTRIBUTE, or `{_path_}` reads as a boolean attribute.
+    const FORCED_STRONG = { className: 'strong', begin: /\{\*(?=\S)/, end: /\*\}/, relevance: 5 };
+    const FORCED_EMPHASIS = { className: 'emphasis', begin: /\{\/(?=\S)/, end: /\/\}/, relevance: 5 };
+    const FORCED_UNDERLINE = { className: 'emphasis', begin: /\{_(?=\S)/, end: /_\}/, relevance: 5 };
+    const FORCED_STRIKE = { className: 'deletion', begin: /\{~(?=\S)(?!.*~>)/, end: /~\}/, relevance: 5 };
+
+    const ATTRIBUTE_EMPTY = {
+        className: 'attr',
+        // Valid only glued to a preceding `]` (`[x]{}`); a bare `{}` is literal.
+        begin: /(?<=\])\{\s*\}/,
+        relevance: 5,
+    };
     const ATTRIBUTE = {
         className: 'attr',
-        begin: /\{(?![=+\-%])[^}]+\}/,
+        begin: new RegExp('\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'),
         relevance: 5,
     };
 
@@ -117,20 +135,20 @@
         relevance: 2,
     };
 
-    // Subscript (Carve): ,text, (single-char; intraword as {,text,})
+    // Subscript (Carve): braced-only `{,text,}` - a bare `,` is literal text.
     const SUBSCRIPT = {
         className: 'built_in',
-        begin: /(?<!\w),(?=\S)/,
-        end: /,(?!\w)/,
+        begin: /\{,(?=\S)/,
+        end: /,\}/,
         relevance: 3,
     };
 
-    // Superscript: ^text^
+    // Superscript (Carve): braced-only `{^text^}` - a bare `^` is literal text.
     const SUPERSCRIPT = {
         className: 'built_in',
-        begin: /\^(?!\s)/,
-        end: /\^/,
-        relevance: 2,
+        begin: /\{\^(?=\S)/,
+        end: /\^\}/,
+        relevance: 3,
     };
 
     // Math: $$`...`$$ (display) and $`...`$ (inline). Must precede the inline
@@ -275,7 +293,8 @@
     // Bullet list items: - or *
     const LIST_BULLET = {
         className: 'bullet',
-        begin: /^[ \t]*[-*](?=\s)/,
+        // A marker line may carry several markers (`- - A`, corpus 103).
+        begin: /^[ \t]*(?:[-*][ \t]+)*[-*](?=\s)/,
         relevance: 0,
     };
 
@@ -459,6 +478,11 @@
             MATH_INLINE,       // $`...`$
             INLINE_CODE_DOUBLE, // ``code`` - before single
             INLINE_CODE_SINGLE, // `code`
+            FORCED_STRONG,
+            FORCED_EMPHASIS,
+            FORCED_UNDERLINE,
+            FORCED_STRIKE,
+            ATTRIBUTE_EMPTY,
             ATTRIBUTE,
             ESCAPE,
             HARD_BREAK,

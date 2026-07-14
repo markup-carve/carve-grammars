@@ -1,6 +1,6 @@
 [
   {
-    "scope": "attr",
+    "scope": "emphasis",
     "text": "{/a/b/}"
   },
   {
@@ -8,7 +8,7 @@
     "text": " and "
   },
   {
-    "scope": "attr",
+    "scope": "emphasis",
     "text": "{/italic *bold*/}"
   },
   {

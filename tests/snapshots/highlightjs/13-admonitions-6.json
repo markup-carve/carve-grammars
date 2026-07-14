@@ -1,11 +1,11 @@
 [
   {
     "scope": "keyword",
-    "text": ":::[First]"
+    "text": "::: note \"Install *now* via `npm`\""
   },
   {
     "scope": null,
-    "text": "\nFirst panel.\n"
+    "text": "\nBody.\n"
   },
   {
     "scope": "keyword",

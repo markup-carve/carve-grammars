@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "---json\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{\"title\": \"My Document\"}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "---json\n{\"title\": \"My Document\"}\n"
   },
   {
     "scope": "meta",

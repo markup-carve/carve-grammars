@@ -1,27 +1,11 @@
 [
   {
     "scope": "keyword",
-    "text": "::: tip"
+    "text": ":::[First]"
   },
   {
     "scope": null,
-    "text": "\nQuick steps:\n\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " read the docs\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " run the demo\n"
+    "text": "\nFirst panel.\n"
   },
   {
     "scope": "keyword",

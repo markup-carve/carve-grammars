@@ -1,15 +1,23 @@
 [
   {
     "scope": null,
-    "text": "A note"
+    "text": "A note^[see "
   },
   {
-    "scope": "built_in",
-    "text": "^[see *later*] inline. And a ref[^"
+    "scope": "strong",
+    "text": "*later*"
   },
   {
     "scope": null,
-    "text": "a].\n\n"
+    "text": "] inline. And a ref"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
   },
   {
     "scope": "symbol",

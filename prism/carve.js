@@ -31,8 +31,25 @@
 
     // Inline attribute block: {#id .class key="val"} - reused by spans, divs,
     // headings and extension calls.
+    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
+    // start with a digit, so `{2=v}` stays literal text rather than scoping as
+    // an attribute block. An unquoted value may contain dots and colons.
+    var attrItem = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
+    // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
+    // An EMPTY attribute block is valid only where it is glued to a preceding
+    // `]` (`[x]{}` -> <span>x</span>); a bare `{}` in prose is literal text
+    // (corpus 123). Prism tokenizes left to right, so the span and its empty
+    // block have to be ONE rule -- a lookbehind would lose its `]` to the span.
+    var spanEmptyAttrs = {
+        pattern: /\[[^\^\]][^\]]*\]\{\s*\}/,
+        inside: {
+            'attr-value': { pattern: /\{\s*\}/, inside: { 'punctuation': /[{}]/ } },
+            'string': /\[[^\]]*\]/,
+        },
+    };
     var attributes = {
-        pattern: /\{[^}\n]+\}/,
+        pattern: RegExp('\\{\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'),
         alias: 'attr-value',
         inside: {
             'id': /#[A-Za-z_][\w-]*/,
@@ -53,6 +70,26 @@
         // The "no leading/trailing space" rule is expressed without JS
         // lookbehind (unsupported on Safari < 16.4 and some engines): the first
         // and last content chars are required to be non-space directly.
+        // Forced intraword family (PART 9 S22): `{*x*}` `{/x/}` `{_x_}` `{~x~}`.
+        // Content may contain the delimiter -- `{/a/b/}` is <em>a/b</em> -- so the
+        // run ends at the closing `X}`. These MUST precede 'attributes', or
+        // `{_path_}` reads as a boolean attribute instead of <u>path</u>.
+        'forced-bold': {
+            pattern: /\{\*(?=\S)[^\n]*?\*\}/,
+            alias: 'bold',
+        },
+        'forced-italic': {
+            pattern: /\{\/(?=\S)[^\n]*?\/\}/,
+            alias: 'italic',
+        },
+        'forced-underline': {
+            pattern: /\{_(?=\S)[^\n]*?_\}/,
+            alias: 'underline',
+        },
+        'forced-strike': {
+            pattern: /\{~(?=\S)(?:(?!~>)[^\n])*?~\}/,
+            alias: 'deleted',
+        },
         'bold': {
             pattern: /\*[^*\s\n](?:[^*\n]*?[^*\s\n])?\*/,
             alias: 'bold',
@@ -77,12 +114,13 @@
             pattern: /\{=(?=\S)[^\n]*?=\}|(?<![\w=])=(?=\S)[^=\n]+?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
+        // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
         'superscript': {
-            pattern: /\{\^(?=\S)[^\n]*?\^\}|\^(?=\S)[^\s^\n]+?\^/,
+            pattern: /\{\^(?=\S)[^\n]*?\^\}/,
             alias: 'important',
         },
         'subscript': {
-            pattern: /\{,(?=\S)[^\n]*?,\}|(?<![\w,]),(?=\S)[^,\n]+?(?<=\S),(?![\w,])/,
+            pattern: /\{,(?=\S)[^\n]*?,\}/,
             alias: 'important',
         },
     };
@@ -210,7 +248,7 @@
 
         // List markers: -, *, ordered (1. a) i.), task [ ]/[x], definition `: `
         'list': {
-            pattern: /^[ \t]*(?:[-*][ \t]+(?:\[[ xX]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
+            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX]\]/,
@@ -330,6 +368,12 @@
             },
         ],
 
+        // An EMPTY attribute block, only where it is glued to a preceding `]`
+        // (`[x]{}` -> <span>x</span>). A bare `{}` in prose is literal text
+        // (corpus 123). Must precede 'span', which would otherwise consume the
+        // `]` this rule anchors on.
+        'span-empty-attrs': spanEmptyAttrs,
+
         // Bracketed span with attributes: [text]{.class}
         'span': {
             pattern: /\[[^\^\]][^\]]*\](?=\{)/,
@@ -364,6 +408,12 @@
             pattern: /\{#[^}]*#\}/,
             alias: 'comment',
         },
+
+        // Forced brace emphasis must beat the attribute rule (`{_path_}`).
+        'forced-bold': inline['forced-bold'],
+        'forced-italic': inline['forced-italic'],
+        'forced-underline': inline['forced-underline'],
+        'forced-strike': inline['forced-strike'],
 
         // Attribute blocks attached to the preceding element
         'attributes': attributes,

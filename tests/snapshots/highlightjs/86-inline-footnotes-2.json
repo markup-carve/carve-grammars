@@ -1,10 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Text"
+    "text": "Text^"
   },
   {
-    "scope": "built_in",
-    "text": "^[note]{.ref}.\n"
+    "scope": "string",
+    "text": "[note]{.ref}"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

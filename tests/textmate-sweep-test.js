@@ -19,10 +19,11 @@ const CASES = [
   ['bold-italic', 'some /*both*/ text', 'markup.bold.italic', 'both'],
   ['underline', 'some _under_ text', 'markup.underline', 'under'],
   ['strike', 'some ~strike~ text', 'markup.strikethrough', 'strike'],
-  ['superscript bare', 'a ^sup^ end', 'markup.superscript', 'sup'],
+  // Sup/sub are braced-only: a bare `^` / `,` is literal text.
   ['superscript brace', 'mc{^2^} end', 'markup.superscript', '2'],
-  ['subscript bare', 'water ,sub, here', 'markup.subscript', 'sub'],
+  ['superscript brace flanked', 'a {^sup^} end', 'markup.superscript', 'sup'],
   ['subscript brace', 'H{,2,}O', 'markup.subscript', '2'],
+  ['subscript brace flanked', 'water {,sub,} here', 'markup.subscript', 'sub'],
   ['highlight bare', 'a =mark= b', 'markup.highlight', 'mark'],
   ['highlight brace', 'wo{=mark=}rd', 'markup.highlight', 'mark'],
   ['inline code', 'a `code` b', 'markup.raw.inline', 'code'],
@@ -36,6 +37,20 @@ const CASES = [
   ['footnote ref', 'text[^1] end', 'constant.other.footnote', '1'],
   ['inline footnote', 'a ^[inline note] b', 'string.other.footnote.inline', 'inline note'],
   ['span attr', '[span]{.class}', 'attributes', '.class'],
+  // Forced brace family (PART 9 S22). `{_x_}` must beat the attribute rule (a
+  // bare boolean key is shape-identical), and the content may contain the
+  // delimiter: `{/a/b/}` is <em>a/b</em>.
+  ['forced bold', 'foo{*bar*}baz', 'markup.bold', 'bar'],
+  ['forced italic', 'a{/b/}c', 'markup.italic', 'b'],
+  ['forced underline', 'my{_path_}name', 'markup.underline', 'path'],
+  ['forced strike', 'x{~gone~}y', 'markup.strikethrough', 'gone'],
+  ['forced italic spanning its own delimiter', '{/a/b/}', 'markup.italic', 'a/b'],
+  // Link titles admit an escaped quote; a `[^"]*` title run truncated at the
+  // backslash and dropped link scoping for the whole construct (corpus 03-links-4).
+  ['escaped-quote link title', '[t](/url "ti\\"tle")', 'markup.underline.link', '/url'],
+  ['empty link title', '[x](u "")', 'markup.underline.link', 'u'],
+  // A marker line may open several lists at once (corpus 103).
+  ['nested list markers on one line', '- - A', 'punctuation.definition.list.unnumbered', '- '],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
   ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],
@@ -141,6 +156,10 @@ const NEGATIVE = [
   ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
   ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
   ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
+  // Strict attribute identifier (PART 9 S14): a digit-first key is not an
+  // attribute block, it is literal text (corpus 122).
+  ['digit-first attr key literal', '`x`{2=v}', 'meta.attributes'],
+  ['empty attr block literal', 'a {} b', 'meta.attributes'],
   // Parser rejects a leading `+` in a symbol name and whitespace inside
   ['symbol leading plus literal', 'a :+1: b stays', 'symbol.carve'],
   ['spaced colons literal', 'a : b : c stays', 'symbol.carve'],

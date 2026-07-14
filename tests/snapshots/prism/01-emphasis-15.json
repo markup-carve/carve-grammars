@@ -4,16 +4,8 @@
     "text": "re"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes",
-    "text": "~view~"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "forced-strike",
+    "text": "{~view~}"
   },
   {
     "type": "text",
@@ -28,24 +20,8 @@
     "text": ", and "
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "mark"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "highlight",
+    "text": "{=mark=}"
   },
   {
     "type": "text",
