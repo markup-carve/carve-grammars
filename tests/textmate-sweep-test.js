@@ -53,6 +53,8 @@ const CASES = [
   ['nested list markers on one line', '- - A', 'punctuation.definition.list.unnumbered', '- '],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
+  ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],
+  ['symbol punct', 'Great :rocket: end', 'punctuation.definition.symbol', ':'],
   ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
   ['smart typography', 'a -- b', 'typography', '--'],
   ['hard break', 'line\\\n next', 'hard-break', '\\'],
@@ -96,6 +98,9 @@ const CASES = [
   ['gfm delimiter row', '| a | b |\n|---|--:|', 'keyword.operator.table.alignment', '--:'],
   ['block attrs line', '{#id .class key=value}\n# H', 'attributes', '#id'],
   ['abbreviation', '*[HTML]: HyperText', 'abbreviation', 'HTML'],
+  ['ref def label', '[r]: https://ref.example', 'constant.other.reference.link', 'r'],
+  ['ref def url', '[r]: https://ref.example', 'markup.underline.link', 'https://ref.example'],
+  ['ref def title', '[r]: https://ref.example "Site"', 'string.quoted.link.title', 'Site'],
   ['frontmatter', '---\ntitle: Doc\n---\n\nText', 'frontmatter', 'title'],
   ['inline math', 'a $`e=mc^2` b', 'markup.math', 'e=mc^2'],
   ['display math', '$$`\\int_0^1 x`', 'markup.math', '\\int_0^1 x'],
@@ -155,6 +160,14 @@ const NEGATIVE = [
   // attribute block, it is literal text (corpus 122).
   ['digit-first attr key literal', '`x`{2=v}', 'meta.attributes'],
   ['empty attr block literal', 'a {} b', 'meta.attributes'],
+  // Parser rejects a leading `+` in a symbol name and whitespace inside
+  ['symbol leading plus literal', 'a :+1: b stays', 'symbol.carve'],
+  ['spaced colons literal', 'a : b : c stays', 'symbol.carve'],
+  // A definition-list line must not read `:: term` as symbol punctuation
+  ['def list not symbol', ':: term\n:  definition', 'symbol.carve'],
+  // Citation defs stay citations, footnote defs stay footnotes
+  ['citation not ref def', '[@k]: x', 'meta.link.reference.def'],
+  ['footnote def not ref def', '[^f]: note body', 'meta.link.reference.def'],
 ]
 let negPass = 0
 for (const [label, sample, badScope] of NEGATIVE) {
