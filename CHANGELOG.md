@@ -2,9 +2,14 @@
 
 All notable changes to `carve-grammars` are documented here.
 
-## 0.1.2 - Unreleased
+## 0.1.2 - 2026-07-14
 
 ### Changed
+- **Renamed to `@markup-carve/carve-grammars`.** The package now publishes under
+  the org scope, matching every other JS package in the project
+  (`@markup-carve/carve`, `@markup-carve/carve-components`, ...). The unscoped
+  `carve-grammars` name stops at 0.1.1; update imports and install lines
+  accordingly.
 - Symbol shortcodes match the refined parser shape (carve#261): the first
   name character may be `+` or `-` (so `:+1:` / `:-1:` tokenize), and a
   left word-boundary guard keeps a colon glued to a word (`word:+1:`) from
