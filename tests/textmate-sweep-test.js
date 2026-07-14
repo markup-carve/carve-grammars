@@ -38,8 +38,8 @@ const CASES = [
   ['span attr', '[span]{.class}', 'attributes', '.class'],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
-  ['emoji', 'Great :rocket: end', 'constant.language.emoji', 'rocket'],
-  ['emoji punct', 'Great :rocket: end', 'punctuation.definition.emoji', ':'],
+  ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],
+  ['symbol punct', 'Great :rocket: end', 'punctuation.definition.symbol', ':'],
   ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
   ['smart typography', 'a -- b', 'typography', '--'],
   ['hard break', 'line\\\n next', 'hard-break', '\\'],
@@ -141,11 +141,11 @@ const NEGATIVE = [
   ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
   ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
   ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
-  // Parser rejects a leading `+` in an emoji name and whitespace inside
-  ['emoji leading plus literal', 'a :+1: b stays', 'emoji'],
-  ['spaced colons literal', 'a : b : c stays', 'emoji'],
-  // A definition-list line must not read `:: term` as emoji punctuation
-  ['def list not emoji', ':: term\n:  definition', 'emoji'],
+  // Parser rejects a leading `+` in a symbol name and whitespace inside
+  ['symbol leading plus literal', 'a :+1: b stays', 'symbol.carve'],
+  ['spaced colons literal', 'a : b : c stays', 'symbol.carve'],
+  // A definition-list line must not read `:: term` as symbol punctuation
+  ['def list not symbol', ':: term\n:  definition', 'symbol.carve'],
   // Citation defs stay citations, footnote defs stay footnotes
   ['citation not ref def', '[@k]: x', 'meta.link.reference.def'],
   ['footnote def not ref def', '[^f]: note body', 'meta.link.reference.def'],

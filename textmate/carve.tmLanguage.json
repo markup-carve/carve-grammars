@@ -389,7 +389,7 @@
                     "include": "#extension_inline"
                 },
                 {
-                    "include": "#emoji"
+                    "include": "#symbol"
                 },
                 {
                     "include": "#critic_add"
@@ -606,17 +606,17 @@
                 }
             }
         },
-        "emoji": {
+        "symbol": {
             "match": "(:)([a-zA-Z0-9][\\w+-]*)(:)",
             "captures": {
                 "1": {
-                    "name": "punctuation.definition.emoji.carve"
+                    "name": "punctuation.definition.symbol.carve"
                 },
                 "2": {
-                    "name": "constant.language.emoji.carve"
+                    "name": "constant.language.symbol.carve"
                 },
                 "3": {
-                    "name": "punctuation.definition.emoji.carve"
+                    "name": "punctuation.definition.symbol.carve"
                 }
             }
         },

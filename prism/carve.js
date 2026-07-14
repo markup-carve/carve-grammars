@@ -378,7 +378,7 @@
         'superscript': inline['superscript'],
         'subscript': inline['subscript'],
 
-        // Mentions @name, tags #tag, emoji :name:
+        // Mentions @name, tags #tag, symbols :name:
         'mention': {
             pattern: /(^|[^\w.])@[A-Za-z0-9_][\w-]*/,
             lookbehind: true,
@@ -389,9 +389,9 @@
             lookbehind: true,
             alias: 'variable',
         },
-        'emoji': {
-            // Parser shape: name starts alphanumeric, then word chars, `+` or
-            // `-` (`:+1:` stays literal - the parser rejects a leading `+`).
+        'symbol': {
+            // Symbol shortcode (e.g. emoji). Parser shape: name starts
+            // alphanumeric, then word chars, `+` or `-` (`:+1:` stays literal).
             pattern: /:[A-Za-z0-9][\w+-]*:/,
             alias: 'constant',
         },
