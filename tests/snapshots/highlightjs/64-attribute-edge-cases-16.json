@@ -1,10 +1,10 @@
 [
   {
     "scope": "string",
-    "text": "[x]{.ok .1}"
+    "text": "[x]"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "{.ok .1}\n"
   }
 ]

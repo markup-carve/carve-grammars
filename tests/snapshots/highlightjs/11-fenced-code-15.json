@@ -29,7 +29,15 @@
   },
   {
     "scope": null,
-    "text": "  #notatag\n"
+    "text": "  "
+  },
+  {
+    "scope": "symbol",
+    "text": "#notatag"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "keyword",

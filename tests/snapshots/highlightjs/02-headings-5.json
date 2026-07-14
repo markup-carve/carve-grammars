@@ -1,6 +1,10 @@
 [
   {
+    "scope": "symbol",
+    "text": "#notaheading"
+  },
+  {
     "scope": null,
-    "text": "#notaheading\n"
+    "text": "\n"
   }
 ]

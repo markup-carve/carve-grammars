@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[x]{.a1 #b2 k3=v}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a1 #b2 k3=v}"
   },
   {
     "scope": null,

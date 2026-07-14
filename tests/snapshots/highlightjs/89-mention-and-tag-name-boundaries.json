@@ -1,6 +1,62 @@
 [
   {
     "scope": null,
-    "text": "Ping @john-doe, @john_doe and @john.doe about #release-1.0 today.\n\nReach @john. That is @john's idea, @john!\n"
+    "text": "Ping "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john-doe"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john_doe"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john.doe"
+  },
+  {
+    "scope": null,
+    "text": " about "
+  },
+  {
+    "scope": "symbol",
+    "text": "#release-1.0"
+  },
+  {
+    "scope": null,
+    "text": " today.\n\nReach "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john"
+  },
+  {
+    "scope": null,
+    "text": ". That is "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john"
+  },
+  {
+    "scope": null,
+    "text": "'s idea, "
+  },
+  {
+    "scope": "symbol",
+    "text": "@john"
+  },
+  {
+    "scope": null,
+    "text": "!\n"
   }
 ]

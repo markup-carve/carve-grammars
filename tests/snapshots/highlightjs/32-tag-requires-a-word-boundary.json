@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "A #tag here, but not in foo#bar.\n"
+    "text": "A "
+  },
+  {
+    "scope": "symbol",
+    "text": "#tag"
+  },
+  {
+    "scope": null,
+    "text": " here, but not in foo#bar.\n"
   }
 ]

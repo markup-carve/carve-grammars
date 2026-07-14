@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[Tab]{kbd}"
+    "text": "[Tab]"
+  },
+  {
+    "scope": "attr",
+    "text": "{kbd}"
   },
   {
     "scope": null,

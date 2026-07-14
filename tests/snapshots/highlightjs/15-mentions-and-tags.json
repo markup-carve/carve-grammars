@@ -1,6 +1,22 @@
 [
   {
     "scope": null,
-    "text": "Hey @alice, see #release-1.0.\n"
+    "text": "Hey "
+  },
+  {
+    "scope": "symbol",
+    "text": "@alice"
+  },
+  {
+    "scope": null,
+    "text": ", see "
+  },
+  {
+    "scope": "symbol",
+    "text": "#release-1.0"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

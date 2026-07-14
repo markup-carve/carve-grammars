@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[label]{key=c .a #b}"
+    "text": "[label]"
+  },
+  {
+    "scope": "attr",
+    "text": "{key=c .a #b}"
   },
   {
     "scope": null,

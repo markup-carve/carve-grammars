@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Hello.\n\n%% carve-version: 0.1; generated-by: carve-js 0.1.0\n"
+    "text": "Hello.\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%% carve-version: 0.1; generated-by: carve-js 0.1.0"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

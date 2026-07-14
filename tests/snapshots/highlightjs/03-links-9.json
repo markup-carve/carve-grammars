@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[some text]{.highlight #note key=val}"
+    "text": "[some text]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.highlight #note key=val}"
   },
   {
     "scope": null,

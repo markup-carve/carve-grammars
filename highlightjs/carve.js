@@ -221,7 +221,9 @@
     // Spans with attributes: [text]{.class} or [text]{#id}
     const SPAN = {
         className: 'string',
-        begin: /\[[^\]]+\]\{[^}]+\}/,
+        // Only the bracket run; the trailing `{...}` is left to ATTRIBUTE so it
+        // scopes as an attribute block rather than vanishing into the span.
+        begin: /\[[^\]]+\](?=\{)/,
         relevance: 5,
     };
 
@@ -351,10 +353,48 @@
     };
 
     // Inline comments: {% comment %}
-    const INLINE_COMMENT = {
+    // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
+    // CriticMarkup comment `{# ... #}`. (The previous rule here matched
+    // `{% ... %}`, which is Jinja/Liquid syntax and does not exist in Carve.)
+    const LINE_COMMENT = {
         className: 'comment',
-        begin: /\{%/,
-        end: /%\}/,
+        begin: /(?:^|(?<=\s))%%(?!%)/,
+        end: /$/,
+        relevance: 5,
+    };
+    const BLOCK_COMMENT = {
+        className: 'comment',
+        begin: /^%%%\s*$/,
+        end: /^%%%\s*$/,
+        relevance: 10,
+    };
+    const CRITIC_SUB = {
+        className: 'meta',
+        // The `~>` arrow is what distinguishes a substitution from a forced
+        // strikethrough (`{~gone~}`), so it is required here.
+        begin: /\{~(?=[^}\n]*~>)/,
+        end: /~\}/,
+        relevance: 10,
+    };
+    const CRITIC_COMMENT = {
+        className: 'comment',
+        // The closing `#}` is required, or this would swallow an attribute
+        // block whose id comes first (`{#id .class}`).
+        begin: /\{#(?=[^}\n]*#\})/,
+        end: /#\}/,
+        relevance: 5,
+    };
+
+    // Mentions and tags: @name / #name (a heading `#` is line-anchored and is
+    // matched earlier, so an inline `#tag` is unambiguous).
+    const MENTION = {
+        className: 'symbol',
+        begin: /(?<![\w@])@[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        relevance: 5,
+    };
+    const TAG = {
+        className: 'symbol',
+        begin: /(?<![\w#])#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
         relevance: 5,
     };
 
@@ -466,7 +506,12 @@
             RAW_FORMAT,        // {=html} - must be before INSERT/DELETE braces
             INSERT,            // {+text+}
             DELETE,            // {-text-}
-            INLINE_COMMENT,    // {% %} - must be before ATTRIBUTE
+            BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
+            LINE_COMMENT,      // %% to end of line
+            CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
+            CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
+            MENTION,
+            TAG,
             HIGHLIGHT,         // =text=
             SUBSCRIPT,         // ,text,
             SUPERSCRIPT,       // ^text^

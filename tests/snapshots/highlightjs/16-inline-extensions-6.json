@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[a]{.cls}"
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.cls}"
   },
   {
     "scope": null,

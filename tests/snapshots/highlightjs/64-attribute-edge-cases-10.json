@@ -5,7 +5,11 @@
   },
   {
     "scope": "string",
-    "text": "[x]{.foo}"
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.foo}"
   },
   {
     "scope": null,

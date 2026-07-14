@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[a /b/ c]{.x}"
+    "text": "[a /b/ c]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
   },
   {
     "scope": null,

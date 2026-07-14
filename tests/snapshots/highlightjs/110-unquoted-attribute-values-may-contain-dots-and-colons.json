@@ -1,7 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[a]{k=v.w}"
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=v.w}"
   },
   {
     "scope": null,
