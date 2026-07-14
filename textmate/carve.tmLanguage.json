@@ -1036,7 +1036,7 @@
         {
           "name": "markup.citation.carve",
           "comment": "Match the whole citation bracket [+?...@key...] that is NOT followed by (, [, or { (which would make it a link, ref-link, or span). A lookahead for @ inside the brackets discriminates from plain spans and footnote refs.",
-          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_])",
+          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_][^\\]\\n]*\\](?!\\(|\\[|\\{))",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.citation.begin.carve"

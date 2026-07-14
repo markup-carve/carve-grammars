@@ -155,6 +155,12 @@ if (fails.length) process.exit(1)
 
 // Negative cases: intraword bare delimiters must NOT tokenize as emphasis.
 const NEGATIVE = [
+  // A bracket whose `]` is followed by ( [ { is a link/ref-link/span, never a citation -
+  // even when it contains an @. Without the suffix check in the citation `begin`, the
+  // citation rule fired here and its `end` refused to close, running away over the line
+  // and swallowing the link.
+  ['link with @ is not a citation', '[contact @team](https://x.de)', 'citation'],
+  ['@-only link is not a citation', '[@smith](https://x.de)', 'citation'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],
   ['intraword super literal', 'foo^2^bar stays', 'markup.superscript'],
