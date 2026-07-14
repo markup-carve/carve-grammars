@@ -391,6 +391,14 @@
         relevance: 2,
     };
 
+    // Emoji shortcodes: :name: (parser shape - name starts alphanumeric,
+    // then word chars, `+` or `-`; no whitespace, so `a : b : c` stays text)
+    const EMOJI = {
+        className: 'symbol',
+        begin: /:[A-Za-z0-9][\w+-]*:/,
+        relevance: 0,
+    };
+
     return {
         name: 'Carve',
         aliases: ['carve'],
@@ -431,6 +439,7 @@
             REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
             CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
             CODE_CALLOUT,      // <n> callout markers
+            EMOJI,             // :name: shortcodes
             LINK,
             AUTOLINK,
             EMAIL_AUTOLINK,

@@ -38,6 +38,8 @@ const CASES = [
   ['span attr', '[span]{.class}', 'attributes', '.class'],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
+  ['emoji', 'Great :rocket: end', 'constant.language.emoji', 'rocket'],
+  ['emoji punct', 'Great :rocket: end', 'punctuation.definition.emoji', ':'],
   ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
   ['smart typography', 'a -- b', 'typography', '--'],
   ['hard break', 'line\\\n next', 'hard-break', '\\'],
@@ -81,6 +83,9 @@ const CASES = [
   ['gfm delimiter row', '| a | b |\n|---|--:|', 'keyword.operator.table.alignment', '--:'],
   ['block attrs line', '{#id .class key=value}\n# H', 'attributes', '#id'],
   ['abbreviation', '*[HTML]: HyperText', 'abbreviation', 'HTML'],
+  ['ref def label', '[r]: https://ref.example', 'constant.other.reference.link', 'r'],
+  ['ref def url', '[r]: https://ref.example', 'markup.underline.link', 'https://ref.example'],
+  ['ref def title', '[r]: https://ref.example "Site"', 'string.quoted.link.title', 'Site'],
   ['frontmatter', '---\ntitle: Doc\n---\n\nText', 'frontmatter', 'title'],
   ['inline math', 'a $`e=mc^2` b', 'markup.math', 'e=mc^2'],
   ['display math', '$$`\\int_0^1 x`', 'markup.math', '\\int_0^1 x'],
@@ -136,6 +141,14 @@ const NEGATIVE = [
   ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
   ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
   ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
+  // Parser rejects a leading `+` in an emoji name and whitespace inside
+  ['emoji leading plus literal', 'a :+1: b stays', 'emoji'],
+  ['spaced colons literal', 'a : b : c stays', 'emoji'],
+  // A definition-list line must not read `:: term` as emoji punctuation
+  ['def list not emoji', ':: term\n:  definition', 'emoji'],
+  // Citation defs stay citations, footnote defs stay footnotes
+  ['citation not ref def', '[@k]: x', 'meta.link.reference.def'],
+  ['footnote def not ref def', '[^f]: note body', 'meta.link.reference.def'],
 ]
 let negPass = 0
 for (const [label, sample, badScope] of NEGATIVE) {

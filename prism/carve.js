@@ -390,7 +390,9 @@
             alias: 'variable',
         },
         'emoji': {
-            pattern: /:[A-Za-z0-9_+-]+:/,
+            // Parser shape: name starts alphanumeric, then word chars, `+` or
+            // `-` (`:+1:` stays literal - the parser rejects a leading `+`).
+            pattern: /:[A-Za-z0-9][\w+-]*:/,
             alias: 'constant',
         },
 

@@ -37,6 +37,9 @@
             "include": "#abbreviation"
         },
         {
+            "include": "#link_ref_def"
+        },
+        {
             "include": "#caption"
         },
         {
@@ -219,6 +222,30 @@
             },
             "name": "meta.abbreviation.carve"
         },
+        "link_ref_def": {
+            "match": "^([ \\t]*)(\\[)(?![@^])([^\\]]+)(\\])(:)[ \\t]+(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?",
+            "captures": {
+                "2": {
+                    "name": "punctuation.definition.link.carve"
+                },
+                "3": {
+                    "name": "constant.other.reference.link.carve"
+                },
+                "4": {
+                    "name": "punctuation.definition.link.carve"
+                },
+                "5": {
+                    "name": "punctuation.separator.carve"
+                },
+                "6": {
+                    "name": "markup.underline.link.carve"
+                },
+                "7": {
+                    "name": "string.quoted.link.title.carve"
+                }
+            },
+            "name": "meta.link.reference.def.carve"
+        },
         "table_row": {
             "begin": "^(?=\\|)",
             "end": "$",
@@ -360,6 +387,9 @@
                 },
                 {
                     "include": "#extension_inline"
+                },
+                {
+                    "include": "#emoji"
                 },
                 {
                     "include": "#critic_add"
@@ -573,6 +603,20 @@
                 },
                 "6": {
                     "name": "meta.attributes.carve"
+                }
+            }
+        },
+        "emoji": {
+            "match": "(:)([a-zA-Z0-9][\\w+-]*)(:)",
+            "captures": {
+                "1": {
+                    "name": "punctuation.definition.emoji.carve"
+                },
+                "2": {
+                    "name": "constant.language.emoji.carve"
+                },
+                "3": {
+                    "name": "punctuation.definition.emoji.carve"
                 }
             }
         },

@@ -4,7 +4,19 @@ All notable changes to `carve-grammars` are documented here.
 
 ## 0.1.2 - Unreleased
 
+### Added
+- TextMate: `:emoji:` shortcodes tokenize (`constant.language.emoji` name,
+  `punctuation.definition.emoji` colons), mirroring the parser shape
+  (name starts alphanumeric, then word chars, `+` or `-`).
+- TextMate: reference-link definition lines (`[r]: url "Title"`) tokenize as
+  `meta.link.reference.def` with label/url/title scopes; citation (`[@k]:`)
+  and footnote (`[^f]:`) definition lines are excluded.
+- highlight.js: `:emoji:` shortcodes produce a `symbol` span.
+- Shiki kit: light/dark token colors for the emoji scopes.
+
 ### Changed
+- Prism: the emoji pattern now matches the parser shape exactly (a leading
+  `+` or `_` in the name no longer tokenizes; `:+1:` stays literal).
 - Tiptap serializer emits bare `=highlight=` / `,subscript,` at word boundaries
   (brace forms stay for intraword), and the canonical `::: tab [Label]` opener
   instead of a `{label="..."}` attribute line (kept as fallback for labels
