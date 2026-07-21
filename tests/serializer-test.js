@@ -9,6 +9,7 @@
  *   strike ~..~ (<s>)  subscript ,,..,, (<sub>)  superscript ^..^  insert {+..+}
  */
 import assert from 'node:assert';
+import { parse } from '@markup-carve/carve';
 import { serializeToCarve } from '../tiptap/serializer.js';
 
 let passed = 0;
@@ -166,16 +167,56 @@ check('list item: paragraph then block quote',
     ] }),
     '- a\n\n  > b');
 
-// Ordered items take the same 2-space continuation: Carve's lazy continuation
-// attaches the block to the item (verified against carve-js).
-check('ordered list item: paragraph then code block',
+// An ordered item's content column is the marker width (`1. ` -> 3), NOT a
+// fixed 2. A block at 2 spaces sits below the column and dedents out of the
+// item entirely (verified against carve-js).
+check('ordered list item: paragraph then code block indents to the marker width',
     doc({ type: 'orderedList', attrs: { start: 1 }, content: [
         { type: 'listItem', content: [
             para(text('a')),
             { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'x=1' }] },
         ] },
     ] }),
-    '1. a\n\n  ```\n  x=1\n  ```');
+    '1. a\n\n   ```\n   x=1\n   ```');
+
+// Same column rule for a nested sublist marker: 2 spaces under `1. ` would be
+// swallowed as lazy continuation text and the sublist lost.
+check('ordered list item: nested sublist indents to the marker width',
+    doc({ type: 'orderedList', attrs: { start: 1 }, content: [
+        { type: 'listItem', content: [
+            para(text('parent')),
+            { type: 'orderedList', attrs: { start: 1 }, content: [
+                { type: 'listItem', content: [para(text('child'))] },
+            ] },
+        ] },
+    ] }),
+    '1. parent\n   1. child');
+
+// A two-digit marker is one column wider again (`10. ` -> 4).
+check('ordered list item: multi-digit marker widens the content column',
+    doc({ type: 'orderedList', attrs: { start: 9 }, content: [
+        { type: 'listItem', content: [para(text('nine'))] },
+        { type: 'listItem', content: [
+            para(text('ten')),
+            { type: 'bulletList', content: [
+                { type: 'listItem', content: [para(text('child'))] },
+            ] },
+        ] },
+    ] }),
+    '9. nine\n10. ten\n    - child');
+
+// A task item's `[ ]` is content of a plain `- ` bullet, so its content column
+// stays 2 - the checkbox does not widen it.
+check('task list item: nested sublist keeps the 2-space bullet column',
+    doc({ type: 'taskList', content: [
+        { type: 'taskItem', attrs: { checked: false }, content: [
+            para(text('parent')),
+            { type: 'taskList', content: [
+                { type: 'taskItem', attrs: { checked: true }, content: [para(text('child'))] },
+            ] },
+        ] },
+    ] }),
+    '- [ ] parent\n  - [x] child');
 
 // A nested sublist stays tight (no blank line): Carve nests a content-column
 // marker without one, and a blank line would render the list loose.
@@ -189,6 +230,55 @@ check('list item: paragraph then nested sublist stays tight',
         ] },
     ] }),
     '- parent\n  - child');
+
+// The list-indent expectations above are hand-written strings, so assert the
+// emitted markup against the reference parser too: a block that lands below the
+// item's content column still LOOKS plausible but reparses outside the item.
+function checkListItemBlocks(name, pmDoc, expectedTypes) {
+    const carve = serializeToCarve(pmDoc);
+    const ast = parse(carve);
+    const item = ast.children?.[0]?.items?.[0];
+    const got = (item?.children || []).map((b) => b.type);
+    assert.deepStrictEqual(
+        got,
+        expectedTypes,
+        `${name}\n--- carve ---\n${carve}\n--- item blocks ---\n${got.join(', ')}`,
+    );
+    passed++;
+    console.log(`  ✓ ${name}`);
+}
+
+const orderedWithSublist = doc({ type: 'orderedList', attrs: { start: 1 }, content: [
+    { type: 'listItem', content: [
+        para(text('parent')),
+        { type: 'orderedList', attrs: { start: 1 }, content: [
+            { type: 'listItem', content: [para(text('child'))] },
+        ] },
+    ] },
+] });
+
+checkListItemBlocks('reparse: ordered sublist stays inside its parent item',
+    orderedWithSublist, ['paragraph', 'list']);
+
+checkListItemBlocks('reparse: ordered continuation code block stays inside its item',
+    doc({ type: 'orderedList', attrs: { start: 1 }, content: [
+        { type: 'listItem', content: [
+            para(text('a')),
+            { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'x=1' }] },
+        ] },
+    ] }),
+    ['paragraph', 'code-block']);
+
+checkListItemBlocks('reparse: task sublist stays inside its parent item',
+    doc({ type: 'taskList', content: [
+        { type: 'taskItem', attrs: { checked: false }, content: [
+            para(text('parent')),
+            { type: 'taskList', content: [
+                { type: 'taskItem', attrs: { checked: true }, content: [para(text('child'))] },
+            ] },
+        ] },
+    ] }),
+    ['paragraph', 'list']);
 
 check('blockquote',
     doc({ type: 'blockquote', content: [para(text('quoted'))] }),
