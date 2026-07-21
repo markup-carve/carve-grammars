@@ -79,22 +79,34 @@ console.log('carve-grammars kroki renderer:');
     ok('img is tagged with the diagram type class', img?.className.includes('carve-diagram-plantuml'));
 }
 
-// --- language aliases + multiple types ------------------------------------
+// --- the puml alias maps to plantuml --------------------------------------
 {
-    const el = container([
-        ['puml', 'A -> B'],
-        ['d2', 'a -> b'],
-        ['graphviz', 'digraph{a->b}'],
-        ['dot', 'digraph{c->d}'],
-    ]);
+    const el = container([['puml', 'A -> B'], ['plantuml', 'C -> D']]);
     const fetch = stubFetch();
     const count = await renderKrokiDiagrams(el, { fetch });
-    const urls = fetch.calls.map((c) => c.url).sort();
+    const urls = fetch.calls.map((c) => c.url);
 
-    ok('renders all four aliased blocks', count === 4, `count=${count}`);
-    ok('puml maps to the plantuml type', urls.includes('https://kroki.io/plantuml/svg'));
-    ok('dot and graphviz both map to graphviz', urls.filter((u) => u.endsWith('/graphviz/svg')).length === 2, urls.join());
-    ok('d2 maps to the d2 type', urls.includes('https://kroki.io/d2/svg'));
+    ok('renders both plantuml and its puml alias', count === 2, `count=${count}`);
+    ok('both map to the plantuml type', urls.every((u) => u === 'https://kroki.io/plantuml/svg'), urls.join());
+}
+
+// --- graphviz/d2 are NOT in the default map (they have offline renderers) --
+{
+    const el = container([['graphviz', 'digraph{a->b}'], ['d2', 'a -> b'], ['plantuml', 'A -> B']]);
+    const fetch = stubFetch();
+    const count = await renderKrokiDiagrams(el, { fetch });
+
+    ok('graphviz and d2 are left for their client renderers', count === 1 && !!el.querySelector('pre.graphviz') && !!el.querySelector('pre.d2'));
+    ok('only the plantuml block was fetched', fetch.calls.length === 1);
+}
+
+// --- an extended types map can still Kroki-render graphviz ------------------
+{
+    const el = container([['graphviz', 'digraph{a->b}']]);
+    const fetch = stubFetch();
+    const count = await renderKrokiDiagrams(el, { fetch, types: { graphviz: 'graphviz' } });
+
+    ok('an explicit types map opts graphviz back into Kroki', count === 1 && fetch.calls[0]?.url === 'https://kroki.io/graphviz/svg');
 }
 
 // --- blocks with no Kroki type are left alone -----------------------------
@@ -149,8 +161,9 @@ console.log('carve-grammars kroki renderer:');
 // --- guards ---------------------------------------------------------------
 {
     ok('null container renders nothing', (await renderKrokiDiagrams(null, { fetch: stubFetch() })) === 0);
-    ok('default type map covers the Carve Kroki presets',
-        KROKI_DIAGRAM_TYPES.plantuml === 'plantuml' && KROKI_DIAGRAM_TYPES.d2 === 'd2' && KROKI_DIAGRAM_TYPES.graphviz === 'graphviz');
+    ok('default type map is plantuml-only (graphviz/d2 render offline)',
+        KROKI_DIAGRAM_TYPES.plantuml === 'plantuml' && KROKI_DIAGRAM_TYPES.puml === 'plantuml'
+        && KROKI_DIAGRAM_TYPES.graphviz === undefined && KROKI_DIAGRAM_TYPES.d2 === undefined);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

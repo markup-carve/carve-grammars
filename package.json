@@ -5,7 +5,7 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js",
+    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
     "test:roundtrip": "node tests/roundtrip-test.js",
@@ -48,7 +48,10 @@
     ".": "./tiptap/index.js",
     "./tiptap": "./tiptap/index.js",
     "./tiptap/*": "./tiptap/*",
+    "./diagrams": "./diagrams/index.js",
     "./diagrams/kroki": "./diagrams/kroki.js",
+    "./diagrams/graphviz": "./diagrams/graphviz.js",
+    "./diagrams/d2": "./diagrams/d2.js",
     "./diagrams/*": "./diagrams/*",
     "./prism/carve.js": "./prism/carve.js",
     "./prism/*": "./prism/*",
@@ -67,7 +70,9 @@
     "@tiptap/extension-underline": "^2",
     "@tiptap/starter-kit": "^2",
     "highlight.js": "^11",
-    "prismjs": "^1"
+    "prismjs": "^1",
+    "@viz-js/viz": "^3",
+    "@terrastruct/d2": "^0.1"
   },
   "peerDependenciesMeta": {
     "@tiptap/core": {
@@ -86,6 +91,12 @@
       "optional": true
     },
     "@shikijs/themes": {
+      "optional": true
+    },
+    "@viz-js/viz": {
+      "optional": true
+    },
+    "@terrastruct/d2": {
       "optional": true
     }
   },
