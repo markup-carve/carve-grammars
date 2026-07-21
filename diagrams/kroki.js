@@ -1,11 +1,18 @@
 /**
  * Kroki diagram renderer for Carve fenced-render output.
  *
- * The `FencedRenderExtension` presets that have no browser rendering library -
- * PlantUML, D2, Graphviz - emit a `<pre class="LANG">SOURCE</pre>` hydration
- * element (carve-php text mode, or carve-js interactive mode). This helper
- * turns those into rendered diagrams client-side via a Kroki server
- * (https://kroki.io by default, or any self-hosted instance).
+ * The one diagram preset with no practical in-browser renderer is **PlantUML**
+ * (its only pure-JS build is a multi-megabyte JVM-in-WASM). This helper renders
+ * it - and any other Kroki-supported type you opt in - by POSTing the source to
+ * a Kroki server. Graphviz and D2 do NOT need this: they have self-contained
+ * WebAssembly renderers (`renderGraphvizDiagrams`, `renderD2Diagrams`) that run
+ * offline, so they are not in the default type map.
+ *
+ * ⚠️ PRIVACY / GDPR: the default server is the PUBLIC `https://kroki.io`, so the
+ * diagram source is sent to a third party outside your control. For anything
+ * sensitive - or to keep rendering offline - point `server` at a self-hosted
+ * Kroki (or a localhost instance) so no data leaves your domain, and disclose
+ * the external call to end users where required.
  *
  * It is dependency-free: the diagram source is POSTed to Kroki as plain text
  * (no deflate/base64 step, so no pako dependency), and the returned SVG is
@@ -29,18 +36,17 @@
 
 /**
  * Default map of fenced-block CSS class (the `FencedRenderExtension` cssClass)
- * to the Kroki diagram type. Covers every Carve preset Kroki can render;
- * Mermaid, WaveDrom, Vega-Lite and Chart have their own browser libraries and
- * are intentionally NOT here.
+ * to the Kroki diagram type. PlantUML only, because it is the one preset with
+ * no practical in-browser renderer. Graphviz and D2 have offline WASM renderers
+ * (`renderGraphvizDiagrams`, `renderD2Diagrams`); Mermaid, WaveDrom, Vega-Lite
+ * and Chart have their own browser libraries. To Kroki-render one of those
+ * anyway (e.g. against a self-hosted server), pass an extended `types` map.
  *
  * @type {Record<string, string>}
  */
 export const KROKI_DIAGRAM_TYPES = {
     plantuml: 'plantuml',
     puml: 'plantuml',
-    d2: 'd2',
-    graphviz: 'graphviz',
-    dot: 'graphviz',
 };
 
 /**

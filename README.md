@@ -193,40 +193,69 @@ Named exports for other setups: `carveGrammar`, `carveLightExtras` /
 `carveDarkExtras`, `carveLightTheme` / `carveDarkTheme`, `extendTheme`,
 `carveStylingTransformer`.
 
-## Diagram rendering (Kroki)
+## Diagram rendering
 
-Carve's `FencedRenderExtension` presets that have a browser library - Mermaid,
-WaveDrom, Vega-Lite, Chart - render themselves once you load that library. The
-presets that have **no** browser library - **PlantUML**, **D2**, **Graphviz** -
-emit a `<pre class="LANG">source</pre>` hydration element instead. This helper
-turns those into diagrams client-side via a [Kroki](https://kroki.io) server:
+Carve's `FencedRenderExtension` presets emit a `<pre class="LANG">source</pre>`
+hydration element; something on the client turns it into a diagram. Mermaid,
+WaveDrom, Vega-Lite and Chart each render once **you** load their browser
+library. For the rest, `@markup-carve/carve-grammars/diagrams` ships renderers:
+
+| Type | Renderer | Engine | Network |
+|------|----------|--------|---------|
+| `graphviz` (`dot`) | `renderGraphvizDiagrams` | `@viz-js/viz` (WASM) | **offline** |
+| `d2` | `renderD2Diagrams` | `@terrastruct/d2` (WASM) | **offline** |
+| `plantuml` (`puml`) | `renderKrokiDiagrams` | a Kroki server | **network** |
+
+Graphviz and D2 render **entirely in the browser** - no server, no external
+call, works offline (in an IDE, behind a firewall, ...). The rendered SVG is
+placed in an inert `<img>` data URI (like the Kroki path), so even untrusted
+diagram source cannot run script or expose a `javascript:` link. The WASM
+libraries are optional peer dependencies, imported lazily only when a matching
+block is on the page:
+
+```js
+import { renderGraphvizDiagrams } from '@markup-carve/carve-grammars/diagrams/graphviz'
+import { renderD2Diagrams } from '@markup-carve/carve-grammars/diagrams/d2'
+
+await renderGraphvizDiagrams(container)
+await renderD2Diagrams(container)
+```
+
+`renderDiagrams` runs both (and PlantUML, when you opt in) in one call; each
+no-ops when its blocks are absent, so you pay nothing for the types not present:
+
+```js
+import { renderDiagrams } from '@markup-carve/carve-grammars/diagrams'
+
+await renderDiagrams(container)                       // graphviz + d2, offline
+await renderDiagrams(container, { kroki: {} })        // + PlantUML via kroki.io
+await renderDiagrams(container, { kroki: { server: 'https://kroki.internal' } })
+```
+
+### PlantUML (Kroki)
+
+PlantUML is the one preset with no practical in-browser renderer - its only
+pure-JS build is a multi-megabyte JVM-in-WASM. `renderKrokiDiagrams` renders it
+by POSTing the source to a [Kroki](https://kroki.io) server; the returned SVG
+rides in an `<img>` data URI (which cannot execute script). Idempotent, and
+dependency-free (plain-text POST, no deflate/base64).
+
+> ⚠️ **Privacy / GDPR.** The default server is the **public `https://kroki.io`**,
+> so the diagram source is sent to a **third party outside your domain**. For
+> anything sensitive, or to stay offline, point `server` at a **self-hosted or
+> localhost Kroki** so no data leaves your control - and disclose the external
+> call to end users where required. Because of this, `renderDiagrams` leaves the
+> Kroki step **off unless you pass `kroki`**.
 
 ```js
 import { renderKrokiDiagrams } from '@markup-carve/carve-grammars/diagrams/kroki'
 
-// after inserting the rendered Carve HTML into the page
-await renderKrokiDiagrams(document.querySelector('.carve-output'))
+await renderKrokiDiagrams(container, { server: 'https://kroki.internal' })
 ```
 
-Each matching `<pre>` is replaced with an `<img>` of the Kroki SVG. It is
-dependency-free (the source is POSTed to Kroki as plain text - no
-deflate/base64 step) and safe (the SVG rides in an `<img>` data URI, so it
-cannot execute script). Processing is idempotent, so it is fine to call after
-every content update.
-
-Output is SVG (a `data:image/svg+xml` `<img>`). Options: `server` (default
-`https://kroki.io`; point it at a self-hosted instance), `types` (the
-CSS-class → Kroki-type map, default `KROKI_DIAGRAM_TYPES` covering
-`plantuml`/`puml`, `d2`, `graphviz`/`dot` - pass a subset to restrict, or
-extend it for other Kroki diagram types), `onError`, and `fetch` (overridable
-for tests / non-browser hosts).
-
-```js
-await renderKrokiDiagrams(container, {
-  server: 'https://kroki.internal',
-  types: { plantuml: 'plantuml', puml: 'plantuml' }, // only PlantUML
-})
-```
+Options: `server` (default `https://kroki.io`), `types` (class → Kroki-type map,
+default `KROKI_DIAGRAM_TYPES` = `plantuml`/`puml` only; extend it to Kroki-render
+graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 
 > When the diagram is rendered at build time (SSG) rather than in the browser,
 > prefer the engine's static-render hook (carve-js `renderers.plantuml`,
@@ -235,10 +264,13 @@ await renderKrokiDiagrams(container, {
 
 ## API
 
-- `renderKrokiDiagrams(container, options?)` - render PlantUML/D2/Graphviz
-  fenced-render blocks under `container` via a Kroki server; returns the count
-  rendered. `KROKI_DIAGRAM_TYPES` is the default class→type map. See
-  [Diagram rendering](#diagram-rendering-kroki).
+- `renderDiagrams(container, options?)` - render Graphviz + D2 (offline), and
+  PlantUML via Kroki when `options.kroki` is set. See
+  [Diagram rendering](#diagram-rendering).
+- `renderGraphvizDiagrams(container, options?)` / `renderD2Diagrams(container, options?)` -
+  render `graphviz`/`d2` blocks with the offline WASM engines.
+- `renderKrokiDiagrams(container, options?)` - render PlantUML (and any opted-in
+  type) via a Kroki server; `KROKI_DIAGRAM_TYPES` is the default class→type map.
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
