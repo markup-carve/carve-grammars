@@ -138,6 +138,58 @@ check('ordered list',
     ] }),
     '1. first\n2. second');
 
+// List items must keep every block child, indented to the content column.
+// Regression: a non-paragraph, non-list child (code, quote, div) was dropped,
+// and a second paragraph landed at column 0, dedenting out of the list
+// (mirrors php-collective/djot-grammars#14, ported to Carve).
+check('list item: two paragraphs (loose)',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [para(text('a')), para(text('b'))] },
+    ] }),
+    '- a\n\n  b');
+
+check('list item: paragraph then code block',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [
+            para(text('a')),
+            { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'x=1' }] },
+        ] },
+    ] }),
+    '- a\n\n  ```\n  x=1\n  ```');
+
+check('list item: paragraph then block quote',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [
+            para(text('a')),
+            { type: 'blockquote', content: [para(text('b'))] },
+        ] },
+    ] }),
+    '- a\n\n  > b');
+
+// Ordered items take the same 2-space continuation: Carve's lazy continuation
+// attaches the block to the item (verified against carve-js).
+check('ordered list item: paragraph then code block',
+    doc({ type: 'orderedList', attrs: { start: 1 }, content: [
+        { type: 'listItem', content: [
+            para(text('a')),
+            { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'x=1' }] },
+        ] },
+    ] }),
+    '1. a\n\n  ```\n  x=1\n  ```');
+
+// A nested sublist stays tight (no blank line): Carve nests a content-column
+// marker without one, and a blank line would render the list loose.
+check('list item: paragraph then nested sublist stays tight',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [
+            para(text('parent')),
+            { type: 'bulletList', content: [
+                { type: 'listItem', content: [para(text('child'))] },
+            ] },
+        ] },
+    ] }),
+    '- parent\n  - child');
+
 check('blockquote',
     doc({ type: 'blockquote', content: [para(text('quoted'))] }),
     '> quoted');
