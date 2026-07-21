@@ -77,16 +77,31 @@ function carveDivFenceLength(node) {
     return maxInner ? maxInner + 1 : 3;
 }
 
+// Column width a list marker occupies, i.e. the offset of the item's content
+// column relative to the marker's own indent. A nested block (sublist marker or
+// continuation block) must sit at exactly that column to stay inside the item;
+// anything shallower dedents out of it.
+//
+// Bullet (`- `) and ordered (`1. `, `10. `) markers own their full text, so an
+// ordered item's content column grows with the number's digits. A task item's
+// `[ ]` is CONTENT of a plain `- ` bullet, not part of the marker, so its
+// content column stays 2 regardless of the checkbox.
+function listMarkerWidth(listType, marker) {
+    return listType === 'taskList' ? 2 : marker.length;
+}
+
 export function serializeToCarve(doc) {
     let output = '';
 
-    function serializeNode(node, depth = 0) {
+    // `indent` is the literal whitespace prefix (a string, not a depth counter)
+    // at which this node's own lines start - see listMarkerWidth.
+    function serializeNode(node, indent = '') {
         if (!node) return;
 
         switch (node.type) {
             case 'doc':
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, depth);
+                    serializeNode(child, indent);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
@@ -129,17 +144,17 @@ export function serializeToCarve(doc) {
                 });
                 let num = node.attrs?.start || 1;
                 (node.content || []).forEach((item, i) => {
-                    const indent = '  '.repeat(depth);
-                    if (node.type === 'bulletList') {
-                        output += indent + '- ';
-                    } else if (node.type === 'orderedList') {
-                        output += indent + num + '. ';
+                    let marker;
+                    if (node.type === 'orderedList') {
+                        marker = num + '. ';
                         num++;
                     } else if (node.type === 'taskList') {
-                        const checked = item.attrs?.checked ? 'x' : ' ';
-                        output += indent + '- [' + checked + '] ';
+                        marker = '- [' + (item.attrs?.checked ? 'x' : ' ') + '] ';
+                    } else {
+                        marker = '- ';
                     }
-                    serializeListItem(item, depth);
+                    output += indent + marker;
+                    serializeListItem(item, indent + ' '.repeat(listMarkerWidth(node.type, marker)));
                     // Add blank line between items in loose lists
                     if (isLoose && i < (node.content || []).length - 1) {
                         output += '\n';
@@ -218,7 +233,7 @@ export function serializeToCarve(doc) {
                 output += divFence + (divClass ? ' ' + divClass : '') + divTitle + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, depth);
+                    serializeNode(child, indent);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
@@ -236,7 +251,7 @@ export function serializeToCarve(doc) {
                 const setFence = ':'.repeat(carveDivFenceLength(node));
                 output += setFence + ' tabs\n';
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, depth);
+                    serializeNode(child, indent);
                     // Tabs are always distinct-type siblings, so separate them
                     // with a blank line (matching authored `::: tab` blocks).
                     if (i < (node.content || []).length - 1) output += '\n';
@@ -263,7 +278,7 @@ export function serializeToCarve(doc) {
                 const tabFence = ':'.repeat(carveDivFenceLength(node));
                 output += tabFence + opener + '\n';
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, depth);
+                    serializeNode(child, indent);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
@@ -393,22 +408,23 @@ export function serializeToCarve(doc) {
         return result.trim();
     }
 
-    function serializeListItem(item, depth) {
+    function serializeListItem(item, contentIndent) {
         const content = item.content || [];
-        // Content column of this item: the marker (`- ` / `1. ` / `- [ ] `)
-        // was already emitted by the caller. Every FOLLOWING block must be
-        // indented to this column to stay in the item; a block left at column
-        // 0 would dedent out of the list, and a block type not recognized here
-        // (code, quote, div, table) was dropped entirely.
-        const contentIndent = '  '.repeat(depth + 1);
+        // `contentIndent` is this item's content column: the marker (`- ` /
+        // `1. ` / `- [ ] `) was already emitted by the caller, which measured
+        // its width. Every FOLLOWING block must be indented to that column to
+        // stay in the item; a shallower block dedents out of the list, and a
+        // block type not recognized here (code, quote, div, table) was dropped
+        // entirely.
         const isList = (type) => ['bulletList', 'orderedList', 'taskList'].includes(type);
         content.forEach((child, i) => {
             if (i === 0 && child.type === 'paragraph') {
                 // Lead paragraph sits on the marker line already emitted.
                 output += serializeInline(child.content) + '\n';
             } else if (isList(child.type)) {
-                // Nested lists carry their own marker indentation via depth.
-                serializeNode(child, depth + 1);
+                // A nested list opens at the parent's content column, so its
+                // own markers are emitted at that indent.
+                serializeNode(child, contentIndent);
             } else {
                 // Any other block (a second+ paragraph, code block, quote,
                 // div, table, ...) is serialized standalone and indented to
