@@ -395,22 +395,36 @@ export function serializeToCarve(doc) {
 
     function serializeListItem(item, depth) {
         const content = item.content || [];
+        // Content column of this item: the marker (`- ` / `1. ` / `- [ ] `)
+        // was already emitted by the caller. Every FOLLOWING block must be
+        // indented to this column to stay in the item; a block left at column
+        // 0 would dedent out of the list, and a block type not recognized here
+        // (code, quote, div, table) was dropped entirely.
+        const contentIndent = '  '.repeat(depth + 1);
+        const isList = (type) => ['bulletList', 'orderedList', 'taskList'].includes(type);
         content.forEach((child, i) => {
-            if (child.type === 'paragraph') {
+            if (i === 0 && child.type === 'paragraph') {
+                // Lead paragraph sits on the marker line already emitted.
                 output += serializeInline(child.content) + '\n';
-                // Blank line before a following *paragraph-level* block (loose
-                // item), but NOT before a nested list - that stays tight
-                // (`- b` directly followed by `  - c`).
-                const next = content[i + 1];
-                if (next && !['bulletList', 'orderedList', 'taskList'].includes(next.type)) {
-                    output += '\n';
-                }
-            } else if (['bulletList', 'orderedList', 'taskList'].includes(child.type)) {
+            } else if (isList(child.type)) {
+                // Nested lists carry their own marker indentation via depth.
                 serializeNode(child, depth + 1);
-                // Add blank line after nested list if followed by more content
-                if (i < content.length - 1) {
-                    output += '\n';
-                }
+            } else {
+                // Any other block (a second+ paragraph, code block, quote,
+                // div, table, ...) is serialized standalone and indented to
+                // the content column so it stays inside the item.
+                const blockText = serializeNodeToString(child);
+                blockText.split('\n').forEach(line => {
+                    output += (line ? contentIndent + line : '') + '\n';
+                });
+            }
+            // Separate blocks with a blank line (loose item), EXCEPT keep a
+            // nested list tight directly under its lead - Carve nests a
+            // content-column sublist marker without a blank line, and adding
+            // one would render the list loose.
+            const next = content[i + 1];
+            if (next && !isList(next.type)) {
+                output += '\n';
             }
         });
     }
