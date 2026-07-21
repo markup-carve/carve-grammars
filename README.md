@@ -193,8 +193,52 @@ Named exports for other setups: `carveGrammar`, `carveLightExtras` /
 `carveDarkExtras`, `carveLightTheme` / `carveDarkTheme`, `extendTheme`,
 `carveStylingTransformer`.
 
+## Diagram rendering (Kroki)
+
+Carve's `FencedRenderExtension` presets that have a browser library - Mermaid,
+WaveDrom, Vega-Lite, Chart - render themselves once you load that library. The
+presets that have **no** browser library - **PlantUML**, **D2**, **Graphviz** -
+emit a `<pre class="LANG">source</pre>` hydration element instead. This helper
+turns those into diagrams client-side via a [Kroki](https://kroki.io) server:
+
+```js
+import { renderKrokiDiagrams } from '@markup-carve/carve-grammars/diagrams/kroki'
+
+// after inserting the rendered Carve HTML into the page
+await renderKrokiDiagrams(document.querySelector('.carve-output'))
+```
+
+Each matching `<pre>` is replaced with an `<img>` of the Kroki SVG. It is
+dependency-free (the source is POSTed to Kroki as plain text - no
+deflate/base64 step) and safe (the SVG rides in an `<img>` data URI, so it
+cannot execute script). Processing is idempotent, so it is fine to call after
+every content update.
+
+Output is SVG (a `data:image/svg+xml` `<img>`). Options: `server` (default
+`https://kroki.io`; point it at a self-hosted instance), `types` (the
+CSS-class → Kroki-type map, default `KROKI_DIAGRAM_TYPES` covering
+`plantuml`/`puml`, `d2`, `graphviz`/`dot` - pass a subset to restrict, or
+extend it for other Kroki diagram types), `onError`, and `fetch` (overridable
+for tests / non-browser hosts).
+
+```js
+await renderKrokiDiagrams(container, {
+  server: 'https://kroki.internal',
+  types: { plantuml: 'plantuml', puml: 'plantuml' }, // only PlantUML
+})
+```
+
+> When the diagram is rendered at build time (SSG) rather than in the browser,
+> prefer the engine's static-render hook (carve-js `renderers.plantuml`,
+> carve-php's own render pipeline) so the page ships finished SVG and needs no
+> client JS at all.
+
 ## API
 
+- `renderKrokiDiagrams(container, options?)` - render PlantUML/D2/Graphviz
+  fenced-render blocks under `container` via a Kroki server; returns the count
+  rendered. `KROKI_DIAGRAM_TYPES` is the default class→type map. See
+  [Diagram rendering](#diagram-rendering-kroki).
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.

@@ -5,7 +5,7 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js",
+    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
     "test:roundtrip": "node tests/roundtrip-test.js",
@@ -36,6 +36,7 @@
   "homepage": "https://github.com/markup-carve/carve-grammars#readme",
   "files": [
     "tiptap/",
+    "diagrams/",
     "prism/",
     "highlightjs/",
     "shiki/",
@@ -47,6 +48,8 @@
     ".": "./tiptap/index.js",
     "./tiptap": "./tiptap/index.js",
     "./tiptap/*": "./tiptap/*",
+    "./diagrams/kroki": "./diagrams/kroki.js",
+    "./diagrams/*": "./diagrams/*",
     "./prism/carve.js": "./prism/carve.js",
     "./prism/*": "./prism/*",
     "./highlightjs/carve.js": {
