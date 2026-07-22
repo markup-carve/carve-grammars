@@ -2,6 +2,22 @@
 
 All notable changes to `carve-grammars` are documented here.
 
+## Unreleased
+
+### Added
+- **Inline literal** `` !`…` `` tokenizes across TextMate, Prism and
+  highlight.js (Shiki inherits the TextMate grammar). A `!` prefix on a
+  verbatim backtick run is scoped as prose rather than code, mirroring the
+  `$`-prefixed math rules and ordered ahead of the inline-code rules so the
+  leading `!` claims the span. A trailing `{…}` stays a separate attribute
+  block, and `![` still opens an image.
+- TextMate and highlight.js additionally handle multi-backtick literal fences
+  (`` !``a ` b`` ``), matching Prism's run-length behavior: TextMate gains a
+  `literal_inline_multi` rule closing on the same run length, and highlight.js
+  splits double/single modes the way the inline-code modes already do. Unlike
+  the math rules, a literal has no closing sentinel to anchor its end, so a
+  bare `` `+ `` terminator would close early on the inner backtick.
+
 ## 0.1.2 - 2026-07-14
 
 ### Changed

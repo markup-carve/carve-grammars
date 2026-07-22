@@ -285,6 +285,15 @@
             },
         ],
 
+        // Inline literal: !`...` - a `!` prefix on a verbatim backtick run,
+        // rendered as prose (no <code>). Parallel to the `$`-prefixed math
+        // token above; must precede `code` so the leading `!` claims the span.
+        'literal': {
+            pattern: /!(`+)[\s\S]*?\1/,
+            greedy: true,
+            alias: 'string',
+        },
+
         // Raw inline passthrough: `code`{=format}
         'raw-inline': {
             pattern: /(`+)(?:[^`]|[^`][\s\S]*?[^`])\1\{=[A-Za-z_][\w-]*\}/,

@@ -93,7 +93,7 @@ ok('prism: grammar registered on Prism.languages.carve', () => {
 ok('prism: required token names present', () => {
     const required = [
         'comment', 'front-matter', 'code-block', 'raw-block', 'title', 'div',
-        'table', 'blockquote', 'list', 'math', 'code', 'image', 'footnote',
+        'table', 'blockquote', 'list', 'math', 'literal', 'code', 'image', 'footnote',
         'url', 'span', 'inserted', 'deleted', 'bold', 'italic', 'underline',
         'strike', 'highlight', 'superscript', 'subscript', 'escape',
         'citation', 'code-callout',
@@ -139,6 +139,18 @@ if (realPrism) {
         // both closing delimiters must be inside a token span, not bare text
         assert.ok(!/`<\/span>\$/.test(html), `trailing $ left outside math token: ${html}`);
         assert.ok(html.includes('`x`$</span>') || html.includes('`x`$'), `inline math close missing: ${html}`);
+    });
+
+    ok('prism: inline literal !`x` is a literal token, not code', () => {
+        const types = typesOf('a !`/kaet/` b');
+        assert.ok(types.includes('literal'), `expected literal token, got: ${types.join(',')}`);
+        assert.ok(!types.includes('code'), `!\`…\` must not tokenize as code: ${types.join(',')}`);
+    });
+
+    ok('prism: image ![alt](src) is still an image, not a literal', () => {
+        const types = typesOf('see ![alt](/u) here');
+        assert.ok(types.includes('image'), `expected image token, got: ${types.join(',')}`);
+        assert.ok(!types.includes('literal'), `![…] must not tokenize as a literal: ${types.join(',')}`);
     });
 
     ok('prism: citation [@key] is a citation token', () => {
@@ -207,6 +219,14 @@ ok('hljs: definition has name, aliases, contains', () => {
     assert.strictEqual(def.name, 'Carve');
     assert.ok(Array.isArray(def.aliases) && def.aliases.includes('carve'), 'aliases must include carve');
     assert.ok(Array.isArray(def.contains) && def.contains.length > 0, 'contains must be a non-empty array');
+});
+
+ok('hljs: an inline-literal mode (begins with !`) is registered before inline code', () => {
+    const beginsOf = (m) => (m && m.begin && (m.begin.source || String(m.begin))) || '';
+    const litIdx = def.contains.findIndex((m) => /^!`/.test(beginsOf(m)));
+    const codeIdx = def.contains.findIndex((m) => /^`/.test(beginsOf(m)));
+    assert.ok(litIdx !== -1, 'expected an inline-literal mode beginning with !`');
+    assert.ok(codeIdx === -1 || litIdx < codeIdx, 'literal mode must precede inline-code modes');
 });
 
 ok('hljs: every mode begin/end is RegExp or string', () => {

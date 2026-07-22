@@ -27,6 +27,14 @@ const CASES = [
   ['highlight bare', 'a =mark= b', 'markup.highlight', 'mark'],
   ['highlight brace', 'wo{=mark=}rd', 'markup.highlight', 'mark'],
   ['inline code', 'a `code` b', 'markup.raw.inline', 'code'],
+  // Inline literal: !`...` renders as prose, so the content carries the raw
+  // content scope and the `!` its own literal punctuation scope.
+  ['inline literal', 'a !`/kaet/` b', 'markup.raw.inline.content', '/kaet/'],
+  ['inline literal punct', 'a !`/kaet/` b', 'punctuation.definition.literal', '!'],
+  // A wider fence carries an inner backtick; the span must close on the same
+  // run length, not on the first backtick (literal_inline_multi).
+  ['inline literal multi', 'a !``x ` y`` b', 'markup.raw.inline.content', 'x ` y'],
+  ['inline literal multi punct', 'a !``x ` y`` b', 'punctuation.definition.literal', '!'],
   ['link text', '[text](https://x.de)', 'string.other.link.title', 'text'],
   ['link url', '[text](https://x.de)', 'markup.underline.link', 'https://x.de'],
   ['link punct', '[text](https://x.de)', 'punctuation.definition.link', '['],
