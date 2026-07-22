@@ -166,6 +166,18 @@
         relevance: 5,
     };
 
+    // Inline literal: !`...` - a `!` prefix on a verbatim backtick run,
+    // rendered as prose (no <code>). Parallel to the math modes above and,
+    // like them, must precede the inline-code modes so the leading `!` claims
+    // the span rather than leaving a stray `!` before a code span. The `!` +
+    // backtick never collides with an image (`![`), whose next char is `[`.
+    const LITERAL_INLINE = {
+        className: 'string',
+        begin: /!`+/,
+        end: /`+/,
+        relevance: 0,
+    };
+
     // Inline code: `code` or ``code``. highlight.js has no begin->end
     // backreference to match fence widths, so handle the two common widths
     // explicitly - double backticks first, so an embedded single backtick
@@ -521,6 +533,7 @@
             STRIKETHROUGH,     // ~text~
             MATH_DISPLAY,      // $$`...`$$ - before inline code (leading $)
             MATH_INLINE,       // $`...`$
+            LITERAL_INLINE,    // !`...` - before inline code (leading !)
             INLINE_CODE_DOUBLE, // ``code`` - before single
             INLINE_CODE_SINGLE, // `code`
             FORCED_STRONG,

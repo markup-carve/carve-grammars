@@ -374,6 +374,9 @@
           "include": "#math_inline"
         },
         {
+          "include": "#literal_inline"
+        },
+        {
           "include": "#footnote_inline"
         },
         {
@@ -968,6 +971,23 @@
         },
         "4": {
           "name": "punctuation.definition.math.carve"
+        }
+      }
+    },
+    "literal_inline": {
+      "match": "(!)(`)([^`\\n]*)(`)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.literal.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.raw.carve"
+        },
+        "3": {
+          "name": "markup.raw.inline.content.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.raw.carve"
         }
       }
     },
