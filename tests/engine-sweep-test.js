@@ -114,6 +114,10 @@ const CASES = [
     ['mention', 'hi @user here', '@user', false],
     ['tag', 'a #tagname here', '#tagname', false],
     ['inline math', 'a $`e=mc^2` b', 'e=mc^2', false],
+    ['inline literal', 'a !`/kaet/` b', '/kaet/', false],
+    // A wider fence carries an inner backtick. Unlike math, a literal has no
+    // closing sentinel, so the span must not stop at the first backtick.
+    ['inline literal multi', 'a !``x ` y`` b', 'x ` y', false],
 
     // Blocks.
     ['heading', '# Title', 'Title', false],
