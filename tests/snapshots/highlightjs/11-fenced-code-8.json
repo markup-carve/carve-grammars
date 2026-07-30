@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "``` \"notes.txt\"\nremember the milk\n``"
+    "text": "``` \"notes.txt\"\nremember the milk\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

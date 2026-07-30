@@ -9,10 +9,10 @@
   },
   {
     "scope": "code",
-    "text": "```php \"from the header\"\ncode\n``"
+    "text": "```php \"from the header\"\ncode\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

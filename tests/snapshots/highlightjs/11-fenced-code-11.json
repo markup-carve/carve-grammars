@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```js title=\"x\"\ncode\n``"
+    "text": "```js title=\"x\"\ncode\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

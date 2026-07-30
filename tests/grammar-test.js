@@ -277,9 +277,13 @@ ok('hljs: definition has name, aliases, contains', () => {
 });
 
 ok('hljs: an inline-literal mode (begins with !`) is registered before inline code', () => {
+    // Matched on shape, not on an exact prefix: the verbatim families build
+    // their begin pattern dynamically (a sigil plus a maximal backtick run), so
+    // a literal begins with `!` followed by backtick machinery rather than a
+    // literal "!`" pair.
     const beginsOf = (m) => (m && m.begin && (m.begin.source || String(m.begin))) || '';
-    const litIdx = def.contains.findIndex((m) => /^!`/.test(beginsOf(m)));
-    const codeIdx = def.contains.findIndex((m) => /^`/.test(beginsOf(m)));
+    const litIdx = def.contains.findIndex((m) => /^!\(\?|^!`/.test(beginsOf(m)));
+    const codeIdx = def.contains.findIndex((m) => /^\(\?<!`\)|^`/.test(beginsOf(m)));
     assert.ok(litIdx !== -1, 'expected an inline-literal mode beginning with !`');
     assert.ok(codeIdx === -1 || litIdx < codeIdx, 'literal mode must precede inline-code modes');
 });
@@ -371,6 +375,38 @@ if (realHljs) {
         assert.ok(m, 'expected an inline code span: ' + value);
         assert.ok(m[1].includes('`'), 'inline code span dropped the embedded backtick: ' + value);
     });
+
+    // Widened verbatim fences (#52). highlight.js has no begin->end
+    // backreference, so these families used to declare only the double and
+    // single widths: a fence of three or more opened on the first two and closed
+    // at the first shorter run inside it, leaking the rest of the span as prose.
+    // The width is now carried across in `resp.data`.
+    for (const [family, src, cls] of [
+        ['inline math', 'a $```p `` q``` b', 'string'],
+        ['display math', 'a $$```p `` q``` b', 'string'],
+        ['inline literal', 'a !```p `` q``` b', 'string'],
+        ['inline code', 'a ```p `` q``` b', 'code'],
+    ]) {
+        ok(`hljs: a widened fence closes at its own width (${family})`, () => {
+            const { value } = realHljs.highlight(src, { language: 'carve' });
+            const re = new RegExp(`<span class="hljs-${cls}">([\\s\\S]*?)</span>`);
+            const m = value.match(re);
+            assert.ok(m, `expected a ${cls} span for ${family}: ${value}`);
+            assert.ok(
+                m[1].includes('``'),
+                `${family} closed at the embedded shorter run: ${value}`,
+            );
+            assert.ok(
+                m[1].includes('q'),
+                `${family} lost content before its real closer: ${value}`,
+            );
+            // The trailing prose must survive outside the span.
+            assert.ok(
+                value.replace(/<[^>]+>/g, '').endsWith(' b'),
+                `${family} swallowed the trailing prose: ${value}`,
+            );
+        });
+    }
 
     ok('hljs: citation [@key] produces a symbol span', () => {
         const { value } = realHljs.highlight('See [@smith2020] and [@jones].', { language: 'carve' });

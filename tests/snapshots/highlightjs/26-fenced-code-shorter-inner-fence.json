@@ -9,10 +9,6 @@
   },
   {
     "scope": "code",
-    "text": "``\nstill code\n``"
-  },
-  {
-    "scope": "code",
-    "text": "`\n"
+    "text": "``\nstill code\n```\n"
   }
 ]

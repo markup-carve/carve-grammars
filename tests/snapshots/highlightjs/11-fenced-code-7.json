@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```php \"src/Auth.php\" [Composer]\ncomposer require x\n``"
+    "text": "```php \"src/Auth.php\" [Composer]\ncomposer require x\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

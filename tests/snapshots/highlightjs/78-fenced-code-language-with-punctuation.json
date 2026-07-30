@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```c++\nint main() {}\n``"
+    "text": "```c++\nint main() {}\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]
