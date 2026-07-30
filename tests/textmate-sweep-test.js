@@ -123,6 +123,9 @@ const CASES = [
   ['line comment', '%% comment line', 'comment', 'comment line'],
   ['trailing comment', 'text %% trailing', 'comment', 'trailing'],
   ['block comment', '%%%\nhidden\n%%%', 'comment', 'hidden'],
+  // A %%% fence line is a delimiter plus an insignificant tail (PART 9 §28):
+  // `%%% html` is a comment, not a raw passthrough block, and `%%% end` closes.
+  ['block comment with a tail', '%%% html\nhidden\n%%% end', 'comment', 'hidden'],
 ]
 
 const hl = await createHighlighter({

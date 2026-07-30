@@ -146,8 +146,9 @@
       "name": "meta.separator.thematic-break.carve"
     },
     "block_comment": {
-      "begin": "^\\s*%%%\\s*$",
-      "end": "^\\s*%%%\\s*$",
+      "comment": "A %%% fence line is a delimiter plus an insignificant tail (spec PART 9 section 28): only the leading run of % is structural, so `%%% TODO` opens and `%%% end` closes. %%% carries no info string - a raw passthrough block is a CODE fence with an =FORMAT info string - so `%%% html` is a comment. The end backreference matches the opener width exactly, so %%%% nests %%%.",
+      "begin": "^\\s*(%{3,})[^\\n]*$",
+      "end": "^\\s*\\1(?!%)[^\\n]*$",
       "name": "comment.block.carve"
     },
     "line_comment": {

@@ -395,9 +395,8 @@
         relevance: 10,
     };
 
-    // Inline comments: {% comment %}
     // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
-    // CriticMarkup comment `{# ... #}`. (The previous rule here matched
+    // CriticMarkup comment `{# ... #}`. (An earlier rule here matched
     // `{% ... %}`, which is Jinja/Liquid syntax and does not exist in Carve.)
     const LINE_COMMENT = {
         className: 'comment',
@@ -405,10 +404,27 @@
         end: /$/,
         relevance: 5,
     };
+    // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
+    // PART 9 §28): only the leading run of `%` is structural, so `%%% TODO`
+    // opens and `%%% end` closes. `%%%` carries NO info string - a raw
+    // passthrough block is a CODE fence whose info string is `=FORMAT`
+    // (```=html) - so `%%% html` is a comment, not raw output.
+    //
+    // The closer must match the opener's length EXACTLY (a longer run does not
+    // close a shorter fence, which is what lets `%%%%` nest `%%%`). There is no
+    // begin->end backreference in highlight.js, so the width is carried across
+    // in `resp.data` and a wrong-width candidate is rejected with
+    // `ignoreMatch()` - the same idiom the bundled markdown grammar uses.
     const BLOCK_COMMENT = {
         className: 'comment',
-        begin: /^%%%\s*$/,
-        end: /^%%%\s*$/,
+        begin: /^(%{3,})[^\n]*$/,
+        'on:begin': (m, resp) => {
+            resp.data._fenceWidth = m[1].length;
+        },
+        end: /^(%{3,})[^\n]*$/,
+        'on:end': (m, resp) => {
+            if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
+        },
         relevance: 10,
     };
     const CRITIC_SUB = {

@@ -127,15 +127,29 @@
 
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
-        // The comment fence is a *bare* %%% line; a `%%% format` opener is a
-        // raw passthrough block instead (handled by #raw-block below).
+        // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
+        // PART 9 §28): only the leading run of `%` is structural, so
+        // `%%% TODO` opens and `%%% end` closes. `%%%` carries NO info string -
+        // a raw passthrough block is a CODE fence whose info string is
+        // `=FORMAT` (```=html), matched by #code-block below - so `%%% html`
+        // is a comment and its body must stay scoped as one.
         'comment': [
             {
-                pattern: /^[ \t]*%%%[ \t]*\n[\s\S]*?^[ \t]*%%%[ \t]*$/m,
+                // The closer is a backreference, so it matches the opener's
+                // length EXACTLY: a longer run does not close a shorter fence
+                // (hence the `(?!%)`), which is what lets `%%%%` nest `%%%`.
+                pattern: /^[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]*?^[ \t]*\1(?!%)[^\n]*$/m,
                 greedy: true,
             },
             {
                 pattern: /^[ \t]*%%(?!%).*$/m,
+                greedy: true,
+            },
+            {
+                // An UNTERMINATED `%%%` run opens nothing (PART 9 §28); it
+                // degrades to a line comment, so it must still scope as one.
+                // Placed after the block form, which consumes matched fences.
+                pattern: /^[ \t]*%{3,}.*$/m,
                 greedy: true,
             },
             {
@@ -167,21 +181,6 @@
                 'punctuation': /^(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
                 'language': {
                     pattern: /(^(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
-                    lookbehind: true,
-                    alias: 'class-name',
-                },
-            },
-        },
-
-        // Raw passthrough blocks: %%% format ... %%%  (rendered verbatim)
-        'raw-block': {
-            pattern: /^%{3,}[ \t]*\S*[ \t]*\n[\s\S]*?^%{3,}[ \t]*$/m,
-            greedy: true,
-            alias: 'string',
-            inside: {
-                'punctuation': /^%{3,}|%{3,}$/,
-                'language': {
-                    pattern: /(^%{3,}[ \t]*)\S+/,
                     lookbehind: true,
                     alias: 'class-name',
                 },
