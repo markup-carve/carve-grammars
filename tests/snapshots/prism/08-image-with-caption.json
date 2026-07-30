@@ -21,6 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure 1: First moon landing\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure 1: First moon landing"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

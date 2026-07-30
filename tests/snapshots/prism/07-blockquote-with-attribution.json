@@ -9,6 +9,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Steve Jobs\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Steve Jobs"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

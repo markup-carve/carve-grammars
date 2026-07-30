@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Press :kbd[Ctrl+C] to copy.\n"
+    "text": "Press "
+  },
+  {
+    "scope": "function",
+    "text": ":kbd[Ctrl+C]"
+  },
+  {
+    "scope": null,
+    "text": " to copy.\n"
   }
 ]

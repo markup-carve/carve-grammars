@@ -5,6 +5,25 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **highlight.js scopes inline extension calls; Prism scopes caption lines.**
+  Each engine was missing a rule the other had, so a construct the corpus has
+  carried since its first release rendered as plain prose in one of them:
+  `:kbd[Ctrl+C]` (corpus `45-inline-extensions`, also `:term[…]` and
+  `:index[…]`) was unscoped in highlight.js, and `^ A caption` - image
+  captions, blockquote attributions and the numbered `^ Figure #: …` form -
+  was unscoped in Prism.
+- **Prism no longer scopes an extension call carrying attributes as a span.**
+  The `span` rule matches any `[x]` followed by `{`, so `:kbd[Ctrl]{.k}` was
+  claimed by it with the `:kbd` left as prose. `extension` now precedes `span`.
+  Neither engine's extension rule consumes the trailing attribute block any
+  more: an attribute value may itself contain braces (`:kbd[x]{k="{y}"}`), so a
+  `{[^}]*}` tail stopped at the inner brace and split the block. The existing
+  attribute rules match it whole.
+- **The cross-engine sweep covers seven more constructs** - inline extensions
+  (bare and with attributes), symbol shortcodes, citations, code callouts, and
+  captions (plain and numbered). The sweep exists to catch a construct with no
+  rule at all, which snapshots happily as unscoped text; the two gaps above
+  survived because it never reached them.
 - **highlight.js: verbatim fences wider than two backticks no longer close
   early** (#52). Inline code, the inline literal and both math forms declared
   only the double and single widths, because highlight.js has no begin-to-end

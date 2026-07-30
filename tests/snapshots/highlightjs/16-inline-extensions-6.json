@@ -1,11 +1,7 @@
 [
   {
-    "scope": null,
-    "text": ":foo"
-  },
-  {
-    "scope": "string",
-    "text": "[a]"
+    "scope": "function",
+    "text": ":foo[a]"
   },
   {
     "scope": "attr",

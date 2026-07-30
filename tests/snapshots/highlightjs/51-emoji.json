@@ -9,6 +9,14 @@
   },
   {
     "scope": null,
-    "text": " and :kbd[Ctrl] is an extension.\n"
+    "text": " and "
+  },
+  {
+    "scope": "function",
+    "text": ":kbd[Ctrl]"
+  },
+  {
+    "scope": null,
+    "text": " is an extension.\n"
   }
 ]

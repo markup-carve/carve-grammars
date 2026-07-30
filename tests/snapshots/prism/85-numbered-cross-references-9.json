@@ -21,7 +21,19 @@
   },
   {
     "type": "text",
-    "text": "\n^ Equation #: mass-energy\n\nSee </"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Equation #: mass-energy"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
   },
   {
     "type": "tag",

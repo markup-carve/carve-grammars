@@ -237,6 +237,20 @@
             alias: 'punctuation',
         },
 
+        // Caption / attribution line: `^ text` (corpus 08-image-with-caption,
+        // 07-blockquote-with-attribution, and the numbered `^ Figure #: …`
+        // form). Placed after `table`, whose rows use `^` as a rowspan marker
+        // INSIDE a `|` row - that rule claims those lines first, so this one
+        // only sees a caret opening its own line. The body keeps inline
+        // markup: a caption is ordinary inline content.
+        'caption': {
+            pattern: /^[ \t]*\^[ \t].*$/m,
+            alias: 'title',
+            inside: Object.assign({
+                'punctuation': /^[ \t]*\^/,
+            }, inline),
+        },
+
         // Blockquotes: leading > (possibly nested >>)
         'blockquote': {
             pattern: /^[ \t]*>+[ \t]?.*$/m,
@@ -387,20 +401,27 @@
         'span-empty-attrs': spanEmptyAttrs,
 
         // Bracketed span with attributes: [text]{.class}
-        'span': {
-            pattern: /\[[^\^\]][^\]]*\](?=\{)/,
-            alias: 'string',
-        },
-
-        // Extension inline call: :name[content]{attrs}
+        // Extension inline call: :name[content]. Must precede `span`: that rule
+        // matches any `[x]` followed by `{`, so an extension call carrying an
+        // attribute block (`:kbd[Ctrl]{.k}`) was scoped as a span with its
+        // `:kbd` left as prose.
+        //
+        // The trailing `{...}` is left to `attributes`. An attribute value may
+        // itself contain braces (`:kbd[x]{k="{y}"}`), so a `\{[^}]*\}` tail here
+        // would stop at the inner `}` and split the block in half.
         'extension': {
-            pattern: /:[a-zA-Z][\w-]*\[[^\]]*\](?:\{[^}]*\})?/,
+            pattern: /:[a-zA-Z][\w-]*\[[^\]]*\]/,
             alias: 'function',
             inside: {
                 'function': /:[a-zA-Z][\w-]*/,
                 'attributes': attributes,
                 'punctuation': /\[|\]/,
             },
+        },
+
+        'span': {
+            pattern: /\[[^\^\]][^\]]*\](?=\{)/,
+            alias: 'string',
         },
 
         // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}

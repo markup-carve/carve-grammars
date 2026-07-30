@@ -1,6 +1,10 @@
 [
   {
+    "scope": "function",
+    "text": ":foo[a [b]"
+  },
+  {
     "scope": null,
-    "text": ":foo[a [b] c]\n"
+    "text": " c]\n"
   }
 ]
