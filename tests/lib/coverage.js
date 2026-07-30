@@ -100,7 +100,7 @@ const TIPTAP_SKIP = new Map([
     ['38-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
     ['39-smart-typography-escapes-and-code', 'smart-typography output is lossy on reparse'],
     ['41-table-rowspan-with-multi-line-content', 'rowspan filler cells are not reconstructed'],
-    ['42-math', 'a delimiter-less math form does not round-trip (serializer always emits closing $)'],
+    ['42-math', 'attributes on a math span are dropped on serialize (the plain inline and display forms round-trip)'],
     ['43-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
     ['44-generic-divs', 'divs carrying a class and admonitions are not modeled'],
     ['45-definition-lists', 'definition lists are not modeled'],

@@ -5,11 +5,12 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/coverage-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
+    "test": "node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
     "test:roundtrip": "node tests/roundtrip-test.js",
-    "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js"
+    "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js",
+    "test:schema-map": "node tests/schema-map-test.js"
   },
   "repository": {
     "type": "git",
@@ -62,7 +63,8 @@
     "./highlightjs/*": "./highlightjs/*",
     "./shiki": "./shiki/index.js",
     "./shiki/carve.css": "./shiki/carve.css",
-    "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json"
+    "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
+    "./tiptap/schema-map.json": "./tiptap/schema-map.json"
   },
   "peerDependencies": {
     "@shikijs/themes": "^2 || ^3",
