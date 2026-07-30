@@ -7,7 +7,7 @@ import Superscript from '@tiptap/extension-superscript';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
-import Table from '@tiptap/extension-table';
+import * as TableModule from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
@@ -28,6 +28,12 @@ import { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.
 import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
+
+// Tiptap 3 dropped the default export from @tiptap/extension-table - it now
+// exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
+// only had the default. This reads whichever the installed major provides; the
+// row/cell/header packages kept their defaults in both, so they import plainly.
+const Table = TableModule.default ?? TableModule.Table;
 import { CarveKeymap } from './extensions/carve-keymap.js';
 import { CarveMention, CarveTag } from './extensions/carve-mention.js';
 
@@ -119,6 +125,14 @@ export const CarveKit = Extension.create({
                 listItem: false,
                 // Disable HardBreak, we add a custom one with visible indicator
                 hardBreak: false,
+                // Tiptap 3 folded Underline and Link INTO StarterKit, while this
+                // kit pushes both separately below (underline maps to Carve's
+                // `_text_`, link carries the Carve-specific attribute handling).
+                // Leaving them enabled registers each mark twice, which Tiptap
+                // rejects as a duplicate name. Tiptap 2's StarterKit has no such
+                // keys and ignores them, so this is safe on both majors.
+                underline: false,
+                link: false,
                 ...this.options.starterKit,
             }));
         }
