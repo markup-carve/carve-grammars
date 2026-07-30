@@ -21,6 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure 1: moon\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure 1: moon"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]
