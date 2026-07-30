@@ -22,8 +22,14 @@ npm install @markup-carve/carve-grammars
 ```
 
 All peer dependencies are optional - install only what you use:
-`@tiptap/core` + `@tiptap/starter-kit` (v2) for the editor, `prismjs` (v1) for
-Prism, `highlight.js` (v11) for highlight.js.
+`@tiptap/core` + `@tiptap/starter-kit` (v2 or v3) for the editor, `prismjs` (v1)
+for Prism, `highlight.js` (v11) for highlight.js. CI runs the suite against both
+Tiptap majors.
+
+On Tiptap 3, `CarveKit` disables StarterKit's bundled Underline and Link, since
+it registers its own (underline carries Carve's `_text_` mapping). Pass
+`starterKit: { underline: true }` to opt back in, at the cost of a duplicate
+mark name.
 
 `CarveKit` also pulls in several standalone Tiptap marks/extensions (highlight,
 subscript, superscript, underline, link, image, table, task-list); install the
