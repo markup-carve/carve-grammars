@@ -158,7 +158,10 @@
     //
     // Like the literal and inline-code modes below, the two common fence widths
     // are split explicitly (double first) because highlight.js has no
-    // begin->end backreference to match fence widths.
+    // begin->end backreference to match fence widths. A fence of three or more
+    // backticks therefore closes at the first shorter run inside it - the same
+    // known limitation the inline-code and literal modes carry, tracked for all
+    // three families in markup-carve/carve-grammars#52.
     const MATH_DISPLAY_DOUBLE = {
         className: 'string',
         begin: /\$\$``/,
