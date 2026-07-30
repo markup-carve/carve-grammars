@@ -61,7 +61,9 @@ jobs:
         run: |
           npm install --no-save --no-audit --no-fund \
             $(node -p "Object.keys(require('./package.json').devDependencies).filter(d => d.startsWith('@tiptap/')).map(d => d + '@^2').join(' ')")
-          node -p "'tiptap core: ' + require('@tiptap/core/package.json').version"
+          # Read the manifest by path: Tiptap's exports map does not expose
+          # ./package.json, so the package-subpath form throws.
+          node -p "'tiptap core: ' + require('./node_modules/@tiptap/core/package.json').version"
 
       - name: Run tests
         run: npm test
