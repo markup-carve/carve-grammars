@@ -4,6 +4,20 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Added
+- **`CarveCriticComment`, a tiptap mark for editorial comments (`{# ... #}`).**
+  Editorial comments became their own node type in the engines
+  (markup-carve/carve#401), and the bridge had nowhere to put them: `insert` and
+  `delete` were marks, the comment was not, so it round-tripped as a plain span
+  carrying a class - if it survived at all. The mark, the `schema-map.json`
+  entry and the serializer token land together, so the map never names something
+  CarveKit does not provide.
+  It outranks `CarveSpan`, whose `span[class]` rule accepts any simple class
+  name and would otherwise claim `<span class="critic-comment">` first.
+  The serializer emits `{#...#}` and does NOT escape the content: an editorial
+  comment is literal, so escaping it the way prose is escaped would put real
+  backslashes into the comment.
+
 ### Fixed
 - **highlight.js scopes inline extension calls; Prism scopes caption lines.**
   Each engine was missing a rule the other had, so a construct the corpus has

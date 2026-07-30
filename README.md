@@ -280,7 +280,7 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
-- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
+- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
 
 ## Schema map (for other engines)
 

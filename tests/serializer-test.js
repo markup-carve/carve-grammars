@@ -59,6 +59,17 @@ check('insert maps to {+..+}',
     doc(para(text('x', 'carveInsert'))),
     '{+x+}');
 
+check('editorial comment maps to {#..#}',
+    doc(para(text('x', 'carveCriticComment'))),
+    '{#x#}');
+
+// The content is LITERAL - the parser does not resolve escapes inside it - so
+// escaping it the way prose is escaped would put real backslashes in the
+// comment. `*not markup*` has to come back out exactly as written.
+check('an editorial comment does not escape its content',
+    doc(para(text('a '), text(' note *not markup* ', 'carveCriticComment'), text(' b'))),
+    'a {# note *not markup* #} b');
+
 check('link',
     doc(para({ type: 'text', text: 'site', marks: [{ type: 'link', attrs: { href: 'https://example.com' } }] })),
     '[site](https://example.com)');

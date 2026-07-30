@@ -461,6 +461,7 @@ export function serializeToCarve(doc) {
                 const hasHighlight = marks.some(m => m.type === 'highlight');
                 const hasDelete = marks.some(m => m.type === 'carveDelete');
                 const hasInsert = marks.some(m => m.type === 'carveInsert');
+                const hasCriticComment = marks.some(m => m.type === 'carveCriticComment');
                 const hasSup = marks.some(m => m.type === 'superscript');
                 const hasSub = marks.some(m => m.type === 'subscript');
                 const hasStrike = marks.some(m => m.type === 'strike');
@@ -476,7 +477,15 @@ export function serializeToCarve(doc) {
                 const isEmphasized = hasBold || hasItalic || hasUnderline || hasStrike
                     || hasHighlight || hasSup || hasSub;
                 let t;
-                if (hasCode) {
+                if (hasCriticComment) {
+                    // An editorial comment's content is LITERAL - nothing inside
+                    // it is markup - so it is emitted raw. Escaping it the way
+                    // prose is escaped would put real backslashes in the
+                    // comment, since the parser does not resolve escapes there.
+                    // Carve has no escape for `#}`, so content containing that
+                    // cannot round-trip; same limitation as {+ +} and {- -}.
+                    t = text;
+                } else if (hasCode) {
                     // Code content is raw (no escaping inside code), so a literal
                     // backtick is handled by widening the fence to one more than
                     // the longest internal backtick run, padding if it touches an
@@ -529,6 +538,9 @@ export function serializeToCarve(doc) {
                 };
                 // Superscript and subscript have NO bare form: a bare `^` or `,`
                 // is literal text, so both always serialize braced.
+                // Innermost, because the content is literal: any other mark
+                // has to wrap the whole `{# ... #}`, never sit inside it.
+                if (hasCriticComment) t = '{#' + t + '#}';
                 if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '{^' + t + '^}';
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
