@@ -21,14 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Costs "
+    "text": "\n"
   },
   {
-    "type": "escape",
-    "text": "\\#"
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Costs \\# units"
   },
   {
     "type": "text",
-    "text": " units\n"
+    "text": "\n"
   }
 ]

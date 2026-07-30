@@ -1,6 +1,10 @@
 [
   {
+    "scope": "function",
+    "text": ":foo[bar]"
+  },
+  {
     "scope": null,
-    "text": ":foo[bar]\n"
+    "text": "\n"
   }
 ]

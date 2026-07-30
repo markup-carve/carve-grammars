@@ -37,6 +37,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure #: A sunset\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: A sunset"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

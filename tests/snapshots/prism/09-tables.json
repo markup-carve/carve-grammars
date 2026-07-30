@@ -69,6 +69,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Fruit prices\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Fruit prices"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

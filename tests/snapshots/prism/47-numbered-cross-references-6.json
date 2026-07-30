@@ -21,14 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ See "
+    "text": "\n"
   },
   {
-    "type": "tag",
-    "text": "#data"
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " See #data for details"
   },
   {
     "type": "text",
-    "text": " for details\n"
+    "text": "\n"
   }
 ]

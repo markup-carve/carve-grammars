@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": ":1[x]\n:a1[x]\n"
+    "text": ":1[x]\n"
+  },
+  {
+    "scope": "function",
+    "text": ":a1[x]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

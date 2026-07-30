@@ -37,7 +37,19 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure #: A sunset\n\nSee </"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: A sunset"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
   },
   {
     "type": "tag",

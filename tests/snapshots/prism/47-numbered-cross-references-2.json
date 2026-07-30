@@ -21,7 +21,19 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure #: one\n\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: one"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
   },
   {
     "type": "image>punctuation",
@@ -45,6 +57,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure #: two\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: two"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

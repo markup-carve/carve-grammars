@@ -1,11 +1,19 @@
 [
   {
-    "type": "text",
+    "type": "extension>function",
     "text": ":foo"
   },
   {
-    "type": "span",
-    "text": "[a]"
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "a"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>punctuation",

@@ -493,6 +493,20 @@
         relevance: 2,
     };
 
+    // Inline extension call: :name[content] (corpus 45-inline-extensions).
+    // Matched before SYMBOL, whose `:name:` shape cannot claim this one but
+    // reads similarly.
+    //
+    // A trailing `{...}` is deliberately NOT consumed here: an attribute value
+    // may itself contain braces (`:kbd[x]{k="{y}"}`), so a `\{[^}]*\}` tail
+    // stops at the inner `}` and swallows half the block. ATTRIBUTE already
+    // matches it correctly as its own scope.
+    const INLINE_EXTENSION = {
+        className: 'function',
+        begin: /:[A-Za-z][\w-]*\[[^\]\n]*\]/,
+        relevance: 5,
+    };
+
     // Symbol shortcodes (e.g. emoji): :name: (parser shape - name starts
     // alphanumeric, then word chars, `+` or `-`; no whitespace, so
     // `a : b : c` stays text)
@@ -542,6 +556,7 @@
             REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
             CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
             CODE_CALLOUT,      // <n> callout markers
+            INLINE_EXTENSION,  // :name[content] - before SYMBOL and LINK
             SYMBOL,            // :name: shortcodes
             LINK,
             AUTOLINK,
