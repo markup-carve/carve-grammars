@@ -9,10 +9,10 @@
   },
   {
     "scope": "code",
-    "text": "```\n  c\n  ``"
+    "text": "```\n  c\n  ```"
   },
   {
-    "scope": "code",
-    "text": "`\ntail\n"
+    "scope": null,
+    "text": "\ntail\n"
   }
 ]

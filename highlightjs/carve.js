@@ -151,80 +151,64 @@
         relevance: 3,
     };
 
-    // Math: $$`...` (display) and $`...` (inline). Per grammar.ebnf PART 9 §18
+    /**
+     * A verbatim span whose fence WIDTH IS DYNAMIC: an optional sigil plus a
+     * run of N backticks opens it, and a run of EXACTLY N backticks closes it.
+     *
+     * highlight.js has no begin->end backreference, which is why these families
+     * used to declare the two common widths explicitly (double first, then
+     * single). A fence of three or more backticks then opened on the first two
+     * and closed at the first shorter run inside it, leaking the rest of the
+     * span as prose - and widened fences are the whole point of the widening
+     * rule, since content holding a backtick run needs a longer fence (#52).
+     *
+     * The width is instead captured at `begin`, carried in `resp.data`, and
+     * enforced at `end` by rejecting a wrong-width candidate with
+     * `ignoreMatch()`. That is the idiom highlight.js's own bundled markdown
+     * grammar uses for fenced code.
+     *
+     * Both patterns match a MAXIMAL run, so a longer run never closes a shorter
+     * fence by matching a prefix of itself: with a 2-wide fence, a 4-backtick
+     * run inside the span is content, not a closer.
+     */
+    function verbatimFence({ className, sigil = '', relevance = 0 }) {
+        const RUN = '(?<!`)`+(?!`)';
+        // The width is read off match[0], NOT a capture group: highlight.js
+        // concatenates every sibling mode's `begin` into one alternation, so
+        // group NUMBERS shift with unrelated modes and an index-based read
+        // silently grabs the wrong group (it threw here, which made the mode
+        // disappear entirely rather than fail loudly).
+        const widthOf = (text) => /`*$/.exec(text)[0].length;
+        return {
+            className,
+            begin: new RegExp(sigil + RUN),
+            'on:begin': (m, resp) => {
+                resp.data._fenceWidth = widthOf(m[0]);
+            },
+            end: new RegExp(RUN),
+            'on:end': (m, resp) => {
+                if (widthOf(m[0]) !== resp.data._fenceWidth) resp.ignoreMatch();
+            },
+            relevance,
+        };
+    }
+
+    // Math: $$`...` (display) and $`...` (inline). Per grammar.ebnf PART 9 SS18
     // the `$` / `$$` prefix opens a verbatim span with NO closing sentinel, so
     // the backtick run alone ends it. Must precede the inline code modes - the
     // leading $ keeps them from matching, but order is clearer.
-    //
-    // Like the literal and inline-code modes below, the two common fence widths
-    // are split explicitly (double first) because highlight.js has no
-    // begin->end backreference to match fence widths. A fence of three or more
-    // backticks therefore closes at the first shorter run inside it - the same
-    // known limitation the inline-code and literal modes carry, tracked for all
-    // three families in markup-carve/carve-grammars#52.
-    const MATH_DISPLAY_DOUBLE = {
-        className: 'string',
-        begin: /\$\$``/,
-        end: /``/,
-        relevance: 5,
-    };
-    const MATH_DISPLAY = {
-        className: 'string',
-        begin: /\$\$`/,
-        end: /`/,
-        relevance: 5,
-    };
-    const MATH_INLINE_DOUBLE = {
-        className: 'string',
-        begin: /\$``/,
-        end: /``/,
-        relevance: 5,
-    };
-    const MATH_INLINE = {
-        className: 'string',
-        begin: /\$`/,
-        end: /`/,
-        relevance: 5,
-    };
+    const MATH_DISPLAY = verbatimFence({ className: 'string', sigil: '\\$\\$', relevance: 5 });
+    const MATH_INLINE = verbatimFence({ className: 'string', sigil: '\\$', relevance: 5 });
 
     // Inline literal: !`...` - a `!` prefix on a verbatim backtick run,
     // rendered as prose (no <code>). Parallel to the math modes above and,
     // like them, must precede the inline-code modes so the leading `!` claims
     // the span rather than leaving a stray `!` before a code span. The `!` +
     // backtick never collides with an image (`![`), whose next char is `[`.
-    // Unlike the math modes above, a literal has no closing sentinel (`$`) to
-    // anchor its end, so a single `end: /`+/` would close at the first backtick
-    // inside a wider fence. Split double/single exactly as the inline-code
-    // modes below do, double first, so `!``a ` b`` ` keeps its inner backtick.
-    const LITERAL_INLINE_DOUBLE = {
-        className: 'string',
-        begin: /!``/,
-        end: /``/,
-        relevance: 0,
-    };
-    const LITERAL_INLINE = {
-        className: 'string',
-        begin: /!`/,
-        end: /`/,
-        relevance: 0,
-    };
+    const LITERAL_INLINE = verbatimFence({ className: 'string', sigil: '!', relevance: 0 });
 
-    // Inline code: `code` or ``code``. highlight.js has no begin->end
-    // backreference to match fence widths, so handle the two common widths
-    // explicitly - double backticks first, so an embedded single backtick
-    // (``a ` b``) does not close the span early.
-    const INLINE_CODE_DOUBLE = {
-        className: 'code',
-        begin: /``/,
-        end: /``/,
-        relevance: 0,
-    };
-    const INLINE_CODE_SINGLE = {
-        className: 'code',
-        begin: /`/,
-        end: /`/,
-        relevance: 0,
-    };
+    // Inline code: `code`, ``code``, or any wider fence.
+    const INLINE_CODE = verbatimFence({ className: 'code', relevance: 0 });
 
     // Inline links: [text](url) with optional trailing attributes
     const LINK = {
@@ -578,14 +562,10 @@
             EMPHASIS,          // /text/
             UNDERLINE,         // _text_
             STRIKETHROUGH,     // ~text~
-            MATH_DISPLAY_DOUBLE, // $$``...`` - before the single-backtick form
-            MATH_DISPLAY,      // $$`...` - before inline code (leading $)
-            MATH_INLINE_DOUBLE, // $``...`` - before the single-backtick form
-            MATH_INLINE,       // $`...`
-            LITERAL_INLINE_DOUBLE, // !``...`` - before the single-backtick form
+            MATH_DISPLAY,      // $$`...` - before $`...` and inline code
+            MATH_INLINE,       // $`...` - before inline code (leading $)
             LITERAL_INLINE,    // !`...` - before inline code (leading !)
-            INLINE_CODE_DOUBLE, // ``code`` - before single
-            INLINE_CODE_SINGLE, // `code`
+            INLINE_CODE,       // `code` at any fence width
             FORCED_STRONG,
             FORCED_EMPHASIS,
             FORCED_UNDERLINE,

@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```=html\n<custom-el>Verbatim HTML</custom-el>\n``"
+    "text": "```=html\n<custom-el>Verbatim HTML</custom-el>\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

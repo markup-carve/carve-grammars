@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```php \"src/Auth.php\"\n$ok = true;\n``"
+    "text": "```php \"src/Auth.php\"\n$ok = true;\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

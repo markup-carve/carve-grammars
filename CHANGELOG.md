@@ -5,6 +5,30 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **highlight.js: verbatim fences wider than two backticks no longer close
+  early** (#52). Inline code, the inline literal and both math forms declared
+  only the double and single widths, because highlight.js has no begin-to-end
+  backreference. A fence of three or more therefore opened on the first two and
+  closed at the first shorter run inside it, leaking the remainder as prose:
+  `a $```p `` q``` b` lost `q` and mis-scoped the tail. Widened fences are the
+  point of the widening rule, since content holding a backtick run needs a
+  longer fence.
+
+  The three families now share one `verbatimFence()` factory that captures the
+  opening width, carries it in `resp.data`, and rejects a wrong-width closer
+  with `ignoreMatch()` - the idiom highlight.js's bundled markdown grammar uses.
+  Both patterns match a maximal run, so a longer run inside a narrower fence is
+  content rather than a closer. Six tiered modes collapse to four dynamic ones,
+  so the families can no longer drift apart.
+
+  The width is read from `match[0]`, not a capture group: highlight.js
+  concatenates every sibling mode's `begin` into one alternation, so group
+  numbers shift with unrelated modes. An index-based read threw there, which
+  made the mode disappear entirely instead of failing loudly.
+
+  Twelve highlight.js snapshots improved as a result - each had pinned a
+  truncated closing fence (` `` ` where the source has ` ``` `), which is the
+  defect itself rather than a formatting difference.
 - **A `%%%` comment fence is never a raw passthrough block.** Prism carried a
   dedicated `raw-block` token matching `%{3,}` plus an info word, and both
   highlighter grammars claimed in comments that `%%% format` was raw

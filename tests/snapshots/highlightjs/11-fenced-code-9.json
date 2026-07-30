@@ -1,10 +1,10 @@
 [
   {
     "scope": "code",
-    "text": "```js \"*.config.js\"\nexport default {}\n``"
+    "text": "```js \"*.config.js\"\nexport default {}\n```"
   },
   {
-    "scope": "code",
-    "text": "`\n"
+    "scope": null,
+    "text": "\n"
   }
 ]
