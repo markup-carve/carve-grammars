@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "symbol",
+    "text": "@u"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=v.w}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": ":: term\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "A first paragraph,\n"
+  },
+  {
+    "type": "table-continuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nthen a flush-left block joined with +.\n"
+  }
+]

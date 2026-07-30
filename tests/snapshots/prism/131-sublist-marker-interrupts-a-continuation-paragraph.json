@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "first\n\n  second\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "nested\n"
+  }
+]

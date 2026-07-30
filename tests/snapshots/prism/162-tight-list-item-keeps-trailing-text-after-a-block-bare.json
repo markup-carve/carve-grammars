@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n  "
+  },
+  {
+    "type": "code",
+    "text": "```\n  c\n  ```"
+  },
+  {
+    "type": "text",
+    "text": "\n  tail\n"
+  }
+]

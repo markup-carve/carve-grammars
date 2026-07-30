@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": " Note"
+  },
+  {
+    "type": "footnote",
+    "text": "[^fn]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": " [^fn]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " body."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

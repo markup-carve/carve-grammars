@@ -1,0 +1,50 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "a(b(c"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": ")d) and "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "y"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "e"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "f)\n"
+  }
+]

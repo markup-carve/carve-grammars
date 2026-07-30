@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": ":: A term that\nwraps onto the next line\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  its definition"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

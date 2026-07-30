@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Literal "
+  },
+  {
+    "type": "literal",
+    "text": "!`  `"
+  },
+  {
+    "type": "text",
+    "text": " and math "
+  },
+  {
+    "type": "math",
+    "text": "$`  `"
+  },
+  {
+    "type": "text",
+    "text": " keep their spaces.\n"
+  }
+]

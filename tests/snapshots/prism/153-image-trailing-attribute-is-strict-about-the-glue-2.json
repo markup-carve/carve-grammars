@@ -1,0 +1,42 @@
+[
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "alt"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "img.png"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".x"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

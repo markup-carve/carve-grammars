@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "[>foo]\n\n{"
+  },
+  {
+    "scope": "symbol",
+    "text": ":tada:"
+  },
+  {
+    "scope": null,
+    "text": "}\n"
+  }
+]

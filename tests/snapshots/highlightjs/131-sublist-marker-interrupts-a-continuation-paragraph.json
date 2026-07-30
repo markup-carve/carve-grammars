@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " first\n\n  second\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " nested\n"
+  }
+]

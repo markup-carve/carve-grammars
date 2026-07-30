@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "But "
+  },
+  {
+    "type": "code",
+    "text": "` a `"
+  },
+  {
+    "type": "text",
+    "text": " strips one space from each side.\n"
+  }
+]

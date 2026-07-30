@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "link",
+    "text": "[x](http://a/b\\)"
+  },
+  {
+    "scope": null,
+    "text": "c) and "
+  },
+  {
+    "scope": "link",
+    "text": "[y](a\\\\b)"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[z](a\\qb)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

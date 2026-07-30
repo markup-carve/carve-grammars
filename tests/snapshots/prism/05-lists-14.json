@@ -1,7 +1,11 @@
 [
   {
+    "type": "list",
+    "text": "- "
+  },
+  {
     "type": "text",
-    "text": "Text hier\n\n"
+    "text": "apples\n\n"
   },
   {
     "type": "list",
@@ -9,6 +13,6 @@
   },
   {
     "type": "text",
-    "text": "nur eins\n"
+    "text": "oranges\n"
   }
 ]

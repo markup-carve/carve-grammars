@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "The word cat is "
+  },
+  {
+    "scope": "string",
+    "text": "!`/kaet/`"
+  },
+  {
+    "scope": null,
+    "text": " in IPA.\n"
+  }
+]

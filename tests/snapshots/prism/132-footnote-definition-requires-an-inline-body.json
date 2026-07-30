@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Use "
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ":\n  First\n"
+  }
+]

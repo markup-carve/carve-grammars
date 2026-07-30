@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": ":: term\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "+\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " the whole definition is this quote"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

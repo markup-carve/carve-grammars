@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "code",
+    "text": "```\n  a\n\n  b\n  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " c\n"
+  }
+]

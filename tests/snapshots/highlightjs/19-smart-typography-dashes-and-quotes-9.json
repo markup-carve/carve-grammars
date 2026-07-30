@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "strong",
+    "text": "*'q'*"
+  },
+  {
+    "scope": null,
+    "text": "\n\n\"hello\"\n\n\"'nested'\"\n\na*'q'*\n"
+  }
+]

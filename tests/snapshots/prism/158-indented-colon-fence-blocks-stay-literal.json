@@ -1,0 +1,26 @@
+[
+  {
+    "type": "div",
+    "text": " "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n A box.\n"
+  },
+  {
+    "type": "div",
+    "text": " "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
