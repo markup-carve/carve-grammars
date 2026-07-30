@@ -13,10 +13,10 @@
   },
   {
     "scope": "comment",
-    "text": "%%%\na hidden\nblock\n%%%\n"
+    "text": "%%%\na hidden\nblock\n%%%"
   },
   {
     "scope": null,
-    "text": "\nAlso visible.\n"
+    "text": "\n\nAlso visible.\n"
   }
 ]

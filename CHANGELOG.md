@@ -4,6 +4,31 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Fixed
+- **A `%%%` comment fence is never a raw passthrough block.** Prism carried a
+  dedicated `raw-block` token matching `%{3,}` plus an info word, and both
+  highlighter grammars claimed in comments that `%%% format` was raw
+  passthrough. The spec has no such form: a raw block is a *code* fence whose
+  info string is `=FORMAT` (```` ```=html ````), and a percent run is always a
+  comment. So `%%% TODO` - a natural thing to write - highlighted its body as a
+  raw string instead of a comment. The `raw-block` token is gone; the
+  `=FORMAT` raw form was already covered by the code-fence rule.
+- **A `%%%` fence line tolerates a trailing tail, in all four grammars.** Only
+  the leading run of `%` is structural (spec PART 9 §28), so `%%% TODO` opens
+  and `%%% end` closes. Prism, highlight.js and TextMate all required a bare
+  `%%%` line before, so a fence with any trailing text failed to open and the
+  comment body leaked into the highlighted output.
+- **The closer matches the opener width exactly**, so `%%%%` nests `%%%`.
+  Prism and TextMate use a backreference; highlight.js, which has no
+  begin-to-end backreference, carries the width in `resp.data` and rejects a
+  wrong-width candidate with `ignoreMatch()`, the idiom its bundled markdown
+  grammar uses.
+
+  Known limitation, unchanged in kind: highlight.js and TextMate cannot look
+  ahead for a closer, so an *unterminated* `%%%` still scopes to end of input
+  rather than degrading to a line comment the way the spec requires. Prism
+  matches the whole block in one pattern and gets this exactly right.
+
 ### Added
 - **Inline literal** `` !`…` `` tokenizes across TextMate, Prism and
   highlight.js (Shiki inherits the TextMate grammar). A `!` prefix on a

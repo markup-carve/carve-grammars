@@ -92,7 +92,9 @@ ok('prism: grammar registered on Prism.languages.carve', () => {
 
 ok('prism: required token names present', () => {
     const required = [
-        'comment', 'front-matter', 'code-block', 'raw-block', 'title', 'div',
+        // No 'raw-block': there is no percent-fence raw block in the spec, and
+        // the `=FORMAT` raw form is a code fence, covered by 'code-block'.
+        'comment', 'front-matter', 'code-block', 'title', 'div',
         'table', 'blockquote', 'list', 'math', 'literal', 'code', 'image', 'footnote',
         'url', 'span', 'inserted', 'deleted', 'bold', 'italic', 'underline',
         'strike', 'highlight', 'superscript', 'subscript', 'escape',
@@ -111,8 +113,9 @@ ok('prism: every token pattern is a valid RegExp', () => {
 });
 
 // Regression tokenizer tests (need the real Prism engine). Front matter before
-// a body must tokenize as front-matter, a `%%% format` opener must be a raw
-// block (not the bare-fence comment), and math spans keep their closing $.
+// a body must tokenize as front-matter, a `%%% format` opener must be a COMMENT
+// (there is no percent-fence raw block in the spec), and math spans keep their
+// closing $.
 if (realPrism) {
     const typesOf = (src) => realPrism.tokenize(src, carvePrism)
         .filter((t) => typeof t !== 'string')
@@ -123,15 +126,55 @@ if (realPrism) {
         assert.ok(types.includes('front-matter'), `expected front-matter token, got: ${types.join(',')}`);
     });
 
-    ok('prism: %%% raw block with a format is not a comment', () => {
+    // This test used to assert the opposite - that `%%% html` is a `raw-block`
+    // token. There is no such construct: a raw passthrough block is a CODE
+    // fence with an `=FORMAT` info string (```=html), and a `%%%` run is always
+    // a comment (spec PART 9 §28). The old assertion is what kept the wrong
+    // rule alive, so it is inverted rather than deleted.
+    ok('prism: a %%% opener with a trailing word is a comment, not a raw block', () => {
         const types = typesOf('%%% html\n<b>x</b>\n%%%\n');
-        assert.ok(types.includes('raw-block'), `expected raw-block token, got: ${types.join(',')}`);
-        assert.ok(!types.includes('comment'), `raw block must not be a comment, got: ${types.join(',')}`);
+        assert.ok(types.includes('comment'), `expected comment token, got: ${types.join(',')}`);
+        assert.ok(!types.includes('raw-block'), `there is no %%% raw block, got: ${types.join(',')}`);
     });
 
     ok('prism: bare %%% block is still a comment', () => {
         const types = typesOf('%%%\nhidden\n%%%\n');
         assert.ok(types.includes('comment'), `expected comment token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: a trailing tail on the closer still closes the comment', () => {
+        const tokens = realPrism.tokenize('%%%\nx\n%%% end\nafter\n', carvePrism);
+        const comment = tokens.find((t) => typeof t !== 'string' && t.type === 'comment');
+        assert.ok(comment, 'expected a comment token');
+        assert.ok(
+            String(comment.content).includes('%%% end'),
+            `closer with a tail must be part of the comment, got: ${JSON.stringify(String(comment.content))}`,
+        );
+        assert.ok(
+            !String(comment.content).includes('after'),
+            'the comment must end at its closer, not swallow the next block',
+        );
+    });
+
+    ok('prism: the closer matches the opener width exactly', () => {
+        // `%%%%` does not close `%%%` (that is what lets a longer fence nest a
+        // shorter one), so neither fence line opens a block here: each degrades
+        // to a line comment and the body between them stays plain text.
+        const tokens = realPrism.tokenize('%%%\nx\n%%%%\n', carvePrism);
+        const texts = tokens.filter((t) => typeof t === 'string').join('');
+        assert.ok(texts.includes('x'), `body must stay text, got: ${JSON.stringify(texts)}`);
+        const comments = tokens.filter((t) => typeof t !== 'string' && t.type === 'comment');
+        assert.equal(comments.length, 2, 'both percent-run lines are line comments');
+    });
+
+    ok('prism: an unterminated %%% opener still scopes as a comment', () => {
+        const types = typesOf('%%% TODO\nsecret\n');
+        assert.ok(types.includes('comment'), `expected comment token, got: ${types.join(',')}`);
+    });
+
+    ok('prism: a ```=html fence is the raw passthrough path', () => {
+        const types = typesOf('```=html\n<b>x</b>\n```\n');
+        assert.ok(types.includes('code-block'), `expected code-block token, got: ${types.join(',')}`);
     });
 
     ok('prism: math is the $ prefix on a verbatim span, with no closing $', () => {
@@ -292,6 +335,33 @@ if (realHljs) {
         const { value } = realHljs.highlight(src, { language: 'carve' });
         // the heading after the fences must still be a section
         assert.ok(value.includes('hljs-section'), 'content after fences was lost: ' + value);
+    });
+
+    ok('hljs: a %%% opener with a trailing word is a comment, not raw output', () => {
+        // `%%% html` is a comment (spec PART 9 §28); there is no percent-fence
+        // raw block. The body must be inside the comment span, and the block
+        // after the closer must survive.
+        const src = '%%% html\n<b>secret</b>\n%%%\n# after\n';
+        const { value } = realHljs.highlight(src, { language: 'carve' });
+        const m = value.match(/<span class="hljs-comment">([\s\S]*?)<\/span>/);
+        assert.ok(m, 'expected a comment span: ' + value);
+        assert.ok(m[1].includes('secret'), 'comment body escaped the comment span: ' + value);
+        assert.ok(value.includes('hljs-section'), 'content after the closer was lost: ' + value);
+    });
+
+    ok('hljs: a trailing tail on the closer still closes the comment', () => {
+        const { value } = realHljs.highlight('%%%\nx\n%%% end\n# after\n', { language: 'carve' });
+        assert.ok(value.includes('hljs-section'), 'closer with a tail did not close: ' + value);
+    });
+
+    ok('hljs: the closer matches the opener width exactly', () => {
+        // A `%%%` line must not close a `%%%%` fence, which is what lets a
+        // longer fence nest a shorter one.
+        const { value } = realHljs.highlight('%%%%\nhas %%% inner\n%%%%\n# after\n', { language: 'carve' });
+        const m = value.match(/<span class="hljs-comment">([\s\S]*?)<\/span>/);
+        assert.ok(m, 'expected a comment span: ' + value);
+        assert.ok(m[1].includes('inner'), 'inner shorter fence closed the block early: ' + value);
+        assert.ok(value.includes('hljs-section'), 'content after the closer was lost: ' + value);
     });
 
     ok('hljs: double-backtick inline code keeps an embedded backtick', () => {

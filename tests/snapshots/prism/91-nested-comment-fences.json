@@ -4,16 +4,8 @@
     "text": "before\n\n"
   },
   {
-    "type": "raw-block>punctuation",
-    "text": "%%%%"
-  },
-  {
-    "type": "raw-block",
-    "text": "\nhidden %%% inner fence stays hidden\n"
-  },
-  {
-    "type": "raw-block>punctuation",
-    "text": "%%%%"
+    "type": "comment",
+    "text": "%%%%\nhidden %%% inner fence stays hidden\n%%%%"
   },
   {
     "type": "text",

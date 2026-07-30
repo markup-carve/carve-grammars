@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "before\n\n%%%%\nhidden %%% inner fence stays hidden\n%%%%\n\nafter\n"
+    "text": "before\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%%%%\nhidden %%% inner fence stays hidden\n%%%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\nafter\n"
   }
 ]
