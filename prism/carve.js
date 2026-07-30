@@ -271,15 +271,19 @@
             },
         },
 
-        // Display + inline math: $$`...`$$ and $`...`$
+        // Display + inline math: $$`...` and $`...`. Per grammar.ebnf PART 9
+        // §18, math is a `$` / `$$` prefix on a verbatim span and has NO
+        // closing sentinel - the backtick run alone delimits it. The prefix is
+        // what disambiguates currency: `$5` has no following backtick run and
+        // stays literal text.
         'math': [
             {
-                pattern: /\$\$(`+)[\s\S]*?\1\$\$/,
+                pattern: /\$\$(`+)[\s\S]*?\1/,
                 greedy: true,
                 alias: 'string',
             },
             {
-                pattern: /\$(`+)[\s\S]*?\1\$/,
+                pattern: /\$(`+)[\s\S]*?\1/,
                 greedy: true,
                 alias: 'string',
             },

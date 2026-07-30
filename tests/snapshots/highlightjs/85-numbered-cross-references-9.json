@@ -9,6 +9,22 @@
   },
   {
     "scope": "string",
-    "text": "$$`E = mc^2`\n^ Equation #: mass-energy\n\nSee </#eq-emc>.\n"
+    "text": "$$`E = mc^2`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Equation #: mass-energy"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee <"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/#eq-emc>.\n"
   }
 ]

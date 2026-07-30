@@ -151,18 +151,39 @@
         relevance: 3,
     };
 
-    // Math: $$`...`$$ (display) and $`...`$ (inline). Must precede the inline
-    // code modes - the leading $ keeps them from matching, but order is clearer.
+    // Math: $$`...` (display) and $`...` (inline). Per grammar.ebnf PART 9 §18
+    // the `$` / `$$` prefix opens a verbatim span with NO closing sentinel, so
+    // the backtick run alone ends it. Must precede the inline code modes - the
+    // leading $ keeps them from matching, but order is clearer.
+    //
+    // Like the literal and inline-code modes below, the two common fence widths
+    // are split explicitly (double first) because highlight.js has no
+    // begin->end backreference to match fence widths. A fence of three or more
+    // backticks therefore closes at the first shorter run inside it - the same
+    // known limitation the inline-code and literal modes carry, tracked for all
+    // three families in markup-carve/carve-grammars#52.
+    const MATH_DISPLAY_DOUBLE = {
+        className: 'string',
+        begin: /\$\$``/,
+        end: /``/,
+        relevance: 5,
+    };
     const MATH_DISPLAY = {
         className: 'string',
-        begin: /\$\$`+/,
-        end: /`+\$\$/,
+        begin: /\$\$`/,
+        end: /`/,
+        relevance: 5,
+    };
+    const MATH_INLINE_DOUBLE = {
+        className: 'string',
+        begin: /\$``/,
+        end: /``/,
         relevance: 5,
     };
     const MATH_INLINE = {
         className: 'string',
-        begin: /\$`+/,
-        end: /`+\$/,
+        begin: /\$`/,
+        end: /`/,
         relevance: 5,
     };
 
@@ -541,8 +562,10 @@
             EMPHASIS,          // /text/
             UNDERLINE,         // _text_
             STRIKETHROUGH,     // ~text~
-            MATH_DISPLAY,      // $$`...`$$ - before inline code (leading $)
-            MATH_INLINE,       // $`...`$
+            MATH_DISPLAY_DOUBLE, // $$``...`` - before the single-backtick form
+            MATH_DISPLAY,      // $$`...` - before inline code (leading $)
+            MATH_INLINE_DOUBLE, // $``...`` - before the single-backtick form
+            MATH_INLINE,       // $`...`
             LITERAL_INLINE_DOUBLE, // !``...`` - before the single-backtick form
             LITERAL_INLINE,    // !`...` - before inline code (leading !)
             INLINE_CODE_DOUBLE, // ``code`` - before single
