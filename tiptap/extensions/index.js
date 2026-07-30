@@ -4,6 +4,7 @@
 
 export { CarveInsert } from './carve-insert.js';
 export { CarveDelete } from './carve-delete.js';
+export { CarveCriticComment } from './carve-critic-comment.js';
 export { CarveDiv } from './carve-div.js';
 export { CarveSpan } from './carve-span.js';
 export { CarveFootnote } from './carve-footnote.js';

@@ -4,45 +4,192 @@
   "carveSpecVocabulary": "spec/docs/profiles.md",
   "proseMirrorSchema": "tiptap/carve-kit.js (CarveKit)",
   "types": {
-    "document": { "kind": "node", "pm": "doc" },
-    "paragraph": { "kind": "node", "pm": "paragraph" },
-    "heading": { "kind": "node", "pm": "heading", "notes": "level attr; only `id` survives as an attribute" },
-    "text": { "kind": "node", "pm": "text" },
-    "hard_break": { "kind": "node", "pm": "hardBreak" },
-    "block_quote": { "kind": "node", "pm": "blockquote" },
-    "code_block": { "kind": "node", "pm": "codeBlock", "notes": "language attr; languageRaw carries the unnormalized info string" },
-    "thematic_break": { "kind": "node", "pm": "horizontalRule" },
-    "list": { "kind": "node", "pm": ["bulletList", "orderedList", "taskList"], "notes": "listType selects; taskList when items carry a task marker" },
-    "list_item": { "kind": "node", "pm": ["listItem", "taskItem"], "notes": "taskItem inside a taskList" },
-    "table": { "kind": "node", "pm": "table" },
-    "table_row": { "kind": "node", "pm": "tableRow" },
-    "table_cell": { "kind": "node", "pm": ["tableCell", "tableHeader"], "notes": "tableHeader for `|=` cells" },
-    "image": { "kind": "node", "pm": "image" },
-    "math": { "kind": "node", "pm": "carveMath", "notes": "inline atom; display attr for the `$$` form" },
-    "footnote_ref": { "kind": "node", "pm": "carveFootnote" },
-    "footnote": { "kind": "node", "pm": "carveFootnoteDefinition" },
-    "div": { "kind": "node", "pm": ["carveDiv", "carveTabSet", "carveTab"], "notes": "carveTabSet/carveTab are the `tabs`/`tab` classes; every other class is carveDiv" },
-    "admonition": { "kind": "node", "pm": "carveDiv", "notes": "profile vocabulary only: an admonition is a div with a type class" },
-    "definition_list": { "kind": "node", "pm": "definitionList" },
-    "definition_term": { "kind": "node", "pm": "definitionTerm" },
-    "definition_description": { "kind": "node", "pm": "definitionDescription" },
-    "mention": { "kind": "node", "pm": ["carveMention", "carveTag"], "notes": "carveTag for the `#tag` flavor" },
-    "inline_extension": { "kind": "node", "pm": "carveEmbed", "notes": "partial: only media embeds are modeled, via the directive stamped in carveSource" },
-
-    "strong": { "kind": "mark", "pm": "bold" },
-    "emphasis": { "kind": "mark", "pm": "italic" },
-    "underline": { "kind": "mark", "pm": "underline" },
-    "strike": { "kind": "mark", "pm": "strike" },
-    "code": { "kind": "mark", "pm": "code" },
-    "highlight": { "kind": "mark", "pm": "highlight" },
-    "subscript": { "kind": "mark", "pm": "subscript" },
-    "superscript": { "kind": "mark", "pm": "superscript" },
-    "insert": { "kind": "mark", "pm": "carveInsert" },
-    "delete": { "kind": "mark", "pm": "carveDelete" },
-    "span": { "kind": "mark", "pm": "carveSpan", "notes": "carries id, class and extra attributes" },
-    "abbreviation": { "kind": "mark", "pm": "carveAbbreviation" },
-    "link": { "kind": "mark", "pm": "link" },
-    "autolink": { "kind": "mark", "pm": "link", "notes": "profile vocabulary only: an autolink is a link whose text is its destination" }
+    "document": {
+      "kind": "node",
+      "pm": "doc"
+    },
+    "paragraph": {
+      "kind": "node",
+      "pm": "paragraph"
+    },
+    "heading": {
+      "kind": "node",
+      "pm": "heading",
+      "notes": "level attr; only `id` survives as an attribute"
+    },
+    "text": {
+      "kind": "node",
+      "pm": "text"
+    },
+    "hard_break": {
+      "kind": "node",
+      "pm": "hardBreak"
+    },
+    "block_quote": {
+      "kind": "node",
+      "pm": "blockquote"
+    },
+    "code_block": {
+      "kind": "node",
+      "pm": "codeBlock",
+      "notes": "language attr; languageRaw carries the unnormalized info string"
+    },
+    "thematic_break": {
+      "kind": "node",
+      "pm": "horizontalRule"
+    },
+    "list": {
+      "kind": "node",
+      "pm": [
+        "bulletList",
+        "orderedList",
+        "taskList"
+      ],
+      "notes": "listType selects; taskList when items carry a task marker"
+    },
+    "list_item": {
+      "kind": "node",
+      "pm": [
+        "listItem",
+        "taskItem"
+      ],
+      "notes": "taskItem inside a taskList"
+    },
+    "table": {
+      "kind": "node",
+      "pm": "table"
+    },
+    "table_row": {
+      "kind": "node",
+      "pm": "tableRow"
+    },
+    "table_cell": {
+      "kind": "node",
+      "pm": [
+        "tableCell",
+        "tableHeader"
+      ],
+      "notes": "tableHeader for `|=` cells"
+    },
+    "image": {
+      "kind": "node",
+      "pm": "image"
+    },
+    "math": {
+      "kind": "node",
+      "pm": "carveMath",
+      "notes": "inline atom; display attr for the `$$` form"
+    },
+    "footnote_ref": {
+      "kind": "node",
+      "pm": "carveFootnote"
+    },
+    "footnote": {
+      "kind": "node",
+      "pm": "carveFootnoteDefinition"
+    },
+    "div": {
+      "kind": "node",
+      "pm": [
+        "carveDiv",
+        "carveTabSet",
+        "carveTab"
+      ],
+      "notes": "carveTabSet/carveTab are the `tabs`/`tab` classes; every other class is carveDiv"
+    },
+    "admonition": {
+      "kind": "node",
+      "pm": "carveDiv",
+      "notes": "profile vocabulary only: an admonition is a div with a type class"
+    },
+    "definition_list": {
+      "kind": "node",
+      "pm": "definitionList"
+    },
+    "definition_term": {
+      "kind": "node",
+      "pm": "definitionTerm"
+    },
+    "definition_description": {
+      "kind": "node",
+      "pm": "definitionDescription"
+    },
+    "mention": {
+      "kind": "node",
+      "pm": [
+        "carveMention",
+        "carveTag"
+      ],
+      "notes": "carveTag for the `#tag` flavor"
+    },
+    "inline_extension": {
+      "kind": "node",
+      "pm": "carveEmbed",
+      "notes": "partial: only media embeds are modeled, via the directive stamped in carveSource"
+    },
+    "strong": {
+      "kind": "mark",
+      "pm": "bold"
+    },
+    "emphasis": {
+      "kind": "mark",
+      "pm": "italic"
+    },
+    "underline": {
+      "kind": "mark",
+      "pm": "underline"
+    },
+    "strike": {
+      "kind": "mark",
+      "pm": "strike"
+    },
+    "code": {
+      "kind": "mark",
+      "pm": "code"
+    },
+    "highlight": {
+      "kind": "mark",
+      "pm": "highlight"
+    },
+    "subscript": {
+      "kind": "mark",
+      "pm": "subscript"
+    },
+    "superscript": {
+      "kind": "mark",
+      "pm": "superscript"
+    },
+    "insert": {
+      "kind": "mark",
+      "pm": "carveInsert"
+    },
+    "delete": {
+      "kind": "mark",
+      "pm": "carveDelete"
+    },
+    "critic_comment": {
+      "kind": "mark",
+      "pm": "carveCriticComment",
+      "notes": "content is literal, so it rides on a text node under the mark - the same shape `code` uses"
+    },
+    "span": {
+      "kind": "mark",
+      "pm": "carveSpan",
+      "notes": "carries id, class and extra attributes"
+    },
+    "abbreviation": {
+      "kind": "mark",
+      "pm": "carveAbbreviation"
+    },
+    "link": {
+      "kind": "mark",
+      "pm": "link"
+    },
+    "autolink": {
+      "kind": "mark",
+      "pm": "link",
+      "notes": "profile vocabulary only: an autolink is a link whose text is its destination"
+    }
   },
   "unmapped": {
     "figure": "figure / caption blocks are not modeled",

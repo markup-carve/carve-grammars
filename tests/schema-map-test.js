@@ -55,7 +55,12 @@ const IMPLEMENTATION_TYPES = new Set([
  * `heading_ref` and `substitution` were promoted out of here by that bump,
  * which is the gate working as designed.
  */
-const AHEAD_OF_PIN = new Set([]);
+const AHEAD_OF_PIN = new Set([
+    // Added to the vocabulary in markup-carve/carve#402; the engines already
+    // emit it (markup-carve/carve-js#454, markup-carve/carve-php#486). Drop
+    // this once the spec pin moves past that PR.
+    'critic_comment',
+]);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {

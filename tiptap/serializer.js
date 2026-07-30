@@ -461,6 +461,7 @@ export function serializeToCarve(doc) {
                 const hasHighlight = marks.some(m => m.type === 'highlight');
                 const hasDelete = marks.some(m => m.type === 'carveDelete');
                 const hasInsert = marks.some(m => m.type === 'carveInsert');
+                const hasCriticComment = marks.some(m => m.type === 'carveCriticComment');
                 const hasSup = marks.some(m => m.type === 'superscript');
                 const hasSub = marks.some(m => m.type === 'subscript');
                 const hasStrike = marks.some(m => m.type === 'strike');
@@ -476,7 +477,15 @@ export function serializeToCarve(doc) {
                 const isEmphasized = hasBold || hasItalic || hasUnderline || hasStrike
                     || hasHighlight || hasSup || hasSub;
                 let t;
-                if (hasCode) {
+                if (hasCriticComment) {
+                    // An editorial comment's content is LITERAL - nothing inside
+                    // it is markup - so it is emitted raw. Escaping it the way
+                    // prose is escaped would put real backslashes in the
+                    // comment, since the parser does not resolve escapes there.
+                    // Carve has no escape for `#}`, so content containing that
+                    // cannot round-trip; same limitation as {+ +} and {- -}.
+                    t = text;
+                } else if (hasCode) {
                     // Code content is raw (no escaping inside code), so a literal
                     // backtick is handled by widening the fence to one more than
                     // the longest internal backtick run, padding if it touches an
@@ -507,7 +516,20 @@ export function serializeToCarve(doc) {
                 // before mark wrapping adds its own brackets - so a `]` in the
                 // content does not terminate the label, without touching the
                 // brackets of an inner already-serialized mark.
-                if ((link || carveSpan || abbr) && !hasCode) {
+                // An editorial comment is excluded alongside code because its
+                // content is LITERAL: the parser resolves no escapes inside
+                // `{# ... #}`, so a `\]` written here is not an escaped bracket,
+                // it is a backslash in the comment text.
+                //
+                // Neither answer is whole for `]` inside a linked comment.
+                // Escaping keeps the link and silently corrupts the comment;
+                // not escaping keeps the comment and the label ends early, so
+                // the link renders as literal text. Content integrity wins:
+                // broken output is visible, altered text is not. Code has no
+                // such dilemma - the engines skip code spans when scanning for
+                // a label's closing bracket, and skipping editorial comments
+                // the same way is the real fix (markup-carve/carve#403).
+                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment) {
                     t = t.replace(/]/g, '\\]');
                 }
                 const bareable = (delim) => {
@@ -529,6 +551,9 @@ export function serializeToCarve(doc) {
                 };
                 // Superscript and subscript have NO bare form: a bare `^` or `,`
                 // is literal text, so both always serialize braced.
+                // Innermost, because the content is literal: any other mark
+                // has to wrap the whole `{# ... #}`, never sit inside it.
+                if (hasCriticComment) t = '{#' + t + '#}';
                 if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '{^' + t + '^}';
                 // NOTE: Carve has no escape for a CriticMarkup closing delimiter,
