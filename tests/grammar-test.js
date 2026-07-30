@@ -134,11 +134,23 @@ if (realPrism) {
         assert.ok(types.includes('comment'), `expected comment token, got: ${types.join(',')}`);
     });
 
-    ok('prism: math spans include the trailing $ / $$', () => {
-        const html = realPrism.highlight('$`x`$ and $$`y`$$', carvePrism, 'carve');
-        // both closing delimiters must be inside a token span, not bare text
-        assert.ok(!/`<\/span>\$/.test(html), `trailing $ left outside math token: ${html}`);
-        assert.ok(html.includes('`x`$</span>') || html.includes('`x`$'), `inline math close missing: ${html}`);
+    ok('prism: math is the $ prefix on a verbatim span, with no closing $', () => {
+        // grammar.ebnf PART 9 §18: math_inline = '$', code_span. There is no
+        // trailing sentinel, so the whole `$`x`` run must be one math token -
+        // previously the pattern demanded a closing $ and left `a $` as text
+        // with the span falling through to `code`.
+        const types = typesOf('a $`x` b');
+        assert.ok(types.includes('math'), `expected math token, got: ${types.join(',')}`);
+        assert.ok(!types.includes('code'), `math span fell through to code: ${types.join(',')}`);
+
+        const display = typesOf('a $$`y` b');
+        assert.ok(display.includes('math'), `expected display math token, got: ${display.join(',')}`);
+    });
+
+    ok('prism: a bare $ amount stays literal text', () => {
+        // The backtick run is what disambiguates math from currency.
+        const types = typesOf('cost $5 today');
+        assert.ok(!types.includes('math'), `currency tokenized as math: ${types.join(',')}`);
     });
 
     ok('prism: inline literal !`x` is a literal token, not code', () => {

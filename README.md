@@ -121,7 +121,7 @@ Carve token set: headings, lists, tables, blockquotes, fenced/raw blocks,
 container divs, front matter and comments, plus inline emphasis
 (`*bold*` `/italic/` `_underline_` `~strike~` `=highlight=`, braced
 `{^sup^}` `{,sub,}`),
-code, links, images, spans, attributes, footnotes, math (`` $`x`$ ``),
+code, links, images, spans, attributes, footnotes, math (`` $`x` ``),
 CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 
 ### Prism
@@ -283,8 +283,10 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
   `[text]{#me .note}`, `![alt](src){.wide}`. Inline attrs trail their target;
   block attrs (headings) sit on the **preceding** line (strict djot), e.g.
   `{#slug}` then `# Title`.
-- **Math** - `CarveMath` (inline atom) serializes to `` $`x`$ `` and, with
-  `display: true`, `` $$`x`$$ ``.
+- **Math** - `CarveMath` (inline atom) serializes to `` $`x` `` and, with
+  `display: true`, `` $$`x` ``. Math has no closing `$` sentinel (grammar.ebnf
+  PART 9 §18): the `$` / `$$` prefix opens a verbatim span and the backtick run
+  ends it, which is what keeps currency like `$5` literal.
 - **Footnotes** - `CarveFootnote` is the inline `[^label]` reference;
   `CarveFootnoteDefinition` is the matching body block, serialized as
   `[^label]: body`.

@@ -1,6 +1,14 @@
 [
   {
     "scope": "string",
-    "text": "$`a^2`{.boxed #eq1 data-k=v}\n"
+    "text": "$`a^2`"
+  },
+  {
+    "scope": "attr",
+    "text": "{.boxed #eq1 data-k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

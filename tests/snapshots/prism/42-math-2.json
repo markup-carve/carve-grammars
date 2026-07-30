@@ -1,11 +1,7 @@
 [
   {
-    "type": "text",
-    "text": "$"
-  },
-  {
-    "type": "code",
-    "text": "`a^2`"
+    "type": "math",
+    "text": "$`a^2`"
   },
   {
     "type": "attributes>punctuation",
