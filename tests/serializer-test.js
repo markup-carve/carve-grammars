@@ -267,7 +267,9 @@ checkListItemBlocks('reparse: ordered continuation code block stays inside its i
             { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'x=1' }] },
         ] },
     ] }),
-    ['paragraph', 'code-block']);
+    // `code_block`, not `code-block`: the node vocabulary is snake_case, and
+    // the engine bump in this commit is where this spelling reached us.
+    ['paragraph', 'code_block']);
 
 checkListItemBlocks('reparse: task sublist stays inside its parent item',
     doc({ type: 'taskList', content: [

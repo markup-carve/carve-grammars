@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "Vote "
+  },
+  {
+    "scope": "symbol",
+    "text": ":+1:"
+  },
+  {
+    "scope": null,
+    "text": " or "
+  },
+  {
+    "scope": "symbol",
+    "text": ":-1:"
+  },
+  {
+    "scope": null,
+    "text": ". Tolerance "
+  },
+  {
+    "scope": "symbol",
+    "text": ":+-:"
+  },
+  {
+    "scope": null,
+    "text": " is a symbol, but a +- b and word:+-: are not.\n"
+  }
+]

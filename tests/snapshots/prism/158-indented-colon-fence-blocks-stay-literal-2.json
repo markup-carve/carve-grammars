@@ -1,0 +1,30 @@
+[
+  {
+    "type": "div",
+    "text": " "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " |"
+  },
+  {
+    "type": "text",
+    "text": "\n Roses,\n Violets.\n"
+  },
+  {
+    "type": "div",
+    "text": " "
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

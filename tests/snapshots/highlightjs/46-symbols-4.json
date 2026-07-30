@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "Launch "
+  },
+  {
+    "scope": "symbol",
+    "text": ":rocket:"
+  },
+  {
+    "scope": "attr",
+    "text": "{.big}"
+  },
+  {
+    "scope": null,
+    "text": " now.\n"
+  }
+]

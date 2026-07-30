@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\{"
+  },
+  {
+    "scope": null,
+    "text": "\"quoted\""
+  },
+  {
+    "scope": "symbol",
+    "text": "\\}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\<"
+  },
+  {
+    "scope": null,
+    "text": "\"q\""
+  },
+  {
+    "scope": "symbol",
+    "text": "\\>"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": "'q'"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\*"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\{"
+  },
+  {
+    "scope": null,
+    "text": " before a quote still opens it: "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\{"
+  },
+  {
+    "scope": null,
+    "text": "\"open\"\n\nUnescaped for contrast: {\"open\"}\n"
+  }
+]

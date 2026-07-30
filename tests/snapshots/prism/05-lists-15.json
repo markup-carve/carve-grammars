@@ -1,18 +1,14 @@
 [
   {
-    "type": "list",
-    "text": "- "
-  },
-  {
     "type": "text",
-    "text": "parent\n"
+    "text": "Die Frage ist x = 5\n"
   },
   {
     "type": "list",
-    "text": "  - "
+    "text": "* "
   },
   {
     "type": "text",
-    "text": "child\n"
+    "text": "3 + 17 wahr.\n"
   }
 ]

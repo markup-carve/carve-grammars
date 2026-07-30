@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "one\n  :: term\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "def\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\!"
+  },
+  {
+    "scope": "code",
+    "text": "`x`"
+  },
+  {
+    "scope": null,
+    "text": " is a bang before code.\n"
+  }
+]

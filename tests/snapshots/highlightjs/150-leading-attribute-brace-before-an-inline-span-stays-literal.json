@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "attr",
+    "text": "{k=v}"
+  },
+  {
+    "scope": "addition",
+    "text": "{+i+}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

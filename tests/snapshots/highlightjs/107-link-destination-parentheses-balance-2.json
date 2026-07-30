@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[x](a(b(c)"
+  },
+  {
+    "scope": null,
+    "text": ")d) and "
+  },
+  {
+    "scope": "link",
+    "text": "[y](e)"
+  },
+  {
+    "scope": null,
+    "text": "f)\n"
+  }
+]

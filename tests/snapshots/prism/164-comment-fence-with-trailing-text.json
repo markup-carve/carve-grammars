@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "before\n\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%% html\nsecret\n%%% end"
+  },
+  {
+    "type": "text",
+    "text": "\n\nafter\n"
+  }
+]

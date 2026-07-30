@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " one\n  :: term\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  def"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

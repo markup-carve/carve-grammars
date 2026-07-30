@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "string",
+    "text": "!`/kaet/`"
+  },
+  {
+    "scope": "attr",
+    "text": "{.ipa}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "string",
+    "text": "!`a<b>`"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "string",
+    "text": "!`*not bold*`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

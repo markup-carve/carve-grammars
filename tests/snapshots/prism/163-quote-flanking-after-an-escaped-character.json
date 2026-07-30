@@ -1,0 +1,58 @@
+[
+  {
+    "type": "escape",
+    "text": "\\{"
+  },
+  {
+    "type": "text",
+    "text": "\"quoted\""
+  },
+  {
+    "type": "escape",
+    "text": "\\}"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "escape",
+    "text": "\\<"
+  },
+  {
+    "type": "text",
+    "text": "\"q\""
+  },
+  {
+    "type": "escape",
+    "text": "\\>"
+  },
+  {
+    "type": "text",
+    "text": " and \\"
+  },
+  {
+    "type": "bold",
+    "text": "*'q'\\*"
+  },
+  {
+    "type": "text",
+    "text": "\n\nA "
+  },
+  {
+    "type": "escape",
+    "text": "\\{"
+  },
+  {
+    "type": "text",
+    "text": " before a quote still opens it: "
+  },
+  {
+    "type": "escape",
+    "text": "\\{"
+  },
+  {
+    "type": "text",
+    "text": "\"open\"\n\nUnescaped for contrast: {\"open\"}\n"
+  }
+]

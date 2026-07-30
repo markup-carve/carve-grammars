@@ -244,10 +244,16 @@
         // only sees a caret opening its own line. The body keeps inline
         // markup: a caption is ordinary inline content.
         'caption': {
-            pattern: /^[ \t]*\^[ \t].*$/m,
+            // Column 0 only. An INDENTED caret is literal text at top level
+            // (corpus 156-indented-image-and-caption-stay-literal), and inside
+            // a list item a caption sits at the item's content column - which a
+            // highlighter cannot track. Allowing leading whitespace here scoped
+            // that literal line as a caption; highlight.js has always been
+            // strict about this, so the two engines now agree.
+            pattern: /^\^[ \t].*$/m,
             alias: 'title',
             inside: Object.assign({
-                'punctuation': /^[ \t]*\^/,
+                'punctuation': /^\^/,
             }, inline),
         },
 

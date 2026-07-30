@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold",
+    "text": "*'q'*"
+  },
+  {
+    "type": "text",
+    "text": "\n\n\"hello\"\n\n\"'nested'\"\n\na"
+  },
+  {
+    "type": "bold",
+    "text": "*'q'*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

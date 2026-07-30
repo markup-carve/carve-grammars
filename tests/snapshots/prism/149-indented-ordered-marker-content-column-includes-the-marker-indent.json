@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "    1. "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  },
+  {
+    "type": "table",
+    "text": "  "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " x "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
