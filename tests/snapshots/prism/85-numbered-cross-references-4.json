@@ -61,7 +61,19 @@
   },
   {
     "type": "text",
-    "text": "\n^ Table #: Stock\n\nSee </"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Table #: Stock"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
   },
   {
     "type": "tag",

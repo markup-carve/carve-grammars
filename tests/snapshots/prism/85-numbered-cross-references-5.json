@@ -21,7 +21,19 @@
   },
   {
     "type": "text",
-    "text": "\n^ Abbildung #: erstes\n\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Abbildung #: erstes"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
   },
   {
     "type": "image>punctuation",
@@ -45,6 +57,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ Figure #: first\n"
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: first"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]
