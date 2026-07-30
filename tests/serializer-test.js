@@ -70,6 +70,16 @@ check('an editorial comment does not escape its content',
     doc(para(text('a '), text(' note *not markup* ', 'carveCriticComment'), text(' b'))),
     'a {# note *not markup* #} b');
 
+// A `]` inside a linked comment has no clean answer: escaping it keeps the
+// link and silently corrupts the comment, since no escape is resolved inside
+// `{# ... #}`. Content integrity wins - the label ends early and the link
+// renders as literal text, which is at least visible. carve#403 tracks the
+// engine fix (a label's scan already skips inline code; it should skip these
+// too), after which this expectation changes to the escaped form.
+check('a linked editorial comment keeps its content over its link',
+    doc(para({ type: 'text', text: 'a]b', marks: [{ type: 'carveCriticComment' }, { type: 'link', attrs: { href: 'u' } }] })),
+    '[{#a]b#}](u)');
+
 check('link',
     doc(para({ type: 'text', text: 'site', marks: [{ type: 'link', attrs: { href: 'https://example.com' } }] })),
     '[site](https://example.com)');

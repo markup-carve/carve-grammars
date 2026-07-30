@@ -16,7 +16,10 @@ All notable changes to `carve-grammars` are documented here.
   name and would otherwise claim `<span class="critic-comment">` first.
   The serializer emits `{#...#}` and does NOT escape the content: an editorial
   comment is literal, so escaping it the way prose is escaped would put real
-  backslashes into the comment.
+  backslashes into the comment. That extends to the `]` escaping used for link
+  and span labels, which leaves a linked comment containing `]` with a label
+  that ends early - visible, unlike silently altered comment text. The engine
+  gap behind it is markup-carve/carve#403.
 
 ### Fixed
 - **highlight.js scopes inline extension calls; Prism scopes caption lines.**

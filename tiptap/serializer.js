@@ -516,7 +516,20 @@ export function serializeToCarve(doc) {
                 // before mark wrapping adds its own brackets - so a `]` in the
                 // content does not terminate the label, without touching the
                 // brackets of an inner already-serialized mark.
-                if ((link || carveSpan || abbr) && !hasCode) {
+                // An editorial comment is excluded alongside code because its
+                // content is LITERAL: the parser resolves no escapes inside
+                // `{# ... #}`, so a `\]` written here is not an escaped bracket,
+                // it is a backslash in the comment text.
+                //
+                // Neither answer is whole for `]` inside a linked comment.
+                // Escaping keeps the link and silently corrupts the comment;
+                // not escaping keeps the comment and the label ends early, so
+                // the link renders as literal text. Content integrity wins:
+                // broken output is visible, altered text is not. Code has no
+                // such dilemma - the engines skip code spans when scanning for
+                // a label's closing bracket, and skipping editorial comments
+                // the same way is the real fix (markup-carve/carve#403).
+                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment) {
                     t = t.replace(/]/g, '\\]');
                 }
                 const bareable = (delim) => {
