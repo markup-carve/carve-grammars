@@ -282,6 +282,33 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 - `CarveKit` - the bundled Tiptap extension set.
 - Individual extensions: `CarveInsert`, `CarveDelete`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
 
+## Schema map (for other engines)
+
+`tiptap/schema-map.json` publishes the Carve-to-ProseMirror vocabulary as data, so
+an engine building a bridge in another language reads it instead of restating it:
+
+```js
+import map from '@markup-carve/carve-grammars/tiptap/schema-map.json'
+
+map.types.strong        // { kind: 'mark', pm: 'bold' }
+map.types.list          // { kind: 'node', pm: ['bulletList', 'orderedList', 'taskList'], ... }
+map.unmapped.figure     // 'figure / caption blocks are not modeled'
+```
+
+Every Carve node type appears exactly once, either in `types` with its
+ProseMirror name(s) or in `unmapped` with the reason it has none - the negative
+space is part of the contract, because a bridge that silently drops table
+alignment or figure captions is worse than one that says it cannot carry them.
+
+`tests/schema-map-test.js` keeps it honest: every ProseMirror name must exist in
+the `CarveKit` schema with the declared node/mark kind, and every type in the
+pinned spec vocabulary must have a decision. Types the map covers ahead of the
+`spec/` pin are declared explicitly and must be removed once the pin catches up.
+
+Restating this mapping per engine is what the spec's own node-vocabulary test was
+written to prevent: carve-php once emitted `citation-group` while every other
+implementation spelled it with underscores.
+
 ## Attributes, math and footnotes
 
 - **Attributes** - spans, headings and images serialize an `id` and `class`
