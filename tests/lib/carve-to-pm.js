@@ -214,8 +214,15 @@ function convertInlineNode(node, marks) {
             return [{ type: 'image', attrs }];
         }
 
-        case 'math':
-            return [{ type: 'carveMath', attrs: { src: node.content || '', display: !!node.display } }];
+        case 'math': {
+            const attrs = { src: node.content || '', display: !!node.display };
+            const a = node.attrs || {};
+            if (a.id) attrs.id = a.id;
+            if (a.classes && a.classes.length) attrs.class = a.classes.join(' ');
+            if (a.keyValues && Object.keys(a.keyValues).length) attrs.keyValues = { ...a.keyValues };
+
+            return [{ type: 'carveMath', attrs }];
+        }
 
         case 'footnote':
             return [{ type: 'carveFootnote', attrs: { label: node.id || 'note' } }];

@@ -546,7 +546,7 @@ export function serializeToCarve(doc) {
                     t = '[' + t + '](' + link.attrs.href + title + ')';
                 }
                 if (carveSpan) {
-                    const spanAttrs = serializeAttributes(carveSpan.attrs)
+                    const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)
                         || ('{.' + (carveSpan.attrs?.class || 'class') + '}');
                     t = '[' + t + ']' + spanAttrs;
                 }
@@ -582,6 +582,7 @@ export function serializeToCarve(doc) {
                 const pad = (mathSrc.startsWith('`') || mathSrc.endsWith('`') || mathSrc === '') ? ' ' : '';
                 const dollars = node.attrs?.display ? '$$' : '$';
                 result += dollars + fence + pad + mathSrc + pad + fence;
+                result += serializeAttributes(node.attrs, ['src', 'display']);
             }
         });
 
@@ -689,27 +690,41 @@ function escapeTitle(title) {
  * Build a Carve attribute block `{#id .class key="val"}` from node/mark attrs.
  * Emits `#id` and `.class` (space-separated classes each become a `.token`);
  * any remaining non-structural attrs are emitted as `key="val"`. Returns '' when
- * there is nothing to emit. The `class` default of `'custom'` (CarveSpan's
- * placeholder) is treated as absent.
+ * there is nothing to emit.
  *
  * @param {object} attrs
  * @param {string[]} [skip] - attribute keys to ignore (structural node attrs).
+ * @param {boolean} [placeholderClass] - treat a `class` of `'custom'` as absent.
+ *   CarveSpan's `class` attribute DEFAULTS to `'custom'`, so an unstyled span
+ *   would otherwise serialize as `{.custom}`. Every other node defaults to null,
+ *   where `.custom` can only be a class the author wrote - suppressing it there
+ *   loses it.
  * @returns {string}
  */
-function serializeAttributes(attrs, skip = []) {
+function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     if (!attrs) return '';
-    const ignore = new Set(['id', 'class', ...skip]);
+    const ignore = new Set(['id', 'class', 'keyValues', ...skip]);
     const parts = [];
     if (attrs.id) parts.push('#' + attrs.id);
-    if (attrs.class && attrs.class !== 'custom') {
+    if (attrs.class && !(placeholderClass && attrs.class === 'custom')) {
         for (const c of String(attrs.class).split(/\s+/).filter(Boolean)) {
             parts.push('.' + c);
         }
     }
+    const pair = (k, v) => k + '="' + String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
     for (const [k, v] of Object.entries(attrs)) {
         if (ignore.has(k) || v == null || v === false || v === '') continue;
-        parts.push(k + '="' + String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"');
+        parts.push(pair(k, v));
     }
+    // A node that keeps authored key/values in one declared attribute - Tiptap
+    // needs every attribute declared, and `data-k=v` cannot be known upfront.
+    if (attrs.keyValues && typeof attrs.keyValues === 'object') {
+        for (const [k, v] of Object.entries(attrs.keyValues)) {
+            if (v == null || v === false || v === '') continue;
+            parts.push(pair(k, v));
+        }
+    }
+
     return parts.length ? '{' + parts.join(' ') + '}' : '';
 }
 

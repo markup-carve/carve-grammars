@@ -79,6 +79,33 @@ check('inline math span round-trips',
     '<p>a <span class="math inline">\\(x^2\\)</span> b</p>',
     'a $`x^2` b');
 
+// Attributes on a math span used to be dropped on the way out, which is why
+// 42-math sat in the round-trip skip map. `math`/`inline`/`display` are
+// carve-php's own rendering classes and must NOT come back as authored ones.
+check('a math span keeps its authored id and class',
+    '<p>a <span class="math inline boxed" id="eq1">\\(x^2\\)</span> b</p>',
+    'a $`x^2`{#eq1 .boxed} b');
+
+check('a math span keeps authored key/values',
+    '<p><span class="math inline" data-k="v">\\(a\\)</span></p>',
+    '$`a`{data-k="v"}');
+
+// The editor's own renderHTML adds `carve-math`, so a getHTML()/setContent()
+// cycle would otherwise turn that hook into an authored class.
+check('the editor\'s own rendered math HTML does not gain a class',
+    '<p><span class="carve-math" data-carve-math="x^2">x^2</span></p>',
+    '$`x^2`');
+
+// `custom` is CarveSpan's placeholder default, not a reserved word: on any
+// other node it can only be a class the author wrote.
+check('an authored .custom class survives on a math span',
+    '<p><span class="math inline custom">\\(x\\)</span></p>',
+    '$`x`{.custom}');
+
+check('a display math span keeps its authored class',
+    '<p><span class="math display boxed">\\[y\\]</span></p>',
+    '$$`y`{.boxed}');
+
 check('citation [@key] round-trips (mention)',
     '<p>See [<span class="mention"><strong>@smith2020</strong></span>].</p>',
     'See [@smith2020].');
