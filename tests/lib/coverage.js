@@ -32,6 +32,7 @@ const emptySkip = () => new Map();
 const TIPTAP_COVERED = [
     '04-images',
     '06-task-lists',
+    '21-math',
     '38-bare-urls-stay-literal',
     '51-table-without-alignment',
     '56-table-cell-escaped-pipe',
@@ -80,7 +81,6 @@ const TIPTAP_SKIP = new Map([
     ['18-unresolved-reference-link', 'unresolved reference syntax is not represented'],
     ['19-smart-typography-dashes-and-quotes', 'smart-typography output is lossy on reparse (quote-context edge cases added with spec 750ddfa)'],
     ['20-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
-    ['21-math', 'attributes on a math span are dropped on serialize (the plain inline and display forms round-trip)'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
     ['23-inline-footnotes', 'inline footnote bodies are lossy through the serializer'],
     ['24-generic-divs', 'divs carrying a class and admonitions are not modeled'],
