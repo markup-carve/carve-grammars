@@ -5,7 +5,19 @@
   },
   {
     "type": "text",
-    "text": "one\n :: term\n"
+    "text": "one\n"
+  },
+  {
+    "type": "definition-term>punctuation",
+    "text": " ::"
+  },
+  {
+    "type": "definition-term",
+    "text": " term"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "list",

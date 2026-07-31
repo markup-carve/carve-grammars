@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "line one\\\nline two\n"
+    "text": "line one"
+  },
+  {
+    "type": "hard-break",
+    "text": "\\"
+  },
+  {
+    "type": "text",
+    "text": "\nline two\n"
   }
 ]

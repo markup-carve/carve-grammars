@@ -1,15 +1,27 @@
 [
   {
     "type": "text",
-    "text": "A note^[see "
+    "text": "A note"
   },
   {
-    "type": "bold",
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "see "
+  },
+  {
+    "type": "inline-footnote>bold",
     "text": "*later*"
   },
   {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
     "type": "text",
-    "text": "] inline. And a ref"
+    "text": " inline. And a ref"
   },
   {
     "type": "footnote",

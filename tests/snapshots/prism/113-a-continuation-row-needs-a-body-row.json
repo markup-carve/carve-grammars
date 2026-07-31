@@ -45,6 +45,22 @@
   },
   {
     "type": "text",
-    "text": "\n+ cont |\n"
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " cont "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

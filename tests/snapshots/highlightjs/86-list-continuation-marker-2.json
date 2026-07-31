@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " item\n+\n"
+    "text": " item\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "quote",

@@ -1,7 +1,19 @@
 [
   {
+    "scope": "title",
+    "text": ":: color"
+  },
+  {
     "scope": null,
-    "text": ":: color\n:: colour\n"
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":: colour"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "title",

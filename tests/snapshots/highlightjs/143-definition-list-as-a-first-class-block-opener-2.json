@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " one\n:: term\n"
+    "text": " one\n"
+  },
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "title",

@@ -1,7 +1,11 @@
 [
   {
+    "scope": "title",
+    "text": ":: A term that"
+  },
+  {
     "scope": null,
-    "text": ":: A term that\nwraps onto the next line\n"
+    "text": "\nwraps onto the next line\n"
   },
   {
     "scope": "title",

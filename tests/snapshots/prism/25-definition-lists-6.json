@@ -1,7 +1,15 @@
 [
   {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " A term that"
+  },
+  {
     "type": "text",
-    "text": ":: A term that\nwraps onto the next line\n"
+    "text": "\nwraps onto the next line\n"
   },
   {
     "type": "list",

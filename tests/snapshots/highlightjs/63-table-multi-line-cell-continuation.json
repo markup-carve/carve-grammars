@@ -13,7 +13,23 @@
   },
   {
     "scope": null,
-    "text": "\n+          | that continues     |\n+          | across lines.      |\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+          | that continues     |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+          | across lines.      |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "string",

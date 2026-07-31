@@ -1,7 +1,15 @@
 [
   {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " term"
+  },
+  {
     "type": "text",
-    "text": ":: term\n"
+    "text": "\n"
   },
   {
     "type": "list",
@@ -12,7 +20,7 @@
     "text": "A first paragraph,\n"
   },
   {
-    "type": "table-continuation",
+    "type": "table-continuation>punctuation",
     "text": "+"
   },
   {

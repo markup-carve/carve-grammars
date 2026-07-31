@@ -1,7 +1,11 @@
 [
   {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
     "scope": null,
-    "text": "---json\n{\"title\": \"My Document\"}\n"
+    "text": "json\n{\"title\": \"My Document\"}\n"
   },
   {
     "scope": "meta",

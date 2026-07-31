@@ -1,6 +1,90 @@
 [
   {
     "scope": null,
-    "text": "a------- b-------- c---------- d----------- e-------------\n"
+    "text": "a"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "- b"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " c"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "- d"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " e"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "-\n"
   }
 ]
