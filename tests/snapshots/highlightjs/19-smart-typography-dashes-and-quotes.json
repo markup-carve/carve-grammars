@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "He paused "
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " then ran "
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": " fast"
+  },
+  {
+    "scope": "literal",
+    "text": "..."
+  },
+  {
+    "scope": null,
+    "text": " \"Stop!\" it's over.\n"
+  }
+]

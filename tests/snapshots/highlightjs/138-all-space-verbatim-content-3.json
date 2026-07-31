@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Literal "
+  },
+  {
+    "scope": "string",
+    "text": "!`  `"
+  },
+  {
+    "scope": null,
+    "text": " and math "
+  },
+  {
+    "scope": "string",
+    "text": "$`  `"
+  },
+  {
+    "scope": null,
+    "text": " keep their spaces.\n"
+  }
+]

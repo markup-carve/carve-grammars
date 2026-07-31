@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "A note"
+  },
+  {
+    "scope": "symbol",
+    "text": "^[see *later*]"
+  },
+  {
+    "scope": null,
+    "text": " inline. And a ref"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]: reference body."
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

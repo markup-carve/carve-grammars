@@ -1,0 +1,42 @@
+[
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " color"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " colour"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "The visual property of objects.\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "A pigment or paint.\n"
+  }
+]

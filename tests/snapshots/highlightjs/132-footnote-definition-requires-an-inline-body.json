@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Use "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": "\n  First\n"
+  }
+]

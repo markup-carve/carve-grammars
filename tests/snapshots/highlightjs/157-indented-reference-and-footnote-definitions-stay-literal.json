@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": " Read "
+  },
+  {
+    "scope": "link",
+    "text": "[intro][x]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n [x]: "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/intro \"T\"\n"
+  }
+]

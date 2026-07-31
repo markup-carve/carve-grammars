@@ -4,31 +4,63 @@
     "text": "- "
   },
   {
+    "type": "list>constant",
+    "text": "[-]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
     "type": "text",
-    "text": "[-] dropped\n"
+    "text": "dropped\n"
   },
   {
     "type": "list",
     "text": "- "
   },
   {
+    "type": "list>constant",
+    "text": "[_]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
     "type": "text",
-    "text": "[_] paused\n"
+    "text": "paused\n"
   },
   {
     "type": "list",
     "text": "- "
   },
   {
+    "type": "list>constant",
+    "text": "[>]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
     "type": "text",
-    "text": "[>] deferred\n"
+    "text": "deferred\n"
   },
   {
     "type": "list",
     "text": "- "
   },
   {
+    "type": "list>constant",
+    "text": "[?]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
     "type": "text",
-    "text": "[?] maybe\n"
+    "text": "maybe\n"
   }
 ]

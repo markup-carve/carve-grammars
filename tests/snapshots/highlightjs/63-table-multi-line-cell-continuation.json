@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Feature |= Description        |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Complex  | A long description |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+          | that continues     |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+          | across lines.      |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Simple   | Single line.       |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

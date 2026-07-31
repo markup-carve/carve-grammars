@@ -1,0 +1,38 @@
+[
+  {
+    "type": "literal",
+    "text": "!`/kaet/`"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".ipa"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "literal",
+    "text": "!`a<b>`"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "literal",
+    "text": "!`*not bold*`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

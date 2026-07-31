@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "But "
+  },
+  {
+    "scope": "code",
+    "text": "` a `"
+  },
+  {
+    "scope": null,
+    "text": " strips one space from each side.\n"
+  }
+]

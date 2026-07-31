@@ -1,22 +1,18 @@
 [
   {
+    "type": "list",
+    "text": "  - "
+  },
+  {
     "type": "text",
-    "text": "Liste:\n"
+    "text": "a\n"
   },
   {
     "type": "list",
-    "text": "- "
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "eins\n"
-  },
-  {
-    "type": "list",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "zwei\n"
+    "text": "b\n"
   }
 ]

@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "Vote "
+  },
+  {
+    "type": "symbol",
+    "text": ":+1:"
+  },
+  {
+    "type": "text",
+    "text": " or "
+  },
+  {
+    "type": "symbol",
+    "text": ":-1:"
+  },
+  {
+    "type": "text",
+    "text": ". Tolerance "
+  },
+  {
+    "type": "symbol",
+    "text": ":+-:"
+  },
+  {
+    "type": "text",
+    "text": " is a symbol, but a "
+  },
+  {
+    "type": "typography",
+    "text": "+-"
+  },
+  {
+    "type": "text",
+    "text": " b and word:"
+  },
+  {
+    "type": "typography",
+    "text": "+-"
+  },
+  {
+    "type": "text",
+    "text": ": are not.\n"
+  }
+]

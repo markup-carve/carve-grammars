@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a/"
+  },
+  {
+    "scope": "deletion",
+    "text": "~y~"
+  },
+  {
+    "scope": null,
+    "text": " a/"
+  },
+  {
+    "scope": "addition",
+    "text": "=y="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

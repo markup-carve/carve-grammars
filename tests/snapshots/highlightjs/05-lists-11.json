@@ -1,18 +1,18 @@
 [
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "- [ ]"
   },
   {
     "scope": null,
-    "text": " apples\n\n"
+    "text": " outer\n"
   },
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "  -"
   },
   {
     "scope": null,
-    "text": " oranges\n"
+    "text": " inner\n"
   }
 ]

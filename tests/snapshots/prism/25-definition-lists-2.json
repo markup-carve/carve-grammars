@@ -1,0 +1,22 @@
+[
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " term"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "A definition can now hold\n\n   more than one paragraph.\n"
+  }
+]

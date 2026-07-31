@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "before\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%%%\nsecret\n\nafter\n"
+  }
+]

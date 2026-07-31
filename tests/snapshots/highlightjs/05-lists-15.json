@@ -1,18 +1,14 @@
 [
   {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
     "scope": null,
-    "text": " parent\n"
+    "text": "Die Frage ist x = 5\n"
   },
   {
     "scope": "bullet",
-    "text": "  -"
+    "text": "*"
   },
   {
     "scope": null,
-    "text": " child\n"
+    "text": " 3 + 17 wahr.\n"
   }
 ]

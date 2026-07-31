@@ -1,0 +1,46 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#eq-emc"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "math",
+    "text": "$$`E = mc^2`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Equation #: mass-energy"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
+  },
+  {
+    "type": "tag",
+    "text": "#eq-emc"
+  },
+  {
+    "type": "text",
+    "text": ">.\n"
+  }
+]

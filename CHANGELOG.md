@@ -5,6 +5,70 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **Seven constructs the corpus carries now scope in Prism and highlight.js.**
+  Each was rendering as plain prose in one or both engines: the inline footnote
+  `^[note]` (neither had a rule, though both scope the `[^a]` reference), the
+  task states `[>]` `[-]` `[?]` `[_]` (both stopped at `[ ]`/`[x]`, while the
+  spec's `task_state` is ` `, `x`, `X`, `-`, `_`, `>`, `?`), the definition term
+  `:: term` (both scoped only the `: definition` line below it), and the table
+  continuation row. Three more were parity gaps where one engine had the rule
+  and the other did not: smart typography (`--`, `->`, ellipsis) missing in
+  highlight.js, the hard break missing in Prism, and the lone `+` continuation
+  marker missing in highlight.js.
+
+  Found by running the TextMate sweep's 96 constructs through the other two
+  engines - their own sweep carried 50, which is why these survived it. It now
+  carries 58, and all seven cases fail against the unfixed grammars.
+
+  Prism's hard-break rule is anchored on an explicit newline rather than an
+  end-of-line assertion with the `m` flag: Prism applies a pattern to the
+  remaining text chunk, so the assertion matched at a chunk boundary and scoped
+  a mid-line backslash as a hard break. The corpus snapshots for
+  `163-quote-flanking-after-an-escaped-character` and `137-inline-literal-3`
+  caught that.
+- **The ProseMirror test bridge accepts the split footnote types.** carve-js
+  split `footnote` into `footnote_ref` and `inline_footnote`
+  (markup-carve/carve#405); this repo pins a published carve that still emits
+  the old name, so all three are accepted and either release order is safe.
+  Without it a footnote silently stopped mapping to `carveFootnote`.
+
+### Added
+- **`CarveCriticComment`, a tiptap mark for editorial comments (`{# ... #}`).**
+  Editorial comments became their own node type in the engines
+  (markup-carve/carve#401), and the bridge had nowhere to put them: `insert` and
+  `delete` were marks, the comment was not, so it round-tripped as a plain span
+  carrying a class - if it survived at all. The mark, the `schema-map.json`
+  entry and the serializer token land together, so the map never names something
+  CarveKit does not provide.
+  It outranks `CarveSpan`, whose `span[class]` rule accepts any simple class
+  name and would otherwise claim `<span class="critic-comment">` first.
+  The serializer emits `{#...#}` and does NOT escape the content: an editorial
+  comment is literal, so escaping it the way prose is escaped would put real
+  backslashes into the comment. That extends to the `]` escaping used for link
+  and span labels, which leaves a linked comment containing `]` with a label
+  that ends early - visible, unlike silently altered comment text. The engine
+  gap behind it is markup-carve/carve#403.
+
+### Fixed
+- **highlight.js scopes inline extension calls; Prism scopes caption lines.**
+  Each engine was missing a rule the other had, so a construct the corpus has
+  carried since its first release rendered as plain prose in one of them:
+  `:kbd[Ctrl+C]` (corpus `45-inline-extensions`, also `:term[…]` and
+  `:index[…]`) was unscoped in highlight.js, and `^ A caption` - image
+  captions, blockquote attributions and the numbered `^ Figure #: …` form -
+  was unscoped in Prism.
+- **Prism no longer scopes an extension call carrying attributes as a span.**
+  The `span` rule matches any `[x]` followed by `{`, so `:kbd[Ctrl]{.k}` was
+  claimed by it with the `:kbd` left as prose. `extension` now precedes `span`.
+  Neither engine's extension rule consumes the trailing attribute block any
+  more: an attribute value may itself contain braces (`:kbd[x]{k="{y}"}`), so a
+  `{[^}]*}` tail stopped at the inner brace and split the block. The existing
+  attribute rules match it whole.
+- **The cross-engine sweep covers seven more constructs** - inline extensions
+  (bare and with attributes), symbol shortcodes, citations, code callouts, and
+  captions (plain and numbered). The sweep exists to catch a construct with no
+  rule at all, which snapshots happily as unscoped text; the two gaps above
+  survived because it never reached them.
 - **highlight.js: verbatim fences wider than two backticks no longer close
   early** (#52). Inline code, the inline literal and both math forms declared
   only the double and single widths, because highlight.js has no begin-to-end

@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "- b"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " c"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

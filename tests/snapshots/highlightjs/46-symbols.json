@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Great "
+  },
+  {
+    "scope": "symbol",
+    "text": ":rocket:"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "function",
+    "text": ":kbd[Ctrl]"
+  },
+  {
+    "scope": null,
+    "text": " is an extension.\n"
+  }
+]

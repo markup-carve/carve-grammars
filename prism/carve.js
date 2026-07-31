@@ -232,9 +232,36 @@
         },
 
         // Table continuation / list continuation: a lone `+`
+        // Table/list continuation: a lone `+` (grammar.ebnf
+        // `continuation_marker`) or a continuation ROW carrying cells
+        // (`continuation_row`, corpus 63-table-multi-line-cell-continuation).
+        // The row form has to end in `|`, so `one + two` in prose stays
+        // literal.
         'table-continuation': {
-            pattern: /^[ \t]*\+[ \t]*$/m,
-            alias: 'punctuation',
+            pattern: /^[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/m,
+            inside: Object.assign({
+                'punctuation': /^[ \t]*\+|\|/,
+            }, inline),
+        },
+
+        // Caption / attribution line: `^ text` (corpus 08-image-with-caption,
+        // 07-blockquote-with-attribution, and the numbered `^ Figure #: …`
+        // form). Placed after `table`, whose rows use `^` as a rowspan marker
+        // INSIDE a `|` row - that rule claims those lines first, so this one
+        // only sees a caret opening its own line. The body keeps inline
+        // markup: a caption is ordinary inline content.
+        'caption': {
+            // Column 0 only. An INDENTED caret is literal text at top level
+            // (corpus 156-indented-image-and-caption-stay-literal), and inside
+            // a list item a caption sits at the item's content column - which a
+            // highlighter cannot track. Allowing leading whitespace here scoped
+            // that literal line as a caption; highlight.js has always been
+            // strict about this, so the two engines now agree.
+            pattern: /^\^[ \t].*$/m,
+            alias: 'title',
+            inside: Object.assign({
+                'punctuation': /^\^/,
+            }, inline),
         },
 
         // Blockquotes: leading > (possibly nested >>)
@@ -246,12 +273,28 @@
         },
 
         // List markers: -, *, ordered (1. a) i.), task [ ]/[x], definition `: `
+        //
+        // `task_state` is ` `, `x`, `X`, `-`, `_`, `>` or `?` (grammar.ebnf
+        // `task_state`). Only `x`/`X` render checked; the rest are still task
+        // markers, and corpus 06-task-lists-2 uses all four of the others.
         'list': {
-            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
+            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
             alias: 'punctuation',
             inside: {
-                'constant': /\[[ xX]\]/,
+                'constant': /\[[ xX\-_>?]\]/,
             },
+        },
+
+        // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
+        // The `:  definition` line is a list marker above; this is the term.
+        // `:::` opens a div and those rules run earlier - the space required
+        // after exactly two colons keeps the two apart in any case.
+        'definition-term': {
+            pattern: /^[ \t]*::[ \t].*$/m,
+            alias: 'title',
+            inside: Object.assign({
+                'punctuation': /^[ \t]*::/,
+            }, inline),
         },
 
         // Reference link / abbreviation definitions
@@ -322,6 +365,19 @@
             },
         },
 
+        // Inline footnote: ^[content] (corpus 23-inline-footnotes). Distinct
+        // from the reference `[^label]` below - the caret leads here - and
+        // matched first so neither rule claims the other's brackets.
+        'inline-footnote': {
+            pattern: /\^\[[^\]\n]*\]/,
+            alias: 'symbol',
+            // The body is ordinary inline content - `^[see *later*]` keeps its
+            // bold - so the shared inline rules apply inside it.
+            inside: Object.assign({
+                'punctuation': /^\^\[|\]$/,
+            }, inline),
+        },
+
         // Footnote references: [^label]
         'footnote': {
             pattern: /\[\^[^\]]+\]/,
@@ -387,20 +443,27 @@
         'span-empty-attrs': spanEmptyAttrs,
 
         // Bracketed span with attributes: [text]{.class}
-        'span': {
-            pattern: /\[[^\^\]][^\]]*\](?=\{)/,
-            alias: 'string',
-        },
-
-        // Extension inline call: :name[content]{attrs}
+        // Extension inline call: :name[content]. Must precede `span`: that rule
+        // matches any `[x]` followed by `{`, so an extension call carrying an
+        // attribute block (`:kbd[Ctrl]{.k}`) was scoped as a span with its
+        // `:kbd` left as prose.
+        //
+        // The trailing `{...}` is left to `attributes`. An attribute value may
+        // itself contain braces (`:kbd[x]{k="{y}"}`), so a `\{[^}]*\}` tail here
+        // would stop at the inner `}` and split the block in half.
         'extension': {
-            pattern: /:[a-zA-Z][\w-]*\[[^\]]*\](?:\{[^}]*\})?/,
+            pattern: /:[a-zA-Z][\w-]*\[[^\]]*\]/,
             alias: 'function',
             inside: {
                 'function': /:[a-zA-Z][\w-]*/,
                 'attributes': attributes,
                 'punctuation': /\[|\]/,
             },
+        },
+
+        'span': {
+            pattern: /\[[^\^\]][^\]]*\](?=\{)/,
+            alias: 'string',
         },
 
         // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
@@ -462,6 +525,19 @@
         // Escapes and smart typography
         'escape': {
             pattern: /\\[\\`*_{}[\]()#+\-.!~^/<>@%|=,]/,
+            alias: 'constant',
+        },
+        // Hard break: a backslash ending the line (highlight.js scopes this as
+        // `meta`; Prism had no rule at all). The escape rule above cannot
+        // claim it - there is no character after it to escape.
+        //
+        // Anchored on an explicit newline rather than `$`+`m`. Prism applies a
+        // pattern to the REMAINING text chunk, so `$` matches at the chunk
+        // boundary and a mid-line backslash left over by the escape rule was
+        // scoped as a hard break (corpus 163-quote-flanking-after-an-escaped-
+        // character, 137-inline-literal-3).
+        'hard-break': {
+            pattern: /\\(?=\n)/,
             alias: 'constant',
         },
         'typography': {

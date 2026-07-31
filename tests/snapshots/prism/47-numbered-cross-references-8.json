@@ -1,0 +1,54 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#lst-greet"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block",
+    "text": "python\ndef greet():\n    return 1\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Listing #: a greeting"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee </"
+  },
+  {
+    "type": "tag",
+    "text": "#lst-greet"
+  },
+  {
+    "type": "text",
+    "text": ">.\n"
+  }
+]

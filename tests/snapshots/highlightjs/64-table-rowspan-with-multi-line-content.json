@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Category       |= Item   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Fresh Fruits    | Apple   |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ from local      |         |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ farms           |         |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| ^               | Banana  |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

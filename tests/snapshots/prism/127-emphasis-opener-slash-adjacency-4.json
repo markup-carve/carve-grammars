@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a/"
+  },
+  {
+    "type": "strike",
+    "text": "~y~"
+  },
+  {
+    "type": "text",
+    "text": " a/"
+  },
+  {
+    "type": "highlight",
+    "text": "=y="
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

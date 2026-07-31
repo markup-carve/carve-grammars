@@ -1,26 +1,14 @@
 [
   {
-    "type": "list",
-    "text": "1. "
-  },
-  {
     "type": "text",
-    "text": "outer\n"
+    "text": "Text hier\n\n"
   },
   {
     "type": "list",
-    "text": "   1. "
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "inner\nlazy\n"
-  },
-  {
-    "type": "list",
-    "text": "   2. "
-  },
-  {
-    "type": "text",
-    "text": "sibling\n"
+    "text": "nur eins\n"
   }
 ]

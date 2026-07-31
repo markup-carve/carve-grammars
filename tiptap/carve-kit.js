@@ -19,6 +19,7 @@ import HardBreak from '@tiptap/extension-hard-break';
 
 import { CarveInsert } from './extensions/carve-insert.js';
 import { CarveDelete } from './extensions/carve-delete.js';
+import { CarveCriticComment } from './extensions/carve-critic-comment.js';
 import { CarveDiv } from './extensions/carve-div.js';
 import { CarveTabSet, CarveTab } from './extensions/carve-tabs.js';
 import { CarveSpan } from './extensions/carve-span.js';
@@ -62,6 +63,7 @@ const CODE_LANGS = [
  * Includes all standard Tiptap extensions plus Carve-specific marks:
  * - CarveInsert: {+text+}
  * - CarveDelete: {-text-}
+ * - CarveCriticComment: {# text #}
  * - CarveDiv: ::: containers
  * - CarveSpan: [text]{.class}
  * - CarveFootnote: [^label]
@@ -445,6 +447,10 @@ export const CarveKit = Extension.create({
         // Carve-specific extensions
         if (this.options.carveInsert !== false) {
             extensions.push(CarveInsert.configure(this.options.carveInsert ?? {}));
+        }
+
+        if (this.options.carveCriticComment !== false) {
+            extensions.push(CarveCriticComment.configure(this.options.carveCriticComment ?? {}));
         }
 
         if (this.options.carveDelete !== false) {

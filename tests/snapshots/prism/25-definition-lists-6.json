@@ -1,0 +1,22 @@
+[
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " A term that"
+  },
+  {
+    "type": "text",
+    "text": "\nwraps onto the next line\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "text",
+    "text": "its definition\n"
+  }
+]

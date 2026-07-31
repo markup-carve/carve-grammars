@@ -1,18 +1,22 @@
 [
   {
     "type": "text",
-    "text": "Intro\n\n"
+    "text": "Liste:\n"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": " Stay hungry"
+    "type": "list",
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "\n^ Steve Jobs\n"
+    "text": "eins\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "zwei\n"
   }
 ]

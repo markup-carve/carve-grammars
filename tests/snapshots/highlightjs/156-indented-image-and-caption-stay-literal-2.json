@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{.gallery}"
+  },
+  {
+    "scope": null,
+    "text": "\n "
+  },
+  {
+    "scope": "link",
+    "text": "![Apollo](a.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n ^ Figure 1: moon\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "A single space "
+  },
+  {
+    "scope": "code",
+    "text": "` `"
+  },
+  {
+    "scope": null,
+    "text": " and two spaces "
+  },
+  {
+    "scope": "code",
+    "text": "`  `"
+  },
+  {
+    "scope": null,
+    "text": " are preserved.\n"
+  }
+]

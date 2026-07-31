@@ -1,14 +1,10 @@
 [
   {
-    "scope": null,
-    "text": "text\n"
-  },
-  {
     "scope": "bullet",
-    "text": "  -"
+    "text": "1."
   },
   {
     "scope": null,
-    "text": " item\n"
+    "text": " one\n\n  > q\n"
   }
 ]

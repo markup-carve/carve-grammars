@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "function",
+    "text": ":foo[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.cls}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

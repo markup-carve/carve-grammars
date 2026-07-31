@@ -269,6 +269,43 @@
         relevance: 5,
     };
 
+    // Inline footnote: ^[content] (corpus 23-inline-footnotes). The caret
+    // leads, which is what separates it from the reference above.
+    const INLINE_FOOTNOTE = {
+        className: 'symbol',
+        begin: /\^\[[^\]\n]*\]/,
+        relevance: 5,
+    };
+
+    // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
+    // DEFINITION_TERM above matches the `: definition` line; this is the term
+    // itself, which had no rule. `:::` opens a div and DIV_BLOCK_START runs
+    // first, so the two do not compete.
+    const DEFINITION_TERM_MARKER = {
+        className: 'title',
+        begin: /^::[ \t]/,
+        end: /$/,
+        relevance: 5,
+    };
+
+    // Table/list continuation: a lone `+` (grammar.ebnf `continuation_marker`)
+    // or a continuation ROW carrying cells (`continuation_row`, corpus
+    // 63-table-multi-line-cell-continuation). The row form has to end in `|`,
+    // so `one + two` in prose stays literal.
+    const TABLE_CONTINUATION = {
+        className: 'punctuation',
+        begin: /^[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/,
+        relevance: 5,
+    };
+
+    // Smart typography, the same set the Prism grammar carries. Not invented
+    // here: dashes, arrows, comparisons and the symbol trio.
+    const TYPOGRAPHY = {
+        className: 'literal',
+        begin: /\.\.\.|---|--|<->|<-|->|=>|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+        relevance: 0,
+    };
+
     // Citations (Tier-2 §22): [@key], [+@key], [@key, p.10], [@a; @b]
     // A bracket whose content holds at least one `@key` with no trailing
     // `(url)`, `[ref]`, or `{attrs}` suffix. The negative lookahead is handled
@@ -335,9 +372,12 @@
     };
 
     // Task list items: - [ ] or - [x]
+    // `task_state` is ` `, `x`, `X`, `-`, `_`, `>` or `?` (grammar.ebnf
+    // `task_state`). Only `x`/`X` render checked; the rest are still task
+    // markers, and corpus 06-task-lists-2 uses all four of the others.
     const TASK_LIST = {
         className: 'bullet',
-        begin: /^[ \t]*[-*]\s\[[ xX_]\]/,
+        begin: /^[ \t]*[-*]\s\[[ xX\-_>?]\]/,
         relevance: 5,
     };
 
@@ -493,6 +533,20 @@
         relevance: 2,
     };
 
+    // Inline extension call: :name[content] (corpus 45-inline-extensions).
+    // Matched before SYMBOL, whose `:name:` shape cannot claim this one but
+    // reads similarly.
+    //
+    // A trailing `{...}` is deliberately NOT consumed here: an attribute value
+    // may itself contain braces (`:kbd[x]{k="{y}"}`), so a `\{[^}]*\}` tail
+    // stops at the inner `}` and swallows half the block. ATTRIBUTE already
+    // matches it correctly as its own scope.
+    const INLINE_EXTENSION = {
+        className: 'function',
+        begin: /:[A-Za-z][\w-]*\[[^\]\n]*\]/,
+        relevance: 5,
+    };
+
     // Symbol shortcodes (e.g. emoji): :name: (parser shape - name starts
     // alphanumeric, then word chars, `+` or `-`; no whitespace, so
     // `a : b : c` stays text)
@@ -523,6 +577,7 @@
             DIV_BLOCK_END,
             HORIZONTAL_RULE,
             TABLE_SEPARATOR,
+            TABLE_CONTINUATION,  // `+` rows - before TABLE_ROW, which needs a leading `|`
             LINE_BLOCK,        // Must be before TABLE_ROW (both start with |)
             TABLE_ROW,
             BLOCKQUOTE,
@@ -530,18 +585,21 @@
             TASK_LIST,         // Must be before LIST_BULLET
             LIST_BULLET,
             LIST_NUMBER,
+            DEFINITION_TERM_MARKER,  // `:: term` - before DEFINITION_TERM (`: definition`)
             DEFINITION_TERM,
             FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
             ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
             REFERENCE_DEF,
 
             // Inline elements (order matters - more specific first)
+            INLINE_FOOTNOTE,   // ^[content] - before FOOTNOTE_REF ([^label])
             FOOTNOTE_REF,
             IMAGE,             // Must be before LINK (starts with !)
             SPAN,              // Must be before LINK ([text]{attr} vs [text](url))
             REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
             CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
             CODE_CALLOUT,      // <n> callout markers
+            INLINE_EXTENSION,  // :name[content] - before SYMBOL and LINK
             SYMBOL,            // :name: shortcodes
             LINK,
             AUTOLINK,
@@ -574,6 +632,7 @@
             ATTRIBUTE,
             ESCAPE,
             HARD_BREAK,
+            TYPOGRAPHY,        // dashes/arrows - after the structural rules
         ],
     };
     };

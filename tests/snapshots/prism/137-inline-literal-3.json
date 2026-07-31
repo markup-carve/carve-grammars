@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "literal",
+    "text": "!`x`"
+  },
+  {
+    "type": "text",
+    "text": " is a bang before code.\n"
+  }
+]

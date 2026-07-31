@@ -1,0 +1,86 @@
+[
+  {
+    "scope": null,
+    "text": "Flow: a "
+  },
+  {
+    "scope": "literal",
+    "text": "->"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "literal",
+    "text": "<-"
+  },
+  {
+    "scope": null,
+    "text": " c "
+  },
+  {
+    "scope": "literal",
+    "text": "<->"
+  },
+  {
+    "scope": null,
+    "text": " d "
+  },
+  {
+    "scope": "addition",
+    "text": "=> e; x !="
+  },
+  {
+    "scope": null,
+    "text": " y, p "
+  },
+  {
+    "scope": "literal",
+    "text": "<="
+  },
+  {
+    "scope": null,
+    "text": " q, r "
+  },
+  {
+    "scope": "literal",
+    "text": ">="
+  },
+  {
+    "scope": null,
+    "text": " s, "
+  },
+  {
+    "scope": "literal",
+    "text": "+-"
+  },
+  {
+    "scope": null,
+    "text": "1.\n"
+  },
+  {
+    "scope": "literal",
+    "text": "(c)"
+  },
+  {
+    "scope": null,
+    "text": " 2024, "
+  },
+  {
+    "scope": "literal",
+    "text": "(r)"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "literal",
+    "text": "(tm)"
+  },
+  {
+    "scope": null,
+    "text": ". Dates like 1/2/2024 stay literal.\n"
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "- b"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": " c"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "- d"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": " e"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "typography",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "-\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "function",
+    "text": ":kbd[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.foo}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

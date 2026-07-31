@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "A note"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "see "
+  },
+  {
+    "type": "inline-footnote>bold",
+    "text": "*later*"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " inline. And a ref"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " reference body."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
