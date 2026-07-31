@@ -5,6 +5,27 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **Seven constructs the corpus carries now scope in Prism and highlight.js.**
+  Each was rendering as plain prose in one or both engines: the inline footnote
+  `^[note]` (neither had a rule, though both scope the `[^a]` reference), the
+  task states `[>]` `[-]` `[?]` `[_]` (both stopped at `[ ]`/`[x]`, while the
+  spec's `task_state` is ` `, `x`, `X`, `-`, `_`, `>`, `?`), the definition term
+  `:: term` (both scoped only the `: definition` line below it), and the table
+  continuation row. Three more were parity gaps where one engine had the rule
+  and the other did not: smart typography (`--`, `->`, ellipsis) missing in
+  highlight.js, the hard break missing in Prism, and the lone `+` continuation
+  marker missing in highlight.js.
+
+  Found by running the TextMate sweep's 96 constructs through the other two
+  engines - their own sweep carried 50, which is why these survived it. It now
+  carries 58, and all seven cases fail against the unfixed grammars.
+
+  Prism's hard-break rule is anchored on an explicit newline rather than an
+  end-of-line assertion with the `m` flag: Prism applies a pattern to the
+  remaining text chunk, so the assertion matched at a chunk boundary and scoped
+  a mid-line backslash as a hard break. The corpus snapshots for
+  `163-quote-flanking-after-an-escaped-character` and `137-inline-literal-3`
+  caught that.
 - **The ProseMirror test bridge accepts the split footnote types.** carve-js
   split `footnote` into `footnote_ref` and `inline_footnote`
   (markup-carve/carve#405); this repo pins a published carve that still emits

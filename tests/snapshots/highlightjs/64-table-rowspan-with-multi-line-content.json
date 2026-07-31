@@ -13,7 +13,23 @@
   },
   {
     "scope": null,
-    "text": "\n+ from local      |         |\n+ farms           |         |\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ from local      |         |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ farms           |         |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "string",

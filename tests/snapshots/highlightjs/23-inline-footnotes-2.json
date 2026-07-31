@@ -1,11 +1,11 @@
 [
   {
     "scope": null,
-    "text": "Text^"
+    "text": "Text"
   },
   {
-    "scope": "string",
-    "text": "[note]"
+    "scope": "symbol",
+    "text": "^[note]"
   },
   {
     "scope": "attr",

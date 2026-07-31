@@ -1,7 +1,11 @@
 [
   {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
     "scope": null,
-    "text": "--- toml\ntitle = \"My Document\"\n"
+    "text": " toml\ntitle = \"My Document\"\n"
   },
   {
     "scope": "meta",

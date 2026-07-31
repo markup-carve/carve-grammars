@@ -1,7 +1,11 @@
 [
   {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
     "scope": null,
-    "text": ":: term\n"
+    "text": "\n"
   },
   {
     "scope": "title",

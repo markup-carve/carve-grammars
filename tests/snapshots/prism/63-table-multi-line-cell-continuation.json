@@ -45,7 +45,55 @@
   },
   {
     "type": "text",
-    "text": "\n+          | that continues     |\n+          | across lines.      |\n"
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": "          "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " that continues     "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": "          "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " across lines.      "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "table>punctuation",

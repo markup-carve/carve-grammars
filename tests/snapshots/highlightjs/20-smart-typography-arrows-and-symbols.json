@@ -1,7 +1,31 @@
 [
   {
     "scope": null,
-    "text": "Flow: a -> b <- c <-> d "
+    "text": "Flow: a "
+  },
+  {
+    "scope": "literal",
+    "text": "->"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "literal",
+    "text": "<-"
+  },
+  {
+    "scope": null,
+    "text": " c "
+  },
+  {
+    "scope": "literal",
+    "text": "<->"
+  },
+  {
+    "scope": null,
+    "text": " d "
   },
   {
     "scope": "addition",
@@ -9,6 +33,54 @@
   },
   {
     "scope": null,
-    "text": " y, p <= q, r >= s, +-1.\n(c) 2024, (r), (tm). Dates like 1/2/2024 stay literal.\n"
+    "text": " y, p "
+  },
+  {
+    "scope": "literal",
+    "text": "<="
+  },
+  {
+    "scope": null,
+    "text": " q, r "
+  },
+  {
+    "scope": "literal",
+    "text": ">="
+  },
+  {
+    "scope": null,
+    "text": " s, "
+  },
+  {
+    "scope": "literal",
+    "text": "+-"
+  },
+  {
+    "scope": null,
+    "text": "1.\n"
+  },
+  {
+    "scope": "literal",
+    "text": "(c)"
+  },
+  {
+    "scope": null,
+    "text": " 2024, "
+  },
+  {
+    "scope": "literal",
+    "text": "(r)"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "literal",
+    "text": "(tm)"
+  },
+  {
+    "scope": null,
+    "text": ". Dates like 1/2/2024 stay literal.\n"
   }
 ]

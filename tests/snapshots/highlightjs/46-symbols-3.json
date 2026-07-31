@@ -25,6 +25,22 @@
   },
   {
     "scope": null,
-    "text": " is a symbol, but a +- b and word:+-: are not.\n"
+    "text": " is a symbol, but a "
+  },
+  {
+    "scope": "literal",
+    "text": "+-"
+  },
+  {
+    "scope": null,
+    "text": " b and word:"
+  },
+  {
+    "scope": "literal",
+    "text": "+-"
+  },
+  {
+    "scope": null,
+    "text": ": are not.\n"
   }
 ]

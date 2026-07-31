@@ -1,7 +1,27 @@
 [
   {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " color"
+  },
+  {
     "type": "text",
-    "text": ":: color\n:: colour\n"
+    "text": "\n"
+  },
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " colour"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "list",

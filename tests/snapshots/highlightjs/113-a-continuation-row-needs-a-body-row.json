@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": "\n+ cont |\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ cont |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

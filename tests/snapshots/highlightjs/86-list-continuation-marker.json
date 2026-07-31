@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " Build the image\n+\n"
+    "text": " Build the image\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "keyword",

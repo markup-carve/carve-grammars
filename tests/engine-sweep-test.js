@@ -131,7 +131,18 @@ const CASES = [
     ['citation', 'see [@smith2020]', '@smith2020', false],
     ['code callout', 'x <1>', '<1>', false],
 
+    // Constructs the TextMate sweep carries that this one did not reach. Each
+    // had no rule at all in one or both engines and snapshotted as prose.
+    ['inline footnote', 'A note^[see later] inline.', 'see later', false],
+    ['smart typography', 'a -- b', '--', false],
+    ['hard break', 'line\\\nnext', '\\', false],
+
     // Blocks.
+    ['task state deferred', '- [>] deferred', '[>]', false],
+    ['task state dropped', '- [-] dropped', '[-]', false],
+    ['definition term', ':: color\n:  the property', 'color', false],
+    ['table continuation row', '| a | b |\n+   | c |', '+', false],
+    ['continuation marker', '- step\n+\n> note', '+', false],
     ['caption', '^ A caption', 'A caption', false],
     ['numbered caption', '^ Figure #: A sunset', 'A sunset', false],
     ['heading', '# Title', 'Title', false],

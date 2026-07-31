@@ -1,11 +1,11 @@
 [
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "- [-]"
   },
   {
     "scope": null,
-    "text": " [-] dropped\n"
+    "text": " dropped\n"
   },
   {
     "scope": "bullet",
@@ -17,18 +17,18 @@
   },
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "- [>]"
   },
   {
     "scope": null,
-    "text": " [>] deferred\n"
+    "text": " deferred\n"
   },
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "- [?]"
   },
   {
     "scope": null,
-    "text": " [?] maybe\n"
+    "text": " maybe\n"
   }
 ]

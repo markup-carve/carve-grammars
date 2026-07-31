@@ -1,11 +1,19 @@
 [
   {
     "type": "text",
-    "text": "Text^"
+    "text": "Text"
   },
   {
-    "type": "span",
-    "text": "[note]"
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "note"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>punctuation",
