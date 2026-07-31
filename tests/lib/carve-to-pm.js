@@ -217,7 +217,14 @@ function convertInlineNode(node, marks) {
         case 'math':
             return [{ type: 'carveMath', attrs: { src: node.content || '', display: !!node.display } }];
 
+        // All three spellings. carve-js split `footnote` into `footnote_ref`
+        // and `inline_footnote` (markup-carve/carve#405); this repo pins a
+        // published carve that still emits the old name, so accepting every
+        // form keeps either release order safe. An inline footnote has no
+        // label of its own, which the fallback already covers.
         case 'footnote':
+        case 'footnote_ref':
+        case 'inline_footnote':
             return [{ type: 'carveFootnote', attrs: { label: node.id || 'note' } }];
 
         case 'link': {

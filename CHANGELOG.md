@@ -4,6 +4,13 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Fixed
+- **The ProseMirror test bridge accepts the split footnote types.** carve-js
+  split `footnote` into `footnote_ref` and `inline_footnote`
+  (markup-carve/carve#405); this repo pins a published carve that still emits
+  the old name, so all three are accepted and either release order is safe.
+  Without it a footnote silently stopped mapping to `carveFootnote`.
+
 ### Added
 - **`CarveCriticComment`, a tiptap mark for editorial comments (`{# ... #}`).**
   Editorial comments became their own node type in the engines
