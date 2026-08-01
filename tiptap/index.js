@@ -49,6 +49,10 @@ export { CarveMath } from './extensions/carve-math.js';
 export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
 export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
+export { CarveUnsupported } from './extensions/carve-unsupported.js';
 
 // Serializer
 export { serializeToCarve, escapeCarve, carveMediaDirective } from './serializer.js';
+
+// Loader
+export { carveToProseMirror, astToProseMirror, UnsupportedNodeError } from './carve-to-pm.js';

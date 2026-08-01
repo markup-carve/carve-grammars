@@ -3,7 +3,7 @@
  *
  * For each corpus file we run the AST idempotence loop:
  *
- *     source -> parse -> astA -> carveToPm -> serializeToCarve -> reparse -> astB
+ *     source -> parse -> astA -> astToProseMirror -> serializeToCarve -> reparse -> astB
  *
  * and assert normalize(astA) deepEqual normalize(astB). This catches serializer
  * drift: any change that makes the serializer emit Carve that re-parses to a
@@ -19,7 +19,7 @@
 import assert from 'node:assert';
 import { parse } from '@markup-carve/carve';
 import { listCorpusFiles, listCategories } from './lib/corpus.js';
-import { carveToPm } from './lib/carve-to-pm.js';
+import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { normalizeAst } from './lib/ast-normalize.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
 import { COVERAGE } from './lib/coverage.js';
@@ -42,7 +42,7 @@ function roundTrip(file) {
     }
     let carve2;
     try {
-        const pm = carveToPm(astA);
+        const pm = astToProseMirror(astA);
         carve2 = serializeToCarve(pm);
     } catch (e) {
         return { ok: false, reason: e.nodeType ? `unsupported ${e.nodeType}` : e.message };
@@ -101,5 +101,19 @@ if (skipShouldPromote.length) {
 }
 
 assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (see above)`);
+
+{
+    const source = '```=html\n<div data-x="1">raw</div>\n```\n\nKept\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    const carve2 = serializeToCarve(pm);
+    assert.deepStrictEqual(normalizeAst(parse(carve2)), normalizeAst(parse(source)));
+}
+
+{
+    const source = '{data-x=1}\nParagraph\n';
+    const pm = carveToProseMirror(source);
+    const carve2 = serializeToCarve(pm);
+    assert.deepStrictEqual(normalizeAst(parse(carve2)), normalizeAst(parse(source)));
+}
 
 console.log('\nround-trip OK');
