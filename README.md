@@ -2,7 +2,7 @@
 
 Grammars for the [Carve](https://github.com/markup-carve/carve) markup language:
 
-- a **Tiptap** integration (editor kit + serializer) that turns a Tiptap/ProseMirror document into Carve markup;
+- a **Tiptap** integration (editor kit, Carve loader and serializer) that converts between Carve markup and Tiptap/ProseMirror JSON;
 - **Prism** and **highlight.js** syntax-highlighting grammars for rendering Carve source on the web;
 - a **TextMate** grammar (`textmate/carve.tmLanguage.json`) for TextMate-based highlighters such as Shiki (used by VitePress).
 
@@ -119,6 +119,54 @@ Headings (`#`), bullet / ordered / task lists, blockquotes (`>`), fenced code
 blocks (`` ``` lang ``), horizontal rules (`---`), tables (with `|=` header
 cells and `^` / `<` row / column spans), container divs (`::: class`), and
 definition lists.
+
+## Loading Carve Into Tiptap
+
+Use the AST loader when opening Carve source in an editor. It parses Carve with
+`@markup-carve/carve` and builds the ProseMirror JSON shape consumed by
+`CarveKit`, avoiding the lossy HTML pivot where attributes disappear unless a
+Tiptap extension happens to claim them during `parseHTML`.
+
+```js
+import {
+  CarveKit,
+  carveToProseMirror,
+  serializeToCarve,
+} from '@markup-carve/carve-grammars/tiptap'
+
+const content = carveToProseMirror(source, { unsupported: 'preserve' })
+
+const editor = new Editor({
+  extensions: [CarveKit],
+  content,
+})
+
+const saved = serializeToCarve(editor.getJSON())
+```
+
+Entry points:
+
+- `carveToProseMirror(source, options?)` parses Carve source and returns a
+  ProseMirror `doc`.
+- `astToProseMirror(ast, options?)` converts an already parsed Carve
+  `document` AST.
+
+Unsupported handling:
+
+- `unsupported: 'throw'` is the default. The loader throws `UnsupportedNodeError`
+  instead of silently dropping content.
+- `unsupported: 'preserve'` maps an unsupported construct to the opaque
+  `carveUnsupported` block node, carrying the original source in `carveSource`.
+  `serializeToCarve` writes that source back verbatim, so a load/save pass keeps
+  the document content even when the editor cannot model that construct.
+
+The loader models only what `CarveKit` and `serializeToCarve` can represent.
+Known gaps that still stay unsupported or lossy include front matter, figures
+and captions, table captions and alignment markers, table span filler cells,
+reference-link definitions, cross references, inline/raw passthrough,
+line blocks, comments, symbols, smart-punctuation artifacts, and several
+source-layout edge cases. `tiptap/schema-map.json` is the public mapping
+authority; `tests/lib/coverage.js` records the current skip reasons.
 
 ## Syntax highlighting
 
@@ -277,10 +325,15 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
   render `graphviz`/`d2` blocks with the offline WASM engines.
 - `renderKrokiDiagrams(container, options?)` - render PlantUML (and any opted-in
   type) via a Kroki server; `KROKI_DIAGRAM_TYPES` is the default class→type map.
+- `carveToProseMirror(source, options?)` - parse Carve source and convert it to
+  ProseMirror JSON. `options.unsupported` is `'throw'` by default or
+  `'preserve'` for opaque source-preserving blocks.
+- `astToProseMirror(ast, options?)` - convert an existing `@markup-carve/carve`
+  AST to ProseMirror JSON.
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
-- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`.
+- Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`, `CarveUnsupported`.
 
 ## Schema map (for other engines)
 

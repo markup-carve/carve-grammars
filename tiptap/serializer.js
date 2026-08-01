@@ -115,6 +115,10 @@ export function serializeToCarve(doc) {
                 break;
 
             case 'paragraph':
+                {
+                    const paragraphAttrs = serializeAttributes(node.attrs);
+                    if (paragraphAttrs) output += paragraphAttrs + '\n';
+                }
                 output += serializeInline(node.content) + '\n';
                 break;
 
@@ -299,6 +303,12 @@ export function serializeToCarve(doc) {
                 if (directive) {
                     output += directive + '\n';
                 }
+                break;
+            }
+
+            case 'carveUnsupported': {
+                output += node.attrs?.carveSource || '';
+                if (output && !output.endsWith('\n')) output += '\n';
                 break;
             }
 
