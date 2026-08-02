@@ -52,21 +52,21 @@ function assertRoundTrips(name, carve) {
 }
 
 assertRoundTrips('labelled tabs with a selected flag (canonical [label] openers)',
-    ':::: tabs\n::: tab [First]\nAlpha\n:::\n\n{selected}\n::: tab [Second]\nBeta\n:::\n::::');
+    '::: tabs\n:::: tab [First]\nAlpha\n::::\n\n{selected}\n:::: tab [Second]\nBeta\n::::\n:::');
 
 // Legacy attribute-form input normalizes to the canonical [label] opener.
 {
-    const legacy = ':::: tabs\n{label="First"}\n::: tab\nAlpha\n:::\n::::';
-    const canonical = ':::: tabs\n::: tab [First]\nAlpha\n:::\n::::';
+    const legacy = '::: tabs\n{label="First"}\n:::: tab\nAlpha\n::::\n:::';
+    const canonical = '::: tabs\n:::: tab [First]\nAlpha\n::::\n:::';
     assert.deepStrictEqual(parse(roundTrip(legacy)), parse(canonical), 'legacy label attribute normalizes to [label]');
     passed++;
     console.log('  ✓ legacy label attribute normalizes to [label]');
 }
 
 assertRoundTrips('tabs without labels',
-    ':::: tabs\n::: tab\nOne\n:::\n\n::: tab\nTwo\n:::\n::::');
+    '::: tabs\n:::: tab\nOne\n::::\n\n:::: tab\nTwo\n::::\n:::');
 
 assertRoundTrips('a tab with multiple blocks',
-    ':::: tabs\n::: tab [Docs]\n## Heading\n\nA paragraph.\n\n- a\n- b\n:::\n::::');
+    '::: tabs\n:::: tab [Docs]\n## Heading\n\nA paragraph.\n\n- a\n- b\n::::\n:::');
 
 console.log(`\n${passed} passed`);
