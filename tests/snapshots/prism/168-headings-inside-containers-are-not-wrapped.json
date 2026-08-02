@@ -1,0 +1,70 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " # Quoted"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " Quoted body."
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Divved"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "# In an item\n\n  Item body.\n"
+  }
+]

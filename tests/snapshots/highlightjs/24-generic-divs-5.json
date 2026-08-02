@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::::: outer"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::: middle"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\nX\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

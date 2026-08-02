@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: tip"
+  },
+  {
+    "scope": null,
+    "text": "\nInner.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

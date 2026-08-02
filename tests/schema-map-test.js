@@ -50,17 +50,12 @@ const IMPLEMENTATION_TYPES = new Set([
  * Types the map covers that the PINNED spec does not define yet. Each must
  * disappear from this list when `spec/` is bumped - the test enforces that.
  *
- * Empty as of the bump to carve `5f7cc8f`: the spec now defines every type the
- * map carries. `admonition`, `autolink`, `caption_number`, `citation_group`,
- * `heading_ref` and `substitution` were promoted out of here by that bump,
- * which is the gate working as designed.
+ * Empty as of the bump to carve `92bef65`: the spec now defines every type the
+ * map carries. `critic_comment` was promoted out of here by that bump, as
+ * `admonition`, `autolink`, `caption_number`, `citation_group`, `heading_ref`
+ * and `substitution` were by the one before it - the gate working as designed.
  */
-const AHEAD_OF_PIN = new Set([
-    // Added to the vocabulary in markup-carve/carve#402; the engines already
-    // emit it (markup-carve/carve-js#454, markup-carve/carve-php#486). Drop
-    // this once the spec pin moves past that PR.
-    'critic_comment',
-]);
+const AHEAD_OF_PIN = new Set([]);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {

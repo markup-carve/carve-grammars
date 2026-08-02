@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {a=b .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> # Auto"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> {#x a=b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> # Written"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{a=b .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Divved"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "scope": null,
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{.item}"
+  },
+  {
+    "scope": null,
+    "text": " An attributed item.\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " literal text\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{a=b .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n  # Attributed heading\n"
+  }
+]

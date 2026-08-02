@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::::: a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::: b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: c"
+  },
+  {
+    "scope": null,
+    "text": "\nX\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

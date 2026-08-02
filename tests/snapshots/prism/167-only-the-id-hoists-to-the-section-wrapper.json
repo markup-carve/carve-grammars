@@ -1,0 +1,90 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "a"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes",
+    "text": "b "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Auto slug"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "a"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes",
+    "text": "b "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>id",
+    "text": "#explicit"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " Written id"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
