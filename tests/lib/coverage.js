@@ -134,7 +134,6 @@ const TIPTAP_SKIP = new Map([
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
     ['79-paragraph-interruption', 'admonition/comment interruption cases are not modeled'],
     ['80-blockquote-lazy-continuation', 'blockquote lazy continuation differs on reparse'],
-    ['82-multi-line-headings', 'multi-line heading folding is lossy through the serializer'],
     ['83-blockquote-lazy-continuation-stops-at-a-fenced-block', 'blockquote/fence interaction is lossy on reparse'],
     ['84-list-lazy-continuation', 'list lazy continuation and admonitions are not modeled'],
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
