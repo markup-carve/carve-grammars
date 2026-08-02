@@ -443,11 +443,11 @@ check('a div containing a div widens the outer fence to ::::',
         div('tab', para(text('First.'))),
         div('tab', para(text('Second.'))),
     )),
-    ':::: tabs\n::: tab\nFirst.\n:::\n\n::: tab\nSecond.\n:::\n::::');
+    '::: tabs\n:::: tab\nFirst.\n::::\n\n:::: tab\nSecond.\n::::\n:::');
 
 check('three levels of nesting widen fences 5/4/3',
     doc(div('outer', div('middle', div('inner', para(text('deep.')))))),
-    '::::: outer\n:::: middle\n::: inner\ndeep.\n:::\n::::\n:::::');
+    '::: outer\n:::: middle\n::::: inner\ndeep.\n:::::\n::::\n:::');
 
 check('sibling divs do not inflate each other (both stay 3)',
     doc(div('note', para(text('one.'))), div('tip', para(text('two.')))),
@@ -458,18 +458,18 @@ check('tab set widens its fence and emits canonical [label] openers',
         { type: 'carveTab', attrs: { label: 'First' }, content: [para(text('Alpha.'))] },
         { type: 'carveTab', attrs: { label: 'Second', selected: true }, content: [para(text('Beta.'))] },
     ] }),
-    ':::: tabs\n::: tab [First]\nAlpha.\n:::\n\n{selected}\n::: tab [Second]\nBeta.\n:::\n::::');
+    '::: tabs\n:::: tab [First]\nAlpha.\n::::\n\n{selected}\n:::: tab [Second]\nBeta.\n::::\n:::');
 
 check('a tab label containing ] falls back to the attribute line',
     doc({ type: 'carveTabSet', content: [
         { type: 'carveTab', attrs: { label: 'A]B' }, content: [para(text('X.'))] },
     ] }),
-    ':::: tabs\n{label="A]B"}\n::: tab\nX.\n:::\n::::');
+    '::: tabs\n{label="A]B"}\n:::: tab\nX.\n::::\n:::');
 
 check('a tab with no label emits a bare ::: tab',
     doc({ type: 'carveTabSet', content: [
         { type: 'carveTab', content: [para(text('X.'))] },
     ] }),
-    ':::: tabs\n::: tab\nX.\n:::\n::::');
+    '::: tabs\n:::: tab\nX.\n::::\n:::');
 
 console.log(`\n${passed} passed`);

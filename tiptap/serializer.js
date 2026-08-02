@@ -58,23 +58,22 @@ export function carveMediaDirective(src) {
 // them must be longer than theirs.
 const FENCE_CONTAINERS = new Set(['carveDiv', 'carveTabSet', 'carveTab']);
 
-function carveDivFenceLength(node) {
-    let maxInner = 0;
-    const scan = (n) => {
-        if (!n || typeof n !== 'object') return;
-        for (const child of n.content || []) {
-            if (FENCE_CONTAINERS.has(child?.type)) {
-                // The child's own fence length already covers its whole subtree,
-                // so recurse via carveDivFenceLength and don't descend again here.
-                maxInner = Math.max(maxInner, carveDivFenceLength(child));
-            } else {
-                scan(child);
-            }
-        }
-    };
-    scan(node);
+// Colon-fence width is LOCAL DEPTH: three at the top, one more per level
+// (carve#439, PART 9 section 12). A closer matches its opener's length exactly,
+// so nesting only needs the lengths to differ - and widening inward is what
+// `carve fmt` emits in every engine, so a document serialized here matches the
+// canonical form byte for byte.
+//
+// This used to scan a container's whole subtree and make the outer fence longer
+// than the deepest inner one, because an equal-or-greater closer meant an outer
+// container had to outrank everything below it. That is no longer true, and it
+// was never cheap: a container's width could not be known until its entire
+// subtree had been walked, which is the property that made a canonical writer
+// need to know its own maximum depth before it could emit its opening line.
+const CARVE_MIN_FENCE = 3;
 
-    return maxInner ? maxInner + 1 : 3;
+function carveDivFenceLength(depth) {
+    return CARVE_MIN_FENCE + depth;
 }
 
 // Column width a list marker occupies, i.e. the offset of the item's content
@@ -95,13 +94,13 @@ export function serializeToCarve(doc) {
 
     // `indent` is the literal whitespace prefix (a string, not a depth counter)
     // at which this node's own lines start - see listMarkerWidth.
-    function serializeNode(node, indent = '') {
+    function serializeNode(node, indent = '', fenceDepth = 0) {
         if (!node) return;
 
         switch (node.type) {
             case 'doc':
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, indent);
+                    serializeNode(child, indent, fenceDepth);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
@@ -233,11 +232,11 @@ export function serializeToCarve(doc) {
                         divTitle = ' "' + t + '"';
                     }
                 }
-                const divFence = ':'.repeat(carveDivFenceLength(node));
+                const divFence = ':'.repeat(carveDivFenceLength(fenceDepth));
                 output += divFence + (divClass ? ' ' + divClass : '') + divTitle + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, indent);
+                    serializeNode(child, indent, fenceDepth + 1);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
@@ -252,10 +251,10 @@ export function serializeToCarve(doc) {
                 break;
 
             case 'carveTabSet': {
-                const setFence = ':'.repeat(carveDivFenceLength(node));
+                const setFence = ':'.repeat(carveDivFenceLength(fenceDepth));
                 output += setFence + ' tabs\n';
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, indent);
+                    serializeNode(child, indent, fenceDepth + 1);
                     // Tabs are always distinct-type siblings, so separate them
                     // with a blank line (matching authored `::: tab` blocks).
                     if (i < (node.content || []).length - 1) output += '\n';
@@ -279,10 +278,10 @@ export function serializeToCarve(doc) {
                 }
                 if (node.attrs?.selected) tabAttrs.push('selected');
                 if (tabAttrs.length) output += '{' + tabAttrs.join(' ') + '}\n';
-                const tabFence = ':'.repeat(carveDivFenceLength(node));
+                const tabFence = ':'.repeat(carveDivFenceLength(fenceDepth));
                 output += tabFence + opener + '\n';
                 (node.content || []).forEach((child, i) => {
-                    serializeNode(child, indent);
+                    serializeNode(child, indent, fenceDepth + 1);
                     if (i < (node.content || []).length - 1) {
                         const curr = child.type;
                         const next = node.content[i + 1]?.type;
