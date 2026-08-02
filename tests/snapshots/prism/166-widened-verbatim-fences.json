@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "A "
+  },
+  {
+    "type": "code",
+    "text": "```span with `` inside```"
+  },
+  {
+    "type": "text",
+    "text": " stays one code span.\n\nA "
+  },
+  {
+    "type": "literal",
+    "text": "!```literal with `` inside```"
+  },
+  {
+    "type": "text",
+    "text": " stays prose.\n\nThen "
+  },
+  {
+    "type": "math",
+    "text": "$```a `` b```"
+  },
+  {
+    "type": "text",
+    "text": " ends the run.\n\n"
+  },
+  {
+    "type": "math",
+    "text": "$$```x `` y```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

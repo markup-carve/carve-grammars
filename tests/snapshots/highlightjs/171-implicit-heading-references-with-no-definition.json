@@ -1,0 +1,82 @@
+[
+  {
+    "scope": "section",
+    "text": "# Getting Started"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[getting started][]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[Missing][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> # Quoted"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[Quoted][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " # In an item\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[In an item][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Defined"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[Defined]: /wins"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[Defined][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

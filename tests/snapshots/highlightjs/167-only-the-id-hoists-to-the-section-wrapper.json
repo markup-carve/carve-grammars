@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "attr",
+    "text": "{a=b .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Auto slug"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{a=b .c #explicit}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Written id"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

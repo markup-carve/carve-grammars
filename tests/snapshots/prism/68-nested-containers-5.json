@@ -1,0 +1,46 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::::"
+  },
+  {
+    "type": "div",
+    "text": " a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " c"
+  },
+  {
+    "type": "text",
+    "text": "\nX\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

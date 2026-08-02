@@ -30,6 +30,7 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    '82-single-line-headings',
     '04-images',
     '06-task-lists',
     '21-math',
@@ -39,8 +40,6 @@ const TIPTAP_COVERED = [
     '44-mentions-and-tags',
     '51-table-without-alignment',
     '54-fenced-code-shorter-inner-fence',
-    '56-table-cell-escaped-pipe',
-    '57-table-cell-pipe-inside-code-span',
     '59-mention-ignores-email-addresses',
     '60-tag-requires-a-word-boundary',
     '63-table-multi-line-cell-continuation',
@@ -201,6 +200,14 @@ const TIPTAP_SKIP = new Map([
     ['163-quote-flanking-after-an-escaped-character', 'the converter does not model the `escaped_text` node'],
     ['164-comment-fence-with-trailing-text', 'the converter does not model the `comment` node'],
     ['165-unterminated-comment-fence', 'the converter does not model the `comment` node'],
+    ['56-table-cell-escaped-pipe', 'the converter does not model the `escaped_text` node'],
+    ['57-table-cell-pipe-inside-code-span', 'a code span holding a pipe reparses into different table cells'],
+    ['166-widened-verbatim-fences', 'the converter does not model the `literal_inline` node'],
+    ['167-only-the-id-hoists-to-the-section-wrapper', 'headings with attributes are not represented (attrs only support id)'],
+    ['168-headings-inside-containers-are-not-wrapped', 'a heading inside a quote or div reparses into a different AST'],
+    ['169-attribute-order-on-an-unwrapped-heading', 'headings with attributes are not represented (attrs only support id)'],
+    ['170-attribute-braces-on-a-list-item-marker-line', 'headings with attributes are not represented (attrs only support id)'],
+    ['171-implicit-heading-references-with-no-definition', 'implicit heading references are not represented'],
 ]);
 
 export const COVERAGE = {

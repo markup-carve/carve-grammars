@@ -1,0 +1,62 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::::"
+  },
+  {
+    "type": "div",
+    "text": " outer"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div",
+    "text": " middle"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\nX\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "quote",
+    "text": "> # Quoted"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> Quoted body."
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Divved"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " # In an item\n\n  Item body.\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "A "
+  },
+  {
+    "scope": "code",
+    "text": "```span with `` inside```"
+  },
+  {
+    "scope": null,
+    "text": " stays one code span.\n\nA "
+  },
+  {
+    "scope": "string",
+    "text": "!```literal with `` inside```"
+  },
+  {
+    "scope": null,
+    "text": " stays prose.\n\nThen "
+  },
+  {
+    "scope": "string",
+    "text": "$```a `` b```"
+  },
+  {
+    "scope": null,
+    "text": " ends the run.\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "$$```x `` y```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
