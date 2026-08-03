@@ -8,7 +8,13 @@
  * while its changelog said otherwise. Nothing noticed, because each repo only
  * ever checked itself.
  *
- * A shape belongs here when it is a BLOCK-LEVEL classification at column 1 that
+ * The TABLE lives in block-battery.json, not here, so the ported grammars can
+ * read it from whatever language they are written in - vscode-carve from
+ * JavaScript, intellij-carve from Kotlin. Each vendors a copy and a drift check
+ * compares it against this one; that pairing is what turns "six copies of a
+ * rule" into "six copies checked against one table".
+ *
+ * A shape belongs in the table when it is a BLOCK-LEVEL classification at column 1 that
  * every grammar can express - marker or not, and which kind. Inline behaviour
  * and scope-name details stay in each repo's own tests, where the vocabularies
  * legitimately differ.
@@ -17,54 +23,18 @@
  * with an engine transcript in the commit message.
  */
 
+import { readFileSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+
 /** @typedef {{ src: string, want: 'heading'|'list'|'deflist'|'caption'|'quote'|'none', why?: string }} Shape */
 
 /** @type {Shape[]} */
-export const BLOCK_BATTERY = [
-  // MARKER REQUIRES CONTENT (markup-carve/carve#513). A marker alone, or with
-  // only whitespace after it, is prose.
-  { src: '#', want: 'none' },
-  { src: '# ', want: 'none' },
-  { src: '#  ', want: 'none', why: 'a RUN of spaces is still not content - corpus 84-single-line-headings-5' },
-  { src: '-', want: 'none' },
-  { src: '- ', want: 'none' },
-  { src: '1.', want: 'none' },
-  { src: '1. ', want: 'none' },
-  { src: '.', want: 'none', why: 'the bare dot may drop its VALUE, not its content' },
-  { src: '::', want: 'none' },
-  { src: ':: ', want: 'none' },
-  { src: '^', want: 'none' },
-  { src: '^ ', want: 'none' },
-
-  // The same markers with content.
-  { src: '# H', want: 'heading' },
-  { src: '- item', want: 'list' },
-  { src: '1. item', want: 'list' },
-  { src: '. bare', want: 'list' },
-  { src: ':: term', want: 'deflist' },
-  { src: '^ cap', want: 'caption' },
-
-  // Only spaces and tabs separate a marker from its content, so a non-ASCII
-  // space IS content. Written as an escape so the codepoint survives editing.
-  { src: '#  Title', want: 'heading', why: 'NBSP is content, not a separator' },
-  { src: '-  item', want: 'list' },
-
-  // A blockquote marker takes a space, or stands alone (markup-carve/carve#525).
-  // `>>` is not a nested marker - that is `> > x`, a space per marker.
-  { src: '>', want: 'quote' },
-  { src: '> real', want: 'quote' },
-  { src: '>no space', want: 'none' },
-  { src: '>>x', want: 'none' },
-  { src: '>> x', want: 'none' },
-  { src: '>\tx', want: 'none', why: 'a tab does not separate' },
-
-  // A chain is a marker plus content, where the content happens to look like a
-  // marker: `- - ` renders as <ul><li>-</li></ul>.
-  { src: '- - ', want: 'list' },
-  { src: '- - item', want: 'list' },
-  { src: '- [ ] ', want: 'list', why: 'a plain bullet holding the literal [ ], no checkbox' },
-  { src: '- [x] done', want: 'list' },
-]
+export const BLOCK_BATTERY = JSON.parse(
+  readFileSync(resolve(__dirname, 'block-battery.json'), 'utf8'),
+).shapes
 
 /**
  * Reduce a set of TextMate scope names to one block classification.
