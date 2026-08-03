@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\nx"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n"
+  }
+]

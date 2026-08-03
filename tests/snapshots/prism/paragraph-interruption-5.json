@@ -4,19 +4,39 @@
     "text": "text\n"
   },
   {
-    "type": "list",
-    "text": "- "
+    "type": "blockquote>punctuation",
+    "text": ">>"
+  },
+  {
+    "type": "blockquote",
+    "text": "= operator"
   },
   {
     "type": "text",
-    "text": "a\n"
+    "text": "\n"
   },
   {
-    "type": "list",
-    "text": "- "
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "=3 items"
   },
   {
     "type": "text",
-    "text": "b\n"
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "_< face"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

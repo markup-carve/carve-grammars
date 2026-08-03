@@ -4,19 +4,19 @@
     "text": "text\n"
   },
   {
-    "scope": "bullet",
-    "text": "2."
+    "scope": "keyword",
+    "text": ":::note"
   },
   {
     "scope": null,
-    "text": " y\n"
+    "text": "\nbody\n"
   },
   {
-    "scope": "bullet",
-    "text": "3."
+    "scope": "keyword",
+    "text": ":::"
   },
   {
     "scope": null,
-    "text": " z\n"
+    "text": "\n"
   }
 ]

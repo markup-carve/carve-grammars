@@ -4,19 +4,27 @@
     "text": "text\n"
   },
   {
-    "scope": "bullet",
-    "text": "-"
+    "scope": "quote",
+    "text": ">>= operator"
   },
   {
     "scope": null,
-    "text": " a\n"
+    "text": "\n"
   },
   {
-    "scope": "bullet",
-    "text": "-"
+    "scope": "quote",
+    "text": ">=3 items"
   },
   {
     "scope": null,
-    "text": " b\n"
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">_< face"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

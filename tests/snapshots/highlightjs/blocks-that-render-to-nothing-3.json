@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: HyperText Markup Language"
+  },
+  {
+    "scope": null,
+    "text": "\n\nbody\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

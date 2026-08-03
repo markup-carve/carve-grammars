@@ -4,11 +4,19 @@
     "text": "text\n"
   },
   {
-    "scope": "string",
-    "text": "| a | b |"
+    "scope": "bullet",
+    "text": "1."
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " x\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "2."
+  },
+  {
+    "scope": null,
+    "text": " y\n"
   }
 ]

@@ -1,15 +1,15 @@
 [
   {
     "type": "text",
-    "text": "text\n\n"
+    "text": "a[r]\n"
   },
   {
-    "type": "title>punctuation",
-    "text": "#"
+    "type": "reference-definition>constant",
+    "text": "[r]:"
   },
   {
-    "type": "title",
-    "text": " H"
+    "type": "reference-definition",
+    "text": " http://x"
   },
   {
     "type": "text",

@@ -5,10 +5,18 @@
   },
   {
     "scope": "bullet",
-    "text": "1985."
+    "text": "2."
   },
   {
     "scope": null,
-    "text": " was the year\n"
+    "text": " y\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "3."
+  },
+  {
+    "scope": null,
+    "text": " z\n"
   }
 ]

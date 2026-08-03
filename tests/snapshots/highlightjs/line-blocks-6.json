@@ -1,7 +1,11 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: \\"
+    "scope": null,
+    "text": "::: "
+  },
+  {
+    "scope": "attr",
+    "text": "{.line-block}"
   },
   {
     "scope": null,

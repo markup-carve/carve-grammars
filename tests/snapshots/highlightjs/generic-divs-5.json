@@ -1,7 +1,7 @@
 [
   {
     "scope": "keyword",
-    "text": "::::: outer"
+    "text": "::: outer"
   },
   {
     "scope": null,
@@ -17,7 +17,7 @@
   },
   {
     "scope": "keyword",
-    "text": "::: note"
+    "text": "::::: note"
   },
   {
     "scope": null,
@@ -25,7 +25,7 @@
   },
   {
     "scope": "keyword",
-    "text": ":::"
+    "text": ":::::"
   },
   {
     "scope": null,
@@ -41,7 +41,7 @@
   },
   {
     "scope": "keyword",
-    "text": ":::::"
+    "text": ":::"
   },
   {
     "scope": null,

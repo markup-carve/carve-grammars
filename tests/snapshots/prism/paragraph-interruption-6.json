@@ -5,18 +5,18 @@
   },
   {
     "type": "list",
-    "text": "1. "
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "x\n"
+    "text": "a\n"
   },
   {
     "type": "list",
-    "text": "2. "
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "y\n"
+    "text": "b\n"
   }
 ]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n```\nx\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

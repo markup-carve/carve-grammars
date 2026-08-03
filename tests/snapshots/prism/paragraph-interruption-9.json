@@ -4,19 +4,23 @@
     "text": "text\n"
   },
   {
-    "type": "list",
-    "text": "2. "
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": "note"
   },
   {
     "type": "text",
-    "text": "y\n"
+    "text": "\nbody\n"
   },
   {
-    "type": "list",
-    "text": "3. "
+    "type": "div>punctuation",
+    "text": ":::"
   },
   {
     "type": "text",
-    "text": "z\n"
+    "text": "\n"
   }
 ]

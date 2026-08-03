@@ -1,18 +1,18 @@
 [
   {
-    "scope": "bullet",
-    "text": "-"
+    "scope": "quote",
+    "text": "> p one"
   },
   {
     "scope": null,
-    "text": " a\n"
+    "text": "\n"
   },
   {
-    "scope": "bullet",
-    "text": "   -"
+    "scope": "quote",
+    "text": "> - item"
   },
   {
     "scope": null,
-    "text": " b\n"
+    "text": "\n"
   }
 ]

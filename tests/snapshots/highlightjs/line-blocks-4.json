@@ -5,23 +5,7 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "strong",
-    "text": "*Bold*"
-  },
-  {
-    "scope": null,
-    "text": " and "
-  },
-  {
-    "scope": "emphasis",
-    "text": "/italic/"
-  },
-  {
-    "scope": null,
-    "text": ",\nplain line.\n"
+    "text": "\nStanza one,\nstill one.\n\nStanza two.\n"
   },
   {
     "scope": "keyword",

@@ -4,11 +4,11 @@
     "text": "text\n"
   },
   {
-    "scope": "keyword",
-    "text": ":::note"
+    "scope": "bullet",
+    "text": "1985."
   },
   {
     "scope": null,
-    "text": "\nbody\n"
+    "text": " was the year\n"
   }
 ]

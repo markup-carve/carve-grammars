@@ -4,11 +4,11 @@
     "text": "text\n"
   },
   {
-    "scope": "link",
-    "text": "![a](u)"
+    "scope": "keyword",
+    "text": ":::note"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\nbody\n"
   }
 ]

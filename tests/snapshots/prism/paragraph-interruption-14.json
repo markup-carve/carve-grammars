@@ -1,18 +1,26 @@
 [
   {
-    "type": "list",
-    "text": "- "
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " p one"
   },
   {
     "type": "text",
-    "text": "a\n"
+    "text": "\n"
   },
   {
-    "type": "list",
-    "text": "   - "
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " - item"
   },
   {
     "type": "text",
-    "text": "b\n"
+    "text": "\n"
   }
 ]

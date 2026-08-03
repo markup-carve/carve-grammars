@@ -5,10 +5,18 @@
   },
   {
     "type": "list",
-    "text": "1985. "
+    "text": "2. "
   },
   {
     "type": "text",
-    "text": "was the year\n"
+    "text": "y\n"
+  },
+  {
+    "type": "list",
+    "text": "3. "
+  },
+  {
+    "type": "text",
+    "text": "z\n"
   }
 ]

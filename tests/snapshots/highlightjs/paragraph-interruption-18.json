@@ -1,11 +1,11 @@
 [
   {
     "scope": null,
-    "text": "Text\n"
+    "text": "text\n\n"
   },
   {
-    "scope": "keyword",
-    "text": "```\ncode"
+    "scope": "section",
+    "text": "# H"
   },
   {
     "scope": null,

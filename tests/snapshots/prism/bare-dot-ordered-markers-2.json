@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "explicit\n"
+  },
+  {
+    "type": "list",
+    "text": ". "
+  },
+  {
+    "type": "text",
+    "text": "continues the same list\n\n) not a marker, and never opens one\n"
+  }
+]

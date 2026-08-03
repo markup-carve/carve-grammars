@@ -1,0 +1,22 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " |"
+  },
+  {
+    "type": "text",
+    "text": "\ntab\tgap\nwide\t\tgap\n\tlead\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "-   "
+  },
+  {
+    "type": "list>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "item\n    # H\n"
+  }
+]

@@ -22,7 +22,7 @@ import { listCorpusFiles, listCategories } from './lib/corpus.js';
 import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { normalizeAst } from './lib/ast-normalize.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
-import { COVERAGE } from './lib/coverage.js';
+import { COVERAGE, isCovered, skipReason } from './lib/coverage.js';
 
 console.log('carve-grammars serializer round-trip:');
 
@@ -62,9 +62,9 @@ const skipShouldPromote = [];
 
 for (const category of listCategories()) {
     const files = filesByCategory.get(category) || [];
-    const isCovered = COVERAGE.tiptap.covered.has(category);
+    const covered = isCovered('tiptap', category);
 
-    if (isCovered) {
+    if (covered) {
         const bad = [];
         for (const f of files) {
             const r = roundTrip(f);
@@ -84,7 +84,7 @@ for (const category of listCategories()) {
         if (allOk) {
             skipShouldPromote.push(category);
         }
-        const reason = COVERAGE.tiptap.skip.get(category) || '(no reason)';
+        const reason = skipReason('tiptap', category) || '(no reason)';
         console.log(`  - SKIP ${category}: ${reason}`);
     }
 }

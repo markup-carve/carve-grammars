@@ -1,7 +1,7 @@
 [
   {
     "type": "div>punctuation",
-    "text": "::::"
+    "text": ":::"
   },
   {
     "type": "div",
@@ -9,31 +9,11 @@
   },
   {
     "type": "text",
-    "text": "\n  indented\nnext\n\n"
+    "text": "\none\ntwo\n"
   },
   {
     "type": "div>punctuation",
     "text": ":::"
-  },
-  {
-    "type": "div",
-    "text": " note"
-  },
-  {
-    "type": "text",
-    "text": "\na\nb\n"
-  },
-  {
-    "type": "div>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "div>punctuation",
-    "text": "::::"
   },
   {
     "type": "text",
