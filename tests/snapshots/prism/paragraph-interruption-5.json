@@ -1,42 +1,22 @@
 [
   {
     "type": "text",
-    "text": "text\n"
+    "text": "text\n>"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": ">>"
-  },
-  {
-    "type": "blockquote",
-    "text": "= operator"
+    "type": "typography",
+    "text": ">="
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": " operator\n"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": "=3 items"
+    "type": "typography",
+    "text": ">="
   },
   {
     "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": "_< face"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "3 items\n>_< face\n"
   }
 ]

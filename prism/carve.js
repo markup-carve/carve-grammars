@@ -264,11 +264,18 @@
             }, inline),
         },
 
-        // Blockquotes: leading > (possibly nested >>)
+        // Blockquotes: a `>` marker followed by a SPACE, or alone on its line.
+        //
+        // Not `>+`, and not `\s`. Verified against carve-rs: `>> x` is a
+        // paragraph (nesting is written `> > x`, each marker taking its own
+        // space), `>no space` is a paragraph, and a TAB does not separate -
+        // `>\tx` is a paragraph too. Matching a run, or accepting any
+        // whitespace, colored `>>= operator` and `>=3 items` as quotes when the
+        // language calls them prose (markup-carve/carve#525).
         'blockquote': {
-            pattern: /^[ \t]*>+[ \t]?.*$/m,
+            pattern: /^[ \t]*>(?: .*)?$/m,
             inside: Object.assign({
-                'punctuation': /^[ \t]*>+/,
+                'punctuation': /^[ \t]*>/,
             }, inline),
         },
 

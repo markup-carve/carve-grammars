@@ -341,10 +341,15 @@
         relevance: 10,
     };
 
-    // Blockquotes: > text
+    // Blockquotes: a `>` marker followed by a SPACE, or alone on its line.
+    //
+    // Verified against carve-rs: `>no space`, `>>x`, `>> x` and `>\tx` are all
+    // paragraphs - the separator must be a space, and nesting is written
+    // `> > x` with a space per marker. A bare `^>` colored `>=3 items` as a
+    // quote when the language calls it prose (markup-carve/carve#525).
     const BLOCKQUOTE = {
         className: 'quote',
-        begin: /^>/,
+        begin: /^>(?= |$)/,
         end: /$/,
         relevance: 0,
     };
