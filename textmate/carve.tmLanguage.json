@@ -131,7 +131,7 @@
       "comment": "The leading-whitespace capture is load-bearing twice over: the `end` pattern closes on the SAME indentation via \\1, and a fence inside a list item is indented. Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "heading": {
-      "match": "^[ \\t]*(#{1,6})\\s+(.*?)\\s*$",
+      "match": "^[ \\t]*(#{1,6})[ \\t]+(?![ \\t]*$)(.*?)[ \\t]*$",
       "captures": {
         "1": {
           "name": "punctuation.definition.heading.carve"
@@ -200,7 +200,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "caption": {
-      "match": "^[ \\t]*(\\^)\\s+(.*)$",
+      "match": "^[ \\t]*(\\^)[ \\t]+(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.caption.carve"
@@ -332,7 +332,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "task_item": {
-      "match": "^(\\s*)([-*])\\s+(\\[)([ xX\\-_>?])(\\])\\s+",
+      "match": "^([ \\t]*)([-*])[ \\t]+(\\[)([ xX\\-_>?])(\\])[ \\t]+(?![ \\t]*$)",
       "captures": {
         "2": {
           "name": "punctuation.definition.list.carve"
@@ -358,7 +358,7 @@
       }
     },
     "list_item": {
-      "match": "^(\\s*)([-*])(\\s+)((?:[-*]\\s+)*)",
+      "match": "^([ \\t]*)([-*])([ \\t]+)(?![ \\t]*$)((?:[-*][ \\t]+)*)",
       "captures": {
         "2": {
           "name": "punctuation.definition.list.unnumbered.carve"
@@ -371,7 +371,7 @@
     },
     "numbered_item": {
       "comment": "Every ordered marker the language accepts, not only `1.`: decimal, single-letter and roman, with `.` or `)`, plus the BARE DOT (carve#472) - `.` alone continues the ordered sequence, and is the only marker allowed to drop its value. The bare form is also recognised glued to an attribute block (`.{#x}`), which is how corpus 174-bare-dot-ordered-markers-3 writes it.",
-      "match": "^(\\s*)((?:\\d+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\\.)(?=\\s|\\{)(\\s*)",
+      "match": "^([ \\t]*)((?:\\d+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\\.)(?=[ \\t]|\\{)([ \\t]*)(?![ \\t]*$)",
       "captures": {
         "2": {
           "name": "punctuation.definition.list.numbered.carve"
@@ -1044,7 +1044,7 @@
     "definition_list": {
       "patterns": [
         {
-          "match": "^(\\s*)(::)(\\s+)(.*)$",
+          "match": "^([ \\t]*)(::)([ \\t]+)(?![ \\t]*$)(.*)$",
           "captures": {
             "2": {
               "name": "punctuation.definition.list.definition.carve"

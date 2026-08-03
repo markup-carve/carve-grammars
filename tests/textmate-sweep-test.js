@@ -13,6 +13,12 @@ const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tm
 
 // [label, sample, substring-of-expected-scope, token-text-that-should-carry-it]
 const CASES = [
+  // A non-ASCII space IS content: only spaces and tabs separate a marker from
+  // it, so `#<space><NBSP>Title` is a heading. `(?=\S)` was tried as the
+  // marker-requires-content guard and rejected this, because oniguruma counts
+  // NBSP as whitespace; the guard is a line-end lookahead instead.
+  ['heading whose content starts with NBSP', '# \u00a0Title', 'markup.heading', 'Title'],
+  ['bullet whose content starts with NBSP', '- \u00a0item', 'list.unnumbered', '-'],
   // Inline
   ['italic', 'some /italic/ text', 'markup.italic', 'italic'],
   ['bold', 'some *bold* text', 'markup.bold', 'bold'],
@@ -189,6 +195,25 @@ if (fails.length) process.exit(1)
 
 // Negative cases: intraword bare delimiters must NOT tokenize as emphasis.
 const NEGATIVE = [
+  // MARKER REQUIRES CONTENT. A marker alone on its line is prose - verified
+  // against carve-rs, every one of these renders as a paragraph. The rules did
+  // require a separator, but wrote it `\s+`, and `\s` matches the line's own
+  // newline, so the requirement never bit (markup-carve/carve#513).
+  ['bare heading marker', '#\n\nafter\n', 'markup.heading'],
+  ['bare definition marker', '::\n\nafter\n', 'list.definition'],
+  ['bare bullet', '-\n\nafter\n', 'list.unnumbered'],
+  ['bare ordered marker', '1.\n\nafter\n', 'list.numbered'],
+  ['bare dot marker', '.\n\nafter\n', 'list.numbered'],
+  ['bare caption marker', '^\n\nafter\n', 'caption'],
+  // Trailing whitespace is not content either: `# ` renders as `<p>#</p>`.
+  ['heading marker, trailing space only', '# \n\nafter\n', 'markup.heading'],
+  ['definition marker, trailing space only', ':: \n\nafter\n', 'list.definition'],
+  ['bullet, trailing space only', '- \n\nafter\n', 'list.unnumbered'],
+  ['ordered marker, trailing space only', '1. \n\nafter\n', 'list.numbered'],
+  ['caption marker, trailing space only', '^ \n\nafter\n', 'caption'],
+  // `- [ ] ` with no content is a plain bullet holding the literal `[ ]`, not a
+  // task item - the checkbox never forms.
+  ['empty task item is not a checkbox', '- [ ] \n\nafter\n', 'checkbox'],
   // A blockquote marker takes a SPACE, or stands alone on its line. Verified
   // against carve-rs: every one of these renders as a paragraph. `>>` is not a
   // nested marker (that is written `> > x`, a space per marker), and a TAB does
