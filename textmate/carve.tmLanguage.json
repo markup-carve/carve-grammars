@@ -127,10 +127,11 @@
         {
           "include": "#callout_marker"
         }
-      ]
+      ],
+      "comment": "The leading-whitespace capture is load-bearing twice over: the `end` pattern closes on the SAME indentation via \\1, and a fence inside a list item is indented. Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "heading": {
-      "match": "^(#{1,6})\\s+(.*?)\\s*$",
+      "match": "^[ \\t]*(#{1,6})\\s+(.*?)\\s*$",
       "captures": {
         "1": {
           "name": "punctuation.definition.heading.carve"
@@ -139,7 +140,8 @@
           "name": "entity.name.section.carve"
         }
       },
-      "name": "markup.heading.carve"
+      "name": "markup.heading.carve",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "hr": {
       "match": "^\\s*-{3,}\\s*$",
@@ -160,7 +162,7 @@
       "name": "comment.line.percent.carve"
     },
     "admonition": {
-      "match": "^(:{3,})(?:[ \\t]*(\\||\\\\)|[ \\t]*([a-zA-Z_][\\w-]*)(?:[ \\t]+(\"[^\"\\n]*\"))?(?:[ \\t]+(\\[[^\\]\\n]*\\]))?|[ \\t]*(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "match": "^[ \\t]*(:{3,})(?:[ \\t]*(\\||\\\\)|[ \\t]*([a-zA-Z_][\\w-]*)(?:[ \\t]+(\"[^\"\\n]*\"))?(?:[ \\t]+(\\[[^\\]\\n]*\\]))?|[ \\t]*(\\[[^\\]\\n]*\\]))?[ \\t]*$",
       "captures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -181,10 +183,11 @@
           "name": "constant.other.label.admonition.carve"
         }
       },
-      "name": "meta.admonition.carve"
+      "name": "meta.admonition.carve",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "blockquote": {
-      "match": "^(>)\\s*(.*)$",
+      "match": "^[ \\t]*(>)\\s*(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -193,10 +196,11 @@
           "name": "markup.quote.carve"
         }
       },
-      "name": "markup.quote.carve"
+      "name": "markup.quote.carve",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "caption": {
-      "match": "^(\\^)\\s+(.*)$",
+      "match": "^[ \\t]*(\\^)\\s+(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.caption.carve"
@@ -205,10 +209,11 @@
           "name": "markup.caption.carve"
         }
       },
-      "name": "meta.caption.carve"
+      "name": "meta.caption.carve",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
-      "match": "^(\\*)(\\[)([A-Z][A-Z0-9]*)(\\])(:)\\s+(.*)$",
+      "match": "^[ \\t]*(\\*)(\\[)([A-Z][A-Z0-9]*)(\\])(:)\\s+(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
@@ -229,7 +234,8 @@
           "name": "string.unquoted.abbreviation.carve"
         }
       },
-      "name": "meta.abbreviation.carve"
+      "name": "meta.abbreviation.carve",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "link_ref_def": {
       "match": "^([ \\t]*)(\\[)(?![@^])([^\\]]+)(\\])(:)[ \\t]+(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?",
@@ -256,7 +262,7 @@
       "name": "meta.link.reference.def.carve"
     },
     "table_row": {
-      "begin": "^(?=\\|)",
+      "begin": "^[ \\t]*(?=\\|)",
       "end": "$",
       "patterns": [
         {
@@ -313,15 +319,17 @@
         {
           "include": "#inline"
         }
-      ]
+      ],
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "multiline_cell": {
-      "match": "^(\\+)(.*)$",
+      "match": "^[ \\t]*(\\+)(.*)$",
       "captures": {
         "1": {
           "name": "keyword.operator.table.continuation.carve"
         }
-      }
+      },
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "task_item": {
       "match": "^(\\s*)([-*])\\s+(\\[)([ xX\\-_>?])(\\])\\s+",

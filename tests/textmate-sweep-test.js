@@ -123,6 +123,20 @@ const CASES = [
   ['gfm delimiter row', '| a | b |\n|---|--:|', 'keyword.operator.table.alignment', '--:'],
   ['block attrs line', '{#id .class key=value}\n# H', 'attributes', '#id'],
   ['abbreviation', '*[HTML]: HyperText', 'abbreviation', 'HTML'],
+  // Indented inside a list item. Every one of these opens its real block
+  // there (verified against carve-rs) and used to go uncolored, because the
+  // rules were anchored at column 0 while `fenced_code` was not - the
+  // asymmetry #71 is about. The cost of the fix is that the same constructs
+  // indented at the TOP level, where they are literal text, now color as
+  // blocks; a line-based grammar cannot separate the two cases.
+  ['heading in a list item', '- item\n\n  # Title', 'heading', 'Title'],
+  ['blockquote in a list item', '- item\n\n  > quoted', 'quote', 'quoted'],
+  ['caption in a list item', '- item\n\n  | a |\n  ^ Attribution', 'caption', 'Attribution'],
+  ['admonition in a list item', '- item\n\n  ::: note\n  body\n  :::', 'admonition', 'note'],
+  ['table row in a list item', '- item\n\n  | a | b |', 'punctuation.separator.table', '|'],
+  ['table continuation in a list item', '- item\n\n  | a |\n  + cont cell |', 'keyword.operator.table.continuation', '+'],
+  ['abbreviation in a list item', '- item\n\n  *[HTML]: HyperText', 'abbreviation', 'HTML'],
+  ['fenced code in a list item', '- item\n\n  ```js\n  x\n  ```', 'fenced_code', 'js'],
   ['ref def label', '[r]: https://ref.example', 'constant.other.reference.link', 'r'],
   ['ref def url', '[r]: https://ref.example', 'markup.underline.link', 'https://ref.example'],
   ['ref def title', '[r]: https://ref.example "Site"', 'string.quoted.link.title', 'Site'],
