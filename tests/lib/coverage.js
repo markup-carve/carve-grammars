@@ -73,6 +73,11 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    // Added when the corpus submodule was refreshed. Each reason was measured
+    // by running the round trip, not guessed - the same rule the header states.
+    ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
+    ['70-blocks-that-render-to-nothing', 'same `comment` gap, plus `abbreviation-def`, which the converter also does not model'],
+    ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],
@@ -221,23 +226,41 @@ export const COVERAGE = {
  * @param {string[]} allCategories - the full corpus category list.
  * @returns {{unclassified: string[], overlap: string[]}}
  */
+/**
+ * A category's identity is its SLUG, not its numbered filename.
+ *
+ * The corpus is generated from docs/examples in document order, so the numeric
+ * prefix is a position, and inserting one example anywhere renumbers every
+ * category after it. Keyed by the full name, this matrix then reports the whole
+ * tail as unclassified: bumping the corpus submodule across 33 commits produced
+ * 106 unclassified categories for tiptap, of which 103 were the same constructs
+ * under new numbers and only THREE were new.
+ *
+ * That is why the submodule sat behind - refreshing it meant re-keying a
+ * hundred entries by hand for no information, so nobody did, and the three real
+ * decisions waited behind the noise.
+ */
+const slugOf = (category) => category.replace(/^\d+-/, '');
+
 export function assertPartition(grammarName, allCategories) {
     const entry = COVERAGE[grammarName];
     if (!entry) throw new Error(`Unknown grammar: ${grammarName}`);
 
+    const skipSlugs = new Set([...entry.skip.keys()].map(slugOf));
     // For highlighters, an empty covered set means "everything is covered" only
     // if we also treat the full category list as covered. To keep the partition
     // meaningful (and snapshot-driven), prism/hljs cover every category that is
     // not explicitly skipped.
-    const coveredAll = grammarName === 'tiptap'
-        ? entry.covered
-        : new Set(allCategories.filter((c) => !entry.skip.has(c)));
+    const coveredSlugs = grammarName === 'tiptap'
+        ? new Set([...entry.covered].map(slugOf))
+        : new Set(allCategories.filter((c) => !skipSlugs.has(slugOf(c))).map(slugOf));
 
     const unclassified = [];
     const overlap = [];
     for (const cat of allCategories) {
-        const inCovered = coveredAll.has(cat);
-        const inSkip = entry.skip.has(cat);
+        const slug = slugOf(cat);
+        const inCovered = coveredSlugs.has(slug);
+        const inSkip = skipSlugs.has(slug);
         if (inCovered && inSkip) overlap.push(cat);
         if (!inCovered && !inSkip) unclassified.push(cat);
     }
