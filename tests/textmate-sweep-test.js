@@ -179,6 +179,16 @@ const NEGATIVE = [
   ['intraword sub literal', 'x,y,z stays', 'markup.subscript'],
   ['intraword highlight literal', 'key=value=x stays', 'markup.highlight'],
   ['unquoted fence title literal', '::: note Custom Title', 'meta.admonition'],
+  // Trailing unquoted text after the type word makes the whole line an
+  // ordinary paragraph - the opener is strict (fence, type, optional
+  // `"title"`, optional `[label]`, nothing else). A rule that scoped
+  // `::: name args` as a directive coloured that paragraph as though the
+  // engine had understood it, which HIDES the author's mistake; the
+  // strictness exists so a malformed opener stays visible. The admonition
+  // check above did not catch it, because it fired under a different scope.
+  ['unquoted fence args not a directive', '::: note extra text', 'extension.carve'],
+  ['unquoted fence kwargs not a directive', '::: chart width=4', 'extension.carve'],
+  ['unquoted fence args not a directive name', '::: note extra text', 'entity.name.function'],
   ['curly-quoted fence title literal', '::: tab “Overview”', 'meta.admonition'],
   ['fence trailing attrs literal', '::: note {#id}', 'meta.admonition'],
   // Strict attribute identifier (PART 9 S14): a digit-first key is not an
