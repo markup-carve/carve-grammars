@@ -166,6 +166,24 @@ let pass = 0
 const fails = []
 const allScopes = new Set()
 
+// Every scope name the grammar declares, so a selector naming none of them is
+// reported as a TYPO rather than silently passing.
+//
+// This matters most for NEGATIVE cases: "no token carries `list.begn`" is true
+// of every document ever written, so a mistyped selector is a check that cannot
+// fail. It has happened - a case here was written with another repo's scope
+// name and asserted nothing until the grammar was reverted and CI stayed green.
+const declaredScopes = new Set()
+;(function collect(node) {
+  if (Array.isArray(node)) return node.forEach(collect)
+  if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if ((key === 'name' || key === 'contentName') && typeof value === 'string') declaredScopes.add(value)
+      else collect(value)
+    }
+  }
+})(grammar)
+
 for (const [label, sample, scopeSub, text] of CASES) {
   const { tokens } = hl.codeToTokens(sample, {
     lang: 'carve',
@@ -264,6 +282,21 @@ const NEGATIVE = [
   ['footnote def not ref def', '[^f]: note body', 'meta.link.reference.def'],
 ]
 let negPass = 0
+const unknownSelectors = [
+  ...CASES.map(([label, , scopeSub]) => [label, scopeSub, 'CASES']),
+  ...NEGATIVE.map(([label, , badScope]) => [label, badScope, 'NEGATIVE']),
+].filter(([, selector]) => ![...declaredScopes].some((name) => name.includes(selector)))
+
+if (unknownSelectors.length) {
+  console.log('\nSelectors matching no scope this grammar declares:')
+  for (const [label, selector, list] of unknownSelectors) {
+    console.log(`  ${list} "${label}": "${selector}"`)
+  }
+  console.log('A negative case with an unknown selector can never fail.')
+  process.exit(1)
+}
+console.log(`  ✓ textmate sweep: every selector names a scope the grammar declares (${declaredScopes.size} known)`)
+
 for (const [label, sample, badScope] of NEGATIVE) {
   const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })
   const scopes = tokens.flat().flatMap(tk => (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName)))
