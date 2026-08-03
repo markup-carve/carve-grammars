@@ -240,7 +240,12 @@ export const COVERAGE = {
  * hundred entries by hand for no information, so nobody did, and the three real
  * decisions waited behind the noise.
  */
-const slugOf = (category) => category.replace(/^\d+-/, '');
+/**
+ * A corpus name's identity with the spec's ordering removed: `01-emphasis-10`
+ * -> `emphasis-10`, `01-emphasis` -> `emphasis`. Shared with the snapshot
+ * goldens, which are keyed the same way and for the same reason (#74).
+ */
+export const slugOf = (category) => category.replace(/^\d+-/, '');
 
 export function assertPartition(grammarName, allCategories) {
     const entry = COVERAGE[grammarName];
