@@ -278,7 +278,7 @@
         // `task_state`). Only `x`/`X` render checked; the rest are still task
         // markers, and corpus 06-task-lists-2 uses all four of the others.
         'list': {
-            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?|(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)][ \t]+|:[ \t]+)/m,
+            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?=[ \t]|\{)[ \t]*|:[ \t]+)/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,

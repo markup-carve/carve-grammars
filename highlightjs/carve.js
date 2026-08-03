@@ -367,7 +367,7 @@
     // Numbered list items: decimal (1.), alpha (a. A.), roman (i. I.)
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)])(?=\s)/,
+        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?=\s|\{)/,
         relevance: 0,
     };
 

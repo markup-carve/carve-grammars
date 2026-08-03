@@ -66,6 +66,15 @@ const CASES = [
   ['empty link title', '[x](u "")', 'markup.underline.link', 'u'],
   // A marker line may open several lists at once (corpus 103).
   ['nested list markers on one line', '- - A', 'punctuation.definition.list.unnumbered', '- '],
+  // Every ordered marker the language accepts, not only `1.` (carve#472 added
+  // the bare dot). `numbered_item` matched `\d+\.` alone, so `1)`, `a.`, `i.`
+  // and `.` all rendered as prose.
+  ['ordered marker decimal', '1. first', 'punctuation.definition.list.numbered', '1.'],
+  ['ordered marker paren', '1) first', 'punctuation.definition.list.numbered', '1)'],
+  ['ordered marker alpha', 'a. first', 'punctuation.definition.list.numbered', 'a.'],
+  ['ordered marker roman', 'iv. fourth', 'punctuation.definition.list.numbered', 'iv.'],
+  ['ordered marker bare dot', '. first', 'punctuation.definition.list.numbered', '.'],
+  ['ordered marker bare dot with attrs', '.{#x} attributed', 'punctuation.definition.list.numbered', '.'],
   ['mention', 'hi @user here', 'mention', '@user'],
   ['tag', 'a #tagname here', 'tag', '#tagname'],
   ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],

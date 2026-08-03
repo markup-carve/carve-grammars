@@ -138,6 +138,9 @@ const CASES = [
     ['hard break', 'line\\\nnext', '\\', false],
 
     // Blocks.
+    // The bare dot continues an ordered sequence (carve#472). Every ordered
+    // rule required a value before the `.`, so this line scoped as prose.
+    ['ordered marker bare dot', '. first\n. second', '.', false],
     ['task state deferred', '- [>] deferred', '[>]', false],
     ['task state dropped', '- [-] dropped', '[-]', false],
     ['definition term', ':: color\n:  the property', 'color', false],

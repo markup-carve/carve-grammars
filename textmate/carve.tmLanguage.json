@@ -362,7 +362,8 @@
       "comment": "A marker line may carry several markers (`- - A` opens two nested lists), so scope each one, not only the line-anchored first."
     },
     "numbered_item": {
-      "match": "^(\\s*)(\\d+\\.)(\\s+)",
+      "comment": "Every ordered marker the language accepts, not only `1.`: decimal, single-letter and roman, with `.` or `)`, plus the BARE DOT (carve#472) - `.` alone continues the ordered sequence, and is the only marker allowed to drop its value. The bare form is also recognised glued to an attribute block (`.{#x}`), which is how corpus 174-bare-dot-ordered-markers-3 writes it.",
+      "match": "^(\\s*)((?:\\d+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\\.)(?=\\s|\\{)(\\s*)",
       "captures": {
         "2": {
           "name": "punctuation.definition.list.numbered.carve"
