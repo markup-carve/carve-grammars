@@ -5,6 +5,16 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **Block constructs indented inside a list item now scope in TextMate.** A
+  heading, block quote, caption, admonition, table row, table continuation or
+  abbreviation definition at a list item's content column went uncolored,
+  because those rules were anchored at column 0 while `fenced_code` was not.
+  All seven now allow leading whitespace, so the block rules agree on which
+  side of the trade-off they sit. The strict column-0 rule makes an indented
+  opener literal text at the TOP level, and a line-based grammar cannot tell
+  that apart from the valid in-container case - so this deliberately
+  over-colors the rare invalid case rather than under-color the common valid
+  one. The decision is recorded in a `comment` on every rule involved.
 - **Seven constructs the corpus carries now scope in Prism and highlight.js.**
   Each was rendering as plain prose in one or both engines: the inline footnote
   `^[note]` (neither had a rule, though both scope the `[^a]` reference), the
