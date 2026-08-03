@@ -31,7 +31,7 @@ import { createRequire } from 'node:module';
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { listCorpusFiles } from './lib/corpus.js';
-import { coveredCategories } from './lib/coverage.js';
+import { coveredCategories, slugOf } from './lib/coverage.js';
 
 const require = createRequire(import.meta.url);
 const UPDATE = process.env.UPDATE_SNAPSHOTS === '1';
@@ -110,10 +110,24 @@ function hljsTokens(source) {
     return out;
 }
 
-/** Compare against (or bootstrap) a golden snapshot file. */
+/**
+ * Compare against (or bootstrap) a golden snapshot file.
+ *
+ * The golden is keyed by SLUG, not by the corpus filename. The corpus is
+ * generated from docs/examples in document order, so its numbers are positions:
+ * inserting one example upstream renumbers every file after it, and goldens
+ * keyed by filename then all appear to change at once. Bumping the submodule
+ * across the 33 commits it sat behind reported 562 differing snapshots, none of
+ * which were token changes.
+ *
+ * That number is the problem. 562 is not a reviewable diff, so the realistic
+ * outcome is a regenerate-and-merge without reading - and a genuine tokenizer
+ * regression rides along unnoticed. Keyed by slug, a renumber touches nothing
+ * and a real token change is a diff of the files that actually changed (#74).
+ */
 function snapshot(grammar, name, tokens) {
     const dir = `${SNAP_DIR}/${grammar}`;
-    const file = `${dir}/${name}.json`;
+    const file = `${dir}/${slugOf(name)}.json`;
     const serialized = JSON.stringify(tokens, null, 2) + '\n';
 
     if (UPDATE) {
@@ -125,7 +139,7 @@ function snapshot(grammar, name, tokens) {
 
     if (!existsSync(file)) {
         failures++;
-        console.log(`  ✗ ${grammar}/${name} has no golden snapshot`);
+        console.log(`  ✗ ${grammar}/${slugOf(name)} has no golden snapshot (corpus file ${name})`);
         console.log(`      a new corpus file (likely a new spec category) is uncovered for ${grammar};`);
         console.log(`      run \`npm run snapshots:update\` to record its golden, then review the diff`);
         return;
@@ -134,7 +148,7 @@ function snapshot(grammar, name, tokens) {
     const golden = readFileSync(file, 'utf8');
     if (golden !== serialized) {
         failures++;
-        console.log(`  ✗ ${grammar}/${name} differs from golden`);
+        console.log(`  ✗ ${grammar}/${slugOf(name)} differs from golden (corpus file ${name})`);
         console.log(`      run \`npm run snapshots:update\` to refresh if the change is intended`);
         // Surface a short diff hint: first differing token index.
         try {
