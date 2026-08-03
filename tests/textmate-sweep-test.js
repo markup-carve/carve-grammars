@@ -189,6 +189,16 @@ if (fails.length) process.exit(1)
 
 // Negative cases: intraword bare delimiters must NOT tokenize as emphasis.
 const NEGATIVE = [
+  // A blockquote marker takes a SPACE, or stands alone on its line. Verified
+  // against carve-rs: every one of these renders as a paragraph. `>>` is not a
+  // nested marker (that is written `> > x`, a space per marker), and a TAB does
+  // not separate. A `>+` run or a `\s` separator colored `>>= operator` and
+  // `>=3 items` as quotes when the language calls them prose
+  // (markup-carve/carve#525).
+  ['no space after marker', '>no space', 'quote'],
+  ['doubled marker without spaces', '>>x', 'quote'],
+  ['doubled marker with one space', '>> x', 'quote'],
+  ['tab does not separate', '>\tx', 'quote'],
   // A bracket whose `]` is followed by ( [ { is a link/ref-link/span, never a citation -
   // even when it contains an @. Without the suffix check in the citation `begin`, the
   // citation rule fired here and its `end` refused to close, running away over the line
