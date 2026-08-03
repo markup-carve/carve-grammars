@@ -189,7 +189,9 @@
 
         // ATX headings # .. ######
         'title': {
-            pattern: /^#{1,6}[ \t]+.+$/m,
+            // `.+` matches a run of spaces, so `#<space><space>` was a heading.
+            // MARKER REQUIRES CONTENT: carve-rs renders it `<p>#</p>`.
+            pattern: /^#{1,6}[ \t]+(?![ \t]*$).+$/m,
             alias: 'important',
             inside: Object.assign({
                 'punctuation': /^#{1,6}/,
@@ -257,7 +259,9 @@
             // highlighter cannot track. Allowing leading whitespace here scoped
             // that literal line as a caption; highlight.js has always been
             // strict about this, so the two engines now agree.
-            pattern: /^\^[ \t].*$/m,
+            // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
+            // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
+            pattern: /^\^[ \t]+(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^\^/,
@@ -285,7 +289,9 @@
         // `task_state`). Only `x`/`X` render checked; the rest are still task
         // markers, and corpus 06-task-lists-2 uses all four of the others.
         'list': {
-            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?=[ \t]|\{)[ \t]*|:[ \t]+)/m,
+            // MARKER REQUIRES CONTENT: each branch ends with a line-end lookahead,
+            // so `- `, `1. ` and `: ` with nothing after them stay prose.
+            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?=[ \t]|\{)[ \t]*(?![ \t]*$)|:[ \t]+(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
@@ -297,7 +303,8 @@
         // `:::` opens a div and those rules run earlier - the space required
         // after exactly two colons keeps the two apart in any case.
         'definition-term': {
-            pattern: /^[ \t]*::[ \t].*$/m,
+            // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
+            pattern: /^[ \t]*::[ \t]+(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^[ \t]*::/,

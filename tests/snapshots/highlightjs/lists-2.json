@@ -1,10 +1,6 @@
 [
   {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
     "scope": null,
-    "text": "\nnot a list\n"
+    "text": "-\nnot a list\n"
   }
 ]

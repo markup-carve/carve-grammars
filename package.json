@@ -5,7 +5,7 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
+    "test": "node tests/block-battery-test.js && node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
     "test:roundtrip": "node tests/roundtrip-test.js",

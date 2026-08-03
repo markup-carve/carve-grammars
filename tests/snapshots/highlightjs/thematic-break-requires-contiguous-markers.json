@@ -1,10 +1,10 @@
 [
   {
     "scope": "bullet",
-    "text": "* * *"
+    "text": "* *"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " *\n"
   }
 ]
