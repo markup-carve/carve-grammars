@@ -173,7 +173,11 @@ function sanityPrism(name, source, tokens) {
     // begins with `#`, and the grammar must produce a heading/title token whose
     // text starts with the `#` run. Only assert when the source actually opens
     // with a heading marker at column 0.
-    if (/^#{1,6}\s/.test(source)) {
+    // MARKER REQUIRES CONTENT: `#  ` with nothing after it is prose, so the
+    // precondition has to be the language's rule and not `\s`, which matches
+    // the line's own newline. Corpus 84-single-line-headings-5 is exactly that
+    // document, and it made this check demand a heading token for a paragraph.
+    if (/^#{1,6}[ \t]+(?![ \t]*$)/.test(source.split('\n')[0])) {
         const headingLike = tokens.find((t) => /(^|>)title$/.test(t.type) || /(^|>)title>/.test(t.type));
         assert.ok(
             headingLike,
@@ -187,7 +191,7 @@ function sanityHljs(name, source, tokens) {
     // start: the first scoped 'meta' token, if any, must not appear after real
     // body content. We check the weaker, robust invariant that a heading line
     // still yields a 'section' scope somewhere (headings survive).
-    if (/^#{1,6}\s/.test(source)) {
+    if (/^#{1,6}[ \t]+(?![ \t]*$)/.test(source.split('\n')[0])) {
         const hasSection = tokens.some((t) => t.scope === 'section');
         assert.ok(
             hasSection,
