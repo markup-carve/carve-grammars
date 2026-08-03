@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "Text\n"
-  },
-  {
-    "type": "div>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\nstuff\n"
+    "text": "Text\n```\ncode\n"
   }
 ]

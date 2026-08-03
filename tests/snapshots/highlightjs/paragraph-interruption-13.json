@@ -1,15 +1,11 @@
 [
   {
-    "scope": "quote",
-    "text": "> p one"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "text\n"
   },
   {
-    "scope": "quote",
-    "text": "> - item"
+    "scope": "link",
+    "text": "![a](u)"
   },
   {
     "scope": null,

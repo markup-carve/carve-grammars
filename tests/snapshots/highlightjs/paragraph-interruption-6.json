@@ -5,18 +5,18 @@
   },
   {
     "scope": "bullet",
-    "text": "1."
+    "text": "-"
   },
   {
     "scope": null,
-    "text": " x\n"
+    "text": " a\n"
   },
   {
     "scope": "bullet",
-    "text": "2."
+    "text": "-"
   },
   {
     "scope": null,
-    "text": " y\n"
+    "text": " b\n"
   }
 ]

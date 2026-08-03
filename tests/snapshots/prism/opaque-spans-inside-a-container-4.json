@@ -1,0 +1,30 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%\n:::\n%%%"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

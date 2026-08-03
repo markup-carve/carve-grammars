@@ -1,14 +1,18 @@
 [
   {
-    "scope": null,
-    "text": "para\n"
-  },
-  {
-    "scope": "comment",
-    "text": "%% c"
+    "scope": "bullet",
+    "text": "-"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
   }
 ]

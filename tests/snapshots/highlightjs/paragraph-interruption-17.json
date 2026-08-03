@@ -1,11 +1,11 @@
 [
   {
     "scope": null,
-    "text": "text\n\n"
+    "text": "a[r]\n"
   },
   {
-    "scope": "section",
-    "text": "# H"
+    "scope": "symbol",
+    "text": "[r]: http://x"
   },
   {
     "scope": null,

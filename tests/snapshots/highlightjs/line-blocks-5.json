@@ -1,15 +1,27 @@
 [
   {
-    "scope": null,
-    "text": "::: "
-  },
-  {
-    "scope": "attr",
-    "text": "{.line-block}"
+    "scope": "keyword",
+    "text": "::: |"
   },
   {
     "scope": null,
-    "text": "\none\ntwo\n"
+    "text": "\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*Bold*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/italic/"
+  },
+  {
+    "scope": null,
+    "text": ",\nplain line.\n"
   },
   {
     "scope": "keyword",

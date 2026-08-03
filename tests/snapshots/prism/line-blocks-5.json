@@ -1,23 +1,31 @@
 [
   {
-    "type": "text",
-    "text": "::: "
+    "type": "div>punctuation",
+    "text": ":::"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".line-block"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "type": "div",
+    "text": " |"
   },
   {
     "type": "text",
-    "text": "\none\ntwo\n"
+    "text": "\n"
+  },
+  {
+    "type": "bold",
+    "text": "*Bold*"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "italic",
+    "text": "/italic/"
+  },
+  {
+    "type": "text",
+    "text": ",\nplain line.\n"
   },
   {
     "type": "div>punctuation",

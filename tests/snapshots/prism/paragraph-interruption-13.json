@@ -1,23 +1,27 @@
 [
   {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": " p one"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "text\n"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": ">"
+    "type": "image>punctuation",
+    "text": "!["
   },
   {
-    "type": "blockquote",
-    "text": " - item"
+    "type": "image",
+    "text": "a"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "u"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
   },
   {
     "type": "text",

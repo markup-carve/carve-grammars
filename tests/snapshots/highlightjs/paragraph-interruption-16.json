@@ -1,11 +1,11 @@
 [
   {
     "scope": null,
-    "text": "a[r]\n"
+    "text": "para\n"
   },
   {
-    "scope": "symbol",
-    "text": "[r]: http://x"
+    "scope": "comment",
+    "text": "%% c"
   },
   {
     "scope": null,

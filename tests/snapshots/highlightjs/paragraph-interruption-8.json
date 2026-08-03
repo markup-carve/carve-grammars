@@ -4,16 +4,8 @@
     "text": "text\n"
   },
   {
-    "scope": "keyword",
-    "text": ":::note"
-  },
-  {
-    "scope": null,
-    "text": "\nbody\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::"
+    "scope": "string",
+    "text": "| a | b |"
   },
   {
     "scope": null,

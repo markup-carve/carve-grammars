@@ -280,7 +280,47 @@ export function assertPartition(grammarName, allCategories) {
  * @returns {Set<string>}
  */
 export function coveredCategories(grammarName, allCategories) {
+    return new Set(allCategories.filter((c) => isCovered(grammarName, c)));
+}
+
+/**
+ * Slug-keyed lookups. Every consumer of this matrix MUST go through these.
+ *
+ * `assertPartition` compared by slug from the start, but `coveredCategories`
+ * and the round-trip test read the raw Sets, so they kept matching by the
+ * numbered name. One inserted corpus example then reclassified every covered
+ * category as skipped - and a skipped category is only checked for whether it
+ * COULD round-trip, so the real assertions stopped running and the failure
+ * surfaced as a list of suggested promotions rather than an alarm.
+ */
+const slugCache = new Map();
+const slugSet = (key, source) => {
+    let set = slugCache.get(key);
+    if (!set) {
+        set = new Set([...source].map(slugOf));
+        slugCache.set(key, set);
+    }
+    return set;
+};
+
+/** @returns {boolean} whether this grammar covers the category, by slug. */
+export function isCovered(grammarName, category) {
     const entry = COVERAGE[grammarName];
-    if (grammarName === 'tiptap') return new Set(entry.covered);
-    return new Set(allCategories.filter((c) => !entry.skip.has(c)));
+    if (!entry) throw new Error(`Unknown grammar: ${grammarName}`);
+    const slug = slugOf(category);
+    if (slugSet(`${grammarName}:skip`, entry.skip.keys()).has(slug)) return false;
+    // Highlighters cover everything not explicitly skipped; see assertPartition.
+    if (grammarName !== 'tiptap') return true;
+    return slugSet(`${grammarName}:covered`, entry.covered).has(slug);
+}
+
+/** @returns {string|undefined} the skip reason for this category, by slug. */
+export function skipReason(grammarName, category) {
+    const entry = COVERAGE[grammarName];
+    if (!entry) throw new Error(`Unknown grammar: ${grammarName}`);
+    const slug = slugOf(category);
+    for (const [key, reason] of entry.skip) {
+        if (slugOf(key) === slug) return reason;
+    }
+    return undefined;
 }

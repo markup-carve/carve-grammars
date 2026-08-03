@@ -1,0 +1,34 @@
+[
+  {
+    "type": "definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-term",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": ":  "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n   x\n"
+  },
+  {
+    "type": "comment",
+    "text": "   %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

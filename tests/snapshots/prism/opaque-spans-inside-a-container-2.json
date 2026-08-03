@@ -1,0 +1,38 @@
+[
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "code-block",
+    "text": "\n:::\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  },
+  {
+    "type": "div>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

@@ -1,31 +1,15 @@
 [
   {
     "scope": "keyword",
-    "text": ":::: \\"
+    "text": "::: \\"
   },
   {
     "scope": null,
-    "text": "\n  indented\nnext\n\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "::: note"
-  },
-  {
-    "scope": null,
-    "text": "\na\nb\n"
+    "text": "\none\ntwo\n"
   },
   {
     "scope": "keyword",
     "text": ":::"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "::::"
   },
   {
     "scope": null,

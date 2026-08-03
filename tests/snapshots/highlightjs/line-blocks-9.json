@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\ntab\tgap\nwide\t\tgap\n\tlead\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

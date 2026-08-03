@@ -9,23 +9,7 @@
   },
   {
     "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "bold",
-    "text": "*Bold*"
-  },
-  {
-    "type": "text",
-    "text": " and "
-  },
-  {
-    "type": "italic",
-    "text": "/italic/"
-  },
-  {
-    "type": "text",
-    "text": ",\nplain line.\n"
+    "text": "\nStanza one,\nstill one.\n\nStanza two.\n"
   },
   {
     "type": "div>punctuation",

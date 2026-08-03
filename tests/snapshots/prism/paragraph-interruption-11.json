@@ -4,15 +4,11 @@
     "text": "text\n"
   },
   {
-    "type": "div>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "div",
-    "text": "note"
+    "type": "list",
+    "text": "1985. "
   },
   {
     "type": "text",
-    "text": "\nbody\n"
+    "text": "was the year\n"
   }
 ]

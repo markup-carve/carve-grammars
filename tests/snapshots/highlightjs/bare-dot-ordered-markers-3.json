@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "."
+  },
+  {
+    "scope": "attr",
+    "text": "{#x}"
+  },
+  {
+    "scope": null,
+    "text": " attributed\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "."
+  },
+  {
+    "scope": null,
+    "text": " plain\n"
+  }
+]

@@ -4,20 +4,24 @@
     "text": "text\n"
   },
   {
-    "type": "div>punctuation",
-    "text": ":::"
+    "type": "table>punctuation",
+    "text": "|"
   },
   {
-    "type": "div",
-    "text": "note"
+    "type": "table",
+    "text": " a "
   },
   {
-    "type": "text",
-    "text": "\nbody\n"
+    "type": "table>punctuation",
+    "text": "|"
   },
   {
-    "type": "div>punctuation",
-    "text": ":::"
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
   },
   {
     "type": "text",
