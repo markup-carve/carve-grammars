@@ -1,166 +1,29 @@
 /**
- * Full TextMate-grammar sweep: every cheatsheet construct must tokenize
- * with its expected scope (positive cases), and intraword bare delimiters
- * must stay literal (negative cases). Tokenized through Shiki.
+ * Full TextMate-grammar sweep: every construct must tokenize with its expected
+ * scope (positive cases), and intraword bare delimiters must stay literal
+ * (negative cases). Tokenized through Shiki.
+ *
+ * The positive cases are NOT a list of their own: they come from
+ * `tests/lib/constructs.js`, the same inventory `tests/engine-sweep-test.js`
+ * consumes. Two hand-maintained lists is how a construct ends up covered in
+ * one sweep and absent from the other - the state that let every block rule in
+ * Prism and highlight.js stay anchored at column zero while this sweep, which
+ * carried the in-list-item cases, reported them green.
+ *
+ * What differs per sweep is the assertion, not the case list: here the payload
+ * must carry the scope the entry NAMES, because a TextMate scope name is a
+ * contract with every consumer of the grammar. The engine sweep only asks
+ * whether the payload is scoped at all, since Prism and highlight.js use
+ * different vocabularies.
  */
 import { createHighlighter } from 'shiki'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
+import { CONSTRUCTS, LITERALS } from './lib/constructs.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
-
-// [label, sample, substring-of-expected-scope, token-text-that-should-carry-it]
-const CASES = [
-  // A non-ASCII space IS content: only spaces and tabs separate a marker from
-  // it, so `#<space><NBSP>Title` is a heading. `(?=\S)` was tried as the
-  // marker-requires-content guard and rejected this, because oniguruma counts
-  // NBSP as whitespace; the guard is a line-end lookahead instead.
-  ['heading whose content starts with NBSP', '# \u00a0Title', 'markup.heading', 'Title'],
-  ['bullet whose content starts with NBSP', '- \u00a0item', 'list.unnumbered', '-'],
-  // Inline
-  ['italic', 'some /italic/ text', 'markup.italic', 'italic'],
-  ['bold', 'some *bold* text', 'markup.bold', 'bold'],
-  ['bold-italic', 'some /*both*/ text', 'markup.bold.italic', 'both'],
-  ['underline', 'some _under_ text', 'markup.underline', 'under'],
-  ['strike', 'some ~strike~ text', 'markup.strikethrough', 'strike'],
-  // Sup/sub are braced-only: a bare `^` / `,` is literal text.
-  ['superscript brace', 'mc{^2^} end', 'markup.superscript', '2'],
-  ['superscript brace flanked', 'a {^sup^} end', 'markup.superscript', 'sup'],
-  ['subscript brace', 'H{,2,}O', 'markup.subscript', '2'],
-  ['subscript brace flanked', 'water {,sub,} here', 'markup.subscript', 'sub'],
-  ['highlight bare', 'a =mark= b', 'markup.highlight', 'mark'],
-  ['highlight brace', 'wo{=mark=}rd', 'markup.highlight', 'mark'],
-  ['inline code', 'a `code` b', 'markup.raw.inline', 'code'],
-  // Inline literal: !`...` renders as prose, so the content carries the raw
-  // content scope and the `!` its own literal punctuation scope.
-  ['inline literal', 'a !`/kaet/` b', 'markup.raw.inline.content', '/kaet/'],
-  ['inline literal punct', 'a !`/kaet/` b', 'punctuation.definition.literal', '!'],
-  // A wider fence carries an inner backtick; the span must close on the same
-  // run length, not on the first backtick (literal_inline_multi).
-  ['inline literal multi', 'a !``x ` y`` b', 'markup.raw.inline.content', 'x ` y'],
-  ['inline literal multi punct', 'a !``x ` y`` b', 'punctuation.definition.literal', '!'],
-  ['link text', '[text](https://x.de)', 'string.other.link.title', 'text'],
-  ['link url', '[text](https://x.de)', 'markup.underline.link', 'https://x.de'],
-  ['link punct', '[text](https://x.de)', 'punctuation.definition.link', '['],
-  ['wiki link', '[Page Name][]', 'string.other.link.title', 'Page Name'],
-  ['autolink', '<https://example.com>', 'markup.underline.link', 'https://example.com'],
-  ['cross-ref', 'see </#section-id> here', 'markup.underline.link.cross-reference', 'section-id'],
-  ['image', '![alt](img.jpg)', 'punctuation.definition.image', '!['],
-  ['footnote ref', 'text[^1] end', 'constant.other.footnote', '1'],
-  // Citations and code callouts (ported from the intellij-carve grammar, which
-  // already covered them; the highlight.js grammar here did too, TextMate did not).
-  ['citation key', 'see [@smith2020] here', 'variable.other.citation.key', 'smith2020'],
-  ['citation integral', 'see [+@smith2020] here', 'keyword.operator.citation.integral', '+'],
-  ['citation punct', 'see [@smith2020] here', 'punctuation.definition.citation', '['],
-  ['callout annotation', '<1> explains the line', 'constant.numeric.callout', '1'],
-  ['callout marker in fence', '``` js\nconst a = 1 <1>\n```', 'constant.numeric.callout', '1'],
-  ['inline footnote', 'a ^[inline note] b', 'string.other.footnote.inline', 'inline note'],
-  ['span attr', '[span]{.class}', 'attributes', '.class'],
-  // Forced brace family (PART 9 S22). `{_x_}` must beat the attribute rule (a
-  // bare boolean key is shape-identical), and the content may contain the
-  // delimiter: `{/a/b/}` is <em>a/b</em>.
-  ['forced bold', 'foo{*bar*}baz', 'markup.bold', 'bar'],
-  ['forced italic', 'a{/b/}c', 'markup.italic', 'b'],
-  ['forced underline', 'my{_path_}name', 'markup.underline', 'path'],
-  ['forced strike', 'x{~gone~}y', 'markup.strikethrough', 'gone'],
-  ['forced italic spanning its own delimiter', '{/a/b/}', 'markup.italic', 'a/b'],
-  // Link titles admit an escaped quote; a `[^"]*` title run truncated at the
-  // backslash and dropped link scoping for the whole construct (corpus 03-links-4).
-  ['escaped-quote link title', '[t](/url "ti\\"tle")', 'markup.underline.link', '/url'],
-  ['empty link title', '[x](u "")', 'markup.underline.link', 'u'],
-  // A marker line may open several lists at once (corpus 103).
-  ['nested list markers on one line', '- - A', 'punctuation.definition.list.unnumbered', '- '],
-  // Every ordered marker the language accepts, not only `1.` (carve#472 added
-  // the bare dot). `numbered_item` matched `\d+\.` alone, so `1)`, `a.`, `i.`
-  // and `.` all rendered as prose.
-  ['ordered marker decimal', '1. first', 'punctuation.definition.list.numbered', '1.'],
-  ['ordered marker paren', '1) first', 'punctuation.definition.list.numbered', '1)'],
-  ['ordered marker alpha', 'a. first', 'punctuation.definition.list.numbered', 'a.'],
-  ['ordered marker roman', 'iv. fourth', 'punctuation.definition.list.numbered', 'iv.'],
-  ['ordered marker bare dot', '. first', 'punctuation.definition.list.numbered', '.'],
-  ['ordered marker bare dot with attrs', '.{#x} attributed', 'punctuation.definition.list.numbered', '.'],
-  ['mention', 'hi @user here', 'mention', '@user'],
-  ['tag', 'a #tagname here', 'tag', '#tagname'],
-  ['symbol', 'Great :rocket: end', 'constant.language.symbol', 'rocket'],
-  ['symbol punct', 'Great :rocket: end', 'punctuation.definition.symbol', ':'],
-  ['symbol leading plus', 'Vote :+1: now', 'constant.language.symbol', '+1'],
-  ['escape', 'a \\*literal\\* b', 'constant.character.escape', '\\*'],
-  ['smart typography', 'a -- b', 'typography', '--'],
-  ['hard break', 'line\\\n next', 'hard-break', '\\'],
-  ['raw inline', 'a `<br>`{=html} b', 'raw', '<br>'],
-  ['extension inline', ':youtube[ID]{.a}', 'extension', 'youtube'],
-  ['critic add', 'a {+ins+} b', 'markup.inserted', 'ins'],
-  ['critic del', 'a {-del-} b', 'markup.deleted', 'del'],
-  ['critic sub', 'a {~old~>new~} b', 'markup.changed', 'old'],
-  ['critic comment', 'a {#note#} b', 'comment', 'note'],
-  // Blocks
-  ['heading', '# Title', 'heading', 'Title'],
-  ['thematic break', 'a\n\n---\n\nb', 'separator', '---'],
-  // The asterisk and underscore spellings are the same block (PART 9), but the
-  // rule listed only the hyphen, so `***` colored as prose while `---` did not.
-  ['thematic break asterisks', 'a\n\n***\n\nb', 'separator', '***'],
-  ['thematic break underscores', 'a\n\n___\n\nb', 'separator', '___'],
-  ['thematic break in a list item', '- item\n\n  ***', 'separator', '***'],
-  ['ul marker', '- item', 'punctuation.definition.list', '-'],
-  ['ol marker', '1. item', 'punctuation.definition.list', '1.'],
-  ['task unchecked', '- [ ] todo', 'checkbox', '['],
-  ['task checked', '- [x] done', 'constant.language.checkbox', 'x'],
-  ['task more states', '- [>] deferred', 'constant.language.checkbox', '>'],
-  ['list attr', '-{.c} styled', 'attributes', '.c'],
-  ['plus attach', '- step\n+\n> note', 'list', '+'],
-  ['def list term', ':: term\n:  definition', 'entity.name.tag.definition.term', 'term'],
-  ['blockquote', '> quoted', 'quote', 'quoted'],
-  ['caption', '> q\n^ Attribution', 'caption', 'Attribution'],
-  ['fence open', '```php\ncode\n```', 'punctuation.definition.fenced', '```'],
-  ['fence language', '```php\ncode\n```', 'fenced_code.block.language', 'php'],
-  ['fence header', '```php "Header" [Label]\ncode\n```', 'string.quoted.double.fenced.title', 'Header'],
-  ['fence raw html', '```=html\n<b>x</b>\n```', 'fenced_code.block.language', '=html'],
-  ['admonition open', '::: note\nbody\n:::', 'admonition', 'note'],
-  ['admonition custom', '::: myclass\nbody\n:::', 'admonition', 'myclass'],
-  ['layout pipe', '::: |\nRoses\n:::', 'admonition', '|'],
-  ['admonition title', '::: note "Custom Title"\nbody\n:::', 'string.quoted.double.admonition.title', 'Custom Title'],
-  ['admonition title and label', '::: tip "Pro Tip" [Build]\nbody\n:::', 'constant.other.label.admonition', '[Build]'],
-  ['admonition label only', '::: tab [Overview]\nbody\n:::', 'constant.other.label.admonition', '[Overview]'],
-  ['typeless flush label', ':::[First]\nbody\n:::', 'constant.other.label.admonition', '[First]'],
-  ['nested longer fence', ':::: tabs\nbody\n::::', 'admonition', 'tabs'],
-  ['table header cell', '|= Name |= Age |', 'keyword.operator.table.header', '|='],
-  ['table sep', '| a | b |', 'punctuation.separator.table', '|'],
-  ['table align', '|=> Age |', 'keyword.operator.table.alignment', '>'],
-  ['table rowspan', '| ^ | spanned |', 'keyword.operator.table.rowspan', '^'],
-  ['table colspan', '| a | < |', 'keyword.operator.table.colspan', '<'],
-  ['table continuation', '+ cont cell |', 'keyword.operator.table.continuation', '+'],
-  ['gfm delimiter row', '| a | b |\n|---|--:|', 'keyword.operator.table.alignment', '--:'],
-  ['block attrs line', '{#id .class key=value}\n# H', 'attributes', '#id'],
-  ['abbreviation', '*[HTML]: HyperText', 'abbreviation', 'HTML'],
-  // Indented inside a list item. Every one of these opens its real block
-  // there (verified against carve-rs) and used to go uncolored, because the
-  // rules were anchored at column 0 while `fenced_code` was not - the
-  // asymmetry #71 is about. The cost of the fix is that the same constructs
-  // indented at the TOP level, where they are literal text, now color as
-  // blocks; a line-based grammar cannot separate the two cases.
-  ['heading in a list item', '- item\n\n  # Title', 'heading', 'Title'],
-  ['blockquote in a list item', '- item\n\n  > quoted', 'quote', 'quoted'],
-  ['caption in a list item', '- item\n\n  | a |\n  ^ Attribution', 'caption', 'Attribution'],
-  ['admonition in a list item', '- item\n\n  ::: note\n  body\n  :::', 'admonition', 'note'],
-  ['table row in a list item', '- item\n\n  | a | b |', 'punctuation.separator.table', '|'],
-  ['table continuation in a list item', '- item\n\n  | a |\n  + cont cell |', 'keyword.operator.table.continuation', '+'],
-  ['abbreviation in a list item', '- item\n\n  *[HTML]: HyperText', 'abbreviation', 'HTML'],
-  ['fenced code in a list item', '- item\n\n  ```js\n  x\n  ```', 'fenced_code', 'js'],
-  ['ref def label', '[r]: https://ref.example', 'constant.other.reference.link', 'r'],
-  ['ref def url', '[r]: https://ref.example', 'markup.underline.link', 'https://ref.example'],
-  ['ref def title', '[r]: https://ref.example "Site"', 'string.quoted.link.title', 'Site'],
-  ['frontmatter', '---\ntitle: Doc\n---\n\nText', 'frontmatter', 'title'],
-  ['inline math', 'a $`e=mc^2` b', 'markup.math', 'e=mc^2'],
-  ['display math', '$$`\\int_0^1 x`', 'markup.math', '\\int_0^1 x'],
-  ['line comment', '%% comment line', 'comment', 'comment line'],
-  ['trailing comment', 'text %% trailing', 'comment', 'trailing'],
-  ['block comment', '%%%\nhidden\n%%%', 'comment', 'hidden'],
-  // A %%% fence line is a delimiter plus an insignificant tail (PART 9 §28):
-  // `%%% html` is a comment, not a raw passthrough block, and `%%% end` closes.
-  ['block comment with a tail', '%%% html\nhidden\n%%% end', 'comment', 'hidden'],
-]
 
 const hl = await createHighlighter({
   themes: ['github-light'],
@@ -189,7 +52,10 @@ const declaredScopes = new Set()
   }
 })(grammar)
 
-for (const [label, sample, scopeSub, text] of CASES) {
+const positives = CONSTRUCTS.filter(c => !c.skip?.textmate)
+const skipped = CONSTRUCTS.filter(c => c.skip?.textmate)
+
+for (const { name, sample, payload, textmate } of positives) {
   const { tokens } = hl.codeToTokens(sample, {
     lang: 'carve',
     theme: 'github-light',
@@ -200,7 +66,7 @@ for (const [label, sample, scopeSub, text] of CASES) {
   for (const tk of flat) {
     const scopes = (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName))
     scopes.forEach(s => allScopes.add(s))
-    if (scopes.some(s => s.includes(scopeSub)) && (text === '' || (tk.content ?? '').includes(text) || flat.some(t2 => (t2.content ?? '').includes(text) && ((t2.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName))).some(s => s.includes(scopeSub))))) {
+    if ((tk.content ?? '').includes(payload) && scopes.some(s => s.includes(textmate))) {
       found = true
       break
     }
@@ -208,11 +74,14 @@ for (const [label, sample, scopeSub, text] of CASES) {
   if (found) { pass++ } else {
     // capture actual tokenization for diagnosis
     const dump = flat.map(tk => `${JSON.stringify(tk.content)}:${(tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName)).filter(s => s !== 'source.carve').join(',')}`).join(' | ')
-    fails.push(`FAIL ${label}  expected scope ~"${scopeSub}" on "${text}"\n   got: ${dump.slice(0, 400)}`)
+    fails.push(`FAIL ${name}  expected scope ~"${textmate}" on "${payload}"\n   got: ${dump.slice(0, 400)}`)
   }
 }
 
-console.log(`  ✓ textmate sweep: ${pass}/${CASES.length} constructs tokenized as expected`)
+console.log(`  ${fails.length ? '✗' : '✓'} textmate sweep: ${pass}/${positives.length} constructs tokenized as expected`)
+// A skip is a decision, so it is reported every run rather than quietly
+// shrinking the denominator.
+for (const c of skipped) console.log(`    - skipped ${c.name}: ${c.skip.textmate}`)
 fails.forEach(f => console.log(f + '\n'))
 if (fails.length) process.exit(1)
 
@@ -288,7 +157,8 @@ const NEGATIVE = [
 ]
 let negPass = 0
 const unknownSelectors = [
-  ...CASES.map(([label, , scopeSub]) => [label, scopeSub, 'CASES']),
+  ...positives.map(({ name, textmate }) => [name, textmate, 'CONSTRUCTS']),
+  ...LITERALS.map(({ name, scopes }) => [name, scopes.textmate, 'LITERALS']),
   ...NEGATIVE.map(([label, , badScope]) => [label, badScope, 'NEGATIVE']),
 ].filter(([, selector]) => ![...declaredScopes].some((name) => name.includes(selector)))
 
@@ -311,4 +181,18 @@ for (const [label, sample, badScope] of NEGATIVE) {
 }
 console.log(`  ✓ textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
 if (negPass !== NEGATIVE.length) process.exit(1)
+
+// The shared counter-examples. Unlike NEGATIVE above, which is about scope
+// names this grammar alone declares, these shapes are prose in every grammar,
+// so all three sweeps assert them from the one inventory.
+let litPass = 0
+for (const { name, sample, payload, scopes } of LITERALS) {
+  const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })
+  const wrong = tokens.flat().filter(tk => (tk.content ?? '').includes(payload)
+    && (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName)).some(s => s.includes(scopes.textmate)))
+  if (wrong.length) console.log(`FAIL(lit) ${name}: ${JSON.stringify(payload)} scoped as ${scopes.textmate} in ${JSON.stringify(sample)}`)
+  else litPass++
+}
+console.log(`  ${litPass === LITERALS.length ? '✓' : '✗'} textmate sweep: ${litPass}/${LITERALS.length} literal shapes stay unscoped`)
+if (litPass !== LITERALS.length) process.exit(1)
 

@@ -187,6 +187,19 @@
             },
         },
 
+        // Thematic break: a whole line of three or more `-`, `*` or `_`.
+        // Prism had no rule at all, so `***` and `___` rendered as prose and
+        // `---` was claimed by the smart-typography rule as an em dash - the
+        // construct looked covered while nothing was matching the block. It
+        // sits AFTER `code-block`, which is greedy, so a `---` line inside a
+        // fence stays code; and after `front-matter`, whose greedy pattern owns
+        // the document's opening delimiters. A table delimiter row (`|---|`)
+        // is not a whole-line run, so the anchors exclude it.
+        'thematic-break': {
+            pattern: /^[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/m,
+            alias: 'punctuation',
+        },
+
         // ATX headings # .. ######
         'title': {
             // `.+` matches a run of spaces, so `#<space><space>` was a heading.
@@ -290,8 +303,13 @@
         // markers, and corpus 06-task-lists-2 uses all four of the others.
         'list': {
             // MARKER REQUIRES CONTENT: each branch ends with a line-end lookahead,
-            // so `- `, `1. ` and `: ` with nothing after them stay prose.
-            pattern: /^[ \t]*(?:(?:[-*] +)*[-*] +(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?= |\{) *(?![ \t]*$)|: +(?![ \t]*$))/m,
+            // so `- `, `1. ` and `: ` with nothing after them stay prose. The
+            // ordered branch spells out a glued attribute block in full rather
+            // than skipping it, because `1.{#x}` with nothing after the block
+            // is a paragraph too, and a `\{[^}]*\}` run stops in the wrong
+            // place: a quoted value may contain `}` and may escape its own
+            // quote, and `{title="a}b"} x` is a valid item (#85).
+            pattern: /^[ \t]*(?:(?:[-*] +)*[-*] +(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n])) *(?![ \t]*$)|: +(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
