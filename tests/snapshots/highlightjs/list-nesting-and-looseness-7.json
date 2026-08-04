@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": "   item\n    # Wide\n"
+    "text": "   item\n"
+  },
+  {
+    "scope": "section",
+    "text": "    # Wide"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

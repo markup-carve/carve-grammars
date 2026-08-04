@@ -5,14 +5,22 @@
   },
   {
     "scope": null,
-    "text": " item\n  "
+    "text": " item\n"
   },
   {
-    "scope": "code",
-    "text": "```\n  c\n  ```"
+    "scope": "keyword",
+    "text": "  ```\n  c"
   },
   {
     "scope": null,
-    "text": "\n  tail\n"
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ```\n  tail"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

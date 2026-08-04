@@ -71,7 +71,7 @@
     // Headings: # to ######
     const HEADING = {
         className: 'section',
-        begin: /^#{1,6} (?![ \t]*$)/,
+        begin: /^[ \t]*#{1,6} (?![ \t]*$)/,
         end: /$/,
         relevance: 10,
     };
@@ -257,7 +257,7 @@
     // Reference definitions: [ref]: url
     const REFERENCE_DEF = {
         className: 'symbol',
-        begin: /^\[[^\]^\]]+\]:(?= )/,
+        begin: /^[ \t]*\[[^\]^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -283,7 +283,7 @@
     // first, so the two do not compete.
     const DEFINITION_TERM_MARKER = {
         className: 'title',
-        begin: /^:: (?![ \t]*$)/,
+        begin: /^[ \t]*:: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };
@@ -328,7 +328,7 @@
     // Footnote definitions: [^note]: content
     const FOOTNOTE_DEF = {
         className: 'symbol',
-        begin: /^\[\^[^\]]+\]:(?= )/,
+        begin: /^[ \t]*\[\^[^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -336,7 +336,7 @@
     // Abbreviation definitions: *[ABBR]: text
     const ABBREVIATION_DEF = {
         className: 'symbol',
-        begin: /^\*\[[^\]]+\]:(?= )/,
+        begin: /^[ \t]*\*\[[^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -349,7 +349,7 @@
     // quote when the language calls it prose (markup-carve/carve#525).
     const BLOCKQUOTE = {
         className: 'quote',
-        begin: /^>(?= |$)/,
+        begin: /^[ \t]*>(?= |$)/,
         end: /$/,
         relevance: 0,
     };
@@ -357,7 +357,7 @@
     // Horizontal rules: --- or *** or ___
     const HORIZONTAL_RULE = {
         className: 'meta',
-        begin: /^(-{3,}|\*{3,}|_{3,})$/,
+        begin: /^[ \t]*(-{3,}|\*{3,}|_{3,})$/,
         relevance: 10,
     };
 
@@ -389,7 +389,7 @@
     // Definition list terms: : term
     const DEFINITION_TERM = {
         className: 'title',
-        begin: /^: (?![ \t]*$)/,
+        begin: /^[ \t]*: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };
@@ -397,14 +397,14 @@
     // Code fence opening: ``` or ~~~ with optional language
     const CODE_FENCE_START = {
         className: 'keyword',
-        begin: /^[`~]{3,}\s*[a-zA-Z]*$/,
+        begin: /^[ \t]*[`~]{3,}\s*[a-zA-Z]*$/,
         relevance: 10,
     };
 
     // Code fence closing: ``` or ~~~
     const CODE_FENCE_END = {
         className: 'keyword',
-        begin: /^[`~]{3,}$/,
+        begin: /^[ \t]*[`~]{3,}$/,
         relevance: 10,
     };
 
@@ -413,14 +413,14 @@
     // trailing text is a paragraph, not a fence, and must not highlight.
     const DIV_BLOCK_START = {
         className: 'keyword',
-        begin: /^:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
+        begin: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
         relevance: 10,
     };
 
     // Div block closing: :::
     const DIV_BLOCK_END = {
         className: 'keyword',
-        begin: /^:{3,}$/,
+        begin: /^[ \t]*:{3,}$/,
         relevance: 10,
     };
 
@@ -446,7 +446,7 @@
     // `ignoreMatch()` - the same idiom the bundled markdown grammar uses.
     const BLOCK_COMMENT = {
         className: 'comment',
-        begin: /^(%{3,})[^\n]*$/,
+        begin: /^[ \t]*(%{3,})[^\n]*$/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -489,14 +489,14 @@
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
         className: 'meta',
-        begin: /^\|[-:| ]+\|$/,
+        begin: /^[ \t]*\|[-:| ]+\|$/,
         relevance: 5,
     };
 
     // Line blocks: | text (for poetry) - must precede TABLE_ROW
     const LINE_BLOCK = {
         className: 'string',
-        begin: /^\| /,
+        begin: /^[ \t]*\| /,
         end: /$/,
         relevance: 3,
     };
@@ -504,7 +504,7 @@
     // Table rows: | cell | cell |
     const TABLE_ROW = {
         className: 'string',
-        begin: /^\|/,
+        begin: /^[ \t]*\|/,
         end: /\|(\{[^}]*\})?$/,
         relevance: 2,
     };
@@ -512,7 +512,7 @@
     // Captions: ^ caption text
     const CAPTION = {
         className: 'title',
-        begin: /^\^ (?![ \t]*$)/,
+        begin: /^[ \t]*\^ (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };

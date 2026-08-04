@@ -5,6 +5,22 @@
   },
   {
     "scope": null,
-    "text": " one\n |= H |\n | x |\n"
+    "text": " one\n"
+  },
+  {
+    "scope": "string",
+    "text": " |= H |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": " | x |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " ::: note\n  :::\n"
+    "text": " ::: note\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

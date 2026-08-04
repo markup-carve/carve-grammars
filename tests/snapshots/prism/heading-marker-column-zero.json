@@ -1,6 +1,10 @@
 [
   {
+    "type": "title",
+    "text": "   # H"
+  },
+  {
     "type": "text",
-    "text": "   # H\n"
+    "text": "\n"
   }
 ]

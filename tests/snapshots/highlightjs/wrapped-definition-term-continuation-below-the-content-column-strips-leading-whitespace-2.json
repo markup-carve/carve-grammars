@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " one\n  :: term\nwrapped\n"
+    "text": " one\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: term"
+  },
+  {
+    "scope": null,
+    "text": "\nwrapped\n"
   }
 ]

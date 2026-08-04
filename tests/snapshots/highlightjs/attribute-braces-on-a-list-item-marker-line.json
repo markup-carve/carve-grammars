@@ -41,6 +41,14 @@
   },
   {
     "scope": null,
-    "text": "\n  # Attributed heading\n"
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # Attributed heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

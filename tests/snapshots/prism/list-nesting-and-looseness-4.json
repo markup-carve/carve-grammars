@@ -13,6 +13,14 @@
   },
   {
     "type": "text",
-    "text": "b\n    # N\nlazy\n"
+    "text": "b\n"
+  },
+  {
+    "type": "title",
+    "text": "    # N"
+  },
+  {
+    "type": "text",
+    "text": "\nlazy\n"
   }
 ]

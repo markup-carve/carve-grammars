@@ -9,10 +9,14 @@
   },
   {
     "scope": null,
-    "text": ".\n\n [x]: "
+    "text": ".\n\n"
   },
   {
-    "scope": "emphasis",
-    "text": "/intro \"T\"\n"
+    "scope": "symbol",
+    "text": " [x]: /intro \"T\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

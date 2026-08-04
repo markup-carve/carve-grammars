@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " one\n\n   # h\n"
+    "text": " one\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "   # h"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]
