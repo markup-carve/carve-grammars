@@ -5,10 +5,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#intro>.\n"
+    "scope": "symbol",
+    "text": "#intro"
+  },
+  {
+    "scope": null,
+    "text": ">.\n"
   }
 ]

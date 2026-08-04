@@ -21,10 +21,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#eq-emc>.\n"
+    "scope": "symbol",
+    "text": "#eq-emc"
+  },
+  {
+    "scope": null,
+    "text": ">.\n"
   }
 ]

@@ -48,13 +48,36 @@
     // start with a digit, so `{2=v}` stays literal text rather than scoping as
     // an attribute block. An unquoted value may contain dots and colons.
     const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    /**
+     * A begin/end mode opens its span the moment `begin` matches, whether or
+     * not the closer ever arrives - so an unpartnered delimiter colors every
+     * remaining character of the document. `:_[x]` is an inline extension, not
+     * an underline, and it used to highlight the rest of the file.
+     *
+     * The lookahead requires the closer to exist before the paragraph ends.
+     * The scan admits a non-newline OR a newline that is not followed by a
+     * blank line, so a mark may still span lines the way the engine does
+     * (`/multi<newline>line/` is one <em>) but cannot reach into the next
+     * block. The two branches start on disjoint characters, so the run is
+     * effectively deterministic rather than a backtracking hazard.
+     *
+     * @param {RegExp} opener - the delimiter that starts the span.
+     * @param {RegExp} closer - the delimiter that ends it.
+     * @returns {object} the mode's `begin`/`end` pair, so the closer used by
+     *   the guard and the closer used by the mode cannot drift apart.
+     */
+    const paired = (opener, closer) => ({
+        begin: new RegExp(`${opener.source}(?=(?:[^\\n]|\\n(?!\\s*\\n))*?${closer.source})`),
+        end: closer,
+    });
+
     // Forced intraword family (PART 9 S22). Content may contain the delimiter
     // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
     // must precede ATTRIBUTE, or `{_path_}` reads as a boolean attribute.
-    const FORCED_STRONG = { className: 'strong', begin: /\{\*(?=\S)/, end: /\*\}/, relevance: 5 };
-    const FORCED_EMPHASIS = { className: 'emphasis', begin: /\{\/(?=\S)/, end: /\/\}/, relevance: 5 };
-    const FORCED_UNDERLINE = { className: 'emphasis', begin: /\{_(?=\S)/, end: /_\}/, relevance: 5 };
-    const FORCED_STRIKE = { className: 'deletion', begin: /\{~(?=\S)(?!.*~>)/, end: /~\}/, relevance: 5 };
+    const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?=\S)/, /\*\}/), relevance: 5 };
+    const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?=\S)/, /\/\}/), relevance: 5 };
+    const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?=\S)/, /_\}/), relevance: 5 };
+    const FORCED_STRIKE = { className: 'deletion', ...paired(/\{~(?=\S)(?!.*~>)/, /~\}/), relevance: 5 };
 
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
@@ -80,16 +103,14 @@
     // (a/b, ://); the end is a closing slash not followed by word char/slash.
     const EMPHASIS = {
         className: 'emphasis',
-        begin: /(?<![\w:/])\/(?=\S)/,
-        end: /\/(?![\w/])/,
+        ...paired(/(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/),
         relevance: 0,
     };
 
     // Underline (Carve): _text_ - not in the middle of words
     const UNDERLINE = {
         className: 'emphasis',
-        begin: /(?<!\w)_(?!\s)/,
-        end: /_(?!\w)/,
+        ...paired(/(?<!\w)_(?!\s)/, /_(?!\w)/),
         relevance: 0,
     };
 
@@ -97,8 +118,7 @@
     // Excludes *[ which is abbreviation-definition syntax.
     const STRONG = {
         className: 'strong',
-        begin: /(?<!\w)\*(?![\s\[])/,
-        end: /\*(?!\w)/,
+        ...paired(/(?<!\w)\*(?![\s\[])/, /\*(?!\w)/),
         relevance: 0,
         contains: [EMPHASIS, UNDERLINE],
     };
@@ -106,48 +126,42 @@
     // Highlight (Carve): =text= (single-char; intraword as {=text=})
     const HIGHLIGHT = {
         className: 'addition',
-        begin: /(?<![=\w])=(?=\S)/,
-        end: /=(?![=\w])/,
+        ...paired(/(?<![=\w])=(?=\S)/, /=(?![=\w])/),
         relevance: 3,
     };
 
     // Insert: {+text+}
     const INSERT = {
         className: 'addition',
-        begin: /\{\+/,
-        end: /\+\}/,
+        ...paired(/\{\+/, /\+\}/),
         relevance: 5,
     };
 
     // Delete: {-text-}
     const DELETE = {
         className: 'deletion',
-        begin: /\{-/,
-        end: /-\}/,
+        ...paired(/\{-/, /-\}/),
         relevance: 5,
     };
 
     // Strikethrough (Carve): ~text~ (Djot uses ~ for subscript instead)
     const STRIKETHROUGH = {
         className: 'deletion',
-        begin: /(?<!\w)~(?=\S)/,
-        end: /~(?!\w)/,
+        ...paired(/(?<!\w)~(?=\S)/, /~(?!\w)/),
         relevance: 2,
     };
 
     // Subscript (Carve): braced-only `{,text,}` - a bare `,` is literal text.
     const SUBSCRIPT = {
         className: 'built_in',
-        begin: /\{,(?=\S)/,
-        end: /,\}/,
+        ...paired(/\{,(?=\S)/, /,\}/),
         relevance: 3,
     };
 
     // Superscript (Carve): braced-only `{^text^}` - a bare `^` is literal text.
     const SUPERSCRIPT = {
         className: 'built_in',
-        begin: /\{\^(?=\S)/,
-        end: /\^\}/,
+        ...paired(/\{\^(?=\S)/, /\^\}/),
         relevance: 3,
     };
 

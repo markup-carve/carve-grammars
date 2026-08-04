@@ -1,10 +1,6 @@
 [
   {
     "scope": null,
-    "text": "x "
-  },
-  {
-    "scope": "emphasis",
-    "text": "/a/b y\n"
+    "text": "x /a/b y\n"
   }
 ]

@@ -5,10 +5,14 @@
   },
   {
     "scope": null,
-    "text": " [ref]: "
+    "text": " [ref]: /url\n\nSee "
   },
   {
-    "scope": "emphasis",
-    "text": "/url\n\nSee [it][ref].\n"
+    "scope": "link",
+    "text": "[it][ref]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]
