@@ -137,6 +137,15 @@ export const CONSTRUCTS = [
     { name: "ordered marker alpha", sample: "a. first", payload: "a.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker roman", sample: "iv. fourth", payload: "iv.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker bare dot with attrs", sample: ".{#x} attributed", payload: ".", textmate: "punctuation.definition.list.numbered" },
+    // The valid half of #85. The marker takes ONE glued attribute block and
+    // then content; these are the shapes a lookahead that stops at the first
+    // `}` gets wrong, since a quoted value may contain `}` and may escape its
+    // own quote. All four render as list items (checked against the engine).
+    { name: "ordered marker with glued attributes", sample: "1.{#x} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker with a brace in a quoted attribute value", sample: "1.{title=\"a}b\"} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker with a brace in a single-quoted attribute value", sample: "1.{title='a}b'} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker with an escaped quote in an attribute value", sample: "1.{title=\"a\\\"b\"} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker whose content is a brace span", sample: "1.{#x} {*bold*}", payload: "1.", textmate: "punctuation.definition.list.numbered" },
     { name: "symbol punct", sample: "Great :rocket: end", payload: ":", textmate: "punctuation.definition.symbol" },
     { name: "symbol leading plus", sample: "Vote :+1: now", payload: "+1", textmate: "constant.language.symbol" },
     { name: "escape", sample: "a \\*literal\\* b", payload: "\\*", textmate: "constant.character.escape" },
@@ -182,4 +191,48 @@ export const CONSTRUCTS = [
     { name: "trailing comment", sample: "text %% trailing", payload: "trailing", textmate: "comment" },
     { name: "block comment", sample: "%%%\nhidden\n%%%", payload: "hidden", textmate: "comment" },
     { name: "block comment with a tail", sample: "%%% html\nhidden\n%%% end", payload: "hidden", textmate: "comment" },
+];
+
+/**
+ * Shapes that must NOT be scoped as the construct they resemble.
+ *
+ * A positive case cannot catch an over-eager rule: `1.{#x} item` and `1.{#x}`
+ * differ only in what follows the attribute block, and a rule that scopes both
+ * passes every coverage assertion in this file. So the marker rules carry
+ * their counter-examples here, and both sweeps assert them.
+ *
+ * `scopes` names the selector per grammar because the vocabularies differ -
+ * Prism says `list`, highlight.js says `bullet`, TextMate says
+ * `list.numbered`. A selector naming no scope the grammar declares is a check
+ * that cannot fail; the TextMate sweep rejects those outright.
+ *
+ * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
+ */
+export const LITERALS = [
+    // An ordered marker glued to an attribute block with nothing after it is
+    // prose: `1.{#x}` renders as a paragraph, `1.{#x} item` as a list item.
+    // All three grammars scoped the marker in both (#85).
+    {
+        name: 'ordered marker whose attribute block has no content after it',
+        sample: '1.{#x}\n\nafter\n',
+        payload: '1.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    {
+        name: 'bare dot marker whose attribute block has no content after it',
+        sample: '.{#x}\n\nafter\n',
+        // `.` rather than `.{`: TextMate scopes the whole line as one token,
+        // the engines split at the brace, so the wider spelling matched no
+        // engine token at all and the check could not fail there.
+        payload: '.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    // Two glued blocks are prose even with content after them, because the
+    // marker takes at most one attribute block.
+    {
+        name: 'ordered marker with two glued attribute blocks',
+        sample: '1.{#x}{.y} item\n',
+        payload: '1.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
 ];

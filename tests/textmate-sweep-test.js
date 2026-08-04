@@ -20,7 +20,7 @@ import { createHighlighter } from 'shiki'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
-import { CONSTRUCTS } from './lib/constructs.js'
+import { CONSTRUCTS, LITERALS } from './lib/constructs.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
@@ -158,6 +158,7 @@ const NEGATIVE = [
 let negPass = 0
 const unknownSelectors = [
   ...positives.map(({ name, textmate }) => [name, textmate, 'CONSTRUCTS']),
+  ...LITERALS.map(({ name, scopes }) => [name, scopes.textmate, 'LITERALS']),
   ...NEGATIVE.map(([label, , badScope]) => [label, badScope, 'NEGATIVE']),
 ].filter(([, selector]) => ![...declaredScopes].some((name) => name.includes(selector)))
 
@@ -180,4 +181,18 @@ for (const [label, sample, badScope] of NEGATIVE) {
 }
 console.log(`  ✓ textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
 if (negPass !== NEGATIVE.length) process.exit(1)
+
+// The shared counter-examples. Unlike NEGATIVE above, which is about scope
+// names this grammar alone declares, these shapes are prose in every grammar,
+// so all three sweeps assert them from the one inventory.
+let litPass = 0
+for (const { name, sample, payload, scopes } of LITERALS) {
+  const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })
+  const wrong = tokens.flat().filter(tk => (tk.content ?? '').includes(payload)
+    && (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName)).some(s => s.includes(scopes.textmate)))
+  if (wrong.length) console.log(`FAIL(lit) ${name}: ${JSON.stringify(payload)} scoped as ${scopes.textmate} in ${JSON.stringify(sample)}`)
+  else litPass++
+}
+console.log(`  ${litPass === LITERALS.length ? '✓' : '✗'} textmate sweep: ${litPass}/${LITERALS.length} literal shapes stay unscoped`)
+if (litPass !== LITERALS.length) process.exit(1)
 

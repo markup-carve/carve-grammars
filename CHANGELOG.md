@@ -5,6 +5,25 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An ordered marker glued to an attribute block with no content is prose in
+  all three grammars.** `1.{#x}` renders as a paragraph and `1.{#x} item` as a
+  list item; every grammar scoped the marker in both. The guard was `(?= |\{)`,
+  which accepts any brace, so the marker-requires-content rule never reached
+  past the block.
+
+  The fix spells the attribute block out in full rather than skipping it,
+  because the block is not brace-balanced text: a quoted value may contain `}`
+  and may escape its own quote, so `{title="a}b"} x` and `{title="a\"b"} x` are
+  valid items that a `\{[^}]*\}` run truncates. Six shapes were checked against
+  the engine before the grammars were touched, both outcomes.
+
+  `#85` recorded this as TextMate-only, on the grounds that Prism and
+  highlight.js match the closer in one pattern. Measured, both carry the same
+  `(?= |\{)` guard and the same defect; all three are fixed here.
+
+  The counter-examples live in the shared inventory as `LITERALS`, so all three
+  sweeps assert them - a positive case cannot catch this, since the valid and
+  the invalid shape differ only in what follows the block.
 - **Prism scopes thematic breaks.** It had no rule for the construct at all, so
   `***` and `___` rendered as prose and `---` was claimed by the smart
   typography rule as an em dash - covered-looking output with nothing matching

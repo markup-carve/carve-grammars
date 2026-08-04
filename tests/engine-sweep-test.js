@@ -22,7 +22,7 @@
  * `tests/lib/constructs.js`, which is the one list both sweeps consume.
  */
 import { prismTokens, hljsTokens } from './lib/engines.js';
-import { CONSTRUCTS } from './lib/constructs.js';
+import { CONSTRUCTS, LITERALS } from './lib/constructs.js';
 
 const ATTR_SCOPE = /attr/i;
 
@@ -61,10 +61,37 @@ function check(engineName, tokenize) {
     return fails.length;
 }
 
+/**
+ * The counter-examples: a shape that resembles a construct but is prose must
+ * NOT carry that construct's scope. A positive case cannot catch an over-eager
+ * rule, since the valid and the invalid shape differ only in their tail.
+ *
+ * @param {string} engineName - which grammar is being checked.
+ * @param {Function} tokenize - its tokenizer from ./lib/engines.js.
+ * @returns {number} how many literals were mis-scoped.
+ */
+function checkLiterals(engineName, tokenize) {
+    const fails = [];
+    for (const { name, sample, payload, scopes } of LITERALS) {
+        const selector = scopes[engineName];
+        const wrong = tokenize(sample)
+            .filter((t) => t.text.includes(payload) && t.scope?.includes(selector));
+        if (wrong.length) {
+            fails.push(`FAIL(neg) [${engineName}] ${name}: ${JSON.stringify(payload)} scoped as ${wrong[0].scope}`
+                + `\n   source: ${JSON.stringify(sample)}`);
+        }
+    }
+    console.log(`  ${fails.length ? '✗' : '✓'} ${engineName}: ${LITERALS.length - fails.length}/${LITERALS.length} literal shapes stay unscoped`);
+    fails.forEach((f) => console.log(f + '\n'));
+    return fails.length;
+}
+
 console.log('carve-grammars engine sweep:');
-const failed = check('prism', prismTokens) + check('highlightjs', hljsTokens);
+const failed = check('prism', prismTokens) + check('highlightjs', hljsTokens)
+    + checkLiterals('prism', prismTokens) + checkLiterals('highlightjs', hljsTokens);
 if (failed) {
-    console.error(`\n${failed} construct(s) mis-scoped. A construct must carry a scope, and must not be`);
-    console.error('claimed by the attribute rule unless it is an attribute block.');
+    console.error(`\n${failed} construct(s) mis-scoped. A construct must carry a scope, must not be`);
+    console.error('claimed by the attribute rule unless it is an attribute block, and a shape that only');
+    console.error('resembles a construct must not carry its scope.');
     process.exit(1);
 }

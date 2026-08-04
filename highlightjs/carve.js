@@ -384,9 +384,14 @@
     };
 
     // Numbered list items: decimal (1.), alpha (a. A.), roman (i. I.)
+    // MARKER REQUIRES CONTENT, AND SO DOES THE ATTRIBUTE FORM: `1.{#x}`
+    // with nothing after the block is a paragraph. The glued-block branch
+    // spells the block out in full rather than skipping it - a quoted value
+    // may contain `}` and may escape its own quote, so a `\{[^}]*\}` run
+    // stops in the wrong place and `{title="a}b"} x` is a valid item (#85).
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?= |\{)(?![ \t]*$)/,
+        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
