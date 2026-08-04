@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  *[HTML]: Hyper Text"
+  },
+  {
+    "scope": null,
+    "text": "\n\nThe HTML spec.\n"
+  }
+]
