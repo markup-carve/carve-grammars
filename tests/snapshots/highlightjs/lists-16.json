@@ -1,22 +1,14 @@
 [
   {
     "scope": null,
-    "text": "Liste:\n"
+    "text": "Die Frage ist x = 5\n"
   },
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "*"
   },
   {
     "scope": null,
-    "text": " eins\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " zwei\n"
+    "text": " 3 + 17 wahr.\n"
   }
 ]

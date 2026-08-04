@@ -1,7 +1,11 @@
 [
   {
+    "scope": "bullet",
+    "text": "- [ ]"
+  },
+  {
     "scope": null,
-    "text": "text\n"
+    "text": " outer\n"
   },
   {
     "scope": "bullet",
@@ -9,6 +13,6 @@
   },
   {
     "scope": null,
-    "text": " item\n"
+    "text": " inner\n"
   }
 ]

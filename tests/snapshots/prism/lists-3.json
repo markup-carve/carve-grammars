@@ -1,26 +1,6 @@
 [
   {
-    "type": "list",
-    "text": "1. "
-  },
-  {
     "type": "text",
-    "text": "first\n"
-  },
-  {
-    "type": "list",
-    "text": "2. "
-  },
-  {
-    "type": "text",
-    "text": "second\n"
-  },
-  {
-    "type": "list",
-    "text": "3. "
-  },
-  {
-    "type": "text",
-    "text": "third\n"
+    "text": ":: \n"
   }
 ]

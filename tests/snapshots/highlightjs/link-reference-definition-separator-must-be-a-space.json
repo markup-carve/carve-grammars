@@ -1,18 +1,10 @@
 [
   {
-    "scope": "symbol",
-    "text": "[a]:\t/url"
-  },
-  {
     "scope": null,
-    "text": "\n\n"
+    "text": "[a]:\t"
   },
   {
-    "scope": "link",
-    "text": "[a][]"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "emphasis",
+    "text": "/url\n\n[a][]\n"
   }
 ]

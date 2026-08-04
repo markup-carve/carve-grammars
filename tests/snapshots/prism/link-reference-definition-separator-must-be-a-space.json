@@ -1,15 +1,7 @@
 [
   {
-    "type": "reference-definition>constant",
-    "text": "[a]:"
-  },
-  {
-    "type": "reference-definition",
-    "text": "\t/url"
-  },
-  {
     "type": "text",
-    "text": "\n\n"
+    "text": "[a]:\t/url\n\n"
   },
   {
     "type": "url>punctuation",

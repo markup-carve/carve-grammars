@@ -1,30 +1,18 @@
 [
   {
-    "type": "text",
-    "text": "Intro\n\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": " Stay hungry"
+    "type": "list",
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "parent\n"
   },
   {
-    "type": "caption>punctuation",
-    "text": "^"
-  },
-  {
-    "type": "caption",
-    "text": " Steve Jobs"
+    "type": "list",
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "child\n"
   }
 ]

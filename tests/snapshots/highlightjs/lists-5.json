@@ -1,34 +1,34 @@
 [
   {
     "scope": "bullet",
-    "text": "1."
+    "text": "-"
   },
   {
     "scope": null,
-    "text": " setup\n"
+    "text": " fruit\n"
   },
   {
     "scope": "bullet",
-    "text": "   -"
+    "text": "  -"
   },
   {
     "scope": null,
-    "text": " clone\n"
+    "text": " apples\n"
   },
   {
     "scope": "bullet",
-    "text": "   -"
+    "text": "  -"
   },
   {
     "scope": null,
-    "text": " install\n"
+    "text": " oranges\n"
   },
   {
     "scope": "bullet",
-    "text": "2."
+    "text": "-"
   },
   {
     "scope": null,
-    "text": " build\n"
+    "text": " vegetables\n"
   }
 ]

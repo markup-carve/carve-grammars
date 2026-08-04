@@ -1,26 +1,30 @@
 [
   {
-    "type": "list",
-    "text": "1. "
+    "type": "text",
+    "text": "Intro\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " Stay hungry"
   },
   {
     "type": "text",
-    "text": "outer\n"
+    "text": "\n"
   },
   {
-    "type": "list",
-    "text": "   1. "
+    "type": "caption>punctuation",
+    "text": "^"
   },
   {
-    "type": "text",
-    "text": "inner\nlazy\n"
-  },
-  {
-    "type": "list",
-    "text": "   2. "
+    "type": "caption",
+    "text": " Steve Jobs"
   },
   {
     "type": "text",
-    "text": "sibling\n"
+    "text": "\n"
   }
 ]

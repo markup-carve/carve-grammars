@@ -1,34 +1,34 @@
 [
   {
     "type": "list",
-    "text": "1. "
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "setup\n"
+    "text": "fruit\n"
   },
   {
     "type": "list",
-    "text": "   - "
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "clone\n"
+    "text": "apples\n"
   },
   {
     "type": "list",
-    "text": "   - "
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "install\n"
+    "text": "oranges\n"
   },
   {
     "type": "list",
-    "text": "2. "
+    "text": "- "
   },
   {
     "type": "text",
-    "text": "build\n"
+    "text": "vegetables\n"
   }
 ]

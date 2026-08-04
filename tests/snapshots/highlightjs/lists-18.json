@@ -1,18 +1,14 @@
 [
   {
+    "scope": null,
+    "text": "Text hier\n\n"
+  },
+  {
     "scope": "bullet",
     "text": "-"
   },
   {
     "scope": null,
-    "text": " parent\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "  -"
-  },
-  {
-    "scope": null,
-    "text": " child\n"
+    "text": " nur eins\n"
   }
 ]

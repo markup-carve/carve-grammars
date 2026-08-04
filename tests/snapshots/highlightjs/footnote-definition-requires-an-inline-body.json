@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^a]:"
+    "text": "[^a]"
   },
   {
     "scope": null,
-    "text": "\n  First\n"
+    "text": ":\n  First\n"
   }
 ]

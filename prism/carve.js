@@ -261,7 +261,7 @@
             // strict about this, so the two engines now agree.
             // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
             // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
-            pattern: /^\^[ \t]+(?![ \t]*$).*$/m,
+            pattern: /^\^ +(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^\^/,
@@ -291,7 +291,7 @@
         'list': {
             // MARKER REQUIRES CONTENT: each branch ends with a line-end lookahead,
             // so `- `, `1. ` and `: ` with nothing after them stay prose.
-            pattern: /^[ \t]*(?:(?:[-*][ \t]+)*[-*][ \t]+(?:\[[ xX\-_>?]\][ \t]+)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?=[ \t]|\{)[ \t]*(?![ \t]*$)|:[ \t]+(?![ \t]*$))/m,
+            pattern: /^[ \t]*(?:(?:[-*] +)*[-*] +(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdmIVXLCDM]+)[.)]|\.)(?= |\{) *(?![ \t]*$)|: +(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
@@ -304,7 +304,7 @@
         // after exactly two colons keeps the two apart in any case.
         'definition-term': {
             // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-            pattern: /^[ \t]*::[ \t]+(?![ \t]*$).*$/m,
+            pattern: /^[ \t]*:: +(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^[ \t]*::/,
@@ -313,14 +313,14 @@
 
         // Reference link / abbreviation definitions
         'reference-definition': {
-            pattern: /^[ \t]*\[[^\]]+\]:[ \t]+\S+.*$/m,
+            pattern: /^[ \t]*\[[^\]]+\]: +\S+.*$/m,
             alias: 'url',
             inside: {
                 'constant': /^[ \t]*\[[^\]]+\]:/,
             },
         },
         'abbreviation-definition': {
-            pattern: /^[ \t]*\*\[[A-Z][A-Z0-9]*\]:[ \t]+.*$/m,
+            pattern: /^[ \t]*\*\[[A-Z][A-Z0-9]*\]: +.*$/m,
             inside: {
                 'punctuation': /^[ \t]*\*|\[|\]|:/,
                 'symbol': /[A-Z][A-Z0-9]*/,

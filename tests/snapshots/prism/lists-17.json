@@ -1,7 +1,7 @@
 [
   {
     "type": "text",
-    "text": "Text hier\n\n"
+    "text": "Liste:\n"
   },
   {
     "type": "list",
@@ -9,6 +9,14 @@
   },
   {
     "type": "text",
-    "text": "nur eins\n"
+    "text": "eins\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "zwei\n"
   }
 ]

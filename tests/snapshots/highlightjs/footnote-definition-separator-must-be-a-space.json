@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^a]:\tTabbed"
+    "text": "[^a]"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": ":\tTabbed\n"
   }
 ]

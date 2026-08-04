@@ -5,14 +5,30 @@
   },
   {
     "type": "text",
-    "text": "outer\n"
+    "text": "setup\n"
   },
   {
     "type": "list",
-    "text": "   1. "
+    "text": "   - "
   },
   {
     "type": "text",
-    "text": "inner\n"
+    "text": "clone\n"
+  },
+  {
+    "type": "list",
+    "text": "   - "
+  },
+  {
+    "type": "text",
+    "text": "install\n"
+  },
+  {
+    "type": "list",
+    "text": "2. "
+  },
+  {
+    "type": "text",
+    "text": "build\n"
   }
 ]

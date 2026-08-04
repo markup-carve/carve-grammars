@@ -12,15 +12,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition",
-    "text": "\tTabbed"
+    "type": "footnote",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ":\tTabbed\n"
   }
 ]

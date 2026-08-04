@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "see "
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " one"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " two"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

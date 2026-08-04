@@ -1,7 +1,7 @@
 [
   {
     "scope": null,
-    "text": "Text hier\n\n"
+    "text": "Liste:\n"
   },
   {
     "scope": "bullet",
@@ -9,6 +9,14 @@
   },
   {
     "scope": null,
-    "text": " nur eins\n"
+    "text": " eins\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " zwei\n"
   }
 ]
