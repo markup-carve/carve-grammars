@@ -34,10 +34,8 @@ const TIPTAP_COVERED = [
     '12-inline-code',
     '73-parenthesized-ordered-marker',
     '85-blockquote-lazy-continuation-stops-at-a-fenced-block',
-    '121-scheme-probe-strips-unicode-whitespace',
     '134-footnote-definition-requires-an-inline-body',
     '156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace',
-    '174-bare-dot-ordered-markers',
     '176-a-marker-separator-is-a-space-never-a-tab',
     '82-single-line-headings',
     '04-images',
@@ -81,6 +79,8 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
+    ['121-scheme-probe-strips-unicode-whitespace', 'reference links are not modeled: `[click][a]` plus its definition comes back as the inline `[click](javascript:alert(1))`, so the `rawRef` the pre-resolve AST records (PART 12 section 3a) is gone on reparse'],
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
     ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
