@@ -4,11 +4,27 @@
     "text": "a\n\n"
   },
   {
-    "type": "typography",
+    "type": "thematic-break",
     "text": "---"
   },
   {
     "type": "text",
-    "text": "\n\nb\n\n***\n\nc\n\n___\n"
+    "text": "\n\nb\n\n"
+  },
+  {
+    "type": "thematic-break",
+    "text": "***"
+  },
+  {
+    "type": "text",
+    "text": "\n\nc\n\n"
+  },
+  {
+    "type": "thematic-break",
+    "text": "___"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

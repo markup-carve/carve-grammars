@@ -1,6 +1,10 @@
 [
   {
+    "type": "thematic-break",
+    "text": " ***"
+  },
+  {
     "type": "text",
-    "text": " ***\n"
+    "text": "\n"
   }
 ]

@@ -5,6 +5,37 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **Prism scopes thematic breaks.** It had no rule for the construct at all, so
+  `***` and `___` rendered as prose and `---` was claimed by the smart
+  typography rule as an em dash - covered-looking output with nothing matching
+  the block. Four Prism snapshots change; three gain the break, and ` ***`
+  (indented, literal text at the top level) now colors as a break the way
+  TextMate and highlight.js already did, so the three grammars make the same
+  documented trade rather than two of three.
+
+### Changed
+- **Both grammar sweeps consume ONE construct inventory**
+  (`tests/lib/constructs.js`, 120 constructs). They used to carry two
+  hand-written case lists - 66 and 115 - that overlapped but neither derived
+  from the other, so a construct could be exercised in one and absent from the
+  other for as long as nobody noticed. That is how every block rule in Prism
+  and highlight.js stayed anchored at column zero while the sweep that carried
+  the in-list-item cases reported them green.
+
+  What differs per sweep is now the assertion, not the case list: TextMate
+  asserts the payload carries the scope the entry NAMES, the engine sweep only
+  that the payload is scoped at all, since Prism and highlight.js use different
+  vocabularies. Adding a construct forces the decision for all three at once,
+  and an absence has to be written down as a `skip` with a reason that prints
+  on every run - the covered-or-skip discipline `tests/lib/coverage.js` already
+  applies per corpus category.
+
+  Merging the lists exposed the Prism gap above, and four constructs that had
+  no TextMate selector (a quoted attribute value, an escaped quote in one, an
+  inline extension carrying attributes, and the numbered caption). One skip is
+  recorded: highlight.js does not highlight front matter, because it has no
+  document-start anchor and a `^---$` begin would swallow from a mid-document
+  thematic break to the next one.
 - **An unclosed inline delimiter no longer colors the rest of the document in
   highlight.js.** Every inline mark is a `begin`/`end` mode, and such a mode
   opens as soon as `begin` matches whether or not the closer ever arrives - so

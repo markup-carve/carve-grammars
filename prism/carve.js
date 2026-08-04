@@ -187,6 +187,19 @@
             },
         },
 
+        // Thematic break: a whole line of three or more `-`, `*` or `_`.
+        // Prism had no rule at all, so `***` and `___` rendered as prose and
+        // `---` was claimed by the smart-typography rule as an em dash - the
+        // construct looked covered while nothing was matching the block. It
+        // sits AFTER `code-block`, which is greedy, so a `---` line inside a
+        // fence stays code; and after `front-matter`, whose greedy pattern owns
+        // the document's opening delimiters. A table delimiter row (`|---|`)
+        // is not a whole-line run, so the anchors exclude it.
+        'thematic-break': {
+            pattern: /^[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/m,
+            alias: 'punctuation',
+        },
+
         // ATX headings # .. ######
         'title': {
             // `.+` matches a run of spaces, so `#<space><space>` was a heading.
