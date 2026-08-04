@@ -9,6 +9,10 @@
   },
   {
     "scope": "comment",
-    "text": " %%% n\n x\n %%%\n tail\n"
+    "text": " %%% n\n x\n %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n tail\n"
   }
 ]

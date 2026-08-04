@@ -469,7 +469,12 @@
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
-        end: /^(%{3,})[^\n]*$/,
+        // The closer may be INDENTED, like the opener above: leading
+        // whitespace is not part of the delimiter, only the `%` run is (PART 9
+        // §24 C3 - a comment is recognized at any column, carve#624/#634).
+        // Anchored at column 0 the fence never closed for an indented closer,
+        // so the comment swallowed the rest of the document.
+        end: /^[ \t]*(%{3,})[^\n]*$/,
         'on:end': (m, resp) => {
             if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
         },
