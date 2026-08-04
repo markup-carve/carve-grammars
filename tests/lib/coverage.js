@@ -99,6 +99,8 @@ const TIPTAP_SKIP = new Map([
     ['187-a-floating-attribute-stops-at-the-item-boundary', 'the floating attribute is dropped on serialize: `- a` / blank / `  {.c}` / `- b` comes back as `- a` / `- b`, so the case cannot be exercised - the attribute the category is about is gone before the boundary matters'],
     ['188-a-comment-under-a-nested-item-does-not-close-it', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['189-a-definition-inside-a-comment-registers-nothing', 'same `comment` gap - the definition is INSIDE the comment, so the converter meets the comment node first and throws before the opacity the category is about can be exercised'],
+    ['190-a-blank-after-a-comment-still-ends-the-item', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
+    ['191-a-comment-fence-under-a-nested-item-does-not-close-it-either', 'same `comment` gap, fence form - the converter meets the comment node before the nesting question the category is about'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],
