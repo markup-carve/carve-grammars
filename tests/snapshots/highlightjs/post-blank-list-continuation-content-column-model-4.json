@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " one\n > q\n"
+    "text": " one\n"
+  },
+  {
+    "scope": "quote",
+    "text": " > q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

@@ -1,6 +1,18 @@
 [
   {
+    "scope": "keyword",
+    "text": " ::: note"
+  },
+  {
     "scope": null,
-    "text": " ::: note\n Body.\n :::\n"
+    "text": "\n Body.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": " :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

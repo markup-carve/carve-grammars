@@ -98,6 +98,11 @@ const CASES = [
   // Blocks
   ['heading', '# Title', 'heading', 'Title'],
   ['thematic break', 'a\n\n---\n\nb', 'separator', '---'],
+  // The asterisk and underscore spellings are the same block (PART 9), but the
+  // rule listed only the hyphen, so `***` colored as prose while `---` did not.
+  ['thematic break asterisks', 'a\n\n***\n\nb', 'separator', '***'],
+  ['thematic break underscores', 'a\n\n___\n\nb', 'separator', '___'],
+  ['thematic break in a list item', '- item\n\n  ***', 'separator', '***'],
   ['ul marker', '- item', 'punctuation.definition.list', '-'],
   ['ol marker', '1. item', 'punctuation.definition.list', '1.'],
   ['task unchecked', '- [ ] todo', 'checkbox', '['],

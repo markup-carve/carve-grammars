@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": " para text\n  :::\n"
+    "text": " para text\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

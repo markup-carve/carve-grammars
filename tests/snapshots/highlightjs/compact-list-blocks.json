@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " item\n\n  > note\n"
+    "text": " item\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "bullet",

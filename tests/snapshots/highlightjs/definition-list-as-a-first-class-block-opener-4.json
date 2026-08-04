@@ -5,6 +5,22 @@
   },
   {
     "scope": null,
-    "text": " one\n\n  :: t\n  :  d\n"
+    "text": " one\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :  d"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

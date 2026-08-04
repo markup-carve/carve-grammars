@@ -157,6 +157,23 @@ const CASES = [
     ['table header', '|= H |= I |', '|=', false],
     ['admonition', '::: note\nBody\n:::', 'note', false],
     ['line comment', '%% comment line', 'comment line', false],
+
+    // The same blocks INSIDE a list item. Carve has no indented code block, so
+    // a block construct sits at its container's content column - two spaces in
+    // a list item is ordinary indentation. Every sample above starts at column
+    // zero, so a rule anchored to `^` with no allowance for leading whitespace
+    // passed this sweep while highlighting nothing inside any container. Six
+    // constructs were in that state: the heading and caption rules in both
+    // engines, and blockquote, admonition, table row and abbreviation in
+    // highlight.js. Measured against the TextMate sweep, which carries the
+    // in-list-item forms and did not go stale the same way.
+    ['heading in a list item', '- item\n\n  # Title', 'Title', false],
+    ['blockquote in a list item', '- item\n\n  > quoted', 'quoted', false],
+    ['caption in a list item', '- item\n\n  | a |\n  ^ Attribution', 'Attribution', false],
+    ['admonition in a list item', '- item\n\n  ::: note\n  body\n  :::', 'note', false],
+    ['table row in a list item', '- item\n\n  | a | b |', '|', false],
+    ['abbreviation in a list item', '- item\n\n  *[HTML]: HyperText', 'HTML', false],
+    ['fenced code in a list item', '- item\n\n  ```php\n  $x = 1;\n  ```', 'php', false],
 ];
 
 const ATTR_SCOPE = /attr/i;

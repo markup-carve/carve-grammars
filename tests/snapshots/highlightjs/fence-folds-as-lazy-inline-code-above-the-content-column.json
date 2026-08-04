@@ -5,14 +5,18 @@
   },
   {
     "scope": null,
-    "text": " one\n\n   "
+    "text": " one\n\n"
   },
   {
-    "scope": "code",
-    "text": "```\n   c\n   ```"
+    "scope": "keyword",
+    "text": "   ```\n   c"
   },
   {
     "scope": null,
     "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```\n"
   }
 ]

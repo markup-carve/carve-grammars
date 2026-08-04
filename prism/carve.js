@@ -175,7 +175,7 @@
 
         // Fenced code blocks: ``` lang ... ``` or ~~~ lang ... ~~~
         'code-block': {
-            pattern: /^(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^\1[ \t]*$/m,
+            pattern: /^[ \t]*(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
             greedy: true,
             inside: {
                 'punctuation': /^(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
@@ -191,7 +191,7 @@
         'title': {
             // `.+` matches a run of spaces, so `#<space><space>` was a heading.
             // MARKER REQUIRES CONTENT: carve-rs renders it `<p>#</p>`.
-            pattern: /^#{1,6}[ \t]+(?![ \t]*$).+$/m,
+            pattern: /^[ \t]*#{1,6}[ \t]+(?![ \t]*$).+$/m,
             alias: 'important',
             inside: Object.assign({
                 'punctuation': /^#{1,6}/,
@@ -261,7 +261,7 @@
             // strict about this, so the two engines now agree.
             // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
             // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
-            pattern: /^\^ +(?![ \t]*$).*$/m,
+            pattern: /^[ \t]*\^ +(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^\^/,

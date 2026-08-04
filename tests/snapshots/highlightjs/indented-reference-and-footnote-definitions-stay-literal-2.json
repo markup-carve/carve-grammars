@@ -9,14 +9,14 @@
   },
   {
     "scope": null,
-    "text": ".\n\n "
+    "text": ".\n\n"
   },
   {
     "scope": "symbol",
-    "text": "[^fn]"
+    "text": " [^fn]: body."
   },
   {
     "scope": null,
-    "text": ": body.\n"
+    "text": "\n"
   }
 ]

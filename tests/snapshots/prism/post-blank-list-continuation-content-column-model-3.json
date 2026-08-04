@@ -5,6 +5,14 @@
   },
   {
     "type": "text",
-    "text": "one\n\n   # h\n"
+    "text": "one\n\n"
+  },
+  {
+    "type": "title",
+    "text": "   # h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

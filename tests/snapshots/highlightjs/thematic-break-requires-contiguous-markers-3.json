@@ -1,14 +1,10 @@
 [
   {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "strong",
-    "text": "**"
+    "scope": "meta",
+    "text": " ***"
   },
   {
     "scope": null,
-    "text": "*\n"
+    "text": "\n"
   }
 ]

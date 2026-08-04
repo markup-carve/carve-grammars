@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " y\n  | x |\n"
+    "text": " y\n"
+  },
+  {
+    "scope": "string",
+    "text": "  | x |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]
