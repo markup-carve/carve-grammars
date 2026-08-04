@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "link",
+    "text": "[Example][ex]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[again][ex]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[ex]: https://example.com {.external}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

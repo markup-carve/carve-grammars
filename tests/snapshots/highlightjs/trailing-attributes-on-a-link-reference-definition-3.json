@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.a}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[ex]: /u {.b}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[E][ex]"
+  },
+  {
+    "scope": null,
+    "text": " and text\n"
+  }
+]
