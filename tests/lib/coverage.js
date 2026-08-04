@@ -85,6 +85,8 @@ const TIPTAP_SKIP = new Map([
     ['179-an-abbreviation-definition-is-recognized-only-at-document-level', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 177-two-abbreviation-definitions'],
     ['180-a-list-item-does-not-define-an-abbreviation-either', 'same `abbreviation-def` gap - the definition that does NOT define is still an `abbreviation-def` node in the tree, so the converter throws before the case can be exercised'],
     ['181-openers-past-the-nesting-cap-are-one-paragraph', 'past the cap the over-cap openers degrade to ONE paragraph whose text is the raw source lines, and the serializer rewrites fence widths per nesting level, so that paragraph comes back holding different text (`:::: note` vs `:::: note x`) even though the tree shape is identical'],
+    ['182-a-comment-is-recognized-at-any-column', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
+    ['183-a-definition-below-every-content-column-folds-as-text', 'the fold is lost on serialize: `- - a` + ` [^f]: x` is item TEXT because the line sits below every content column, but it comes back as `-   - a` + a blank + a flush-left `[^f]: x`, which re-parses as a real document-level footnote definition - the opposite of what the category pins'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],
