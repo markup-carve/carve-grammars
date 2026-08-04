@@ -156,6 +156,28 @@ if (realPrism) {
         );
     });
 
+    // A comment is recognized at ANY column, fence form included (PART 9
+    // §24 C3, carve#624/#634 and corpus 186), so an INDENTED opener is closed
+    // by an equally indented closer. Generated across the columns rather than
+    // written once: the snapshot for corpus 186 pinned highlight.js swallowing
+    // the rest of the document here, because a snapshot pins whatever the
+    // grammar does - only an assertion about CLOSING can fail.
+    for (const indent of ['', ' ', '  ', '\t']) {
+        const label = indent === '' ? 'column 0' : `indent ${JSON.stringify(indent)}`;
+        ok(`prism: a comment fence at ${label} closes and does not swallow the next block`, () => {
+            const src = `${indent}%%%\n${indent}x\n${indent}%%%\nafter\n`;
+            const tokens = realPrism.tokenize(src, carvePrism);
+            const comments = tokens
+                .filter((t) => typeof t !== 'string' && t.type === 'comment')
+                .map((t) => String(t.content));
+            assert.ok(comments.length > 0, `expected a comment token for ${JSON.stringify(src)}`);
+            assert.ok(
+                !comments.some((c) => c.includes('after')),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
     ok('prism: the closer matches the opener width exactly', () => {
         // `%%%%` does not close `%%%` (that is what lets a longer fence nest a
         // shorter one), so neither fence line opens a block here: each degrades
@@ -325,6 +347,25 @@ if (realHljs) {
         assert.ok(value.length > 0, 'expected highlighted output');
         assert.ok(value.includes('hljs-'), 'expected hljs token classes');
     });
+
+    for (const indent of ['', ' ', '  ', '\t']) {
+        const label = indent === '' ? 'column 0' : `indent ${JSON.stringify(indent)}`;
+        ok(`hljs: a comment fence at ${label} closes and does not swallow the next block`, () => {
+            // The opener was already column-free here; the CLOSER was anchored
+            // at column 0, so an indented fence never closed and the comment
+            // ran to the end of the document (carve-grammars, corpus 186).
+            const src = `${indent}%%%\n${indent}x\n${indent}%%%\nafter\n`;
+            const { value } = realHljs.highlight(src, { language: 'carve' });
+            const comments = [...value.matchAll(/<span class="hljs-comment">([\s\S]*?)<\/span>/g)].map(
+                (m) => m[1],
+            );
+            assert.ok(comments.length > 0, `expected a comment span for ${JSON.stringify(src)}`);
+            assert.ok(
+                !comments.some((c) => c.includes('after')),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
 
     ok('hljs: a mid-document --- does not swallow the rest of the document', () => {
         // The `---` is a horizontal rule (meta), but it must NOT start a
