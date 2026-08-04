@@ -1,10 +1,6 @@
 [
   {
     "scope": null,
-    "text": "a=\"b\"\n:\"q\"\n-\"q\"\n"
-  },
-  {
-    "scope": "emphasis",
-    "text": "/\"q\"\n(\"q\")\n"
+    "text": "a=\"b\"\n:\"q\"\n-\"q\"\n/\"q\"\n(\"q\")\n"
   }
 ]

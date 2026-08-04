@@ -5,10 +5,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nJump to <"
+    "text": "\n\nJump to </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#getting-started>.\n"
+    "scope": "symbol",
+    "text": "#getting-started"
+  },
+  {
+    "scope": null,
+    "text": ">.\n"
   }
 ]

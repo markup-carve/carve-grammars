@@ -1,10 +1,6 @@
 [
   {
     "scope": null,
-    "text": "a:b:c and 10:30: meeting, :"
-  },
-  {
-    "scope": "emphasis",
-    "text": "_x: too.\n"
+    "text": "a:b:c and 10:30: meeting, :_x: too.\n"
   }
 ]

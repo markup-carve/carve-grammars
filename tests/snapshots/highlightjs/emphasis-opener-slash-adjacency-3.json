@@ -1,6 +1,14 @@
 [
   {
+    "scope": null,
+    "text": "/a/"
+  },
+  {
     "scope": "emphasis",
-    "text": "/a/_b_\n"
+    "text": "_b_"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

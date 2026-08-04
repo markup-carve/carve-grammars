@@ -5,6 +5,34 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An unclosed inline delimiter no longer colors the rest of the document in
+  highlight.js.** Every inline mark is a `begin`/`end` mode, and such a mode
+  opens as soon as `begin` matches whether or not the closer ever arrives - so
+  a lone `_` scoped every remaining character of the file as underline. The
+  shapes that hit it are not typos: in `:_[x]` the `_` belongs to an inline
+  extension and in `:_x:` to a symbol, and neither is a delimiter at all.
+  Thirteen modes were written that way (emphasis, underline, strong,
+  strikethrough, highlight, insert, delete, subscript, superscript and the four
+  forced-intraword marks); each now requires its closer to exist before the
+  paragraph ends. A mark may still span lines the way the engine does
+  (`/multi`, newline, `line/` is one `<em>`) but cannot reach into the next
+  block, and the closer is declared once so the guard and the mode's own `end`
+  cannot drift apart.
+
+  Nineteen highlight.js snapshots change. Most drop a false span outright; in
+  seven the runaway had been swallowing a construct that now scopes correctly
+  (`</#anchor>` cross-references, `[a][]` reference links). One,
+  `129-emphasis-opener-slash-adjacency-3` (`/a/_b_`), trades the runaway for a
+  narrower pre-existing over-match: the emphasis `end` guard `\/(?![\w/])`
+  refuses to close before `_`, so `/a/` now scopes as nothing and `_b_` as
+  underline where the engine renders `<em>a</em>_b_`. That end guard is a
+  separate defect, not introduced here.
+
+  Prism was never affected - its patterns require the closer in one match - so
+  the new `tests/unclosed-delimiter-test.js` runs both engines and uses Prism
+  as the control. It also asserts the other direction, that a mark WITH a
+  closer still opens, so the fix cannot degrade into never opening the mode.
+  Sixteen of its cases fail against the unfixed grammar.
 - **Block constructs indented inside a list item now scope in TextMate.** A
   heading, block quote, caption, admonition, table row, table continuation or
   abbreviation definition at a list item's content column went uncolored,

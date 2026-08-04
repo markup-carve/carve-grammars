@@ -19,58 +19,7 @@
  * Deliberately NOT asserting exact scope names: Prism and highlight.js use
  * different vocabularies, and pinning those is what the snapshots are for.
  */
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-
-// ----- Prism -----
-const Prism = require('prismjs');
-globalThis.Prism = Prism;
-await import('../prism/carve.js');
-delete globalThis.Prism;
-const carveGrammar = Prism.languages.carve;
-
-function prismLeaves(tokens, parentPath = '') {
-    const out = [];
-    for (const tok of tokens) {
-        if (typeof tok === 'string') {
-            out.push({ scope: parentPath || null, text: tok });
-            continue;
-        }
-        const path = parentPath ? `${parentPath}>${tok.type}` : tok.type;
-        if (Array.isArray(tok.content)) {
-            out.push(...prismLeaves(tok.content, path));
-        } else if (tok.content && typeof tok.content === 'object') {
-            out.push(...prismLeaves([tok.content], path));
-        } else {
-            out.push({ scope: path, text: String(tok.content) });
-        }
-    }
-    return out;
-}
-const prismTokens = (src) => prismLeaves(Prism.tokenize(src, carveGrammar));
-
-// ----- highlight.js -----
-const hljs = require('highlight.js');
-const hljsCarve = (await import('../highlightjs/carve.mjs')).default;
-hljs.registerLanguage('carve', hljsCarve);
-
-const ENTITIES = { '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&#x27;': "'", '&#39;': "'" };
-const unescapeHtml = (s) => s.replace(/&(?:lt|gt|amp|quot|#x27|#39);/g, (m) => ENTITIES[m]);
-
-function hljsTokens(source) {
-    const { value } = hljs.highlight(source, { language: 'carve' });
-    const out = [];
-    const stack = [];
-    const re = /<span class="([^"]*)">|<\/span>|([^<]+)/g;
-    let m;
-    while ((m = re.exec(value)) !== null) {
-        if (m[1] !== undefined) stack.push(m[1].replace(/^hljs-/, ''));
-        else if (m[2] !== undefined) out.push({ scope: stack.at(-1) ?? null, text: unescapeHtml(m[2]) });
-        else stack.pop();
-    }
-    return out;
-}
+import { prismTokens, hljsTokens } from './lib/engines.js';
 
 // [label, sample, payload-that-must-be-scoped, isAttributeConstruct]
 const CASES = [

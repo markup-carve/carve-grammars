@@ -29,10 +29,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#lst-greet>.\n"
+    "scope": "symbol",
+    "text": "#lst-greet"
+  },
+  {
+    "scope": null,
+    "text": ">.\n"
   }
 ]

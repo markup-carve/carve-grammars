@@ -29,10 +29,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#tbl-r>.\n"
+    "scope": "symbol",
+    "text": "#tbl-r"
+  },
+  {
+    "scope": null,
+    "text": ">.\n"
   }
 ]

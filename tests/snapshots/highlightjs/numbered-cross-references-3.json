@@ -21,10 +21,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee </"
   },
   {
-    "scope": "emphasis",
-    "text": "/#fig-sun> for the colors.\n"
+    "scope": "symbol",
+    "text": "#fig-sun"
+  },
+  {
+    "scope": null,
+    "text": "> for the colors.\n"
   }
 ]
