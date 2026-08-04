@@ -1,0 +1,34 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[bold]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /x"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "*bold*"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

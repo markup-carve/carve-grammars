@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[bold]: /x"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[*bold*][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
