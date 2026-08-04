@@ -101,6 +101,7 @@ const TIPTAP_SKIP = new Map([
     ['189-a-definition-inside-a-comment-registers-nothing', 'same `comment` gap - the definition is INSIDE the comment, so the converter meets the comment node first and throws before the opacity the category is about can be exercised'],
     ['190-a-blank-after-a-comment-still-ends-the-item', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['191-a-comment-fence-under-a-nested-item-does-not-close-it-either', 'same `comment` gap, fence form - the converter meets the comment node before the nesting question the category is about'],
+    ['192-a-collapsed-reference-is-matched-by-the-label-the-author-wrote', 'the reference-link gap (#101): `[*bold*]: /x` plus `see [*bold*][]` comes back as the inline `see [*bold*](/x)`. The second example is the worse half - its label does NOT match, so the collapsed reference is unresolved, and it still serializes as `see [*bold*]()` with an EMPTY destination rather than staying literal'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],
