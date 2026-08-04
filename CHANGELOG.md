@@ -33,6 +33,17 @@ All notable changes to `carve-grammars` are documented here.
   as the control. It also asserts the other direction, that a mark WITH a
   closer still opens, so the fix cannot degrade into never opening the mode.
   Sixteen of its cases fail against the unfixed grammar.
+- **The engine dependency pins a revision.** `@markup-carve/carve` was declared
+  as `github:markup-carve/carve-js` with no ref, so npm resolved it to whatever
+  the default branch held at install time - `npm update`, a lockfile
+  regeneration or any consumer resolving without the lock took a different
+  engine, and nothing recorded which one the grammars were verified against.
+  The lockfile already pinned `857e45f`; the declared dependency now says so
+  too. A scheduled `Engine drift` job reports the lag and fails if the pin
+  stops being a real commit on carve-js main or drifts from the lockfile, the
+  same shape as the existing `Spec drift` job. This records the current pin
+  rather than moving it: the engine is 77 commits behind main, and bumping it
+  is its own reviewed change.
 - **Block constructs indented inside a list item now scope in TextMate.** A
   heading, block quote, caption, admonition, table row, table continuation or
   abbreviation definition at a list item's content column went uncolored,
