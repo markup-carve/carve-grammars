@@ -1,18 +1,18 @@
 [
   {
     "type": "list",
-    "text": "- "
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "apples\n\n"
+    "text": "a\n"
   },
   {
     "type": "list",
-    "text": "- "
+    "text": "  - "
   },
   {
     "type": "text",
-    "text": "oranges\n"
+    "text": "b\n"
   }
 ]

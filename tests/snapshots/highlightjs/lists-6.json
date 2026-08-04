@@ -5,14 +5,30 @@
   },
   {
     "scope": null,
-    "text": " outer\n"
+    "text": " setup\n"
   },
   {
     "scope": "bullet",
-    "text": "   1."
+    "text": "   -"
   },
   {
     "scope": null,
-    "text": " inner\n"
+    "text": " clone\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " install\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "2."
+  },
+  {
+    "scope": null,
+    "text": " build\n"
   }
 ]

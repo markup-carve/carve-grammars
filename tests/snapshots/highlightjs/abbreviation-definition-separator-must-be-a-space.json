@@ -1,10 +1,6 @@
 [
   {
-    "scope": "symbol",
-    "text": "*[HTML]:\tHyper"
-  },
-  {
     "scope": null,
-    "text": "\n\nThe HTML\n"
+    "text": "*[HTML]:\tHyper\n\nThe HTML\n"
   }
 ]

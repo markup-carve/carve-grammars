@@ -1,26 +1,22 @@
 [
   {
-    "scope": "bullet",
-    "text": "1."
+    "scope": null,
+    "text": "Intro\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> Stay hungry"
   },
   {
     "scope": null,
-    "text": " outer\n"
+    "text": "\n"
   },
   {
-    "scope": "bullet",
-    "text": "   1."
-  },
-  {
-    "scope": null,
-    "text": " inner\nlazy\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "   2."
+    "scope": "title",
+    "text": "^ Steve Jobs"
   },
   {
     "scope": null,
-    "text": " sibling\n"
+    "text": "\n"
   }
 ]

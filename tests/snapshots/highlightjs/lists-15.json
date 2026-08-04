@@ -1,14 +1,18 @@
 [
   {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
     "scope": null,
-    "text": "Die Frage ist x = 5\n"
+    "text": " apples\n\n"
   },
   {
     "scope": "bullet",
-    "text": "*"
+    "text": "-"
   },
   {
     "scope": null,
-    "text": " 3 + 17 wahr.\n"
+    "text": " oranges\n"
   }
 ]

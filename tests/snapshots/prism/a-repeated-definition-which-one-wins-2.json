@@ -1,0 +1,58 @@
+[
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n\nA here.\n"
+  }
+]

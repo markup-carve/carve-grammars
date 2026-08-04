@@ -30,6 +30,7 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    '176-a-marker-separator-is-a-space-never-a-tab',
     '82-single-line-headings',
     '04-images',
     '06-task-lists',
@@ -78,6 +79,9 @@ const TIPTAP_SKIP = new Map([
     ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
     ['70-blocks-that-render-to-nothing', 'same `comment` gap, plus `abbreviation-def`, which the converter also does not model'],
     ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
+    ['175-a-repeated-definition-which-one-wins', 'footnote definitions are dropped on serialize (`see [^f].` + two `[^f]:` bodies comes back as `see [^f].` alone), and one file also hits the `abbreviation-def` gap'],
+    ['177-two-abbreviation-definitions', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 70-blocks-that-render-to-nothing'],
+    ['178-a-flush-left-line-needs-an-open-paragraph-to-fold-into', 'an empty block quote in a list item is not reconstructed and the paragraph after it folds onto the marker line, so `. >` + `X` comes back as `. > X`'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],

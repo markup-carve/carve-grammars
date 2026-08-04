@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "see "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]: one"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]: two"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

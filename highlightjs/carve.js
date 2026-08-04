@@ -71,7 +71,7 @@
     // Headings: # to ######
     const HEADING = {
         className: 'section',
-        begin: /^#{1,6}[ \t](?![ \t]*$)/,
+        begin: /^#{1,6} (?![ \t]*$)/,
         end: /$/,
         relevance: 10,
     };
@@ -257,7 +257,7 @@
     // Reference definitions: [ref]: url
     const REFERENCE_DEF = {
         className: 'symbol',
-        begin: /^\[[^\]^\]]+\]:/,
+        begin: /^\[[^\]^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -283,7 +283,7 @@
     // first, so the two do not compete.
     const DEFINITION_TERM_MARKER = {
         className: 'title',
-        begin: /^::[ \t](?![ \t]*$)/,
+        begin: /^:: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };
@@ -328,7 +328,7 @@
     // Footnote definitions: [^note]: content
     const FOOTNOTE_DEF = {
         className: 'symbol',
-        begin: /^\[\^[^\]]+\]:/,
+        begin: /^\[\^[^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -336,7 +336,7 @@
     // Abbreviation definitions: *[ABBR]: text
     const ABBREVIATION_DEF = {
         className: 'symbol',
-        begin: /^\*\[[^\]]+\]:/,
+        begin: /^\*\[[^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -365,14 +365,14 @@
     const LIST_BULLET = {
         className: 'bullet',
         // A marker line may carry several markers (`- - A`, corpus 103).
-        begin: /^[ \t]*(?:[-*][ \t]+)*[-*](?=[ \t])(?![ \t]*$)/,
+        begin: /^[ \t]*(?:[-*] +)*[-*](?= )(?![ \t]*$)/,
         relevance: 0,
     };
 
     // Numbered list items: decimal (1.), alpha (a. A.), roman (i. I.)
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?=[ \t]|\{)(?![ \t]*$)/,
+        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?= |\{)(?![ \t]*$)/,
         relevance: 0,
     };
 
@@ -382,7 +382,7 @@
     // markers, and corpus 06-task-lists-2 uses all four of the others.
     const TASK_LIST = {
         className: 'bullet',
-        begin: /^[ \t]*[-*][ \t]\[[ xX\-_>?]\](?=[ \t])(?![ \t]*$)/,
+        begin: /^[ \t]*[-*] \[[ xX\-_>?]\](?= )(?![ \t]*$)/,
         relevance: 5,
     };
 

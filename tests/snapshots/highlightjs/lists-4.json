@@ -1,34 +1,26 @@
 [
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "1."
   },
   {
     "scope": null,
-    "text": " fruit\n"
+    "text": " first\n"
   },
   {
     "scope": "bullet",
-    "text": "  -"
+    "text": "2."
   },
   {
     "scope": null,
-    "text": " apples\n"
+    "text": " second\n"
   },
   {
     "scope": "bullet",
-    "text": "  -"
+    "text": "3."
   },
   {
     "scope": null,
-    "text": " oranges\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " vegetables\n"
+    "text": " third\n"
   }
 ]

@@ -1,38 +1,6 @@
 [
   {
-    "type": "abbreviation-definition>punctuation",
-    "text": "*"
-  },
-  {
-    "type": "abbreviation-definition>punctuation",
-    "text": "["
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "HTML"
-  },
-  {
-    "type": "abbreviation-definition>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "abbreviation-definition>punctuation",
-    "text": ":"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "\t"
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "H"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "yper"
-  },
-  {
     "type": "text",
-    "text": "\n\nThe HTML\n"
+    "text": "*[HTML]:\tHyper\n\nThe HTML\n"
   }
 ]
