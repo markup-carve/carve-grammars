@@ -1,19 +1,19 @@
 [
   {
-    "scope": "keyword",
-    "text": ":::"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
     "scope": "symbol",
     "text": "*[HTML]: HyperText Markup Language"
   },
   {
     "scope": null,
-    "text": "\n\nbody\n"
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nbody\n"
   },
   {
     "scope": "keyword",
