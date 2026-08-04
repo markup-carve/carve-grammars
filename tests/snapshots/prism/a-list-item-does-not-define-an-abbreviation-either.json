@@ -1,5 +1,9 @@
 [
   {
+    "type": "list",
+    "text": "- "
+  },
+  {
     "type": "abbreviation-definition>punctuation",
     "text": "*"
   },
@@ -29,7 +33,7 @@
   },
   {
     "type": "abbreviation-definition",
-    "text": "yper"
+    "text": "yper "
   },
   {
     "type": "abbreviation-definition>symbol",
@@ -37,42 +41,10 @@
   },
   {
     "type": "abbreviation-definition",
-    "text": "ext "
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "M"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "arkup "
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "L"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "anguage"
+    "text": "ext"
   },
   {
     "type": "text",
-    "text": "\n\n"
-  },
-  {
-    "type": "div>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\nbody\n"
-  },
-  {
-    "type": "div>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "\n\nThe HTML spec.\n"
   }
 ]
