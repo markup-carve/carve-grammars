@@ -39,6 +39,11 @@ function ok(name, fn) {
  * implementation needs to represent source faithfully.
  */
 const IMPLEMENTATION_TYPES = new Set([
+  // docs/profiles.md names this set explicitly: a serialized AST carries type
+  // names the profile vocabulary does not list, because denying them would mean
+  // nothing. `abbreviation_def` renders nothing at all, so it belongs here
+  // rather than in AHEAD_OF_PIN - no spec bump will ever promote it.
+  'abbreviation_def',
   'document',
   'frontmatter',
   'literal_inline',
