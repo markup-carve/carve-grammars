@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "comment",
+    "text": " %%% n\n x\n %%%\n tail\n"
+  }
+]
