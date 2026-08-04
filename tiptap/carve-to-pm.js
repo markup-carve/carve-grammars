@@ -311,10 +311,16 @@ function convertInlineNode(node, marks, ctx) {
 
         case 'soft-break':
         case 'soft_break':
-            // The serializer has no soft-break node; carve treats a soft break as
-            // whitespace between inline runs, so emit a space text node. (Marks
-            // never span a soft break in practice.)
-            return [{ type: 'text', text: ' ' }];
+            // A NEWLINE, not a space. A soft break is a line break the author
+            // wrote, and collapsing it to a space joined a two-line paragraph
+            // into one - the serialized document no longer reparsed to the
+            // same AST (carve-grammars#102).
+            //
+            // Writing a newline is safe by construction: a line that would OPEN
+            // a block interrupts the paragraph at parse time (PART 9 §10 I1),
+            // so a soft break is only ever followed by text that opens nothing.
+            // (Marks never span a soft break in practice.)
+            return [{ type: 'text', text: '\n' }];
 
         case 'hard-break':
         case 'hard_break':
