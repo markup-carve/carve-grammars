@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[x][r]"
+  },
+  {
+    "scope": null,
+    "text": " here.\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "    > [r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> - a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   [r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[t][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
