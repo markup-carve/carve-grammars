@@ -585,4 +585,45 @@ check('insert and delete write their braced forms',
     doc(para(text('a', 'carveInsert'), text('b', 'carveDelete'))),
     '{+a+}{-b-}');
 
+// The engines publish U+E000 for a no-break space they RESOLVED from `\ `, and
+// `carve fmt` writes it back as that escape (markup-carve/carve#721). Asserted on the
+// SOURCE, because the AST comparison cannot see this: `\ ` parses back to the
+// same sentinel, so a serializer that emitted the raw codepoint round-tripped
+// cleanly while writing a private-use character into the document.
+check('a resolved no-break space is written as the escape, not the sentinel',
+    doc(para(text('a\uE000b'))),
+    'a\\ b');
+
+check('a no-break space the author typed stays itself',
+    doc(para(text('a\u00A0b'))),
+    'a\u00A0b');
+
+// A trailing backslash at the END of a block is a hard break, so the escape has
+// no spelling in that one position - a real no-break space goes out instead.
+check('a resolved no-break space at the end of a block becomes a real one',
+    doc(para(text('a\uE000'))),
+    'a\u00A0');
+
+// Anywhere else the escape is what the engines parse back, including where the
+// next thing is a space or a sibling span.
+check('a resolved no-break space before a space keeps the escape',
+    doc(para(text('a\uE000 b'))),
+    'a\\  b');
+
+// Inside a MARKED run the mark's closing delimiter follows, and a resolved space
+// before it kills the span - so that position takes a real no-break space even
+// though a sibling follows.
+check('a resolved no-break space at the end of a bold run keeps the span',
+    doc(para(text('a\uE000', 'bold'))),
+    '*a\u00A0*');
+
+check('a resolved no-break space before a sibling span keeps the escape',
+    doc(para(text('a\uE000'), text('b', 'bold'))),
+    'a\\ *b*');
+
+// `String.prototype.trim` eats U+00A0. It is content, not layout.
+check('a no-break space at either edge survives the final trim',
+    doc(para(text('\u00A0a\u00A0'))),
+    '\u00A0a\u00A0');
+
 console.log(`\n${passed} passed`);
