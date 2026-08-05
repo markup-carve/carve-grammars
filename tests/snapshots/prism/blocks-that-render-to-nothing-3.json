@@ -24,36 +24,8 @@
     "text": " "
   },
   {
-    "type": "abbreviation-definition>symbol",
-    "text": "H"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "yper"
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "T"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "ext "
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "M"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "arkup "
-  },
-  {
-    "type": "abbreviation-definition>symbol",
-    "text": "L"
-  },
-  {
-    "type": "abbreviation-definition",
-    "text": "anguage"
+    "type": "abbreviation-definition>string",
+    "text": "HyperText Markup Language"
   },
   {
     "type": "text",
