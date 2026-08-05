@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "!"
+  },
+  {
+    "scope": "link",
+    "text": "[moon][]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[moon]: /moon.png \"Title\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

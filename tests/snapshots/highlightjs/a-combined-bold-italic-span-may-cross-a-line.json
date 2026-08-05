@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/*multi\nline*/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

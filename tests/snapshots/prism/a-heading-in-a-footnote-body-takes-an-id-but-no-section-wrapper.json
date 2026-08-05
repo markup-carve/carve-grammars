@@ -1,0 +1,30 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title",
+    "text": "  # H"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  after\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

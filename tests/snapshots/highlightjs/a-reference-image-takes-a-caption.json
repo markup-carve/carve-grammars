@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "!"
+  },
+  {
+    "scope": "link",
+    "text": "[a][ok]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ cap"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[ok]: /p.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "See "
+  },
+  {
+    "scope": "link",
+    "text": "[text][m]"
+  },
+  {
+    "scope": null,
+    "text": " and !"
+  },
+  {
+    "scope": "link",
+    "text": "[moon][m]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[m]: /moon.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

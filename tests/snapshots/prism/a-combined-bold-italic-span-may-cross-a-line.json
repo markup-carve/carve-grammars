@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold-italic",
+    "text": "/*multi\nline*/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

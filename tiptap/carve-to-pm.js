@@ -64,10 +64,25 @@ export function astToProseMirror(ast, options = {}) {
         }
         unsupported('frontmatter', ast, ctx);
     }
-    return {
-        type: 'doc',
-        content: convertBlocks(ast.children || [], ctx),
-    };
+    const content = convertBlocks(ast.children || [], ctx);
+    // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
+    // walk of the body alone never sees them. The serializer has always had a
+    // `carveFootnoteDefinition` case and `CarveKit` has always registered the
+    // node - nothing produced one, so a note's body was dropped by every round
+    // trip and the definition vanished from the output (a declared node type
+    // with no producer).
+    //
+    // They are appended after the body: a definition may be written anywhere and
+    // renders nothing where it sits, so position is not part of what the round
+    // trip has to preserve - the definition existing is.
+    for (const [label, blocks] of Object.entries(ast.footnoteDefs ?? {})) {
+        content.push({
+            type: 'carveFootnoteDefinition',
+            attrs: { label },
+            content: convertBlocks(blocks || [], ctx),
+        });
+    }
+    return { type: 'doc', content };
 }
 
 export const carveToPm = astToProseMirror;
@@ -332,6 +347,13 @@ function convertInlineNode(node, marks, ctx) {
         case 'image': {
             const attrs = { alt: node.alt || '', src: node.src || '' };
             if (node.title) attrs.title = node.title;
+            // An image written as a REFERENCE keeps its label, exactly as a
+            // link does (PART 12 section 3a). carve-grammars#101 fixed this for
+            // links and left images behind, so `![moon][m]` came back as
+            // `![moon](/moon.png)` - the reference form gone and the definition
+            // with it.
+            if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
+            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
             return [{ type: 'image', attrs }];
         }
 

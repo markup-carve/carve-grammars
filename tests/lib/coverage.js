@@ -30,6 +30,27 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Promoted by producing `carveFootnoteDefinition` in this change: the
+    // serializer could always write one; nothing had ever made one.
+    '120-footnotes-placement',
+    '202-a-definition-on-a-footnote-body-s-continuation-line-is-collected',
+    '212-a-flush-left-line-after-a-footnote-definition-belongs-to-the-document',
+    // Promoted by the unresolved-reference fix in this change: with no phantom
+    // definition invented, an unresolved reference survives the round trip.
+    '192-a-collapsed-reference-is-matched-by-the-label-the-author-wrote',
+    '18-unresolved-reference-link',
+    '76-reference-labels-are-case-sensitive',
+    '171-implicit-heading-references-with-no-definition',
+    // Reference IMAGES round-trip since the converter and serializer learned
+    // the image half of the reference form (carve-grammars#101 covered links).
+    '198-an-image-takes-a-reference-the-way-a-link-does',
+    '199-a-collapsed-image-reference-uses-its-alt-text-as-the-label',
+    '200-one-definition-serves-a-link-and-an-image',
+    '201-an-unresolved-image-reference-stays-literal',
+    '210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text',
+    '211-a-block-attribute-line-inside-a-quote-ends-the-paragraph-above-it',
+    '213-a-tag-inside-a-literal-brace-run-is-still-a-tag',
+    '217-a-heading-id-keeps-a-non-ascii-space',
     // round-trips since the serializer learned the reference form and writes the
     // definitions it points at (carve-grammars#101)
     '121-scheme-probe-strips-unicode-whitespace',
@@ -82,6 +103,19 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
+    ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
+    ['203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written', 'a footnote body holding blocks is not modeled; the body does not survive'],
+    ['204-a-heading-in-a-footnote-body-takes-an-id-but-no-section-wrapper', 'a footnote body holding blocks is not modeled; the body does not survive'],
+    ['205-an-attribute-line-inside-a-footnote-body-attaches-inside-it', 'a footnote body holding blocks is not modeled; the body does not survive'],
+    ['206-a-nested-list-in-a-footnote-body-stays-nested', 'a footnote body holding blocks is not modeled; the body does not survive'],
+    ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],
+    ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
+    ['209-an-unresolved-reference-image-takes-no-caption', 'the caption line is escaped to `\^ cap`, so the paragraph reparses with a literal backslash'],
+    ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
+    ['215-a-marker-attribute-may-hold-a-quoted-brace', 'a list-marker attribute block is dropped, so `1.{title=...} item` comes back as `1. item`'],
+    ['216-a-description-line-needs-a-term-above-it', 'the bare `:` line is escaped and a phantom empty definition is appended'],
+
     ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
@@ -103,7 +137,6 @@ const TIPTAP_SKIP = new Map([
     ['189-a-definition-inside-a-comment-registers-nothing', 'same `comment` gap - the definition is INSIDE the comment, so the converter meets the comment node first and throws before the opacity the category is about can be exercised'],
     ['190-a-blank-after-a-comment-still-ends-the-item', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['191-a-comment-fence-under-a-nested-item-does-not-close-it-either', 'same `comment` gap, fence form - the converter meets the comment node before the nesting question the category is about'],
-    ['192-a-collapsed-reference-is-matched-by-the-label-the-author-wrote', 'the reference-link gap (#101): `[*bold*]: /x` plus `see [*bold*][]` comes back as the inline `see [*bold*](/x)`. The second example is the worse half - its label does NOT match, so the collapsed reference is unresolved, and it still serializes as `see [*bold*]()` with an EMPTY destination rather than staying literal'],
     ['193-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition', 'two gaps at once. The abbreviation form loses BOTH its escaping and its column: `  *[HTML]: Hyper Text` comes back as `\\*\\[HTML]: Hyper Text` flush left, so the line is no longer at the content column the category is about. The `-2` form is the opposite - the link definition there IS collected (correctly, carve-rs#570 / carve-php#765), so the serializer writes `see [t](/u)` and the definition is gone'],
     ['194-a-definition-inside-a-container-is-collected-at-that-container-s-content-column', 'the reference-link gap (#101), and the first example shows its worst form: `> - a` plus a definition at the quoted item column comes back as `see [t]()` - an EMPTY destination. The third escapes instead, re-serializing the definition as `> \\[r]: /u` inside the quote'],
     ['195-trailing-attributes-on-a-link-reference-definition', 'the reference-link gap (#101) with the ATTRIBUTES lost as well: `[ex]: /u {.external}` plus `[Example][ex]` comes back as `[Example](https://example.com)` with no class, so the very thing the category pins - attributes reaching every link through the definition - is gone on reparse'],
@@ -121,7 +154,6 @@ const TIPTAP_SKIP = new Map([
     ['15-heading-ids', 'cross-reference links to heading ids are not modeled'],
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
     ['17-collapsed-reference-link', 'reference-link definitions are not represented'],
-    ['18-unresolved-reference-link', 'unresolved reference syntax is not represented'],
     ['19-smart-typography-dashes-and-quotes', 'smart-typography output is lossy on reparse (quote-context edge cases added with spec 750ddfa)'],
     ['20-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
@@ -162,7 +194,6 @@ const TIPTAP_SKIP = new Map([
     ['72-emphasis-edge-cases', 'an emphasis edge case is lossy through the serializer'],
     ['73-list-nesting-and-looseness', 'nested-list looseness differs on reparse'],
     ['75-nested-brackets-in-link-text', 'nested brackets in link text are lossy through the serializer'],
-    ['76-reference-labels-are-case-sensitive', 'reference-link definitions are not represented'],
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
     ['79-paragraph-interruption', 'admonition/comment interruption cases are not modeled'],
     ['80-blockquote-lazy-continuation', 'blockquote lazy continuation differs on reparse'],
@@ -193,7 +224,6 @@ const TIPTAP_SKIP = new Map([
     ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
-    ['120-footnotes-placement', 'admonition blocks are not modeled'],
     ['125-autolink-display-keeps-the-raw-content', 'autolink inline nodes are not modeled'],
     ['126-editorial-markup-takes-a-trailing-attribute', 'editorial markup with a trailing attribute is lossy on reparse'],
     ['127-emphasis-opener-slash-adjacency', 'the converter does not model the `emphasis` node'],
@@ -235,7 +265,6 @@ const TIPTAP_SKIP = new Map([
     ['168-headings-inside-containers-are-not-wrapped', 'a heading inside a quote or div reparses into a different AST'],
     ['169-attribute-order-on-an-unwrapped-heading', 'headings with attributes are not represented (attrs only support id)'],
     ['170-attribute-braces-on-a-list-item-marker-line', 'headings with attributes are not represented (attrs only support id)'],
-    ['171-implicit-heading-references-with-no-definition', 'implicit heading references are not represented'],
 ]);
 
 export const COVERAGE = {
