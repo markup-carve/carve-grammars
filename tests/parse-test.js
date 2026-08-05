@@ -147,6 +147,39 @@ check('two footnotes round-trip',
     + '</ol></section>',
     'A[^1] B[^2]\n\n[^1]: first\n\n[^2]: second');
 
+// The marker STYLE arrives as `<ol type>` on the HTML path, which is a different
+// attribute from the one the Carve AST carries.
+check('an alphabetic ordered list keeps its style through the editor',
+    '<ol type="a" start="2"><li>x</li></ol>',
+    'b. x');
+
+check('a roman ordered list keeps its style through the editor',
+    '<ol type="i"><li>x</li><li>y</li></ol>',
+    'i. x\nii. y');
+
+// Presentation classes in task-list HTML are not authored Carve attributes.
+check('a structural task-list class does not become a marker attribute',
+    '<ul><li class="task-list-item"><input type="checkbox" disabled> x</li></ul>',
+    '- [ ] x');
+
+check('an authored class alongside it still survives',
+    '<ul><li class="task-list-item c"><input type="checkbox" disabled> x</li></ul>',
+    '-{.c} [ ] x');
+
+// Tiptap fills `target`/`rel` in on every link it parses, and those defaults
+// must not come back as an authored attribute run.
+check('a plain link keeps no attribute run through the editor',
+    '<p><a href="/u">t</a></p>',
+    '[t](/u)');
+
+check('an authored id and class on a link DO survive the editor',
+    '<p><a href="/u" id="id" class="c">t</a></p>',
+    '[t](/u){#id .c}');
+
+check('a non-default rel survives',
+    '<p><a href="/u" rel="me">t</a></p>',
+    '[t](/u){rel="me"}');
+
 console.log(`\n${pass} passed, ${fail} failed`);
 if (fail) {
     process.exit(1);
