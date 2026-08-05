@@ -30,6 +30,10 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Classified with the bump that added them: both round-trip cleanly through
+    // parse -> toPm -> serialize -> parse.
+    '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
+    '221-a-heading-reference-folds-unicode-normalization-but-not-compatibility',
     // Promoted by carrying the LIST MARKER's own metadata in this change: the
     // marker attribute (`-{.c} item`), the marker style (`a.`, `iv)`, bare `.`)
     // and the autolink spelling. Each was modeled in the AST and dropped here.
@@ -117,6 +121,8 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['218-a-footnote-body-s-own-column-is-two-and-a-third-column-is-its-text', 'the note body holds a TABLE at column 3, which the body reads as its own text - and the round trip drops those lines outright: `[^a]: intro` + three indented table lines comes back as `[^a]: intro` alone, so the body loses everything past its first line'],
+    ['219-a-definition-below-a-footnote-body-s-column-is-the-document-s-own-text', 'a definition one column in belongs to the DOCUMENT, and the round trip both escapes it and re-emits it: `[^a]: note` + ` [r]: /u` comes back with a literal `\\[r]: /u` paragraph at the top AND a real `[r]: /u` at the end, so one definition becomes two things'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
     ['203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written', 'a footnote body holding blocks is not modeled; the body does not survive'],

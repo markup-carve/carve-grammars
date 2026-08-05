@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "section",
+    "text": "# Café"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[Café][]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[file][]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# ﬁle"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
