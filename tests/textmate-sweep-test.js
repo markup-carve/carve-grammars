@@ -20,7 +20,7 @@ import { createHighlighter } from 'shiki'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
-import { CONSTRUCTS, LITERALS } from './lib/constructs.js'
+import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
@@ -54,6 +54,7 @@ const declaredScopes = new Set()
 
 const positives = CONSTRUCTS.filter(c => !c.skip?.textmate)
 const skipped = CONSTRUCTS.filter(c => c.skip?.textmate)
+assertInventory('textmate sweep', positives.length)
 
 for (const { name, sample, payload, textmate } of positives) {
   const { tokens } = hl.codeToTokens(sample, {

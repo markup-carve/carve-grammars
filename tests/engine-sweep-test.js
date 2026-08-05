@@ -22,7 +22,7 @@
  * `tests/lib/constructs.js`, which is the one list both sweeps consume.
  */
 import { prismTokens, hljsTokens } from './lib/engines.js';
-import { CONSTRUCTS, LITERALS } from './lib/constructs.js';
+import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js';
 
 const ATTR_SCOPE = /attr/i;
 
@@ -31,6 +31,7 @@ function check(engineName, tokenize) {
     const fails = [];
     const skipped = CONSTRUCTS.filter((c) => c.skip?.[engineName]);
     const applicable = CONSTRUCTS.filter((c) => !c.skip?.[engineName]);
+    assertInventory(`${engineName} sweep`, applicable.length);
 
     for (const construct of applicable) {
         const { name, sample, attr } = construct;
