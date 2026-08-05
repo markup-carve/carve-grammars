@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": "attr",
+    "text": "{title='a}b'}"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  }
+]

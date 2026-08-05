@@ -597,7 +597,12 @@ export function serializeToCarve(doc) {
                         // label is compared rather than the raw string replayed.
                         const collapsed = ref.toLowerCase() === t.trim().toLowerCase();
                         t = '[' + t + ']' + (collapsed ? '[]' : '[' + ref + ']');
-                        if (!referenceDefs.has(ref)) {
+                        // Only where there IS a destination. An UNRESOLVED
+                        // reference carries an empty one, and writing
+                        // `[label]: ` back invents a definition the author never
+                        // had - one that turns literal text into a link to the
+                        // empty string on the next parse.
+                        if (link.attrs.href && !referenceDefs.has(ref)) {
                             referenceDefs.set(ref, link.attrs.href + title);
                         }
                     } else {
@@ -622,8 +627,18 @@ export function serializeToCarve(doc) {
                 const alt = node.attrs?.alt || '';
                 const src = node.attrs?.src || '';
                 const title = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
-                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title']);
-                result += '![' + alt + '](' + src + title + ')' + imgAttrs;
+                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title', 'ref', 'rawRef']);
+                const ref = node.attrs?.ref;
+                if (typeof ref === 'string' && ref !== '') {
+                    // Collapsed where the label IS the alt text, full otherwise -
+                    // the same two forms the link path writes, and the definition
+                    // is emitted with the others at the end.
+                    const collapsed = ref.toLowerCase() === alt.trim().toLowerCase();
+                    result += '![' + alt + ']' + (collapsed ? '[]' : '[' + ref + ']') + imgAttrs;
+                    if (src && !referenceDefs.has(ref)) referenceDefs.set(ref, src + title);
+                } else {
+                    result += '![' + alt + '](' + src + title + ')' + imgAttrs;
+                }
             } else if (node.type === 'carveMention') {
                 result += '@' + (node.attrs?.id || '');
             } else if (node.type === 'carveTag') {

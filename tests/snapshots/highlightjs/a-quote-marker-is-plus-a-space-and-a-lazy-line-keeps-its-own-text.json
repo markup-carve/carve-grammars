@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> ok"
+  },
+  {
+    "scope": null,
+    "text": "\n>bad\n"
+  }
+]

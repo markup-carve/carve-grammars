@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "title",
+    "text": ":  [r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[t][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

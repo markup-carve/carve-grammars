@@ -1,0 +1,42 @@
+[
+  {
+    "type": "text",
+    "text": "!"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "moon"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "m"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[m]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /moon.png"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

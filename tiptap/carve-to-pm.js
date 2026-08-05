@@ -332,6 +332,13 @@ function convertInlineNode(node, marks, ctx) {
         case 'image': {
             const attrs = { alt: node.alt || '', src: node.src || '' };
             if (node.title) attrs.title = node.title;
+            // An image written as a REFERENCE keeps its label, exactly as a
+            // link does (PART 12 section 3a). carve-grammars#101 fixed this for
+            // links and left images behind, so `![moon][m]` came back as
+            // `![moon](/moon.png)` - the reference form gone and the definition
+            // with it.
+            if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
+            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
             return [{ type: 'image', attrs }];
         }
 
