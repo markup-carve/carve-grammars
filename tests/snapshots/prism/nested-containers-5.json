@@ -1,42 +1,54 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::::"
   },
   {
-    "type": "div",
-    "text": " a"
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "a"
   },
   {
     "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": "::::"
   },
   {
-    "type": "div",
-    "text": " b"
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "b"
   },
   {
     "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " c"
+    "type": "div>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "div>div-delimiter>class-name",
+    "text": "c"
+  },
+  {
+    "type": "div",
     "text": "\nX\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

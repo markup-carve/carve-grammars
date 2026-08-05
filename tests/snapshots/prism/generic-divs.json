@@ -1,14 +1,14 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\nA plain box.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -40,15 +40,15 @@
     "text": "\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\nA div with attributes.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

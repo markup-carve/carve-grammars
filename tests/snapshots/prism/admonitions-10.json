@@ -1,34 +1,38 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " tip"
+    "type": "div>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "div>div-delimiter>class-name",
+    "text": "tip"
+  },
+  {
+    "type": "div",
     "text": "\nQuick steps:\n\n"
   },
   {
-    "type": "list",
+    "type": "div>list",
     "text": "- "
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "read the docs\n"
   },
   {
-    "type": "list",
+    "type": "div>list",
     "text": "- "
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "run the demo\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

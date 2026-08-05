@@ -1,18 +1,18 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>symbol",
+    "type": "div>div-delimiter>symbol",
     "text": "[First]"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\nFirst panel.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

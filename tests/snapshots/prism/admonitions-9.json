@@ -1,18 +1,22 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " warning"
+    "type": "div>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "div>div-delimiter>class-name",
+    "text": "warning"
+  },
+  {
+    "type": "div",
     "text": "\nMind the gap.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -237,6 +237,34 @@
             alias: 'important',
             inside: Object.assign({
                 'punctuation': /^#{1,6}/,
+                // A tag is still a tag even inside a heading's literal
+                // trailing brace run (carve-grammars#125, corpus 213): a
+                // heading takes no trailing attribute block, so `{#id .cls}`
+                // is ordinary heading text (that half already worked - it was
+                // never scoped as 'attributes'), but `#id` inside it is still
+                // a tag construct. Deliberately narrow: the rest of the
+                // shared `inline` set already covers emphasis; the full
+                // inline repertoire (links, mentions) is not added here,
+                // matching this repo's preference for a targeted fix over
+                // modeling everything a heading could theoretically hold.
+                //
+                // NOT the same regex as the top-level 'tag' token below: this
+                // one also excludes a `#` immediately after `</`, because
+                // Prism has no cross-reference token at all
+                // (`auto_text_link = "</#", crossref_id, '>'`,
+                // grammar.ebnf) - without the exclusion this rule claimed the
+                // `#a` inside a heading cross-reference `</#a>` and broke
+                // corpus 118 (`# A </#a>`), which pins the whole thing
+                // staying unscoped. The `(?<!<\/)` is real JS lookbehind
+                // (already used elsewhere in this file, e.g. 'highlight'
+                // above) rather than Prism's own single-char lookbehind
+                // trick, because the exclusion needs to see two characters
+                // back.
+                'tag': {
+                    pattern: /(^|[^\w])(?<!<\/)#[A-Za-z0-9_][\w-]*/,
+                    lookbehind: true,
+                    alias: 'variable',
+                },
             }, inline),
         },
 
@@ -245,16 +273,52 @@
         // quotes), optional [label], the | / \ layout tokens, or a typeless
         // [label]. Trailing junk makes the line a paragraph, so it must not
         // highlight as a fence.
+        //
+        // The pattern spans the WHOLE container (opener through its matching
+        // closer), not just the opener line (carve-grammars#125): a per-line
+        // match left the body wide open to the full top-level pattern set,
+        // which incorrectly let 'abbreviation-definition' fire inside a div
+        // (PART 9: abbreviation definitions are recognized at document level
+        // only). The optional tail is a lazy scan up to a closer that
+        // backreferences the SAME colon run captured by the opener (group 1),
+        // so it closes on an EXACT length match (PART 9's colon-fence depth
+        // rule: a longer or shorter run does not close it, which is what lets
+        // equal-length fences nest and `::::` hold `:::`). The tail is
+        // OPTIONAL so an unclosed opener still matches as a div on its own
+        // line rather than failing to match at all.
+        //
+        // `inside` is composed below (after the grammar object is built) from
+        // the full language minus 'abbreviation-definition', plus a
+        // self-reference for nested divs - see the assignment after this
+        // object literal. That preserves everything else that already worked
+        // inside a div body (headings - corpus 170, nested lists, blockquotes)
+        // while suppressing only the one construct this fix targets.
         'div': {
-            pattern: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
+            pattern: /^[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
             alias: 'tag',
             inside: {
-                'punctuation': /:{3,}/,
-                'string': /"[^"\n]*"/,
-                'symbol': /\[[^\]\n]*\]/,
-                'class-name': {
-                    pattern: /(^[ \t]*:{3,}[ \t]*)(?:[a-zA-Z_][\w-]*|\||\\)/,
-                    lookbehind: true,
+                // Any delimiter line (opener OR closer - the same shape as
+                // the whole match this rule used to be, before
+                // carve-grammars#125) is claimed WHOLE by one sub-pattern,
+                // rather than several independently-anchored siblings
+                // (punctuation/string/symbol/class-name used to be top-level
+                // keys here). That is load-bearing now that the body
+                // patterns are also present below: Prism re-scans an
+                // unmatched "gap" between two matches as its own fresh
+                // string, so a `^`-anchored body pattern (e.g. 'table') could
+                // match at the START of that gap even when it is really
+                // mid-line residue after the type/title/label, not a real
+                // line start - `::: |` mis-scoped its own `|` layout token
+                // as a table row. Leaving nothing ungrabbed on a delimiter
+                // line closes that gap.
+                'div-delimiter': {
+                    pattern: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
+                    inside: {
+                        'punctuation': /:{3,}/,
+                        'string': /"[^"\n]*"/,
+                        'symbol': /\[[^\]\n]*\]/,
+                        'class-name': /[a-zA-Z_][\w-]*|\||\\/,
+                    },
                 },
             },
         },
@@ -631,6 +695,25 @@
             alias: 'constant',
         },
     };
+
+    // A div's body holds the full language MINUS 'abbreviation-definition'
+    // (carve-grammars#125 - see the comment on 'div' above). Composed here,
+    // after the grammar object is fully built, rather than hand-duplicated:
+    // `Object.assign` with a shallow copy keeps every entry a REFERENCE to
+    // the same token object Prism already uses at the top level (including
+    // 'div' itself), so this stays in sync with the rest of the grammar and
+    // gives nested divs their own recursive scoping for free - a `:::` inside
+    // this div's body is tokenized by the very same 'div' rule. The
+    // delimiter-specific 'div-delimiter' entry already on 'div'.inside is
+    // spread first, so it still wins over the body patterns for the
+    // opener/closer lines themselves.
+    var divBody = Object.assign({}, Prism.languages.carve);
+    delete divBody['abbreviation-definition'];
+    Prism.languages.carve.div.inside = Object.assign(
+        {},
+        Prism.languages.carve.div.inside,
+        divBody
+    );
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
     Prism.languages.carvemd = Prism.languages.carve;
