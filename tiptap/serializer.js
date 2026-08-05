@@ -142,6 +142,16 @@ function linkAttrRun(attrs) {
     return out;
 }
 
+// `String.prototype.trim` strips U+00A0 - it is whitespace to JavaScript and
+// CONTENT to Carve, so trimming a serialized document with it silently deleted a
+// no-break space at either edge (the engine's own writer keeps it). Only ASCII
+// layout whitespace is structural here.
+const ASCII_EDGE_WS = /^[ \t\n\r\f\v]+|[ \t\n\r\f\v]+$/g;
+
+function trimSource(text) {
+    return text.replace(ASCII_EDGE_WS, '');
+}
+
 export function serializeToCarve(doc) {
     let output = '';
 
@@ -505,7 +515,7 @@ export function serializeToCarve(doc) {
         serializeNode(node);
         const result = output;
         output = oldOutput;
-        return result.trim();
+        return trimSource(result);
     }
 
     function serializeListItem(item, contentIndent) {
@@ -610,6 +620,12 @@ export function serializeToCarve(doc) {
                     const pad = (text.startsWith('`') || text.endsWith('`') || text === '') ? ' ' : '';
                     t = fence + pad + text + pad + fence;
                 } else if (isEmphasized) {
+                    // NOT trailing-safe, whatever follows this run: the
+                    // mark's own closing delimiter comes next, and a
+                    // RESOLVED space before it kills the span - `*a\ *`
+                    // parses as literal text where `*a<U+00A0>*` is still
+                    // strong. So a trailing sentinel inside a marked run
+                    // is written as a real no-break space.
                     // Inside an emphasis span ANY literal delimiter closes it
                     // early (`*a*b*`), so escape every emphasis delimiter char.
                     // (Bare `=x=` IS a single-char delimiter at a word
@@ -618,7 +634,9 @@ export function serializeToCarve(doc) {
                     t = escapeStructural(text).replace(/[*/_~^]/g, '\\$&');
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
-                    t = escapeCarve(text);
+                    // More inline content after this run means a trailing
+                    // escaped space still has something to attach to.
+                    t = escapeCarve(text, idx < content.length - 1);
                     // A lone emphasis delimiter at this run's edge can pair with
                     // one in an adjacent inline node across the mark boundary
                     // (`*` + linked `bold` + `*` -> `*[bold](u)*`). Escape an
@@ -767,7 +785,7 @@ export function serializeToCarve(doc) {
     }
 
     serializeNode(doc);
-    let result = output.trim();
+    let result = trimSource(output);
     if (referenceDefs.size > 0) {
         const defs = [...referenceDefs].map(([label, target]) => '[' + label + ']: ' + target);
         result += '\n\n' + defs.join('\n');
@@ -787,8 +805,8 @@ export function serializeToCarve(doc) {
  * - mentions `@name`, tags `#tag` (nodes; escaped here for literal prose),
  *   emoji `:name:` (not modeled by CarveKit)
  */
-function escapeStructural(text) {
-    return text
+function escapeStructural(text, trailingSafe = false) {
+    return resolvedSpaces(text, trailingSafe)
         // A backslash that would otherwise escape a following escapable char.
         .replace(/\\(?=[\\`*_/~^=,{}[\]()<>@#%!|.+-])/g, '\\\\')
         .replace(/`/g, '\\`')
@@ -856,8 +874,47 @@ function escapeTrailingDelimiter(s) {
  * @param {string} text - Plain text to escape.
  * @returns {string} Text safe to emit as a Carve inline run.
  */
-export function escapeCarve(text) {
-    return escapeEmphasisOpeners(escapeStructural(text));
+export function escapeCarve(text, trailingSafe = false) {
+    return escapeEmphasisOpeners(escapeStructural(text, trailingSafe));
+}
+
+/**
+ * Spell the engines' resolved-no-break-space SENTINEL (U+E000) as the escape the
+ * author wrote, `\ `.
+ *
+ * The sentinel is not a character anyone typed: it marks a no-break space the
+ * parser resolved from `\ ` or from preserved line-block indentation, and
+ * `carve fmt` writes it back as that escape. Emitting it verbatim put a
+ * private-use codepoint into Carve source and a tofu box in the editor, and the
+ * round trip could not see it - `\ ` parses back to the same sentinel, so both
+ * sides of the AST comparison held it (markup-carve/carve#721). A literal U+00A0
+ * the author typed is published as itself, which is the distinction the sentinel
+ * exists to keep.
+ *
+ * `\ ` needs something after it: a trailing backslash at the END of a block is a
+ * HARD BREAK, so the escape has no spelling in that one position. `trailingSafe`
+ * says whether more inline content follows in this block - anywhere else,
+ * including before a space, before a sibling span and before a soft break, the
+ * escape is what the engines parse back. Where it is not available a real U+00A0
+ * goes out: the rendered document is then right and only the resolved-vs-typed
+ * distinction is lost, which is much the cheaper failure.
+ *
+ * @param {string} text
+ * @param {boolean} trailingSafe
+ * @returns {string}
+ */
+function resolvedSpaces(text, trailingSafe) {
+    if (!text.includes('\uE000')) return text;
+    const last = text.length - 1;
+    let out = '';
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] !== '\uE000') {
+            out += text[i];
+            continue;
+        }
+        out += (i < last || trailingSafe) ? '\\ ' : '\u00A0';
+    }
+    return out;
 }
 
 /**
