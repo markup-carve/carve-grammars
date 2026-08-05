@@ -384,6 +384,10 @@
     };
 
     // Numbered list items: decimal (1.), alpha (a. A.), roman (i. I.)
+    // A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which
+    // matched any mixture and coloured `Vim. text` and `Mix. text` as lists where the
+    // engine renders paragraphs (#118). `mix.`, `civil.` and `did.` DO open lists, so
+    // the fix is the case split, not rejecting multi-letter words.
     // MARKER REQUIRES CONTENT, AND SO DOES THE ATTRIBUTE FORM: `1.{#x}`
     // with nothing after the block is a paragraph. The glued-block branch
     // spells the block out in full rather than skipping it - a quoted value
@@ -391,7 +395,7 @@
     // stops in the wrong place and `{title="a}b"} x` is a valid item (#85).
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdmIVXLCDM]+[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
