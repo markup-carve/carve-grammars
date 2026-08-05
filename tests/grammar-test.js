@@ -56,20 +56,34 @@ console.log('carve-grammars highlight grammars:');
 function isRegExp(v) {
     return Object.prototype.toString.call(v) === '[object RegExp]';
 }
-function validateToken(tok, path) {
+// `seen` guards against a token whose `inside` recursively references an
+// ancestor object - a normal, supported Prism idiom (Prism's own bundled
+// `markup`/`css` grammars do this: `doctype.inside['internal-subset'].inside
+// = Prism.languages.markup`, `atrule.inside.rest = Prism.languages.css`), and
+// one this grammar's own 'div' token now uses too (carve-grammars#125): a
+// div's body includes the language recursively (minus
+// 'abbreviation-definition') so a nested div still scopes, which makes
+// `div.inside.div === carvePrism.div` a literal object identity cycle. A
+// walker with no cycle guard recurses forever on that; every object is
+// validated once and re-visits are skipped rather than re-walked.
+function validateToken(tok, path, seen = new Set()) {
     if (Array.isArray(tok)) {
-        tok.forEach((t, i) => validateToken(t, `${path}[${i}]`));
+        tok.forEach((t, i) => validateToken(t, `${path}[${i}]`, seen));
         return;
     }
     if (isRegExp(tok)) {
         return;
     }
     assert.ok(tok && typeof tok === 'object', `${path} must be RegExp or token object`);
+    if (seen.has(tok)) {
+        return;
+    }
+    seen.add(tok);
     assert.ok('pattern' in tok, `${path} missing pattern`);
     assert.ok(isRegExp(tok.pattern), `${path}.pattern must be RegExp`);
     if (tok.inside) {
         for (const k of Object.keys(tok.inside)) {
-            validateToken(tok.inside[k], `${path}.inside.${k}`);
+            validateToken(tok.inside[k], `${path}.inside.${k}`, seen);
         }
     }
 }

@@ -472,19 +472,38 @@
         relevance: 10,
     };
 
-    // Div block opening: ::: with optional type, "title", [label], or the
-    // | / \ layout tokens. Strict shapes only - unquoted or curly-quoted
-    // trailing text is a paragraph, not a fence, and must not highlight.
-    const DIV_BLOCK_START = {
-        className: 'keyword',
-        begin: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
-        relevance: 10,
-    };
-
-    // Div block closing: :::
-    const DIV_BLOCK_END = {
-        className: 'keyword',
-        begin: /^[ \t]*:{3,}$/,
+    // Div block: ::: with optional type, "title", [label], or the | / \
+    // layout tokens, through its matching closer. Strict opener shapes only -
+    // unquoted or curly-quoted trailing text is a paragraph, not a fence, and
+    // must not highlight.
+    //
+    // A real begin/end mode (carve-grammars#125), not two independent
+    // single-line modes: a per-line match left the body wide open to the
+    // full top-level mode list, which incorrectly let ABBREVIATION_DEF fire
+    // inside a div (PART 9: abbreviation definitions are recognized at
+    // document level only). highlight.js has no begin->end backreference, so
+    // the closer's width is checked the same way BLOCK_COMMENT already does
+    // above: captured on `on:begin`, compared on `on:end`, and rejected with
+    // `ignoreMatch()` on a mismatch - so the closer matches the opener's
+    // colon run EXACTLY (PART 9's colon-fence depth rule: a longer or
+    // shorter run does not close it, which is what lets equal-length fences
+    // nest and `::::` hold `:::`). `contains` is assigned below, once the
+    // full top-level mode list is known, to the same list minus
+    // ABBREVIATION_DEF plus `'self'` (for nested divs) - so everything else
+    // that already worked inside a div body (headings, nested lists,
+    // blockquotes) keeps working; only the one construct this fix targets is
+    // suppressed.
+    const DIV_BLOCK = {
+        beginScope: 'keyword',
+        begin: /^[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
+        'on:begin': (m, resp) => {
+            resp.data._fenceWidth = m[1].length;
+        },
+        endScope: 'keyword',
+        end: /^[ \t]*(:{3,})[ \t]*$/,
+        'on:end': (m, resp) => {
+            if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
+        },
         relevance: 10,
     };
 
@@ -552,6 +571,17 @@
     const TAG = {
         className: 'symbol',
         begin: /(?<![\w#])#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        relevance: 5,
+    };
+    // Used only inside HEADING (carve-grammars#125), not TAG itself: a
+    // heading's own `contains` does not carry a cross-reference mode (this
+    // grammar has none at all), so without the extra exclusion this would
+    // wrongly claim the `#a` inside a heading cross-reference `</#a>`
+    // (grammar.ebnf `auto_text_link = "</#", crossref_id, '>'`) and break
+    // corpus 118 (`# A </#a>`), which pins the whole thing staying unscoped.
+    const HEADING_TAG = {
+        className: 'symbol',
+        begin: /(?<![\w#])(?<!<\/)#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
         relevance: 5,
     };
 
@@ -630,83 +660,100 @@
         relevance: 0,
     };
 
+    // A tag is still a tag even inside a heading's literal trailing brace run
+    // (carve-grammars#125, corpus 213): a heading takes no trailing attribute
+    // block, so `{#id .cls}` is ordinary heading text (that half already
+    // worked - it was never scoped as an attribute), but `#id` inside it is
+    // still a tag construct. Deliberately narrow - just HEADING_TAG (see its
+    // own comment above), not the full inline repertoire - matching the same
+    // targeted scope as the TextMate and Prism fixes for this same bug.
+    HEADING.contains = [HEADING_TAG];
+
+    const CONTAINS = [
+        // NOTE: front matter is intentionally NOT highlighted. It is valid
+        // only at the very top of the document, but highlight.js has no
+        // document-start anchor, so a `^---$` begin would also match a bare
+        // `---` horizontal rule mid-document and swallow everything up to
+        // the next `---`. The horizontal-rule rule below handles `---`
+        // lines instead. (Prism anchors front matter via `^` with no `m`
+        // flag; see prism/carve.js.)
+
+        // Block-level elements (order matters - more specific first)
+        HEADING,
+        CODE_FENCE_START,
+        CODE_FENCE_END,
+        DIV_BLOCK,
+        HORIZONTAL_RULE,
+        TABLE_SEPARATOR,
+        TABLE_CONTINUATION,  // `+` rows - before TABLE_ROW, which needs a leading `|`
+        LINE_BLOCK,        // Must be before TABLE_ROW (both start with |)
+        TABLE_ROW,
+        BLOCKQUOTE,
+        CAPTION,
+        TASK_LIST,         // Must be before LIST_BULLET
+        LIST_BULLET,
+        LIST_NUMBER,
+        DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
+        FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
+        ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
+        REFERENCE_DEF,
+
+        // Inline elements (order matters - more specific first)
+        INLINE_FOOTNOTE,   // ^[content] - before FOOTNOTE_REF ([^label])
+        FOOTNOTE_REF,
+        IMAGE,             // Must be before LINK (starts with !)
+        SPAN,              // Must be before LINK ([text]{attr} vs [text](url))
+        REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
+        CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
+        CODE_CALLOUT,      // <n> callout markers
+        INLINE_EXTENSION,  // :name[content] - before SYMBOL and LINK
+        SYMBOL,            // :name: shortcodes
+        LINK,
+        AUTOLINK,
+        EMAIL_AUTOLINK,
+        RAW_FORMAT,        // {=html} - must be before INSERT/DELETE braces
+        INSERT,            // {+text+}
+        DELETE,            // {-text-}
+        BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
+        LINE_COMMENT,      // %% to end of line
+        CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
+        CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
+        MENTION,
+        TAG,
+        HIGHLIGHT,         // =text=
+        SUBSCRIPT,         // ,text,
+        SUPERSCRIPT,       // ^text^
+        STRONG,
+        EMPHASIS,          // /text/
+        UNDERLINE,         // _text_
+        STRIKETHROUGH,     // ~text~
+        MATH_DISPLAY,      // $$`...` - before $`...` and inline code
+        MATH_INLINE,       // $`...` - before inline code (leading $)
+        LITERAL_INLINE,    // !`...` - before inline code (leading !)
+        INLINE_CODE,       // `code` at any fence width
+        FORCED_STRONG,
+        FORCED_EMPHASIS,
+        FORCED_UNDERLINE,
+        FORCED_STRIKE,
+        ATTRIBUTE_EMPTY,
+        ATTRIBUTE,
+        ESCAPE,
+        HARD_BREAK,
+        TYPOGRAPHY,        // dashes/arrows - after the structural rules
+    ];
+
+    // A div's body holds the full top-level mode list minus ABBREVIATION_DEF
+    // (carve-grammars#125 - see the comment on DIV_BLOCK above), plus 'self'
+    // so a nested div still scopes. highlight.js resolves the 'self' string
+    // to this same mode natively, so this does not need the width-tracking
+    // idiom above to also handle recursion.
+    DIV_BLOCK.contains = ['self', ...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)];
+
     return {
         name: 'Carve',
         aliases: ['carve'],
         case_insensitive: false,
-        contains: [
-            // NOTE: front matter is intentionally NOT highlighted. It is valid
-            // only at the very top of the document, but highlight.js has no
-            // document-start anchor, so a `^---$` begin would also match a bare
-            // `---` horizontal rule mid-document and swallow everything up to
-            // the next `---`. The horizontal-rule rule below handles `---`
-            // lines instead. (Prism anchors front matter via `^` with no `m`
-            // flag; see prism/carve.js.)
-
-            // Block-level elements (order matters - more specific first)
-            HEADING,
-            CODE_FENCE_START,
-            CODE_FENCE_END,
-            DIV_BLOCK_START,
-            DIV_BLOCK_END,
-            HORIZONTAL_RULE,
-            TABLE_SEPARATOR,
-            TABLE_CONTINUATION,  // `+` rows - before TABLE_ROW, which needs a leading `|`
-            LINE_BLOCK,        // Must be before TABLE_ROW (both start with |)
-            TABLE_ROW,
-            BLOCKQUOTE,
-            CAPTION,
-            TASK_LIST,         // Must be before LIST_BULLET
-            LIST_BULLET,
-            LIST_NUMBER,
-            DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
-            FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
-            ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
-            REFERENCE_DEF,
-
-            // Inline elements (order matters - more specific first)
-            INLINE_FOOTNOTE,   // ^[content] - before FOOTNOTE_REF ([^label])
-            FOOTNOTE_REF,
-            IMAGE,             // Must be before LINK (starts with !)
-            SPAN,              // Must be before LINK ([text]{attr} vs [text](url))
-            REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
-            CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
-            CODE_CALLOUT,      // <n> callout markers
-            INLINE_EXTENSION,  // :name[content] - before SYMBOL and LINK
-            SYMBOL,            // :name: shortcodes
-            LINK,
-            AUTOLINK,
-            EMAIL_AUTOLINK,
-            RAW_FORMAT,        // {=html} - must be before INSERT/DELETE braces
-            INSERT,            // {+text+}
-            DELETE,            // {-text-}
-            BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
-            LINE_COMMENT,      // %% to end of line
-            CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
-            CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
-            MENTION,
-            TAG,
-            HIGHLIGHT,         // =text=
-            SUBSCRIPT,         // ,text,
-            SUPERSCRIPT,       // ^text^
-            STRONG,
-            EMPHASIS,          // /text/
-            UNDERLINE,         // _text_
-            STRIKETHROUGH,     // ~text~
-            MATH_DISPLAY,      // $$`...` - before $`...` and inline code
-            MATH_INLINE,       // $`...` - before inline code (leading $)
-            LITERAL_INLINE,    // !`...` - before inline code (leading !)
-            INLINE_CODE,       // `code` at any fence width
-            FORCED_STRONG,
-            FORCED_EMPHASIS,
-            FORCED_UNDERLINE,
-            FORCED_STRIKE,
-            ATTRIBUTE_EMPTY,
-            ATTRIBUTE,
-            ESCAPE,
-            HARD_BREAK,
-            TYPOGRAPHY,        // dashes/arrows - after the structural rules
-        ],
+        contains: CONTAINS,
     };
     };
 }));

@@ -4,19 +4,19 @@
     "text": "text\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\nbody\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

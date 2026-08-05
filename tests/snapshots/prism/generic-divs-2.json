@@ -20,7 +20,7 @@
     "text": "\nnot a div\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

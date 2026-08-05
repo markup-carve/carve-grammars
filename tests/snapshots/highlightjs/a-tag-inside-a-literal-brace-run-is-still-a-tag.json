@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# H {#id .cls}"
+    "text": "# H {"
+  },
+  {
+    "scope": "symbol",
+    "text": "#id"
+  },
+  {
+    "scope": "section",
+    "text": " .cls}"
   },
   {
     "scope": null,

@@ -8,27 +8,27 @@
     "text": "item\n"
   },
   {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": "  "
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\n  body\n"
   },
   {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": "  "
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

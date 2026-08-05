@@ -5,6 +5,37 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An abbreviation definition inside a div no longer scopes as a definition,
+  and a tag inside a heading's literal trailing brace run now scopes as a
+  tag** (#125). Two unrelated gaps in the shared grammars:
+
+  In all three grammars, the div/admonition rule matched only its own
+  delimiter LINE, leaving the body wide open to the full top-level pattern
+  set - which incorrectly let `*[HTML]: Hyper Text` scope as an abbreviation
+  definition inside `:::`/`:::`, even though PART 9 recognizes abbreviations
+  at document level only (the sibling list-item and blockquote cases already
+  read correctly, but only by accident of their own line mechanics, not
+  because either detects the container). The div/admonition rule is now a
+  real begin/end span (TextMate, highlight.js) or a backreferenced multi-line
+  pattern (Prism), closing on an exact colon-run length match per PART 9's
+  fence-depth rule, with everything else that already worked inside a div
+  body - headings, nested divs, lists, blockquotes - unaffected; only
+  `abbreviation`/`abbreviation-definition` is excluded from the body.
+
+  Headings applied no (TextMate) or only a narrow emphasis-only (Prism,
+  highlight.js) set of inline patterns to their own text, so `#id` inside a
+  heading's literal `{#id .cls}` (headings take no trailing attribute block,
+  so the brace run was already correctly left unscoped as attributes) got no
+  tag scope either. Headings now recognize a tag inside their own text,
+  narrowly - not the full inline set - and specifically exclude a `#`
+  immediately after `</` so a heading cross-reference (`</#id>`) is not
+  mis-claimed as a tag.
+
+  As a side effect of the div fix, an admonition's own type word (`note`,
+  `tip`, …) now gets `class-name` scope in Prism where it previously fell
+  through unscoped - a pre-existing ordering gap the restructuring
+  incidentally closed.
+
 - **A bullet glued to an attribute block is a marker, and both marker rules now
   validate the payload** (#126). The ordered rule learned the glued form in #85;
   the bullet rule beside it never did, in any of the three grammars, so

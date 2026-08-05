@@ -1,26 +1,30 @@
 [
   {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " |"
-  },
-  {
-    "type": "text",
-    "text": "\n Roses,\n Violets.\n"
-  },
-  {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
+    "text": "\n Roses,\n Violets.\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

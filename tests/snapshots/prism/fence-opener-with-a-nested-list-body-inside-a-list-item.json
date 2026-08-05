@@ -16,11 +16,11 @@
     "text": "para text\n"
   },
   {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": "  "
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

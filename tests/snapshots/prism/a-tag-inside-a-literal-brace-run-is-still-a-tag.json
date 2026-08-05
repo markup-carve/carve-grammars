@@ -5,7 +5,15 @@
   },
   {
     "type": "title",
-    "text": " H {#id .cls}"
+    "text": " H {"
+  },
+  {
+    "type": "title>tag",
+    "text": "#id"
+  },
+  {
+    "type": "title",
+    "text": " .cls}"
   },
   {
     "type": "text",

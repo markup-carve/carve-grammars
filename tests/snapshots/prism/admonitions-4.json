@@ -1,30 +1,38 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " tip "
-  },
-  {
-    "type": "div>string",
-    "text": "\"Pro Tip\""
-  },
-  {
-    "type": "div",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>symbol",
+    "type": "div>div-delimiter>class-name",
+    "text": "tip"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>string",
+    "text": "\"Pro Tip\""
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>symbol",
     "text": "[Build]"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": "\nSave early, save often.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

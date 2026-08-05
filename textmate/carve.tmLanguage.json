@@ -131,17 +131,21 @@
       "comment": "The leading-whitespace capture is load-bearing twice over: the `end` pattern closes on the SAME indentation via \\1, and a fence inside a list item is indented. Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "heading": {
-      "match": "^[ \\t]*(#{1,6}) +(?![ \\t]*$)(.*?)[ \\t]*$",
-      "captures": {
+      "begin": "^[ \\t]*(#{1,6}) +(?![ \\t]*$)",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.heading.carve"
-        },
-        "2": {
-          "name": "entity.name.section.carve"
         }
       },
+      "end": "$",
       "name": "markup.heading.carve",
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "contentName": "entity.name.section.carve",
+      "patterns": [
+        {
+          "include": "#heading_tag"
+        }
+      ],
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71) - see the comment on `admonition` for the tradeoff this repeats. Restructured from a flat `match` into a `begin`/`end: \"$\"` construct (mirrors `table_row`, the existing precedent in this file for a single physical line that still needs recursive `patterns`) so a tag inside a heading's literal trailing brace run still scopes as a tag (carve-grammars#125): `# H {#id .cls}` has no real attribute block (headings take none), so the brace run is ordinary heading text, and `#id` inside it is still a tag construct - that half was already correctly NOT scoped as `attributes`, only the tag scope itself was missing. Uses `#heading_tag` (a `#tag` variant, see its own comment), not `#tag` directly, to stay out of the way of a heading cross-reference. Deliberately narrow: not the full `#inline` set table_row uses - headings are known (corpus 02-headings-4, 118) to support broader inline markup (emphasis, cross-references) that stays unscoped here, matching this repo's pattern of accepting a narrow, targeted fix over modeling everything at once (PR #129)."
     },
     "hr": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
@@ -162,8 +166,8 @@
       "name": "comment.line.percent.carve"
     },
     "admonition": {
-      "match": "^[ \\t]*(:{3,})(?:[ \\t]*(\\||\\\\)|[ \\t]*([a-zA-Z_][\\w-]*)(?:[ \\t]+(\"[^\"\\n]*\"))?(?:[ \\t]+(\\[[^\\]\\n]*\\]))?|[ \\t]*(\\[[^\\]\\n]*\\]))?[ \\t]*$",
-      "captures": {
+      "begin": "^[ \\t]*(:{3,})(?:[ \\t]*(\\||\\\\)|[ \\t]*([a-zA-Z_][\\w-]*)(?:[ \\t]+(\"[^\"\\n]*\"))?(?:[ \\t]+(\\[[^\\]\\n]*\\]))?|[ \\t]*(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
         },
@@ -183,8 +187,70 @@
           "name": "constant.other.label.admonition.carve"
         }
       },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
       "name": "meta.admonition.carve",
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set - which incorrectly let `#abbreviation` fire inside a div (PART 9: abbreviation definitions are recognized at document level only; the sibling list-item and blockquote cases already read correctly, but only because their own line mechanics happen to block it, not because either detects the container). The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus `#abbreviation` (the one construct this fix targets); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before."
     },
     "blockquote": {
       "match": "^[ \\t]*(>)(?= |$) ?(.*)$",
@@ -909,6 +975,18 @@
     },
     "tag": {
       "match": "(?<![\\w])(#)([a-zA-Z][\\w-]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.tag.carve"
+        },
+        "2": {
+          "name": "variable.other.tag.carve"
+        }
+      }
+    },
+    "heading_tag": {
+      "comment": "Used only inside `heading` (carve-grammars#125), not the shared `#tag` include: a heading's own inline set does not carry `#cross_ref`, so without this guard a heading cross-reference's `#id` (`</#id>`, grammar.ebnf `auto_text_link`) would be wrongly claimed as a tag - corpus 118 pins `# A </#a>` staying unscoped as a whole. `#cross_ref` is not added here instead because that would mean modeling the full cross-reference construct (and its `>` closer) inside headings, well past this ticket's scope; excluding the one shape that collides is the narrower fix.",
+      "match": "(?<![\\w])(?<!</)(#)([a-zA-Z][\\w-]*)",
       "captures": {
         "1": {
           "name": "punctuation.definition.tag.carve"

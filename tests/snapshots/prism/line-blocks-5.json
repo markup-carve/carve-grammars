@@ -1,34 +1,38 @@
 [
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
-    "text": " |"
+    "type": "div>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "bold",
+    "type": "div>bold",
     "text": "*Bold*"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": " and "
   },
   {
-    "type": "italic",
+    "type": "div>italic",
     "text": "/italic/"
   },
   {
-    "type": "text",
+    "type": "div",
     "text": ",\nplain line.\n"
   },
   {
-    "type": "div>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
