@@ -1,0 +1,14 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " \tx"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  }
+]
