@@ -327,3 +327,83 @@ export const LITERALS = [
         scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
     },
 ];
+
+/*
+ * THE INVENTORY'S OWN POPULATION, checked by every sweep that reads it.
+ *
+ * The docblock at the top of this file records the failure that created it: two
+ * sweeps with two case lists, one of which carried none of the in-list-item
+ * family, reporting `66/66 constructs scoped correctly` while three grammars
+ * anchored every block rule at column zero. One inventory fixed the DIVERGENCE
+ * between the lists and left the shape of that failure intact - a sweep still
+ * says `N/N` and passes, whatever N is.
+ *
+ * So if this file shrinks, or a filter starts dropping entries, or every entry
+ * acquires a skip, the sweeps print `0/0` with a tick beside it and exit 0. That
+ * is carve#755's second variant, and this is the floor that stops it.
+ *
+ * A FLOOR rather than an exact count: adding a construct should not require
+ * touching a number, and the failure being guarded against is the population
+ * getting SMALLER. Raise these when the inventory grows - the diff is the record.
+ */
+export const MIN_CONSTRUCTS = 134
+export const MIN_LITERALS = 13
+
+/*
+ * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
+ * collapse without the inventory shrinking at all.
+ *
+ * Found by sabotage while writing the check above: adding `skip` to 132 of the
+ * 134 entries leaves the inventory intact, and the textmate sweep then prints
+ *
+ *   textmate sweep: 2/2 constructs tokenized as expected
+ *
+ * with a tick beside it and exits 0. A floor on CONSTRUCTS.length cannot see
+ * that, and "assertable is not zero" cannot either - the realistic failure is a
+ * population that collapses, not one that empties.
+ *
+ * These are today's counts. A skip is already a written decision here, so
+ * lowering one of these is the same decision made once more, in a diff.
+ */
+export const MIN_ASSERTABLE = {
+    textmate: 134,
+    prism: 134,
+    // One construct is skipped for highlight.js; see its `skip` entry.
+    highlightjs: 133,
+};
+
+/**
+ * Fail loudly rather than sweeping an empty or shrunken inventory.
+ *
+ * @param {string} sweep the caller, so the message says which run is vacuous
+ * @param {number} [assertable] entries the caller will actually assert, after
+ *   its own skip filter - `0` there means every construct is skipped, which
+ *   reads as a clean sweep otherwise
+ */
+export function assertInventory(sweep, assertable) {
+  const problems = [];
+  if (CONSTRUCTS.length < MIN_CONSTRUCTS) {
+    problems.push(`CONSTRUCTS holds ${CONSTRUCTS.length}, expected at least ${MIN_CONSTRUCTS}`);
+  }
+  if (LITERALS.length < MIN_LITERALS) {
+    problems.push(`LITERALS holds ${LITERALS.length}, expected at least ${MIN_LITERALS}`);
+  }
+  const key = sweep.split(' ')[0];
+  const floor = MIN_ASSERTABLE[key];
+  if (assertable !== undefined && floor !== undefined && assertable < floor) {
+    problems.push(
+      `${key} asserts ${assertable} construct(s), expected at least ${floor} - ` +
+        'the rest carry a skip',
+    );
+  } else if (assertable === 0) {
+    problems.push('every construct is skipped, so this sweep asserts nothing');
+  }
+  if (assertable !== undefined && floor === undefined) {
+    problems.push(`no MIN_ASSERTABLE entry for "${key}", so its population is unchecked`);
+  }
+  if (problems.length === 0) return;
+  console.log(`FAIL ${sweep}: the inventory cannot support this sweep.`);
+  for (const problem of problems) console.log(`  - ${problem}`);
+  console.log('  A sweep that reports N/N over a shrunken inventory is not a pass (carve#755).');
+  process.exit(1);
+}
