@@ -155,6 +155,22 @@ const NEGATIVE = [
   // Citation defs stay citations, footnote defs stay footnotes
   ['citation not ref def', '[@k]: x', 'meta.link.reference.def'],
   ['footnote def not ref def', '[^f]: note body', 'meta.link.reference.def'],
+  // COLUMN SENSITIVITY. A definition line that sits below EVERY open content
+  // column opens nothing and defines nothing - it is item text (PART 9 §24 C3,
+  // corpus 183-a-definition-below-every-content-column-folds-as-text). Here the
+  // sub-item's content column is 4 and the line is indented 1, so it is text.
+  //
+  // The assertion is deliberately on `meta.link.reference.def` and NOT on the
+  // reference name's own scope: the line is still text CONTAINING a reference,
+  // and `constant.other.reference.link` on it is correct. Only the definition
+  // wrapper is wrong. Asserting the broader scope would have pinned the wrong
+  // answer - a text line may legitimately carry a reference.
+  ['def below every content column is text', '- - a\n [r]: /u\n', 'meta.link.reference.def'],
+  // The content column is the marker's ACTUAL width, not a fixed two columns.
+  // Verified against carve-php: in both of these the reference stays literal
+  // (`see [t][r]`), so no definition was collected and the line is item text.
+  ['def below a wide bullet content column is text', '-   a\n  [r]: /u\n', 'meta.link.reference.def'],
+  ['def below an ordered content column is text', '10. a\n  [r]: /u\n', 'meta.link.reference.def'],
 ]
 let negPass = 0
 const unknownSelectors = [
