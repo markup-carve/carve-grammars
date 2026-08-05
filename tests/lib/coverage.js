@@ -95,6 +95,7 @@ const TIPTAP_COVERED = [
     '134-footnote-definition-requires-an-inline-body',
     '156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace',
     '176-a-marker-separator-is-a-space-never-a-tab',
+    '222-a-tab-as-the-first-character-of-a-definition-term',
     '82-single-line-headings',
     '04-images',
     '06-task-lists',
