@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n\n \tmore\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

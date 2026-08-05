@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[dl]: definition list"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[3D]: three dimensional"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[9]: nine"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA dl, a 3D one, and 9.\n"
+  }
+]
