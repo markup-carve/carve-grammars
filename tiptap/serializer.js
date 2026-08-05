@@ -592,19 +592,25 @@ export function serializeToCarve(doc) {
     // link/reference/span syntax, recognized at any column, so they still
     // need the real escape.
     //
-    // The literal space can't be written directly here: when this paragraph
-    // is the very first thing in the document, `trimSource`'s final edge trim
-    // (below) strips exactly that leading space back off before it ever
-    // reaches the parser. A private-use sentinel survives that trim (it is
-    // not ASCII layout whitespace) and is swapped for a real space right
-    // after, once nothing will trim it away again.
+    // The literal space can't always be written directly: when this
+    // paragraph ends up being the very first thing in the whole document,
+    // `trimSource`'s final edge trim (below) strips exactly that leading
+    // space back off before it ever reaches the parser - so only THAT one
+    // position needs a stand-in. The stand-in is a long, deliberately
+    // unlikely string so a real document's own text is never mistaken for
+    // it, and it is only ever swapped back at the exact front of the
+    // output (never a global replace), so an authored occurrence of the
+    // same text anywhere else in the document is left untouched.
     const LEADING_DEFINITION_ESCAPE = /^\\\[[^\]\n]*\]:/;
-    const LEADING_SPACE_SENTINEL = '';
+    const LEADING_SPACE_SENTINEL = 'carve-grammars#121-leading-space';
 
     function serializeParagraphText(content) {
         const text = serializeInline(content);
         if (LEADING_DEFINITION_ESCAPE.test(text)) {
-            return LEADING_SPACE_SENTINEL + text.slice(1);
+            // A real leading space is safe here UNLESS this paragraph is
+            // about to be the first thing written to `output` at all - only
+            // then can the final edge trim reach it.
+            return (output === '' ? LEADING_SPACE_SENTINEL : ' ') + text.slice(1);
         }
         return text;
     }
@@ -841,8 +847,13 @@ export function serializeToCarve(doc) {
     serializeNode(doc);
     let result = trimSource(output);
     // Swap the sentinel back to the real space it stands in for, now that the
-    // edge trim above can no longer eat it (see LEADING_SPACE_SENTINEL).
-    result = result.split(LEADING_SPACE_SENTINEL).join(' ');
+    // edge trim above can no longer eat it (see LEADING_SPACE_SENTINEL). Only
+    // the exact front of the document is ever touched - never a global
+    // replace - so authored text elsewhere that happens to contain this
+    // string is left exactly as written.
+    if (result.startsWith(LEADING_SPACE_SENTINEL)) {
+        result = ' ' + result.slice(LEADING_SPACE_SENTINEL.length);
+    }
     if (referenceDefs.size > 0) {
         const defs = [...referenceDefs].map(([label, target]) => '[' + label + ']: ' + target);
         result += '\n\n' + defs.join('\n');
