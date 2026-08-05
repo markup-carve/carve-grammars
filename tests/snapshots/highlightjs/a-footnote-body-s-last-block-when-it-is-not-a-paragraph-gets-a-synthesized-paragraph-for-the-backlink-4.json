@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n  d\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  :::"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

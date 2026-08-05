@@ -32,6 +32,7 @@ const emptySkip = () => new Map();
 const TIPTAP_COVERED = [
     // Classified with the bump that added them: both round-trip cleanly through
     // parse -> toPm -> serialize -> parse.
+    '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
     '221-a-heading-reference-folds-unicode-normalization-but-not-compatibility',
     // Promoted by carrying the LIST MARKER's own metadata in this change: the
@@ -189,6 +190,8 @@ const TIPTAP_SKIP = new Map([
     ['24-generic-divs', 'divs carrying a class and admonitions are not modeled'],
     ['25-definition-lists', 'definition lists are not modeled'],
     ['26-comments', 'comment blocks are not modeled'],
+    ['223-an-abbreviation-term-is-one-ascii-alphanumeric-word', 'abbreviation definitions are not modeled, the same gap as 43-abbreviations - both files reparse to a different AST'],
+    ['225-a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink', 'the `-5` file ends its body with a raw block, which is not modeled - the same gap as 27-raw-blocks. The other four files in the category do round-trip'],
     ['27-raw-blocks', 'raw blocks are not modeled'],
     ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
     ['30-raw-inline', 'raw inline spans are not modeled'],
