@@ -364,6 +364,14 @@ function convertInlineNode(node, marks, ctx) {
         case 'link': {
             const attrs = { href: node.href || '' };
             if (node.title) attrs.title = node.title;
+            // A REFERENCE link is not an inline link, and PART 12 section 3a is
+            // what says so: the tree stays pre-resolve, carrying `ref` and the
+            // bracket text the author wrote. Dropping them here left the
+            // serializer with nothing to write but the resolved destination, so
+            // a round trip rewrote `[click][a]` as `[click](…)` - the exact
+            // distinction 3a exists to keep (carve-grammars#101).
+            if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
+            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
             return descend(node, [...marks, { type: 'link', attrs }], ctx);
         }
 

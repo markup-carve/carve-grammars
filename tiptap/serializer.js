@@ -92,6 +92,17 @@ function listMarkerWidth(listType, marker) {
 export function serializeToCarve(doc) {
     let output = '';
 
+    // Reference links write their LABEL, so the definitions they point at have
+    // to be written too - otherwise the round trip turns a link into literal
+    // text, which is worse than the inline rewrite it replaces. Collected while
+    // serializing and emitted once at the end (carve-grammars#101).
+    //
+    // Position is not preserved: the author may have written the definition
+    // anywhere, and a definition is document-level metadata that renders
+    // nothing wherever it sits. What IS preserved is the reference FORM, which
+    // is what PART 12 section 3a keeps in the tree.
+    const referenceDefs = new Map();
+
     // `indent` is the literal whitespace prefix (a string, not a depth counter)
     // at which this node's own lines start - see listMarkerWidth.
     function serializeNode(node, indent = '', fenceDepth = 0) {
@@ -577,7 +588,21 @@ export function serializeToCarve(doc) {
                 if (hasBold) t = '*' + t + '*';
                 if (link) {
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
-                    t = '[' + t + '](' + link.attrs.href + title + ')';
+                    const ref = link.attrs?.ref;
+                    if (typeof ref === 'string' && ref !== '') {
+                        // COLLAPSED (`[text][]`) where the label is the link's
+                        // own text, FULL (`[text][label]`) otherwise - the two
+                        // forms the language has. `rawRef` records which one was
+                        // written; the text may have been edited since, so the
+                        // label is compared rather than the raw string replayed.
+                        const collapsed = ref.toLowerCase() === t.trim().toLowerCase();
+                        t = '[' + t + ']' + (collapsed ? '[]' : '[' + ref + ']');
+                        if (!referenceDefs.has(ref)) {
+                            referenceDefs.set(ref, link.attrs.href + title);
+                        }
+                    } else {
+                        t = '[' + t + '](' + link.attrs.href + title + ')';
+                    }
                 }
                 if (carveSpan) {
                     const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)
@@ -624,7 +649,12 @@ export function serializeToCarve(doc) {
     }
 
     serializeNode(doc);
-    return output.trim();
+    let result = output.trim();
+    if (referenceDefs.size > 0) {
+        const defs = [...referenceDefs].map(([label, target]) => '[' + label + ']: ' + target);
+        result += '\n\n' + defs.join('\n');
+    }
+    return result;
 }
 
 /**
