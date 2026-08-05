@@ -32,6 +32,7 @@ const emptySkip = () => new Map();
 const TIPTAP_COVERED = [
     // Classified with the bump that added them: both round-trip cleanly through
     // parse -> toPm -> serialize -> parse.
+    '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
     '221-a-heading-reference-folds-unicode-normalization-but-not-compatibility',
@@ -192,6 +193,8 @@ const TIPTAP_SKIP = new Map([
     ['26-comments', 'comment blocks are not modeled'],
     ['223-an-abbreviation-term-is-one-ascii-alphanumeric-word', 'abbreviation definitions are not modeled, the same gap as 43-abbreviations - both files reparse to a different AST'],
     ['225-a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink', 'the `-5` file ends its body with a raw block, which is not modeled - the same gap as 27-raw-blocks. The other four files in the category do round-trip'],
+    ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
+    ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
     ['27-raw-blocks', 'raw blocks are not modeled'],
     ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
     ['30-raw-inline', 'raw inline spans are not modeled'],
