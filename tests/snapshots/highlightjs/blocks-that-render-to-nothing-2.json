@@ -13,10 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\n   x\n"
-  },
-  {
-    "scope": "comment",
-    "text": "   %%%\n"
+    "text": "\n   x\n   %%%\n"
   }
 ]

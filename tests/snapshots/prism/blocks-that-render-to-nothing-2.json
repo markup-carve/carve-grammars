@@ -1,14 +1,14 @@
 [
   {
-    "type": "definition-term>punctuation",
+    "type": "definition-list>definition-term>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-term",
+    "type": "definition-list>definition-term",
     "text": " t"
   },
   {
-    "type": "text",
+    "type": "definition-list",
     "text": "\n:  "
   },
   {

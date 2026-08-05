@@ -125,6 +125,35 @@
         },
     };
 
+    // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
+    // Reused as a nested rule inside 'definition-list' below - not registered
+    // as a top-level token, so it only ever colors a term that
+    // 'definition-list' has already decided is inside a real entry.
+    var definitionTerm = {
+        // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
+        pattern: /^[ \t]*:: +(?![ \t]*$).*$/m,
+        alias: 'title',
+        inside: Object.assign({
+            'punctuation': /^[ \t]*::/,
+        }, inline),
+    };
+
+    // An OTHER block opener ends a definition-list entry: a heading, a
+    // list/task marker, a blockquote, a fence (code/div), a horizontal rule,
+    // a caption or a table row. Blank lines and lazy-continuation prose are
+    // NOT block openers and fold into the entry instead - that is what keeps
+    // a folded term line (`term_continuation_line`, corpus
+    // 25-definition-lists-6) and a definition separated from its term by one
+    // blank line (corpus 25-definition-lists-7) scoped correctly.
+    var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$|\*{3,}[ \t]*$|_{3,}[ \t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+[.)][ \t]|\.[ \t])/.source;
+
+    // A definition-list entry: the opening term line plus every following
+    // line that is not some OTHER block opener (see above).
+    var definitionListPattern = RegExp(
+        '^[ \\t]*:: +(?![ \\t]*$)[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
+        'm',
+    );
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -296,7 +325,10 @@
             }, inline),
         },
 
-        // List markers: -, *, ordered (1. a) i.), task [ ]/[x], definition `: `
+        // List markers: -, * and ordered (1. a) i.), task [ ]/[x]. The
+        // definition-list description marker `:  ` used to be a third branch
+        // here, matched unconditionally - see 'definition-list' below for why
+        // it moved out.
         //
         // `task_state` is ` `, `x`, `X`, `-`, `_`, `>` or `?` (grammar.ebnf
         // `task_state`). Only `x`/`X` render checked; the rest are still task
@@ -312,30 +344,43 @@
             // branch already had the guard (#126). Same guard, and it is a lookahead
             // rather than a consuming group so the attribute rule keeps the block.
             // MARKER REQUIRES CONTENT: each branch ends with a line-end lookahead,
-            // so `- `, `1. ` and `: ` with nothing after them stay prose. The
+            // so `- ` and `1. ` with nothing after them stay prose. The
             // ordered branch spells out a glued attribute block in full rather
             // than skipping it, because `1.{#x}` with nothing after the block
             // is a paragraph too, and a `\{[^}]*\}` run stops in the wrong
             // place: a quoted value may contain `}` and may escape its own
             // quote, and `{title="a}b"} x` is a valid item (#85).
-            pattern: /^[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$)|: +(?![ \t]*$))/m,
+            pattern: /^[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
             },
         },
 
-        // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
-        // The `:  definition` line is a list marker above; this is the term.
-        // `:::` opens a div and those rules run earlier - the space required
-        // after exactly two colons keeps the two apart in any case.
-        'definition-term': {
-            // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-            pattern: /^[ \t]*:: +(?![ \t]*$).*$/m,
-            alias: 'title',
-            inside: Object.assign({
-                'punctuation': /^[ \t]*::/,
-            }, inline),
+        // Definition-list entry: `:: term` through its `:  def` line(s)
+        // (grammar.ebnf `definition_entry`). `:::` opens a div and that rule
+        // runs earlier - the space required after exactly two colons keeps
+        // the two apart in any case.
+        //
+        // A `:` description line scopes only INSIDE an entry that a real
+        // `:: ` term opened (carve-grammars#91) - it used to be matched by
+        // the 'list' token unconditionally, so a bare `:  d` with no term
+        // above it (or a term the separator rule disqualified, e.g.
+        // `::\tterm` - the marker separator is a literal space per the
+        // tab-and-separator ruling on markup-carve/carve#698, a tab never
+        // satisfies it) was scoped as a definition even though the engines
+        // render it as a paragraph. The entry runs forward from the term
+        // through any number of lines that are not some OTHER block opener
+        // (see `otherBlockOpener` above `Prism.languages.carve`).
+        'definition-list': {
+            pattern: definitionListPattern,
+            inside: {
+                'definition-term': definitionTerm,
+                // The description marker itself; the body text is left for
+                // the inline rules to tokenize as ordinary content, same as
+                // it was when this lived in 'list'.
+                'punctuation': /^[ \t]*: +(?![ \t]*$)/m,
+            },
         },
 
         // Reference link / abbreviation definitions

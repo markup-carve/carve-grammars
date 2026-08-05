@@ -8,23 +8,23 @@
     "text": "one\n\n"
   },
   {
-    "type": "definition-term>punctuation",
+    "type": "definition-list>definition-term>punctuation",
     "text": "  ::"
   },
   {
-    "type": "definition-term",
+    "type": "definition-list>definition-term",
     "text": " t"
   },
   {
-    "type": "text",
+    "type": "definition-list",
     "text": "\n"
   },
   {
-    "type": "list",
+    "type": "definition-list>punctuation",
     "text": "  :  "
   },
   {
-    "type": "text",
+    "type": "definition-list",
     "text": "d\n"
   }
 ]

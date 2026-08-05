@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "::\tterm\n"
-  },
-  {
-    "scope": "title",
-    "text": ":  d"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "::\tterm\n:  d\n"
   }
 ]

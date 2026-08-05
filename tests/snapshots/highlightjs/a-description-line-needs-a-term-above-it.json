@@ -1,11 +1,7 @@
 [
   {
-    "scope": "title",
-    "text": ":  [r]: /u"
-  },
-  {
     "scope": null,
-    "text": "\n\nsee "
+    "text": ":  [r]: /u\n\nsee "
   },
   {
     "scope": "link",

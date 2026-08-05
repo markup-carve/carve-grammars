@@ -326,6 +326,31 @@ export const LITERALS = [
         payload: '1.',
         scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
     },
+    // A `:` description line scopes as a definition only when a real `:: `
+    // term precedes it (carve-grammars#91) - every grammar here used to
+    // scope the marker unconditionally, so the engines render a paragraph
+    // where the grammars drew a `<dl>`. `scopes` names what the OLD,
+    // ungated rule produced (checked against the shared LITERALS floor
+    // below): prism's flat 'list' token, highlight.js's 'title' class, and
+    // TextMate's `punctuation.definition.list.definition` scope.
+    {
+        name: 'a description line after plain prose has no term above it',
+        sample: 'plain para\n:  d\n',
+        payload: ':',
+        scopes: { prism: 'list', highlightjs: 'title', textmate: 'list.definition' },
+    },
+    // Same rule, the corpus 176 shape: the term line IS `::`, but its
+    // separator is a tab, not the literal space PART 9's marker-separator
+    // clause requires (a tab never satisfies it - the ruling on
+    // markup-carve/carve#698 that also settled the tab-in-term-content
+    // question). `::\tterm` therefore never opens a term, so the `:  d`
+    // line below it has nothing to belong to either.
+    {
+        name: 'a description line below a tab-disqualified term marker',
+        sample: '::\tterm\n:  d\n',
+        payload: ':',
+        scopes: { prism: 'list', highlightjs: 'title', textmate: 'list.definition' },
+    },
 ];
 
 /*
