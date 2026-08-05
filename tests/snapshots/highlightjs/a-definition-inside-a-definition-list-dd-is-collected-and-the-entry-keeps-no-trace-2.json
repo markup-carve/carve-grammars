@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  [^f]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee[^f]\n"
+  }
+]
