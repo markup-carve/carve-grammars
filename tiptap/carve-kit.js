@@ -342,6 +342,20 @@ export const CarveKit = Extension.create({
                     openOnClick: false,
                     ...this.options.link,
                 }).extend({
+                    // A REFERENCE link keeps the label the author wrote. The
+                    // converter puts `ref`/`rawRef` on the mark (PART 12
+                    // section 3a) and the serializer writes the reference form
+                    // from them - but ProseMirror drops any attribute the mark
+                    // does not declare, so without this the metadata survives
+                    // only when the JSON never reaches an editor, which is not
+                    // the path anyone uses (carve-grammars#101).
+                    addAttributes() {
+                        return {
+                            ...this.parent?.(),
+                            ref: { default: null },
+                            rawRef: { default: null },
+                        };
+                    },
                     addKeyboardShortcuts() {
                         return {
                             'Mod-Shift-k': () => {

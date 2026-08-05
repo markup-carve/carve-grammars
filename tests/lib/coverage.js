@@ -30,6 +30,9 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // round-trips since the serializer learned the reference form and writes the
+    // definitions it points at (carve-grammars#101)
+    '121-scheme-probe-strips-unicode-whitespace',
     // round-trips cleanly since the soft break became a newline (carve-grammars#102)
     '12-inline-code',
     '73-parenthesized-ordered-marker',
@@ -80,7 +83,6 @@ const TIPTAP_COVERED = [
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
     ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
-    ['121-scheme-probe-strips-unicode-whitespace', 'reference links are not modeled: `[click][a]` plus its definition comes back as the inline `[click](javascript:alert(1))`, so the `rawRef` the pre-resolve AST records (PART 12 section 3a) is gone on reparse'],
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
     ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
