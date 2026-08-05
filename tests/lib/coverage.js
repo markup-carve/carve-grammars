@@ -30,6 +30,11 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Promoted by producing `carveFootnoteDefinition` in this change: the
+    // serializer could always write one; nothing had ever made one.
+    '120-footnotes-placement',
+    '202-a-definition-on-a-footnote-body-s-continuation-line-is-collected',
+    '212-a-flush-left-line-after-a-footnote-definition-belongs-to-the-document',
     // Promoted by the unresolved-reference fix in this change: with no phantom
     // definition invented, an unresolved reference survives the round trip.
     '192-a-collapsed-reference-is-matched-by-the-label-the-author-wrote',
@@ -100,7 +105,6 @@ const TIPTAP_COVERED = [
 const TIPTAP_SKIP = new Map([
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
-    ['202-a-definition-on-a-footnote-body-s-continuation-line-is-collected', 'the footnote DEFINITION is dropped: `[^a]: note` and its body do not survive the round trip'],
     ['203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written', 'a footnote body holding blocks is not modeled; the body does not survive'],
     ['204-a-heading-in-a-footnote-body-takes-an-id-but-no-section-wrapper', 'a footnote body holding blocks is not modeled; the body does not survive'],
     ['205-an-attribute-line-inside-a-footnote-body-attaches-inside-it', 'a footnote body holding blocks is not modeled; the body does not survive'],
@@ -108,7 +112,6 @@ const TIPTAP_SKIP = new Map([
     ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
     ['209-an-unresolved-reference-image-takes-no-caption', 'the caption line is escaped to `\^ cap`, so the paragraph reparses with a literal backslash'],
-    ['212-a-flush-left-line-after-a-footnote-definition-belongs-to-the-document', 'the footnote definition is dropped, taking the note with it'],
     ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
     ['215-a-marker-attribute-may-hold-a-quoted-brace', 'a list-marker attribute block is dropped, so `1.{title=...} item` comes back as `1. item`'],
     ['216-a-description-line-needs-a-term-above-it', 'the bare `:` line is escaped and a phantom empty definition is appended'],
@@ -221,7 +224,6 @@ const TIPTAP_SKIP = new Map([
     ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
-    ['120-footnotes-placement', 'admonition blocks are not modeled'],
     ['125-autolink-display-keeps-the-raw-content', 'autolink inline nodes are not modeled'],
     ['126-editorial-markup-takes-a-trailing-attribute', 'editorial markup with a trailing attribute is lossy on reparse'],
     ['127-emphasis-opener-slash-adjacency', 'the converter does not model the `emphasis` node'],

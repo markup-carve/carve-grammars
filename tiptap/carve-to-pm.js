@@ -64,10 +64,25 @@ export function astToProseMirror(ast, options = {}) {
         }
         unsupported('frontmatter', ast, ctx);
     }
-    return {
-        type: 'doc',
-        content: convertBlocks(ast.children || [], ctx),
-    };
+    const content = convertBlocks(ast.children || [], ctx);
+    // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
+    // walk of the body alone never sees them. The serializer has always had a
+    // `carveFootnoteDefinition` case and `CarveKit` has always registered the
+    // node - nothing produced one, so a note's body was dropped by every round
+    // trip and the definition vanished from the output (a declared node type
+    // with no producer).
+    //
+    // They are appended after the body: a definition may be written anywhere and
+    // renders nothing where it sits, so position is not part of what the round
+    // trip has to preserve - the definition existing is.
+    for (const [label, blocks] of Object.entries(ast.footnoteDefs ?? {})) {
+        content.push({
+            type: 'carveFootnoteDefinition',
+            attrs: { label },
+            content: convertBlocks(blocks || [], ctx),
+        });
+    }
+    return { type: 'doc', content };
 }
 
 export const carveToPm = astToProseMirror;
