@@ -1,6 +1,10 @@
 [
   {
+    "type": "list",
+    "text": "-"
+  },
+  {
     "type": "text",
-    "text": "-{} A bare item via the empty block.\n"
+    "text": "{} A bare item via the empty block.\n"
   }
 ]

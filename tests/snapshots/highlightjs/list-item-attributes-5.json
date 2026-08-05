@@ -1,6 +1,10 @@
 [
   {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
     "scope": null,
-    "text": "-{} A bare item via the empty block.\n"
+    "text": "{} A bare item via the empty block.\n"
   }
 ]

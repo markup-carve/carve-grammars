@@ -5,6 +5,30 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **A bullet glued to an attribute block is a marker, and both marker rules now
+  validate the payload** (#126). The ordered rule learned the glued form in #85;
+  the bullet rule beside it never did, in any of the three grammars, so
+  `-{#x} item`, `*{.c} item` and `-{title="a}b"} item` went uncoloured on lines
+  that ARE list items. Four corpus documents already pinned the shape and were
+  snapshotting the wrong answer - `90-list-item-attributes`, `-4`, `-5` and
+  `172-attribute-braces-on-a-list-item-marker-line` - which a snapshot cannot
+  report, since it pins whatever the grammar does.
+
+  Copying the ordered guard verbatim would have REGRESSED
+  `90-list-item-attributes-6`: `-{+a+} text` is a paragraph, because `{+a+}` is
+  an insertion span rather than attributes, and a guard accepting any
+  brace-delimited run colours the `-`. So the guard now requires valid attribute
+  syntax, and both branches share it - the ordered rule had the same hole,
+  unpinned only because no corpus document writes `1.{+a+} text`. Identifiers are
+  strict (PART 9 §14) and admit no colon, matching carve-js and the TextMate
+  grammar; Prism's and highlight.js's own attribute rules still admit one, which
+  is a separate pre-existing divergence.
+
+  Known limitation, unchanged and shared with every Carve TextMate grammar: the
+  checkbox after a glued block (`-{.c} [x] done`) is not scoped, because
+  `task_item` runs first and has no glued branch. The bullet is scoped. The guard
+  is a lookahead rather than a consuming group, so the attribute rule keeps the
+  block - consuming it is the failure mode recorded in #85.
 - **A mixed-case roman run is not an ordered marker.** All three grammars spelled a
   roman run as one class, `[ivxlcdmIVXLCDM]+`, which matches any mixture of the two
   cases - so `Vim. text`, `Mix. text` and `Ix. text` coloured as lists where carve-js

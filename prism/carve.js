@@ -307,6 +307,10 @@
             // and `Mix. text` as lists where the engine renders paragraphs (#118).
             // `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split,
             // not rejecting multi-letter words.
+            // A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK too, and then the space
+            // comes after the block - `-{#x} item` went uncoloured while the ordered
+            // branch already had the guard (#126). Same guard, and it is a lookahead
+            // rather than a consuming group so the attribute rule keeps the block.
             // MARKER REQUIRES CONTENT: each branch ends with a line-end lookahead,
             // so `- `, `1. ` and `: ` with nothing after them stay prose. The
             // ordered branch spells out a glued attribute block in full rather
@@ -314,7 +318,7 @@
             // is a paragraph too, and a `\{[^}]*\}` run stops in the wrong
             // place: a quoted value may contain `}` and may escape its own
             // quote, and `{title="a}b"} x` is a valid item (#85).
-            pattern: /^[ \t]*(?:(?:[-*] +)*[-*] +(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n])) *(?![ \t]*$)|: +(?![ \t]*$))/m,
+            pattern: /^[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$)|: +(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
