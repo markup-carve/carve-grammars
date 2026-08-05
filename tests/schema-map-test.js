@@ -22,6 +22,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getSchema } from '@tiptap/core';
 import { CarveKit } from '../tiptap/carve-kit.js';
+import { INLINE_MARKS } from '../tiptap/carve-to-pm.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const map = JSON.parse(readFileSync(resolve(here, '../tiptap/schema-map.json'), 'utf8'));
@@ -150,6 +151,60 @@ ok('every unmapped entry carries a reason', () => {
     .filter(([, reason]) => typeof reason !== 'string' || reason.trim() === '')
     .map(([type]) => type);
   assert.deepStrictEqual(empty, [], `unmapped without a reason: ${empty.join(', ')}`);
+});
+
+// Marks the map declares that the converter cannot yet PRODUCE, with the reason.
+// Same promotion gate as the coverage skips: the test below fails once a mark
+// here becomes reachable, so the list cannot rot into a list of excuses.
+const UNREACHABLE_MARKS = new Map([
+  ['abbreviation', 'an `abbreviation` inline needs the `abbreviation_def` BLOCK too - '
+    + 'the definition is what carries the expansion, and the converter has no case for it, '
+    + 'so a document using one throws before the mark is reached'],
+]);
+
+ok('every mark the map declares is reachable from the converter', () => {
+  // The map is checked against the spec and against the CarveKit schema, but
+  // NOTHING used to check it against the converter that has to produce those
+  // marks. All four of `superscript`, `subscript`, `insert` and `delete` were
+  // declared correctly here and keyed in the converter under names no engine
+  // emits any more (`super`, `sub`, `critic-insert`, `critic-delete`), so the
+  // marks were registered, serializable, and unreachable: `{^a^}` threw
+  // `unsupported node type "superscript"`.
+  const converterSource = readFileSync(resolve(here, '../tiptap/carve-to-pm.js'), 'utf8');
+  const hasCase = (type) => converterSource.includes(`case '${type}':`);
+  const declared = Object.entries(map.types).filter(([, entry]) => entry.kind === 'mark');
+
+  const unreachable = declared
+    .map(([carveType]) => carveType)
+    .filter((carveType) => !(carveType in INLINE_MARKS) && !hasCase(carveType))
+    .filter((carveType) => !UNREACHABLE_MARKS.has(carveType));
+  assert.deepStrictEqual(
+    unreachable, [],
+    'marks declared in schema-map.json that the converter never produces: ' + unreachable.join(', '),
+  );
+
+  const stale = [...UNREACHABLE_MARKS.keys()]
+    .filter((carveType) => carveType in INLINE_MARKS || hasCase(carveType));
+  assert.deepStrictEqual(
+    stale, [],
+    'UNREACHABLE_MARKS entries the converter now handles (delete them): ' + stale.join(', '),
+  );
+});
+
+ok('the converter maps every mark to the ProseMirror name the map declares', () => {
+  const declared = Object.fromEntries(
+    Object.entries(map.types)
+      .filter(([, entry]) => entry.kind === 'mark')
+      .map(([carveType, entry]) => [carveType, entry.pm]),
+  );
+  const wrong = Object.entries(INLINE_MARKS)
+    // `italic` is the one legitimate alias: two carve type names (`emphasis` and
+    // the legacy `italic`) reach the same mark, and the map names only the
+    // canonical one.
+    .filter(([carveType]) => carveType !== 'italic')
+    .filter(([carveType, pm]) => declared[carveType] !== pm)
+    .map(([carveType, pm]) => `${carveType} -> ${pm} (map says ${declared[carveType] ?? 'nothing'})`);
+  assert.deepStrictEqual(wrong, [], `INLINE_MARKS disagrees with schema-map.json: ${wrong.join(', ')}`);
 });
 
 console.log(`\n${passed} passed`);

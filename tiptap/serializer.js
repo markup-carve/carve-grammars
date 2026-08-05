@@ -76,17 +76,70 @@ function carveDivFenceLength(depth) {
     return CARVE_MIN_FENCE + depth;
 }
 
-// Column width a list marker occupies, i.e. the offset of the item's content
-// column relative to the marker's own indent. A nested block (sublist marker or
-// continuation block) must sit at exactly that column to stay inside the item;
-// anything shallower dedents out of it.
+// The ordered-marker TOKEN for one item: `1`, `a`, `iv`. `olType` is the style
+// the author used (`a`/`A` alphabetic, `i`/`I` roman, absent = decimal) and
+// `num` is that item's ordinal.
 //
-// Bullet (`- `) and ordered (`1. `, `10. `) markers own their full text, so an
-// ordered item's content column grows with the number's digits. A task item's
-// `[ ]` is CONTENT of a plain `- ` bullet, not part of the marker, so its
-// content column stays 2 regardless of the checkbox.
-function listMarkerWidth(listType, marker) {
-    return listType === 'taskList' ? 2 : marker.length;
+// The two styles OVERLAP on single letters, and the parser resolves the overlap
+// by looking at the following markers: `v.` alone is alphabetic 22, while
+// `v.` + `vi.` is roman 5, and `i.` + `j.` is alphabetic 9 where `i.` + `ii.` is
+// roman 1. So an ambiguous token is safe in a list of two or more items - the
+// next token always disambiguates - and unwritable in a ONE-item list, which
+// falls back to the decimal token: that changes the marker style but keeps the
+// ORDINAL, and a wrong number would be the worse of the two.
+function orderedToken(num, olType, itemCount) {
+    if (olType === 'a' || olType === 'A') {
+        if (num >= 1 && num <= 26 && (num !== 9 || itemCount > 1)) {
+            const letter = String.fromCharCode(96 + num);
+            return olType === 'A' ? letter.toUpperCase() : letter;
+        }
+        return String(num);
+    }
+    if (olType === 'i' || olType === 'I') {
+        const roman = toRoman(num);
+        if (roman && (roman.length > 1 || roman === 'i' || itemCount > 1)) {
+            return olType === 'I' ? roman.toUpperCase() : roman;
+        }
+        return String(num);
+    }
+    return String(num);
+}
+
+const ROMAN = [
+    [1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'],
+    [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i'],
+];
+
+function toRoman(num) {
+    if (!Number.isInteger(num) || num < 1 || num > 3999) return null;
+    let rest = num, out = '';
+    for (const [value, token] of ROMAN) {
+        while (rest >= value) {
+            out += token;
+            rest -= value;
+        }
+    }
+    return out;
+}
+
+// Tiptap's Link extension FILLS IN `target` and `rel` on every link mark it
+// parses from HTML, so a document that went through an editor carries them
+// whether or not the author wrote anything. Writing them back turned every
+// ordinary `[t](/u)` into `[t](/u){target="_blank" rel="noopener noreferrer
+// nofollow"}` - attributes nobody authored, on the round trip that matters most.
+//
+// Only the stock DEFAULTS are dropped: a link that really does carry
+// `rel="me"` keeps it, and a Carve-authored `{target="x"}` arrives in
+// `keyValues` rather than here, so it is never affected either way.
+const TIPTAP_LINK_DEFAULTS = { target: '_blank', rel: 'noopener noreferrer nofollow' };
+
+function linkAttrRun(attrs) {
+    if (!attrs) return attrs;
+    const out = { ...attrs };
+    for (const [key, value] of Object.entries(TIPTAP_LINK_DEFAULTS)) {
+        if (out[key] === value) delete out[key];
+    }
+    return out;
 }
 
 export function serializeToCarve(doc) {
@@ -104,7 +157,8 @@ export function serializeToCarve(doc) {
     const referenceDefs = new Map();
 
     // `indent` is the literal whitespace prefix (a string, not a depth counter)
-    // at which this node's own lines start - see listMarkerWidth.
+    // at which this node's own lines start - the width of the marker prefix
+    // actually written.
     function serializeNode(node, indent = '', fenceDepth = 0) {
         if (!node) return;
 
@@ -157,18 +211,44 @@ export function serializeToCarve(doc) {
                     return blocks.length > 1;
                 });
                 let num = node.attrs?.start || 1;
+                // `olType` comes from the Carve AST; `type` is what Tiptap's own
+                // OrderedList records when the editor is seeded from rendered
+                // HTML (`<ol type="a">`). Reading only the first lost every
+                // alphabetic and roman list on the WYSIWYG path.
+                const htmlType = /^[aAiI]$/.test(String(node.attrs?.type ?? '')) ? node.attrs.type : null;
+                const olType = node.attrs?.olType || htmlType;
+                const delim = node.attrs?.delim === ')' ? ')' : '.';
                 (node.content || []).forEach((item, i) => {
-                    let marker;
+                    // The marker splits in two around the attribute slot: a
+                    // marker attribute goes directly after the marker CHARACTER
+                    // and before the separating space, so a task item is
+                    // `-{.c} [ ] text` and never `- [ ]{.c} text` - the latter
+                    // makes the brace run an inline span on the item's text.
+                    let marker, taskBox = '';
                     if (node.type === 'orderedList') {
-                        marker = num + '. ';
+                        marker = (node.attrs?.bareMarker ? '' : orderedToken(num, olType, (node.content || []).length)) + delim;
                         num++;
                     } else if (node.type === 'taskList') {
-                        marker = '- [' + (item.attrs?.checked ? 'x' : ' ') + '] ';
+                        marker = '-';
+                        taskBox = '[' + (item.attrs?.checked ? 'x' : ' ') + '] ';
                     } else {
-                        marker = '- ';
+                        marker = '-';
                     }
-                    output += indent + marker;
-                    serializeListItem(item, indent + ' '.repeat(listMarkerWidth(node.type, marker)));
+                    // Written with NO space before the brace. A SPACE there
+                    // (`- {.c} item`) is a different document: the brace is then
+                    // content, either literal text or a block-attribute line for
+                    // what follows (corpus 90-list-item-attributes-7, 172).
+                    const markerAttrs = serializeAttributes(item.attrs, ['checked']);
+                    const prefix = marker + markerAttrs + ' ';
+                    output += indent + prefix + taskBox;
+                    // The content column is measured from the prefix ACTUALLY
+                    // written, attributes included - that is how the engine this
+                    // round trip is checked against reads it back, and indenting
+                    // a continuation to the bare marker width would dedent the
+                    // block out of an attributed item. Which reading is correct
+                    // is open (markup-carve/carve#711); the task checkbox is
+                    // content either way, so it never counts.
+                    serializeListItem(item, indent + ' '.repeat(prefix.length));
                     // Add blank line between items in loose lists
                     if (isLoose && i < (node.content || []).length - 1) {
                         output += '\n';
@@ -496,8 +576,23 @@ export function serializeToCarve(doc) {
                 // =mark=, _underline_, /em/, *strong*.
                 const isEmphasized = hasBold || hasItalic || hasUnderline || hasStrike
                     || hasHighlight || hasSup || hasSub;
+
+                // An AUTOLINK is its own text and its content is LITERAL, so its
+                // form is decided BEFORE any escaping or mark wrapper is applied:
+                // the escaped label would no longer match the target (`<…/a*b*>`),
+                // and wrapping has to happen OUTSIDE the angle brackets so
+                // `*<https://e.com>*` keeps its emphasis.
+                const autoRaw = node.text || '';
+                const autoTarget = link?.attrs?.href || '';
+                const writeAutolink = !!link?.attrs?.autolink
+                    && !link.attrs?.title
+                    && (autoRaw === autoTarget || 'mailto:' + autoRaw === autoTarget)
+                    // `>` would close the form early and whitespace ends it.
+                    && autoRaw !== '' && !/[>\s]/.test(autoRaw);
                 let t;
-                if (hasCriticComment) {
+                if (writeAutolink) {
+                    t = '<' + autoRaw + '>';
+                } else if (hasCriticComment) {
                     // An editorial comment's content is LITERAL - nothing inside
                     // it is markup - so it is emitted raw. Escaping it the way
                     // prose is escaped would put real backslashes in the
@@ -549,7 +644,7 @@ export function serializeToCarve(doc) {
                 // such dilemma - the engines skip code spans when scanning for
                 // a label's closing bracket, and skipping editorial comments
                 // the same way is the real fix (markup-carve/carve#403).
-                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment) {
+                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment && !writeAutolink) {
                     t = t.replace(/]/g, '\\]');
                 }
                 const bareable = (delim) => {
@@ -589,7 +684,10 @@ export function serializeToCarve(doc) {
                 if (link) {
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
                     const ref = link.attrs?.ref;
-                    if (typeof ref === 'string' && ref !== '') {
+                    if (writeAutolink) {
+                        // Already written in its own form above, brackets and
+                        // all; only the attribute run is still owed.
+                    } else if (typeof ref === 'string' && ref !== '') {
                         // COLLAPSED (`[text][]`) where the label is the link's
                         // own text, FULL (`[text][label]`) otherwise - the two
                         // forms the language has. `rawRef` records which one was
@@ -608,6 +706,11 @@ export function serializeToCarve(doc) {
                     } else {
                         t = '[' + t + '](' + link.attrs.href + title + ')';
                     }
+                    // An attribute RUN on the link, which is not the same thing
+                    // as the destination or the reference label - and was
+                    // dropped in silence before, taking the author's id and
+                    // classes with it.
+                    t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'autolink']);
                 }
                 if (carveSpan) {
                     const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)

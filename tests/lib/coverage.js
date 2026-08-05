@@ -30,6 +30,20 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Promoted by carrying the LIST MARKER's own metadata in this change: the
+    // marker attribute (`-{.c} item`), the marker style (`a.`, `iv)`, bare `.`)
+    // and the autolink spelling. Each was modeled in the AST and dropped here.
+    '90-list-item-attributes',
+    '215-a-marker-attribute-may-hold-a-quoted-brace',
+    '31-ordered-list-start-and-delimiter',
+    '32-ordered-list-dialects',
+    '174-bare-dot-ordered-markers',
+    '127-autolink-display-keeps-the-raw-content',
+    // Promoted by keeping a link's ATTRIBUTE RUN and by writing the email
+    // autolink form: `[t](/u){#id .c}` used to come back as `[t](/u)`.
+    '17-collapsed-reference-link',
+    '108-security-hardening',
+    '152-leading-attribute-brace-before-an-inline-span-stays-literal',
     // Promoted by producing `carveFootnoteDefinition` in this change: the
     // serializer could always write one; nothing had ever made one.
     '120-footnotes-placement',
@@ -113,10 +127,8 @@ const TIPTAP_SKIP = new Map([
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
     ['209-an-unresolved-reference-image-takes-no-caption', 'the caption line is escaped to `\^ cap`, so the paragraph reparses with a literal backslash'],
     ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
-    ['215-a-marker-attribute-may-hold-a-quoted-brace', 'a list-marker attribute block is dropped, so `1.{title=...} item` comes back as `1. item`'],
     ['216-a-description-line-needs-a-term-above-it', 'the bare `:` line is escaped and a phantom empty definition is appended'],
 
-    ['174-bare-dot-ordered-markers', 'the serializer has no field for the bare-dot marker, so `. item` re-serializes as `1. item` and the AST differs'],
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
     ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
@@ -142,7 +154,7 @@ const TIPTAP_SKIP = new Map([
     ['195-trailing-attributes-on-a-link-reference-definition', 'the reference-link gap (#101) with the ATTRIBUTES lost as well: `[ex]: /u {.external}` plus `[Example][ex]` comes back as `[Example](https://example.com)` with no class, so the very thing the category pins - attributes reaching every link through the definition - is gone on reparse'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
     ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
-    ['03-links', 'autolinks, crossrefs and key/value spans are not modeled'],
+    ['03-links', 'the converter models neither `heading_ref` (a crossref) nor `escaped_text`'],
     ['05-lists', 'figure (image-with-caption) blocks inside list items are not modeled'],
     ['07-blockquote-with-attribution', 'figure / caption blocks are not modeled'],
     ['08-image-with-caption', 'figure / caption blocks are not modeled'],
@@ -153,7 +165,6 @@ const TIPTAP_SKIP = new Map([
     ['14-frontmatter', 'front matter is not modeled by the serializer'],
     ['15-heading-ids', 'cross-reference links to heading ids are not modeled'],
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
-    ['17-collapsed-reference-link', 'reference-link definitions are not represented'],
     ['19-smart-typography-dashes-and-quotes', 'smart-typography output is lossy on reparse (quote-context edge cases added with spec 750ddfa)'],
     ['20-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
@@ -164,14 +175,12 @@ const TIPTAP_SKIP = new Map([
     ['27-raw-blocks', 'raw blocks are not modeled'],
     ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
     ['30-raw-inline', 'raw inline spans are not modeled'],
-    ['31-ordered-list-start-and-delimiter', 'round-trips to a different AST'],
-    ['32-ordered-list-dialects', 'a list dialect variant is lossy through the serializer'],
     ['33-editorial-markup', 'critic-substitute inline nodes are not modeled'],
     ['35-cross-reference', 'cross-reference inline nodes are not modeled'],
-    ['36-autolinks', 'autolink inline nodes are not modeled'],
+    ['36-autolinks', 'the converter does not model `smart_punctuation`, which one variant produces alongside the autolinks'],
     ['37-escapes', 'the converter does not model the `escaped_text` node'],
     ['39-inline-span', 'a span variant is lossy through the serializer'],
-    ['40-superscript-and-subscript', 'the converter does not model the `subscript` node'],
+    ['40-superscript-and-subscript', 'a BARE `^6^` is literal text (sup/sub are braced-only) and the serializer escapes only the leading caret, so `10^6^` comes back as `10\\^6^`'],
     ['41-line-blocks', 'line blocks (div with attrs) are not modeled'],
     ['42-admonitions', 'admonition blocks (:::warning) are not modeled'],
     ['43-abbreviations', 'abbreviation definitions are not modeled'],
@@ -201,9 +210,8 @@ const TIPTAP_SKIP = new Map([
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
     ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
-    ['88-list-item-attributes', 'list-item attributes are not represented'],
     ['89-mention-and-tag-name-boundaries', 'mention/tag inline nodes are not modeled'],
-    ['90-superscript-in-a-table-cell', 'the converter does not model the `superscript` node'],
+    ['90-superscript-in-a-table-cell', 'the `-2` variant holds a BARE `^2^`, which is literal text (sup/sub are braced-only), and the serializer escapes only the leading caret - `\\^2^` in the cell'],
     ['91-nested-comment-fences', 'comment blocks are not modeled'],
     ['92-strong-emphasis-starting-with-a-link', 'a link-in-emphasis edge case is lossy on reparse'],
     ['93-abbreviation-definition-interrupts-a-paragraph', 'abbreviation definitions are not modeled'],
@@ -216,7 +224,6 @@ const TIPTAP_SKIP = new Map([
     ['103-marker-line-nested-lists', 'marker-line nested lists (- - A) are lossy on reparse'],
     ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],
     ['105-colspan-marker-scans-left-past-a-consumed-cell', 'table span-marker cells are not modeled'],
-    ['106-security-hardening', 'autolink and key/value span inline nodes are not modeled; one variant is lossy'],
     ['107-link-destination-parentheses-balance', 'round-trips to a different AST'],
     ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
     ['109-cross-references-resolve-inside-footnote-bodies', 'footnote definition bodies are lossy on reparse'],
@@ -224,7 +231,6 @@ const TIPTAP_SKIP = new Map([
     ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
-    ['125-autolink-display-keeps-the-raw-content', 'autolink inline nodes are not modeled'],
     ['126-editorial-markup-takes-a-trailing-attribute', 'editorial markup with a trailing attribute is lossy on reparse'],
     ['127-emphasis-opener-slash-adjacency', 'the converter does not model the `emphasis` node'],
     ['128-bold-italic-delimiter-needs-content', 'the converter does not model the `emphasis` node'],
@@ -244,7 +250,6 @@ const TIPTAP_SKIP = new Map([
     ['146-colon-fence-as-a-block-opener-in-a-list-item', 'the converter does not model the `soft_break` node'],
     ['148-abbreviation-title-escapes-its-markup-characters', 'the converter does not model the `abbreviation_def` node'],
     ['149-indented-ordered-marker-content-column-includes-the-marker-indent', 'the converter does not model the `soft_break` node'],
-    ['150-leading-attribute-brace-before-an-inline-span-stays-literal', 'the converter does not model the `insert` node'],
     ['152-under-indented-definition-attaches-over-indented-definition-folds', 'the converter does not model the `definition_list` node'],
     ['153-image-trailing-attribute-is-strict-about-the-glue', 'round-trips to a different AST'],
     ['155-indented-attribute-line-stays-literal', 'the converter does not model the `soft_break` node'],

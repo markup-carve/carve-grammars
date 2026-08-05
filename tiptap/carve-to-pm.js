@@ -24,17 +24,26 @@ export class UnsupportedNodeError extends Error {
 }
 
 // Inline carve node type -> the Tiptap mark type the serializer recognizes.
-const INLINE_MARKS = {
+//
+// THE KEYS ARE AST TYPE NAMES AND MUST MATCH `CANONICAL_INLINE_TYPES` exactly.
+// Four of them did not: `super`/`sub` predate the braced-only spelling
+// (markup-carve/carve#276) and `critic-insert`/`critic-delete` predate the rename to
+// `insert`/`delete`. No engine has emitted those four names in a long time, so
+// the marks were registered in `CarveKit`, written by the serializer, and
+// unreachable from here - `{^a^}` threw `unsupported node type "superscript"`.
+// The names are checked against the engine's own vocabulary in
+// tests/parse-test.js, which is the only thing that can catch the next rename.
+export const INLINE_MARKS = {
     emphasis: 'italic',
     italic: 'italic',
     strong: 'bold',
     underline: 'underline',
     strike: 'strike',
     highlight: 'highlight',
-    super: 'superscript',
-    sub: 'subscript',
-    'critic-insert': 'carveInsert',
-    'critic-delete': 'carveDelete',
+    superscript: 'superscript',
+    subscript: 'subscript',
+    insert: 'carveInsert',
+    delete: 'carveDelete',
 };
 
 /**
@@ -170,7 +179,7 @@ function convertBlock(node, ctx) {
                     type: 'taskList',
                     content: (node.items || []).map((it) => ({
                         type: 'taskItem',
-                        attrs: { checked: !!it.checked },
+                        attrs: { checked: !!it.checked, ...(convertAttrs(it.attrs) || {}) },
                         content: convertBlocks(it.children || [], ctx),
                     })),
                 };
@@ -178,12 +187,24 @@ function convertBlock(node, ctx) {
             const type = node.ordered ? 'orderedList' : 'bulletList';
             const listNode = {
                 type,
-                content: (node.items || []).map((it) => ({
-                    type: 'listItem',
-                    content: convertBlocks(it.children || [], ctx),
-                })),
+                content: (node.items || []).map((it) => {
+                    const item = { type: 'listItem', content: convertBlocks(it.children || [], ctx) };
+                    // A MARKER attribute (`-{.c} item`) sits on the item, not on
+                    // the paragraph inside it, and is the only place those
+                    // attributes can live.
+                    const itemAttrs = convertAttrs(it.attrs);
+                    if (itemAttrs) item.attrs = itemAttrs;
+                    return item;
+                }),
             };
-            if (node.ordered) listNode.attrs = { start: node.start || 1 };
+            if (node.ordered) {
+                listNode.attrs = { start: node.start || 1 };
+                // The MARKER STYLE: `1.` / `1)` / `a.` / `iv.` / the bare `.`.
+                // Dropping it rewrote every alpha and roman list as `1.`.
+                if (node.olType) listNode.attrs.olType = node.olType;
+                if (node.delim) listNode.attrs.delim = node.delim;
+                if (node.bareMarker) listNode.attrs.bareMarker = true;
+            }
             return listNode;
         }
 
@@ -394,7 +415,19 @@ function convertInlineNode(node, marks, ctx) {
             // distinction 3a exists to keep (carve-grammars#101).
             if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
             if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
+            Object.assign(attrs, convertAttrs(node.attrs) || {});
             return descend(node, [...marks, { type: 'link', attrs }], ctx);
+        }
+
+        case 'autolink': {
+            // `<https://e.com>` carries its own text and no children. The map
+            // has always declared autolink -> the link mark; the converter had
+            // no case for it, so every autolink threw.
+            const text = node.text ?? node.href ?? '';
+            // An autolink takes an attribute run of its own
+            // (`<https://e.com>{#id .c}` renders the id and class on the `<a>`).
+            const attrs = { href: node.href || text, autolink: true, ...(convertAttrs(node.attrs) || {}) };
+            return [{ type: 'text', text, marks: [...marks, { type: 'link', attrs }] }];
         }
 
         case 'span':

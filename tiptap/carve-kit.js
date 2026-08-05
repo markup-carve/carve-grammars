@@ -14,6 +14,7 @@ import TableHeader from '@tiptap/extension-table-header';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
 import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import HardBreak from '@tiptap/extension-hard-break';
 
@@ -110,6 +111,19 @@ const CODE_LANGS = [
  * })
  * ```
  */
+// Classes that are PRESENTATION HOOKS in rendered task-list HTML, not authored
+// Carve attributes. No Carve engine emits them - they come from GitHub-flavored
+// HTML and from editors - and capturing them as a marker attribute invents
+// source the author never wrote: `-{.task-list-item} [ ] x`.
+const STRUCTURAL_LIST_CLASSES = new Set(['task-list-item', 'contains-task-list']);
+
+function authoredClasses(element) {
+    const kept = (element.getAttribute('class') || '')
+        .split(/\s+/)
+        .filter((c) => c && !STRUCTURAL_LIST_CLASSES.has(c));
+    return kept.length ? kept.join(' ') : null;
+}
+
 export const CarveKit = Extension.create({
     name: 'carveKit',
 
@@ -125,6 +139,7 @@ export const CarveKit = Extension.create({
                 codeBlock: false,
                 // Disable default lists - we add custom ones that handle task-list
                 bulletList: false,
+                orderedList: false,
                 listItem: false,
                 // Disable HardBreak, we add a custom one with visible indicator
                 hardBreak: false,
@@ -293,9 +308,38 @@ export const CarveKit = Extension.create({
             extensions.push(CustomBulletList.configure(this.options.bulletList ?? {}));
         }
 
+        // Custom OrderedList carrying the MARKER STYLE. Carve writes ordered
+        // markers four ways (`1.`, `1)`, `a.`, `iv.`) plus the bare `.` form,
+        // and the AST records which (`olType`, `delim`, `bareMarker`). Tiptap's
+        // OrderedList declares only `start`, so without these an `a.` list came
+        // back as `1.` - a different document.
+        if (this.options.orderedList !== false) {
+            const CustomOrderedList = OrderedList.extend({
+                addAttributes() {
+                    return {
+                        ...this.parent?.(),
+                        olType: { default: null },
+                        delim: { default: null },
+                        bareMarker: { default: null },
+                    };
+                },
+            });
+            extensions.push(CustomOrderedList.configure(this.options.orderedList ?? {}));
+        }
+
         // Custom ListItem that excludes task items (those with checkboxes)
         if (this.options.listItem !== false) {
             const CustomListItem = ListItem.extend({
+                // A marker attribute (`-{.c} item`) belongs to the ITEM, and
+                // ProseMirror drops any attribute a node does not declare.
+                addAttributes() {
+                    return {
+                        ...this.parent?.(),
+                        id: { default: null },
+                        class: { default: null, parseHTML: authoredClasses },
+                        keyValues: { default: null },
+                    };
+                },
                 parseHTML() {
                     return [
                         {
@@ -354,6 +398,18 @@ export const CarveKit = Extension.create({
                             ...this.parent?.(),
                             ref: { default: null },
                             rawRef: { default: null },
+                            // An AUTOLINK is `<https://e.com>`; the same target
+                            // written `[t](https://e.com)` is a different node
+                            // in the AST, so the spelling has to survive as
+                            // metadata or every autolink comes back as an
+                            // inline link.
+                            autolink: { default: null },
+                            // An ATTRIBUTE RUN on the link (`[t](/u){#id .c}`).
+                            // Without these the run was dropped in silence: an
+                            // id and classes the author wrote simply vanished.
+                            id: { default: null },
+                            class: { default: null },
+                            keyValues: { default: null },
                         };
                     },
                     addKeyboardShortcuts() {
@@ -435,6 +491,11 @@ export const CarveKit = Extension.create({
                                 'data-checked': attributes.checked,
                             }),
                         },
+                        // A task item takes a marker attribute the same way a
+                        // plain item does: `-{.c} [ ] text`.
+                        id: { default: null },
+                        class: { default: null, parseHTML: authoredClasses },
+                        keyValues: { default: null },
                     };
                 },
                 parseHTML() {
