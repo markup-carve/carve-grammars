@@ -188,13 +188,12 @@ export function serializeToCarve(doc) {
                 });
                 break;
 
-            case 'paragraph':
-                {
-                    const paragraphAttrs = serializeAttributes(node.attrs);
-                    if (paragraphAttrs) output += paragraphAttrs + '\n';
-                }
-                output += serializeInline(node.content) + '\n';
+            case 'paragraph': {
+                const paragraphAttrs = serializeAttributes(node.attrs);
+                if (paragraphAttrs) output += paragraphAttrs + '\n';
+                output += serializeParagraphText(node.content) + '\n';
                 break;
+            }
 
             case 'heading': {
                 // Strict djot: block attributes live on the preceding line, never
@@ -414,11 +413,33 @@ export function serializeToCarve(doc) {
 
             case 'carveFootnoteDefinition': {
                 const fnLabel = node.attrs?.label || 'note';
-                const paras = (node.content || []).map(b => serializeInline(b.content || []));
-                // First paragraph on the marker line; further paragraphs are
-                // indented continuation lines.
-                output += '[^' + fnLabel + ']: ' + (paras.shift() || '') + '\n';
-                paras.forEach(p => { output += '  ' + p + '\n'; });
+                const content = node.content || [];
+                // The body's own continuation column, fixed regardless of the
+                // label's width or the source's original indentation (verified
+                // against carve-js's own writer, which canonicalizes on 3).
+                const bodyIndent = '   ';
+                // The lead paragraph sits on the marker line itself; any block
+                // after it - a second paragraph, a table, a list, anything
+                // `serializeNodeToString` can render - is serialized standalone
+                // and indented to the body column, the same pattern
+                // `serializeListItem` uses for a list item's own non-lead
+                // blocks. A body whose first block ISN'T a plain paragraph (no
+                // faithful "marker line" text) still opens the marker line, just
+                // with nothing on it.
+                let startIndex = 0;
+                if (content[0]?.type === 'paragraph') {
+                    output += '[^' + fnLabel + ']: ' + serializeParagraphText(content[0].content) + '\n';
+                    startIndex = 1;
+                } else {
+                    output += '[^' + fnLabel + ']:\n';
+                }
+                for (let i = startIndex; i < content.length; i++) {
+                    output += '\n';
+                    const blockText = serializeNodeToString(content[i]);
+                    blockText.split('\n').forEach((line) => {
+                        output += (line ? bodyIndent + line : '') + '\n';
+                    });
+                }
                 break;
             }
 
@@ -553,6 +574,39 @@ export function serializeToCarve(doc) {
                 output += '\n';
             }
         });
+    }
+
+    // A block-level paragraph is always written flush at column 0 (or right
+    // after a container's own marker/prefix, which itself occupies column 0),
+    // so its escaped text is exactly where a `[label]:` / `[^label]:` shaped
+    // run would also be read as a document- or footnote-level DEFINITION.
+    // `escapeStructural` guards that by escaping the opening `[`, but the
+    // backslash reparses into an `escaped_text` + `text` pair where the
+    // original (typically written with no backslash at all, just enough
+    // indentation to not be column 0) held a single plain `text` node - so a
+    // strict AST comparison sees a difference that isn't really there
+    // (carve-grammars#121). A single leading space defeats the same column-0
+    // read without the escape machinery, and reparses to the original shape.
+    // Only the colon-suffixed (definition) shape needs this: the other
+    // bracket shapes `\[text](`, `\[text][`, `\[text]{` are ordinary INLINE
+    // link/reference/span syntax, recognized at any column, so they still
+    // need the real escape.
+    //
+    // The literal space can't be written directly here: when this paragraph
+    // is the very first thing in the document, `trimSource`'s final edge trim
+    // (below) strips exactly that leading space back off before it ever
+    // reaches the parser. A private-use sentinel survives that trim (it is
+    // not ASCII layout whitespace) and is swapped for a real space right
+    // after, once nothing will trim it away again.
+    const LEADING_DEFINITION_ESCAPE = /^\\\[[^\]\n]*\]:/;
+    const LEADING_SPACE_SENTINEL = '';
+
+    function serializeParagraphText(content) {
+        const text = serializeInline(content);
+        if (LEADING_DEFINITION_ESCAPE.test(text)) {
+            return LEADING_SPACE_SENTINEL + text.slice(1);
+        }
+        return text;
     }
 
     function serializeInline(content) {
@@ -786,6 +840,9 @@ export function serializeToCarve(doc) {
 
     serializeNode(doc);
     let result = trimSource(output);
+    // Swap the sentinel back to the real space it stands in for, now that the
+    // edge trim above can no longer eat it (see LEADING_SPACE_SENTINEL).
+    result = result.split(LEADING_SPACE_SENTINEL).join(' ');
     if (referenceDefs.size > 0) {
         const defs = [...referenceDefs].map(([label, target]) => '[' + label + ']: ' + target);
         result += '\n\n' + defs.join('\n');

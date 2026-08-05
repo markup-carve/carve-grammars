@@ -53,6 +53,22 @@ const TIPTAP_COVERED = [
     '120-footnotes-placement',
     '202-a-definition-on-a-footnote-body-s-continuation-line-is-collected',
     '212-a-flush-left-line-after-a-footnote-definition-belongs-to-the-document',
+    // Promoted by carve-grammars#121: `carveFootnoteDefinition` now serializes
+    // every content block (not just a lead paragraph), reusing the same
+    // `serializeListItem` pattern of a standalone, indented block per line.
+    '218-a-footnote-body-s-own-column-is-two-and-a-third-column-is-its-text',
+    '203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written',
+    '204-a-heading-in-a-footnote-body-takes-an-id-but-no-section-wrapper',
+    '205-an-attribute-line-inside-a-footnote-body-attaches-inside-it',
+    '206-a-nested-list-in-a-footnote-body-stays-nested',
+    '66-footnote-with-multiple-blocks',
+    // Promoted by carve-grammars#121: a top-level paragraph whose text starts
+    // with a `[label]:`-shaped run only needed its bracket escaped to avoid
+    // being read as a document-level definition at column 0. Swapping that
+    // escape for a single leading space keeps it a plain `text` node on
+    // reparse instead of splitting into `escaped_text` + `text`.
+    '219-a-definition-below-a-footnote-body-s-column-is-the-document-s-own-text',
+    '134-link-reference-definition-separator-must-be-a-space',
     // Promoted by the unresolved-reference fix in this change: with no phantom
     // definition invented, an unresolved reference survives the round trip.
     '192-a-collapsed-reference-is-matched-by-the-label-the-author-wrote',
@@ -121,14 +137,8 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
-    ['218-a-footnote-body-s-own-column-is-two-and-a-third-column-is-its-text', 'the note body holds a TABLE at column 3, which the body reads as its own text - and the round trip drops those lines outright: `[^a]: intro` + three indented table lines comes back as `[^a]: intro` alone, so the body loses everything past its first line'],
-    ['219-a-definition-below-a-footnote-body-s-column-is-the-document-s-own-text', 'a definition one column in belongs to the DOCUMENT, and the round trip both escapes it and re-emits it: `[^a]: note` + ` [r]: /u` comes back with a literal `\\[r]: /u` paragraph at the top AND a real `[r]: /u` at the end, so one definition becomes two things'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
-    ['203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written', 'a footnote body holding blocks is not modeled; the body does not survive'],
-    ['204-a-heading-in-a-footnote-body-takes-an-id-but-no-section-wrapper', 'a footnote body holding blocks is not modeled; the body does not survive'],
-    ['205-an-attribute-line-inside-a-footnote-body-attaches-inside-it', 'a footnote body holding blocks is not modeled; the body does not survive'],
-    ['206-a-nested-list-in-a-footnote-body-stays-nested', 'a footnote body holding blocks is not modeled; the body does not survive'],
     ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
     ['209-an-unresolved-reference-image-takes-no-caption', 'the caption line is escaped to `\^ cap`, so the paragraph reparses with a literal backslash'],
@@ -203,7 +213,6 @@ const TIPTAP_SKIP = new Map([
     ['61-table-stacked-rowspan', 'rowspan filler cells are not reconstructed'],
     ['62-smart-typography-escapes-and-code', 'smart-typography output is lossy on reparse'],
     ['64-table-rowspan-with-multi-line-content', 'rowspan filler cells are not reconstructed'],
-    ['66-footnote-with-multiple-blocks', 'multi-block footnote definitions are not faithfully reconstructed'],
     ['69-attribute-edge-cases', 'key/value spans, div/heading attributes and extensions are not modeled'],
     ['70-escape-coverage', 'a variant is lossy through the serializer'],
     ['72-emphasis-edge-cases', 'an emphasis edge case is lossy through the serializer'],
@@ -242,7 +251,6 @@ const TIPTAP_SKIP = new Map([
     ['128-bold-italic-delimiter-needs-content', 'the converter does not model the `emphasis` node'],
     ['129-emphasis-span-closes-before-a-following-delimiter', 'round-trips to a different AST'],
     ['130-thematic-break-requires-contiguous-markers', 'round-trips to a different AST'],
-    ['134-link-reference-definition-separator-must-be-a-space', 'round-trips to a different AST'],
     ['135-abbreviation-definition-separator-must-be-a-space', 'round-trips to a different AST'],
     ['136-unclaimed-openers-stay-literal', 'the converter does not model the `symbol` node'],
     ['137-inline-literal', 'the converter does not model the `literal_inline` node'],
