@@ -150,6 +150,18 @@ export const CONSTRUCTS = [
     // `}` gets wrong, since a quoted value may contain `}` and may escape its
     // own quote. All four render as list items (checked against the engine).
     { name: "ordered marker with glued attributes", sample: "1.{#x} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
+    // The bullet's half of the same rule. Only the ordered branch had the guard, so a
+    // glued BULLET went uncoloured in all three grammars (#126).
+    { name: "bullet with glued attributes", sample: "-{#x} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    // Valid payloads that are easy to reject by accident: an EMPTY block attaches
+    // nothing, and bare keys are two boolean attributes.
+    { name: "bullet with an empty glued block", sample: "-{} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    { name: "bullet with bare-key attributes", sample: "-{not attrs} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    { name: "star bullet with glued attributes", sample: "*{.c} item", payload: "*", textmate: "punctuation.definition.list.unnumbered" },
+    { name: "bullet with a brace in a quoted attribute value", sample: "-{title=\"a}b\"} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    // The checkbox after a glued block is NOT scoped in any Carve TextMate grammar -
+    // `task_item` runs before `list_item` and has no glued branch - but the bullet is.
+    { name: "task bullet with glued attributes", sample: "-{.c} [x] done", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
     { name: "ordered marker with a brace in a quoted attribute value", sample: "1.{title=\"a}b\"} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker with a brace in a single-quoted attribute value", sample: "1.{title='a}b'} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker with an escaped quote in an attribute value", sample: "1.{title=\"a\\\"b\"} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
@@ -217,6 +229,55 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    // A bullet glued to an attribute block still needs content after the block, the
+    // same as an ordered marker (#126).
+    // An INVALID payload means the `{` is literal content and the line is prose - a
+    // brace-delimited run is not enough. `-{+a+} text` is corpus
+    // 90-list-item-attributes-6, which a guard accepting any brace run coloured as a
+    // list. The colon is not an identifier character in carve-js, though Prism's and
+    // highlight.js's own attribute rules still admit one (separate divergence).
+    {
+        name: 'bullet whose glued block is an insertion span',
+        sample: '-{+a+} text\n',
+        payload: '-',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.unnumbered' },
+    },
+    {
+        name: 'bullet whose glued block has a digit-first key',
+        sample: '-{2=v} text\n',
+        payload: '-',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.unnumbered' },
+    },
+    {
+        name: 'bullet whose glued block has a colon in a key',
+        sample: '-{a:b} item\n',
+        payload: '-',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.unnumbered' },
+    },
+    {
+        name: 'ordered marker whose glued block is an insertion span',
+        sample: '1.{+a+} text\n',
+        payload: '1.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    {
+        name: 'ordered marker whose glued block has a digit-first key',
+        sample: '1.{2=v} text\n',
+        payload: '1.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    {
+        name: 'bullet whose attribute block has no content after it',
+        sample: '-{#x}\n\nafter\n',
+        payload: '-',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.unnumbered' },
+    },
+    {
+        name: 'bullet with two glued attribute blocks',
+        sample: '-{#x}{.y} item\n',
+        payload: '-',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.unnumbered' },
+    },
     // A MIXED-CASE roman run is not a marker. One `[ivxlcdmIVXLCDM]` class matched any
     // mixture, so `Vim. text` and `Mix. text` coloured as lists where the engine renders
     // paragraphs (#118) - and those are exactly the shape of a word starting a sentence,

@@ -1,6 +1,6 @@
 [
   {
-    "scope": null,
+    "scope": "bullet",
     "text": "-"
   },
   {
@@ -9,7 +9,11 @@
   },
   {
     "scope": null,
-    "text": " A classed item.\n-"
+    "text": " A classed item.\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
   },
   {
     "scope": "attr",

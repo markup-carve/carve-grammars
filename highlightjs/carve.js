@@ -376,10 +376,14 @@
     };
 
     // Bullet list items: - or *
+    // A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space
+    // comes after the block - `-{#x} item` went uncoloured while LIST_NUMBER
+    // already had the guard (#126). Same guard, spelled out rather than a
+    // `\{[^}]*\}` run, because a quoted value may hold a `}`.
     const LIST_BULLET = {
         className: 'bullet',
         // A marker line may carry several markers (`- - A`, corpus 103).
-        begin: /^[ \t]*(?:[-*] +)*[-*](?= )(?![ \t]*$)/,
+        begin: /^[ \t]*(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
@@ -395,7 +399,7 @@
     // stops in the wrong place and `{title="a}b"} x` is a valid item (#85).
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^}"'\n])*\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
