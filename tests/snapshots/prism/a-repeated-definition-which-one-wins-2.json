@@ -21,7 +21,11 @@
   },
   {
     "type": "abbreviation-definition",
-    "text": " a"
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "a"
   },
   {
     "type": "text",
@@ -49,7 +53,11 @@
   },
   {
     "type": "abbreviation-definition",
-    "text": " b"
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "b"
   },
   {
     "type": "text",

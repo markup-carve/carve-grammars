@@ -455,11 +455,32 @@
                 'constant': /^[ \t]*\[[^\]]+\]:/,
             },
         },
+        // `abbreviation_term = (letter | digit)+`, and `letter` is enumerated
+        // ASCII - so the term is case-blind and may be digits. This required
+        // the whole term to be uppercase, which is the reading carve-js also
+        // had (carve-js#720) and dropped.
         'abbreviation-definition': {
-            pattern: /^[ \t]*\*\[[A-Z][A-Z0-9]*\]: +.*$/m,
+            pattern: /^[ \t]*\*\[[A-Za-z0-9]+\]: +.*$/m,
             inside: {
+                // BEFORE punctuation, and anchored to the brackets. Prism
+                // applies these in order, so a punctuation rule that eats `*[`
+                // first leaves nothing for a lookbehind to anchor on. Unanchored
+                // it scoped runs of the EXPANSION instead - with the old
+                // uppercase-only class that showed up as the `H` of `HyperText`
+                // carrying `symbol`, which the goldens pinned.
+                'symbol': {
+                    pattern: /(^[ \t]*\*\[)[A-Za-z0-9]+(?=\]:)/,
+                    lookbehind: true,
+                },
+                // The expansion is the abbreviation's TITLE, not more markup.
+                // TextMate has always scoped it (`string.unquoted.abbreviation`)
+                // and this grammar left it to whatever the term rule spilled
+                // onto it.
+                'string': {
+                    pattern: /(\]:[ \t]+).+$/,
+                    lookbehind: true,
+                },
                 'punctuation': /^[ \t]*\*|\[|\]|:/,
-                'symbol': /[A-Z][A-Z0-9]*/,
             },
         },
 

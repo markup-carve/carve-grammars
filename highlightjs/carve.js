@@ -361,9 +361,14 @@
     };
 
     // Abbreviation definitions: *[ABBR]: text
+    //
+    // The term is `(letter | digit)+` with `letter` enumerated ASCII, so
+    // `*[e.g.]:` and `*[HTTP API]:` are NOT definitions - they stay paragraph
+    // text in every engine. This matched anything without a bracket, which is
+    // the reading carve-rs had for non-ASCII terms (carve-rs#660).
     const ABBREVIATION_DEF = {
         className: 'symbol',
-        begin: /^[ \t]*\*\[[^\]]+\]:(?= )/,
+        begin: /^[ \t]*\*\[[A-Za-z0-9]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
