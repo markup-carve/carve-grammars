@@ -1,19 +1,7 @@
 [
   {
-    "type": "list",
-    "text": ":  "
-  },
-  {
-    "type": "reference-definition>constant",
-    "text": "[r]:"
-  },
-  {
-    "type": "reference-definition",
-    "text": " /u"
-  },
-  {
     "type": "text",
-    "text": "\n\nsee "
+    "text": ":  [r]: /u\n\nsee "
   },
   {
     "type": "url>punctuation",

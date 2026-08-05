@@ -292,15 +292,28 @@
     };
 
     // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
-    // DEFINITION_TERM above matches the `: definition` line; this is the term
-    // itself, which had no rule. `:::` opens a div and DIV_BLOCK_START runs
-    // first, so the two do not compete.
+    // Reused as a nested mode inside DEFINITION_LIST_ENTRY below - not
+    // registered as a top-level mode, so it only ever colors a term that
+    // DEFINITION_LIST_ENTRY has already decided is inside a real entry.
+    // `:::` opens a div and DIV_BLOCK_START runs first, so the two do not
+    // compete.
     const DEFINITION_TERM_MARKER = {
         className: 'title',
         begin: /^[ \t]*:: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };
+
+    // An OTHER block opener ends a definition-list entry: a heading, a
+    // list/task marker, a blockquote, a fence (code/div), a horizontal rule,
+    // a caption or a table row. Blank lines and lazy-continuation prose are
+    // NOT block openers and fold into the entry instead - that is what keeps
+    // a folded term line (`term_continuation_line`, corpus
+    // 25-definition-lists-6) and a definition separated from its term by one
+    // blank line (corpus 25-definition-lists-7) scoped correctly.
+    const OTHER_BLOCK_OPENER_SOURCE =
+        '[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)'
+        + '|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t])';
 
     // Table/list continuation: a lone `+` (grammar.ebnf `continuation_marker`)
     // or a continuation ROW carrying cells (`continuation_row`, corpus
@@ -413,12 +426,36 @@
         relevance: 5,
     };
 
-    // Definition list terms: : term
+    // Definition-list description marker: `:  def`. Reused as a nested mode
+    // inside DEFINITION_LIST_ENTRY - not registered as a top-level mode.
     const DEFINITION_TERM = {
         className: 'title',
         begin: /^[ \t]*: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
+    };
+
+    // Definition-list entry: `:: term` through its `:  def` line(s)
+    // (grammar.ebnf `definition_entry`).
+    //
+    // A `:` description line scopes only INSIDE an entry that a real `:: `
+    // term opened (carve-grammars#91) - DEFINITION_TERM used to be registered
+    // as its own top-level mode, matched unconditionally, so a bare `:  d`
+    // with no term above it (or a term the separator rule disqualified, e.g.
+    // `::\tterm` - the marker separator is a literal space per the
+    // tab-and-separator ruling on markup-carve/carve#698, a tab never
+    // satisfies it) was scoped as a definition even though the engines render
+    // it as a paragraph. The entry opens on a real term line and runs through
+    // any number of lines that are not some OTHER block opener (see
+    // OTHER_BLOCK_OPENER_SOURCE above). `begin`/`end` are zero-width
+    // lookaheads so DEFINITION_TERM_MARKER/DEFINITION_TERM (below, in
+    // `contains`) do the actual per-line matching and coloring themselves,
+    // exactly as they did as top-level modes.
+    const DEFINITION_LIST_ENTRY = {
+        begin: /^(?=[ \t]*:: (?![ \t]*$))/,
+        end: new RegExp('^(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'),
+        relevance: 0,
+        contains: [DEFINITION_TERM_MARKER, DEFINITION_TERM],
     };
 
     // Code fence opening: ``` or ~~~ with optional language
@@ -622,8 +659,7 @@
             TASK_LIST,         // Must be before LIST_BULLET
             LIST_BULLET,
             LIST_NUMBER,
-            DEFINITION_TERM_MARKER,  // `:: term` - before DEFINITION_TERM (`: definition`)
-            DEFINITION_TERM,
+            DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
             FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
             ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
             REFERENCE_DEF,

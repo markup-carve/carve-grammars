@@ -1042,25 +1042,40 @@
       }
     },
     "definition_list": {
+      "comment": "A `:` description line scopes only INSIDE an entry a real `:: ` term opened (carve-grammars#91) - a bare `:` line at the top level (no preceding term, or a term the separator rule disqualified, e.g. `::\\tterm`) is prose and carries no scope. `begin` opens on a real term line (separator is a literal space per the tab-and-separator ruling on markup-carve/carve#698 - a tab never satisfies it); `end` closes on the next OTHER block opener (heading, list, quote, fence, hr, caption, table row), tolerating blank lines and lazy-continuation prose in between so a folded term (`term_continuation_line`) or a definition separated from its term by one blank line (corpus 25-definition-lists-7) still scope.",
       "patterns": [
         {
-          "match": "^([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
-          "captures": {
+          "begin": "^([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+          "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.definition.carve"
             },
             "4": {
               "name": "entity.name.tag.definition.term.carve"
             }
-          }
-        },
-        {
-          "match": "^(\\s*)(:)(?=\\s)",
-          "captures": {
-            "2": {
-              "name": "punctuation.definition.list.definition.carve"
+          },
+          "end": "^[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t])",
+          "patterns": [
+            {
+              "match": "^([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "captures": {
+                "2": {
+                  "name": "punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve"
+                }
+              }
+            },
+            {
+              "match": "^([ \\t]*)(:)(?=[ ])",
+              "captures": {
+                "2": {
+                  "name": "punctuation.definition.list.definition.carve"
+                }
+              }
             }
-          }
+          ]
         }
       ]
     },

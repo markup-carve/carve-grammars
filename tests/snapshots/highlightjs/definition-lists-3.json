@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "+"
-  },
-  {
-    "scope": null,
-    "text": "\nthen a flush-left block joined with +.\n"
+    "text": "\n+\nthen a flush-left block joined with +.\n"
   }
 ]
