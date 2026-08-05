@@ -136,6 +136,14 @@ export const CONSTRUCTS = [
     { name: "ordered marker paren", sample: "1) first", payload: "1)", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker alpha", sample: "a. first", payload: "a.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker roman", sample: "iv. fourth", payload: "iv.", textmate: "punctuation.definition.list.numbered" },
+    // A roman run is CASE-CONSISTENT, and both spellings open a list. The mixed-case
+    // counter-examples are in LITERALS below; the two here are what a rule that rejects
+    // multi-letter runs outright would break (#118).
+    { name: "ordered marker roman lowercase run", sample: "ivx. text", payload: "ivx.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker roman uppercase run", sample: "IVX. text", payload: "IVX.", textmate: "punctuation.definition.list.numbered" },
+    // A word made only of roman letters IS a marker - `mix.` is 1009. So the case split
+    // is the fix rather than a length or dictionary rule.
+    { name: "ordered marker roman word", sample: "mix. text", payload: "mix.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker bare dot with attrs", sample: ".{#x} attributed", payload: ".", textmate: "punctuation.definition.list.numbered" },
     // The valid half of #85. The marker takes ONE glued attribute block and
     // then content; these are the shapes a lookahead that stops at the first
@@ -209,6 +217,28 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    // A MIXED-CASE roman run is not a marker. One `[ivxlcdmIVXLCDM]` class matched any
+    // mixture, so `Vim. text` and `Mix. text` coloured as lists where the engine renders
+    // paragraphs (#118) - and those are exactly the shape of a word starting a sentence,
+    // which is the risk the rule's own comment was written to avoid.
+    {
+        name: 'mixed-case roman run is not a marker',
+        sample: 'Vim. text\n',
+        payload: 'Vim.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    {
+        name: 'mixed-case roman run is not a marker, other order',
+        sample: 'Mix. text\n',
+        payload: 'Mix.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
+    {
+        name: 'a two-letter mixed-case roman run is not a marker',
+        sample: 'Ix. text\n',
+        payload: 'Ix.',
+        scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' },
+    },
     // An ordered marker glued to an attribute block with nothing after it is
     // prose: `1.{#x}` renders as a paragraph, `1.{#x} item` as a list item.
     // All three grammars scoped the marker in both (#85).

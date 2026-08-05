@@ -5,6 +5,18 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **A mixed-case roman run is not an ordered marker.** All three grammars spelled a
+  roman run as one class, `[ivxlcdmIVXLCDM]+`, which matches any mixture of the two
+  cases - so `Vim. text`, `Mix. text` and `Ix. text` coloured as lists where carve-js
+  renders paragraphs. Those are exactly the shape of a word starting a sentence,
+  which is the risk the rule's own comment was written to avoid: it names `Note.` as
+  the case to keep literal, and `Note` happens to fall outside the class while `Vim`
+  does not. A roman numeral in Carve is case-consistent, so the fix is two classes.
+
+  Not a length or dictionary rule: `mix.`, `civil.` and `did.` DO open lists
+  (`type="i"`, start 1009 / 153 / 999), and `ivx.` and `IVX.` both do too. All five
+  spellings are in the shared inventory now - the three mixed-case ones as `LITERALS`,
+  which fail in all three grammars when the grammar files are reverted.
 - **An ordered marker glued to an attribute block with no content is prose in
   all three grammars.** `1.{#x}` renders as a paragraph and `1.{#x} item` as a
   list item; every grammar scoped the marker in both. The guard was `(?= |\{)`,
