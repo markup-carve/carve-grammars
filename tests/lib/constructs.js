@@ -211,7 +211,42 @@ export const CONSTRUCTS = [
     { name: "trailing comment", sample: "text %% trailing", payload: "trailing", textmate: "comment" },
     { name: "block comment", sample: "%%%\nhidden\n%%%", payload: "hidden", textmate: "comment" },
     { name: "block comment with a tail", sample: "%%% html\nhidden\n%%% end", payload: "hidden", textmate: "comment" },
+    // COLUMN SENSITIVITY, the other half. A definition AT a list item's content
+    // column IS a definition and must stay highlighted - carve-php#765 and
+    // carve-rs#570 both landed that reading, and carve#801 since made
+    // definitions collectable in EVERY block-level container, so indented
+    // definitions are first-class rather than an edge case.
+    //
+    // This guards the tempting wrong fix for its paired negative case in the
+    // textmate sweep: narrowing the definition pattern to flush-left only would
+    // silence that failure and break this, trading a rare wrong answer for a
+    // common one.
+    {
+        name: "link ref definition at a list item content column",
+        sample: "- a\n  [r]: /u\n",
+        payload: "r",
+        textmate: "meta.link.reference.def",
+        skip: {
+            prism: "no container model, so an indented definition is out of reach - see the textmate sweep for the column-sensitive pair",
+            highlightjs: "no container model, so an indented definition is out of reach - see the textmate sweep for the column-sensitive pair",
+        },
+    },
+
+    // A TASK item's content column is 2, not 6 - the checkbox is content, not
+    // part of the marker. Verified against carve-php: `- [ ] a` with a
+    // two-space definition under it DOES collect (the reference resolves).
+    {
+        name: "link ref definition under a task list item",
+        sample: "- [ ] a\n  [r]: /u\n",
+        payload: "r",
+        textmate: "meta.link.reference.def",
+        skip: {
+            prism: "no container model - see the textmate sweep for the column-sensitive pair",
+            highlightjs: "no container model - see the textmate sweep for the column-sensitive pair",
+        },
+    },
 ];
+
 
 /**
  * Shapes that must NOT be scoped as the construct they resemble.
