@@ -171,6 +171,18 @@ const NEGATIVE = [
   // (`see [t][r]`), so no definition was collected and the line is item text.
   ['def below a wide bullet content column is text', '-   a\n  [r]: /u\n', 'meta.link.reference.def'],
   ['def below an ordered content column is text', '10. a\n  [r]: /u\n', 'meta.link.reference.def'],
+  // The same column rule for a HEADING, which the corpus pins directly:
+  // `178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6` renders
+  // ` # H` below the nested item's content column as item TEXT. This grammar
+  // coloured it a heading until `#heading` was anchored at column 0 and
+  // `#heading_in_container` took over inside a container (carve-grammars#138).
+  //
+  // The positive half of the pair is in `constructs.js`: `heading` (column 0)
+  // and `heading in a list item` (at the item's content column). A rule that
+  // stopped matching everywhere would pass these negatives and fail those two,
+  // which is what makes the pair a pair.
+  ['heading below a nested content column is text', '- x\n  - a\n # H\n', 'markup.heading'],
+  ['heading indented at document level is text', ' # H\n', 'markup.heading'],
 ]
 let negPass = 0
 const unknownSelectors = [

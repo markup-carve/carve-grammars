@@ -134,7 +134,7 @@
       "comment": "The leading-whitespace capture is load-bearing twice over: the `end` pattern closes on the SAME indentation via \\1, and a fence inside a list item is indented. Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "heading": {
-      "begin": "^[ \\t]*(#{1,6}) +(?![ \\t]*$)",
+      "begin": "^(#{1,6}) +(?![ \\t]*$)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.heading.carve"
@@ -148,7 +148,7 @@
           "include": "#heading_tag"
         }
       ],
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71) - see the comment on `admonition` for the tradeoff this repeats. Restructured from a flat `match` into a `begin`/`end: \"$\"` construct (mirrors `table_row`, the existing precedent in this file for a single physical line that still needs recursive `patterns`) so a tag inside a heading's literal trailing brace run still scopes as a tag (carve-grammars#125): `# H {#id .cls}` has no real attribute block (headings take none), so the brace run is ordinary heading text, and `#id` inside it is still a tag construct - that half was already correctly NOT scoped as `attributes`, only the tag scope itself was missing. Uses `#heading_tag` (a `#tag` variant, see its own comment), not `#tag` directly, to stay out of the way of a heading cross-reference. Deliberately narrow: not the full `#inline` set table_row uses - headings are known (corpus 02-headings-4, 118) to support broader inline markup (emphasis, cross-references) that stays unscoped here, matching this repo's pattern of accepting a narrow, targeted fix over modeling everything at once (PR #129)."
+      "comment": "A heading opens at COLUMN 0 at document level. Leading whitespace used to be allowed here (carve-grammars#71) because a line-based grammar could not tell an opener at a list item's content column from an indented one at the top level - it over-coloured the rare invalid case rather than under-colour the common valid one. The container split (carve-grammars#137) removed that constraint: `#heading_in_container` is the permissive variant, reachable only through `#container_blocks`, so the document-level rule can be strict. Corpus 178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6 pins the case this fixes: ` # H` below a nested item's content column is paragraph text, and this grammar coloured it a heading (carve-grammars#138)."
     },
     "hr": {
       "match": "^\\s*(?:-{3,}|\\*{3,}|_{3,})\\s*$",
@@ -1376,7 +1376,7 @@
           "include": "#fenced_code"
         },
         {
-          "include": "#heading"
+          "include": "#heading_in_container"
         },
         {
           "include": "#hr"
@@ -1457,6 +1457,23 @@
           "include": "#container_blocks"
         }
       ]
+    },
+    "heading_in_container": {
+      "begin": "^[ \\t]*(#{1,6}) +(?![ \\t]*$)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.heading.carve"
+        }
+      },
+      "end": "$",
+      "name": "markup.heading.carve",
+      "contentName": "entity.name.section.carve",
+      "patterns": [
+        {
+          "include": "#heading_tag"
+        }
+      ],
+      "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138)."
     }
   }
 }
