@@ -5,6 +5,24 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **A colon in an attribute key no longer scopes as an attribute block in the
+  Prism and highlight.js grammars** (#135). Both built their block from
+  `[A-Za-z_][\w:-]*`, so `[x]{a:b}`, `[x]{a:b=v}` and `[x]{xmlns:x=y}` coloured
+  as attributes on lines carve-js renders as literal text - `[x]{a:b}` is
+  `<p>[x]{a:b}</p>`, braces and all. The damage was not only the brace run:
+  once the payload read as attributes, the preceding `[x]` was claimed as a
+  span (Prism) or a link label (highlight.js), so a line of prose came out
+  looking like a resolved construct.
+
+  An attribute name is the grammar's `identifier` production - a letter or `_`,
+  then letters, digits, `_` and `-` - and PART 9 §14 makes one invalid name
+  enough to leave the whole block literal. The TextMate grammar in this
+  package already spelled it that way, as did both files' own list-marker
+  guards, so the two engine grammars now agree with the third, with carve-js,
+  and with the comment each file already carried. A colon belongs to the value
+  grammar rather than the key, so `[x]{k=a:b}` and `[x]{k="a:b"}` are still
+  attribute blocks; `{2=v}`, `{-a}` and `{#-id}` are unaffected and stay
+  literal as before.
 - **An abbreviation definition inside a div no longer scopes as a definition,
   and a tag inside a heading's literal trailing brace run now scopes as a
   tag** (#125). Two unrelated gaps in the shared grammars:
@@ -52,8 +70,8 @@ All notable changes to `carve-grammars` are documented here.
   syntax, and both branches share it - the ordered rule had the same hole,
   unpinned only because no corpus document writes `1.{+a+} text`. Identifiers are
   strict (PART 9 §14) and admit no colon, matching carve-js and the TextMate
-  grammar; Prism's and highlight.js's own attribute rules still admit one, which
-  is a separate pre-existing divergence.
+  grammar; Prism's and highlight.js's own standalone attribute rules still
+  admitted one at the time, which #135 below closes.
 
   Known limitation, unchanged and shared with every Carve TextMate grammar: the
   checkbox after a glued block (`-{.c} [x] done`) is not scoped, because

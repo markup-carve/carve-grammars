@@ -44,10 +44,13 @@
     return function carve(hljs) {
     // Block attributes: {.class #id key=value} or boolean {reversed}
     // Excludes special inline syntax like {= {+ {- {%
-    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
-    // start with a digit, so `{2=v}` stays literal text rather than scoping as
-    // an attribute block. An unquoted value may contain dots and colons.
-    const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // The payload is STRICT (spec PART 9 S14): a class/id/key is the grammar's
+    // `identifier` production, a letter or `_` then letters, digits, `_` and `-`.
+    // So `{2=v}`, `{-a}` and `{a:b}` stay literal text rather than scoping as an
+    // attribute block, and one invalid name is enough to leave the whole run
+    // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
+    // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
+    const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
     /**
      * A begin/end mode opens its span the moment `begin` matches, whether or
      * not the closer ever arrives - so an unpartnered delimiter colors every
