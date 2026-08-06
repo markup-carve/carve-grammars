@@ -68,6 +68,11 @@ export const CONSTRUCTS = [
     { name: "block attrs line", sample: "{#id .class key=value}\n# H", payload: "#id", textmate: "attributes", attr: true },
     { name: "quoted attr value", sample: "[x]{title=\"a b\"}", payload: "title", textmate: "meta.attributes", attr: true },
     { name: "escaped quote in attr value", sample: "[x]{title=\"a\\\"b\"}", payload: "title", textmate: "meta.attributes", attr: true },
+    // A colon is illegal in a KEY and legal in an unquoted VALUE - `unquoted_value`
+    // admits `.` and `:` so version strings and namespaced tokens need no quoting.
+    // The colon literals are in LITERALS below; this is the control that stops a fix
+    // for them from tightening the value branch too (#135).
+    { name: "colon in an unquoted attr value", sample: "[x]{k=a:b}", payload: "k=a:b", textmate: "meta.attributes", attr: true },
     { name: "link text", sample: "[text](https://x.de)", payload: "text", textmate: "string.other.link.title" },
     { name: "link url", sample: "[text](https://x.de)", payload: "https://x.de", textmate: "markup.underline.link" },
     { name: "escaped-quote link title", sample: "[t](/url \"ti\\\"tle\")", payload: "/url", textmate: "markup.underline.link" },
@@ -269,8 +274,9 @@ export const LITERALS = [
     // An INVALID payload means the `{` is literal content and the line is prose - a
     // brace-delimited run is not enough. `-{+a+} text` is corpus
     // 90-list-item-attributes-6, which a guard accepting any brace run coloured as a
-    // list. The colon is not an identifier character in carve-js, though Prism's and
-    // highlight.js's own attribute rules still admit one (separate divergence).
+    // list. The colon is not an identifier character in carve-js; the marker guards
+    // were written that way from the start, while the standalone attribute rules
+    // admitted one until #135 - those counter-examples are at the end of this list.
     {
         name: 'bullet whose glued block is an insertion span',
         sample: '-{+a+} text\n',
@@ -386,6 +392,52 @@ export const LITERALS = [
         payload: ':',
         scopes: { prism: 'list', highlightjs: 'title', textmate: 'list.definition' },
     },
+    // STRICT ATTRIBUTE IDENTIFIER, on the STANDALONE attribute rule rather than the
+    // marker guards above. `identifier` is `(letter | '_'), {letter | digit | '_' |
+    // '-'}` (PART 7), and PART 9 §14 makes one invalid name enough to leave the whole
+    // block literal - so `[x]{a:b}` renders `<p>[x]{a:b}</p>`, braces and all. Prism
+    // and highlight.js built their block from `[A-Za-z_][\w:-]*` and scoped these as
+    // attribute blocks, which also handed the preceding `[x]` to the span rule: a line
+    // of prose came out looking like a resolved construct (#135). Both the bare-key
+    // and the key=value form are here, because one class serves both branches.
+    {
+        name: 'a colon in a bare attribute key',
+        sample: '[x]{a:b}\n',
+        payload: 'a:b',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    {
+        name: 'a colon in an attribute key with a value',
+        sample: '[x]{xmlns:x=y}\n',
+        payload: 'xmlns:x',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    // The three shapes a fix that OVER-tightens the class would break. All three are
+    // already literal in every grammar, so they pin what must not move while the colon
+    // is removed - a first-character rule that is right for the wrong reason (say, one
+    // that also rejects `-` or a digit after the first character) fails here.
+    {
+        // `2` rather than `2=v`: a grammar that accepted this would split the block
+        // at the `=`, and no Prism token would hold the wider spelling at all - so
+        // the check could not fail there. Found by mutating the class to admit a
+        // digit-first key, which this caught only once the payload was the key.
+        name: 'a digit-first attribute key',
+        sample: '[x]{2=v}\n',
+        payload: '2',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    {
+        name: 'a dash-first attribute key',
+        sample: '[x]{-a}\n',
+        payload: '-a',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    {
+        name: 'a dash-first id',
+        sample: '[x]{#-id}\n',
+        payload: '#-id',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
 ];
 
 /*
@@ -406,8 +458,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 134
-export const MIN_LITERALS = 13
+export const MIN_CONSTRUCTS = 137
+export const MIN_LITERALS = 20
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -426,10 +478,11 @@ export const MIN_LITERALS = 13
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    textmate: 134,
-    prism: 134,
-    // One construct is skipped for highlight.js; see its `skip` entry.
-    highlightjs: 133,
+    textmate: 137,
+    // Two constructs are skipped for Prism and three for highlight.js; each says
+    // why in its own `skip` entry, and every skip is subtracted here.
+    prism: 135,
+    highlightjs: 134,
 };
 
 /**

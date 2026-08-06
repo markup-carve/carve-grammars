@@ -31,10 +31,13 @@
 
     // Inline attribute block: {#id .class key="val"} - reused by spans, divs,
     // headings and extension calls.
-    // The payload is STRICT (spec PART 9 S14): a class/id/key identifier may not
-    // start with a digit, so `{2=v}` stays literal text rather than scoping as
-    // an attribute block. An unquoted value may contain dots and colons.
-    var attrItem = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w:-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // The payload is STRICT (spec PART 9 S14): a class/id/key is the grammar's
+    // `identifier` production, a letter or `_` then letters, digits, `_` and `-`.
+    // So `{2=v}`, `{-a}` and `{a:b}` stay literal text rather than scoping as an
+    // attribute block, and one invalid name is enough to leave the whole run
+    // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
+    // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
+    var attrItem = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -54,7 +57,7 @@
         inside: {
             'id': /#[A-Za-z_][\w-]*/,
             'class-name': /\.[A-Za-z_][\w-]*/,
-            'attr-name': /[A-Za-z_:][\w:-]*(?==)/,
+            'attr-name': /[A-Za-z_][\w-]*(?==)/,
             'string': /"[^"]*"|'[^']*'/,
             'punctuation': /[{}=]/,
         },
