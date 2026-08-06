@@ -228,6 +228,7 @@ const TIPTAP_SKIP = new Map([
     ['37-escapes', 'the converter does not model the `escaped_text` node'],
     ['39-inline-span', 'a span variant is lossy through the serializer'],
     ['40-superscript-and-subscript', 'a BARE `^6^` is literal text (sup/sub are braced-only) and the serializer escapes only the leading caret, so `10^6^` comes back as `10\\^6^`'],
+    ['252-a-tab-separates-two-attributes-and-pads-a-block-as-a-space-does', 'nothing to do with tabs: the serializer drops a trailing attribute block from strong entirely (`*x*{.a .b}` comes back as `*x*`), the same gap as 13-attributes, and an EMPTY block on a span comes back as `{.class}` - a class the document never had (carve-grammars#159)'],
     ['41-line-blocks', 'line blocks (div with attrs) are not modeled'],
     ['42-admonitions', 'admonition blocks (:::warning) are not modeled'],
     ['43-abbreviations', 'abbreviation definitions are not modeled'],

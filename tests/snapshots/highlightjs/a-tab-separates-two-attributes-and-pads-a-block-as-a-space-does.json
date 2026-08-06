@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a\t.b}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*y*"
+  },
+  {
+    "scope": "attr",
+    "text": "{\t.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*z*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.d\t}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
