@@ -5,6 +5,24 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An indented fence, blockquote or abbreviation definition at document level
+  is no longer highlighted by the TextMate grammar** (#138). Carve opens a
+  block at column 0, or at an enclosing container's content column - nowhere in
+  between, so ` > q`, ` *[HTML]: HyperText` and an indented fence are all
+  paragraphs at the top level, and below every open content column they are
+  item text (the corpus 178 shape). Following `heading` (#149), the
+  `fenced_code`, `blockquote` and `abbreviation` rules are now anchored at
+  column 0, with `fenced_code_in_container`, `blockquote_in_container` and
+  `abbreviation_in_container` carrying the indented forms - reachable only
+  through `container_blocks`, so a fence, quote or abbreviation at a list
+  item's content column highlights exactly as before.
+
+  The Prism and highlight.js grammars keep their `^[ \t]*` anchors and are
+  unchanged. They have no container model, so tightening them would stop
+  highlighting every legitimately indented construct inside a list item or a
+  block quote rather than only the invalid top-level one. That divergence is
+  deliberate and is now written up in the README under "Where the three
+  grammars deliberately differ", with a matching note in each engine grammar.
 - **A colon in an attribute key no longer scopes as an attribute block in the
   Prism and highlight.js grammars** (#135). Both built their block from
   `[A-Za-z_][\w:-]*`, so `[x]{a:b}`, `[x]{a:b=v}` and `[x]{xmlns:x=y}` coloured

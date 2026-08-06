@@ -20,6 +20,29 @@
  * A top-level `export default` is intentionally NOT used: that would be a
  * syntax error when the file is loaded as a classic browser script.
  *
+ * INDENTED BLOCK OPENERS, and why this file differs from the TextMate grammar
+ * in the same package (carve-grammars#138, #89, #71):
+ *
+ * Carve opens a block at column 0, or at an enclosing container's content
+ * column - nowhere in between. ` # H`, ` > q`, ` *[A]: x` and an indented fence
+ * are all paragraphs at document level, while the same four openers at a list
+ * item's content column are real blocks. Telling those apart needs block
+ * context, and highlight.js modes here are line-based: this grammar has no
+ * container model, so it cannot ask the question.
+ *
+ * So every block opener here stays anchored `^[ \t]*` and knowingly
+ * over-colours the indented-at-document-level case. Anchoring at column 0
+ * instead would not buy accuracy - it would stop highlighting EVERY
+ * legitimately indented construct inside a list item or a block quote, which
+ * is the common valid shape, in exchange for correcting a rare invalid one.
+ *
+ * The TextMate grammar tracks a list item's content column (carve-grammars#137)
+ * and therefore CAN split the two: its `heading`, `fenced_code`, `blockquote`
+ * and `abbreviation` rules are anchored at column 0, with `_in_container`
+ * twins reachable only from inside a container. That divergence is deliberate
+ * and is written up in the README ("Where the three grammars deliberately
+ * differ"). Do not "fix" the anchors here to match it.
+ *
  * @see https://github.com/markup-carve/carve for the Carve specification
  */
 (function (root, factory) {
@@ -97,6 +120,8 @@
     // Headings: # to ######
     const HEADING = {
         className: 'section',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^[ \t]*#{1,6} (?![ \t]*$)/,
         end: /$/,
         relevance: 10,
@@ -371,6 +396,8 @@
     // the reading carve-rs had for non-ASCII terms (carve-rs#660).
     const ABBREVIATION_DEF = {
         className: 'symbol',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^[ \t]*\*\[[A-Za-z0-9]+\]:(?= )/,
         end: /$/,
         relevance: 10,
@@ -384,6 +411,8 @@
     // quote when the language calls it prose (markup-carve/carve#525).
     const BLOCKQUOTE = {
         className: 'quote',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^[ \t]*>(?= |$)/,
         end: /$/,
         relevance: 0,
@@ -469,6 +498,8 @@
     // Code fence opening: ``` or ~~~ with optional language
     const CODE_FENCE_START = {
         className: 'keyword',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^[ \t]*[`~]{3,}\s*[a-zA-Z]*$/,
         relevance: 10,
     };
@@ -476,6 +507,8 @@
     // Code fence closing: ``` or ~~~
     const CODE_FENCE_END = {
         className: 'keyword',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^[ \t]*[`~]{3,}$/,
         relevance: 10,
     };

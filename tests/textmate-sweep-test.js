@@ -190,6 +190,31 @@ const NEGATIVE = [
   // which is what makes the pair a pair.
   ['heading below a nested content column is text', '- x\n  - a\n # H\n', 'markup.heading'],
   ['heading indented at document level is text', ' # H\n', 'markup.heading'],
+  // The same column rule for the other three document-level anchors the
+  // container split made strict (carve-grammars#138). Every shape here was
+  // checked against the pinned engine before its anchor moved:
+  //
+  //   ` ```js` / ` x` / ` ``` `  -> <p><code>js x </code></p>
+  //   ` > q`                     -> <p>&gt; q</p>
+  //   ` *[HTML]: HyperText`      -> <p>*[HTML]: HyperText</p>, defining nothing
+  //
+  // and below every open content column each renders as item text, the corpus
+  // 178 shape. The fence sample keeps its CLOSER indented too: a flush-left
+  // ``` on the last line is itself a valid document-level opener, so a sample
+  // spelled ` ```js\nx\n``` ` would carry a fence scope for a reason that has
+  // nothing to do with the anchor under test.
+  //
+  // The positive halves are in `constructs.js` - `fenced code`, `blockquote`
+  // and `abbreviation` at column 0, and `fenced code in a list item`,
+  // `blockquote in a list item` and `abbreviation in a list item` at the item's
+  // content column. Pointing `#container_blocks` back at the strict rule passes
+  // every negative here and fails those three, which is what makes them pairs.
+  ['fence indented at document level is text', ' ```js\n x\n ```\n', 'fenced_code'],
+  ['fence below a nested content column is text', '- x\n  - a\n ```js\n y\n ```\n', 'fenced_code'],
+  ['blockquote indented at document level is text', ' > q\n', 'markup.quote'],
+  ['blockquote below a nested content column is text', '- x\n  - a\n > q\n', 'markup.quote'],
+  ['abbreviation indented at document level is text', ' *[HTML]: HyperText\n', 'meta.abbreviation'],
+  ['abbreviation below a nested content column is text', '- x\n  - a\n *[HTML]: HyperText\n', 'meta.abbreviation'],
 ]
 let negPass = 0
 const unknownSelectors = [

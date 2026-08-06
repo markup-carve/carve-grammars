@@ -22,6 +22,29 @@
  * `Prism`), then import this file for its side effect - it reads the global
  * `Prism` (`globalThis` / `window` / `global`) and registers the grammar.
  *
+ * INDENTED BLOCK OPENERS, and why this file differs from the TextMate grammar
+ * in the same package (carve-grammars#138, #89, #71):
+ *
+ * Carve opens a block at column 0, or at an enclosing container's content
+ * column - nowhere in between. ` # H`, ` > q`, ` *[A]: x` and an indented fence
+ * are all paragraphs at document level, while the same four openers at a list
+ * item's content column are real blocks. Telling those apart needs block
+ * context, and Prism is line-based: this grammar has no container model, so it
+ * cannot ask the question.
+ *
+ * So every block opener here stays anchored `^[ \t]*` and knowingly
+ * over-colours the indented-at-document-level case. Anchoring at column 0
+ * instead would not buy accuracy - it would stop highlighting EVERY
+ * legitimately indented construct inside a list item or a block quote, which
+ * is the common valid shape, in exchange for correcting a rare invalid one.
+ *
+ * The TextMate grammar tracks a list item's content column (carve-grammars#137)
+ * and therefore CAN split the two: its `heading`, `fenced_code`, `blockquote`
+ * and `abbreviation` rules are anchored at column 0, with `_in_container`
+ * twins reachable only from inside a container. That divergence is deliberate
+ * and is written up in the README ("Where the three grammars deliberately
+ * differ"). Do not "fix" the anchors here to match it.
+ *
  * @module carve-grammars/prism/carve
  */
 (function (Prism) {
@@ -207,6 +230,8 @@
 
         // Fenced code blocks: ``` lang ... ``` or ~~~ lang ... ~~~
         'code-block': {
+            // Anchored `^[ \t]*` on purpose - no container model here, see the
+            // indented-block-openers note in the module docblock (carve-grammars#138).
             pattern: /^[ \t]*(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
             greedy: true,
             inside: {
@@ -243,6 +268,8 @@
             // `231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose`,
             // carve-grammars#140). Whitespace AFTER the separator space is still
             // heading text, which is why the run stays optional behind it.
+            // Anchored `^[ \t]*` on purpose - no container model here, see the
+            // indented-block-openers note in the module docblock (carve-grammars#138).
             pattern: /^[ \t]*#{1,6} [ \t]*(?![ \t]*$).+$/m,
             alias: 'important',
             inside: Object.assign({
@@ -393,6 +420,8 @@
         // whitespace, colored `>>= operator` and `>=3 items` as quotes when the
         // language calls them prose (markup-carve/carve#525).
         'blockquote': {
+            // Anchored `^[ \t]*` on purpose - no container model here, see the
+            // indented-block-openers note in the module docblock (carve-grammars#138).
             pattern: /^[ \t]*>(?: .*)?$/m,
             inside: Object.assign({
                 'punctuation': /^[ \t]*>/,
@@ -470,6 +499,8 @@
         // the whole term to be uppercase, which is the reading carve-js also
         // had (carve-js#720) and dropped.
         'abbreviation-definition': {
+            // Anchored `^[ \t]*` on purpose - no container model here, see the
+            // indented-block-openers note in the module docblock (carve-grammars#138).
             pattern: /^[ \t]*\*\[[A-Za-z0-9]+\]: +.*$/m,
             inside: {
                 // BEFORE punctuation, and anchored to the brackets. Prism
