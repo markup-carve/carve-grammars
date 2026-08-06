@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a\n\n"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": "\n\nb\n"
+  }
+]

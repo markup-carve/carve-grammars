@@ -1,0 +1,38 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[a@b]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /v"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "a@b"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

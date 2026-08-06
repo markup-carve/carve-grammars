@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "I. "
+  },
+  {
+    "type": "text",
+    "text": "one\n"
+  },
+  {
+    "type": "list",
+    "text": "II. "
+  },
+  {
+    "type": "text",
+    "text": "two\n"
+  }
+]

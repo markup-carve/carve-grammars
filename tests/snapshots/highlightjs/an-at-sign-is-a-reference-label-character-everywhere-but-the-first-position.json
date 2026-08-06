@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[a@b]: /v"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[u][a@b]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

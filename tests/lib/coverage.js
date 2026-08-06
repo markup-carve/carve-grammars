@@ -32,6 +32,13 @@ const emptySkip = () => new Map();
 const TIPTAP_COVERED = [
     // Classified with the bump that added them: both round-trip cleanly through
     // parse -> toPm -> serialize -> parse.
+    '230-an-at-sign-is-a-reference-label-character-everywhere-but-the-first-position',
+    '233-two-backticks-are-not-a-code-fence-opening-or-closing',
+    '234-a-single-percent-is-not-a-comment',
+    '235-an-uppercase-roman-numeral-is-a-list-marker',
+    '236-a-table-delimiter-cell-needs-at-least-one-dash',
+    '237-a-continuation-row-carries-no-trailing-text',
+    '238-a-format-character-before-a-scheme-is-not-stripped-and-is-inert',
     '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
@@ -195,6 +202,9 @@ const TIPTAP_SKIP = new Map([
     ['225-a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink', 'the `-5` file ends its body with a raw block, which is not modeled - the same gap as 27-raw-blocks. The other four files in the category do round-trip'],
     ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
     ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
+    ['229-an-empty-abbreviation-term-is-not-a-definition', 'reparses to a different AST: the line is prose because the term is empty, and the abbreviation-definition gap of 43-abbreviations reaches the literal form too'],
+    ['231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose', 'the `-2` file reparses to a different AST - the tab after the marker is not preserved through the serializer, so the line that must stay prose comes back as the construct'],
+    ['232-two-dashes-are-not-a-thematic-break', 'unsupported smart_punctuation: `--` is an en dash inline node the converter has no type for, so the line cannot be rebuilt'],
     ['27-raw-blocks', 'raw blocks are not modeled'],
     ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
     ['30-raw-inline', 'raw inline spans are not modeled'],
