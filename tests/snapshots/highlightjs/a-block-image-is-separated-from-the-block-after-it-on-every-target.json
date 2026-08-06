@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![alt text](img.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n\nfollowing paragraph\n"
+  }
+]
