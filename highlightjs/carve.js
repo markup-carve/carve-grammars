@@ -141,7 +141,15 @@
     };
     const ATTRIBUTE = {
         className: 'attr',
-        begin: new RegExp('\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'),
+        // TWO ROLES, ONE TOKEN - see the note on Prism's `attributes`. A standalone
+        // attribute LINE may span lines; an inline block glued to a construct may
+        // not, so `*x*{.a` + newline + `.b}` used to colour as a block where every
+        // engine renders prose (#164). The line-anchored branch is a lookbehind so
+        // the match still starts at the `{`.
+        begin: new RegExp(
+            '(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'
+            + '|\\{[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}',
+        ),
         relevance: 5,
     };
 

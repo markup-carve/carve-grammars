@@ -5,6 +5,28 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An inline attribute block no longer scopes across a newline** (#164). A block
+  glued to an inline construct pads and separates with `opt_ws` - "spaces/tabs
+  only, no line breaks" (markup-carve/carve#897) - and only a standalone
+  attribute LINE crosses a newline, through `attr_separator`'s continuation.
+  Prism and highlight.js served both roles from one `\s`-separated pattern, so
+  `*x*{.a` + newline + `.b}` coloured as an attribute block where every engine
+  renders it as prose.
+
+  The two roles are now two branches of the same token. The line-anchored one is
+  a LOOKBEHIND that does not consume the indentation, so the match still starts
+  at the `{` and token boundaries are unchanged everywhere the decision is
+  unchanged - which is why exactly one corpus document moves, the one that should
+  (`253-an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does`).
+  Anchoring with `^` and the `m` flag is the wrong tool here for the reason
+  already recorded on the hard-break rule: Prism applies a pattern to the
+  remaining text chunk, so `^` matches at a chunk boundary rather than a line
+  start.
+
+  The TextMate grammar is untouched. It got the reported case right by accident -
+  its attribute rule is single-line, so it also misses the standalone multi-line
+  block, which is the other direction of the same bug. That is recorded as a skip
+  on the new inventory entry rather than fixed here.
 - **An empty attribute block no longer comes back from the tiptap serializer as
   a class named `class`** (#159). `[x]{}` and `[x]{ }` are valid Carve - an
   empty block is the explicit "make this a span" hook and yields a bare

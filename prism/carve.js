@@ -113,7 +113,24 @@
         },
     };
     var attributes = {
-        pattern: RegExp('\\{\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'),
+        // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
+        // INLINE block glued to a construct may not - `attributes` pads and
+        // separates with `opt_ws`, "spaces/tabs only, no line breaks"
+        // (markup-carve/carve#897), and only `attr_separator`'s continuation
+        // crosses a newline. One `\\s`-separated pattern served both, so
+        // `*x*{.a` + newline + `.b}` coloured as a block where every engine
+        // renders it as prose (#164).
+        //
+        // The line-anchored branch is a LOOKBEHIND, and it does not consume the
+        // indentation: the match still starts at the `{`, so token boundaries are
+        // unchanged everywhere the decision is unchanged. Anchoring with `^` and
+        // the `m` flag is the wrong tool here for the reason recorded on the
+        // hard-break rule - Prism applies a pattern to the remaining text chunk,
+        // so `^` matches at a chunk boundary rather than a real line start.
+        pattern: RegExp(
+            '(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'
+            + '|\\{[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}',
+        ),
         alias: 'attr-value',
         inside: {
             'id': /#[A-Za-z_][\w-]*/,
