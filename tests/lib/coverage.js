@@ -152,7 +152,7 @@ const TIPTAP_COVERED = [
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
     ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
-    ['244-the-same-column-written-with-four-spaces', 'the four-space indent is not re-emitted, so the block opener that was text at column 4 comes back at the content column and nests'],
+    ['244-the-same-column-written-with-four-spaces', 'the four-space indent is not re-emitted and the `>` is not escaped, so the line that was TEXT inside the item paragraph comes back at column 0 and re-parses as a block quote outside the list (#145)'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
     ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],
