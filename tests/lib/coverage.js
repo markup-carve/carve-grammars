@@ -39,6 +39,10 @@ const TIPTAP_COVERED = [
     '236-a-table-delimiter-cell-needs-at-least-one-dash',
     '237-a-continuation-row-carries-no-trailing-text',
     '238-a-format-character-before-a-scheme-is-not-stripped-and-is-inert',
+    '239-a-link-definition-written-before-a-footnote-stays-before-it',
+    '240-a-zero-width-character-in-a-reference-definition-destination',
+    '242-a-block-image-is-separated-from-the-block-after-it-on-every-target',
+    '243-a-tab-indent-is-the-column-it-reaches-whatever-the-line-holds',
     '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
@@ -147,6 +151,8 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
+    ['244-the-same-column-written-with-four-spaces', 'the four-space indent is not re-emitted, so the block opener that was text at column 4 comes back at the content column and nests'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
     ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],

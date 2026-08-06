@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "see"
+  },
+  {
+    "type": "footnote",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": " and"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^b]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " bee"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " ay"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

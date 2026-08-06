@@ -198,6 +198,7 @@
     "figure": "figure / caption blocks are not modeled",
     "caption": "figure / caption blocks are not modeled",
     "abbreviation_def": "abbreviation definitions are document metadata, not editor content",
+    "link_reference_definition": "link reference definitions are document metadata, not editor content - the same call as abbreviation_def, and the reference that uses one is serialized as an ordinary link",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
     "citation_group": "citations are not modeled",
     "comment": "comments are not represented in the editor model",

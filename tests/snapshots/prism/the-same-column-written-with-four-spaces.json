@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "    >"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
