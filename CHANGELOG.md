@@ -116,6 +116,306 @@ All notable changes to `carve-grammars` are documented here.
   (indented, literal text at the top level) now colors as a break the way
   TextMate and highlight.js already did, so the three grammars make the same
   documented trade rather than two of three.
+- **A list item tracks its own content column, in the TextMate grammar** (#94). A
+  link-reference definition indented under a list item scoped as a definition at
+  ANY indent: the rule allowed leading whitespace and nothing in the grammar knew
+  where the item's content actually started. So `- a` over `  [r]: /u` (content
+  column 2, line at 2) and `-   a` over `  [r]: /u` (content column 4, line at 2)
+  both scoped, where the engines collect the first and leave `[r]` literal in the
+  second.
+
+  List items, task items and footnote definitions are now `begin`/`end`
+  containers. One stays open across blank lines and closes on the first nonblank
+  line indented below its own content column, and the document-level definition
+  rule narrows to flush-left, so an indented definition is reachable only through
+  a container that has already established the line sits at or beyond that
+  column. A definition below every open content column is item text again.
+
+  Exact for bullets at any indent and any separator width, for task items and
+  footnote bodies (both measured at column 2 whatever the separator is), and for
+  ordered markers up to five characters, which get one rule variant per width.
+  Wider ordered markers (`10000.`, `civil.`) and attribute-glued markers
+  (`-{#x} item`, `1.{#x} item`) are APPROXIMATE: `vscode-textmate` splices a
+  begin-capture into the `end` pattern as literal text, so a captured run cannot
+  be counted, and both approximations err toward holding the container open a
+  column or two too long rather than closing it early. Every column was measured
+  against carve-php, and spot-checked against carve-js, rather than reasoned from
+  the spec text. Prism and highlight.js are untouched.
+- **A tab after a heading marker leaves the line as prose, in the Prism grammar**
+  (#140). The heading separator is a LITERAL SPACE and the pattern accepted
+  `[ \t]+`, so a heading marker followed by a tab scoped as a heading where every
+  engine renders that line as a paragraph. The separator is required and the run
+  behind it stays optional, so whitespace AFTER the space is still heading text,
+  and `# Heading`, `#   Heading`, `#Heading` and a bare `#` are all unchanged.
+  The sibling markers were already right and are untouched: the quote arm never
+  matched a tab and the caption pattern already required a space. highlight.js
+  has always declined this line, so the two engines agree now.
+- **One term alphabet for an abbreviation definition, in all three grammars.**
+  `abbreviation_term` is `(letter | digit)+`, with `letter` enumerated `a`-`z`
+  plus `A`-`Z`, and this repo spelled it three ways. TextMate and Prism both
+  required `[A-Z][A-Z0-9]*`, so `*[dl]:` and `*[9]:` were prose; highlight.js
+  took `[^\]]+`, so `*[e.g.]:` and `*[ß]:` scoped as definitions. All three now
+  take the production. Every abbreviation sample in the corpus uses an uppercase
+  multi-letter term - the single shape all three spellings agreed on - which is
+  why 1210 pinned tokens caught none of it.
+
+  Two Prism fixes fell out of writing the test. Its inner `symbol` was
+  unanchored, so it also scoped every capital in the EXPANSION
+  (`HyperText Markup Language` tokenized as eight alternating runs, and the
+  goldens pinned it); and the expansion had no scope of its own, where TextMate
+  has always scoped it `string.unquoted.abbreviation`. Both inner rules have to
+  precede `punctuation`, since Prism applies them in order.
+- **A description line scopes as a definition only inside a real entry** (#91).
+  All three grammars matched a `:` description line unconditionally, per line,
+  independent of whether a real `:: ` term preceded it. So a term line
+  disqualified by a tab separator followed by `:  d`, and a bare `:  d` after
+  ordinary prose with no term at all, both scoped as definition lists where every
+  engine renders one paragraph. Corpus `176` and `216` were each snapshotted with
+  the wrong answer.
+
+  The rule is an ENTRY now in each grammar: it opens on a real `:: ` term line
+  and runs forward through blank lines and lazy-continuation prose until another
+  block opener - heading, list or task marker, blockquote, fence, hr, caption,
+  table row - ends it, and a `:` description marker only colors while inside it.
+  A folded term line and a definition separated from its term by one blank line
+  still scope. Narrow trade in highlight.js: a lone `+` continuation marker and a
+  `%%%` comment line nested inside a definition body lose their scope, because
+  the entry's own `contains` is just the two definition sub-modes. The text is
+  unaffected.
+- **An indented comment fence closes, in the highlight.js grammar.** The `%%%`
+  opener had always been column-free there; the CLOSER was anchored at column 0,
+  so an indented fence never closed and the comment span ran to the end of the
+  document. Corpus `186` is that shape, and its `tail` line - ordinary item
+  content - highlighted as comment text. A comment is recognized at any column
+  and closes nothing. Leading whitespace is not part of the delimiter, the `%`
+  run is, so the width backreference still holds and `%%%%` does not close
+  `%%%`. Prism and TextMate were already correct.
+- **Block openers indented inside a container scope in Prism and highlight.js.**
+  Carve has no indented code block, so a block construct sits at its container's
+  content column: two spaces inside a list item is ordinary indentation. Both
+  engines anchored most block rules at column zero, so a heading, caption,
+  blockquote, admonition, table row or abbreviation definition inside a list item
+  came out as unscoped prose - `- item`, a blank line, then `  # Title`
+  reproduces it. This puts the two engines in the position the TextMate grammar
+  already took: the same constructs indented at the TOP level, where they are
+  literal text, now color as blocks too, because a line-based grammar cannot
+  separate the two cases. 73 snapshots re-record. Front matter stays anchored in
+  both. TextMate gained the `***` and `___` spellings of an indented thematic
+  break along the way, its `hr` rule having listed only the hyphen.
+- **A tab does not separate a marker from its content, in any grammar.** The spec
+  pins this twice - corpus `176` for markers and `135`/`136`/`137` for the three
+  definition kinds - and each of the three grammars highlighted some of the tab
+  forms as real constructs where the engines render every one as a paragraph:
+  `#`, `-`, `1.`, `::`, `^` and `- [x]` followed by a tab, and `[^a]:`, `[a]:`
+  and `*[HTML]:` the same. The blockquote rule was already right in all three and
+  is what the others now look like. Two narrower forms came out of review, both
+  confirmed against the engine:
+  `- [x]<TAB>a` is a bullet whose CONTENT is `[x]<TAB>a`, not a task item, and
+  `- -<TAB>a` is a bullet whose content is `-<TAB>a`. highlight.js additionally
+  did not test the definition separator at all, so a bare `[r]:` with nothing
+  after it also read as a definition.
+- **A marker followed only by whitespace is prose in Prism and highlight.js.**
+  `# `, `- `, `1. `, `:: ` and `^ ` scoped as markers in both, and Prism also read
+  `#` plus a RUN of spaces as a heading, `.+` matching it happily. carve-rs
+  renders every one of them as a paragraph. TextMate was already correct, having
+  taken the same rule for a bare marker. One snapshot moves the other way and is
+  accepted rather than hidden: in `:  %%%` the comment is extracted first, so the
+  definition marker then looks content-less and loses its scope. The engine
+  renders that body empty - the line is a marker whose only content is a comment,
+  a shape a line grammar cannot see - and reverting the guard to keep it would
+  re-break the five real cases.
+- **A marker alone on its line is prose, in the TextMate grammar**
+  (markup-carve/carve#513). The rules did require a separator; they wrote it
+  `\s+`, and `\s` matches the line's own newline, so the requirement never bit.
+  `#`, `::`, `-`, `1.`, `.` and `^` each got their construct scope where carve-rs
+  renders a paragraph. Trailing whitespace is not content either - `# ` renders
+  `<p>#</p>` - so each rule now takes `[ \t]+` and a line-end lookahead. Prism
+  and highlight.js were already correct on all six; this was a TextMate-only
+  divergence, and TextMate is the grammar vscode-carve, intellij-carve and
+  sublime-carve port from.
+
+  Not `(?=\S)`, which is the obvious guard and is wrong: Oniguruma counts NBSP as
+  whitespace and Carve does not, so a heading whose content starts with a NBSP
+  lost its scope under it. An empty task item (`- [ ]` with nothing after) is a
+  plain bullet holding the literal `[ ]`, which the task rule now declines and the
+  bullet rule takes, matching the engine.
+- **A blockquote marker takes a space, in all three grammars**
+  (markup-carve/carve#525). None had noticed the space becoming mandatory, so
+  `>>= operator` and `>=3 items` colored as quotes. Verified against carve-rs
+  rather than read off the rule: `>no space`, `>>x`, `>> x` and a marker followed
+  by a TAB are paragraphs, while `>` alone on its line, `> real` and `> > x` are
+  quotes. Two surprises worth stating - `>>` is not a nested marker at all,
+  nesting is written a space per marker, and a tab does not count as the
+  separator. Leading indentation stays allowed.
+- **Every ordered marker scopes, including the bare dot**
+  (markup-carve/carve#472). A `.` alone continues an ordered sequence and is the
+  only marker allowed to drop its value; no grammar here matched it, so a
+  `.`-marked list rendered as prose in every editor these grammars reach.
+  TextMate was further behind than that: `numbered_item` matched `\d+\.` only, so
+  `1)`, `a.` and `iv.` were prose there while Prism and highlight.js had covered
+  them for a while. It takes the same marker set as the other two now. All three
+  also accept a marker glued to an attribute block (`3.{#x k=v}`, `.{#x}`), which
+  is how corpus `88-list-item-attributes-2`/`-3` and
+  `174-bare-dot-ordered-markers-3` write it; the old `(?=\s)` lookahead refused
+  them.
+- **A paragraph is no longer colored as a directive, in the TextMate grammar**
+  (#68). `extension_block` scoped `::: name rest-of-line` as a recognized
+  directive with a highlighted name and arguments. Measured against carve-js with
+  every builtin extension loaded, that shape is not an opener at all -
+  `::: note extra text`, `::: chart width=4`, `::: toc 2-4` and
+  `::: details Click me` all render as paragraphs - so the rule is removed rather
+  than rescoped. Coloring an invalid opener hides the author's mistake, which is
+  worse than leaving a valid one uncolored. It was dead in two other ways as
+  well: it matched exactly `:::` rather than `:{3,}`, so it could never fire on a
+  nested container, and the strict opener rule that handles every width arrived
+  after it.
+- **Math has no closing dollar sentinel, in Prism and highlight.js.** Both
+  required a trailing `$` to close a math span - `` $`x`$ `` inline,
+  `` $$`y`$$ `` display. Carve has no such form: the `$` prefix opens a verbatim
+  span, the backtick run ends it, and the prefix alone disambiguates currency. On
+  spec-valid input Prism dropped the prefix to text and handed the span to
+  `code`; highlight.js never matched its end pattern and ran the string mode to
+  the end of the block, swallowing the following prose in `42-math` and the
+  trailing attribute block in `42-math-2`. The corpus `.crv` files always used
+  the correct syntax and the goldens had encoded the defect, which is why CI
+  stayed green. `README.md` documented the trailing-sentinel form in three places
+  and no longer does; the Tiptap serializer was always correct.
+- **A footnote body keeps its blocks, and a definition-shaped paragraph is not
+  rewritten** (#121). `carveFootnoteDefinition` only ever serialized a flat list
+  of paragraphs, so any non-paragraph block in a footnote body - a table, a
+  heading, a nested list, a second paragraph - was silently dropped past the
+  first. Every content block serializes now, standalone and indented to the
+  body's own fixed continuation column (carve-js's writer canonicalizes on three
+  spaces independent of label width or source indentation, verified
+  empirically).
+
+  Separately, a top-level paragraph whose literal text starts with a
+  `[label]:`-shaped run was escaped with a backslash to keep it from being read
+  as a document-level definition at column 0. That backslash reparses into an
+  `escaped_text` plus `text` pair where the original held a single plain `text`
+  node. A single leading space defeats the same column-0 read without going
+  through the escape machinery.
+- **A no-break space survives the serializer, in both directions.** Two ways it
+  was lost, neither visible to the round-trip test, which compares ASTs - and the
+  AST is where both bugs agree with themselves.
+
+  The engines publish U+E000 in a text node's `value` for a no-break space the
+  PARSER resolved, from an escaped space or from preserved line-block
+  indentation, and publish a literally typed U+00A0 as itself. This serializer
+  wrote the private-use codepoint straight into Carve source, so the document
+  came out holding a character no author typed and an editor drew a tofu box for
+  it. It writes the escape now, except in the two positions where that changes
+  the render: at the END of a block, where a trailing backslash is a hard break,
+  and immediately before a mark's closing delimiter, where a resolved space kills
+  the span (`*a\ *` parses as literal text, while the same run with a typed
+  U+00A0 is still strong). Those two take a real U+00A0 instead, which loses only
+  the resolved-versus-typed distinction.
+
+  The final `String.prototype.trim` also stripped a real U+00A0 - whitespace to
+  JavaScript, content to Carve - so a document whose first or last character was
+  one lost it. Only ASCII layout whitespace is structural here.
+- **A list marker's own metadata survives, and four inline marks nothing could
+  produce now work.** Five defects in the Tiptap bridge, all the same shape: the
+  construct is modeled in the Carve AST and dropped here, so a document that goes
+  through an editor comes back as a different document.
+
+  `INLINE_MARKS` keys are AST type names, and four named nothing any engine emits
+  - `super`/`sub` predate the braced-only spelling, `critic-insert`/
+  `critic-delete` predate the rename to `insert`/`delete` - so `{^a^}` threw
+  `unsupported node type "superscript"`. `schema-map.json` declared all four
+  correctly; nothing had ever compared the map to the converter that has to
+  produce the marks, and that check now exists in both directions.
+
+  A marker attribute belongs to the ITEM (PART 9 §15 A8), and ProseMirror drops
+  any attribute a node does not declare, so `-{.c} A classed item.` came back as
+  `- A classed item.`. The ordered marker style is carried too - Carve records
+  `olType`, `delim` and `bareMarker`, where Tiptap's `OrderedList` declares only
+  `start`, so `a. An alpha item.` came back as `1.`. Autolinks had no converter
+  case at all and threw. A link's trailing attribute run (`[t](/u){#id .c}`) was
+  dropped in silence, and is kept now behind two filters that keep the editor
+  path honest: Tiptap fills `target` and `rel` in on every link it parses, and
+  task-list HTML carries presentation classes no Carve engine emits, so writing
+  either back would invent source the author never wrote.
+- **The image half of the reference form, and a phantom definition per
+  unresolved reference.** Reference LINKS were taught to the converter and the
+  serializer; images were left out, so `![moon][m]` with its definition came back
+  as `![moon](/moon.png)`, the reference form gone and the definition with it.
+  Images carry `ref`/`rawRef` now and get the collapsed or full form the same way
+  links do. The serializer also recorded a definition for any reference it saw,
+  so `![moon][gone]` came back with a `[gone]: ` pointing at the empty string
+  that the author never wrote; only references with a destination are recorded,
+  on both the link and the image path.
+
+  `carveFootnoteDefinition` had a serializer case and a registered extension and
+  nothing had ever produced one: definitions live on `ast.footnoteDefs` rather
+  than in `children`, and the converter walks children only, so every round trip
+  dropped the definition and the note's body with it. The converter emits one per
+  definition, appended after the body - a definition may be written anywhere and
+  renders nothing where it sits, so its existence rather than its position is
+  what has to survive.
+- **The serializer keeps a reference link a reference link** (#101). `[click][a]`
+  with its definition re-serialized to the resolved inline form, so the `rawRef`
+  the pre-resolve AST records was gone on reparse. PART 12 §3a made the tree
+  pre-resolve precisely so a reference survives a format cycle and stays
+  distinguishable from an inline link; the serializer predates that clause. Three
+  parts, because any two alone make it worse: the converter carries `ref`/`rawRef`
+  onto the link mark; the Link mark DECLARES those attributes, since ProseMirror
+  drops what a mark does not declare and the metadata otherwise survived only
+  when the JSON never reached an editor; and the serializer writes the
+  definitions the labels point at, emitting `[click][a]` without `[a]: …` being a
+  worse round trip than the inline rewrite it replaces.
+
+  The form comes from the label, not from replaying `rawRef`: collapsed when the
+  label matches the link's own text, full otherwise, because the text may have
+  been edited since and replaying the raw string would resurrect the old label.
+  Definition POSITION is not preserved - they are collected and emitted together
+  at the end - and a label used twice writes one definition.
+- **A soft break converts to a newline, not a space** (#102). The
+  Carve-to-ProseMirror converter emitted a space text node, so a two-line
+  paragraph came back as one line and the serialized document no longer reparsed
+  to the same AST. A following block-shaped line cannot arise to make that
+  dangerous: a line that would OPEN a block interrupts the paragraph at parse
+  time (PART 9 §10 I1), so a soft break is only ever followed by text that opens
+  nothing. The safety is structural, not incidental.
+- **Attributes on a math span survive serialization.** `` $`a^2` `` carrying an
+  id, a class and a data attribute came back bare. Three layers each had a hole:
+  `carveMath` declared only `src` and `display`, so there was nowhere to keep
+  them (authored key/values travel together in one `keyValues` map, since a
+  `data-` name cannot be known upfront); the serializer's math branch never
+  called `serializeAttributes`, which every other attribute-bearing node already
+  uses; and the bridge built the ProseMirror node from `content` and `display`
+  only. Rendering hooks are not authored classes, so the classes carve-php and
+  this node's own `renderHTML` add are not re-emitted - which needed a parse
+  priority as well, because `CarveSpan` claims any span whose class is a single
+  simple word and so re-read the editor's own rendered math as a generic
+  attributed span.
+
+  One fix reaches past math: `serializeAttributes` suppressed a `class` of
+  `custom` for EVERY caller, because that is the value CarveSpan's class
+  attribute defaults to. On every other node the default is `null`, so `.custom`
+  there can only be a class the author wrote, and it was being dropped from
+  headings and images.
+- **Nested list blocks indent to the item's content column** (#45).
+  `serializeToCarve` emitted list markers at a fixed two-space step per level and
+  continuation blocks one step further, ignoring the enclosing item's real marker
+  width. Bullet items (content column 2) were fine; ordered items are wider
+  (`1. ` is 3, `10. ` is 4), so a nested sublist marker and a continuation block
+  both landed below the content column and dedented out of the item on reparse.
+  The serializer threads the literal indent string instead of a depth counter,
+  and each item measures its own marker. A task item's `[ ]` is content of a
+  plain `- ` bullet rather than part of the marker, so its content column stays 2
+  regardless of the checkbox.
+- **A list item's non-paragraph blocks survive serialization.**
+  `serializeListItem` handled a lead `paragraph` and nested lists and nothing
+  else: a second paragraph was emitted at column 0, so it dedented out of the
+  list when reparsed, and a code block, block quote, div or table was dropped
+  ENTIRELY, the function having no branch for it. Every child serializes now -
+  the lead paragraph on the marker line, nested lists with their own marker
+  indentation, any other block standalone and indented to the item content
+  column, blocks separated by a blank line. One Carve-specific exception is
+  preserved: a nested sublist stays TIGHT directly under its lead, since Carve
+  nests a content-column marker without a blank line and adding one would render
+  the list loose.
 
 ### Changed
 - **Both grammar sweeps consume ONE construct inventory**
@@ -215,6 +515,44 @@ All notable changes to `carve-grammars` are documented here.
   (markup-carve/carve#405); this repo pins a published carve that still emits
   the old name, so all three are accepted and either release order is safe.
   Without it a footnote silently stopped mapping to `carveFootnote`.
+- **`CarveKit` installs on Tiptap 3 as well as 2.** The kit declared
+  `"@tiptap/core": "^2"`, so a Tiptap 3 application could not install it as a
+  peer at all, and two things break on 3.x once it is forced. The table extension
+  dropped its default export, which fails at module load and takes down every
+  suite touching the kit; it is read through a namespace import now that accepts
+  whichever shape the installed major provides, and of the 17 tiptap packages the
+  kit imports it is the only one affected. StarterKit also bundles Underline and
+  Link on 3.x, both of which the kit pushes separately (underline carries Carve's
+  `_text_` mapping, link the Carve attribute handling), so each mark registered
+  twice; StarterKit is configured with `underline: false, link: false`, keys
+  Tiptap 2's StarterKit has no notion of and ignores, so one config serves both
+  majors. The peer ranges for core, StarterKit and the underline extension widen
+  to `^2 || ^3`.
+- **The serializer widens colon fences inward, from local depth.** A closer
+  matches its opener's length exactly now (PART 9 §12), so nesting only needs the
+  lengths to differ, and an outer container no longer has to outrank everything
+  in its subtree. `carveDivFenceLength` was a whole-subtree scan for exactly that
+  reason; it is the minimum fence plus the local depth now, threaded down through
+  `serializeNode`. Output flips from a `::::` tab set holding a `:::` tab to a
+  `:::` set holding a `::::` tab. The old form still parses - the lengths differ
+  either way - but it is no longer what `carve fmt` emits in any engine, so a
+  document leaving the editor would have been rewritten the first time anyone
+  formatted it.
+- **The published schema map gains an `accepts` field, and two decisions.** A
+  bridge fed a payload from a plain Tiptap editor hits `mention`, the name the
+  stock mention extension emits, and the map refused it - and Carve models
+  mentions fully, so refusing the stock spelling made an editor fail on a concept
+  the language already has. `accepts` names the spellings a bridge should
+  recognize on the way IN, which leaves `pm` meaning "the name CarveKit
+  registers" - the invariant the schema-map test checks, and widening `pm` would
+  have traded a real check for a convenience. `textStyle` is an answered question
+  now rather than an open one, and stays out: it is a carrier mark for color,
+  font family and font size, so mapping it onto `span` would push presentational
+  attributes into a Carve document; an application that wants that registers it
+  itself. `abbreviation_def`, which carve-php gained as a real node class, is
+  recorded as unmapped for the same reason `comment` and `frontmatter` are - it
+  renders nothing of its own and carries document metadata rather than editor
+  content.
 
 ### Added
 - **`CarveCriticComment`, a tiptap mark for editorial comments (`{# ... #}`).**
@@ -232,6 +570,82 @@ All notable changes to `carve-grammars` are documented here.
   and span labels, which leaves a linked comment containing `]` with a label
   that ends early - visible, unlike silently altered comment text. The engine
   gap behind it is markup-carve/carve#403.
+- **`carveToProseMirror` and `astToProseMirror`, so an editor loads through the
+  AST.** This package could turn a ProseMirror document INTO Carve and not the
+  other way round, so every consumer loaded by rendering Carve to HTML and
+  handing that to Tiptap's `parseHTML` - fidelity then depends on each
+  extension's HTML parsing rather than on the tree, and an attribute no extension
+  claims is gone, silently, on load. The converter already existed as a test
+  helper: unpublished, undocumented, reachable only by copying it. The round-trip
+  test imports the published module now, so the thing that is tested is the thing
+  that ships.
+
+  ```js
+  import { carveToProseMirror } from '@markup-carve/carve-grammars/tiptap'
+
+  const doc = carveToProseMirror(source)                              // strict (default)
+  const doc = carveToProseMirror(source, { unsupported: 'preserve' }) // lossless-on-save
+  ```
+
+  Strict, which throws, stays the default: correct for a test harness, wrong for
+  an editor, where opening a document containing one admonition must not fail to
+  open the document. In `preserve` an unrepresentable construct becomes a
+  `CarveUnsupported` atom carrying its own Carve source, and `serializeToCarve`
+  writes that source back out verbatim, so a load/save cycle through an editor
+  that cannot EDIT a construct does not LOSE it. `@markup-carve/carve` moves to
+  runtime `dependencies`, since the shipped loader imports it.
+- **`tiptap/schema-map.json`, the Carve-to-ProseMirror mapping published as
+  data** (reachable through the package exports). A bridge needs three
+  vocabularies to agree - Carve node types, the ProseMirror node and mark names,
+  and which Carve types the editor model cannot represent - and only the first
+  was owned anywhere, so an engine building a bridge in another language had to
+  rediscover the names, the attribute policy and the divergence set from this
+  repo's source, and would drift exactly that way. Every Carve node type appears
+  exactly once, either mapped with its ProseMirror name or names, or unmapped
+  with a reason. The negative space is deliberately part of the contract: a
+  bridge that silently drops table alignment or figure captions is worse than one
+  that reports it cannot carry them.
+- **Client-side diagram renderers for fenced Graphviz, D2 and PlantUML blocks.**
+  The fenced-render presets split in two: Mermaid, WaveDrom, Vega-Lite and Chart
+  each render themselves once their library is loaded, while PlantUML, D2 and
+  Graphviz have no browser library and emit a hydration element that nothing
+  turns into a diagram - so every integration that wanted them hand-rolled its
+  own client.
+
+  ```js
+  import { renderDiagrams } from '@markup-carve/carve-grammars/diagrams'
+
+  await renderDiagrams(container)                                  // graphviz + d2, offline
+  await renderDiagrams(container, { kroki: { server: 'https://kroki.internal' } })
+  ```
+
+  `renderGraphvizDiagrams` and `renderD2Diagrams` run OFFLINE, on the WASM builds
+  of the viz-js and Terrastruct D2 packages - both optional peer dependencies,
+  imported lazily only when a matching block is present, with the engine instance
+  reused. `renderKrokiDiagrams` covers PlantUML, which has no offline path: it
+  POSTs the source as plain text, so no deflate or base64 dependency is needed,
+  takes a `server` for a self-hosted instance, and carries a GDPR note, because
+  the default `kroki.io` is a third party outside the caller's domain and the
+  diagram source leaves their control. `renderDiagrams` leaves Kroki OFF unless
+  asked for it.
+
+  All rendered SVG, offline or from Kroki, rides in an inert
+  `data:image/svg+xml` image element, so untrusted diagram output cannot run
+  script or expose a `javascript:` link. Every renderer marks what it has handled
+  and skips it afterwards, so calling after each content update is safe.
+- **TextMate scopes citations and code callouts.** The highlight.js grammar here
+  already had both and `textmate/carve.tmLanguage.json` had neither, so citation
+  groups and `<N>` callout markers rendered as plain text in Shiki and VS Code.
+  Citation groups scope with their integral `+`, per-item `-`/`+` modifiers and
+  `;` separators; `<N>` scopes both as a leading annotation line and as a
+  trailing marker inside a fenced block, whose body is scanned for it now.
+
+  A bug in the ported rule was found and fixed in the same pass: the citation
+  `begin` only checked for a key INSIDE the bracket and never the suffix, while
+  its `end` refuses to close a `]` followed by `(`, `[` or `{` - so a link whose
+  text happens to contain a mention opened a citation that could never close,
+  running away over the line and swallowing the link. `begin` requires the
+  closing `]` now, and that it is not followed by one of those three.
 
 ### Fixed
 - **highlight.js scopes inline extension calls; Prism scopes caption lines.**
