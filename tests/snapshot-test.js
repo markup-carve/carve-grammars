@@ -177,7 +177,13 @@ function sanityPrism(name, source, tokens) {
     // precondition has to be the language's rule and not `\s`, which matches
     // the line's own newline. Corpus 84-single-line-headings-5 is exactly that
     // document, and it made this check demand a heading token for a paragraph.
-    if (/^#{1,6}[ \t]+(?![ \t]*$)/.test(source.split('\n')[0])) {
+    // The separator is a LITERAL SPACE. A tab after the marker leaves the line
+    // as prose (spec markup-carve/carve#802, corpus
+    // `231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose`),
+    // so `#<TAB>Heading` is a paragraph and produces no section scope - which
+    // this check read as the grammar losing a heading. Whitespace AFTER the
+    // separator space is still fine.
+    if (/^#{1,6} [ \t]*(?![ \t]*$)/.test(source.split('\n')[0])) {
         const headingLike = tokens.find((t) => /(^|>)title$/.test(t.type) || /(^|>)title>/.test(t.type));
         assert.ok(
             headingLike,
@@ -191,7 +197,9 @@ function sanityHljs(name, source, tokens) {
     // start: the first scoped 'meta' token, if any, must not appear after real
     // body content. We check the weaker, robust invariant that a heading line
     // still yields a 'section' scope somewhere (headings survive).
-    if (/^#{1,6}[ \t]+(?![ \t]*$)/.test(source.split('\n')[0])) {
+    // Same LITERAL SPACE rule as the prism sanity check above - the two copies
+    // of this test are why the first patch left this one deciding the old way.
+    if (/^#{1,6} [ \t]*(?![ \t]*$)/.test(source.split('\n')[0])) {
         const hasSection = tokens.some((t) => t.scope === 'section');
         assert.ok(
             hasSection,

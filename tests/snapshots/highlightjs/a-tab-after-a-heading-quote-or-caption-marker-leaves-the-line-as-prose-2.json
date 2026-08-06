@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![Moon](m.jpg)"
+  },
+  {
+    "scope": null,
+    "text": "\n^\tFigure 1\n"
+  }
+]
