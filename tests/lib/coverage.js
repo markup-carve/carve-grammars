@@ -32,6 +32,7 @@ const emptySkip = () => new Map();
 const TIPTAP_COVERED = [
     // Classified with the bump that added them: both round-trip cleanly through
     // parse -> toPm -> serialize -> parse.
+    '251-a-continuation-marker-after-a-blank-line-in-a-loose-item',
     '250-line-endings-and-a-byte-order-mark',
     '230-an-at-sign-is-a-reference-label-character-everywhere-but-the-first-position',
     '233-two-backticks-are-not-a-code-fence-opening-or-closing',
