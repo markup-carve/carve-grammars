@@ -43,6 +43,7 @@ const TIPTAP_COVERED = [
     '240-a-zero-width-character-in-a-reference-definition-destination',
     '242-a-block-image-is-separated-from-the-block-after-it-on-every-target',
     '243-a-tab-indent-is-the-column-it-reaches-whatever-the-line-holds',
+    '245-sibling-markers-that-reach-one-column-are-one-list',
     '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
