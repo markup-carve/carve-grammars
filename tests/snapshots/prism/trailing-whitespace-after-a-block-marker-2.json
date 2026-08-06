@@ -1,0 +1,14 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block",
+    "text": " \nx\n``` "
+  },
+  {
+    "type": "text",
+    "text": "\n\ny\n"
+  }
+]
