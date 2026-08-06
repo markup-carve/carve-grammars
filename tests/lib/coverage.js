@@ -146,6 +146,11 @@ const TIPTAP_COVERED = [
     '140-table-row-closing-pipe',
     '147-fence-folds-as-lazy-inline-code-above-the-content-column',
     '151-attribute-block-after-a-mention-stays-literal',
+    '56-table-cell-escaped-pipe',
+    '207-a-reference-image-takes-a-caption',
+    '209-an-unresolved-reference-image-takes-no-caption',
+    '231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose',
+    '244-the-same-column-written-with-four-spaces',
 ];
 
 // Categories the tiptap serializer cannot round-trip, with the concrete reason.
@@ -153,12 +158,9 @@ const TIPTAP_COVERED = [
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
     ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
-    ['244-the-same-column-written-with-four-spaces', 'the four-space indent is not re-emitted and the `>` is not escaped, so the line that was TEXT inside the item paragraph comes back at column 0 and re-parses as a block quote outside the list (#145)'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
-    ['207-a-reference-image-takes-a-caption', 'the caption line is escaped to `\^ cap`, so the figure reparses as a paragraph'],
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
-    ['209-an-unresolved-reference-image-takes-no-caption', 'the caption line is escaped to `\^ cap`, so the paragraph reparses with a literal backslash'],
     ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
     ['216-a-description-line-needs-a-term-above-it', 'the bare `:` line is escaped and a phantom empty definition is appended'],
 
@@ -210,7 +212,6 @@ const TIPTAP_SKIP = new Map([
     ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
     ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
     ['229-an-empty-abbreviation-term-is-not-a-definition', 'reparses to a different AST: the line is prose because the term is empty, and the abbreviation-definition gap of 43-abbreviations reaches the literal form too'],
-    ['231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose', 'the `-2` file reparses to a different AST - the tab after the marker is not preserved through the serializer, so the line that must stay prose comes back as the construct'],
     ['232-two-dashes-are-not-a-thematic-break', 'unsupported smart_punctuation: `--` is an en dash inline node the converter has no type for, so the line cannot be rebuilt'],
     ['27-raw-blocks', 'raw blocks are not modeled'],
     ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
@@ -301,7 +302,6 @@ const TIPTAP_SKIP = new Map([
     ['163-quote-flanking-after-an-escaped-character', 'the converter does not model the `escaped_text` node'],
     ['164-comment-fence-with-trailing-text', 'the converter does not model the `comment` node'],
     ['165-unterminated-comment-fence', 'the converter does not model the `comment` node'],
-    ['56-table-cell-escaped-pipe', 'the converter does not model the `escaped_text` node'],
     ['57-table-cell-pipe-inside-code-span', 'a code span holding a pipe reparses into different table cells'],
     ['166-widened-verbatim-fences', 'the converter does not model the `literal_inline` node'],
     ['167-only-the-id-hoists-to-the-section-wrapper', 'headings with attributes are not represented (attrs only support id)'],
