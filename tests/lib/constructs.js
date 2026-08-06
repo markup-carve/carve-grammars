@@ -68,11 +68,20 @@ export const CONSTRUCTS = [
     { name: "block attrs line", sample: "{#id .class key=value}\n# H", payload: "#id", textmate: "attributes", attr: true },
     { name: "quoted attr value", sample: "[x]{title=\"a b\"}", payload: "title", textmate: "meta.attributes", attr: true },
     { name: "escaped quote in attr value", sample: "[x]{title=\"a\\\"b\"}", payload: "title", textmate: "meta.attributes", attr: true },
-    // A colon is illegal in a KEY and legal in an unquoted VALUE - `unquoted_value`
-    // admits `.` and `:` so version strings and namespaced tokens need no quoting.
-    // The colon literals are in LITERALS below; this is the control that stops a fix
-    // for them from tightening the value branch too (#135).
+    // A colon is illegal in a KEY, a CLASS and an ID, and legal in an unquoted VALUE -
+    // `unquoted_value` admits `.` and `:` so version strings and namespaced tokens need
+    // no quoting. The colon literals are in LITERALS below; this is the CONTROL that
+    // stops a fix for any of them from tightening the value branch too (#135, #150).
+    // `[x]{k=a:b}` is the one colon shape that renders as a span in every engine.
     { name: "colon in an unquoted attr value", sample: "[x]{k=a:b}", payload: "k=a:b", textmate: "meta.attributes", attr: true },
+    // The other half of `[x]{#a:b}`, whose literal counter-example is in LITERALS
+    // below. The block is not an attribute block, so the source stays prose - and the
+    // `#a` left in that prose is an ordinary tag, which is what the engine renders
+    // (`<span class="tag"><strong>#a</strong></span>:b`). Pairing the two pins the
+    // whole outcome rather than only the half that must not happen: a rule that
+    // widened the id branch would claim `#a` for the attribute block and fail here as
+    // well as there.
+    { name: "a hash in a colon-invalidated attribute block is a tag", sample: "[x]{#a:b}\n", payload: "#a", textmate: "tag" },
     { name: "link text", sample: "[text](https://x.de)", payload: "text", textmate: "string.other.link.title" },
     { name: "link url", sample: "[text](https://x.de)", payload: "https://x.de", textmate: "markup.underline.link" },
     { name: "escaped-quote link title", sample: "[t](/url \"ti\\\"tle\")", payload: "/url", textmate: "markup.underline.link" },
@@ -412,6 +421,45 @@ export const LITERALS = [
         payload: 'xmlns:x',
         scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
     },
+    // The SHORTHAND branch of the same rule. `identifier` is what `.class` and `#id`
+    // are spelled with too, so the colon is illegal in all four attribute forms; the
+    // shorthand branch has always written it `[.#][A-Za-z_][\w-]*` and so #139 had
+    // nothing to change there - which is exactly why nothing pinned it. The key branch
+    // acquired ITS colon by one character class serving both branches, so the next edit
+    // that shares a class again widens the shorthand too and no key-only case notices.
+    // Verified against the pinned engine: `[x]{.a:b}` renders `<p>[x]{.a:b}</p>`.
+    //
+    // The payload is the leading `.a`/`#a` rather than the whole item, for the reason
+    // the digit-first case below records: the inner id and class rules stop at the
+    // colon, so a grammar that admitted the block would still hold no token spelling
+    // `.a:b`, and a check nothing can fail is worse than no check. `.a` inside this
+    // source can only be scoped by the attribute rule claiming the block.
+    {
+        name: 'a colon in an attribute class',
+        sample: '[x]{.a:b}\n',
+        payload: '.a',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    {
+        // The engine's own answer here is `<p>[x]{<span class="tag">#a</span>:b}</p>` -
+        // the block is prose and the `#a` in it is a tag. `constructs.js` carries that
+        // positive half; this is the half that must not happen. Both move together.
+        name: 'a colon in an attribute id',
+        sample: '[x]{#a:b}\n',
+        payload: '#a',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
+    {
+        // A QUOTED value does not rescue an invalid key - the value grammar is not
+        // consulted until the name is an `identifier`. Its own branch in the pattern is
+        // separate from the unquoted one, so a loosening written only for quoted values
+        // (the shape XML-ish namespaced attributes arrive in) would leave the two key
+        // cases above green. Payload `k:` for the same token-boundary reason as above.
+        name: 'a colon in an attribute key with a quoted value',
+        sample: '[x]{k:v="q"}\n',
+        payload: 'k:',
+        scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
     // The three shapes a fix that OVER-tightens the class would break. All three are
     // already literal in every grammar, so they pin what must not move while the colon
     // is removed - a first-character rule that is right for the wrong reason (say, one
@@ -458,8 +506,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 137
-export const MIN_LITERALS = 20
+export const MIN_CONSTRUCTS = 138
+export const MIN_LITERALS = 23
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -478,11 +526,11 @@ export const MIN_LITERALS = 20
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    textmate: 137,
+    textmate: 138,
     // Two constructs are skipped for Prism and three for highlight.js; each says
     // why in its own `skip` entry, and every skip is subtracted here.
-    prism: 135,
-    highlightjs: 134,
+    prism: 136,
+    highlightjs: 135,
 };
 
 /**
