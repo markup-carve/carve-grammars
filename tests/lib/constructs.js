@@ -45,6 +45,13 @@
 
 /** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), attr?: boolean, skip?: object}>} */
 export const CONSTRUCTS = [
+    // The other half of #164, and the reason the fix cannot just narrow the shared
+    // separator: a standalone attribute LINE DOES span lines, and must keep doing so.
+    {
+        name: 'an attribute line spans lines', sample: '{.a\n.b}\n\nparagraph\n',
+        payload: '{.a', textmate: 'meta.attributes', attr: true,
+        skip: { textmate: 'the TextMate attribute rule is single-line, so it misses the standalone multi-line block too - the other direction of #164, not fixed here' },
+    },
     { name: "italic", sample: "some /italic/ text", payload: "italic", textmate: "markup.italic" },
     { name: "bold", sample: "some *bold* text", payload: "bold", textmate: "markup.bold" },
     { name: "bold-italic", sample: "some /*both*/ text", payload: "both", textmate: "markup.bold.italic" },
@@ -360,6 +367,20 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    // An INLINE attribute block does not span lines. `attributes` pads and separates
+    // with `opt_ws` - "spaces/tabs only, no line breaks" (markup-carve/carve#897) -
+    // and only a standalone attribute LINE crosses a newline, through
+    // `attr_separator`'s continuation. One `\s`-separated pattern served both roles,
+    // so this coloured as a block where every engine renders prose (#164). Corpus
+    // 253 is the same shape.
+    {
+        name: 'an inline attribute block does not span lines',
+        sample: '*x*{.a\n.b}\n',
+        // `.b`, not `{.a`: Prism splits the block into `{`, `.a`, newline, `.b`, `}`,
+        // so no token ever contains `{.a` and the check could not fail there.
+        payload: '.b',
+        scopes: { prism: 'attr', highlightjs: 'attr', textmate: 'meta.attributes' },
+    },
     // A bullet glued to an attribute block still needs content after the block, the
     // same as an ordered marker (#126).
     // An INVALID payload means the `{` is literal content and the line is prose - a
