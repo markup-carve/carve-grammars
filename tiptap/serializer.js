@@ -855,8 +855,26 @@ export function serializeToCarve(doc) {
                     t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'autolink']);
                 }
                 if (carveSpan) {
+                    // A span mark has to write SOMETHING after `[text]`: bare
+                    // `[x]` is not a span on the next parse, it is literal
+                    // brackets (or a reference link). With no attributes to
+                    // write, that something is the blessed empty block `{}` -
+                    // valid Carve, and the explicit "make this a span" hook
+                    // (corpus 39-inline-span-2). It used to be `{.class}`, a
+                    // class named "class" that the document never had; unlike a
+                    // dropped attribute, an invented one cannot be recognized as
+                    // invented by anything downstream.
+                    //
+                    // A `class` of `custom` still writes `{.custom}` here.
+                    // `custom` is CarveSpan's schema DEFAULT, so at this point
+                    // an editor-created span and an authored `[x]{.custom}` are
+                    // the same object - the serializer cannot tell them apart,
+                    // and only a schema change (a null default) could. Writing
+                    // it keeps the authored spelling; the placeholder leaking
+                    // out of an editor is the residue, and is not this branch's
+                    // to decide.
                     const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)
-                        || ('{.' + (carveSpan.attrs?.class || 'class') + '}');
+                        || (carveSpan.attrs?.class ? '{.' + carveSpan.attrs.class + '}' : '{}');
                     t = '[' + t + ']' + spanAttrs;
                 }
                 // `[text]{abbr="…"}` is carve/djot-php's SemanticSpanExtension

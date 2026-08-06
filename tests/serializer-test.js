@@ -9,7 +9,8 @@
  *   strike ~..~ (<s>)  subscript ,,..,, (<sub>)  superscript ^..^  insert {+..+}
  */
 import assert from 'node:assert';
-import { parse } from '@markup-carve/carve';
+import { parse, renderHtml } from '@markup-carve/carve';
+import { astToProseMirror } from '../tiptap/index.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
 
 let passed = 0;
@@ -370,6 +371,67 @@ check('literal == and ,, are not escaped',
 check('span serializes id and class',
     doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'note', id: 'me' } }] })),
     '[x]{#me .note}');
+
+// A span with NOTHING to write still has to write something: bare `[x]` is not
+// a span on the next parse, it is literal brackets. The empty block `{}` is
+// that something - valid Carve, and the explicit "make this a span" hook. The
+// fallback used to invent `{.class}`, putting a class named "class" on a
+// document that never had one.
+check('a span with no attributes writes the blessed empty block',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: {} }] })),
+    '[x]{}');
+
+check('a span with no attrs object at all writes the blessed empty block',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan' }] })),
+    '[x]{}');
+
+// UNCHANGED BEHAVIOR, pinned deliberately. `custom` is CarveSpan's schema
+// default, so by the time the serializer sees it, an editor-created span and an
+// authored `[x]{.custom}` are indistinguishable. It keeps being written, which
+// preserves the authored spelling; deciding the other way needs a schema change
+// (a null default), not a serializer branch. This case fails if the fallback is
+// made an unconditional `{}`.
+check('a span whose only class is the schema placeholder still writes it',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'custom' } }] })),
+    '[x]{.custom}');
+
+// The placeholder is suppressed once there is a real attribute beside it, so
+// `placeholderClass` stays load-bearing above.
+check('the schema placeholder is suppressed beside a real attribute',
+    doc(para({ type: 'text', text: 'x', marks: [{ type: 'carveSpan', attrs: { class: 'custom', id: 'me' } }] })),
+    '[x]{#me}');
+
+// A round trip can pass for the WRONG REASON: if both directions are broken the
+// same way, `serialize(convert(x))` still comes back equal to `x`. So assert the
+// INTERMEDIATE ProseMirror shape and the RENDERED html either side of it, not
+// only that the source survived. Here the intermediate is the load-bearing
+// half - it was already correct (a `carveSpan` mark carrying no attributes at
+// all) while the text coming out of the serializer said `.class`, so a check
+// that only compared source to source would have been reading the serializer's
+// own invention back as though the document contained it.
+function checkSpanPipeline(name, source, expectedCarve) {
+    const astA = parse(source);
+    const pm = astToProseMirror(astA);
+    const marks = pm.content?.[0]?.content?.[0]?.marks || [];
+    const span = marks.find((m) => m.type === 'carveSpan');
+    assert.ok(span, `${name}: no carveSpan mark in the intermediate document`);
+    assert.deepStrictEqual(span.attrs || {}, {},
+        `${name}: the intermediate span carries attributes the source never had:`
+        + ` ${JSON.stringify(span.attrs)}`);
+    const carve = serializeToCarve(pm);
+    assert.strictEqual(carve, expectedCarve, `${name}\n--- expected ---\n${expectedCarve}\n--- actual ---\n${carve}`);
+    const htmlA = renderHtml(astA).trim();
+    const htmlB = renderHtml(parse(carve)).trim();
+    assert.strictEqual(htmlB, htmlA, `${name}: rendered output changed\n--- before ---\n${htmlA}\n--- after ---\n${htmlB}`);
+    assert.strictEqual(htmlB, '<p><span>x</span></p>',
+        `${name}: expected a bare span, got ${htmlB}`);
+    passed++;
+    console.log(`  ✓ ${name}`);
+}
+
+checkSpanPipeline('an empty attribute block survives the whole round trip', '[x]{}\n', '[x]{}');
+checkSpanPipeline('a whitespace-only attribute block survives it too', '[x]{ }\n', '[x]{}');
+checkSpanPipeline('a tab-only attribute block survives it too', '[x]{\t}\n', '[x]{}');
 
 check('heading serializes an id on the preceding line (strict djot)',
     doc({ type: 'heading', attrs: { level: 2, id: 'slug' }, content: [text('Title')] }),
