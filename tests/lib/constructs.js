@@ -598,6 +598,26 @@ export const LITERALS = [
         payload: 'Sentinel',
         scopes: { prism: 'title', highlightjs: 'section', textmate: 'markup.heading' },
     },
+    {
+        // THE SAME RULE ONE LEVEL DOWN. Prism's definition-term and div-delimiter
+        // sub-patterns carry the `m` flag and run against a MULTI-LINE token, so a
+        // token-local allowance there let the mark re-open a block on a later line
+        // that the document-anchored top-level rule had already refused: this
+        // sample scoped `:: second` as a term. Both now carry the full assertion,
+        // which at that level resolves against the token's own offset 0 - sound,
+        // because a token can only BEGIN with the mark when the top-level opener
+        // consumed one. Found in review of carve-grammars#154.
+        //
+        // Live in Prism, where the over-match was. highlight.js and TextMate leave
+        // the line alone either way and pass it for free; a shape that is only
+        // wrong in one grammar still belongs in the shared list, because the next
+        // person to add a nested `m` pattern will be in whichever grammar they are
+        // in.
+        name: 'a byte order mark below the first line of a definition list',
+        sample: ':: first\ndef one\n\uFEFF:: second\n',
+        payload: 'second',
+        scopes: { prism: 'definition-term', highlightjs: 'title', textmate: 'entity.name.tag.definition.term' },
+    },
 ];
 
 /*
@@ -619,7 +639,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 153
-export const MIN_LITERALS = 24
+export const MIN_LITERALS = 25
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

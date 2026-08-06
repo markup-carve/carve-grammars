@@ -65,9 +65,19 @@
  * anchor `^` cannot be under `m`.
  *
  * Inside a rule's `inside`, the sub-pattern runs against the matched token's own
- * text, whose first character IS the mark when the opener carried one. There the
- * allowance is an unconditional `\uFEFF?`, because the assertion would be asking
- * a different question (start of the token, not start of the document).
+ * text, whose first character IS the mark when the opener carried one. Most of
+ * those sub-patterns have no `m` flag and match a single-line token, so there the
+ * allowance is an unconditional `\uFEFF?` - `^` already means "start of this
+ * token" and there is no second line for it to leak onto.
+ *
+ * Two sub-patterns DO carry `m` and run against a multi-line token: the
+ * definition term inside `definition-list`, and `div-delimiter` inside `div`
+ * (which needs `m` to reach the closing fence). Those keep the full assertion.
+ * Without it, `:: first\ndef one\n\uFEFF:: second` scoped that second line as a
+ * term, which is the over-match this whole allowance exists to avoid - a mark
+ * below the first line opens nothing. The assertion resolves against the token's
+ * own offset 0 there, which is sound because a token can only BEGIN with the mark
+ * when the top-level opener, itself document-anchored, consumed one.
  *
  * The codepoint is always written as the escape `\uFEFF`. No file in this repo
  * holds a literal byte order mark: it is invisible, and an editor or a
@@ -185,7 +195,7 @@
     // 'definition-list' has already decided is inside a real entry.
     var definitionTerm = {
         // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-        pattern: /^\uFEFF?[ \t]*:: +(?![ \t]*$).*$/m,
+        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$).*$/m,
         alias: 'title',
         inside: Object.assign({
             'punctuation': /^\uFEFF?[ \t]*::/,
@@ -377,7 +387,7 @@
                 // as a table row. Leaving nothing ungrabbed on a delimiter
                 // line closes that gap.
                 'div-delimiter': {
-                    pattern: /^\uFEFF?[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
+                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
                     inside: {
                         'punctuation': /:{3,}/,
                         'string': /"[^"\n]*"/,
