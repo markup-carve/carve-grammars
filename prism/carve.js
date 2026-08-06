@@ -45,6 +45,44 @@
  * and is written up in the README ("Where the three grammars deliberately
  * differ"). Do not "fix" the anchors here to match it.
  *
+ * A LEADING BYTE ORDER MARK (carve-grammars#154):
+ *
+ * A byte order mark at the START OF THE DOCUMENT is not content - the spec says
+ * so ("Line endings and a byte order mark"), and carve-js, carve-rs and
+ * carve-php all strip it before the block scanner runs. It is neither a space
+ * nor a tab, so without an allowance it sat between the line start and the
+ * marker and defeated every opener below: a BOM-led heading went unscoped, and
+ * a BOM-led fence was claimed by the inline `code` rule instead.
+ *
+ * The allowance is `(?:(?<![\s\S])\uFEFF)?`, and the assertion is the point.
+ * These patterns carry the `m` flag, so a plain `^\uFEFF?` would admit the mark
+ * at EVERY line start - and a mark that is not at offset 0 is an ordinary
+ * zero-width character that opens nothing. Measured: `# T\n\n\uFEFF- item\n`
+ * is a paragraph holding literal text in carve-rs and in carve-php. Only
+ * carve-js reads it as a list, because JavaScript's own `\s` class is Unicode
+ * White_Space plus U+FEFF (markup-carve/carve#806), and that is the outlier.
+ * `(?<![\s\S])` is true only where nothing precedes, which is the document-start
+ * anchor `^` cannot be under `m`.
+ *
+ * Inside a rule's `inside`, the sub-pattern runs against the matched token's own
+ * text, whose first character IS the mark when the opener carried one. Most of
+ * those sub-patterns have no `m` flag and match a single-line token, so there the
+ * allowance is an unconditional `\uFEFF?` - `^` already means "start of this
+ * token" and there is no second line for it to leak onto.
+ *
+ * Two sub-patterns DO carry `m` and run against a multi-line token: the
+ * definition term inside `definition-list`, and `div-delimiter` inside `div`
+ * (which needs `m` to reach the closing fence). Those keep the full assertion.
+ * Without it, `:: first\ndef one\n\uFEFF:: second` scoped that second line as a
+ * term, which is the over-match this whole allowance exists to avoid - a mark
+ * below the first line opens nothing. The assertion resolves against the token's
+ * own offset 0 there, which is sound because a token can only BEGIN with the mark
+ * when the top-level opener, itself document-anchored, consumed one.
+ *
+ * The codepoint is always written as the escape `\uFEFF`. No file in this repo
+ * holds a literal byte order mark: it is invisible, and an editor or a
+ * normalizing filter can drop the one character a rule is about.
+ *
  * @module carve-grammars/prism/carve
  */
 (function (Prism) {
@@ -157,10 +195,10 @@
     // 'definition-list' has already decided is inside a real entry.
     var definitionTerm = {
         // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-        pattern: /^[ \t]*:: +(?![ \t]*$).*$/m,
+        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$).*$/m,
         alias: 'title',
         inside: Object.assign({
-            'punctuation': /^[ \t]*::/,
+            'punctuation': /^\uFEFF?[ \t]*::/,
         }, inline),
     };
 
@@ -176,7 +214,7 @@
     // A definition-list entry: the opening term line plus every following
     // line that is not some OTHER block opener (see above).
     var definitionListPattern = RegExp(
-        '^[ \\t]*:: +(?![ \\t]*$)[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
+        '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*:: +(?![ \\t]*$)[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
         'm',
     );
 
@@ -193,18 +231,18 @@
                 // The closer is a backreference, so it matches the opener's
                 // length EXACTLY: a longer run does not close a shorter fence
                 // (hence the `(?!%)`), which is what lets `%%%%` nest `%%%`.
-                pattern: /^[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]*?^[ \t]*\1(?!%)[^\n]*$/m,
+                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]*?^[ \t]*\1(?!%)[^\n]*$/m,
                 greedy: true,
             },
             {
-                pattern: /^[ \t]*%%(?!%).*$/m,
+                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*%%(?!%).*$/m,
                 greedy: true,
             },
             {
                 // An UNTERMINATED `%%%` run opens nothing (PART 9 §28); it
                 // degrades to a line comment, so it must still scope as one.
                 // Placed after the block form, which consumes matched fences.
-                pattern: /^[ \t]*%{3,}.*$/m,
+                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*%{3,}.*$/m,
                 greedy: true,
             },
             {
@@ -220,7 +258,7 @@
         // `^` (no `m` flag) anchors to the start of the document; the close is
         // matched at end-of-line so a document body may follow.
         'front-matter': {
-            pattern: /^---[ \t]*[A-Za-z0-9_-]*[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+            pattern: /^\uFEFF?---[ \t]*[A-Za-z0-9_-]*[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
             alias: 'comment',
             greedy: true,
             inside: {
@@ -232,12 +270,12 @@
         'code-block': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^[ \t]*(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
             greedy: true,
             inside: {
-                'punctuation': /^(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
+                'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
                 'language': {
-                    pattern: /(^(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
+                    pattern: /(^\uFEFF?(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
                     lookbehind: true,
                     alias: 'class-name',
                 },
@@ -253,7 +291,7 @@
         // the document's opening delimiters. A table delimiter row (`|---|`)
         // is not a whole-line run, so the anchors exclude it.
         'thematic-break': {
-            pattern: /^[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/m,
             alias: 'punctuation',
         },
 
@@ -270,10 +308,10 @@
             // heading text, which is why the run stays optional behind it.
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^[ \t]*#{1,6} [ \t]*(?![ \t]*$).+$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} [ \t]*(?![ \t]*$).+$/m,
             alias: 'important',
             inside: Object.assign({
-                'punctuation': /^#{1,6}/,
+                'punctuation': /^\uFEFF?#{1,6}/,
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -331,7 +369,7 @@
         // inside a div body (headings - corpus 170, nested lists, blockquotes)
         // while suppressing only the one construct this fix targets.
         'div': {
-            pattern: /^[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
@@ -349,7 +387,7 @@
                 // as a table row. Leaving nothing ungrabbed on a delimiter
                 // line closes that gap.
                 'div-delimiter': {
-                    pattern: /^[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
+                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
                     inside: {
                         'punctuation': /:{3,}/,
                         'string': /"[^"\n]*"/,
@@ -362,7 +400,7 @@
 
         // Table rows: | a | b |   (plus header `|=`, caption `^`, span markers)
         'table': {
-            pattern: /^[ \t]*\|.*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|.*$/m,
             inside: Object.assign({
                 // rowspan `^` / colspan `<` markers - must precede `punctuation`
                 // so the surrounding `|` is not consumed first.
@@ -383,9 +421,9 @@
         // The row form has to end in `|`, so `one + two` in prose stays
         // literal.
         'table-continuation': {
-            pattern: /^[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/m,
             inside: Object.assign({
-                'punctuation': /^[ \t]*\+|\|/,
+                'punctuation': /^\uFEFF?[ \t]*\+|\|/,
             }, inline),
         },
 
@@ -404,10 +442,10 @@
             // strict about this, so the two engines now agree.
             // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
             // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
-            pattern: /^[ \t]*\^ +(?![ \t]*$).*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\^ +(?![ \t]*$).*$/m,
             alias: 'title',
             inside: Object.assign({
-                'punctuation': /^\^/,
+                'punctuation': /^\uFEFF?\^/,
             }, inline),
         },
 
@@ -422,9 +460,9 @@
         'blockquote': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^[ \t]*>(?: .*)?$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: .*)?$/m,
             inside: Object.assign({
-                'punctuation': /^[ \t]*>/,
+                'punctuation': /^\uFEFF?[ \t]*>/,
             }, inline),
         },
 
@@ -453,7 +491,7 @@
             // is a paragraph too, and a `\{[^}]*\}` run stops in the wrong
             // place: a quoted value may contain `}` and may escape its own
             // quote, and `{title="a}b"} x` is a valid item (#85).
-            pattern: /^[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$))/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$))/m,
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
@@ -488,10 +526,10 @@
 
         // Reference link / abbreviation definitions
         'reference-definition': {
-            pattern: /^[ \t]*\[[^\]]+\]: +\S+.*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[[^\]]+\]: +\S+.*$/m,
             alias: 'url',
             inside: {
-                'constant': /^[ \t]*\[[^\]]+\]:/,
+                'constant': /^\uFEFF?[ \t]*\[[^\]]+\]:/,
             },
         },
         // `abbreviation_term = (letter | digit)+`, and `letter` is enumerated
@@ -501,7 +539,7 @@
         'abbreviation-definition': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^[ \t]*\*\[[A-Za-z0-9]+\]: +.*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +.*$/m,
             inside: {
                 // BEFORE punctuation, and anchored to the brackets. Prism
                 // applies these in order, so a punctuation rule that eats `*[`
@@ -510,7 +548,7 @@
                 // uppercase-only class that showed up as the `H` of `HyperText`
                 // carrying `symbol`, which the goldens pinned.
                 'symbol': {
-                    pattern: /(^[ \t]*\*\[)[A-Za-z0-9]+(?=\]:)/,
+                    pattern: /(^\uFEFF?[ \t]*\*\[)[A-Za-z0-9]+(?=\]:)/,
                     lookbehind: true,
                 },
                 // The expansion is the abbreviation's TITLE, not more markup.
@@ -521,7 +559,7 @@
                     pattern: /(\]:[ \t]+).+$/,
                     lookbehind: true,
                 },
-                'punctuation': /^[ \t]*\*|\[|\]|:/,
+                'punctuation': /^\uFEFF?[ \t]*\*|\[|\]|:/,
             },
         },
 

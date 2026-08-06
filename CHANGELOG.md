@@ -5,6 +5,24 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **A file that begins with a UTF-8 byte order mark keeps the highlighting on
+  its first line** (#154). The mark is neither a space nor a tab, so it sat
+  between the line start and the marker and defeated every line-anchored block
+  opener in all three grammars: a heading, thematic break, list or task marker,
+  quote marker, fence, div, table row or continuation, caption, definition term,
+  abbreviation, reference or footnote definition, comment and front matter all
+  lost their scope on line 1, and some degraded worse than that - a fence opener
+  was claimed by the inline code rule in Prism and highlight.js, and a front
+  matter `---` by the smart-typography rule in TextMate.
+
+  A mark at the start of a document is not content (spec: "Line endings and a
+  byte order mark"), and every engine strips it. The allowance is deliberately
+  restricted to the document's start: a mark on any later line is an ordinary
+  zero-width character that opens nothing in carve-rs and carve-php. Since every
+  rule anchors with `^` under a multiline flag, the three grammars each needed
+  their own document-start assertion - `(?<![\s\S])` in Prism and highlight.js,
+  Oniguruma's `\A` in TextMate - which is written up in the README under "One
+  rule, three spellings: a leading byte order mark".
 - **An indented fence, blockquote or abbreviation definition at document level
   is no longer highlighted by the TextMate grammar** (#138). Carve opens a
   block at column 0, or at an enclosing container's content column - nowhere in

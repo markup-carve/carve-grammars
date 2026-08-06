@@ -43,6 +43,34 @@
  * and is written up in the README ("Where the three grammars deliberately
  * differ"). Do not "fix" the anchors here to match it.
  *
+ * A LEADING BYTE ORDER MARK (carve-grammars#154):
+ *
+ * A byte order mark at the START OF THE DOCUMENT is not content - the spec says
+ * so ("Line endings and a byte order mark"), and carve-js, carve-rs and
+ * carve-php all strip it before the block scanner runs. It is neither a space
+ * nor a tab, so without an allowance it sat between the line start and the
+ * marker and defeated every `begin` below that opens a block: a BOM-led heading
+ * went unscoped, and a BOM-led fence was claimed by the inline code rule.
+ *
+ * The allowance is `(?:(?<![\s\S])\uFEFF)?`, and the assertion is the point.
+ * highlight.js compiles these with the `m` flag, so a plain `^\uFEFF?` would admit
+ * the mark at EVERY line start - and a mark that is not at offset 0 is an
+ * ordinary zero-width character that opens nothing. Measured:
+ * `# T\n\n\uFEFF- item\n` is a paragraph holding literal text in carve-rs and in
+ * carve-php. Only carve-js reads it as a list, because JavaScript's own `\s`
+ * class is Unicode White_Space plus U+FEFF (markup-carve/carve#806), and that is
+ * the outlier. `(?<![\s\S])` is true only where nothing precedes.
+ *
+ * Only OPENERS carry it. A closer (`CODE_FENCE_END`, the div and block-comment
+ * `end`s) and a definition body line cannot be line 1, so they are untouched.
+ * `LINE_COMMENT` needs nothing either, but for a reason worth naming: its
+ * `(?<=\s)` already admits the mark, because JavaScript's `\s` holds U+FEFF.
+ * That is the same quirk as above, working in this one rule's favour.
+ *
+ * The codepoint is always written as the escape `\uFEFF`. No file in this repo
+ * holds a literal byte order mark: it is invisible, and an editor or a
+ * normalizing filter can drop the one character a rule is about.
+ *
  * @see https://github.com/markup-carve/carve for the Carve specification
  */
 (function (root, factory) {
@@ -122,7 +150,7 @@
         className: 'section',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^[ \t]*#{1,6} (?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} (?![ \t]*$)/,
         end: /$/,
         relevance: 10,
     };
@@ -299,7 +327,7 @@
     // Reference definitions: [ref]: url
     const REFERENCE_DEF = {
         className: 'symbol',
-        begin: /^[ \t]*\[[^\]^\]]+\]:(?= )/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[[^\]^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -327,7 +355,7 @@
     // compete.
     const DEFINITION_TERM_MARKER = {
         className: 'title',
-        begin: /^[ \t]*:: (?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };
@@ -349,7 +377,7 @@
     // so `one + two` in prose stays literal.
     const TABLE_CONTINUATION = {
         className: 'punctuation',
-        begin: /^[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/,
         relevance: 5,
     };
 
@@ -383,7 +411,7 @@
     // Footnote definitions: [^note]: content
     const FOOTNOTE_DEF = {
         className: 'symbol',
-        begin: /^[ \t]*\[\^[^\]]+\]:(?= )/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[\^[^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -398,7 +426,7 @@
         className: 'symbol',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^[ \t]*\*\[[A-Za-z0-9]+\]:(?= )/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]:(?= )/,
         end: /$/,
         relevance: 10,
     };
@@ -413,7 +441,7 @@
         className: 'quote',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^[ \t]*>(?= |$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?= |$)/,
         end: /$/,
         relevance: 0,
     };
@@ -421,7 +449,7 @@
     // Horizontal rules: --- or *** or ___
     const HORIZONTAL_RULE = {
         className: 'meta',
-        begin: /^[ \t]*(-{3,}|\*{3,}|_{3,})$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(-{3,}|\*{3,}|_{3,})$/,
         relevance: 10,
     };
 
@@ -433,7 +461,7 @@
     const LIST_BULLET = {
         className: 'bullet',
         // A marker line may carry several markers (`- - A`, corpus 103).
-        begin: /^[ \t]*(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
@@ -449,7 +477,7 @@
     // stops in the wrong place and `{title="a}b"} x` is a valid item (#85).
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
         relevance: 0,
     };
 
@@ -459,7 +487,7 @@
     // markers, and corpus 06-task-lists-2 uses all four of the others.
     const TASK_LIST = {
         className: 'bullet',
-        begin: /^[ \t]*[-*] \[[ xX\-_>?]\](?= )(?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*[-*] \[[ xX\-_>?]\](?= )(?![ \t]*$)/,
         relevance: 5,
     };
 
@@ -489,7 +517,7 @@
     // `contains`) do the actual per-line matching and coloring themselves,
     // exactly as they did as top-level modes.
     const DEFINITION_LIST_ENTRY = {
-        begin: /^(?=[ \t]*:: (?![ \t]*$))/,
+        begin: /^(?=(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$))/,
         end: new RegExp('^(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'),
         relevance: 0,
         contains: [DEFINITION_TERM_MARKER, DEFINITION_TERM],
@@ -500,7 +528,7 @@
         className: 'keyword',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^[ \t]*[`~]{3,}\s*[a-zA-Z]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*[`~]{3,}\s*[a-zA-Z]*$/,
         relevance: 10,
     };
 
@@ -536,7 +564,7 @@
     // suppressed.
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -570,7 +598,7 @@
     // `ignoreMatch()` - the same idiom the bundled markdown grammar uses.
     const BLOCK_COMMENT = {
         className: 'comment',
-        begin: /^[ \t]*(%{3,})[^\n]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})[^\n]*$/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -629,14 +657,14 @@
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
         className: 'meta',
-        begin: /^[ \t]*\|[-:| ]+\|$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|[-:| ]+\|$/,
         relevance: 5,
     };
 
     // Line blocks: | text (for poetry) - must precede TABLE_ROW
     const LINE_BLOCK = {
         className: 'string',
-        begin: /^[ \t]*\| /,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\| /,
         end: /$/,
         relevance: 3,
     };
@@ -644,7 +672,7 @@
     // Table rows: | cell | cell |
     const TABLE_ROW = {
         className: 'string',
-        begin: /^[ \t]*\|/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|/,
         end: /\|(\{[^}]*\})?$/,
         relevance: 2,
     };
@@ -652,7 +680,7 @@
     // Captions: ^ caption text
     const CAPTION = {
         className: 'title',
-        begin: /^[ \t]*\^ (?![ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\^ (?![ \t]*$)/,
         end: /$/,
         relevance: 5,
     };

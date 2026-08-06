@@ -212,19 +212,101 @@ export const CONSTRUCTS = [
     { name: "ref def url", sample: "[r]: https://ref.example", payload: "https://ref.example", textmate: "markup.underline.link" },
     { name: "ref def title", sample: "[r]: https://ref.example \"Site\"", payload: "Site", textmate: "string.quoted.link.title" },
     {
-        // highlight.js has no document-start anchor, so a `^---$` begin would
-        // also match a bare `---` thematic break mid-document and swallow
-        // everything up to the next one. The grammar records that decision at
-        // its `contains` list; this records it where the coverage question is
-        // asked.
+        // highlight.js has no front-matter rule: a bare `^---$` begin would also
+        // match a `---` thematic break mid-document and swallow everything up to
+        // the next one, so the grammar leaves front matter alone. (A
+        // document-start assertion is expressible - `(?<![\s\S])`, which
+        // carve-grammars#154 uses for the byte order mark - but giving
+        // highlight.js a front-matter rule is its own change, not this one.) The
+        // grammar records the decision at its `contains` list; this records it
+        // where the coverage question is asked.
         name: "frontmatter", sample: "---\ntitle: Doc\n---\n\nText", payload: "title",
         textmate: "frontmatter",
-        skip: { highlightjs: "no document-start anchor, so front matter is deliberately not highlighted" },
+        skip: { highlightjs: "no front-matter rule, so front matter is deliberately not highlighted" },
     },
     { name: "display math", sample: "$$`\\int_0^1 x`", payload: "\\int_0^1 x", textmate: "markup.math" },
     { name: "trailing comment", sample: "text %% trailing", payload: "trailing", textmate: "comment" },
     { name: "block comment", sample: "%%%\nhidden\n%%%", payload: "hidden", textmate: "comment" },
     { name: "block comment with a tail", sample: "%%% html\nhidden\n%%% end", payload: "hidden", textmate: "comment" },
+    /*
+     * A LEADING BYTE ORDER MARK, on every opener family (carve-grammars#154).
+     *
+     * A mark at the start of a document is not content: the spec says so ("Line
+     * endings and a byte order mark"), and carve-js, carve-rs and carve-php all
+     * strip it before the block scanner runs. It is neither a space nor a tab, so
+     * before the fix it sat between the line start and the marker and defeated
+     * EVERY line-anchored opener in all three grammars - the heading the issue
+     * sampled, and also the fence, which Prism and highlight.js then handed to the
+     * inline code rule, and front matter, which TextMate coloured as a smart-
+     * typography em dash. Covering only the heading would have left the rest dark
+     * while reading as fixed, which is why this is a family rather than a case.
+     *
+     * WHY THIS FILE IS THE HOME, measured rather than assumed. The corpus DOES
+     * carry a real mark - `spec/tests/corpus/250-line-endings-and-a-byte-order-
+     * mark-3.crv` begins `ef bb bf`, and survives because the spec repo marks
+     * `tests/corpus/**` as `-text` so git normalizes nothing. That one file is
+     * what surfaced this, and its snapshots moved with the fix. But it is the only
+     * shape the corpus has: a mark before a HEADING. The other fourteen opener
+     * families have no corpus case, this repo authors no corpus of its own (it
+     * consumes the spec submodule), and a snapshot pins whatever a grammar does -
+     * which is precisely how a defect this wide sat under 1336 matching snapshots.
+     *
+     * So the family lives here, where the sample is a JavaScript string literal
+     * and the mark is written `\uFEFF`: an escape made of ASCII, which no editor,
+     * `.gitattributes` rule or normalizing step can quietly remove, in a file that
+     * needs no `-text` protection to stay correct. Both sweeps read this
+     * inventory, so one entry forces the decision in all three grammars at once.
+     *
+     * The counter-example is in LITERALS below: a mark BELOW the first line opens
+     * nothing. That pair is what separates the fix from `^\uFEFF?`, which would
+     * admit the mark at every line start.
+     */
+    { name: "byte order mark before a heading", sample: "\uFEFF# Title", payload: "Title", textmate: "heading" },
+    {
+        // DISCRIMINATES IN TEXTMATE ONLY, and that is written down rather than
+        // assumed. Reverting the fix leaves this unscoped in Prism (caught) but
+        // in highlight.js the run degrades to `**`+`*` and the `**` carries
+        // `strong` - so the engine sweep's COVERED invariant still holds and the
+        // case passes there. The engine sweep deliberately asserts that a payload
+        // is scoped at ALL, never what the scope is called (see its header), so a
+        // construct that degrades into a DIFFERENT construct is invisible to it.
+        // The TextMate sweep asserts the name and fails.
+        name: "byte order mark before a thematic break", sample: "\uFEFF***", payload: "***",
+        textmate: "separator",
+    },
+    { name: "byte order mark before a list marker", sample: "\uFEFF- item", payload: "-", textmate: "punctuation.definition.list" },
+    { name: "byte order mark before an ordered marker", sample: "\uFEFF1. item", payload: "1.", textmate: "punctuation.definition.list" },
+    { name: "byte order mark before a task marker", sample: "\uFEFF- [x] done", payload: "x", textmate: "constant.language.checkbox" },
+    { name: "byte order mark before a quote marker", sample: "\uFEFF> quoted", payload: "quoted", textmate: "quote" },
+    {
+        // THE SAME LIMITATION, and the sharpest instance of it. Reverting the fix
+        // makes both engines hand the whole fence to the INLINE code rule, so
+        // `php` is scoped `code` and COVERED holds: this case passes in Prism and
+        // in highlight.js against a grammar that mis-colours the line. It is not
+        // expressible as a LITERALS counter-example either - Prism's correct scope
+        // path is `code-block>language`, which `includes('code')` cannot be told
+        // apart from the inline `code` it must reject. Only the TextMate sweep,
+        // which asserts `fenced_code.block.language` by name, discriminates here;
+        // measured, reverting the fix fails 15/15 in TextMate, 14/15 in Prism and
+        // 12/14 in highlight.js, and this entry is the Prism miss.
+        name: "byte order mark before a fence", sample: "\uFEFF```php\ncode\n```", payload: "php",
+        textmate: "fenced_code.block.language",
+    },
+    { name: "byte order mark before a div", sample: "\uFEFF::: note\nbody\n:::", payload: "note", textmate: "admonition" },
+    { name: "byte order mark before a table row", sample: "\uFEFF| a | b |", payload: "|", textmate: "punctuation.separator.table" },
+    { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption" },
+    { name: "byte order mark before a definition term", sample: "\uFEFF:: term\n:  definition", payload: "term", textmate: "entity.name.tag.definition.term" },
+    { name: "byte order mark before an abbreviation", sample: "\uFEFF*[HTML]: HyperText", payload: "HTML", textmate: "abbreviation" },
+    { name: "byte order mark before a reference definition", sample: "\uFEFF[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
+    { name: "byte order mark before a block comment", sample: "\uFEFF%%%\nhidden\n%%%", payload: "hidden", textmate: "comment" },
+    {
+        // The one opener whose skip carries over: highlight.js has no front-matter
+        // rule at all (see the `frontmatter` entry above), so there is nothing for
+        // the allowance to land in there.
+        name: "byte order mark before front matter", sample: "\uFEFF---\ntitle: Doc\n---\n\nText",
+        payload: "title", textmate: "frontmatter",
+        skip: { highlightjs: "no front-matter rule, so front matter is deliberately not highlighted" },
+    },
     // COLUMN SENSITIVITY, the other half. A definition AT a list item's content
     // column IS a definition and must stay highlighted - carve-php#765 and
     // carve-rs#570 both landed that reading, and carve#801 since made
@@ -486,6 +568,56 @@ export const LITERALS = [
         payload: '#-id',
         scopes: { prism: 'attributes', highlightjs: 'attr', textmate: 'meta.attributes' },
     },
+    {
+        // THE COUNTER-EXAMPLE to the byte order mark family in CONSTRUCTS above,
+        // and the case that decides how the allowance is spelled.
+        //
+        // The spec's rule is about the start of a DOCUMENT, and the engines split
+        // on anything else. Measured directly: `# T\n\n\uFEFF- item\n` renders as a
+        // paragraph holding literal text in carve-rs and in carve-php, and as a
+        // list only in carve-js - whose own `\s` class is Unicode White_Space plus
+        // U+FEFF (markup-carve/carve#806), so it is the outlier rather than the
+        // rule. A mark that is not at offset 0 is an ordinary zero-width character
+        // and opens nothing.
+        //
+        // Every one of these grammars anchors with `^` under a multiline flag, so
+        // the obvious spelling `^\uFEFF?` admits the mark at EVERY line start and
+        // passes all fifteen positives above while getting this wrong. What each
+        // grammar needs instead is a real document-start assertion, and the three
+        // do not share one: Prism and highlight.js use the JavaScript lookbehind
+        // `(?<![\s\S])`, TextMate uses Oniguruma's `\A`, which vscode-textmate
+        // resolves against the first line only. One rule, three spellings.
+        //
+        // PAYLOAD. `Sentinel` rather than the whole marker-plus-text run: Prism
+        // splits a heading into `\uFEFF#` (`title>punctuation`) and ` Sentinel`
+        // (`title`), so a payload spanning the split is contained by NEITHER
+        // token and the check cannot fail there. Found by running the mutation
+        // above - it caught highlight.js and TextMate and let Prism through.
+        name: 'a byte order mark below the first line',
+        sample: 'prose paragraph\n\n\uFEFF# Sentinel\n',
+        payload: 'Sentinel',
+        scopes: { prism: 'title', highlightjs: 'section', textmate: 'markup.heading' },
+    },
+    {
+        // THE SAME RULE ONE LEVEL DOWN. Prism's definition-term and div-delimiter
+        // sub-patterns carry the `m` flag and run against a MULTI-LINE token, so a
+        // token-local allowance there let the mark re-open a block on a later line
+        // that the document-anchored top-level rule had already refused: this
+        // sample scoped `:: second` as a term. Both now carry the full assertion,
+        // which at that level resolves against the token's own offset 0 - sound,
+        // because a token can only BEGIN with the mark when the top-level opener
+        // consumed one. Found in review of carve-grammars#154.
+        //
+        // Live in Prism, where the over-match was. highlight.js and TextMate leave
+        // the line alone either way and pass it for free; a shape that is only
+        // wrong in one grammar still belongs in the shared list, because the next
+        // person to add a nested `m` pattern will be in whichever grammar they are
+        // in.
+        name: 'a byte order mark below the first line of a definition list',
+        sample: ':: first\ndef one\n\uFEFF:: second\n',
+        payload: 'second',
+        scopes: { prism: 'definition-term', highlightjs: 'title', textmate: 'entity.name.tag.definition.term' },
+    },
 ];
 
 /*
@@ -506,8 +638,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 138
-export const MIN_LITERALS = 23
+export const MIN_CONSTRUCTS = 153
+export const MIN_LITERALS = 25
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -526,11 +658,11 @@ export const MIN_LITERALS = 23
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    textmate: 138,
-    // Two constructs are skipped for Prism and three for highlight.js; each says
+    textmate: 153,
+    // Two constructs are skipped for Prism and four for highlight.js; each says
     // why in its own `skip` entry, and every skip is subtracted here.
-    prism: 136,
-    highlightjs: 135,
+    prism: 151,
+    highlightjs: 149,
 };
 
 /**
