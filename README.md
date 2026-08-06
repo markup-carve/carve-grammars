@@ -235,6 +235,44 @@ read, and the same asymmetry is written down there as `skip` entries on the
 column-sensitive cases; the TextMate-only column cases live in the `NEGATIVE`
 list in `tests/textmate-sweep-test.js`.
 
+### One rule, three spellings: a leading byte order mark
+
+A byte order mark at the **start of a document** is not content. The spec says
+so ("Line endings and a byte order mark"), and carve-js, carve-rs and carve-php
+all strip it before the block scanner runs. It is neither a space nor a tab, so
+without an explicit allowance it sits between the line start and the marker and
+defeats every line-anchored opener - a mark in front of a heading left the title
+unscoped, and a mark in front of a fence handed the line to the inline code rule
+instead.
+
+All three grammars now allow it, and the restriction to the document's start is
+load-bearing rather than pedantry. A mark anywhere else is an ordinary
+zero-width character that opens nothing:
+
+```
+# T
+
+<a byte order mark here>- item
+```
+
+renders as a paragraph holding literal text in carve-rs and in carve-php, and as
+a list only in carve-js, whose own `\s` class is Unicode White_Space plus U+FEFF
+(markup-carve/carve#806). Every rule here anchors with `^` under a multiline
+flag, which matches at *every* line start, so the allowance has to carry its own
+document-start assertion - and the three grammars do not share one:
+
+| grammar | spelling | mechanism |
+| --- | --- | --- |
+| prism | `(?:(?<![\s\S])\uFEFF)?` | JavaScript lookbehind: nothing precedes offset 0 |
+| highlightjs | `(?:(?<![\s\S])\uFEFF)?` | the same, and it survives highlight.js compilation |
+| textmate | `(?:\A\x{FEFF})?` | Oniguruma `\A`, which vscode-textmate resolves against the first line only |
+
+The codepoint is always written as an escape. No file in this repo holds a
+literal byte order mark: it is invisible, and an editor or a normalizing filter
+can drop the one character a rule is about. The spec corpus is the exception and
+can afford to be - it marks `tests/corpus/**` as `-text`, so
+`250-line-endings-and-a-byte-order-mark-3.crv` really does begin `ef bb bf`.
+
 ### Prism
 
 The grammar registers itself against the global `Prism`, so `Prism` must be
