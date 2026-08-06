@@ -236,7 +236,14 @@
         'title': {
             // `.+` matches a run of spaces, so `#<space><space>` was a heading.
             // MARKER REQUIRES CONTENT: carve-rs renders it `<p>#</p>`.
-            pattern: /^[ \t]*#{1,6}[ \t]+(?![ \t]*$).+$/m,
+            //
+            // THE SEPARATOR IS A LITERAL SPACE. `[ \t]+` accepted a tab, so
+            // `#<TAB>Heading` was scoped as a heading where every engine renders
+            // it as a paragraph (spec markup-carve/carve#802, corpus
+            // `231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose`,
+            // carve-grammars#140). Whitespace AFTER the separator space is still
+            // heading text, which is why the run stays optional behind it.
+            pattern: /^[ \t]*#{1,6} [ \t]*(?![ \t]*$).+$/m,
             alias: 'important',
             inside: Object.assign({
                 'punctuation': /^#{1,6}/,
