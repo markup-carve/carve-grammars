@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": null,
+    "text": "{xlink:href=u}\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": null,
+    "text": "{k:v=\"q\"}\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[c]"
+  },
+  {
+    "scope": null,
+    "text": "{.sm:hover}\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[d]"
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "symbol",
+    "text": "#a"
+  },
+  {
+    "scope": null,
+    "text": ":b}\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[e]"
+  },
+  {
+    "scope": null,
+    "text": "{.ok xml:lang=en}\n"
+  }
+]

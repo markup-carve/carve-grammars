@@ -44,6 +44,7 @@ const TIPTAP_COVERED = [
     '242-a-block-image-is-separated-from-the-block-after-it-on-every-target',
     '243-a-tab-indent-is-the-column-it-reaches-whatever-the-line-holds',
     '245-sibling-markers-that-reach-one-column-are-one-list',
+    '247-a-continuation-marker-after-a-blank-line-in-the-item',
     '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
     '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
@@ -157,6 +158,9 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
+    ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
+    ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
     ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=x:y}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i .c k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "| a | b |{.x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

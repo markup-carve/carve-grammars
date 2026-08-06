@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n  b\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nc\n\nx\n"
+  }
+]

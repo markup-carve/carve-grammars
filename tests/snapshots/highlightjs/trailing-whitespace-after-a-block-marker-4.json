@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "| a | b |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+ c | d | "
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

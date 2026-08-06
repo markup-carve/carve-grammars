@@ -1,0 +1,50 @@
+[
+  {
+    "type": "span",
+    "text": "[a]"
+  },
+  {
+    "type": "text",
+    "text": "{xlink:href=u}\n\n"
+  },
+  {
+    "type": "span",
+    "text": "[b]"
+  },
+  {
+    "type": "text",
+    "text": "{k:v=\"q\"}\n\n"
+  },
+  {
+    "type": "span",
+    "text": "[c]"
+  },
+  {
+    "type": "text",
+    "text": "{.sm:hover}\n\n"
+  },
+  {
+    "type": "span",
+    "text": "[d]"
+  },
+  {
+    "type": "text",
+    "text": "{"
+  },
+  {
+    "type": "tag",
+    "text": "#a"
+  },
+  {
+    "type": "text",
+    "text": ":b}\n\n"
+  },
+  {
+    "type": "span",
+    "text": "[e]"
+  },
+  {
+    "type": "text",
+    "text": "{.ok xml:lang=en}\n"
+  }
+]
