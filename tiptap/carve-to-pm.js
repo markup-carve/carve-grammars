@@ -330,6 +330,39 @@ function convertInline(nodes, ctx) {
     for (const node of nodes) {
         out.push(...convertInlineNode(node, [], ctx));
     }
+
+    return mergeAdjacentText(out);
+}
+
+/**
+ * Join neighbouring text nodes that carry the same marks.
+ *
+ * ProseMirror's own schema does this - two adjacent text nodes with equal marks
+ * are one node - so a converter that emits them separately produces a document
+ * PM would never build, and a round-trip comparison then reports a difference
+ * that is not one.
+ *
+ * The split is not hypothetical: an escape reparses into `escaped_text` plus
+ * `text`, so `\* b` arrived as `*` and ` b` where the unescaped spelling of the
+ * same text is a single node (carve-grammars#121 noticed this from the other
+ * side, and carve-grammars#145 needs it to measure an escape at all).
+ */
+function mergeAdjacentText(nodes) {
+    const out = [];
+    for (const node of nodes) {
+        const previous = out[out.length - 1];
+        if (
+            node.type === 'text' &&
+            previous?.type === 'text' &&
+            JSON.stringify(previous.marks ?? []) === JSON.stringify(node.marks ?? [])
+        ) {
+            out[out.length - 1] = { ...previous, text: previous.text + node.text };
+
+            continue;
+        }
+        out.push(node);
+    }
+
     return out;
 }
 
@@ -343,6 +376,17 @@ function convertInline(nodes, ctx) {
 function convertInlineNode(node, marks, ctx) {
     switch (node.type) {
         case 'text':
+        // An ESCAPED character is literal text and nothing else: the backslash
+        // is a source-level spelling, not a node the editor should show or a
+        // shape it can act on. PART 12 gives it its own type only so a writer
+        // can reproduce the spelling, and this converter's output has no place
+        // to keep that - which is fine, because the serializer re-derives every
+        // escape it needs from the text itself.
+        //
+        // Left unmapped, the converter THREW on any document holding one, so a
+        // round trip through an escape could not even be measured - and the
+        // serializer emits escapes (carve-grammars#145).
+        case 'escaped_text':
             return [{ type: 'text', text: node.value || '', ...(marks.length ? { marks } : {}) }];
 
         case 'soft-break':

@@ -550,8 +550,11 @@ export function serializeToCarve(doc) {
         const isList = (type) => ['bulletList', 'orderedList', 'taskList'].includes(type);
         content.forEach((child, i) => {
             if (i === 0 && child.type === 'paragraph') {
-                // Lead paragraph sits on the marker line already emitted.
-                output += serializeInline(child.content) + '\n';
+                // Lead paragraph sits on the marker line already emitted - but
+                // only its FIRST line does. A soft break puts every later line
+                // at column 0, where a block opener stops being text
+                // (carve-grammars#145).
+                output += escapeContinuationOpeners(serializeInline(child.content)) + '\n';
             } else if (isList(child.type)) {
                 // A nested list opens at the parent's content column, so its
                 // own markers are emitted at that indent.
@@ -603,6 +606,67 @@ export function serializeToCarve(doc) {
     // same text anywhere else in the document is left untouched.
     const LEADING_DEFINITION_ESCAPE = /^\\\[[^\]\n]*\]:/;
     const LEADING_SPACE_SENTINEL = 'carve-grammars#121-leading-space';
+
+    // A BLOCK OPENER at the start of a paragraph line has to be escaped, or the
+    // line stops being part of the paragraph.
+    //
+    // Every line of a serialized paragraph lands at column 0 - the first after
+    // whatever container prefix precedes it, the rest after a soft break with
+    // nothing at all. So a line beginning `> ` or `# ` reparses as a block
+    // quote or a heading, and the text that was INSIDE the paragraph is gone
+    // from it: `1. a` + four spaces + `> quote` came back as `1. a` / `> quote`,
+    // which is a list item and a block quote beside it rather than one item
+    // holding a soft break (carve-grammars#145).
+    //
+    // Re-emitting the original indentation is not the fix, and measuring says
+    // so: the source's four spaces reach column 4, one PAST the item's content
+    // column of 3, and writing three spaces instead makes the line a nested
+    // quote - a different document again. The ProseMirror doc does not record
+    // the column either. Escaping is what states "this is text", at any column.
+    //
+    // Only the openers that actually take a line at column 0 are escaped. A
+    // bullet or an ordered marker is deliberately NOT here: §10 says a list
+    // marker does not interrupt a paragraph, so `- b` on a soft-break line is
+    // already text and escaping it would add a backslash the reader sees.
+    // Scoped to a LIST ITEM's lead paragraph, and to lines after a soft break
+    // within it. Both halves of that scope are measured, not assumed:
+    //
+    //   - the first line sits on the marker line the caller already emitted, so
+    //     its position is that caller's business;
+    //   - a paragraph inside a BLOCK QUOTE is not at column 0 either, because
+    //     the quote prefixes every line with `> ` - corpus 210 (`> ok` /
+    //     `>bad`) turns `>bad` into `> \>bad` under a blanket rule, which is a
+    //     backslash the reader sees and a document that no longer reparses to
+    //     itself.
+    //
+    // A list item's continuation line is the case where nothing precedes it.
+    // `>` and `#` ONLY, and the set is measured rather than reasoned:
+    //
+    //   - `^` is the caption marker, and escaping it is the defect that kept
+    //     207/209/231 out of coverage in the first place - a caption is its own
+    //     block and the caller that emits it owns the marker;
+    //   - `|`, `~`, `:::`, `%%`, `---` and `===` produced no round-trip that
+    //     was broken without them, so escaping them would only add backslashes
+    //     a reader sees.
+    //
+    // Widening this set is a measurement, not a judgement: add a case that
+    // loses its paragraph without the escape, then add the character.
+    const CONTINUATION_BLOCK_OPENER = /\n([>#])/g;
+
+    function escapeContinuationOpeners(text) {
+        // A single SPACE, not a backslash. Both keep the line as text - the
+        // engines render `1. a` + ` > quote` and `1. a` + `\> quote`
+        // identically - but a backslash reparses into an `escaped_text` node
+        // beside a `text` one where the source held a single `text`, so a
+        // strict AST comparison reports a difference that is not one. That is
+        // the same trade carve-grammars#121 made for a leading `[label]:`, and
+        // for the same reason.
+        //
+        // One space is below every item's content column (the shallowest is 2,
+        // for `- `), so the line stays a lazy continuation rather than becoming
+        // the block it would be at that column.
+        return text.replace(CONTINUATION_BLOCK_OPENER, (match, opener) => '\n ' + opener);
+    }
 
     function serializeParagraphText(content) {
         const text = serializeInline(content);
