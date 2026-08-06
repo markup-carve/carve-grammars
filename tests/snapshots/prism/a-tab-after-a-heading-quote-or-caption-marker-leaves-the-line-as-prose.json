@@ -1,14 +1,6 @@
 [
   {
-    "type": "title>punctuation",
-    "text": "#"
-  },
-  {
-    "type": "title",
-    "text": "\tHeading"
-  },
-  {
     "type": "text",
-    "text": "\n\n>\tquoted\n"
+    "text": "#\tHeading\n\n>\tquoted\n"
   }
 ]
