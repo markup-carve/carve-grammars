@@ -1,0 +1,42 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".a"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nfirst\n\n"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".b"
+  },
+  {
+    "type": "attributes",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsecond\n"
+  }
+]

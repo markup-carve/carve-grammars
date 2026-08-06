@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a\n.b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
