@@ -103,6 +103,37 @@
       ]
     },
     "fenced_code": {
+      "begin": "^()(`{3,}|~{3,})\\s*(=?[a-zA-Z0-9_-]*)\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$",
+      "beginCaptures": {
+        "2": {
+          "name": "punctuation.definition.fenced.carve"
+        },
+        "3": {
+          "name": "fenced_code.block.language.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.fenced.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.fenced.carve"
+        }
+      },
+      "end": "^\\1\\2\\s*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.fenced.carve"
+        }
+      },
+      "name": "markup.fenced_code.block.carve",
+      "contentName": "markup.raw.code.carve",
+      "patterns": [
+        {
+          "include": "#callout_marker"
+        }
+      ],
+      "comment": "The DOCUMENT-LEVEL fence, anchored at column 0 (carve-grammars#138). An indented opener at the top level is literal text - verified against the pinned engine, ` ```js` renders `<p><code>js …</code></p>` - so this rule refuses it and `#fenced_code_in_container` takes over inside a container. Group 1 is an EMPTY capture rather than a dropped one: `end` closes on the opener's own indentation via `^\\1\\2`, and keeping the group means this rule and its in-container twin differ by exactly that one anchor, with every capture index and the `end` pattern identical. Two rules that differ in one place cannot drift the way two rules that differ in five can."
+    },
+    "fenced_code_in_container": {
       "begin": "^(\\s*)(`{3,}|~{3,})\\s*(=?[a-zA-Z0-9_-]*)\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$",
       "beginCaptures": {
         "2": {
@@ -131,7 +162,7 @@
           "include": "#callout_marker"
         }
       ],
-      "comment": "The leading-whitespace capture is load-bearing twice over: the `end` pattern closes on the SAME indentation via \\1, and a fence inside a list item is indented. Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "comment": "The in-container fence: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the leading-whitespace capture stays load-bearing twice over, since `end` closes on the SAME indentation via \\1 and a fence inside a list item is indented. Reached only after the container's `end` has established that the line sits at or beyond the item's content column, which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137)."
     },
     "heading": {
       "begin": "^(#{1,6}) +(?![ \\t]*$)",
@@ -256,6 +287,19 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set - which incorrectly let `#abbreviation` fire inside a div (PART 9: abbreviation definitions are recognized at document level only; the sibling list-item and blockquote cases already read correctly, but only because their own line mechanics happen to block it, not because either detects the container). The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus `#abbreviation` (the one construct this fix targets); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before."
     },
     "blockquote": {
+      "match": "^(>)(?= |$) ?(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "markup.quote.carve"
+        }
+      },
+      "name": "markup.quote.carve",
+      "comment": "The DOCUMENT-LEVEL blockquote, anchored at column 0 (carve-grammars#138). An indented marker at the top level is literal text - verified against the pinned engine, ` > q` renders `<p>&gt; q</p>` - so this rule refuses it and `#blockquote_in_container` takes over inside a container."
+    },
+    "blockquote_in_container": {
       "match": "^[ \\t]*(>)(?= |$) ?(.*)$",
       "captures": {
         "1": {
@@ -266,7 +310,7 @@
         }
       },
       "name": "markup.quote.carve",
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "comment": "The in-container blockquote: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this, and only after the container's `end` has established that the line sits at or beyond the item's content column - which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137)."
     },
     "caption": {
       "match": "^[ \\t]*(\\^) +(?![ \\t]*$)(.*)$",
@@ -282,6 +326,31 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
+      "match": "^(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "3": {
+          "name": "entity.name.abbreviation.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "5": {
+          "name": "punctuation.separator.carve"
+        },
+        "6": {
+          "name": "string.unquoted.abbreviation.carve"
+        }
+      },
+      "name": "meta.abbreviation.carve",
+      "comment": "The DOCUMENT-LEVEL abbreviation definition, anchored at column 0 (carve-grammars#138). An indented definition at the top level is literal text - verified against the pinned engine, ` *[HTML]: HyperText` renders `<p>*[HTML]: HyperText</p>` and defines nothing - so this rule refuses it and `#abbreviation_in_container` takes over inside a container."
+    },
+    "abbreviation_in_container": {
       "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
       "captures": {
         "1": {
@@ -304,7 +373,7 @@
         }
       },
       "name": "meta.abbreviation.carve",
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
     "link_ref_def": {
       "match": "^(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?",
@@ -1373,7 +1442,7 @@
       "comment": "The block pattern set a container's body reaches, shared by every list-item rule so the three of them cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only. `#link_ref_def_in_container` stands in for `#link_ref_def`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the item's content column.",
       "patterns": [
         {
-          "include": "#fenced_code"
+          "include": "#fenced_code_in_container"
         },
         {
           "include": "#heading_in_container"
@@ -1391,10 +1460,10 @@
           "include": "#admonition"
         },
         {
-          "include": "#blockquote"
+          "include": "#blockquote_in_container"
         },
         {
-          "include": "#abbreviation"
+          "include": "#abbreviation_in_container"
         },
         {
           "include": "#link_ref_def_in_container"

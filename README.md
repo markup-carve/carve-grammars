@@ -178,6 +178,63 @@ container divs, front matter and comments, plus inline emphasis
 code, links, images, spans, attributes, footnotes, math (`` $`x` ``),
 CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 
+### Where the three grammars deliberately differ
+
+The TextMate grammar is stricter than the Prism and highlight.js grammars about
+**indented block openers at document level**, and that difference is a decision
+rather than drift.
+
+Carve opens a block at column 0, or at an enclosing container's content column -
+nowhere in between. So at document level these are all ordinary paragraphs:
+
+````
+ # H
+ > q
+ *[HTML]: HyperText
+ ```js
+ x
+ ```
+````
+
+while the same four openers at a list item's content column are real blocks:
+
+````
+- item
+
+  # H
+
+  > quoted
+
+  ```js
+  x
+  ```
+````
+
+Telling those two apart needs block context. Only the TextMate grammar has it:
+its list-item rules track the item's actual content column, so a document-level
+rule can be anchored at column 0 while an `_in_container` twin stays permissive
+and is reachable only from inside a container. Its `heading`, `fenced_code`,
+`blockquote` and `abbreviation` rules are therefore anchored at column 0, and
+`heading_in_container`, `fenced_code_in_container`, `blockquote_in_container`
+and `abbreviation_in_container` carry the indented forms.
+
+Prism and highlight.js are line-based and have no container model, so they
+cannot make that distinction. Anchoring their block rules at column 0 would not
+buy accuracy - it would stop highlighting **every** legitimately indented
+construct inside a list item or a block quote, which is a common valid shape,
+in exchange for correcting a rare invalid one. So both keep their `^[ \t]*`
+anchors and knowingly over-colour the indented-at-document-level case.
+
+The practical consequence: a document that indents a heading, fence, blockquote
+or abbreviation definition by one or two columns at top level is highlighted by
+Prism and highlight.js and left as plain text by the TextMate grammar (Shiki,
+VS Code). The TextMate answer is the one that agrees with the engines.
+
+`tests/lib/constructs.js` is the shared construct inventory all three sweeps
+read, and the same asymmetry is written down there as `skip` entries on the
+column-sensitive cases; the TextMate-only column cases live in the `NEGATIVE`
+list in `tests/textmate-sweep-test.js`.
+
 ### Prism
 
 The grammar registers itself against the global `Prism`, so `Prism` must be
