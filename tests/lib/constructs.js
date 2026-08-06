@@ -262,12 +262,36 @@ export const CONSTRUCTS = [
      * admit the mark at every line start.
      */
     { name: "byte order mark before a heading", sample: "\uFEFF# Title", payload: "Title", textmate: "heading" },
-    { name: "byte order mark before a thematic break", sample: "\uFEFF***", payload: "***", textmate: "separator" },
+    {
+        // DISCRIMINATES IN TEXTMATE ONLY, and that is written down rather than
+        // assumed. Reverting the fix leaves this unscoped in Prism (caught) but
+        // in highlight.js the run degrades to `**`+`*` and the `**` carries
+        // `strong` - so the engine sweep's COVERED invariant still holds and the
+        // case passes there. The engine sweep deliberately asserts that a payload
+        // is scoped at ALL, never what the scope is called (see its header), so a
+        // construct that degrades into a DIFFERENT construct is invisible to it.
+        // The TextMate sweep asserts the name and fails.
+        name: "byte order mark before a thematic break", sample: "\uFEFF***", payload: "***",
+        textmate: "separator",
+    },
     { name: "byte order mark before a list marker", sample: "\uFEFF- item", payload: "-", textmate: "punctuation.definition.list" },
     { name: "byte order mark before an ordered marker", sample: "\uFEFF1. item", payload: "1.", textmate: "punctuation.definition.list" },
     { name: "byte order mark before a task marker", sample: "\uFEFF- [x] done", payload: "x", textmate: "constant.language.checkbox" },
     { name: "byte order mark before a quote marker", sample: "\uFEFF> quoted", payload: "quoted", textmate: "quote" },
-    { name: "byte order mark before a fence", sample: "\uFEFF```php\ncode\n```", payload: "php", textmate: "fenced_code.block.language" },
+    {
+        // THE SAME LIMITATION, and the sharpest instance of it. Reverting the fix
+        // makes both engines hand the whole fence to the INLINE code rule, so
+        // `php` is scoped `code` and COVERED holds: this case passes in Prism and
+        // in highlight.js against a grammar that mis-colours the line. It is not
+        // expressible as a LITERALS counter-example either - Prism's correct scope
+        // path is `code-block>language`, which `includes('code')` cannot be told
+        // apart from the inline `code` it must reject. Only the TextMate sweep,
+        // which asserts `fenced_code.block.language` by name, discriminates here;
+        // measured, reverting the fix fails 15/15 in TextMate, 14/15 in Prism and
+        // 12/14 in highlight.js, and this entry is the Prism miss.
+        name: "byte order mark before a fence", sample: "\uFEFF```php\ncode\n```", payload: "php",
+        textmate: "fenced_code.block.language",
+    },
     { name: "byte order mark before a div", sample: "\uFEFF::: note\nbody\n:::", payload: "note", textmate: "admonition" },
     { name: "byte order mark before a table row", sample: "\uFEFF| a | b |", payload: "|", textmate: "punctuation.separator.table" },
     { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption" },
