@@ -107,6 +107,13 @@ const NEGATIVE = [
   // `- [ ] ` with no content is a plain bullet holding the literal `[ ]`, not a
   // task item - the checkbox never forms.
   ['empty task item is not a checkbox', '- [ ] \n\nafter\n', 'checkbox'],
+  // The separator BETWEEN the checkbox and its content is a literal space too
+  // (`task_marker = '[', task_state, ']', space`). carve-rs renders
+  // `- [x]<TAB>a` as a list item whose content is the literal text `[x]<TAB>a`,
+  // with no checkbox at all - so the item is still a list and only the checkbox
+  // is wrong, which is why the block battery cannot express this shape: both
+  // spellings classify as `list` there (carve-grammars#152).
+  ['task marker, tab before its content', '- [x]\ta\n\nafter\n', 'checkbox'],
   // A blockquote marker takes a SPACE, or stands alone on its line. Verified
   // against carve-rs: every one of these renders as a paragraph. `>>` is not a
   // nested marker (that is written `> > x`, a space per marker), and a TAB does
@@ -208,7 +215,11 @@ for (const [label, sample, badScope] of NEGATIVE) {
     console.log(`FAIL(neg) ${label}: ${badScope} matched in "${sample}"`)
   } else { negPass++ }
 }
-console.log(`  ✓ textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
+// The tick is CONDITIONAL, as it is on the literal sweep below. It was
+// hardcoded, so a failing run printed a line claiming success immediately
+// under its own FAIL output and then exited 1 - the transcript disagreed with
+// itself, and a reader skimming for ticks saw a pass.
+console.log(`  ${negPass === NEGATIVE.length ? '✓' : '✗'} textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
 if (negPass !== NEGATIVE.length) process.exit(1)
 
 // The shared counter-examples. Unlike NEGATIVE above, which is about scope
