@@ -5,6 +5,22 @@ All notable changes to `carve-grammars` are documented here.
 ## Unreleased
 
 ### Fixed
+- **An empty attribute block no longer comes back from the tiptap serializer as
+  a class named `class`** (#159). `[x]{}` and `[x]{ }` are valid Carve - an
+  empty block is the explicit "make this a span" hook and yields a bare
+  `<span>` - but the serializer wrote them back as `[x]{.class}`, so a document
+  that passed through a tiptap editor gained a class it never had. The invented
+  name was a fallback: a span mark has to write something after `[text]`, or
+  the brackets stop being a span on the next parse, and the fallback filled the
+  gap with `{.` + the mark's class + `}` even when there was no class to write.
+  The empty block `{}` is what that position wants, so `[x]{}` now round-trips
+  exactly. Dropping an attribute loses information; inventing one is worse,
+  because nothing downstream can tell that it was invented.
+
+  A span whose only class is `custom` still writes `{.custom}`. That string is
+  CarveSpan's schema default, so at the serializer an editor-created span and an
+  authored `[x]{.custom}` are the same object - only a schema change could
+  separate them, and it is not this fallback's call to make.
 - **A file that begins with a UTF-8 byte order mark keeps the highlighting on
   its first line** (#154). The mark is neither a space nor a tab, so it sat
   between the line start and the marker and defeated every line-anchored block
