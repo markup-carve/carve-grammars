@@ -563,9 +563,15 @@ export const LITERALS = [
         // do not share one: Prism and highlight.js use the JavaScript lookbehind
         // `(?<![\s\S])`, TextMate uses Oniguruma's `\A`, which vscode-textmate
         // resolves against the first line only. One rule, three spellings.
+        //
+        // PAYLOAD. `Sentinel` rather than the whole marker-plus-text run: Prism
+        // splits a heading into `\uFEFF#` (`title>punctuation`) and ` Sentinel`
+        // (`title`), so a payload spanning the split is contained by NEITHER
+        // token and the check cannot fail there. Found by running the mutation
+        // above - it caught highlight.js and TextMate and let Prism through.
         name: 'a byte order mark below the first line',
-        sample: 'prose paragraph\n\n\uFEFF# H\n',
-        payload: '# H',
+        sample: 'prose paragraph\n\n\uFEFF# Sentinel\n',
+        payload: 'Sentinel',
         scopes: { prism: 'title', highlightjs: 'section', textmate: 'markup.heading' },
     },
 ];
