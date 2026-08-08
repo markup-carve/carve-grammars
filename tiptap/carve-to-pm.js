@@ -75,6 +75,10 @@ export function carveToProseMirror(source, options = {}) {
     // editable nodes whenever they are safe, and every other document remains
     // load/save lossless instead of being subtly corrupted.
     if ((options.unsupported ?? 'throw') === 'preserve') {
+        if (doc.content?.length === 1 && doc.content[0]?.type === 'carveUnsupported'
+            && doc.content[0].attrs?.carveSource !== source) {
+            return opaqueDocument(source);
+        }
         try {
             const reparsed = parse(serializeToCarve(doc));
             if (stableAst(ast) !== stableAst(reparsed)) return opaqueDocument(source);
@@ -137,7 +141,11 @@ export function astToProseMirror(ast, options = {}) {
             unsupported('frontmatter', ast, ctx);
         }
     }
-    content.push(...convertBlocks(ast.children || [], ctx));
+    const body = ast.children || [];
+    // A source-local block only improves editability when it has siblings. For
+    // a one-block document the complete-source fallback is the same editing
+    // surface and is the only form that also retains edge whitespace exactly.
+    content.push(...convertBlocks(body, ctx, body.length > 1));
     // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
     // walk of the body alone never sees them. The serializer has always had a
     // `carveFootnoteDefinition` case and `CarveKit` has always registered the
@@ -204,10 +212,25 @@ function sourceFor(node, ctx) {
     return '';
 }
 
-function convertBlocks(nodes, ctx) {
+function convertBlocks(nodes, ctx, localizeLossy = false) {
     return nodes.map((node) => {
         try {
-            return convertBlock(node, ctx);
+            const converted = convertBlock(node, ctx);
+            if (localizeLossy && ctx.unsupported === 'preserve') {
+                const carveSource = sourceFor(node, ctx);
+                if (carveSource) {
+                    try {
+                        const original = parse(carveSource);
+                        const written = parse(serializeToCarve({ type: 'doc', content: [converted] }));
+                        if (stableAst(original) !== stableAst(written)) {
+                            return { type: 'carveUnsupported', attrs: { carveSource } };
+                        }
+                    } catch {
+                        return { type: 'carveUnsupported', attrs: { carveSource } };
+                    }
+                }
+            }
+            return converted;
         } catch (error) {
             // An unsupported inline child must not make the complete document
             // opaque. The block position includes its opening markup and all
@@ -400,7 +423,18 @@ function convertTable(node, ctx) {
 function convertInline(nodes, ctx) {
     const out = [];
     for (const node of nodes) {
-        out.push(...convertInlineNode(node, [], ctx));
+        try {
+            out.push(...convertInlineNode(node, [], ctx));
+        } catch (error) {
+            if (ctx.unsupported === 'preserve' && error instanceof UnsupportedNodeError) {
+                const carveSource = sourceFor(node, ctx);
+                if (carveSource) {
+                    out.push({ type: 'carveUnsupportedInline', attrs: { carveSource } });
+                    continue;
+                }
+            }
+            throw error;
+        }
     }
 
     return mergeAdjacentText(out);

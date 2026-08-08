@@ -696,6 +696,10 @@ export function serializeToCarve(doc) {
         let result = '';
 
         content.forEach((node, idx) => {
+            if (node.type === 'carveUnsupportedInline') {
+                result += node.attrs?.carveSource || '';
+                return;
+            }
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
