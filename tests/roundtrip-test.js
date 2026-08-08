@@ -140,4 +140,18 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
     assert.strictEqual(serializeToCarve(pm), source);
 }
 
+{
+    // Unsupported inline content is isolated to its containing source block;
+    // editable siblings must not be hidden inside a whole-document atom.
+    const source = '# Editable\n\n## Smart -- heading\n\nStill editable\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.deepStrictEqual(pm.content.map((node) => node.type), [
+        'heading', 'carveUnsupported', 'paragraph',
+    ]);
+    assert.deepStrictEqual(
+        normalizeAst(parse(serializeToCarve(pm))),
+        normalizeAst(parse(source)),
+    );
+}
+
 console.log('\nround-trip OK');

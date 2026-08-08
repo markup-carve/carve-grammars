@@ -198,7 +198,20 @@ function sourceFor(node, ctx) {
 }
 
 function convertBlocks(nodes, ctx) {
-    return nodes.map((node) => convertBlock(node, ctx));
+    return nodes.map((node) => {
+        try {
+            return convertBlock(node, ctx);
+        } catch (error) {
+            // An unsupported inline child must not make the complete document
+            // opaque. The block position includes its opening markup and all
+            // children, so it is the smallest source slice that can safely be
+            // kept while sibling blocks remain rich and editable.
+            if (ctx.unsupported === 'preserve' && error instanceof UnsupportedNodeError) {
+                return unsupported(error.nodeType, node, ctx);
+            }
+            throw error;
+        }
+    });
 }
 
 function convertBlock(node, ctx) {
