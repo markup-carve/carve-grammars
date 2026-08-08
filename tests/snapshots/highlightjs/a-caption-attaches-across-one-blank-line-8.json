@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "$$`E = mc^2`"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Equation: mass-energy"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

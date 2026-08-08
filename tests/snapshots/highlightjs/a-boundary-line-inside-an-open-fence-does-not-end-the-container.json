@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\na"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^z]: zz"
+  },
+  {
+    "scope": null,
+    "text": "\nb\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  },
+  {
+    "scope": null,
+    "text": "\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```  php"
+  },
+  {
+    "scope": null,
+    "text": "\nx = 1\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

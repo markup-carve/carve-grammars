@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "|= Fruit |= Price |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Apple  | $1     |"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Fruit prices"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

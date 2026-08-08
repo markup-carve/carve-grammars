@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ":\tnote\n"
+  }
+]

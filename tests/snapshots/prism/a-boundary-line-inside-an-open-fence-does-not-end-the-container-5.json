@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div",
+    "text": "\n  a\n"
+  },
+  {
+    "type": "div>list",
+    "text": "  - "
+  },
+  {
+    "type": "div",
+    "text": "m\n  b\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

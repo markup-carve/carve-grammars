@@ -1,0 +1,22 @@
+[
+  {
+    "type": "math",
+    "text": "$$`E = mc^2`"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Equation: mass-energy"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

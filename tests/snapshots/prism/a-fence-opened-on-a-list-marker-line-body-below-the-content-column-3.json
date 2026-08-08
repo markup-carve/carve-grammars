@@ -1,0 +1,14 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "code",
+    "text": "```\n  x\n  ```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

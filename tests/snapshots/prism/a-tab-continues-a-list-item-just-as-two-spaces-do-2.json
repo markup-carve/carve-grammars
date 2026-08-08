@@ -1,0 +1,10 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n  more\n\nx\n"
+  }
+]

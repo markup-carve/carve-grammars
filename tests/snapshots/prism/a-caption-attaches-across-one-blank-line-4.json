@@ -1,0 +1,30 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block",
+    "text": "python\ndef greet():\n    return 1\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Listing: a greeting"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

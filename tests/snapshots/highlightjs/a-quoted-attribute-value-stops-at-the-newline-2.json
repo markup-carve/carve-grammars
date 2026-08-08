@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=\"a b\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

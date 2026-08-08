@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n  more\n\nx\n"
+  }
+]

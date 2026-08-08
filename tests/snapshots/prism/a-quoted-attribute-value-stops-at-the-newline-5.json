@@ -1,0 +1,26 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".a"
+  },
+  {
+    "type": "attributes",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".b"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nparagraph\n"
+  }
+]

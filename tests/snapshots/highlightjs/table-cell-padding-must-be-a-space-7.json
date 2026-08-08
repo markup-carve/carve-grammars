@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|=\t h |=\t i |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| 1 | 2 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

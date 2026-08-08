@@ -1,0 +1,46 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " text"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u {.c}"
+  },
+  {
+    "type": "text",
+    "text": "\nmore\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "a"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

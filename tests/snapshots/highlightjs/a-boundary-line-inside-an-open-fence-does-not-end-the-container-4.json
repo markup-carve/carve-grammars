@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "quote",
+    "text": "> q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\na\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^z]: zz"
+  },
+  {
+    "scope": null,
+    "text": "\nb\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

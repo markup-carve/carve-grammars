@@ -1,0 +1,34 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "\t"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".a"
+  },
+  {
+    "type": "attributes",
+    "text": "\t"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".b"
+  },
+  {
+    "type": "attributes",
+    "text": "\t"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nparagraph\n"
+  }
+]

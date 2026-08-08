@@ -1,0 +1,22 @@
+[
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "  yaml\ntitle: T\n"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  }
+]

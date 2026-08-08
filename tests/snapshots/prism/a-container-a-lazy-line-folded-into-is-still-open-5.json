@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "text",
+    "text": "\nd\n  b\n"
+  }
+]

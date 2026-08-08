@@ -1,0 +1,18 @@
+[
+  {
+    "type": "code",
+    "text": "`x `"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "literal",
+    "text": "!`y `"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

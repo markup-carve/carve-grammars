@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%\n  x\n  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": " 1. "
+  },
+  {
+    "type": "text",
+    "text": "o\n"
+  }
+]

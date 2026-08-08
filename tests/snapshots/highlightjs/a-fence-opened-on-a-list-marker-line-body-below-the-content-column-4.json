@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "quote",
+    "text": "> ```"
+  },
+  {
+    "scope": null,
+    "text": "\nx\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]
