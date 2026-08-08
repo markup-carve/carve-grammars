@@ -6,13 +6,15 @@
  * nodes/marks; for any carve AST construct the serializer cannot represent
  * (front matter, reference-link definitions, smart typography, etc.) the
  * default mode throws `UnsupportedNodeError`. `unsupported: 'preserve'` instead
- * emits an opaque `carveUnsupported` atom carrying the original Carve source.
+ * verifies the rich conversion and uses opaque `carveUnsupported` source when
+ * an unsupported subtree or lossy serialization would otherwise alter the AST.
  *
  * The mark/node/attr names below are matched exactly against what the
  * serializer reads (carveInsert, carveDelete, carveSpan, carveMath{src,display},
  * carveFootnote{label}, tableHeader vs tableCell, attrs.colspan/rowspan, ...).
  */
 import { parse } from '@markup-carve/carve';
+import { serializeToCarve } from './serializer.js';
 
 export class UnsupportedNodeError extends Error {
     constructor(type, node = null) {
@@ -53,7 +55,62 @@ export const INLINE_MARKS = {
  * @returns {object} ProseMirror `doc` node.
  */
 export function carveToProseMirror(source, options = {}) {
-    return astToProseMirror(parse(source), { ...options, source });
+    const ast = parse(source);
+    let doc;
+    try {
+        doc = astToProseMirror(ast, { ...options, source });
+    } catch (error) {
+        if ((options.unsupported ?? 'throw') === 'preserve' && error instanceof UnsupportedNodeError) {
+            return opaqueDocument(source);
+        }
+        throw error;
+    }
+
+    // `preserve` is a losslessness contract, not merely an instruction to
+    // avoid throwing. A construct can have a rich mapping and still be unsafe
+    // to write back because its source-sensitive shape is normalized (list
+    // columns, invalid marker lookalikes, table fillers, and so on). Verify the
+    // proposed rich document once; if it changes the parsed document, retain
+    // the complete source as a single opaque atom. Consumers still get rich,
+    // editable nodes whenever they are safe, and every other document remains
+    // load/save lossless instead of being subtly corrupted.
+    if ((options.unsupported ?? 'throw') === 'preserve') {
+        try {
+            const reparsed = parse(serializeToCarve(doc));
+            if (stableAst(ast) !== stableAst(reparsed)) return opaqueDocument(source);
+        } catch {
+            return opaqueDocument(source);
+        }
+    }
+
+    return doc;
+}
+
+function opaqueDocument(source) {
+    return { type: 'doc', content: [{ type: 'carveUnsupported', attrs: { carveSource: source } }] };
+}
+
+function stableAst(value) {
+    return JSON.stringify(normalizeAst(value));
+}
+
+function normalizeAst(value) {
+    if (Array.isArray(value)) return value.map(normalizeAst);
+    if (value === null || typeof value !== 'object') return value;
+    const volatile = new Set([
+        'pos', 'startLine', 'endLine', 'startColumn', 'endColumn',
+        'startOffset', 'endOffset', 'line', 'column', 'offset',
+        'order', 'srcByteLength',
+    ]);
+    const emptyArrays = new Set(['children', 'items', 'cells', 'rows']);
+    const out = {};
+    for (const key of Object.keys(value).sort()) {
+        if (volatile.has(key)) continue;
+        const child = value[key];
+        if (emptyArrays.has(key) && Array.isArray(child) && child.length === 0) continue;
+        out[key] = normalizeAst(child);
+    }
+    return out;
 }
 
 /**

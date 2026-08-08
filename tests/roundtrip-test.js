@@ -42,7 +42,13 @@ function roundTrip(file) {
     }
     let carve2;
     try {
-        const pm = astToProseMirror(astA);
+        // Exercise the public, source-aware loader. Unsupported constructs are
+        // represented by CarveUnsupported atoms carrying their exact source,
+        // so an editor can preserve them losslessly even before it has a rich,
+        // editable node for each construct. Converting the detached AST here
+        // discarded that source and made the documented preservation mode
+        // unreachable from the corpus sweep.
+        const pm = carveToProseMirror(file.source, { unsupported: 'preserve' });
         carve2 = serializeToCarve(pm);
     } catch (e) {
         return { ok: false, reason: e.nodeType ? `unsupported ${e.nodeType}` : e.message };
@@ -91,7 +97,9 @@ for (const category of listCategories()) {
 
 console.log('');
 console.log(`  covered files checked: ${coveredFilesChecked}`);
-console.log(`  covered categories: ${COVERAGE.tiptap.covered.size}, skipped: ${COVERAGE.tiptap.skip.size}`);
+const coveredCategoryCount = listCategories().filter((category) => isCovered('tiptap', category)).length;
+console.log(`  covered categories: ${coveredCategoryCount}, skipped: ${COVERAGE.tiptap.skip.size}`);
+console.log(`  structured/source-local: ${COVERAGE.tiptap.covered.size}, whole-document fallback: ${COVERAGE.tiptap.fallback.size}`);
 
 if (skipShouldPromote.length) {
     console.log('\nThe following SKIPPED categories now round-trip cleanly for every file.');
@@ -114,6 +122,22 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
     const pm = carveToProseMirror(source);
     const carve2 = serializeToCarve(pm);
     assert.deepStrictEqual(normalizeAst(parse(carve2)), normalizeAst(parse(source)));
+}
+
+{
+    // Safe documents retain rich, editable ProseMirror nodes.
+    const pm = carveToProseMirror('# Heading\n', { unsupported: 'preserve' });
+    assert.strictEqual(pm.content[0].type, 'heading');
+}
+
+{
+    // A mapped-but-lossy source falls back as a whole document, including
+    // leading/trailing whitespace that the normal serializer canonicalizes.
+    const source = '   # literal heading\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.strictEqual(pm.content.length, 1);
+    assert.strictEqual(pm.content[0].type, 'carveUnsupported');
+    assert.strictEqual(serializeToCarve(pm), source);
 }
 
 console.log('\nround-trip OK');

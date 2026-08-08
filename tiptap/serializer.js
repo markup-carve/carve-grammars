@@ -153,6 +153,13 @@ function trimSource(text) {
 }
 
 export function serializeToCarve(doc) {
+    // A whole-document fallback is already exact Carve source. Sending it
+    // through the normal block joiner and edge trimmer would corrupt precisely
+    // the whitespace-sensitive documents for which the fallback exists.
+    if (doc?.type === 'doc' && doc.content?.length === 1 && doc.content[0]?.type === 'carveUnsupported') {
+        return doc.content[0].attrs?.carveSource || '';
+    }
+
     let output = '';
 
     // Reference links write their LABEL, so the definitions they point at have
