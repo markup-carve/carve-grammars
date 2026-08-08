@@ -160,12 +160,7 @@ function convertBlock(node, ctx) {
             }
 
         case 'heading': {
-            const attrs = { level: node.level || 1 };
-            const id = node.attrs?.id;
-            if (id) attrs.id = id;
-            // A class or any other attribute on a heading is not represented by
-            // the Tiptap heading node, so bail rather than silently drop it.
-            if (node.attrs && hasNonIdAttrs(node.attrs)) return unsupported('heading-with-attrs', node, ctx);
+            const attrs = { level: node.level || 1, ...(convertAttrs(node.attrs) || {}) };
             return { type: 'heading', attrs, content: convertInline(node.children || [], ctx) };
         }
 
@@ -528,15 +523,6 @@ function convertDivAttrs(node) {
     if (!attrs.class) attrs.class = '';
     if (node.title) attrs.title = inlinePlainText(node.title);
     return attrs;
-}
-
-function hasNonIdAttrs(attrs) {
-    const { id, order, ...rest } = attrs;
-    if (rest.classes && rest.classes.length) return true;
-    if (rest.keyValues && Object.keys(rest.keyValues).length) return true;
-    delete rest.classes;
-    delete rest.keyValues;
-    return Object.keys(rest).length > 0;
 }
 
 function hasAnyAttrs(attrs) {

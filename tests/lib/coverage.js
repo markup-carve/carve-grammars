@@ -30,6 +30,10 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    '02-headings',
+    '112-adjacent-attribute-blocks-on-one-line-merge',
+    '169-attribute-order-on-an-unwrapped-heading',
+    '167-only-the-id-hoists-to-the-section-wrapper',
     // Classified empirically with the spec corpus bump to 26a0d64.
     '257-link-and-image-title-slots-must-be-a-space',
     '259-a-tab-continues-a-list-item-just-as-two-spaces-do',
@@ -224,7 +228,6 @@ const TIPTAP_SKIP = new Map([
     ['194-a-definition-inside-a-container-is-collected-at-that-container-s-content-column', 'the reference-link gap (#101), and the first example shows its worst form: `> - a` plus a definition at the quoted item column comes back as `see [t]()` - an EMPTY destination. The third escapes instead, re-serializing the definition as `> \\[r]: /u` inside the quote'],
     ['195-trailing-attributes-on-a-link-reference-definition', 'the reference-link gap (#101) with the ATTRIBUTES lost as well: `[ex]: /u {.external}` plus `[Example][ex]` comes back as `[Example](https://example.com)` with no class, so the very thing the category pins - attributes reaching every link through the definition - is gone on reparse'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
-    ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'the converter models neither `heading_ref` (a crossref) nor `escaped_text`'],
     ['05-lists', 'figure (image-with-caption) blocks inside list items are not modeled'],
     ['07-blockquote-with-attribution', 'figure / caption blocks are not modeled'],
@@ -304,7 +307,6 @@ const TIPTAP_SKIP = new Map([
     ['107-link-destination-parentheses-balance', 'round-trips to a different AST'],
     ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
     ['109-cross-references-resolve-inside-footnote-bodies', 'footnote definition bodies are lossy on reparse'],
-    ['112-adjacent-attribute-blocks-on-one-line-merge', 'headings with merged attribute blocks are not represented'],
     ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
@@ -341,9 +343,7 @@ const TIPTAP_SKIP = new Map([
     ['165-unterminated-comment-fence', 'the converter does not model the `comment` node'],
     ['57-table-cell-pipe-inside-code-span', 'a code span holding a pipe reparses into different table cells'],
     ['166-widened-verbatim-fences', 'the converter does not model the `literal_inline` node'],
-    ['167-only-the-id-hoists-to-the-section-wrapper', 'headings with attributes are not represented (attrs only support id)'],
     ['168-headings-inside-containers-are-not-wrapped', 'a heading inside a quote or div reparses into a different AST'],
-    ['169-attribute-order-on-an-unwrapped-heading', 'headings with attributes are not represented (attrs only support id)'],
     ['170-attribute-braces-on-a-list-item-marker-line', 'headings with attributes are not represented (attrs only support id)'],
 ]);
 

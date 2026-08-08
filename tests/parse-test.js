@@ -114,6 +114,10 @@ check('tag #topic round-trips',
     '<p>a <span class="tag"><strong>#topic</strong></span> b</p>',
     'a #topic b');
 
+check('a heading keeps authored classes and key/value attributes',
+    '<h1 a="b" class="c">Auto slug</h1>',
+    '{.c a="b"}\n# Auto slug');
+
 // Sup/sub have no bare form: braced even when flanked by whitespace.
 check('superscript is always braced',
     '<p>a <sup>x</sup> b</p>',

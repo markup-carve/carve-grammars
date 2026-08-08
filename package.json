@@ -72,6 +72,7 @@
   "peerDependencies": {
     "@shikijs/themes": "^2 || ^3",
     "@tiptap/core": "^2 || ^3",
+    "@tiptap/extension-heading": "^2 || ^3",
     "@tiptap/extension-underline": "^2 || ^3",
     "@tiptap/starter-kit": "^2 || ^3",
     "highlight.js": "^11",
@@ -81,6 +82,9 @@
   },
   "peerDependenciesMeta": {
     "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-heading": {
       "optional": true
     },
     "@tiptap/starter-kit": {
@@ -111,6 +115,7 @@
     "@tiptap/extension-bullet-list": "^3.29.2",
     "@tiptap/extension-code-block": "^3.29.2",
     "@tiptap/extension-hard-break": "^3.29.2",
+    "@tiptap/extension-heading": "^3.29.2",
     "@tiptap/extension-highlight": "^3.29.2",
     "@tiptap/extension-image": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
