@@ -155,18 +155,17 @@ Unsupported handling:
 
 - `unsupported: 'throw'` is the default. The loader throws `UnsupportedNodeError`
   instead of silently dropping content.
-- `unsupported: 'preserve'` maps an unsupported construct to the opaque
-  `carveUnsupported` block node, carrying the original source in `carveSource`.
-  `serializeToCarve` writes that source back verbatim, so a load/save pass keeps
-  the document content even when the editor cannot model that construct.
+- `unsupported: 'preserve'` first builds the richest available document and
+  verifies that serializing it preserves the parsed AST. Unsupported subtrees
+  use opaque `carveUnsupported` blocks; if a mapped document is still lossy,
+  the loader falls back to one whole-document opaque block. `serializeToCarve`
+  writes its source back byte-for-byte, including edge whitespace.
 
-The loader models only what `CarveKit` and `serializeToCarve` can represent.
-Known gaps that still stay unsupported or lossy include front matter, figures
-and captions, table captions and alignment markers, table span filler cells,
-reference-link definitions, cross references, inline/raw passthrough,
-line blocks, comments, symbols, smart-punctuation artifacts, and several
-source-layout edge cases. `tiptap/schema-map.json` is the public mapping
-authority; `tests/lib/coverage.js` records the current skip reasons.
+All corpus documents are therefore load/save lossless in preservation mode.
+Some constructs remain opaque rather than directly editable, including parts
+of figures, advanced tables, comments, raw passthrough, and source-layout edge
+cases. `tiptap/schema-map.json` is the public rich-mapping authority;
+`tests/lib/coverage.js` records why structured conversion falls back.
 
 ## Syntax highlighting
 
