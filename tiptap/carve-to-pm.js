@@ -217,7 +217,12 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
             // node's source span. Standalone validation would compare a slice
             // without those attributes to a conversion that correctly carries
             // them, so leave attributed blocks for the document-level check.
-            if (localizeLossy && ctx.unsupported === 'preserve' && !node.attrs) {
+            // A reference's definition can live outside this block. Validating
+            // the block slice alone therefore reparses it as unresolved and
+            // falsely declares the rich conversion lossy; the document-level
+            // check below has the complete definition context.
+            const hasExternalReference = nodeHasReference(node);
+            if (localizeLossy && ctx.unsupported === 'preserve' && !node.attrs && !hasExternalReference) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
                     try {
@@ -243,6 +248,14 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
             throw error;
         }
     });
+}
+
+function nodeHasReference(node) {
+    if (!node || typeof node !== 'object') return false;
+    if (typeof node.ref === 'string' && node.ref !== '') return true;
+    return Object.values(node).some((value) => Array.isArray(value)
+        ? value.some(nodeHasReference)
+        : value && typeof value === 'object' && nodeHasReference(value));
 }
 
 /**

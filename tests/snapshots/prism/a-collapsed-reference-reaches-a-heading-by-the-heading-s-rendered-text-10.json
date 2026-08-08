@@ -5,15 +5,15 @@
   },
   {
     "type": "title",
-    "text": " an "
+    "text": " a :smile: "
   },
   {
     "type": "title>italic",
-    "text": "/em/"
+    "text": "/b/"
   },
   {
     "type": "title",
-    "text": " heading"
+    "text": " c"
   },
   {
     "type": "text",
@@ -25,7 +25,7 @@
   },
   {
     "type": "url",
-    "text": "an /em/ heading"
+    "text": "a :smile: /b/ c"
   },
   {
     "type": "url>punctuation",

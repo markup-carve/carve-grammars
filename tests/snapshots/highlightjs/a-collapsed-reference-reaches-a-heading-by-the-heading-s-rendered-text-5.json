@@ -1,7 +1,7 @@
 [
   {
     "scope": "section",
-    "text": "# an /em/ heading"
+    "text": "# a [x](/y) b"
   },
   {
     "scope": null,
@@ -9,10 +9,10 @@
   },
   {
     "scope": "link",
-    "text": "[an /em/ heading][]"
+    "text": "[a [x](/y)"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " b][]\n"
   }
 ]

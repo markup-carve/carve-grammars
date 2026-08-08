@@ -5,15 +5,7 @@
   },
   {
     "type": "title",
-    "text": " an "
-  },
-  {
-    "type": "title>italic",
-    "text": "/em/"
-  },
-  {
-    "type": "title",
-    "text": " heading"
+    "text": " a [x](/y) b"
   },
   {
     "type": "text",
@@ -25,18 +17,30 @@
   },
   {
     "type": "url",
-    "text": "an /em/ heading"
+    "text": "a "
   },
   {
     "type": "url>punctuation",
-    "text": "]["
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "x"
   },
   {
     "type": "url>punctuation",
-    "text": "]"
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/y"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": " b][]\n"
   }
 ]
