@@ -50,6 +50,7 @@ export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.
 export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
 export { CarveUnsupported } from './extensions/carve-unsupported.js';
+export { CarveHeading } from './extensions/carve-heading.js';
 
 // Serializer
 export { serializeToCarve, escapeCarve, carveMediaDirective } from './serializer.js';
