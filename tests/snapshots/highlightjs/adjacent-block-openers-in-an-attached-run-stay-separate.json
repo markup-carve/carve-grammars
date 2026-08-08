@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " x\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

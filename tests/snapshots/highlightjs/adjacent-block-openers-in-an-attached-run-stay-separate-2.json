@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " x\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| a |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| b |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| a |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| b |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
