@@ -221,7 +221,7 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
             // the block slice alone therefore reparses it as unresolved and
             // falsely declares the rich conversion lossy; the document-level
             // check below has the complete definition context.
-            const hasExternalReference = nodeHasReference(node);
+            const hasExternalReference = nodeHasExternalReference(node);
             if (localizeLossy && ctx.unsupported === 'preserve' && !node.attrs && !hasExternalReference) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
@@ -250,12 +250,16 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
     });
 }
 
-function nodeHasReference(node) {
+function nodeHasExternalReference(node) {
     if (!node || typeof node !== 'object') return false;
-    if (typeof node.ref === 'string' && node.ref !== '') return true;
+    const resolvedTarget = (typeof node.href === 'string' && node.href !== '')
+        || (typeof node.src === 'string' && node.src !== '');
+    if (typeof node.ref === 'string' && node.ref !== '' && resolvedTarget) {
+        return true;
+    }
     return Object.values(node).some((value) => Array.isArray(value)
-        ? value.some(nodeHasReference)
-        : value && typeof value === 'object' && nodeHasReference(value));
+        ? value.some(nodeHasExternalReference)
+        : value && typeof value === 'object' && nodeHasExternalReference(value));
 }
 
 /**
