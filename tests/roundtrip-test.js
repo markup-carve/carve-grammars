@@ -157,13 +157,30 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
 }
 
 {
-    // A mapped-but-lossy source falls back as a whole document, including
-    // leading/trailing whitespace that the normal serializer canonicalizes.
+    // A mapped-but-source-sensitive document keeps its structured nodes and an
+    // edit-aware source envelope, including whitespace canonical serialization
+    // would otherwise discard.
     const source = '   # literal heading\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
-    assert.strictEqual(pm.content.length, 1);
-    assert.strictEqual(pm.content[0].type, 'carveUnsupported');
+    assert.strictEqual(pm.content[0].type, 'paragraph');
+    assert.strictEqual(pm.attrs.carveSource, source);
     assert.strictEqual(serializeToCarve(pm), source);
+
+    // Editing the structured tree invalidates the fingerprint, so stale source
+    // is never allowed to overwrite the user's change.
+    pm.content[0].content[0].text = 'edited heading';
+    assert.notStrictEqual(serializeToCarve(pm), source);
+    assert.strictEqual(serializeToCarve(pm), 'edited heading');
+}
+
+{
+    // A leading table span marker has no origin to merge into, but remains an
+    // editable table cell rather than making the table/document opaque.
+    const source = '| < | b |\n|---|---|\n| c | d |\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.strictEqual(pm.content[0].type, 'table');
+    assert.strictEqual(pm.content[0].content[0].content[0].attrs.carveSpanMarker, '<');
+    assert.deepStrictEqual(normalizeAst(parse(serializeToCarve(pm))), normalizeAst(parse(source)));
 }
 
 {

@@ -36,6 +36,7 @@ import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js
 import { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
 import { CarveRawBlock } from './extensions/carve-raw-block.js';
 import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
+import { CarveSourcePreservation } from './extensions/carve-source-preservation.js';
 import { CarveLineBlock } from './extensions/carve-line-block.js';
 
 // Tiptap 3 dropped the default export from @tiptap/extension-table - it now
@@ -621,6 +622,9 @@ export const CarveKit = Extension.create({
         if (this.options.carveComment !== false) {
             extensions.push(CarveComment.configure(this.options.carveComment ?? {}));
             extensions.push(CarveCommentInline.configure(this.options.carveCommentInline ?? {}));
+        }
+        if (this.options.carveSourcePreservation !== false) {
+            extensions.push(CarveSourcePreservation.configure(this.options.carveSourcePreservation ?? {}));
         }
         if (this.options.carveLineBlock !== false) {
             extensions.push(CarveLineBlock.configure(this.options.carveLineBlock ?? {}));

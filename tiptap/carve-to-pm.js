@@ -81,9 +81,9 @@ export function carveToProseMirror(source, options = {}) {
         }
         try {
             const reparsed = parse(serializeToCarve(doc));
-            if (stableAst(ast) !== stableAst(reparsed)) return opaqueDocument(source);
+            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, source);
         } catch {
-            return opaqueDocument(source);
+            return sourceEnvelope(doc, source);
         }
     }
 
@@ -92,6 +92,21 @@ export function carveToProseMirror(source, options = {}) {
 
 function opaqueDocument(source) {
     return { type: 'doc', content: [{ type: 'carveUnsupported', attrs: { carveSource: source } }] };
+}
+
+function sourceEnvelope(doc, source) {
+    const clean = { ...doc };
+    delete clean.attrs;
+    return {
+        ...clean,
+        attrs: { carveSource: source, carveFingerprint: pmFingerprint(clean) },
+    };
+}
+
+function pmFingerprint(value) {
+    if (Array.isArray(value)) return '[' + value.map(pmFingerprint).join(',') + ']';
+    if (value === null || typeof value !== 'object') return JSON.stringify(value);
+    return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + pmFingerprint(value[key])).join(',') + '}';
 }
 
 function stableAst(value) {
@@ -142,7 +157,9 @@ export function astToProseMirror(ast, options = {}) {
         }
     }
     const body = ast.children || [];
-    content.push(...convertBlocks(body, ctx, true));
+    // Retain the semantic tree. If its canonical spelling is lossy, the public
+    // loader adds an edit-aware source envelope after the complete AST check.
+    content.push(...convertBlocks(body, ctx));
     // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
     // walk of the body alone never sees them. The serializer has always had a
     // `carveFootnoteDefinition` case and `CarveKit` has always registered the
@@ -554,14 +571,24 @@ function convertTableCore(node, ctx) {
             const cell = row.cells[col];
             if (cell.span === 'rowspan') {
                 const origin = previousGrid[col];
-                if (!origin) throw new UnsupportedNodeError('table-rowspan-without-origin', cell);
+                if (!origin) {
+                    const orphan = orphanSpanCell(cell, '^');
+                    cells.push(orphan);
+                    grid[col] = orphan;
+                    continue;
+                }
                 origin.attrs.rowspan = (origin.attrs.rowspan || 1) + 1;
                 grid[col] = origin;
                 continue;
             }
             if (cell.span === 'colspan') {
                 const origin = grid[col - 1];
-                if (!origin) throw new UnsupportedNodeError('table-colspan-without-origin', cell);
+                if (!origin) {
+                    const orphan = orphanSpanCell(cell, '<');
+                    cells.push(orphan);
+                    grid[col] = orphan;
+                    continue;
+                }
                 origin.attrs.colspan = (origin.attrs.colspan || 1) + 1;
                 grid[col] = origin;
                 continue;
@@ -583,6 +610,14 @@ function convertTableCore(node, ctx) {
         return convertedRow;
     });
     return { type: 'table', content: rows };
+}
+
+function orphanSpanCell(cell, marker) {
+    return {
+        type: cell.header ? 'tableHeader' : 'tableCell',
+        attrs: { carveSpanMarker: marker },
+        content: [{ type: 'paragraph' }],
+    };
 }
 
 function convertInline(nodes, ctx) {
