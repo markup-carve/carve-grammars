@@ -13,7 +13,7 @@
  * serializer reads (carveInsert, carveDelete, carveSpan, carveMath{src,display},
  * carveFootnote{label}, tableHeader vs tableCell, attrs.colspan/rowspan, ...).
  */
-import { parse } from '@markup-carve/carve';
+import { parse, toAstJson, toSourceLayout } from '@markup-carve/carve';
 import { serializeToCarve } from './serializer.js';
 
 export class UnsupportedNodeError extends Error {
@@ -56,6 +56,7 @@ export const INLINE_MARKS = {
  */
 export function carveToProseMirror(source, options = {}) {
     const ast = parse(source);
+    const sourceLayout = toSourceLayout(source, toAstJson(ast));
     let doc;
     try {
         doc = astToProseMirror(ast, { ...options, source });
@@ -81,9 +82,9 @@ export function carveToProseMirror(source, options = {}) {
         }
         try {
             const reparsed = parse(serializeToCarve(doc));
-            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, source);
+            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, sourceLayout);
         } catch {
-            return sourceEnvelope(doc, source);
+            return sourceEnvelope(doc, sourceLayout);
         }
     }
 
@@ -94,12 +95,16 @@ function opaqueDocument(source) {
     return { type: 'doc', content: [{ type: 'carveUnsupported', attrs: { carveSource: source } }] };
 }
 
-function sourceEnvelope(doc, source) {
+function sourceEnvelope(doc, sourceLayout) {
     const clean = { ...doc };
     delete clean.attrs;
     return {
         ...clean,
-        attrs: { carveSource: source, carveFingerprint: pmFingerprint(clean) },
+        attrs: {
+            carveSource: sourceLayout.source,
+            carveFingerprint: pmFingerprint(clean),
+            carveSourceLayout: JSON.stringify(sourceLayout),
+        },
     };
 }
 

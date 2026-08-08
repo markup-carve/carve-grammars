@@ -10,7 +10,7 @@
  */
 import assert from 'node:assert';
 import { parse, renderHtml } from '@markup-carve/carve';
-import { astToProseMirror } from '../tiptap/index.js';
+import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
 
 let passed = 0;
@@ -443,7 +443,16 @@ function checkSpanPipeline(name, source, expectedCarve) {
 
 checkSpanPipeline('an empty attribute block survives the whole round trip', '[x]{}\n', '[x]{}');
 checkSpanPipeline('a whitespace-only attribute block survives it too', '[x]{ }\n', '[x]{}');
-checkSpanPipeline('a tab-only attribute block survives it too', '[x]{\t}\n', '[x]{}');
+{
+    // PART 12 now makes an inline attribute interior SPACE-only. A tab keeps
+    // the complete run literal; it must not acquire an empty carveSpan mark.
+    const source = '[x]{\t}\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.strictEqual(pm.content[0].content[0].marks, undefined);
+    assert.strictEqual(serializeToCarve(pm), source);
+    passed++;
+    console.log('  ✓ a tab-only attribute interior stays literal');
+}
 
 check('heading serializes an id on the preceding line (strict djot)',
     doc({ type: 'heading', attrs: { level: 2, id: 'slug' }, content: [text('Title')] }),
