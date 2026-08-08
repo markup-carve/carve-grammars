@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "| h |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| |x |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
