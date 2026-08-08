@@ -293,7 +293,13 @@ export function serializeToCarve(doc) {
                 // Strip one trailing newline from the code text (carve-php renders
                 // <code>…\n</code>) so we don't emit a blank line before the fence.
                 const code = (node.content || []).map(c => c.text || '').join('').replace(/\n$/, '');
-                output += '```' + lang + '\n' + code + '\n```\n';
+                const longest = (code.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
+                const fence = '`'.repeat(Math.max(3, longest + 1));
+                const header = node.attrs?.header != null ? ` "${String(node.attrs.header).replace(/"/g, '\\"')}"` : '';
+                const label = node.attrs?.label != null ? ` [${String(node.attrs.label).replace(/]/g, '\\]')}]` : '';
+                const blockAttrs = serializeAttributes(node.attrs, ['language', 'languageRaw', 'header', 'label']);
+                if (blockAttrs) output += blockAttrs + '\n';
+                output += fence + lang + header + label + '\n' + code + '\n' + fence + '\n';
                 break;
             }
 
@@ -418,6 +424,49 @@ export function serializeToCarve(doc) {
                 break;
             }
 
+            case 'carveFigure': {
+                const figureAttrs = serializeAttributes(node.attrs);
+                if (figureAttrs) output += figureAttrs + '\n';
+                const content = node.content || [];
+                for (const child of content) serializeNode(child, indent, fenceDepth);
+                break;
+            }
+
+            case 'carveCaption':
+                output += '^ ' + serializeInline(node.content) + '\n';
+                break;
+
+            case 'carveRawBlock': {
+                const raw = (node.content || []).map(child => child.text || '').join('').replace(/\n$/, '');
+                const longest = (raw.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
+                const fence = '`'.repeat(Math.max(3, longest + 1));
+                output += `${fence}=${node.attrs?.format || ''}\n${raw}\n${fence}\n`;
+                break;
+            }
+
+            case 'carveLineBlock': {
+                const mode = node.attrs?.mode === '\\' ? '\\' : '|';
+                output += `::: ${mode}\n`;
+                for (const [childIndex, child] of (node.content || []).entries()) {
+                    if (childIndex > 0) output += '\n';
+                    if (child.type === 'paragraph') {
+                        let line = '';
+                        for (const inline of child.content || []) {
+                            if (inline.type === 'hardBreak') {
+                                line += '\n';
+                            } else {
+                                line += serializeInline([inline]);
+                            }
+                        }
+                        output += line + '\n';
+                    } else {
+                        serializeNode(child, indent, fenceDepth + 1);
+                    }
+                }
+                output += ':::\n';
+                break;
+            }
+
             case 'carveFootnoteDefinition': {
                 const fnLabel = node.attrs?.label || 'note';
                 const content = node.content || [];
@@ -525,7 +574,7 @@ export function serializeToCarve(doc) {
                     // in the text is not read as a column separator.
                     .replace(/\n/g, ' ')
                     .replace(/\|/g, '\\|');
-                out.push({ header, content });
+                out.push({ header, content, align: cell.attrs?.textAlign || null, attrs: cell.attrs });
                 if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
                 col++;
                 for (let k = 1; k < colspan; k++) {
@@ -536,7 +585,9 @@ export function serializeToCarve(doc) {
             }
             let line = '';
             for (const c of out) {
-                line += (c.header ? '|= ' : '| ') + c.content + ' ';
+                const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
+                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign']);
+                line += '|' + (c.header ? '=' : '') + align + ' ' + cellAttrs + c.content + ' ';
             }
             output += line + '|\n';
         });
