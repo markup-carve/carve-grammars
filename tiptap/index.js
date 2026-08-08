@@ -51,6 +51,9 @@ export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
 export { CarveUnsupported } from './extensions/carve-unsupported.js';
 export { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
+export { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
+export { CarveRawBlock } from './extensions/carve-raw-block.js';
+export { CarveLineBlock } from './extensions/carve-line-block.js';
 export { CarveHeading } from './extensions/carve-heading.js';
 
 // Serializer

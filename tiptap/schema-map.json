@@ -114,6 +114,22 @@
       "kind": "node",
       "pm": "definitionDescription"
     },
+    "figure": {
+      "kind": "node",
+      "pm": "carveFigure"
+    },
+    "caption": {
+      "kind": "node",
+      "pm": "carveCaption"
+    },
+    "line_block": {
+      "kind": "node",
+      "pm": "carveLineBlock"
+    },
+    "raw_block": {
+      "kind": "node",
+      "pm": "carveRawBlock"
+    },
     "mention": {
       "kind": "node",
       "pm": [
@@ -195,8 +211,6 @@
     }
   },
   "unmapped": {
-    "figure": "figure / caption blocks are not modeled",
-    "caption": "figure / caption blocks are not modeled",
     "abbreviation_def": "abbreviation definitions are document metadata, not editor content",
     "link_reference_definition": "link reference definitions are document metadata, not editor content - the same call as abbreviation_def, and the reference that uses one is serialized as an ordinary link",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
@@ -205,8 +219,6 @@
     "frontmatter": "front matter is not modeled by the serializer",
     "heading_ref": "cross-reference links to heading ids are not modeled",
     "inline_footnote": "inline footnotes are not modeled",
-    "line_block": "line blocks are not modeled",
-    "raw_block": "raw passthrough blocks are not modeled",
     "raw_inline": "raw passthrough inlines are not modeled",
     "raw_text": "raw text is the payload of a raw block, not a node an editor holds",
     "escaped_text": "escaping is a source-level concern; the editor holds the escaped character as text",

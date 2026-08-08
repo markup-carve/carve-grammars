@@ -33,6 +33,9 @@ import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveUnsupported } from './extensions/carve-unsupported.js';
 import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
+import { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
+import { CarveRawBlock } from './extensions/carve-raw-block.js';
+import { CarveLineBlock } from './extensions/carve-line-block.js';
 
 // Tiptap 3 dropped the default export from @tiptap/extension-table - it now
 // exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
@@ -194,6 +197,11 @@ export const CarveKit = Extension.create({
                                 return { 'data-language-raw': attributes.languageRaw };
                             },
                         },
+                        header: { default: null },
+                        label: { default: null },
+                        id: { default: null },
+                        class: { default: null },
+                        keyValues: { default: null },
                     };
                 },
 
@@ -450,9 +458,15 @@ export const CarveKit = Extension.create({
                 resizable: true,
                 ...this.options.table,
             }));
-            extensions.push(TableRow.configure(this.options.tableRow ?? {}));
-            extensions.push(TableCell.configure(this.options.tableCell ?? {}));
-            extensions.push(TableHeader.configure(this.options.tableHeader ?? {}));
+            const tableAttrs = {
+                id: { default: null }, class: { default: null }, keyValues: { default: null }, textAlign: { default: null },
+            };
+            const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
+            const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
+            const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
+            extensions.push(CustomTableRow.configure(this.options.tableRow ?? {}));
+            extensions.push(CustomTableCell.configure(this.options.tableCell ?? {}));
+            extensions.push(CustomTableHeader.configure(this.options.tableHeader ?? {}));
         }
 
         // Task list extensions - extend to match PHP output format
@@ -594,6 +608,16 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveUnsupportedInline !== false) {
             extensions.push(CarveUnsupportedInline.configure(this.options.carveUnsupportedInline ?? {}));
+        }
+        if (this.options.carveFigure !== false) {
+            extensions.push(CarveFigure.configure(this.options.carveFigure ?? {}));
+            extensions.push(CarveCaption.configure(this.options.carveCaption ?? {}));
+        }
+        if (this.options.carveRawBlock !== false) {
+            extensions.push(CarveRawBlock.configure(this.options.carveRawBlock ?? {}));
+        }
+        if (this.options.carveLineBlock !== false) {
+            extensions.push(CarveLineBlock.configure(this.options.carveLineBlock ?? {}));
         }
 
         // Mentions (@name) and tags (#tag); citations [@key] use a mention.
