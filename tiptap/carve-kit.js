@@ -32,6 +32,7 @@ import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveUnsupported } from './extensions/carve-unsupported.js';
+import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
 
 // Tiptap 3 dropped the default export from @tiptap/extension-table - it now
 // exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
@@ -590,6 +591,9 @@ export const CarveKit = Extension.create({
 
         if (this.options.carveUnsupported !== false) {
             extensions.push(CarveUnsupported.configure(this.options.carveUnsupported ?? {}));
+        }
+        if (this.options.carveUnsupportedInline !== false) {
+            extensions.push(CarveUnsupportedInline.configure(this.options.carveUnsupportedInline ?? {}));
         }
 
         // Mentions (@name) and tags (#tag); citations [@key] use a mention.
