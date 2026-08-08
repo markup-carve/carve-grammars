@@ -142,10 +142,7 @@ export function astToProseMirror(ast, options = {}) {
         }
     }
     const body = ast.children || [];
-    // A source-local block only improves editability when it has siblings. For
-    // a one-block document the complete-source fallback is the same editing
-    // surface and is the only form that also retains edge whitespace exactly.
-    content.push(...convertBlocks(body, ctx, body.length > 1));
+    content.push(...convertBlocks(body, ctx, true));
     // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
     // walk of the body alone never sees them. The serializer has always had a
     // `carveFootnoteDefinition` case and `CarveKit` has always registered the
@@ -216,17 +213,21 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
     return nodes.map((node) => {
         try {
             const converted = convertBlock(node, ctx);
-            if (localizeLossy && ctx.unsupported === 'preserve') {
+            // A preceding block-attribute line is deliberately outside the
+            // node's source span. Standalone validation would compare a slice
+            // without those attributes to a conversion that correctly carries
+            // them, so leave attributed blocks for the document-level check.
+            if (localizeLossy && ctx.unsupported === 'preserve' && !node.attrs) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
                     try {
                         const original = parse(carveSource);
                         const written = parse(serializeToCarve({ type: 'doc', content: [converted] }));
                         if (stableAst(original) !== stableAst(written)) {
-                            return { type: 'carveUnsupported', attrs: { carveSource } };
+                            return localizeLossyBlock(node, converted, carveSource, ctx);
                         }
                     } catch {
-                        return { type: 'carveUnsupported', attrs: { carveSource } };
+                        return localizeLossyBlock(node, converted, carveSource, ctx);
                     }
                 }
             }
@@ -242,6 +243,47 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
             throw error;
         }
     });
+}
+
+/**
+ * Keep an editable block shell when only its inline representation is lossy.
+ * Paragraph and heading positions cover their authored inline source exactly;
+ * block attributes remain on the rich node and are serialized separately.
+ */
+function localizeLossyBlock(node, converted, carveSource, ctx) {
+    if (node.type === 'paragraph') {
+        return {
+            ...converted,
+            content: carveSource === '' ? [] : [unsupportedInlineSource(carveSource)],
+        };
+    }
+    if (node.type === 'heading') {
+        const inlineSource = sourceForInlineChildren(node.children || [], ctx);
+        if (inlineSource !== '') {
+            return { ...converted, content: [unsupportedInlineSource(inlineSource)] };
+        }
+    }
+    return { type: 'carveUnsupported', attrs: { carveSource } };
+}
+
+function unsupportedInlineSource(carveSource) {
+    return { type: 'carveUnsupportedInline', attrs: { carveSource } };
+}
+
+function sourceForInlineChildren(children, ctx) {
+    if (!children.length || !ctx?.source) return '';
+    const first = children[0]?.pos;
+    const last = children[children.length - 1]?.pos;
+    if (Number.isInteger(first?.startOffset) && Number.isInteger(last?.endOffset)) {
+        return ctx.source.slice(first.startOffset, last.endOffset);
+    }
+    if (Number.isInteger(first?.startLine) && Number.isInteger(first?.startColumn)
+        && Number.isInteger(last?.endLine) && Number.isInteger(last?.endColumn)) {
+        const start = (ctx.lineOffsets[first.startLine - 1] ?? 0) + first.startColumn - 1;
+        const end = (ctx.lineOffsets[last.endLine - 1] ?? 0) + last.endColumn - 1;
+        return ctx.source.slice(start, end);
+    }
+    return '';
 }
 
 function convertBlock(node, ctx) {
@@ -308,12 +350,16 @@ function convertBlock(node, ctx) {
             return { type: 'blockquote', content: convertBlocks(node.children || [], ctx) };
 
         case 'code-block':
-        case 'code_block':
+        case 'code_block': {
+            const attrs = { language: node.lang || '', ...(convertAttrs(node.attrs) || {}) };
+            if (typeof node.header === 'string') attrs.header = node.header;
+            if (typeof node.label === 'string') attrs.label = node.label;
             return {
                 type: 'codeBlock',
-                attrs: { language: node.lang || '' },
+                attrs,
                 content: node.content ? [{ type: 'text', text: node.content }] : [],
             };
+        }
 
         case 'thematic-break':
         case 'thematic_break':
@@ -328,7 +374,15 @@ function convertBlock(node, ctx) {
             return convertTable(node, ctx);
 
         case 'div':
+            if ((node.attrs?.classes || []).length === 1 && node.attrs.classes[0] === 'hardbreaks'
+                && !node.attrs.id && !Object.keys(node.attrs.keyValues || {}).length) {
+                return { type: 'carveLineBlock', attrs: { mode: '\\' }, content: convertBlocks(node.children || [], ctx) };
+            }
             return { type: 'carveDiv', attrs: convertDivAttrs(node), content: convertBlocks(node.children || [], ctx) };
+
+        case 'line-block':
+        case 'line_block':
+            return { type: 'carveLineBlock', attrs: { mode: '|' }, content: convertBlocks(node.children || [], ctx) };
 
         case 'admonition':
             return convertAdmonition(node, ctx);
@@ -344,20 +398,51 @@ function convertBlock(node, ctx) {
             return unsupported('abbreviation-def', node, ctx);
         case 'raw-block':
         case 'raw_block':
-            return unsupported('raw-block', node, ctx);
+            return {
+                type: 'carveRawBlock',
+                attrs: { format: node.format || '' },
+                content: node.content ? [{ type: 'text', text: node.content }] : [],
+            };
         case 'comment':
             return unsupported('comment', node, ctx);
         case 'figure':
-            return unsupported('figure', node, ctx);
+            return convertFigure(node, ctx);
 
         default:
             return unsupported(node.type, node, ctx);
     }
 }
 
+function convertFigure(node, ctx) {
+    const target = node.target;
+    let convertedTarget;
+    if (target?.type === 'image') {
+        convertedTarget = blockImage(target);
+    } else if (target?.type === 'math') {
+        convertedTarget = { type: 'paragraph', content: convertInlineNode(target, [], ctx) };
+    } else if (target) {
+        convertedTarget = convertBlock(target, ctx);
+    } else {
+        throw new UnsupportedNodeError('figure-target', node);
+    }
+    const figure = {
+        type: 'carveFigure',
+        content: [
+            convertedTarget,
+            { type: 'carveCaption', content: convertInline(node.caption || [], ctx) },
+        ],
+    };
+    const attrs = convertAttrs(node.attrs);
+    if (attrs) figure.attrs = attrs;
+    return figure;
+}
+
 function blockImage(node) {
     const attrs = { alt: node.alt || '', src: node.src || '' };
     if (node.title) attrs.title = node.title;
+    if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
+    if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
+    Object.assign(attrs, convertAttrs(node.attrs) || {});
     return { type: 'paragraph', content: [{ type: 'image', attrs }] };
 }
 
@@ -403,19 +488,55 @@ function inlinePlainText(nodes) {
 }
 
 function convertTable(node, ctx) {
+    const table = convertTableCore(node, ctx);
+    if (node.caption) {
+        return {
+            type: 'carveFigure',
+            content: [table, { type: 'carveCaption', content: convertInline(node.caption, ctx) }],
+            ...(convertAttrs(node.attrs) ? { attrs: convertAttrs(node.attrs) } : {}),
+        };
+    }
+    const attrs = convertAttrs(node.attrs);
+    if (attrs) table.attrs = attrs;
+    return table;
+}
+
+function convertTableCore(node, ctx) {
+    let previousGrid = [];
     const rows = (node.rows || []).map((row) => {
-        const cells = (row.cells || []).map((cell) => {
-            // carve marks spans on the *filler* cell (`<` colspan, `^` rowspan)
-            // rather than the spanning cell, so reconstructing ProseMirror
-            // colspan/rowspan attrs from this form is lossy. Bail on any span.
-            if (cell.span) unsupported('table-span-cell', cell, ctx);
-            return {
+        const cells = [];
+        const grid = [];
+        for (let col = 0; col < (row.cells || []).length; col++) {
+            const cell = row.cells[col];
+            if (cell.span === 'rowspan') {
+                const origin = previousGrid[col];
+                if (!origin) throw new UnsupportedNodeError('table-rowspan-without-origin', cell);
+                origin.attrs.rowspan = (origin.attrs.rowspan || 1) + 1;
+                grid[col] = origin;
+                continue;
+            }
+            if (cell.span === 'colspan') {
+                const origin = grid[col - 1];
+                if (!origin) throw new UnsupportedNodeError('table-colspan-without-origin', cell);
+                origin.attrs.colspan = (origin.attrs.colspan || 1) + 1;
+                grid[col] = origin;
+                continue;
+            }
+            const attrs = { ...(convertAttrs(cell.attrs) || {}) };
+            if (cell.align) attrs.textAlign = cell.align;
+            const converted = {
                 type: cell.header ? 'tableHeader' : 'tableCell',
-                attrs: {},
+                attrs,
                 content: [{ type: 'paragraph', content: convertInline(cell.children || [], ctx) }],
             };
-        });
-        return { type: 'tableRow', content: cells };
+            cells.push(converted);
+            grid[col] = converted;
+        }
+        previousGrid = grid;
+        const convertedRow = { type: 'tableRow', content: cells };
+        const rowAttrs = convertAttrs(row.attrs);
+        if (rowAttrs) convertedRow.attrs = rowAttrs;
+        return convertedRow;
     });
     return { type: 'table', content: rows };
 }
