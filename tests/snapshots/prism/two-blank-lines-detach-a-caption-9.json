@@ -1,0 +1,22 @@
+[
+  {
+    "type": "math",
+    "text": "$$`a + b = c`"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Equation: the sum"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
