@@ -494,6 +494,13 @@ check('footnote definition',
     ),
     'see [^1]\n\n[^1]: the body');
 
+check('empty footnote definition uses the empty sentinel',
+    doc(
+        para(text('see '), { type: 'carveFootnote', attrs: { label: '1' } }),
+        { type: 'carveFootnoteDefinition', attrs: { label: '1' } },
+    ),
+    'see [^1]\n\n[^1]: {empty}');
+
 const div = (cls, ...content) => ({ type: 'carveDiv', attrs: { class: cls }, content });
 
 check('flat div keeps a 3-colon fence',

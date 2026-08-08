@@ -434,7 +434,12 @@ export function serializeToCarve(doc) {
                 // faithful "marker line" text) still opens the marker line, just
                 // with nothing on it.
                 let startIndex = 0;
-                if (content[0]?.type === 'paragraph') {
+                if (content.length === 0) {
+                    // A bare `[^label]:` is paragraph text, not a footnote
+                    // definition. PART 11 §7b gives the empty AST body this
+                    // explicit spelling so the definition survives reparsing.
+                    output += '[^' + fnLabel + ']: {empty}\n';
+                } else if (content[0]?.type === 'paragraph') {
                     output += '[^' + fnLabel + ']: ' + serializeParagraphText(content[0].content) + '\n';
                     startIndex = 1;
                 } else {

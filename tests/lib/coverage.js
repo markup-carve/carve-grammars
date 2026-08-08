@@ -27,11 +27,12 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    '283-an-empty-footnote-body-is-written-with-the-empty-sentinel',
+    '14-frontmatter',
     // The source-aware loader preserves constructs without a rich ProseMirror
     // mapping as opaque carveUnsupported atoms. They remain non-editable, but
     // survive a load/save cycle byte-for-byte.
     '07-blockquote-with-attribution',
-    '14-frontmatter',
     '19-smart-typography-dashes-and-quotes',
     '20-smart-typography-arrows-and-symbols',
     '27-raw-blocks',
