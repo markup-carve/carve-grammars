@@ -130,6 +130,11 @@
       "kind": "node",
       "pm": "carveRawBlock"
     },
+    "comment": {
+      "kind": "node",
+      "pm": ["carveComment", "carveCommentInline"],
+      "notes": "block attr distinguishes %% line comments from fenced comments"
+    },
     "mention": {
       "kind": "node",
       "pm": [
@@ -215,7 +220,6 @@
     "link_reference_definition": "link reference definitions are document metadata, not editor content - the same call as abbreviation_def, and the reference that uses one is serialized as an ordinary link",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
     "citation_group": "citations are not modeled",
-    "comment": "comments are not represented in the editor model",
     "frontmatter": "front matter is not modeled by the serializer",
     "heading_ref": "cross-reference links to heading ids are not modeled",
     "inline_footnote": "inline footnotes are not modeled",

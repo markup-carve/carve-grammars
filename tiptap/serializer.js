@@ -444,6 +444,21 @@ export function serializeToCarve(doc) {
                 break;
             }
 
+            case 'carveComment': {
+                const comment = (node.content || []).map(child => child.text || '').join('');
+                if (!node.attrs?.block && !comment.includes('\n')) {
+                    output += `%%${comment ? ` ${comment}` : ''}\n`;
+                    break;
+                }
+                // A comment closes on a percent fence at least as wide as its
+                // opener. Widen past every run in the body so edited content
+                // can never terminate the block early.
+                const longest = (comment.match(/%+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
+                const fence = '%'.repeat(Math.max(3, longest + 1));
+                output += `${fence}\n${comment}${comment.endsWith('\n') || !comment ? '' : '\n'}${fence}\n`;
+                break;
+            }
+
             case 'carveLineBlock': {
                 const mode = node.attrs?.mode === '\\' ? '\\' : '|';
                 output += `::: ${mode}\n`;
@@ -568,12 +583,26 @@ export function serializeToCarve(doc) {
                 const rowspan = cell.attrs?.rowspan || 1;
                 const header = cell.type === 'tableHeader';
                 const content = (cell.content || [])
-                    .map(p => serializeInline(p.content))
+                    .map(p => (p.content || []).map(inline => {
+                        let rendered = serializeInline([inline]);
+                        // Pipes inside code spans are literal already: escaping
+                        // one there adds a real backslash to the code payload.
+                        // Every other inline form still needs table-delimiter
+                        // protection.
+                        const isCode = inline.type === 'text'
+                            && (inline.marks || []).some(mark => mark.type === 'code');
+                        // Bare superscript-looking text (`^2^`) is literal in
+                        // Carve; only the braced `{^2^}` form is a mark. The
+                        // generic prose escaper is intentionally conservative,
+                        // but retaining that escape changes the parsed AST.
+                        if (inline.type === 'text' && !(inline.marks || []).length) {
+                            rendered = rendered.replace(/\\\^/g, '^');
+                        }
+                        return isCode ? rendered : rendered.replace(/\|/g, '\\|');
+                    }).join(''))
                     .join(' ')
-                    // A cell is one line; fold newlines and escape pipes so a `|`
-                    // in the text is not read as a column separator.
-                    .replace(/\n/g, ' ')
-                    .replace(/\|/g, '\\|');
+                    // A table cell occupies one physical line.
+                    .replace(/\n/g, ' ');
                 out.push({ header, content, align: cell.attrs?.textAlign || null, attrs: cell.attrs });
                 if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
                 col++;
@@ -759,6 +788,10 @@ export function serializeToCarve(doc) {
         };
 
         content.forEach((node, idx) => {
+            if (node.type === 'carveCommentInline') {
+                result += `%%${node.attrs?.content ? ` ${node.attrs.content}` : ''}`;
+                return;
+            }
             if (node.type === 'carveUnsupportedInline') {
                 result += node.attrs?.carveSource || '';
                 return;

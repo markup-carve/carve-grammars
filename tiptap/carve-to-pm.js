@@ -175,6 +175,10 @@ function makeContext(options) {
         unsupported: unsupportedMode,
         source,
         lineOffsets: source ? lineOffsets(source) : [],
+        // Parser positions are normalized across BOM/CRLF/CR input, so source
+        // slicing by line/column is deliberately avoided for those documents.
+        // The final whole-document AST check remains authoritative.
+        nonCanonicalLineEncoding: Boolean(source && (source.startsWith('\uFEFF') || source.includes('\r'))),
     };
 }
 
@@ -240,7 +244,8 @@ function convertBlocks(nodes, ctx, localizeLossy = false) {
             // falsely declares the rich conversion lossy; the document-level
             // check below has the complete definition context.
             const hasExternalReference = nodeHasExternalReference(node);
-            if (localizeLossy && ctx.unsupported === 'preserve' && !node.attrs && !hasExternalReference) {
+            if (localizeLossy && ctx.unsupported === 'preserve' && !ctx.nonCanonicalLineEncoding
+                && !node.attrs && !hasExternalReference) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
                     try {
@@ -439,7 +444,11 @@ function convertBlock(node, ctx) {
                 content: node.content ? [{ type: 'text', text: node.content }] : [],
             };
         case 'comment':
-            return unsupported('comment', node, ctx);
+            return {
+                type: 'carveComment',
+                attrs: { block: Boolean(node.block) },
+                content: node.content ? [{ type: 'text', text: node.content }] : [],
+            };
         case 'figure':
             return convertFigure(node, ctx);
 
@@ -750,6 +759,9 @@ function convertInlineNode(node, marks, ctx) {
         case 'critic-comment':
         case 'critic_comment':
             return [{ type: 'text', text: node.text || '', marks: [...marks, { type: 'carveCriticComment' }] }];
+
+        case 'comment':
+            return [{ type: 'carveCommentInline', attrs: { content: node.content || '' } }];
 
         default: {
             const markType = INLINE_MARKS[node.type];
