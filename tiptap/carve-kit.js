@@ -17,6 +17,7 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import HardBreak from '@tiptap/extension-hard-break';
+import { CarveHeading } from './extensions/carve-heading.js';
 
 import { CarveInsert } from './extensions/carve-insert.js';
 import { CarveDelete } from './extensions/carve-delete.js';
@@ -143,6 +144,7 @@ export const CarveKit = Extension.create({
                 listItem: false,
                 // Disable HardBreak, we add a custom one with visible indicator
                 hardBreak: false,
+                heading: false,
                 // Tiptap 3 folded Underline and Link INTO StarterKit, while this
                 // kit pushes both separately below (underline maps to Carve's
                 // `_text_`, link carries the Carve-specific attribute handling).
@@ -153,6 +155,10 @@ export const CarveKit = Extension.create({
                 link: false,
                 ...this.options.starterKit,
             }));
+        }
+
+        if (this.options.heading !== false) {
+            extensions.push(CarveHeading.configure(this.options.heading ?? {}));
         }
 
         // Custom HardBreak with visible indicator (shows ↵ symbol)

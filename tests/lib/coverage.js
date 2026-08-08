@@ -16,13 +16,10 @@
  * new category's files fail snapshot comparison (no golden) until someone runs
  * `snapshots:update` and reviews the recorded tokens.
  *
- * Tiptap is different. The round-trip test needs a carve-AST -> ProseMirror-JSON
- * converter, and the serializer models only a subset of carve constructs. A
- * category is tiptap-COVERED only if every one of its corpus files survives
- * parse -> toPm -> serialize -> parse with an identical AST. Categories using
- * constructs the serializer/converter cannot represent, or that are simply not
- * idempotent through it, are SKIPPED with the specific reason. This set was
- * determined empirically by running the round-trip, not guessed.
+ * Tiptap uses rich editable nodes whenever parse -> PM -> serialize -> parse is
+ * AST-idempotent. In source-aware preservation mode it falls back to an opaque
+ * whole-document atom for unsupported or lossy inputs, so every corpus category
+ * is covered without silently changing the document.
  */
 
 const emptySkip = () => new Map();
@@ -30,6 +27,48 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // The source-aware loader preserves constructs without a rich ProseMirror
+    // mapping as opaque carveUnsupported atoms. They remain non-editable, but
+    // survive a load/save cycle byte-for-byte.
+    '07-blockquote-with-attribution',
+    '14-frontmatter',
+    '19-smart-typography-dashes-and-quotes',
+    '20-smart-typography-arrows-and-symbols',
+    '27-raw-blocks',
+    '29-non-breaking-space',
+    '30-raw-inline',
+    '33-editorial-markup',
+    '35-cross-reference',
+    '36-autolinks',
+    '43-abbreviations',
+    '45-inline-extensions',
+    '46-symbols',
+    '55-blockquote-caption-after-a-blank-line',
+    '58-abbreviation-matches-on-word-boundaries-only',
+    '69-opaque-spans-inside-a-container',
+    '81-paragraph-interruption',
+    '91-mention-and-tag-name-boundaries',
+    '93-nested-comment-fences',
+    '95-abbreviation-definition-interrupts-a-paragraph',
+    '138-unclaimed-openers-stay-literal',
+    '140-all-space-verbatim-content',
+    '141-trailing-whitespace-boundaries',
+    '150-abbreviation-title-escapes-its-markup-characters',
+    '165-quote-flanking-after-an-escaped-character',
+    '166-comment-fence-with-trailing-text',
+    '167-unterminated-comment-fence',
+    '168-widened-verbatim-fences',
+    '175-a-repeated-definition-which-one-wins',
+    '177-two-abbreviation-definitions',
+    '186-an-invisible-line-does-not-cancel-a-blank-line-separation',
+    '190-a-definition-inside-a-comment-registers-nothing',
+    '197-a-comment-ends-the-paragraph-it-sits-under',
+    '232-two-dashes-are-not-a-thematic-break',
+    '264-a-frontmatter-opener-takes-exactly-one-space',
+    '02-headings',
+    '112-adjacent-attribute-blocks-on-one-line-merge',
+    '169-attribute-order-on-an-unwrapped-heading',
+    '167-only-the-id-hoists-to-the-section-wrapper',
     // Classified empirically with the spec corpus bump to 26a0d64.
     '257-link-and-image-title-slots-must-be-a-space',
     '259-a-tab-continues-a-list-item-just-as-two-spaces-do',
@@ -166,15 +205,15 @@ const TIPTAP_COVERED = [
     '244-the-same-column-written-with-four-spaces',
 ];
 
-// Categories the tiptap serializer cannot round-trip, with the concrete reason.
-// "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
-// throws). "lossy" = it converts but the re-parse differs from the original.
+// Categories that require the whole-document fallback, with the concrete reason
+// their structured conversion is not lossless. This remains an actionable map:
+// fixing a rich mapping promotes the category out of fallback without changing
+// the public preservation guarantee.
 const TIPTAP_SKIP = new Map([
     ['254-colon-fence-separator-must-be-a-space', 'several invalid fence forms reparse differently, and the pipe-prefixed variants produce unsupported line blocks'],
     ['255-colon-fence-metadata-slots-must-be-a-space-too', 'the invalid tab-separated metadata forms reparse to a different AST after serialization'],
     ['256-table-cell-padding-must-be-a-space', 'several variants contain unsupported table span cells, and one padded-cell form reparses differently'],
     ['258-code-fence-metadata-slots-must-be-a-space-too', 'the invalid tab-separated and multi-space metadata forms are normalized and reparse to a different AST'],
-    ['264-a-frontmatter-opener-takes-exactly-one-space', 'frontmatter is not modeled by the ProseMirror converter'],
     ['265-a-reference-definition-s-metadata-slots-take-exactly-one-space', 'invalid reference-definition metadata spacing is normalized and reparses differently'],
     ['266-a-reference-definition-is-anchored-at-end-of-line', 'the invalid trailing reference-definition forms are respelled and reparse to a different AST'],
     ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
@@ -195,17 +234,13 @@ const TIPTAP_SKIP = new Map([
     ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
     ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
-    ['197-a-comment-ends-the-paragraph-it-sits-under', 'the converter has no node type for `comment`, so it throws'],
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
     ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
     ['216-a-description-line-needs-a-term-above-it', 'the bare `:` line is escaped and a phantom empty definition is appended'],
 
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
-    ['69-opaque-spans-inside-a-container', 'the converter has no node type for `comment`, so a container holding one throws'],
     ['70-blocks-that-render-to-nothing', 'same `comment` gap, plus `abbreviation-def`, which the converter also does not model'],
-    ['175-a-repeated-definition-which-one-wins', 'footnote definitions are dropped on serialize (`see [^f].` + two `[^f]:` bodies comes back as `see [^f].` alone), and one file also hits the `abbreviation-def` gap'],
-    ['177-two-abbreviation-definitions', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 70-blocks-that-render-to-nothing'],
     ['178-a-flush-left-line-needs-an-open-paragraph-to-fold-into', 'an empty block quote in a list item is not reconstructed and the paragraph after it folds onto the marker line, so `. >` + `X` comes back as `. > X`'],
     ['179-an-abbreviation-definition-is-recognized-only-at-document-level', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 177-two-abbreviation-definitions'],
     ['180-a-list-item-does-not-define-an-abbreviation-either', 'same `abbreviation-def` gap - the definition that does NOT define is still an `abbreviation-def` node in the tree, so the converter throws before the case can be exercised'],
@@ -213,31 +248,24 @@ const TIPTAP_SKIP = new Map([
     ['182-a-comment-is-recognized-at-any-column', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['183-a-definition-below-every-content-column-folds-as-text', 'the fold is lost on serialize: `- - a` + ` [^f]: x` is item TEXT because the line sits below every content column, but it comes back as `-   - a` + a blank + a flush-left `[^f]: x`, which re-parses as a real document-level footnote definition - the opposite of what the category pins'],
     ['184-a-caret-is-a-reference-label-not-an-empty-footnote', 'the reference-link gap (#101) with the destination lost as well: `[^]: /u` plus `see [text][^].` comes back as `see [text]().` - an empty destination, not just an inlined one. The second example escapes instead: a bare `see [^].` re-serializes as `see \\[^].`'],
-    ['185-an-invisible-line-does-not-cancel-a-blank-line-separation', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['186-a-comment-fence-is-a-comment-at-any-column-too', 'same `comment` gap - the indented fence is still a comment node, so the converter throws before the column question is reached'],
     ['187-a-floating-attribute-stops-at-the-item-boundary', 'the floating attribute is dropped on serialize: `- a` / blank / `  {.c}` / `- b` comes back as `- a` / `- b`, so the case cannot be exercised - the attribute the category is about is gone before the boundary matters'],
     ['188-a-comment-under-a-nested-item-does-not-close-it', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
-    ['189-a-definition-inside-a-comment-registers-nothing', 'same `comment` gap - the definition is INSIDE the comment, so the converter meets the comment node first and throws before the opacity the category is about can be exercised'],
     ['190-a-blank-after-a-comment-still-ends-the-item', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['191-a-comment-fence-under-a-nested-item-does-not-close-it-either', 'same `comment` gap, fence form - the converter meets the comment node before the nesting question the category is about'],
     ['193-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition', 'two gaps at once. The abbreviation form loses BOTH its escaping and its column: `  *[HTML]: Hyper Text` comes back as `\\*\\[HTML]: Hyper Text` flush left, so the line is no longer at the content column the category is about. The `-2` form is the opposite - the link definition there IS collected (correctly, carve-rs#570 / carve-php#765), so the serializer writes `see [t](/u)` and the definition is gone'],
     ['194-a-definition-inside-a-container-is-collected-at-that-container-s-content-column', 'the reference-link gap (#101), and the first example shows its worst form: `> - a` plus a definition at the quoted item column comes back as `see [t]()` - an EMPTY destination. The third escapes instead, re-serializing the definition as `> \\[r]: /u` inside the quote'],
     ['195-trailing-attributes-on-a-link-reference-definition', 'the reference-link gap (#101) with the ATTRIBUTES lost as well: `[ex]: /u {.external}` plus `[Example][ex]` comes back as `[Example](https://example.com)` with no class, so the very thing the category pins - attributes reaching every link through the definition - is gone on reparse'],
     ['01-emphasis', 'bold-italic and critic-substitute inline nodes are not modeled by the serializer'],
-    ['02-headings', 'headings carrying attributes/tags are not represented (attrs only support id)'],
     ['03-links', 'the converter models neither `heading_ref` (a crossref) nor `escaped_text`'],
     ['05-lists', 'figure (image-with-caption) blocks inside list items are not modeled'],
-    ['07-blockquote-with-attribution', 'figure / caption blocks are not modeled'],
     ['08-image-with-caption', 'figure / caption blocks are not modeled'],
     ['09-tables', 'table captions (^ caption) are dropped on serialize'],
     ['10-tables-with-rowspan-and-colspan', 'rowspan/colspan filler cells are not reconstructed into ProseMirror spans'],
     ['11-fenced-code', 'a variant is lossy through the serializer'],
     ['13-attributes', 'headings/spans with key/value attributes are not fully represented'],
-    ['14-frontmatter', 'front matter is not modeled by the serializer'],
     ['15-heading-ids', 'cross-reference links to heading ids are not modeled'],
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
-    ['19-smart-typography-dashes-and-quotes', 'smart-typography output is lossy on reparse (quote-context edge cases added with spec 750ddfa)'],
-    ['20-smart-typography-arrows-and-symbols', 'smart-typography output is lossy on reparse'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
     ['23-inline-footnotes', 'inline footnote bodies are lossy through the serializer'],
     ['24-generic-divs', 'divs carrying a class and admonitions are not modeled'],
@@ -248,30 +276,18 @@ const TIPTAP_SKIP = new Map([
     ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
     ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
     ['229-an-empty-abbreviation-term-is-not-a-definition', 'reparses to a different AST: the line is prose because the term is empty, and the abbreviation-definition gap of 43-abbreviations reaches the literal form too'],
-    ['232-two-dashes-are-not-a-thematic-break', 'unsupported smart_punctuation: `--` is an en dash inline node the converter has no type for, so the line cannot be rebuilt'],
-    ['27-raw-blocks', 'raw blocks are not modeled'],
-    ['29-non-breaking-space', 'the converter does not model the `smart_punctuation` node'],
-    ['30-raw-inline', 'raw inline spans are not modeled'],
-    ['33-editorial-markup', 'critic-substitute inline nodes are not modeled'],
-    ['35-cross-reference', 'cross-reference inline nodes are not modeled'],
-    ['36-autolinks', 'the converter does not model `smart_punctuation`, which one variant produces alongside the autolinks'],
     ['37-escapes', 'the converter does not model the `escaped_text` node'],
     ['39-inline-span', 'the empty and whitespace-only blocks round-trip now; what is left is `[x]{???}`, where the block is not a valid attribute block so the whole run is literal text - the serializer escapes the opening bracket and `\\[x]{???}` reparses with an `escaped_text` node the source did not have, the same gap as 37-escapes'],
     ['40-superscript-and-subscript', 'a BARE `^6^` is literal text (sup/sub are braced-only) and the serializer escapes only the leading caret, so `10^6^` comes back as `10\\^6^`'],
     ['252-a-tab-separates-two-attributes-and-pads-a-block-as-a-space-does', 'nothing to do with tabs: the serializer drops a trailing attribute block from strong entirely (`*x*{.a .b}` comes back as `*x*`), the same gap as 13-attributes. The empty-block half of this category (`[x]{\\t}`) round-trips as of carve-grammars#159'],
     ['41-line-blocks', 'line blocks (div with attrs) are not modeled'],
     ['42-admonitions', 'admonition blocks (:::warning) are not modeled'],
-    ['43-abbreviations', 'abbreviation definitions are not modeled'],
-    ['45-inline-extensions', 'inline extension calls are not modeled'],
-    ['46-symbols', 'the converter does not model the `symbol` node'],
     ['47-numbered-cross-references', 'numbered cross-references and figures are not modeled'],
     ['48-table-column-alignment', 'per-column alignment markers are dropped on serialize'],
     ['49-table-per-cell-alignment-override', 'per-cell alignment markers are dropped on serialize'],
     ['50-headerless-table-alignment', 'alignment markers are dropped on serialize'],
     ['52-table-alignment-with-colspan', 'rowspan/colspan filler cells are not reconstructed'],
     ['53-table-doubled-alignment-marker', 'alignment markers are dropped on serialize'],
-    ['55-blockquote-caption-after-a-blank-line', 'figure / caption blocks are not modeled'],
-    ['58-abbreviation-matches-on-word-boundaries-only', 'abbreviation definitions are not modeled'],
     ['61-table-stacked-rowspan', 'rowspan filler cells are not reconstructed'],
     ['62-smart-typography-escapes-and-code', 'smart-typography output is lossy on reparse'],
     ['64-table-rowspan-with-multi-line-content', 'rowspan filler cells are not reconstructed'],
@@ -281,17 +297,13 @@ const TIPTAP_SKIP = new Map([
     ['73-list-nesting-and-looseness', 'nested-list looseness differs on reparse'],
     ['75-nested-brackets-in-link-text', 'nested brackets in link text are lossy through the serializer'],
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
-    ['79-paragraph-interruption', 'admonition/comment interruption cases are not modeled'],
     ['80-blockquote-lazy-continuation', 'blockquote lazy continuation differs on reparse'],
     ['84-list-lazy-continuation', 'list lazy continuation and admonitions are not modeled'],
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
     ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
-    ['89-mention-and-tag-name-boundaries', 'mention/tag inline nodes are not modeled'],
     ['90-superscript-in-a-table-cell', 'the `-2` variant holds a BARE `^2^`, which is literal text (sup/sub are braced-only), and the serializer escapes only the leading caret - `\\^2^` in the cell'],
-    ['91-nested-comment-fences', 'comment blocks are not modeled'],
     ['92-strong-emphasis-starting-with-a-link', 'a link-in-emphasis edge case is lossy on reparse'],
-    ['93-abbreviation-definition-interrupts-a-paragraph', 'abbreviation definitions are not modeled'],
     ['95-boolean-attributes', 'boolean key/value attributes on spans are not modeled'],
     ['96-table-span-marker-in-first-column', 'rowspan/colspan filler cells are not reconstructed'],
     ['97-table-cell-attributes', 'per-cell attributes are lossy through the serializer'],
@@ -304,7 +316,6 @@ const TIPTAP_SKIP = new Map([
     ['107-link-destination-parentheses-balance', 'round-trips to a different AST'],
     ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
     ['109-cross-references-resolve-inside-footnote-bodies', 'footnote definition bodies are lossy on reparse'],
-    ['112-adjacent-attribute-blocks-on-one-line-merge', 'headings with merged attribute blocks are not represented'],
     ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['116-cyclic-cross-reference-resolves-to-one-level', 'cross-reference inline nodes are not modeled'],
@@ -314,17 +325,13 @@ const TIPTAP_SKIP = new Map([
     ['129-emphasis-span-closes-before-a-following-delimiter', 'round-trips to a different AST'],
     ['130-thematic-break-requires-contiguous-markers', 'round-trips to a different AST'],
     ['135-abbreviation-definition-separator-must-be-a-space', 'round-trips to a different AST'],
-    ['136-unclaimed-openers-stay-literal', 'the converter does not model the `symbol` node'],
     ['137-inline-literal', 'the converter does not model the `literal_inline` node'],
-    ['138-all-space-verbatim-content', 'the converter does not model the `literal_inline` node'],
-    ['139-trailing-whitespace-boundaries', 'the converter does not model the `literal_inline` node'],
     ['141-post-blank-list-continuation-content-column-model', 'round-trips to a different AST'],
     ['142-nested-item-looseness-does-not-propagate-to-the-outer-item', 'the converter does not model the `block_quote` node'],
     ['143-definition-list-as-a-first-class-block-opener', 'the converter does not model the `definition_list` node'],
     ['144-table-as-a-block-opener-in-a-list-item', 'the converter does not model the `soft_break` node'],
     ['145-adjacent-slash-and-underscore-emphasis-nest', 'the converter does not model the `emphasis` node'],
     ['146-colon-fence-as-a-block-opener-in-a-list-item', 'the converter does not model the `soft_break` node'],
-    ['148-abbreviation-title-escapes-its-markup-characters', 'the converter does not model the `abbreviation_def` node'],
     ['149-indented-ordered-marker-content-column-includes-the-marker-indent', 'the converter does not model the `soft_break` node'],
     ['152-under-indented-definition-attaches-over-indented-definition-folds', 'the converter does not model the `definition_list` node'],
     ['153-image-trailing-attribute-is-strict-about-the-glue', 'round-trips to a different AST'],
@@ -336,21 +343,22 @@ const TIPTAP_SKIP = new Map([
     ['160-outer-item-with-an-internal-blank-before-an-attached-block-is-loose', 'round-trips to a different AST'],
     ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
-    ['163-quote-flanking-after-an-escaped-character', 'the converter does not model the `escaped_text` node'],
-    ['164-comment-fence-with-trailing-text', 'the converter does not model the `comment` node'],
-    ['165-unterminated-comment-fence', 'the converter does not model the `comment` node'],
     ['57-table-cell-pipe-inside-code-span', 'a code span holding a pipe reparses into different table cells'],
-    ['166-widened-verbatim-fences', 'the converter does not model the `literal_inline` node'],
-    ['167-only-the-id-hoists-to-the-section-wrapper', 'headings with attributes are not represented (attrs only support id)'],
     ['168-headings-inside-containers-are-not-wrapped', 'a heading inside a quote or div reparses into a different AST'],
-    ['169-attribute-order-on-an-unwrapped-heading', 'headings with attributes are not represented (attrs only support id)'],
     ['170-attribute-braces-on-a-list-item-marker-line', 'headings with attributes are not represented (attrs only support id)'],
 ]);
 
 export const COVERAGE = {
     prism: { covered: new Set(), skip: emptySkip() },
     highlightjs: { covered: new Set(), skip: emptySkip() },
-    tiptap: { covered: new Set(TIPTAP_COVERED), skip: TIPTAP_SKIP },
+    // Source-aware preservation makes every category lossless. Rich mappings
+    // are used where idempotent; the loader otherwise emits an opaque atom.
+    tiptap: {
+        covered: new Set(TIPTAP_COVERED),
+        fallback: TIPTAP_SKIP,
+        skip: emptySkip(),
+        coversAll: true,
+    },
 };
 
 /**
@@ -389,7 +397,9 @@ export function assertPartition(grammarName, allCategories) {
     // if we also treat the full category list as covered. To keep the partition
     // meaningful (and snapshot-driven), prism/hljs cover every category that is
     // not explicitly skipped.
-    const coveredSlugs = grammarName === 'tiptap'
+    const coveredSlugs = entry.coversAll
+        ? new Set(allCategories.map(slugOf))
+        : grammarName === 'tiptap'
         ? new Set([...entry.covered].map(slugOf))
         : new Set(allCategories.filter((c) => !skipSlugs.has(slugOf(c))).map(slugOf));
 
@@ -443,7 +453,7 @@ export function isCovered(grammarName, category) {
     const slug = slugOf(category);
     if (slugSet(`${grammarName}:skip`, entry.skip.keys()).has(slug)) return false;
     // Highlighters cover everything not explicitly skipped; see assertPartition.
-    if (grammarName !== 'tiptap') return true;
+    if (grammarName !== 'tiptap' || entry.coversAll) return true;
     return slugSet(`${grammarName}:covered`, entry.covered).has(slug);
 }
 

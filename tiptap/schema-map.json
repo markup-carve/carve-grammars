@@ -15,7 +15,7 @@
     "heading": {
       "kind": "node",
       "pm": "heading",
-      "notes": "level attr; only `id` survives as an attribute"
+      "notes": "level plus authored id, classes, and key/value attributes"
     },
     "text": {
       "kind": "node",
