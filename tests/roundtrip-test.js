@@ -117,6 +117,16 @@ if (skipShouldPromote.length) {
 assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (see above)`);
 
 {
+    // A heading reference has no external definition. Its source-sensitive
+    // label can stay local to the heading/paragraph shells instead of forcing
+    // the complete document into one opaque fallback atom.
+    const source = '# a\\_b heading\n\n[a\\_b heading][]\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.notStrictEqual(pm.content?.[0]?.type, 'carveUnsupported');
+    assert.deepStrictEqual(normalizeAst(parse(serializeToCarve(pm))), normalizeAst(parse(source)));
+}
+
+{
     const source = '```=html\n<div data-x="1">raw</div>\n```\n\nKept\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     const carve2 = serializeToCarve(pm);
