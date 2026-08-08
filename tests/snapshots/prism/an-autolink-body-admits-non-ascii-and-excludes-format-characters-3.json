@@ -1,0 +1,10 @@
+[
+  {
+    "type": "url",
+    "text": "<https://example.com/€10>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

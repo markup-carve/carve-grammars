@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold",
+    "text": "*x*"
+  },
+  {
+    "type": "text",
+    "text": "{k=\"a\nb\"}\n"
+  }
+]

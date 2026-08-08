@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> quote"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> :::note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> body"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> :::"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "<https://example.com/café>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

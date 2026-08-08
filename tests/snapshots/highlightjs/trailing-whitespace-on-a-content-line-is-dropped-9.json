@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\nabc \n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

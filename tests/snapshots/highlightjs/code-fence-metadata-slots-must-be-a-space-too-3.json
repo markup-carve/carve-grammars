@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```\t js"
+  },
+  {
+    "scope": null,
+    "text": "\nx\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  }
+]

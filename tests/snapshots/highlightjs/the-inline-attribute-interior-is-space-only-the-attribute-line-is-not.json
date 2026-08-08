@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a .b}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*y*"
+  },
+  {
+    "scope": "attr",
+    "text": "{ .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*z*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.d }"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[w]"
+  },
+  {
+    "scope": "attr",
+    "text": "{ }"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

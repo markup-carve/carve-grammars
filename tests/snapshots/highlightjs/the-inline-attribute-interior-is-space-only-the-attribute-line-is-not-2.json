@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{\t.a\t.b\t}"
+  },
+  {
+    "scope": null,
+    "text": "\n\nparagraph\n"
+  }
+]

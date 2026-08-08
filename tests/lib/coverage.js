@@ -30,6 +30,15 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Classified empirically with the spec corpus bump to 26a0d64.
+    '257-link-and-image-title-slots-must-be-a-space',
+    '259-a-tab-continues-a-list-item-just-as-two-spaces-do',
+    '260-an-absorbed-colon-fence-leaves-a-block-quote-s-paragraph-open',
+    '261-a-blank-line-holds-spaces-and-tabs-and-nothing-else',
+    '262-a-link-title-takes-exactly-one-space',
+    '263-a-code-fence-opener-takes-exactly-one-space',
+    '270-a-real-div-in-a-container-and-the-flush-left-line-after-it',
+    '271-the-flush-left-line-after-a-container-a-quoted-line-opened',
     // Classified with the bump that added them: both round-trip cleanly through
     // parse -> toPm -> serialize -> parse.
     '253-an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does',
@@ -161,6 +170,26 @@ const TIPTAP_COVERED = [
 // "unsupported X" = the converter has no faithful ProseMirror mapping for X (it
 // throws). "lossy" = it converts but the re-parse differs from the original.
 const TIPTAP_SKIP = new Map([
+    ['254-colon-fence-separator-must-be-a-space', 'several invalid fence forms reparse differently, and the pipe-prefixed variants produce unsupported line blocks'],
+    ['255-colon-fence-metadata-slots-must-be-a-space-too', 'the invalid tab-separated metadata forms reparse to a different AST after serialization'],
+    ['256-table-cell-padding-must-be-a-space', 'several variants contain unsupported table span cells, and one padded-cell form reparses differently'],
+    ['258-code-fence-metadata-slots-must-be-a-space-too', 'the invalid tab-separated and multi-space metadata forms are normalized and reparse to a different AST'],
+    ['264-a-frontmatter-opener-takes-exactly-one-space', 'frontmatter is not modeled by the ProseMirror converter'],
+    ['265-a-reference-definition-s-metadata-slots-take-exactly-one-space', 'invalid reference-definition metadata spacing is normalized and reparses differently'],
+    ['266-a-reference-definition-is-anchored-at-end-of-line', 'the invalid trailing reference-definition forms are respelled and reparse to a different AST'],
+    ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
+    ['268-trailing-whitespace-on-a-content-line-is-dropped', 'some whitespace-sensitive forms reparse differently and others contain unsupported literal-inline or line-block nodes'],
+    ['269-a-definition-body-continuation-indented-past-its-column-is-lazy-text', 'the definition continuation indentation is normalized and reparses to a different AST'],
+    ['272-an-autolink-body-admits-non-ascii-and-excludes-format-characters', 'one variant produces unsupported smart punctuation and another reparses differently'],
+    ['273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not', 'the whitespace-sensitive attribute form is normalized and reparses to a different AST'],
+    ['274-a-quoted-attribute-value-stops-at-the-newline', 'the unterminated quoted attribute forms are respelled and reparse to a different AST'],
+    ['275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text', 'collapsed heading references are not preserved faithfully and reparse to a different AST'],
+    ['276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column', 'list/fence indentation is normalized and all variants reparse to a different AST'],
+    ['277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open', 'comments are unsupported, and the non-comment variant reparses differently'],
+    ['278-a-list-marker-at-the-content-column-inside-an-open-fence', 'the nested list/fence structure is normalized and reparses to a different AST'],
+    ['279-a-boundary-line-inside-an-open-fence-does-not-end-the-container', 'comment variants are unsupported and the remaining container-boundary forms reparse differently'],
+    ['280-a-container-a-lazy-line-folded-into-is-still-open', 'one lazy container continuation is normalized and reparses to a different AST'],
+    ['281-a-caption-attaches-across-one-blank-line', 'figures are unsupported, while the non-figure caption forms reparse to a different AST'],
     ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
     ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
     ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
