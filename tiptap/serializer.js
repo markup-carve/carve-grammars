@@ -153,6 +153,13 @@ function trimSource(text) {
 }
 
 export function serializeToCarve(doc) {
+    const preservedSource = doc?.attrs?.carveSource;
+    const preservedFingerprint = doc?.attrs?.carveFingerprint;
+    if (typeof preservedSource === 'string' && typeof preservedFingerprint === 'string') {
+        const clean = { ...doc };
+        delete clean.attrs;
+        if (pmFingerprint(clean) === preservedFingerprint) return preservedSource;
+    }
     // A whole-document fallback is already exact Carve source. Sending it
     // through the normal block joiner and edge trimmer would corrupt precisely
     // the whitespace-sensitive documents for which the fallback exists.
@@ -579,6 +586,11 @@ export function serializeToCarve(doc) {
                 }
                 if (ci >= cells.length) break;
                 const cell = cells[ci++];
+                if (cell.attrs?.carveSpanMarker) {
+                    out.push({ header: Boolean(cell.type === 'tableHeader'), content: cell.attrs.carveSpanMarker });
+                    col++;
+                    continue;
+                }
                 const colspan = cell.attrs?.colspan || 1;
                 const rowspan = cell.attrs?.rowspan || 1;
                 const header = cell.type === 'tableHeader';
@@ -615,7 +627,7 @@ export function serializeToCarve(doc) {
             let line = '';
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
-                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign']);
+                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveSpanMarker']);
                 line += '|' + (c.header ? '=' : '') + align + ' ' + cellAttrs + c.content + ' ';
             }
             output += line + '|\n';
@@ -1258,3 +1270,9 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
 }
 
 export default serializeToCarve;
+
+function pmFingerprint(value) {
+    if (Array.isArray(value)) return '[' + value.map(pmFingerprint).join(',') + ']';
+    if (value === null || typeof value !== 'object') return JSON.stringify(value);
+    return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + pmFingerprint(value[key])).join(',') + '}';
+}

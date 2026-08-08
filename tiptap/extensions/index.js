@@ -18,5 +18,6 @@ export { CarveUnsupportedInline } from './carve-unsupported-inline.js';
 export { CarveFigure, CarveCaption } from './carve-figure.js';
 export { CarveRawBlock } from './carve-raw-block.js';
 export { CarveComment, CarveCommentInline } from './carve-comment.js';
+export { CarveSourcePreservation } from './carve-source-preservation.js';
 export { CarveLineBlock } from './carve-line-block.js';
 export { CarveHeading } from './carve-heading.js';
