@@ -67,7 +67,7 @@
     "./tiptap/schema-map.json": "./tiptap/schema-map.json"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#380138c6fb8a60d1c6a6ecabc3855b77484b52f2"
+    "@markup-carve/carve": "github:markup-carve/carve-js#25e2c58216ede0fd2e19592f1d5b8d3c0f9e8880"
   },
   "peerDependencies": {
     "@shikijs/themes": "^2 || ^3",

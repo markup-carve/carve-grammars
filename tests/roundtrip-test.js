@@ -164,6 +164,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.strictEqual(pm.content[0].type, 'paragraph');
     assert.strictEqual(pm.attrs.carveSource, source);
+    assert.deepStrictEqual(JSON.parse(pm.attrs.carveSourceLayout), {
+        version: 1,
+        encoding: 'utf-8',
+        source,
+        lineEndings: 'lf',
+        bom: false,
+        nodes: JSON.parse(pm.attrs.carveSourceLayout).nodes,
+    });
     assert.strictEqual(serializeToCarve(pm), source);
 
     // Editing the structured tree invalidates the fingerprint, so stale source
