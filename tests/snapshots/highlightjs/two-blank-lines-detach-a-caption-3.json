@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": "```lua"
+  },
+  {
+    "scope": null,
+    "text": "\nlocal n = 1\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```\n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Listing: a local"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

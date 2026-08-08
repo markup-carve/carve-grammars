@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> the cited line"
+  },
+  {
+    "scope": null,
+    "text": "\n\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Source: the cited work"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
