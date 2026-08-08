@@ -754,7 +754,7 @@ export function serializeToCarve(doc) {
         };
         const sameReferenceLink = (left, right) => {
             if (!left || !right) return false;
-            const keys = ['href', 'title', 'ref', 'rawRef'];
+            const keys = ['href', 'title', 'ref', 'rawRef', 'referenceDefinition'];
             return keys.every((key) => (left.attrs?.[key] ?? '') === (right.attrs?.[key] ?? ''));
         };
 
@@ -903,6 +903,7 @@ export function serializeToCarve(doc) {
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
                 if (link) {
+                    let replayedReferenceSource = false;
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
                     const ref = link.attrs?.ref;
                     const referenceContinuesNext = typeof ref === 'string' && ref !== ''
@@ -927,9 +928,14 @@ export function serializeToCarve(doc) {
                         if (!continuesPrevious) t = '[' + t;
                         if (!continuesNext) {
                             const rawRef = link.attrs?.rawRef || '';
-                            const collapsed = rawRef.endsWith('[]')
-                                || ref.toLowerCase() === t.trim().toLowerCase();
-                            t += ']' + (collapsed ? '[]' : '[' + ref + ']');
+                            if (!continuesPrevious && rawRef.startsWith(t + ']')) {
+                                t = rawRef;
+                                replayedReferenceSource = true;
+                            } else {
+                                const collapsed = rawRef.endsWith('[]')
+                                    || ref.toLowerCase() === t.trim().toLowerCase();
+                                t += ']' + (collapsed ? '[]' : '[' + ref + ']');
+                            }
                         }
                         // Only where there IS a destination. An UNRESOLVED
                         // reference carries an empty one, and writing
@@ -937,7 +943,8 @@ export function serializeToCarve(doc) {
                         // had - one that turns literal text into a link to the
                         // empty string on the next parse.
                         if (link.attrs.href && !referenceDefs.has(ref)) {
-                            referenceDefs.set(ref, link.attrs.href + title);
+                            referenceDefs.set(ref, link.attrs.referenceDefinition
+                                || '[' + ref + ']: ' + link.attrs.href + title);
                         }
                     } else {
                         t = '[' + t + '](' + link.attrs.href + title + ')';
@@ -948,8 +955,8 @@ export function serializeToCarve(doc) {
                     // classes with it.
                     // Attributes belong after the complete link, not between
                     // adjacent text runs that make up one marked label.
-                    if (!referenceContinuesNext) {
-                        t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'autolink']);
+                    if (!referenceContinuesNext && !replayedReferenceSource) {
+                        t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'referenceDefinition', 'autolink']);
                     }
                 }
                 if (carveSpan) {
@@ -996,7 +1003,9 @@ export function serializeToCarve(doc) {
                     // is emitted with the others at the end.
                     const collapsed = ref.toLowerCase() === alt.trim().toLowerCase();
                     result += '![' + alt + ']' + (collapsed ? '[]' : '[' + ref + ']') + imgAttrs;
-                    if (src && !referenceDefs.has(ref)) referenceDefs.set(ref, src + title);
+                    if (src && !referenceDefs.has(ref)) {
+                        referenceDefs.set(ref, '[' + ref + ']: ' + src + title);
+                    }
                 } else {
                     result += '![' + alt + '](' + src + title + ')' + imgAttrs;
                 }
@@ -1035,7 +1044,7 @@ export function serializeToCarve(doc) {
         result = ' ' + result.slice(LEADING_SPACE_SENTINEL.length);
     }
     if (referenceDefs.size > 0) {
-        const defs = [...referenceDefs].map(([label, target]) => '[' + label + ']: ' + target);
+        const defs = [...referenceDefs.values()];
         result += '\n\n' + defs.join('\n');
     }
     return result;

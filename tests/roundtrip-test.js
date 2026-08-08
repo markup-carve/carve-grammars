@@ -127,6 +127,16 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
 }
 
 {
+    // Definition attributes are merged into resolved links by the AST, while
+    // rawRef carries only attributes authored on this use. Keep both source
+    // locations distinct so neither attribute run is duplicated or reordered.
+    const source = '[Example][ex]{.internal #b}\n\n[ex]: /u {.external #a}\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.notStrictEqual(pm.content?.[0]?.type, 'carveUnsupported');
+    assert.deepStrictEqual(normalizeAst(parse(serializeToCarve(pm))), normalizeAst(parse(source)));
+}
+
+{
     const source = '```=html\n<div data-x="1">raw</div>\n```\n\nKept\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     const carve2 = serializeToCarve(pm);

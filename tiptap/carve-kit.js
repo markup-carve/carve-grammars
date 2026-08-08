@@ -413,6 +413,7 @@ export const CarveKit = Extension.create({
                             ...this.parent?.(),
                             ref: { default: null },
                             rawRef: { default: null },
+                            referenceDefinition: { default: null },
                             // An AUTOLINK is `<https://e.com>`; the same target
                             // written `[t](https://e.com)` is a different node
                             // in the AST, so the spelling has to survive as

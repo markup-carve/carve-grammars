@@ -209,6 +209,24 @@ function sourceFor(node, ctx) {
     return '';
 }
 
+function referenceDefinitionSource(ref, ctx) {
+    if (!ctx?.source || typeof ref !== 'string' || ref === '') return '';
+    const escaped = ref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const match = ctx.source.match(new RegExp(`^\\[${escaped}\\]:[^\\r\\n]*$`, 'm'));
+    const line = match?.[0] || '';
+    return /\{[^\r\n]*\}\s*$/.test(line) ? line : '';
+}
+
+function authoredReferenceAttrs(rawRef) {
+    if (typeof rawRef !== 'string' || rawRef === '') return null;
+    try {
+        const link = parse(rawRef).children?.[0]?.children?.find((child) => child.type === 'link');
+        return convertAttrs(link?.attrs);
+    } catch {
+        return null;
+    }
+}
+
 function convertBlocks(nodes, ctx, localizeLossy = false) {
     return nodes.map((node) => {
         try {
@@ -703,7 +721,15 @@ function convertInlineNode(node, marks, ctx) {
             // distinction 3a exists to keep (carve-grammars#101).
             if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
             if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
-            Object.assign(attrs, convertAttrs(node.attrs) || {});
+            const definitionSource = referenceDefinitionSource(node.ref, ctx);
+            if (definitionSource) attrs.referenceDefinition = definitionSource;
+            // A resolved reference carries the definition's attributes merged
+            // into every use. Only attributes present in rawRef were authored
+            // on this particular link; the definition line is preserved
+            // separately above, including attributes shadowed by the use.
+            Object.assign(attrs, definitionSource
+                ? (authoredReferenceAttrs(node.rawRef) || {})
+                : (convertAttrs(node.attrs) || {}));
             return descend(node, [...marks, { type: 'link', attrs }], ctx);
         }
 
