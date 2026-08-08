@@ -4,6 +4,67 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Changed
+- **A preservation-mode load is lossless, and a document that cannot be written
+  back exactly now arrives as one opaque block** (#171). `unsupported:
+  'preserve'` promised that a load/save pass keeps the document and only
+  enforced half of it: a construct with no rich mapping became a
+  `carveUnsupported` atom, but a construct that HAD one was trusted to write
+  back unchanged. Many do not. A list item's content column, a marker
+  lookalike, a table's filler cells and other source-sensitive shapes normalize
+  on the way out, so the editor handed back Carve that parses to a different
+  document than the one it loaded. Silent alteration is the worst outcome
+  available in this position, because nothing downstream can tell that it
+  happened - the same reasoning that made an invented `{.class}` worse than a
+  dropped one.
+
+  The loader now serializes the rich document it just built, reparses it, and
+  compares it against the AST it started from with positions, orders and the
+  other volatile fields normalized away. On any difference - or on a throw from
+  either step - it returns the whole source as a single `carveUnsupported`
+  atom, and `serializeToCarve` short-circuits that exact shape straight back to
+  its source instead of sending it through the block joiner and the edge
+  trimmer, which is what would corrupt precisely the whitespace-sensitive
+  documents the fallback exists for. All 281 corpus categories over 856 files
+  are load/save lossless now, with 148 still keeping structured or source-local
+  conversion.
+
+  **This changes what a lossy document looks like to a consumer.** Such a
+  document used to load as rich, editable nodes and write back subtly altered;
+  it now loads as one opaque block and writes back byte-for-byte. An
+  application built against the old behavior loses the editable tree for that
+  class of input and gains an exact one, which is the trade the mode's name
+  always claimed. Which documents are in the class is inspectable rather than a
+  surprise: `tests/lib/coverage.js` keeps the 133 structured-conversion reasons
+  as a fallback matrix, and the README states the contract. The default
+  `unsupported: 'throw'` mode is untouched.
+
+### Added
+- **`CarveHeading`, a tiptap heading node that keeps the attributes the author
+  wrote** (#170). `{#intro .lead lang=en}` on a heading survived as far as the
+  converter and no further: tiptap's stock heading models `level` and nothing
+  else, so an id was written onto a node whose schema had no slot for it, and a
+  class or any key/value pair sent the whole heading to the
+  `heading-with-attrs` fallback. An authored attribute run is the only way
+  Carve gives a heading an id that can be linked to, so losing it is not a
+  cosmetic loss. The new extension declares `id`, `class` and `keyValues` as
+  real schema attributes, and it promotes the shared corpus categories for
+  heading attributes, including
+  `only-the-id-hoists-to-the-section-wrapper`.
+
+  `CarveKit` registers it in StarterKit's place, so a consumer configuring the
+  kit gets it without asking. `heading: false` opts out and `heading: {...}`
+  configures it, matching every other node the kit swaps. A consumer that
+  registers its own heading extension alongside `CarveKit` must now pass
+  `heading: false`, since tiptap rejects two extensions under one name.
+
+  The `id` attribute deliberately does NOT parse from HTML. Rendered Carve puts
+  a GENERATED id on a heading inside a section wrapper, and HTML does not record
+  whether an id was authored, so importing one would write `{#slug}` into a
+  document that never carried it - an invented attribute, and worse than a
+  dropped one for the reason above. Source conversion sets the attribute
+  directly, and it is the only path that knows the answer.
+
 ### Fixed
 - **An inline attribute block no longer scopes across a newline** (#164). A block
   glued to an inline construct pads and separates with `opt_ws` - "spaces/tabs
