@@ -124,13 +124,20 @@ export function astToProseMirror(ast, options = {}) {
     if (!ast || ast.type !== 'document') {
         unsupported(ast?.type ?? 'undefined', ast, ctx);
     }
+    const content = [];
     if (ast.frontmatter) {
         if (ctx.unsupported === 'preserve' && ctx.source) {
-            return { type: 'doc', content: [{ type: 'carveUnsupported', attrs: { carveSource: ctx.source } }] };
+            const frontmatterSource = sourceFor(ast.frontmatter, ctx);
+            if (!frontmatterSource) return opaqueDocument(ctx.source);
+            // Frontmatter has no rich editor model yet, but its own position is
+            // exact. Keep only that prefix opaque so the document body remains
+            // structured and editable.
+            content.push({ type: 'carveUnsupported', attrs: { carveSource: frontmatterSource } });
+        } else {
+            unsupported('frontmatter', ast, ctx);
         }
-        unsupported('frontmatter', ast, ctx);
     }
-    const content = convertBlocks(ast.children || [], ctx);
+    content.push(...convertBlocks(ast.children || [], ctx));
     // FOOTNOTE DEFINITIONS live on `ast.footnoteDefs`, not in `children`, so a
     // walk of the body alone never sees them. The serializer has always had a
     // `carveFootnoteDefinition` case and `CarveKit` has always registered the

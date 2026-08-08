@@ -41,6 +41,7 @@ function roundTrip(file) {
         return { ok: false, reason: `parse failed: ${e.message}` };
     }
     let carve2;
+    let wholeDocumentFallback = false;
     try {
         // Exercise the public, source-aware loader. Unsupported constructs are
         // represented by CarveUnsupported atoms carrying their exact source,
@@ -49,6 +50,9 @@ function roundTrip(file) {
         // discarded that source and made the documented preservation mode
         // unreachable from the corpus sweep.
         const pm = carveToProseMirror(file.source, { unsupported: 'preserve' });
+        wholeDocumentFallback = pm.content?.length === 1
+            && pm.content[0]?.type === 'carveUnsupported'
+            && pm.content[0]?.attrs?.carveSource === file.source;
         carve2 = serializeToCarve(pm);
     } catch (e) {
         return { ok: false, reason: e.nodeType ? `unsupported ${e.nodeType}` : e.message };
@@ -59,12 +63,13 @@ function roundTrip(file) {
     } catch {
         return { ok: false, reason: 'reparse AST differs (not idempotent)' };
     }
-    return { ok: true };
+    return { ok: true, wholeDocumentFallback };
 }
 
 let failures = 0;
 let coveredFilesChecked = 0;
 const skipShouldPromote = [];
+const wholeDocumentFallbackCategories = new Set();
 
 for (const category of listCategories()) {
     const files = filesByCategory.get(category) || [];
@@ -75,6 +80,7 @@ for (const category of listCategories()) {
         for (const f of files) {
             const r = roundTrip(f);
             coveredFilesChecked++;
+            if (r.wholeDocumentFallback) wholeDocumentFallbackCategories.add(category);
             if (!r.ok) bad.push(`${f.name}: ${r.reason}`);
         }
         if (bad.length) {
@@ -99,7 +105,7 @@ console.log('');
 console.log(`  covered files checked: ${coveredFilesChecked}`);
 const coveredCategoryCount = listCategories().filter((category) => isCovered('tiptap', category)).length;
 console.log(`  covered categories: ${coveredCategoryCount}, skipped: ${COVERAGE.tiptap.skip.size}`);
-console.log(`  structured/source-local: ${COVERAGE.tiptap.covered.size}, whole-document fallback: ${COVERAGE.tiptap.fallback.size}`);
+console.log(`  structured/source-local: ${coveredCategoryCount - wholeDocumentFallbackCategories.size}, whole-document fallback: ${wholeDocumentFallbackCategories.size}`);
 
 if (skipShouldPromote.length) {
     console.log('\nThe following SKIPPED categories now round-trip cleanly for every file.');
@@ -147,6 +153,20 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.deepStrictEqual(pm.content.map((node) => node.type), [
         'heading', 'carveUnsupported', 'paragraph',
+    ]);
+    assert.deepStrictEqual(
+        normalizeAst(parse(serializeToCarve(pm))),
+        normalizeAst(parse(source)),
+    );
+}
+
+{
+    // Frontmatter is source-local: metadata remains opaque, while body blocks
+    // stay editable instead of the complete document becoming one atom.
+    const source = '--- yaml\ntitle: T\n---\n\n# Editable\n';
+    const pm = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.deepStrictEqual(pm.content.map((node) => node.type), [
+        'carveUnsupported', 'heading',
     ]);
     assert.deepStrictEqual(
         normalizeAst(parse(serializeToCarve(pm))),
