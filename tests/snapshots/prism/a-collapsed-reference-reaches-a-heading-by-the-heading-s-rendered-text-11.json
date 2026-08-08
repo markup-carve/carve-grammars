@@ -1,15 +1,27 @@
 [
   {
+    "type": "reference-definition>constant",
+    "text": "[*bold* heading]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /x"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
     "type": "title>punctuation",
     "text": "#"
   },
   {
     "type": "title",
-    "text": " an "
+    "text": " "
   },
   {
-    "type": "title>italic",
-    "text": "/em/"
+    "type": "title>bold",
+    "text": "*bold*"
   },
   {
     "type": "title",
@@ -25,7 +37,7 @@
   },
   {
     "type": "url",
-    "text": "an /em/ heading"
+    "text": "*bold* heading"
   },
   {
     "type": "url>punctuation",

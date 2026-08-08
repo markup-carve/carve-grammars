@@ -746,6 +746,18 @@ export function serializeToCarve(doc) {
         if (!content) return '';
         let result = '';
 
+        const referenceLinkAt = (index) => {
+            const candidate = content[index];
+            if (candidate?.type !== 'text') return null;
+            const mark = (candidate.marks || []).find((item) => item.type === 'link');
+            return typeof mark?.attrs?.ref === 'string' && mark.attrs.ref !== '' ? mark : null;
+        };
+        const sameReferenceLink = (left, right) => {
+            if (!left || !right) return false;
+            const keys = ['href', 'title', 'ref', 'rawRef'];
+            return keys.every((key) => (left.attrs?.[key] ?? '') === (right.attrs?.[key] ?? ''));
+        };
+
         content.forEach((node, idx) => {
             if (node.type === 'carveUnsupportedInline') {
                 result += node.attrs?.carveSource || '';
@@ -893,17 +905,32 @@ export function serializeToCarve(doc) {
                 if (link) {
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
                     const ref = link.attrs?.ref;
+                    const referenceContinuesNext = typeof ref === 'string' && ref !== ''
+                        && sameReferenceLink(link, referenceLinkAt(idx + 1));
                     if (writeAutolink) {
                         // Already written in its own form above, brackets and
                         // all; only the attribute run is still owed.
                     } else if (typeof ref === 'string' && ref !== '') {
+                        const continuesPrevious = sameReferenceLink(link, referenceLinkAt(idx - 1));
+                        const continuesNext = referenceContinuesNext;
                         // COLLAPSED (`[text][]`) where the label is the link's
                         // own text, FULL (`[text][label]`) otherwise - the two
                         // forms the language has. `rawRef` records which one was
                         // written; the text may have been edited since, so the
                         // label is compared rather than the raw string replayed.
-                        const collapsed = ref.toLowerCase() === t.trim().toLowerCase();
-                        t = '[' + t + ']' + (collapsed ? '[]' : '[' + ref + ']');
+                        //
+                        // ProseMirror splits one link into adjacent text nodes
+                        // whenever an inner mark starts or ends. Open the label
+                        // on the first run and close it on the last; wrapping
+                        // every run independently turned `[*bold* heading][]`
+                        // into two unrelated references.
+                        if (!continuesPrevious) t = '[' + t;
+                        if (!continuesNext) {
+                            const rawRef = link.attrs?.rawRef || '';
+                            const collapsed = rawRef.endsWith('[]')
+                                || ref.toLowerCase() === t.trim().toLowerCase();
+                            t += ']' + (collapsed ? '[]' : '[' + ref + ']');
+                        }
                         // Only where there IS a destination. An UNRESOLVED
                         // reference carries an empty one, and writing
                         // `[label]: ` back invents a definition the author never
@@ -919,7 +946,11 @@ export function serializeToCarve(doc) {
                     // as the destination or the reference label - and was
                     // dropped in silence before, taking the author's id and
                     // classes with it.
-                    t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'autolink']);
+                    // Attributes belong after the complete link, not between
+                    // adjacent text runs that make up one marked label.
+                    if (!referenceContinuesNext) {
+                        t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'autolink']);
+                    }
                 }
                 if (carveSpan) {
                     // A span mark has to write SOMETHING after `[text]`: bare

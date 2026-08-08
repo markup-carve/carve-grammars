@@ -5,15 +5,7 @@
   },
   {
     "type": "title",
-    "text": " an "
-  },
-  {
-    "type": "title>italic",
-    "text": "/em/"
-  },
-  {
-    "type": "title",
-    "text": " heading"
+    "text": " a\\_b heading"
   },
   {
     "type": "text",
@@ -25,7 +17,7 @@
   },
   {
     "type": "url",
-    "text": "an /em/ heading"
+    "text": "a\\_b heading"
   },
   {
     "type": "url>punctuation",

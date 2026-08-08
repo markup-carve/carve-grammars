@@ -139,6 +139,18 @@ check('escapes a closing bracket inside a link label',
     doc(para({ type: 'text', text: 'a]b', marks: [{ type: 'link', attrs: { href: 'http://x' } }] })),
     '[a\\]b](http://x)');
 
+check('a reference label split by an inner mark stays one collapsed link',
+    doc(para(
+        { type: 'text', text: 'bold', marks: [
+            { type: 'link', attrs: { href: '/x', ref: '*bold* heading', rawRef: '[*bold* heading][]' } },
+            { type: 'bold' },
+        ] },
+        { type: 'text', text: ' heading', marks: [
+            { type: 'link', attrs: { href: '/x', ref: '*bold* heading', rawRef: '[*bold* heading][]' } },
+        ] },
+    )),
+    '[*bold* heading][]\n\n[*bold* heading]: /x');
+
 check('escapes edge delimiters that would pair across an inline mark boundary',
     doc(para(
         text('*'),
