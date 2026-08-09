@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "Text\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure 1: moon"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": " [r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

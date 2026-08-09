@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> Text"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> ^ Figure 1: moon"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
