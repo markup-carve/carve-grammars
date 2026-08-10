@@ -392,7 +392,7 @@ export function serializeToCarve(doc) {
                 const label = node.attrs?.label != null ? String(node.attrs.label) : null;
                 if (label !== null && label !== '' && !label.includes(']') && !label.includes('\n')) {
                     opener += ' [' + label + ']';
-                } else if (label !== null) {
+                } else if (label !== null && label !== '') {
                     const l = label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                     tabAttrs.push('label="' + l + '"');
                 }

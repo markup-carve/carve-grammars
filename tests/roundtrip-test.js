@@ -220,4 +220,18 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
     );
 }
 
+{
+    // A malformed fence boundary can leave an empty inline code leaf in the
+    // engine AST. ProseMirror rejects empty text nodes, so the bridge must omit
+    // that zero-width leaf instead of handing Tiptap invalid JSON.
+    const pm = carveToProseMirror('- ```\n x\n ```\n', { unsupported: 'preserve' });
+    const emptyText = [];
+    const visit = (node, path = '') => {
+        if (node?.type === 'text' && node.text === '') emptyText.push(path);
+        (node?.content || []).forEach((child, index) => visit(child, `${path}/content/${index}`));
+    };
+    visit(pm);
+    assert.deepStrictEqual(emptyText, []);
+}
+
 console.log('\nround-trip OK');

@@ -66,6 +66,10 @@ All notable changes to `carve-grammars` are documented here.
   directly, and it is the only path that knows the answer.
 
 ### Fixed
+- Tiptap documents no longer receive invalid empty text nodes from zero-width
+  parser leaves, and an absent tab label that the editor schema materializes as
+  `label: ""` no longer writes an authored `{label=""}` attribute.
+
 - **An inline attribute block no longer scopes across a newline** (#164). A block
   glued to an inline construct pads and separates with `opt_ws` - "spaces/tabs
   only, no line breaks" (markup-carve/carve#897) - and only a standalone
