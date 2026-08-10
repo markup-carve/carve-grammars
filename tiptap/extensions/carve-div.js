@@ -72,6 +72,9 @@ export const CarveDiv = Node.create({
 
     addAttributes() {
         return {
+            id: { default: null },
+            keyValues: { default: null },
+            label: { default: null },
             class: {
                 default: null,
                 parseHTML: element => element.getAttribute('data-carve-class')

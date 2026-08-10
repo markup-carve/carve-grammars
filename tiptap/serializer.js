@@ -223,6 +223,8 @@ export function serializeToCarve(doc) {
             case 'bulletList':
             case 'orderedList':
             case 'taskList':
+                const listAttrs = serializeAttributes(node.attrs, ['start', 'type', 'olType', 'delim', 'bareMarker']);
+                if (listAttrs) output += listAttrs + '\n';
                 // A list is "loose" when an item holds more than one
                 // paragraph-level block. A nested sub-list does NOT count - an
                 // item of `paragraph + sublist` is still tight, so don't let it
@@ -280,6 +282,8 @@ export function serializeToCarve(doc) {
                 break;
 
             case 'blockquote':
+                const quoteAttrs = serializeAttributes(node.attrs);
+                if (quoteAttrs) output += quoteAttrs + '\n';
                 // Serialize each child block with proper blank line separation
                 (node.content || []).forEach((child, i) => {
                     const childText = serializeNodeToString(child);
@@ -311,6 +315,8 @@ export function serializeToCarve(doc) {
             }
 
             case 'horizontalRule':
+                const ruleAttrs = serializeAttributes(node.attrs);
+                if (ruleAttrs) output += ruleAttrs + '\n';
                 output += '---\n';
                 break;
 
@@ -343,6 +349,7 @@ export function serializeToCarve(doc) {
                 // text survives losslessly. An empty title is meaningful, and
                 // a bare ::: cannot carry a title.
                 const rawDivTitle = node.attrs?.title;
+                const rawDivLabel = node.attrs?.label;
                 let divTitle = '';
                 if (divClass && rawDivTitle != null) {
                     const t = String(rawDivTitle);
@@ -353,7 +360,10 @@ export function serializeToCarve(doc) {
                     }
                 }
                 const divFence = ':'.repeat(carveDivFenceLength(fenceDepth));
-                output += divFence + (divClass ? ' ' + divClass : '') + divTitle + '\n';
+                const divLabel = rawDivLabel != null && rawDivLabel !== ''
+                    ? ' [' + String(rawDivLabel).replace(/]/g, '\\]') + ']'
+                    : '';
+                output += divFence + (divClass ? ' ' + divClass : '') + divTitle + divLabel + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth + 1);
@@ -628,9 +638,13 @@ export function serializeToCarve(doc) {
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
                 const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveSpanMarker']);
-                line += '|' + (c.header ? '=' : '') + align + ' ' + cellAttrs + c.content + ' ';
+                // A cell attribute run sits immediately after `|`, before the
+                // header/alignment marker: `|{.hot}= value`. Putting it after
+                // `=` makes the braces literal cell text.
+                line += '|' + cellAttrs + (c.header ? '=' : '') + align + ' ' + c.content + ' ';
             }
-            output += line + '|\n';
+            const rowAttrs = serializeAttributes(row.attrs, ['textAlign']);
+            output += line + '|' + rowAttrs + '\n';
         });
     }
 
@@ -793,6 +807,14 @@ export function serializeToCarve(doc) {
             const mark = (candidate.marks || []).find((item) => item.type === 'link');
             return typeof mark?.attrs?.ref === 'string' && mark.attrs.ref !== '' ? mark : null;
         };
+        const markAt = (index, type) => {
+            const candidate = content[index];
+            return candidate?.type === 'text'
+                ? (candidate.marks || []).find((item) => item.type === type) || null
+                : null;
+        };
+        const sameMark = (left, right) => Boolean(left && right
+            && pmFingerprint(left.attrs || {}) === pmFingerprint(right.attrs || {}));
         const sameReferenceLink = (left, right) => {
             if (!left || !right) return false;
             const keys = ['href', 'title', 'ref', 'rawRef', 'referenceDefinition'];
@@ -801,6 +823,10 @@ export function serializeToCarve(doc) {
 
         content.forEach((node, idx) => {
             if (node.type === 'carveCommentInline') {
+                // Inline comments require a separating space. Without it,
+                // mounting `text %% note` and serializing produced
+                // `text%% note`, which reparses as visible paragraph text.
+                if (result && !/\s$/.test(result)) result += ' ';
                 result += `%%${node.attrs?.content ? ` ${node.attrs.content}` : ''}`;
                 return;
             }
@@ -992,7 +1018,13 @@ export function serializeToCarve(doc) {
                                 || '[' + ref + ']: ' + link.attrs.href + title);
                         }
                     } else {
-                        t = '[' + t + '](' + link.attrs.href + title + ')';
+                        // ProseMirror splits one marked range whenever an inner
+                        // mark begins or ends. Keep those pieces inside one link
+                        // instead of emitting adjacent `<a>` elements.
+                        const continuesPrevious = sameMark(link, markAt(idx - 1, 'link'));
+                        const continuesNext = sameMark(link, markAt(idx + 1, 'link'));
+                        if (!continuesPrevious) t = '[' + t;
+                        if (!continuesNext) t += '](' + link.attrs.href + title + ')';
                     }
                     // An attribute RUN on the link, which is not the same thing
                     // as the destination or the reference label - and was
@@ -1000,7 +1032,8 @@ export function serializeToCarve(doc) {
                     // classes with it.
                     // Attributes belong after the complete link, not between
                     // adjacent text runs that make up one marked label.
-                    if (!referenceContinuesNext && !replayedReferenceSource) {
+                    const linkContinuesNext = sameMark(link, markAt(idx + 1, 'link'));
+                    if (!referenceContinuesNext && !linkContinuesNext && !replayedReferenceSource) {
                         t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'referenceDefinition', 'autolink']);
                     }
                 }
@@ -1015,17 +1048,17 @@ export function serializeToCarve(doc) {
                     // dropped attribute, an invented one cannot be recognized as
                     // invented by anything downstream.
                     //
-                    // A `class` of `custom` still writes `{.custom}` here.
-                    // `custom` is CarveSpan's schema DEFAULT, so at this point
-                    // an editor-created span and an authored `[x]{.custom}` are
-                    // the same object - the serializer cannot tell them apart,
-                    // and only a schema change (a null default) could. Writing
-                    // it keeps the authored spelling; the placeholder leaking
-                    // out of an editor is the residue, and is not this branch's
-                    // to decide.
-                    const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)
-                        || (carveSpan.attrs?.class ? '{.' + carveSpan.attrs.class + '}' : '{}');
-                    t = '[' + t + ']' + spanAttrs;
+                    // An explicit `custom` class still writes `{.custom}`. The
+                    // schema default is null, so an empty authored span remains
+                    // distinguishable from that real class after mounting.
+                    const continuesPrevious = sameMark(carveSpan, markAt(idx - 1, 'carveSpan'));
+                    const continuesNext = sameMark(carveSpan, markAt(idx + 1, 'carveSpan'));
+                    if (!continuesPrevious) t = '[' + t;
+                    if (!continuesNext) {
+                        const spanAttrs = serializeAttributes(carveSpan.attrs, [], true)
+                            || (carveSpan.attrs?.class ? '{.' + carveSpan.attrs.class + '}' : '{}');
+                        t += ']' + spanAttrs;
+                    }
                 }
                 // `[text]{abbr="…"}` is carve/djot-php's SemanticSpanExtension
                 // syntax: with that extension enabled the `abbr` attribute is
@@ -1059,8 +1092,12 @@ export function serializeToCarve(doc) {
             } else if (node.type === 'carveTag') {
                 result += '#' + (node.attrs?.id || '');
             } else if (node.type === 'carveFootnote') {
-                const label = node.attrs?.label || 'note';
-                result += '[^' + label + ']';
+                if (node.attrs?.carveSource) {
+                    result += node.attrs.carveSource;
+                } else {
+                    const label = node.attrs?.label || 'note';
+                    result += '[^' + label + ']';
+                }
             } else if (node.type === 'carveMath') {
                 // Math source is raw; widen the backtick fence past any internal
                 // run and pad if it touches an edge. Inline $`x`, display $$`x`

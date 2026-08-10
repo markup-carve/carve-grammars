@@ -396,8 +396,10 @@ function convertBlock(node, ctx) {
                     return item;
                 }),
             };
+            const listAttrs = convertAttrs(node.attrs);
+            if (listAttrs) listNode.attrs = listAttrs;
             if (node.ordered) {
-                listNode.attrs = { start: node.start || 1 };
+                listNode.attrs = { ...(listNode.attrs || {}), start: node.start || 1 };
                 // The MARKER STYLE: `1.` / `1)` / `a.` / `iv.` / the bare `.`.
                 // Dropping it rewrote every alpha and roman list as `1.`.
                 if (node.olType) listNode.attrs.olType = node.olType;
@@ -440,7 +442,11 @@ function convertBlock(node, ctx) {
                 && !node.attrs.id && !Object.keys(node.attrs.keyValues || {}).length) {
                 return { type: 'carveLineBlock', attrs: { mode: '\\' }, content: convertBlocks(node.children || [], ctx) };
             }
-            return { type: 'carveDiv', attrs: convertDivAttrs(node), content: convertBlocks(node.children || [], ctx) };
+            return {
+                type: 'carveDiv',
+                attrs: { ...convertDivAttrs(node), ...(node.label != null ? { label: node.label } : {}) },
+                content: convertBlocks(node.children || [], ctx),
+            };
 
         case 'line-block':
         case 'line_block':
@@ -529,6 +535,7 @@ function convertAdmonition(node, ctx) {
     const attrs = { class: node.kind || '' };
     const title = inlinePlainText(node.title || []);
     if (title !== '') attrs.title = title;
+    if (node.label != null) attrs.label = node.label;
     return { type: 'carveDiv', attrs, content: convertBlocks(node.children || [], ctx) };
 }
 
@@ -752,9 +759,13 @@ function convertInlineNode(node, marks, ctx) {
         // published carve that still emits the old name, so accepting every
         // form keeps either release order safe. An inline footnote has no
         // label of its own, which the fallback already covers.
+        case 'inline_footnote':
+            // Inline notes carry arbitrary marked inline content, while the
+            // editor presents footnotes as an atom. Preserve that atom's exact
+            // local spelling rather than degrading it into a labelled ref.
+            return [{ type: 'carveFootnote', attrs: { carveSource: sourceFor(node, ctx) } }];
         case 'footnote':
         case 'footnote_ref':
-        case 'inline_footnote':
             return [{ type: 'carveFootnote', attrs: { label: node.id || 'note' } }];
 
         case 'mention':

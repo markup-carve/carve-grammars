@@ -66,6 +66,15 @@ All notable changes to `carve-grammars` are documented here.
   directly, and it is the only path that knows the answer.
 
 ### Fixed
+- **Mounting the structured document in Tiptap no longer loses common authored
+  metadata.** The real Tiptap 2 and 3 lifecycle now retains link titles, image
+  attributes and reference metadata, paragraph/list/quote/rule attributes,
+  span key/value attributes, div ids/key-values/labels, table row/cell
+  attributes, inline-footnote source, and the required separator before an
+  inline comment. Adjacent ProseMirror runs carrying one link or span serialize
+  back as one construct. The mounted-corpus render-equivalence ratchet improves
+  from 671/892 to 729/892.
+
 - Tiptap documents no longer receive invalid empty text nodes from zero-width
   parser leaves, and an absent tab label that the editor schema materializes as
   `label: ""` no longer writes an authored `{label=""}` attribute.

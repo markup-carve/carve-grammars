@@ -28,6 +28,7 @@ export const CarveFootnote = Node.create({
 
     addAttributes() {
         return {
+            carveSource: { default: null, rendered: false },
             label: {
                 default: 'note',
                 parseHTML: element => element.getAttribute('data-footnote-label')
