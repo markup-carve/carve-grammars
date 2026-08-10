@@ -562,6 +562,12 @@ check('a tab with no label emits a bare ::: tab',
     ] }),
     '::: tabs\n:::: tab\nX.\n::::\n:::');
 
+check('a tab whose editor schema supplies an empty label emits a bare ::: tab',
+    doc({ type: 'carveTabSet', content: [
+        { type: 'carveTab', attrs: { label: '' }, content: [para(text('X.'))] },
+    ] }),
+    '::: tabs\n:::: tab\nX.\n::::\n:::');
+
 // --- list marker metadata (markup-carve/carve-grammars#116) -------------------
 // Everything below was modeled in the AST and dropped by this bridge, so a
 // round trip through an editor silently rewrote the author's document.

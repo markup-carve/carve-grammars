@@ -698,7 +698,9 @@ function convertInlineNode(node, marks, ctx) {
         // round trip through an escape could not even be measured - and the
         // serializer emits escapes (carve-grammars#145).
         case 'escaped_text':
-            return [{ type: 'text', text: node.value || '', ...(marks.length ? { marks } : {}) }];
+            return node.value
+                ? [{ type: 'text', text: node.value, ...(marks.length ? { marks } : {}) }]
+                : [];
 
         case 'soft-break':
         case 'soft_break':
@@ -718,7 +720,9 @@ function convertInlineNode(node, marks, ctx) {
             return [{ type: 'hardBreak' }];
 
         case 'code':
-            return [{ type: 'text', text: node.value || '', marks: [...marks, { type: 'code' }] }];
+            return node.value
+                ? [{ type: 'text', text: node.value, marks: [...marks, { type: 'code' }] }]
+                : [];
 
         case 'image': {
             const attrs = { alt: node.alt || '', src: node.src || '' };
