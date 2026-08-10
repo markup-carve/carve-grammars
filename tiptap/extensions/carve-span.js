@@ -23,14 +23,17 @@ export const CarveSpan = Mark.create({
     addAttributes() {
         return {
             class: {
-                default: 'custom',
+                // `custom` is UI chrome, not authored Carve. A schema default
+                // is materialized by ProseMirror even when the AST supplied no
+                // class, turning `[x]{}` into `[x]{.custom}` on first mount.
+                default: null,
                 parseHTML: element => {
                     // First check data-carve-class, then fall back to class attribute
                     const carveClass = element.getAttribute('data-carve-class');
                     if (carveClass) return carveClass;
                     // Extract class from className, filtering out carve-span
                     const className = element.className || '';
-                    return className.replace('carve-span', '').trim() || 'custom';
+                    return className.replace('carve-span', '').trim() || null;
                 },
                 renderHTML: attributes => {
                     return { 'data-carve-class': attributes.class };
@@ -43,6 +46,17 @@ export const CarveSpan = Mark.create({
                     if (!attributes.id) return {};
                     return { id: attributes.id };
                 },
+            },
+            keyValues: {
+                default: null,
+                parseHTML: element => {
+                    const raw = element.getAttribute('data-carve-key-values');
+                    if (!raw) return null;
+                    try { return JSON.parse(raw); } catch { return null; }
+                },
+                renderHTML: attributes => attributes.keyValues
+                    ? { 'data-carve-key-values': JSON.stringify(attributes.keyValues) }
+                    : {},
             },
         };
     },
@@ -76,10 +90,10 @@ export const CarveSpan = Mark.create({
     },
 
     renderHTML({ HTMLAttributes }) {
-        const className = HTMLAttributes['data-carve-class'] || 'custom';
+        const className = HTMLAttributes['data-carve-class'] || '';
         return ['span', mergeAttributes(HTMLAttributes, {
-            class: `carve-span ${className}`,
-            'data-carve-class': className,
+            class: `carve-span${className ? ` ${className}` : ''}`,
+            ...(className ? { 'data-carve-class': className } : {}),
         }), 0];
     },
 

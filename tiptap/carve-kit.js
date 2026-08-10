@@ -137,6 +137,24 @@ export const CarveKit = Extension.create({
     addExtensions() {
         const extensions = [];
 
+        // Attributes on ordinary block nodes are part of the Carve document,
+        // but the stock Tiptap schema does not declare them. ProseMirror drops
+        // undeclared fields while mounting JSON, so retain the common Carve
+        // attribute shape globally for nodes whose serializer supports it.
+        extensions.push(Extension.create({
+            name: 'carveBlockAttributes',
+            addGlobalAttributes() {
+                return [{
+                    types: ['paragraph', 'blockquote', 'bulletList', 'orderedList', 'taskList', 'horizontalRule'],
+                    attributes: {
+                        id: { default: null },
+                        class: { default: null },
+                        keyValues: { default: null },
+                    },
+                }];
+            },
+        }));
+
         // StarterKit provides: Document, Paragraph, Text, Bold, Italic, Code,
         // CodeBlock, Blockquote, BulletList, OrderedList, ListItem, Heading,
         // HardBreak, HorizontalRule, Dropcursor, Gapcursor, History
@@ -413,6 +431,7 @@ export const CarveKit = Extension.create({
                     addAttributes() {
                         return {
                             ...this.parent?.(),
+                            title: { default: null },
                             ref: { default: null },
                             rawRef: { default: null },
                             referenceDefinition: { default: null },
@@ -452,7 +471,18 @@ export const CarveKit = Extension.create({
         // paragraph (Carve images are inline); a block-level image just becomes a
         // paragraph containing the inline image.
         if (this.options.image !== false) {
-            extensions.push(Image.configure({ inline: true, ...(this.options.image ?? {}) }));
+            extensions.push(Image.extend({
+                addAttributes() {
+                    return {
+                        ...this.parent?.(),
+                        ref: { default: null },
+                        rawRef: { default: null },
+                        id: { default: null },
+                        class: { default: null },
+                        keyValues: { default: null },
+                    };
+                },
+            }).configure({ inline: true, ...(this.options.image ?? {}) }));
         }
 
         // Table extensions
