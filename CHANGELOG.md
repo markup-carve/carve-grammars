@@ -6,6 +6,11 @@ All notable changes to `carve-grammars` are documented here.
 
 ## 0.1.3 - 2026-08-10
 
+### Fixed
+- Tiptap's editor-shaped footnote reference and definition HTML now outranks
+  the generic Superscript and ListItem parsers, so a getHTML/setContent cycle
+  keeps them as footnotes instead of superscript text and an ordinary list.
+
 ### Changed
 - **A preservation-mode load is lossless, and a document that cannot be written
   back exactly now arrives as one opaque block** (#171). `unsupported:

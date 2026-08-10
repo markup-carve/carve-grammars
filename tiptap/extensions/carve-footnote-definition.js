@@ -44,8 +44,10 @@ export const CarveFootnoteDefinition = Node.create({
 
     parseHTML() {
         return [
-            { tag: 'li[data-footnote-label]' },
-            { tag: 'section.carve-footnotes > ol > li' },
+            // These are also list items, so they must beat StarterKit's
+            // ListItem rule instead of tying it at the default priority.
+            { tag: 'li[data-footnote-label]', priority: 60 },
+            { tag: 'section.carve-footnotes > ol > li', priority: 60 },
             // carve-php / carve-js render the footnote section as
             // <section role="doc-endnotes"><hr><ol><li id="fnN"><p>body
             // <a role="doc-backlink">↩</a></p></li></ol></section>. Take each li

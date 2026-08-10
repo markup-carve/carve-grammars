@@ -45,8 +45,11 @@ export const CarveFootnote = Node.create({
 
     parseHTML() {
         return [
-            { tag: 'sup.carve-footnote' },
-            { tag: 'span.carve-footnote-ref' },
+            // Both selectors overlap extensions registered by CarveKit:
+            // Superscript claims every <sup>, while other inline extensions may
+            // claim a generic <span>. Resolve the Carve-specific shape first.
+            { tag: 'sup.carve-footnote', priority: 60 },
+            { tag: 'span.carve-footnote-ref', priority: 60 },
             // carve-php / carve-js render the reference as
             // <a id="fnrefN" role="doc-noteref"><sup>N</sup></a>. Beat Link to it.
             { tag: 'a[role="doc-noteref"]', priority: 60 },
