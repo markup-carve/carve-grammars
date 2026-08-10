@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+## 0.1.3 - 2026-08-10
+
 ### Changed
 - **A preservation-mode load is lossless, and a document that cannot be written
   back exactly now arrives as one opaque block** (#171). `unsupported:

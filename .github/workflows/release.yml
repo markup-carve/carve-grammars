@@ -16,6 +16,19 @@ jobs:
         with:
           submodules: recursive # spec corpus submodule; npm test needs it
 
+      - name: Verify version and changelog match the tag
+        run: |
+          VER_EXPECT="${GITHUB_REF_NAME#v}"
+          VER="$(node -p "require('./package.json').version")"
+          if [ "$VER_EXPECT" != "$VER" ]; then
+            echo "::error::Release tag ${GITHUB_REF_NAME} does not match package.json version $VER."
+            exit 1
+          fi
+          if ! grep -qE "^## \[?${VER_EXPECT//./\\.}\]?" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section for $VER_EXPECT."
+            exit 1
+          fi
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
