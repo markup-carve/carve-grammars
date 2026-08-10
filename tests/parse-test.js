@@ -151,6 +151,14 @@ check('two footnotes round-trip',
     + '</ol></section>',
     'A[^1] B[^2]\n\n[^1]: first\n\n[^2]: second');
 
+// The editor extension's own HTML uses class/data hooks rather than the ARIA
+// roles emitted by carve-js and carve-php. These selectors overlap Superscript
+// and ListItem respectively, so their parse priorities are part of the bridge.
+check('editor-shaped footnote hooks beat superscript and list item',
+    '<p>Text<sup class="carve-footnote" data-footnote-label="f">[^f]</sup>.</p>'
+    + '<li data-footnote-label="f"><p>Note body.</p></li>',
+    'Text[^f].\n\n[^f]: Note body.');
+
 // The marker STYLE arrives as `<ol type>` on the HTML path, which is a different
 // attribute from the one the Carve AST carries.
 check('an alphabetic ordered list keeps its style through the editor',
