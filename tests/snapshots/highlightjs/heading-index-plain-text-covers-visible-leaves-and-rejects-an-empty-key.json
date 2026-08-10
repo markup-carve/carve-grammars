@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "section",
+    "text": "# a <https://e.com> b"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[a <https://e.com> b][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
