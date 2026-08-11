@@ -4,6 +4,40 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+## 0.1.4 - 2026-08-11
+
+### Added
+
+- **A framework-independent `<carve-editor>` Web Component** is available from
+  `@markup-carve/carve-grammars/editor` (#209). Consumers interact with a
+  string `value` and ordinary bubbling, composed `input` events while Tiptap
+  remains an implementation detail. The element loads through the shared AST
+  bridge in `unsupported: 'preserve'` mode, so authored footnote labels and
+  constructs without a rich editor representation survive load/save instead
+  of passing through HTML or disappearing.
+
+  Declarative initial content, programmatic updates, `readonly`, native focus
+  options, disconnect/reconnect cleanup and the
+  `carve-editor::part(editor)` styling hook are included. Registration is
+  explicit and idempotent through `defineCarveEditor()`, and importing the
+  module itself is safe in a DOM-less environment.
+
+- **First-class TypeScript declarations for the Tiptap package** (#208). The
+  root and `/tiptap` entry points now type `CarveKit`, the public extensions,
+  AST loading, serialization and `UnsupportedNodeError`. The `/editor` entry
+  point types the custom element, its `input` detail and registration helper.
+  A downstream-consumer compile is part of `npm test`, so missing or stale
+  declarations fail CI rather than reaching a published package.
+
+### Verification
+
+- The complete grammar, serializer, AST/editor round-trip and 892-document
+  corpus suites pass on Node.js 18, 20 and 22. A separate full-suite job keeps
+  the advertised Tiptap 2 support tested while the default suite runs against
+  Tiptap 3.
+- Package dry runs assert that the JavaScript and declaration files for the
+  typed Tiptap and Web Component entry points are included in the tarball.
+
 ## 0.1.3 - 2026-08-10
 
 ### Fixed
