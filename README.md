@@ -167,6 +167,30 @@ of figures, advanced tables, comments, raw passthrough, and source-layout edge
 cases. `tiptap/schema-map.json` is the public rich-mapping authority;
 `tests/lib/coverage.js` records why structured conversion falls back.
 
+## Framework-independent editor element
+
+Applications that do not otherwise use Tiptap can mount the same lossless
+bridge through a Web Component:
+
+```js
+import { defineCarveEditor } from '@markup-carve/carve-grammars/editor'
+
+defineCarveEditor()
+const editor = document.querySelector('carve-editor')
+editor.value = '# Hello'
+editor.addEventListener('input', event => save(event.detail.value))
+```
+
+```html
+<carve-editor></carve-editor>
+```
+
+The element exposes a string `value`, emits bubbling and composed `input`
+events, and uses `unsupported: 'preserve'` internally. Its editable surface is
+available as the `editor` CSS part (`carve-editor::part(editor)`). Tiptap stays
+an implementation detail of the element, although its peer packages must be
+installed with `carve-grammars`.
+
 ## Syntax highlighting
 
 Render Carve source as highlighted HTML on the web. Both grammars cover the full
