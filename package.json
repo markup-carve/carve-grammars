@@ -5,7 +5,8 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "node tests/block-battery-test.js && node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/mounted-roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/abbreviation-term-test.js && node tests/unclosed-delimiter-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
+    "test": "npm run test:types && node tests/block-battery-test.js && node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/mounted-roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/abbreviation-term-test.js && node tests/unclosed-delimiter-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
+    "test:types": "tsc -p tsconfig.types.json",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
     "test:roundtrip": "node tests/roundtrip-test.js",
@@ -46,8 +47,14 @@
     "LICENSE"
   ],
   "exports": {
-    ".": "./tiptap/index.js",
-    "./tiptap": "./tiptap/index.js",
+    ".": {
+      "types": "./tiptap/index.d.ts",
+      "default": "./tiptap/index.js"
+    },
+    "./tiptap": {
+      "types": "./tiptap/index.d.ts",
+      "default": "./tiptap/index.js"
+    },
     "./tiptap/*": "./tiptap/*",
     "./diagrams": "./diagrams/index.js",
     "./diagrams/kroki": "./diagrams/kroki.js",
@@ -71,14 +78,14 @@
   },
   "peerDependencies": {
     "@shikijs/themes": "^2 || ^3",
+    "@terrastruct/d2": "^0.1",
     "@tiptap/core": "^2 || ^3",
     "@tiptap/extension-heading": "^2 || ^3",
     "@tiptap/extension-underline": "^2 || ^3",
     "@tiptap/starter-kit": "^2 || ^3",
-    "highlight.js": "^11",
-    "prismjs": "^1",
     "@viz-js/viz": "^3",
-    "@terrastruct/d2": "^0.1"
+    "highlight.js": "^11",
+    "prismjs": "^1"
   },
   "peerDependenciesMeta": {
     "@tiptap/core": {
@@ -135,7 +142,8 @@
     "happy-dom": "^20.10.6",
     "highlight.js": "^11.11.1",
     "prismjs": "^1.30.0",
-    "shiki": "^4.3.1"
+    "shiki": "^4.3.1",
+    "typescript": "^5.9.3"
   },
   "publishConfig": {
     "access": "public"
