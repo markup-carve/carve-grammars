@@ -1,0 +1,30 @@
+[
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>language",
+    "text": ":fr"
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>language",
+    "text": ":de"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

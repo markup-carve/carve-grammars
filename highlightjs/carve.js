@@ -101,7 +101,7 @@
     // attribute block, and one invalid name is enough to leave the whole run
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
-    const ATTR_ITEM = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    const ATTR_ITEM = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
     /**
      * A begin/end mode opens its span the moment `begin` matches, whether or
      * not the closer ever arrives - so an unpartnered delimiter colors every

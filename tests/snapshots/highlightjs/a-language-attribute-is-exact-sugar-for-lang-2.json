@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:de-CH}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:sr-Latn-RS}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[c]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:x-acme}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[d]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:i-klingon}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

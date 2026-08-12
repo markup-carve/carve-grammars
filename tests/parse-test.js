@@ -41,6 +41,14 @@ function check(name, html, expected) {
     }
 }
 
+check('language attributes survive the mounted HTML path',
+    '<p><span lang="de-DE">Hallo</span></p>',
+    '[Hallo]{:de-DE}');
+
+check('empty language attributes use the canonical empty shorthand',
+    '<p><span lang="">text</span></p>',
+    '[text]{:}');
+
 // --- Constructs, as carve-js / carve-php actually render them ---
 
 check('admonition (aside) round-trips',

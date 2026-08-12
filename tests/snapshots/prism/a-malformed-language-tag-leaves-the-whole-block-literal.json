@@ -1,0 +1,34 @@
+[
+  {
+    "type": "span",
+    "text": "[a]"
+  },
+  {
+    "type": "text",
+    "text": "{:en_US} "
+  },
+  {
+    "type": "span",
+    "text": "[b]"
+  },
+  {
+    "type": "text",
+    "text": "{:-en} "
+  },
+  {
+    "type": "span",
+    "text": "[c]"
+  },
+  {
+    "type": "text",
+    "text": "{:en-} "
+  },
+  {
+    "type": "span",
+    "text": "[d]"
+  },
+  {
+    "type": "text",
+    "text": "{:français}\n"
+  }
+]

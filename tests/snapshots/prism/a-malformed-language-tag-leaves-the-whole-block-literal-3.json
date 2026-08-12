@@ -1,0 +1,18 @@
+[
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "text",
+    "text": "{"
+  },
+  {
+    "type": "symbol",
+    "text": ":tada:"
+  },
+  {
+    "type": "text",
+    "text": "}\n"
+  }
+]

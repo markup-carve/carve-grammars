@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{onclick=\"steal()\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

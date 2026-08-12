@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": null,
+    "text": "{:en_US} "
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": null,
+    "text": "{:-en} "
+  },
+  {
+    "scope": "string",
+    "text": "[c]"
+  },
+  {
+    "scope": null,
+    "text": "{:en-} "
+  },
+  {
+    "scope": "string",
+    "text": "[d]"
+  },
+  {
+    "scope": null,
+    "text": "{:français}\n"
+  }
+]

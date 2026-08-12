@@ -1,0 +1,42 @@
+[
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>language",
+    "text": ":fr"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "lang"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes",
+    "text": "de"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\nText\n"
+  }
+]

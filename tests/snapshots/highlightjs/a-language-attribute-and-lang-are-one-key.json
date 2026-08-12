@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:fr lang=de}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": "attr",
+    "text": "{lang=de :fr}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

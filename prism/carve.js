@@ -98,7 +98,7 @@
     // attribute block, and one invalid name is enough to leave the whole run
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
-    var attrItem = /(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    var attrItem = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -137,6 +137,10 @@
             'class-name': /\.[A-Za-z_][\w-]*/,
             'attr-name': /[A-Za-z_][\w-]*(?==)/,
             'string': /"[^"]*"|'[^']*'/,
+            'language': {
+                pattern: /(^|[\s{]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?/,
+                lookbehind: true,
+            },
             'punctuation': /[{}=]/,
         },
     };
