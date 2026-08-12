@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "function",
+    "text": ":abbr[HTML]"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"HyperText Markup Language\"}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":cite[The Book]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":dfn[term]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "function",
+    "text": ":samp[ready]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":var[x]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":time[noon]"
+  },
+  {
+    "scope": "attr",
+    "text": "{datetime=\"12:00\"}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":code[x]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":mark[relevant]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

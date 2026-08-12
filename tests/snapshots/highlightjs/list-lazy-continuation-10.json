@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " item\n\n   spaced\nflush\n"
+  }
+]

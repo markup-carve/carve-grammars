@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: Hyper Text Markup Language"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "[HTML]"
+  },
+  {
+    "scope": "attr",
+    "text": "{abbr=\"Custom\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

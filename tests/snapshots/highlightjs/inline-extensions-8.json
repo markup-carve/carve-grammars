@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "function",
+    "text": ":kbd[*Ctrl*+C]"
+  },
+  {
+    "scope": "attr",
+    "text": "{#copy .shortcut data-key=\"copy\" onclick=\"alert(1)\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

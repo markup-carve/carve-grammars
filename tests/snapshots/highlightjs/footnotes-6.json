@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "Wrapped"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^two\nwords]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^two words]: This definition is not referenced."
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^broken\nlabel]: This is not a definition."
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

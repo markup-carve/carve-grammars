@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "string",
+    "text": "[CSS]"
+  },
+  {
+    "scope": "attr",
+    "text": "{dfn abbr=\"Cascading Style Sheets\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "[Noon]"
+  },
+  {
+    "scope": "attr",
+    "text": "{time=\"12:00\"}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{code mark samp var kbd cite}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
