@@ -1,0 +1,82 @@
+[
+  {
+    "type": "span",
+    "text": "[CSS]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "dfn "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "abbr"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"Cascading Style Sheets\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "span",
+    "text": "[Noon]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "time"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"12:00\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "code mark samp var kbd cite"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

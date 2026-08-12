@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{a=1 a}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "type": "span",
+    "text": "[*Ctrl*+C]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#copy"
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".shortcut"
+  },
+  {
+    "type": "attributes",
+    "text": " kbd "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "data-key"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"copy\""
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "onclick"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"alert(1)\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "kbd "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "onclick"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"alert(1)\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

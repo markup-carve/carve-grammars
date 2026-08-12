@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "Wrapped"
+  },
+  {
+    "type": "footnote",
+    "text": "[^two\nwords]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^two words]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " This definition is not referenced."
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^broken\nlabel]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " This is not a definition."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

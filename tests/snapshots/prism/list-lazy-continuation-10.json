@@ -1,0 +1,10 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "item\n\n   spaced\nflush\n"
+  }
+]
