@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{:fr}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{lang=de}"
+  },
+  {
+    "scope": null,
+    "text": "\nText\n"
+  }
+]

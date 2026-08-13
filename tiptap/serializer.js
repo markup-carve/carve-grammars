@@ -1290,16 +1290,27 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
         }
     }
     const pair = (k, v) => k + '="' + String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+    const language = (v) => {
+        const value = String(v);
+        return /^(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?$/.test(value)
+            ? ':' + value
+            : pair('lang', value);
+    };
     for (const [k, v] of Object.entries(attrs)) {
-        if (ignore.has(k) || v == null || v === false || v === '') continue;
-        parts.push(pair(k, v));
+        if (ignore.has(k) || v == null || v === false) continue;
+        if (k === 'lang') parts.push(language(v));
+        else if (v !== '') parts.push(pair(k, v));
     }
     // A node that keeps authored key/values in one declared attribute - Tiptap
     // needs every attribute declared, and `data-k=v` cannot be known upfront.
     if (attrs.keyValues && typeof attrs.keyValues === 'object') {
         for (const [k, v] of Object.entries(attrs.keyValues)) {
-            if (v == null || v === false || v === '') continue;
-            parts.push(pair(k, v));
+            if (v == null || v === false || (v === '' && k !== 'lang')) continue;
+            if (k === 'lang') {
+                if (attrs.lang == null) parts.push(language(v));
+            } else {
+                parts.push(pair(k, v));
+            }
         }
     }
 

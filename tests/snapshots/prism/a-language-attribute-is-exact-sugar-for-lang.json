@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "The title is "
+  },
+  {
+    "type": "span",
+    "text": "[Le Bon Usage]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>language",
+    "text": ":fr"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{:abcdefgh}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[b]"
+  },
+  {
+    "scope": null,
+    "text": "{:abcdefghi}\n"
+  }
+]

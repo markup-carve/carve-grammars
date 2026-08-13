@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{#quote :fr .formal title=bonjour}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

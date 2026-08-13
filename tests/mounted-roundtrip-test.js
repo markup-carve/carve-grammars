@@ -55,5 +55,5 @@ const fixed = [
     '100-table-row-attributes',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
-assert.strictEqual(changed.length, 163, `mounted rich projection changed for ${changed.length} corpus documents`);
+assert.strictEqual(changed.length, 173, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

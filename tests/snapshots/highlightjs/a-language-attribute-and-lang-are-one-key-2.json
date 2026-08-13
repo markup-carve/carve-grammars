@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=1 :fr lang=de title=t}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

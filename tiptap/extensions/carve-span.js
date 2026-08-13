@@ -47,6 +47,11 @@ export const CarveSpan = Mark.create({
                     return { id: attributes.id };
                 },
             },
+            lang: {
+                default: null,
+                parseHTML: element => element.hasAttribute('lang') ? element.getAttribute('lang') : null,
+                renderHTML: attributes => attributes.lang === null ? {} : { lang: attributes.lang },
+            },
             keyValues: {
                 default: null,
                 parseHTML: element => {
@@ -64,6 +69,7 @@ export const CarveSpan = Mark.create({
     parseHTML() {
         return [
             { tag: 'span[data-carve-class]' },
+            { tag: 'span[lang]' },
             // Also match spans with class attributes from PHP renderer
             {
                 tag: 'span[class]',
