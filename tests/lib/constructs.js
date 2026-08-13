@@ -81,6 +81,17 @@ export const CONSTRUCTS = [
     // stops a fix for any of them from tightening the value branch too (#135, #150).
     // `[x]{k=a:b}` is the one colon shape that renders as a span in every engine.
     { name: "colon in an unquoted attr value", sample: "[x]{k=a:b}", payload: "k=a:b", textmate: "meta.attributes", attr: true },
+    // The language attribute (carve#1114) is the first attribute item that may
+    // OPEN with a colon, which every grammar's attr-item alternation had to
+    // learn: an unrecognised item leaves the whole block literal, so a grammar
+    // that misses it stops scoping the block rather than scoping it wrongly.
+    { name: "language attribute", sample: "[x]{:fr}", payload: ":fr", textmate: "meta.attributes", attr: true },
+    { name: "language attribute with subtags", sample: "[x]{:sr-Latn-RS}", payload: ":sr-Latn-RS", textmate: "meta.attributes", attr: true },
+    // The empty form is `lang=""`, and it is the shape most likely to be read
+    // as a stray colon by a rule that requires a tag.
+    { name: "empty language attribute", sample: "[x]{:}", payload: "{:}", textmate: "meta.attributes", attr: true },
+    { name: "language attribute beside others", sample: "[x]{#i :fr .c}", payload: ":fr", textmate: "meta.attributes", attr: true },
+    { name: "language attribute on a block line", sample: "{:de}\n# H", payload: ":de", textmate: "meta.attributes", attr: true },
     // The other half of `[x]{#a:b}`, whose literal counter-example is in LITERALS
     // below. The block is not an attribute block, so the source stays prose - and the
     // `#a` left in that prose is an ordinary tag, which is what the engine renders
