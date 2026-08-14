@@ -5,7 +5,7 @@
   "type": "module",
   "main": "tiptap/index.js",
   "scripts": {
-    "test": "npm run test:types && node tests/carve-editor-test.js && node tests/block-battery-test.js && node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/mounted-roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/abbreviation-term-test.js && node tests/unclosed-delimiter-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
+    "test": "npm run test:types && node tests/carve-editor-test.js && node tests/block-battery-test.js && node tests/coverage-test.js && node tests/schema-map-test.js && node tests/snapshot-test.js && node tests/roundtrip-test.js && node tests/mounted-roundtrip-test.js && node tests/serializer-test.js && node tests/tabs-roundtrip-test.js && node tests/parse-test.js && node tests/language-attribute-test.js && node tests/grammar-test.js && node tests/shiki-test.js && node tests/engine-sweep-test.js && node tests/abbreviation-term-test.js && node tests/unclosed-delimiter-test.js && node tests/textmate-sweep-test.js && node tests/kroki-test.js && node tests/client-diagram-test.js",
     "test:types": "tsc -p tsconfig.types.json",
     "test:coverage": "node tests/coverage-test.js",
     "test:snapshot": "node tests/snapshot-test.js",
@@ -78,7 +78,7 @@
     "./tiptap/schema-map.json": "./tiptap/schema-map.json"
   },
   "dependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#25e2c58216ede0fd2e19592f1d5b8d3c0f9e8880"
+    "@markup-carve/carve": "github:markup-carve/carve-js#8d38a03cc8664e761f81baa02a1bf54e7dde96a4"
   },
   "peerDependencies": {
     "@shikijs/themes": "^2 || ^3",

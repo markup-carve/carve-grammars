@@ -4,6 +4,17 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Fixed
+
+- **The `{:TAG}` language attribute reaches the editor**, not just the
+  highlighters. `carveToProseMirror` reads the bundled `@markup-carve/carve`,
+  which was pinned to a commit that predates the engine production, so
+  `[bonjour]{:fr}` loaded as one plain text node and an editor built on this
+  package showed the attribute as literal text instead of a span. The pin now
+  tracks a carve-js commit that parses it, and the loader produces a
+  `carveSpan` mark carrying the language for `{:fr}`, `{:de-DE}`, `{:}`, a
+  language beside another attribute, and the long `lang="fr"` spelling.
+
 ## 0.1.4 - 2026-08-11
 
 ### Added
