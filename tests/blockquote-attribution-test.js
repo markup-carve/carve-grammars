@@ -143,6 +143,18 @@ const CASES = [
 const fails = [];
 let pass = 0;
 
+/**
+ * A shape check that REPORTS rather than throws, so one run of a reverted
+ * projection lists every symptom instead of stopping at the first.
+ */
+function same(actual, expected, message) {
+    if (JSON.stringify(actual) === JSON.stringify(expected)) {
+        pass++;
+        return;
+    }
+    fails.push(`${message}: got ${JSON.stringify(actual)}, expected ${JSON.stringify(expected)}`);
+}
+
 for (const { name, source, attributions, written, byteIdentical } of CASES) {
     const got = editableAttributions(load(source));
     if (JSON.stringify(got) === JSON.stringify(attributions)) {
@@ -199,14 +211,11 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         }],
     };
     const written = serializeToCarve(captionOnly);
-    assert.strictEqual(written, '>\n^ Only an attribution',
+    same(written, '>\n^ Only an attribution',
         'a quote holding only its attribution is not written as an empty quote plus a `^ …` line');
-    assert.deepStrictEqual(
-        editableAttributions(load(`${written}\n`)),
-        ['Only an attribution'],
-        'a quote holding only its attribution does not survive its own round trip',
-    );
-    assert.strictEqual(serializeToCarve({ ...load(`${written}\n`), attrs: undefined }), written,
+    same(editableAttributions(load(`${written}\n`)), ['Only an attribution'],
+        'a quote holding only its attribution does not survive its own round trip');
+    same(serializeToCarve({ ...load(`${written}\n`), attrs: undefined }), written,
         'a quote holding only its attribution is not a fixed point');
 }
 
@@ -228,9 +237,9 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         }],
     };
     const written = serializeToCarve(captionMidQuote);
-    assert.strictEqual(written, '> a\n>\n> b\n^ src',
+    same(written, '> a\n>\n> b\n^ src',
         'an attribution that is not the last child is written inside the quote');
-    assert.deepStrictEqual(editableAttributions(load(`${written}\n`)), ['src'],
+    same(editableAttributions(load(`${written}\n`)), ['src'],
         'an attribution that is not the last child does not survive the round trip');
 }
 
@@ -252,12 +261,12 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         }],
     };
     const written = serializeToCarve(twoCaptions);
-    assert.strictEqual(written, '> a\n^ one two',
+    same(written, '> a\n^ one two',
         'several captions in a quote are not joined into one attribution');
     const reloaded = load(`${written}\n`);
-    assert.deepStrictEqual(editableAttributions(reloaded), ['one two'],
+    same(editableAttributions(reloaded), ['one two'],
         'several captions in a quote do not survive as one attribution');
-    assert.strictEqual(reloaded.content.length, 1,
+    same(reloaded.content.length, 1,
         'several captions in a quote ejected a paragraph out of the quote');
 }
 
@@ -277,9 +286,9 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         }],
     };
     const written = serializeToCarve(emptyCaption);
-    assert.strictEqual(written, '> a',
+    same(written, '> a',
         'an emptied attribution writes a caret that the engine reads as quoted text');
-    assert.deepStrictEqual(load(`${written}\n`).content[0].content,
+    same(load(`${written}\n`).content[0].content,
         [{ type: 'paragraph', content: [{ type: 'text', text: 'a' }] }],
         'an emptied attribution corrupted the quoted paragraph on reload');
 }
