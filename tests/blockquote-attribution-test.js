@@ -261,6 +261,29 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         'several captions in a quote ejected a paragraph out of the quote');
 }
 
+// Emptying an attribution in the editor leaves a `carveCaption` with no
+// content. `^` on its own is not an attribution marker to the engine - it glues
+// onto the quoted paragraph as literal text, corrupting the quote's own
+// content - so an empty caption is written as nothing at all.
+{
+    const emptyCaption = {
+        type: 'doc',
+        content: [{
+            type: 'blockquote',
+            content: [
+                { type: 'paragraph', content: [{ type: 'text', text: 'a' }] },
+                { type: 'carveCaption' },
+            ],
+        }],
+    };
+    const written = serializeToCarve(emptyCaption);
+    assert.strictEqual(written, '> a',
+        'an emptied attribution writes a caret that the engine reads as quoted text');
+    assert.deepStrictEqual(load(`${written}\n`).content[0].content,
+        [{ type: 'paragraph', content: [{ type: 'text', text: 'a' }] }],
+        'an emptied attribution corrupted the quoted paragraph on reload');
+}
+
 // The probe has to answer both ways. One that always reports an attribution
 // would pass every row above without reading anything.
 assert.deepStrictEqual(editableAttributions(load('> Just a quote\n')), [],
