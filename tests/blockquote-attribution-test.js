@@ -234,6 +234,33 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         'an attribution that is not the last child does not survive the round trip');
 }
 
+// Several captions in one quote are reachable by pressing Enter inside the
+// attribution, which splits the node. The model has room for one, so they are
+// joined. Consecutive `^ …` lines would not do: the engine reads only the first
+// as the attribution and reparses the rest as paragraphs OUTSIDE the quote,
+// where they render with a literal caret.
+{
+    const twoCaptions = {
+        type: 'doc',
+        content: [{
+            type: 'blockquote',
+            content: [
+                { type: 'paragraph', content: [{ type: 'text', text: 'a' }] },
+                { type: 'carveCaption', content: [{ type: 'text', text: 'one' }] },
+                { type: 'carveCaption', content: [{ type: 'text', text: 'two' }] },
+            ],
+        }],
+    };
+    const written = serializeToCarve(twoCaptions);
+    assert.strictEqual(written, '> a\n^ one two',
+        'several captions in a quote are not joined into one attribution');
+    const reloaded = load(`${written}\n`);
+    assert.deepStrictEqual(editableAttributions(reloaded), ['one two'],
+        'several captions in a quote do not survive as one attribution');
+    assert.strictEqual(reloaded.content.length, 1,
+        'several captions in a quote ejected a paragraph out of the quote');
+}
+
 // The probe has to answer both ways. One that always reports an attribution
 // would pass every row above without reading anything.
 assert.deepStrictEqual(editableAttributions(load('> Just a quote\n')), [],

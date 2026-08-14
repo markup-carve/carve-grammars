@@ -320,13 +320,22 @@ export function serializeToCarve(doc) {
                         output += '>\n';
                     }
                 });
-                // A quote carries at most one attribution, so a second caption
-                // is a shape the model has no room for. Written out anyway: the
-                // engine reads the first line as the attribution and the rest as
-                // paragraphs, which keeps the author's text visible instead of
-                // deleting it.
-                for (const attribution of attributions) {
-                    output += '^ ' + serializeInline(attribution.content) + '\n';
+                // A quote carries at most ONE attribution, so several captions
+                // are a shape the model has no room for - reachable by pressing
+                // Enter inside an attribution, which splits the node in two.
+                // They are joined into one attribution line rather than written
+                // as consecutive `^ …` lines: the engine reads only the first
+                // such line as the attribution and the rest as paragraphs, so
+                // that spelling ejects the author's text out of the quote and
+                // renders it with a literal caret. Dropping the extras instead
+                // would be the silent content loss this projection exists to
+                // remove.
+                if (attributions.length > 0) {
+                    const text = attributions
+                        .map((caption) => serializeInline(caption.content))
+                        .filter((part) => part !== '')
+                        .join(' ');
+                    output += '^ ' + text + '\n';
                 }
                 break;
             }
