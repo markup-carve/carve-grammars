@@ -289,13 +289,17 @@ export function serializeToCarve(doc) {
                 // on the line after the quote: `> ^ Steve Jobs` would be a
                 // caption belonging to the quoted content instead, a different
                 // document.
-                // Guarded on length > 1: a quote whose ONLY child is a caption
-                // (reachable by deleting the quoted paragraph in the editor)
-                // would otherwise write a bare `^ …` line and lose the quote.
                 const children = [...(node.content || [])];
-                const attribution = children.length > 1 && children.at(-1)?.type === 'carveCaption'
-                    ? children.pop()
-                    : null;
+                const attribution = children.at(-1)?.type === 'carveCaption' ? children.pop() : null;
+                // A quote whose ONLY child is the attribution is reachable by
+                // deleting the quoted paragraph in the editor. It needs a bare
+                // `>` line: dropping the marker writes `^ …` at top level,
+                // which is a paragraph and loses the quote, while keeping the
+                // caption inside writes `> ^ …`, which reparses as literal text
+                // in the quote and loses the attribution on the next load.
+                // `>` alone plus an unprefixed `^ …` reparses to exactly this
+                // document, an empty quote carrying an attribution.
+                if (attribution && children.length === 0) output += '>\n';
                 // Serialize each child block with proper blank line separation
                 children.forEach((child, i) => {
                     const childText = serializeNodeToString(child);

@@ -184,6 +184,32 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
     }
 }
 
+// A quote whose ONLY child is the attribution is reachable in the editor by
+// deleting the quoted paragraph, and it is the one shape where writing the
+// caption the obvious way destroys it. `> ^ x` reparses as literal text inside
+// the quote (the attribution is gone on the next load) and a bare `^ x` is a
+// top-level paragraph (the quote is gone). Both preserve the bytes and lose the
+// document, which is why this is asserted on the reparse rather than the string.
+{
+    const captionOnly = {
+        type: 'doc',
+        content: [{
+            type: 'blockquote',
+            content: [{ type: 'carveCaption', content: [{ type: 'text', text: 'Only an attribution' }] }],
+        }],
+    };
+    const written = serializeToCarve(captionOnly);
+    assert.strictEqual(written, '>\n^ Only an attribution',
+        'a quote holding only its attribution is not written as an empty quote plus a `^ …` line');
+    assert.deepStrictEqual(
+        editableAttributions(load(`${written}\n`)),
+        ['Only an attribution'],
+        'a quote holding only its attribution does not survive its own round trip',
+    );
+    assert.strictEqual(serializeToCarve({ ...load(`${written}\n`), attrs: undefined }), written,
+        'a quote holding only its attribution is not a fixed point');
+}
+
 // The probe has to answer both ways. One that always reports an attribution
 // would pass every row above without reading anything.
 assert.deepStrictEqual(editableAttributions(load('> Just a quote\n')), [],
