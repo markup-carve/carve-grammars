@@ -410,8 +410,23 @@ function convertBlock(node, ctx) {
         }
 
         case 'blockquote':
-        case 'block_quote':
-            return { type: 'blockquote', content: convertBlocks(node.children || [], ctx) };
+        case 'block_quote': {
+            const content = convertBlocks(node.children || [], ctx);
+            // A `^ …` line under a quote is the quote's ATTRIBUTION, an inline
+            // field on `block_quote` rather than a `figure`/`figcaption` pair
+            // wrapped around it (markup-carve/carve-js#1033). Read nowhere, it
+            // survived only in the whole-document `carveSource` envelope, which
+            // the first edit invalidates - so editing a quote dropped its
+            // attribution. It projects onto `carveCaption`, the caption node
+            // this schema already has, appended INSIDE the quote because that
+            // is where the engine renders it (`<footer>` within `<blockquote>`,
+            // not a `<figure>` around it). No node type or node shape changes.
+            const attribution = node.attribution;
+            if (Array.isArray(attribution) && attribution.length > 0) {
+                content.push({ type: 'carveCaption', content: convertInline(attribution, ctx) });
+            }
+            return { type: 'blockquote', content };
+        }
 
         case 'code-block':
         case 'code_block': {

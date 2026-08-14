@@ -27,7 +27,8 @@
     },
     "block_quote": {
       "kind": "node",
-      "pm": "blockquote"
+      "pm": "blockquote",
+      "notes": "the optional `attribution` inline field projects onto a trailing `carveCaption` child of the blockquote, matching where the engine renders it (a `<footer>` inside the quote); a bridge that ignores the field drops the `^ …` line on the first edit"
     },
     "code_block": {
       "kind": "node",

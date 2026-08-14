@@ -281,22 +281,38 @@ export function serializeToCarve(doc) {
                 });
                 break;
 
-            case 'blockquote':
+            case 'blockquote': {
                 const quoteAttrs = serializeAttributes(node.attrs);
                 if (quoteAttrs) output += quoteAttrs + '\n';
+                // A trailing `carveCaption` is the quote's ATTRIBUTION, which
+                // the loader appends inside the quote. It is written UNPREFIXED
+                // on the line after the quote: `> ^ Steve Jobs` would be a
+                // caption belonging to the quoted content instead, a different
+                // document.
+                // Guarded on length > 1: a quote whose ONLY child is a caption
+                // (reachable by deleting the quoted paragraph in the editor)
+                // would otherwise write a bare `^ …` line and lose the quote.
+                const children = [...(node.content || [])];
+                const attribution = children.length > 1 && children.at(-1)?.type === 'carveCaption'
+                    ? children.pop()
+                    : null;
                 // Serialize each child block with proper blank line separation
-                (node.content || []).forEach((child, i) => {
+                children.forEach((child, i) => {
                     const childText = serializeNodeToString(child);
                     // Prefix each line with >
                     childText.split('\n').forEach(line => {
                         output += '> ' + line + '\n';
                     });
                     // Add blank line between blocks (> followed by empty line)
-                    if (i < (node.content || []).length - 1) {
+                    if (i < children.length - 1) {
                         output += '>\n';
                     }
                 });
+                if (attribution) {
+                    output += '^ ' + serializeInline(attribution.content) + '\n';
+                }
                 break;
+            }
 
             case 'codeBlock': {
                 const lang = node.attrs?.language || '';
