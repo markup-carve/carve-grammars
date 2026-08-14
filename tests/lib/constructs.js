@@ -191,6 +191,15 @@ export const CONSTRUCTS = [
     { name: "bullet with bare-key attributes", sample: "-{not attrs} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
     { name: "star bullet with glued attributes", sample: "*{.c} item", payload: "*", textmate: "punctuation.definition.list.unnumbered" },
     { name: "bullet with a brace in a quoted attribute value", sample: "-{title=\"a}b\"} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    // THE SAME RULE, WITH THE NEWEST ATTRIBUTE ITEM. The marker rules look past
+    // a whole attribute block to decide there is a marker at all, and each spelled
+    // the item alternation out separately from the attribute rule's. So when the
+    // language attribute joined the attribute rule, `-{:fr} item` lost its marker
+    // in Prism and highlight.js while `-{.c} item` above kept it, and every
+    // language-attribute case in this file passed throughout: they all feed the
+    // block at the start of a line or after a `]`, never glued to a marker.
+    { name: "bullet with a glued language attribute", sample: "-{:fr} item", payload: "-", textmate: "punctuation.definition.list.unnumbered" },
+    { name: "ordered marker with a glued language attribute", sample: "1.{:fr} item", payload: "1.", textmate: "punctuation.definition.list.numbered" },
     // The checkbox after a glued block is NOT scoped in any Carve TextMate grammar -
     // `task_item` runs before `list_item` and has no glued branch - but the bullet is.
     { name: "task bullet with glued attributes", sample: "-{.c} [x] done", payload: "-", textmate: "punctuation.definition.list.unnumbered" },

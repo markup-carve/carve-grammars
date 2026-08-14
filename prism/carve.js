@@ -99,6 +99,16 @@
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
     var attrItem = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // A LIST MARKER MAY BE GLUED TO AN ATTRIBUTE BLOCK (`-{#x} item`), so the
+    // marker rule has to look past a whole block to decide it is a marker at
+    // all. That lookahead spelled the item alternation out a second time, and
+    // the copy went stale: when the language attribute (`{:fr}`) was added to
+    // `attrItem`, `-{:fr} item` stopped scoping its `-` as a marker while
+    // `-{.c} item` still did. Built from `attrItem` now, so there is one
+    // spelling of what an attribute item is and the marker rule cannot drift
+    // from the attribute rule again.
+    var gluedAttrBlock =
+        '(?=\\{\\s*(?:' + attrItem + '(?:\\s+' + attrItem + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -512,7 +522,12 @@
             // is a paragraph too, and a `\{[^}]*\}` run stops in the wrong
             // place: a quoted value may contain `}` and may escape its own
             // quote, and `{title="a}b"} x` is a valid item (#85).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?:\[[ xX\-_>?]\] +)?(?![ \t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n])) *(?![ \t]*$))/m,
+            pattern: RegExp(
+                '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
+                + ') *(?:\\[[ xX\\-_>?]\\] +)?(?![ \\t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
+                + gluedAttrBlock + ') *(?![ \\t]*$))',
+                'm',
+            ),
             alias: 'punctuation',
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
