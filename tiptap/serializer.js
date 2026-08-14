@@ -284,22 +284,30 @@ export function serializeToCarve(doc) {
             case 'blockquote': {
                 const quoteAttrs = serializeAttributes(node.attrs);
                 if (quoteAttrs) output += quoteAttrs + '\n';
-                // A trailing `carveCaption` is the quote's ATTRIBUTION, which
-                // the loader appends inside the quote. It is written UNPREFIXED
-                // on the line after the quote: `> ^ Steve Jobs` would be a
-                // caption belonging to the quoted content instead, a different
-                // document.
-                const children = [...(node.content || [])];
-                const attribution = children.at(-1)?.type === 'carveCaption' ? children.pop() : null;
+                // A `carveCaption` child of a quote is the quote's ATTRIBUTION,
+                // which the loader appends inside the quote. It is written
+                // UNPREFIXED after the quote: `> ^ Steve Jobs` is not a quieter
+                // spelling of the same document, it reparses as literal text in
+                // the quoted paragraph.
+                //
+                // Extracted by TYPE rather than by position. The loader always
+                // appends it last, but an editor need not keep it there -
+                // pressing Enter at the end of the attribution puts a paragraph
+                // after it - and a position test would then prefix it and lose
+                // it. The engine's model has the attribution at the end of the
+                // quote regardless, so moving it there is the projection, not a
+                // rewrite.
+                const all = node.content || [];
+                const children = all.filter((child) => child.type !== 'carveCaption');
+                const attributions = all.filter((child) => child.type === 'carveCaption');
                 // A quote whose ONLY child is the attribution is reachable by
                 // deleting the quoted paragraph in the editor. It needs a bare
                 // `>` line: dropping the marker writes `^ …` at top level,
                 // which is a paragraph and loses the quote, while keeping the
-                // caption inside writes `> ^ …`, which reparses as literal text
-                // in the quote and loses the attribution on the next load.
+                // caption inside writes `> ^ …`, which loses the attribution.
                 // `>` alone plus an unprefixed `^ …` reparses to exactly this
                 // document, an empty quote carrying an attribution.
-                if (attribution && children.length === 0) output += '>\n';
+                if (attributions.length > 0 && children.length === 0) output += '>\n';
                 // Serialize each child block with proper blank line separation
                 children.forEach((child, i) => {
                     const childText = serializeNodeToString(child);
@@ -312,7 +320,12 @@ export function serializeToCarve(doc) {
                         output += '>\n';
                     }
                 });
-                if (attribution) {
+                // A quote carries at most one attribution, so a second caption
+                // is a shape the model has no room for. Written out anyway: the
+                // engine reads the first line as the attribution and the rest as
+                // paragraphs, which keeps the author's text visible instead of
+                // deleting it.
+                for (const attribution of attributions) {
                     output += '^ ' + serializeInline(attribution.content) + '\n';
                 }
                 break;

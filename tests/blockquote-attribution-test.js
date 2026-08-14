@@ -210,6 +210,30 @@ for (const { name, source, attributions, written, byteIdentical } of CASES) {
         'a quote holding only its attribution is not a fixed point');
 }
 
+// The loader appends the attribution last, but an editor need not keep it
+// there: pressing Enter at the end of the attribution leaves a paragraph after
+// it. A serializer that recognized the attribution by POSITION would prefix it
+// as `> ^ src`, which reparses into the quoted paragraph as literal text - the
+// same silent loss this change exists to remove, one edit further along.
+{
+    const captionMidQuote = {
+        type: 'doc',
+        content: [{
+            type: 'blockquote',
+            content: [
+                { type: 'paragraph', content: [{ type: 'text', text: 'a' }] },
+                { type: 'carveCaption', content: [{ type: 'text', text: 'src' }] },
+                { type: 'paragraph', content: [{ type: 'text', text: 'b' }] },
+            ],
+        }],
+    };
+    const written = serializeToCarve(captionMidQuote);
+    assert.strictEqual(written, '> a\n>\n> b\n^ src',
+        'an attribution that is not the last child is written inside the quote');
+    assert.deepStrictEqual(editableAttributions(load(`${written}\n`)), ['src'],
+        'an attribution that is not the last child does not survive the round trip');
+}
+
 // The probe has to answer both ways. One that always reports an attribution
 // would pass every row above without reading anything.
 assert.deepStrictEqual(editableAttributions(load('> Just a quote\n')), [],
