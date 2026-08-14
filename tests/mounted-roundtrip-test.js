@@ -65,13 +65,24 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // this repo breaking:
 //
 // - Four are one engine change, carve-js#1033: a caption on a quote is now the
-//   quote's attribution, so `^ Steve Jobs` renders as a `<footer>` inside the
-//   blockquote instead of a `<figure>`/`<figcaption>` pair around it. The
-//   serializer models the old shape only, so those documents fall back rather
-//   than round-trip: 05-lists-20, 07-blockquote-with-attribution,
+//   quote's attribution, carried as an `attribution` field on `block_quote`
+//   instead of a `<figure>`/`<figcaption>` pair wrapped around it. This is a
+//   REGRESSION, not a neutral reshuffle, and it is worth stating plainly. The
+//   loader used to build a real `carveFigure`/`carveCaption` pair for
+//   `^ Steve Jobs`, which survived a mount and stayed editable. It now reads
+//   the field nowhere, so the attribution lives only in the whole-document
+//   `carveSource` envelope - and the first edit invalidates the fingerprint
+//   that envelope is keyed to, which drops the line. Affected:
+//   05-lists-20, 07-blockquote-with-attribution,
 //   55-blockquote-caption-after-a-blank-line and
-//   282-two-blank-lines-detach-a-caption-5. Teaching the projection the
-//   attribution shape is the follow-up that removes them.
+//   282-two-blank-lines-detach-a-caption-5.
+//
+//   The counter is raised rather than the projection taught because mapping
+//   `attribution` back onto `carveFigure`/`carveCaption` restores the old
+//   editable shape while the engine now renders a `<footer>` inside the quote,
+//   so what the editor should show is a schema decision, not a pin bump's to
+//   make. Until it is made, those four documents are a known content-dropping
+//   gap and not merely a fallback.
 // - Two are the language attribute reaching a place the projection cannot
 //   carry it yet: a block-level `{:de}` on a blockquote
 //   (294-a-language-attribute-is-exact-sugar-for-lang-3) and the boolean
