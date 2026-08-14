@@ -102,6 +102,16 @@
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
     const ATTR_ITEM = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // A LIST MARKER MAY BE GLUED TO AN ATTRIBUTE BLOCK (`-{#x} item`), so the
+    // marker rules have to look past a whole block to decide there is a marker
+    // at all. That lookahead spelled the item alternation out again, and the
+    // copies went stale: when the language attribute (`{:fr}`) joined
+    // `ATTR_ITEM`, `-{:fr} item` stopped colouring its `-` as a bullet while
+    // `-{.c} item` still did. Built from `ATTR_ITEM` now, so one spelling of
+    // what an attribute item is serves the attribute rule and both marker
+    // rules, and they cannot drift apart again.
+    const GLUED_ATTR_BLOCK =
+        '(?=\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
     /**
      * A begin/end mode opens its span the moment `begin` matches, whether or
      * not the closer ever arrives - so an unpartnered delimiter colors every
@@ -469,7 +479,9 @@
     const LIST_BULLET = {
         className: 'bullet',
         // A marker line may carry several markers (`- - A`, corpus 103).
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:[-*] +)*[-*](?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: RegExp(
+            '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$)',
+        ),
         relevance: 0,
     };
 
@@ -485,7 +497,9 @@
     // stops in the wrong place and `{title="a}b"} x` is a valid item (#85).
     const LIST_NUMBER = {
         className: 'bullet',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?:(?= )|(?=\{\s*(?:(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)(?:\s+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?))*\s*)?\}[ \t]+[^ \t\n]))(?![ \t]*$)/,
+        begin: RegExp(
+            '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$)',
+        ),
         relevance: 0,
     };
 
