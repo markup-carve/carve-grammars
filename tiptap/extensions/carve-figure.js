@@ -22,6 +22,7 @@ export const CarveCaption = Node.create({
     name: 'carveCaption',
     group: 'block',
     content: 'inline*',
+    addAttributes() { return { short: { default: false } }; },
     parseHTML() { return [{ tag: 'figcaption[data-carve-caption]' }]; },
     renderHTML({ HTMLAttributes }) {
         return ['figcaption', mergeAttributes(HTMLAttributes, { 'data-carve-caption': 'true' }), 0];

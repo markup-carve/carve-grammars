@@ -36,6 +36,16 @@ import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js
 import { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
 import { CarveRawBlock } from './extensions/carve-raw-block.js';
 import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
+import { CarveCitation } from './extensions/carve-citation.js';
+import { CarveCrossref } from './extensions/carve-crossref.js';
+import { CarveFrontmatter } from './extensions/carve-frontmatter.js';
+import { CarveInlineNote } from './extensions/carve-inline-note.js';
+import { CarveLinkRefDef } from './extensions/carve-link-ref-def.js';
+import { CarveLiteral } from './extensions/carve-literal.js';
+import { CarveRawInline } from './extensions/carve-raw-inline.js';
+import { CarveSection } from './extensions/carve-section.js';
+import { CarveSubstitution } from './extensions/carve-substitution.js';
+import { CarveSymbol } from './extensions/carve-symbol.js';
 import { CarveSourcePreservation } from './extensions/carve-source-preservation.js';
 import { CarveLineBlock } from './extensions/carve-line-block.js';
 
@@ -645,6 +655,36 @@ export const CarveKit = Extension.create({
         if (this.options.carveFigure !== false) {
             extensions.push(CarveFigure.configure(this.options.carveFigure ?? {}));
             extensions.push(CarveCaption.configure(this.options.carveCaption ?? {}));
+        }
+        if (this.options.carveFrontmatter !== false) {
+            extensions.push(CarveFrontmatter.configure(this.options.carveFrontmatter ?? {}));
+        }
+        if (this.options.carveLinkRefDef !== false) {
+            extensions.push(CarveLinkRefDef.configure(this.options.carveLinkRefDef ?? {}));
+        }
+        if (this.options.carveInlineNote !== false) {
+            extensions.push(CarveInlineNote.configure(this.options.carveInlineNote ?? {}));
+        }
+        if (this.options.carveRawInline !== false) {
+            extensions.push(CarveRawInline.configure(this.options.carveRawInline ?? {}));
+        }
+        if (this.options.carveLiteral !== false) {
+            extensions.push(CarveLiteral.configure(this.options.carveLiteral ?? {}));
+        }
+        if (this.options.carveSubstitution !== false) {
+            extensions.push(CarveSubstitution.configure(this.options.carveSubstitution ?? {}));
+        }
+        if (this.options.carveSymbol !== false) {
+            extensions.push(CarveSymbol.configure(this.options.carveSymbol ?? {}));
+        }
+        if (this.options.carveCitation !== false) {
+            extensions.push(CarveCitation.configure(this.options.carveCitation ?? {}));
+        }
+        if (this.options.carveCrossref !== false) {
+            extensions.push(CarveCrossref.configure(this.options.carveCrossref ?? {}));
+        }
+        if (this.options.carveSection !== false) {
+            extensions.push(CarveSection.configure(this.options.carveSection ?? {}));
         }
         if (this.options.carveRawBlock !== false) {
             extensions.push(CarveRawBlock.configure(this.options.carveRawBlock ?? {}));

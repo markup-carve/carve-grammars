@@ -449,7 +449,26 @@ export function serializeToCarve(doc) {
                 break;
             }
 
+            case 'carveSection':
+                for (const child of node.content || []) serializeNode(child, indent, fenceDepth);
+                break;
+
+            case 'carveFrontmatter': {
+                const format = node.attrs?.format || 'yaml';
+                const opener = format === 'yaml' ? '---' : `---${format}`;
+                const content = node.attrs?.content || '';
+                output += `${opener}\n${content}${content.endsWith('\n') ? '' : '\n'}---\n`;
+                break;
+            }
+
+            case 'carveLinkRefDef': {
+                const title = node.attrs?.title != null ? ` "${escapeTitle(String(node.attrs.title))}"` : '';
+                output += `[${node.attrs?.label || ''}]: ${node.attrs?.href || ''}${title}\n`;
+                break;
+            }
+
             case 'carveCaption':
+                if (node.attrs?.short) break;
                 output += '^ ' + serializeInline(node.content) + '\n';
                 break;
 
@@ -822,6 +841,40 @@ export function serializeToCarve(doc) {
         };
 
         content.forEach((node, idx) => {
+            if (node.type === 'carveInlineNote') {
+                result += '^[' + serializeInline(node.content) + ']';
+                return;
+            }
+            if (node.type === 'carveRawInline') {
+                const raw = node.attrs?.content || '';
+                const longest = (raw.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
+                const fence = '`'.repeat(longest + 1);
+                result += `${fence}${raw}${fence}{=${node.attrs?.format || ''}}`;
+                return;
+            }
+            if (node.type === 'carveLiteral') {
+                const literal = node.attrs?.content || '';
+                const longest = (literal.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
+                const fence = '`'.repeat(longest + 1);
+                result += `!${fence}${literal}${fence}`;
+                return;
+            }
+            if (node.type === 'carveSubstitution') {
+                result += `{~${node.attrs?.oldText || ''}~>${node.attrs?.newText || ''}~}`;
+                return;
+            }
+            if (node.type === 'carveSymbol') {
+                result += `:${node.attrs?.name || ''}:`;
+                return;
+            }
+            if (node.type === 'carveCitation') {
+                result += node.attrs?.raw || '';
+                return;
+            }
+            if (node.type === 'carveCrossref') {
+                result += `</#${node.attrs?.target || ''}>`;
+                return;
+            }
             if (node.type === 'carveCommentInline') {
                 // Inline comments require a separating space. Without it,
                 // mounting `text %% note` and serializing produced
