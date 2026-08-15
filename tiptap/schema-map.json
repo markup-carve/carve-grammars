@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "about": "Carve node type to ProseMirror node/mark name, for engines building a Carve <-> ProseMirror bridge. Carve type names are the normative vocabulary from the spec (docs/profiles.md); the ProseMirror names are this package's CarveKit schema. Consumers read this rather than restating the mapping, which is how carve-php once ended up emitting `citation-group` against everyone else's underscores. `pm` is the name CarveKit registers; an optional `accepts` lists further names a bridge should recognize on the way in, for concepts a stock Tiptap extension already spells differently.",
+  "about": "Carve node type to ProseMirror node/mark name, for engines building a Carve <-> ProseMirror bridge. Carve type names are the normative vocabulary from the spec (docs/profiles.md); the ProseMirror names are this package's CarveKit schema. Consumers read this rather than restating the mapping, which is how carve-php once ended up emitting `citation-group` against everyone else's underscores. `pm` is the name CarveKit registers; an optional `accepts` lists further names a bridge should recognize on the way in, for concepts a stock Tiptap extension already spells differently. Where two Carve types name the same ProseMirror node or mark, the one that is a vocabulary alias of the other carries `aliasOf` naming the type that owns the name; a bridge resolving a ProseMirror name back to a Carve type must not decide that by whatever order it happens to walk this file in.",
   "carveSpecVocabulary": "spec/docs/profiles.md",
   "proseMirrorSchema": "tiptap/carve-kit.js (CarveKit)",
   "types": {
@@ -100,6 +100,7 @@
     "admonition": {
       "kind": "node",
       "pm": "carveDiv",
+      "aliasOf": "div",
       "notes": "profile vocabulary only: an admonition is a div with a type class"
     },
     "definition_list": {
@@ -262,6 +263,7 @@
     "autolink": {
       "kind": "mark",
       "pm": "link",
+      "aliasOf": "link",
       "notes": "profile vocabulary only: an autolink is a link whose text is its destination"
     }
   },
