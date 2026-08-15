@@ -1,14 +1,14 @@
 [
   {
     "scope": null,
-    "text": "a ![t"
+    "text": "a "
   },
   {
-    "scope": "symbol",
-    "text": "\\]"
+    "scope": "link",
+    "text": "![t\\]z](/i.png)"
   },
   {
     "scope": null,
-    "text": "z](/i.png) b\n"
+    "text": " b\n"
   }
 ]

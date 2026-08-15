@@ -17,23 +17,31 @@
   },
   {
     "type": "url",
-    "text": "x"
+    "text": "x]"
   },
   {
     "type": "url>punctuation",
-    "text": "]["
+    "text": "["
   },
   {
     "type": "url",
-    "text": "r2"
+    "text": "r2]"
   },
   {
     "type": "url>punctuation",
-    "text": "]"
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
   },
   {
     "type": "text",
-    "text": "](/u) b\n\n"
+    "text": " b\n\n"
   },
   {
     "type": "reference-definition>constant",

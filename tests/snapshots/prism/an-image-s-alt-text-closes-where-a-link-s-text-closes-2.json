@@ -1,6 +1,30 @@
 [
   {
     "type": "text",
-    "text": "a ![t[z]](/i.png) b\n"
+    "text": "a "
+  },
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "t[z]"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "/i.png"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
   }
 ]

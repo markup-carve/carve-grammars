@@ -62,6 +62,39 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- **A link, image or span whose label holds a bracket run is highlighted**, in
+  Prism, in highlight.js AND in TextMate. The spec closes a label at the
+  MATCHING `]` and resolves escapes on the way (`grammar.ebnf`, `link_text`);
+  all three grammars spelled the label `[^\]]*`, which closes at the FIRST `]`.
+  The rule then wanted a `(` or a `[`, found the second `]` and gave up, so
+
+  ```
+  a ![t[z]](/i.png) b
+  ```
+
+  recorded as prose in every engine even though it renders
+
+  ```html
+  <p>a <img src="/i.png" alt="t[z]"> b</p>
+  ```
+
+  The same body accepted the opposite shape too: an UNBALANCED opener scoped
+  from the outer `[`, so `a [t[z](/u) b` coloured `[t` as part of a link where
+  the engine reads it as prose and starts the link at the inner bracket. Both
+  directions are fixed, for inline and reference links, inline and reference
+  images, and bracketed spans, along with a label carrying an escaped `[` or
+  `]`. Nesting is matched four levels deep; deeper labels stay unscoped, as
+  every depth did before.
+
+  A side effect worth naming: the old label body scanned to end of input for
+  every `[` it could not close, and the new one stops at the bracket it cannot
+  close. On 192 KB of unclosed openers the label pattern alone drops from 18.9s
+  to 1.8ms, and tokenizing that whole document drops from 116s to 22s in Prism
+  and from 108s to 25s in highlight.js. What is left belongs to other rules that
+  still spell a bracket body `[^\]]*` and are untouched here, so this is a large
+  cut and not a cure. Measured on a machine under other load; read the ratio
+  rather than the absolute.
+
 - **A container's closing fence no longer opens a phantom container in
   highlight.js.** A div's `contains` was tried before its own `end` and led
   with `'self'`, whose opener tail is optional, so a bare `:::` closer matched

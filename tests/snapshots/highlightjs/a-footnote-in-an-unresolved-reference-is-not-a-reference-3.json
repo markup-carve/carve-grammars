@@ -1,14 +1,14 @@
 [
   {
     "scope": null,
-    "text": "a [t"
+    "text": "a "
   },
   {
-    "scope": "symbol",
-    "text": "^[n]"
+    "scope": "link",
+    "text": "[t^[n]][nope]"
   },
   {
     "scope": null,
-    "text": "][nope] b\n"
+    "text": " b\n"
   }
 ]

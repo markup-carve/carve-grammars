@@ -5,11 +5,11 @@
   },
   {
     "scope": "link",
-    "text": "[t[x][r2]"
+    "text": "[t[x][r2]](/u)"
   },
   {
     "scope": null,
-    "text": "](/u) b\n\n"
+    "text": " b\n\n"
   },
   {
     "scope": "symbol",

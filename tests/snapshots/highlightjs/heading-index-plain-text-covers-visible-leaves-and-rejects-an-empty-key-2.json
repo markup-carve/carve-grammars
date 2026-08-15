@@ -9,10 +9,10 @@
   },
   {
     "scope": "link",
-    "text": "[a ![alt](/i.png)"
+    "text": "[a ![alt](/i.png) b][]"
   },
   {
     "scope": null,
-    "text": " b][]\n"
+    "text": "\n"
   }
 ]

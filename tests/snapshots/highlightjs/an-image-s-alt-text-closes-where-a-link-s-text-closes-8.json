@@ -1,7 +1,15 @@
 [
   {
     "scope": null,
-    "text": "a [x ![t[z]][r] y](/u) b\n\n"
+    "text": "a "
+  },
+  {
+    "scope": "link",
+    "text": "[x ![t[z]][r] y](/u)"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
   },
   {
     "scope": "symbol",

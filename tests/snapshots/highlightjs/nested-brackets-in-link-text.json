@@ -1,6 +1,10 @@
 [
   {
+    "scope": "link",
+    "text": "[a [b] c](/u)"
+  },
+  {
     "scope": null,
-    "text": "[a [b] c](/u)\n"
+    "text": "\n"
   }
 ]
