@@ -15,15 +15,6 @@ All notable changes to `carve-grammars` are documented here.
   `carveSpan` mark carrying the language for `{:fr}`, `{:de-DE}`, `{:}`, a
   language beside another attribute, and the long `lang="fr"` spelling.
 
-- **A quote's `^ …` attribution stays editable and survives an edit.** The
-  engine now carries it as an `attribution` field on `block_quote` rather than
-  a `figure`/`figcaption` pair, and the loader read that field nowhere - so the
-  line survived only in the whole-document source envelope, which the first
-  edit invalidates. Editing a quote silently dropped its attribution. It now
-  projects onto the existing `carveCaption` node, appended inside the quote
-  where the engine renders it, and the serializer writes it back as a `^ …`
-  line after the quote.
-
 ## 0.1.4 - 2026-08-11
 
 ### Added

@@ -281,69 +281,22 @@ export function serializeToCarve(doc) {
                 });
                 break;
 
-            case 'blockquote': {
+            case 'blockquote':
                 const quoteAttrs = serializeAttributes(node.attrs);
                 if (quoteAttrs) output += quoteAttrs + '\n';
-                // A `carveCaption` child of a quote is the quote's ATTRIBUTION,
-                // which the loader appends inside the quote. It is written
-                // UNPREFIXED after the quote: `> ^ Steve Jobs` is not a quieter
-                // spelling of the same document, it reparses as literal text in
-                // the quoted paragraph.
-                //
-                // Extracted by TYPE rather than by position. The loader always
-                // appends it last, but an editor need not keep it there -
-                // pressing Enter at the end of the attribution puts a paragraph
-                // after it - and a position test would then prefix it and lose
-                // it. The engine's model has the attribution at the end of the
-                // quote regardless, so moving it there is the projection, not a
-                // rewrite.
-                const all = node.content || [];
-                const children = all.filter((child) => child.type !== 'carveCaption');
-                // A quote carries at most ONE attribution, so several captions
-                // are a shape the model has no room for - reachable by pressing
-                // Enter inside an attribution, which splits the node in two.
-                // They are joined into one line rather than written as
-                // consecutive `^ …` lines: the engine reads only the first such
-                // line as the attribution and the rest as paragraphs, so that
-                // spelling ejects the author's text out of the quote and renders
-                // it with a literal caret. Dropping the extras instead would be
-                // the silent content loss this projection exists to remove.
-                //
-                // An EMPTY caption is not an attribution and is written as
-                // nothing at all. `^` on its own is not an attribution marker to
-                // the engine either: it glues onto the quoted paragraph as
-                // literal text, which corrupts the quote's own content. Emptying
-                // an attribution in the editor is how that shape arises.
-                const attributionText = all
-                    .filter((child) => child.type === 'carveCaption')
-                    .map((caption) => serializeInline(caption.content))
-                    .filter((part) => part !== '')
-                    .join(' ');
-                // A quote whose only children are captions is reachable by
-                // deleting the quoted paragraph in the editor. It needs a bare
-                // `>` line: dropping the marker writes `^ …` at top level,
-                // which is a paragraph and loses the quote, while keeping the
-                // caption inside writes `> ^ …`, which loses the attribution.
-                // `>` alone plus an unprefixed `^ …` reparses to exactly this
-                // document, an empty quote carrying an attribution.
-                if (all.length > 0 && children.length === 0) output += '>\n';
                 // Serialize each child block with proper blank line separation
-                children.forEach((child, i) => {
+                (node.content || []).forEach((child, i) => {
                     const childText = serializeNodeToString(child);
                     // Prefix each line with >
                     childText.split('\n').forEach(line => {
                         output += '> ' + line + '\n';
                     });
                     // Add blank line between blocks (> followed by empty line)
-                    if (i < children.length - 1) {
+                    if (i < (node.content || []).length - 1) {
                         output += '>\n';
                     }
                 });
-                if (attributionText !== '') {
-                    output += '^ ' + attributionText + '\n';
-                }
                 break;
-            }
 
             case 'codeBlock': {
                 const lang = node.attrs?.language || '';
