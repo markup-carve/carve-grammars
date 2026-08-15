@@ -228,6 +228,15 @@ export const CONSTRUCTS = [
     { name: "admonition label only", sample: "::: tab [Overview]\nbody\n:::", payload: "[Overview]", textmate: "constant.other.label.admonition" },
     { name: "typeless flush label", sample: ":::[First]\nbody\n:::", payload: "[First]", textmate: "constant.other.label.admonition" },
     { name: "nested longer fence", sample: ":::: tabs\nbody\n::::", payload: "tabs", textmate: "admonition" },
+    // Composite figures (PART 9 §4c, markup-carve/carve#1215). A BARE `::: figure`
+    // opener is ONE figure of ordered panels, so it carries its own scope rather
+    // than the generic container's. The counter-examples - the same kind word with
+    // a title and with a label, which stay generic containers - are in LITERALS
+    // below; the two halves belong together and neither is worth much alone.
+    { name: "composite figure opener", sample: "::: figure\n![one](a.png)\n^ (a) One\n:::\n^ Figure #: Group\n", payload: "figure", textmate: "entity.name.tag.figure-group" },
+    // The group caption is §4's sixth host: the `^ ` line after the CLOSING
+    // fence, which is the one position no other container kind gives a caption.
+    { name: "composite figure group caption", sample: "::: figure\n![one](a.png)\n:::\n^ Figure #: Group\n", payload: "Group", textmate: "markup.caption" },
     { name: "table sep", sample: "| a | b |", payload: "|", textmate: "punctuation.separator.table" },
     { name: "table align", sample: "|=> Age |", payload: ">", textmate: "keyword.operator.table.alignment" },
     { name: "table rowspan", sample: "| ^ | spanned |", payload: "^", textmate: "keyword.operator.table.rowspan" },
@@ -659,6 +668,24 @@ export const LITERALS = [
         payload: 'second',
         scopes: { prism: 'definition-term', highlightjs: 'title', textmate: 'entity.name.tag.definition.term' },
     },
+    // The other half of the composite-figure constructs above (PART 9 §4c). THE
+    // OPENER IS BARE OR IT IS NOT THIS PRODUCTION: the kind word is the same
+    // word, and only the tail of the line decides whether this is one figure of
+    // panels or the generic Tier-2 container it has always been. A positive case
+    // cannot catch a rule that fires on both, which is the whole failure mode
+    // here - the two openers differ by nothing else.
+    {
+        name: 'a quoted title makes a figure opener a generic container',
+        sample: '::: figure "Panel set"\nBody.\n:::\n',
+        payload: 'figure',
+        scopes: { prism: 'figure-group', highlightjs: 'section', textmate: 'figure-group' },
+    },
+    {
+        name: 'a [label] makes a figure opener a generic container',
+        sample: '::: figure [g]\nBody.\n:::\n',
+        payload: 'figure',
+        scopes: { prism: 'figure-group', highlightjs: 'section', textmate: 'figure-group' },
+    },
 ];
 
 /*
@@ -679,8 +706,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 153
-export const MIN_LITERALS = 25
+export const MIN_CONSTRUCTS = 155
+export const MIN_LITERALS = 27
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -699,11 +726,11 @@ export const MIN_LITERALS = 25
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    textmate: 153,
+    textmate: 155,
     // Two constructs are skipped for Prism and four for highlight.js; each says
     // why in its own `skip` entry, and every skip is subtracted here.
-    prism: 151,
-    highlightjs: 149,
+    prism: 153,
+    highlightjs: 151,
 };
 
 /**

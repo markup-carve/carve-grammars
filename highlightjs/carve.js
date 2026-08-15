@@ -598,6 +598,85 @@
         relevance: 10,
     };
 
+    // Composite figure block: a BARE `::: figure` opener through its matching
+    // closer (PART 9 §4c, markup-carve/carve#1215).
+    //
+    // The kind word `figure` is RESERVED among the `:::` types: a bare opener -
+    // the fence, its separator, the word `figure`, and NOTHING else - is ONE
+    // figure of ordered panels, not an admonition. It carries `section` rather
+    // than DIV_BLOCK's `keyword` so a consumer can tell the two readings apart,
+    // and it is listed BEFORE DIV_BLOCK, whose begin also matches this line -
+    // highlight.js takes the earliest match and breaks a tie by mode order.
+    //
+    // The `[ \t]*$` tail is the whole distinction. An opener carrying a quoted
+    // title or a [label] (`::: figure "T"`, `::: figure [g]`) does not match
+    // here at all and falls to DIV_BLOCK, which is the generic Tier-2 container
+    // the clause says it stays.
+    //
+    // Closer width is carried in `resp.data` and compared on `on:end`, the same
+    // idiom DIV_BLOCK and BLOCK_COMMENT already use, so the closer matches the
+    // opener's colon run EXACTLY. `contains` is assigned below, once the full
+    // mode list is known.
+    // A STACK, where the modes above keep a single width. highlight.js hands
+    // every instance of a mode the SAME `resp.data` object, so one slot holds
+    // only the innermost fence: with `::: figure` > `:::: note` > `::::: x`,
+    // the width-5 opener overwrote the width-4 one, both outer closers then
+    // failed their check, and the group ran to end of input unscoped. These two
+    // modes nest inside each other by construction, so they push and pop
+    // instead. `container` names which stack, because the two modes are
+    // separate objects and each needs its own.
+    const pushFence = (container) => (m, resp) => {
+        (resp.data[container] ??= []).push(m[1].length);
+    };
+    const popFence = (container) => (m, resp) => {
+        const open = resp.data[container];
+        if (!open?.length || m[1].length !== open[open.length - 1]) {
+            resp.ignoreMatch();
+            return;
+        }
+        open.pop();
+    };
+
+    const FIGURE_GROUP_BLOCK = {
+        beginScope: 'section',
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})[ \t]+figure[ \t]*$/,
+        'on:begin': pushFence('_groupFences'),
+        endScope: 'section',
+        end: /^[ \t]*(:{3,})[ \t]*$/,
+        'on:end': popFence('_groupFences'),
+        relevance: 10,
+    };
+
+    // The generic container reached only from INSIDE a composite figure group.
+    // Its `contains` differs from DIV_BLOCK's (assigned below), so a bare
+    // `::: figure` at any depth inside an open group reads as the generic
+    // container PART 9 §4c degrades it to (GROUPS DO NOT NEST; corpus
+    // 318-composite-figures-9). The scope stays `keyword` - it IS a div, and a
+    // consumer selecting that must keep seeing it.
+    //
+    // Its `begin` also differs, in the one way that lets a group close at all.
+    // highlight.js tries a mode's CONTAINS before its own `end`, so DIV_BLOCK's
+    // optional tail - which makes a bare `:::` line a typeless div opener -
+    // matched the group's own closing fence and opened a phantom container
+    // instead of closing the group. Measured before this line existed: a second
+    // `::: figure` later in the same document scoped `keyword`, because the
+    // whole rest of the file was still inside that phantom.
+    //
+    // Requiring the tail here is not a narrowing of what Carve accepts, it is
+    // the colon-fence depth rule (PART 9 §12) written where highlight.js can
+    // act on it: a `:::` line inside a `:::` container CLOSES it, and a
+    // container nested inside one has to open with a LONGER run. So a bare
+    // fence line inside a group is a closer, and reaching `end` is the correct
+    // reading of it. A longer bare run (`::::` inside a `:::` group) fails the
+    // width check in `on:end` and is left unscoped, which is the one case this
+    // trades away.
+    const DIV_BLOCK_IN_GROUP = {
+        ...DIV_BLOCK,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])[ \t]*$/,
+        'on:begin': pushFence('_groupDivFences'),
+        'on:end': popFence('_groupDivFences'),
+    };
+
     // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
     // CriticMarkup comment `{# ... #}`. (An earlier rule here matched
     // `{% ... %}`, which is Jinja/Liquid syntax and does not exist in Carve.)
@@ -773,6 +852,7 @@
         HEADING,
         CODE_FENCE_START,
         CODE_FENCE_END,
+        FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,
         HORIZONTAL_RULE,
         TABLE_SEPARATOR,
@@ -838,7 +918,44 @@
     // so a nested div still scopes. highlight.js resolves the 'self' string
     // to this same mode natively, so this does not need the width-tracking
     // idiom above to also handle recursion.
-    DIV_BLOCK.contains = ['self', ...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)];
+    // `'self'` sits LAST, not first. highlight.js takes the first mode in
+    // `contains` that matches at the earliest position, and DIV_BLOCK's own
+    // begin matches `::: figure` (its tail is optional), so a leading `'self'`
+    // out-ranked FIGURE_GROUP_BLOCK for every group nested inside a div - and
+    // because a div's closing fence opens a phantom `'self'` too, "inside a
+    // div" meant "anywhere after the first container in the document".
+    // Measured: `::: note` / `:::` / blank / `::: figure` scoped the group
+    // `keyword`. It is also redundant where it stands, since DIV_BLOCK is
+    // itself an entry in CONTAINS; it is kept, at the end, as the explicit
+    // statement that a div nests in a div.
+    DIV_BLOCK.contains = [...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF), 'self'];
+
+    // A composite figure's body is the div body MINUS FIGURE_GROUP_BLOCK (PART 9
+    // §4c: GROUPS DO NOT NEST - a bare `::: figure` inside an open group is a
+    // generic container at any depth, corpus 318-composite-figures-9). Dropping
+    // the mode is what makes the inner opener fall to the div mode, which is
+    // exactly the generic reading the clause asks for.
+    //
+    // The div reached from here is DIV_BLOCK_IN_GROUP rather than DIV_BLOCK, so
+    // the exclusion survives a level of nesting: DIV_BLOCK still offers
+    // FIGURE_GROUP_BLOCK (a bare opener inside a `::: note` IS a group - only a
+    // group suppresses one), and this variant does not, so
+    // `::: figure` > `::: note` > `::: figure` reads generic too. `'self'` would
+    // not do here: inside DIV_BLOCK_IN_GROUP it resolves to that same div, which
+    // is what is wanted, but the mode has to be a distinct object for its
+    // `contains` to differ from DIV_BLOCK's at all.
+    //
+    // RESIDUAL, written down rather than left to be rediscovered: a bare opener
+    // reached through a LIST ITEM or a BLOCKQUOTE inside a group is matched by
+    // the top-level modes again, so it over-colours as a group there. That is
+    // the same block-context limit every mode in this file has (see the
+    // indented-block-openers note in the module docblock); tree-sitter-carve is
+    // where a real container model lives.
+    const IN_GROUP = CONTAINS
+        .filter((mode) => mode !== ABBREVIATION_DEF && mode !== FIGURE_GROUP_BLOCK)
+        .map((mode) => (mode === DIV_BLOCK ? DIV_BLOCK_IN_GROUP : mode));
+    FIGURE_GROUP_BLOCK.contains = IN_GROUP;
+    DIV_BLOCK_IN_GROUP.contains = [...IN_GROUP.filter((mode) => mode !== DIV_BLOCK_IN_GROUP), 'self'];
 
     return {
         name: 'Carve',
