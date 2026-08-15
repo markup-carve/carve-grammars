@@ -207,4 +207,65 @@ ok('the converter maps every mark to the ProseMirror name the map declares', () 
   assert.deepStrictEqual(wrong, [], `INLINE_MARKS disagrees with schema-map.json: ${wrong.join(', ')}`);
 });
 
+ok('every shared ProseMirror name has exactly one owner', () => {
+  /*
+   * Two Carve types may name the same ProseMirror node or mark - `carveDiv` is
+   * both `div` and `admonition`, `link` is both `link` and `autolink`. A bridge
+   * going the OTHER way has to turn that name back into one Carve type, and
+   * without a declared owner it decides by whatever order it happens to walk
+   * this file in. That is not stable across engines: carve-php walks insertion
+   * order and gets `div`, carve-rs walks a sorted map and gets `admonition`.
+   * The consequence was not academic - carve-rs routed every labelled div down
+   * the admonition path, which does not carry a label, and `:::[First]` came
+   * back as a bare div with the word gone (markup-carve/carve-rs#993).
+   *
+   * `aliasOf` states it. This asserts the file never leaves a name arbitrated
+   * by luck, and that an alias points at a type that really does claim it.
+   */
+  const claims = new Map();
+  for (const [carveType, entry] of Object.entries(map.types)) {
+    for (const name of [entry.pm].flat()) {
+      if (!claims.has(name)) claims.set(name, []);
+      claims.get(name).push(carveType);
+    }
+  }
+
+  const unarbitrated = [];
+  const dangling = [];
+  for (const [name, owners] of claims) {
+    if (owners.length < 2) continue;
+    const primary = owners.filter((t) => !map.types[t].aliasOf);
+    if (primary.length !== 1) {
+      unarbitrated.push(`${name} <- ${owners.join(', ')} (${primary.length} without aliasOf)`);
+      continue;
+    }
+    for (const alias of owners.filter((t) => map.types[t].aliasOf)) {
+      const target = map.types[alias].aliasOf;
+      if (target !== primary[0]) {
+        dangling.push(`${alias}.aliasOf is ${target}, but ${name} is owned by ${primary[0]}`);
+      }
+    }
+  }
+
+  assert.deepStrictEqual(unarbitrated, [], `shared names with no single owner: ${unarbitrated.join('; ')}`);
+  assert.deepStrictEqual(dangling, [], `aliasOf pointing at the wrong type: ${dangling.join('; ')}`);
+});
+
+ok('an aliasOf names a type that exists and shares the name', () => {
+  const broken = [];
+  for (const [carveType, entry] of Object.entries(map.types)) {
+    const target = entry.aliasOf;
+    if (!target) continue;
+    if (!(target in map.types)) {
+      broken.push(`${carveType} -> ${target} (no such type)`);
+      continue;
+    }
+    const shared = [entry.pm].flat().filter((n) => [map.types[target].pm].flat().includes(n));
+    if (shared.length === 0) {
+      broken.push(`${carveType} -> ${target} (they share no ProseMirror name)`);
+    }
+  }
+  assert.deepStrictEqual(broken, [], `broken aliasOf: ${broken.join(', ')}`);
+});
+
 console.log(`\n${passed} passed`);

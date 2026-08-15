@@ -6,6 +6,17 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- **`aliasOf` in `tiptap/schema-map.json`**, so a bridge reading the map back
+  the other way is not left to decide by iteration order. Two Carve types can
+  name the same ProseMirror node or mark - `carveDiv` is both `div` and
+  `admonition`, `link` is both `link` and `autolink` - and a bridge turning that
+  name into one Carve type had nothing to consult. carve-php happens to get the
+  owner because PHP preserves this file's key order; carve-rs walks a sorted map
+  and got the alias, which routed every labelled div down the admonition path
+  and dropped the label (markup-carve/carve-rs#993). `admonition` and `autolink`
+  now carry `aliasOf`, and the suite fails if a shared name is left with no
+  single owner or an alias points at a type that does not claim it.
+
 - **Composite figures are their own construct in all three grammars** (PART 9
   §4c, markup-carve/carve#1215). A BARE `::: figure` opener - the fence, its
   separator, the kind word, and nothing else - is one figure of ordered panels,
