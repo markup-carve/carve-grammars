@@ -6,6 +6,18 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- **Composite figures are their own construct in all three grammars** (PART 9
+  §4c, markup-carve/carve#1215). A BARE `::: figure` opener - the fence, its
+  separator, the kind word, and nothing else - is one figure of ordered panels,
+  so it now carries `meta.figure-group.carve` /
+  `entity.name.tag.figure-group.carve` in TextMate, a `figure-group` token in
+  Prism and `section` in highlight.js, instead of reading as an admonition. An
+  opener that carries a quoted title or a `[label]` is not that production and
+  stays the generic container it has always been, and a bare opener inside an
+  open group degrades to a generic container too, because groups do not nest.
+  The `^ ` line after the closing fence is the group caption and keeps the
+  caption scope it already had.
+
 - **CarveKit registers every authored Carve construct** (mirror of
   carve-php's bridge completion, markup-carve/carve-php#1266). Ten node types
   leave the schema map's `unmapped` list: `carveFrontmatter`,
@@ -20,6 +32,14 @@ All notable changes to `carve-grammars` are documented here.
   editor holds: caption numbers, escapes, smart typography, soft breaks.
 
 ### Fixed
+
+- **A container's closing fence no longer opens a phantom container in
+  highlight.js.** A div's `contains` was tried before its own `end` and led
+  with `'self'`, whose opener tail is optional, so a bare `:::` closer matched
+  it and the rest of the document stayed inside a container that never closed.
+  Every construct kept its own scope, which is why this went unseen; what it
+  actually cost was mode PRECEDENCE, so any construct sharing an opener with a
+  div read as a div from the first container line onward.
 
 - **The `{:TAG}` language attribute reaches the editor**, not just the
   highlighters. `carveToProseMirror` reads the bundled `@markup-carve/carve`,

@@ -374,6 +374,65 @@
             }, inline),
         },
 
+        // Composite figure ::: figure  (PART 9 §4c, markup-carve/carve#1215)
+        //
+        // The kind word `figure` is RESERVED among the `:::` types: a BARE
+        // opener - the fence, its separator, the word `figure`, and NOTHING
+        // else - is ONE figure of ordered panels, not an admonition. It gets
+        // its own token so a consumer can tell the two readings apart, and it
+        // sits BEFORE 'div' because both patterns match the same line and
+        // Prism takes the first rule that does.
+        //
+        // The `[ \t]*$` tail is the whole distinction. An opener carrying a
+        // quoted title or a [label] (`::: figure "T"`, `::: figure [g]`) does
+        // not match here at all and falls through to 'div', which is the
+        // generic Tier-2 container the clause says it stays.
+        //
+        // The separator is a SPACE run, never a tab (grammar.ebnf PART 7,
+        // MARKER SEPARATORS; corpus 254 renders `:::<TAB>note` as a paragraph).
+        // A tab-separated opener is not claimed here and falls to 'div', which
+        // over-colours it exactly as it does today - a pre-existing trade this
+        // rule neither widens nor fixes. Trailing whitespace after the kind
+        // word is insignificant and may be a tab.
+        //
+        // The whole-container span, the lazy tail and the `\1` backreference
+        // to the opener's colon run are 'div' below, unchanged - see its
+        // comment for why the pattern reaches its own closer.
+        //
+        // GROUPS DO NOT NEST: a bare `::: figure` inside an open group is a
+        // generic container, which is what the `inside` composed after this
+        // object literal arranges (the group's body holds no 'figure-group').
+        'figure-group': {
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            alias: 'tag',
+            inside: {
+                // THIS container's own two delimiter lines, each claimed whole
+                // by one sub-pattern, for the same reason 'div-delimiter' below
+                // is: an ungrabbed run on a delimiter line is re-scanned as its
+                // own fresh string and a `^`-anchored body pattern can match
+                // into it.
+                //
+                // Deliberately NOT `m`-flagged, which is where this differs from
+                // 'div-delimiter'. That rule wants every delimiter line in its
+                // token, because a nested `:::` is the SAME rule. Here a nested
+                // one is not: an `m`-flagged pattern claimed the inner opener of
+                // `::: figure` > `:::: figure` as a group delimiter, which is
+                // the one shape PART 9 \u00A74c says degrades. So the two
+                // alternatives anchor to the token's own ends instead - the
+                // first alternative to its start (`^` with no `m` is offset 0
+                // of the token, and the token begins at the opener), the second
+                // to its end (`$` with no `m` is the end of the token, and an
+                // unclosed group has no closer line to match).
+                'figure-group-delimiter': {
+                    pattern: /^\uFEFF?[ \t]*:{3,} +figure[ \t]*(?=\n|$)|(?<=\n)[ \t]*:{3,}[ \t]*$/,
+                    inside: {
+                        'punctuation': /:{3,}/,
+                        'class-name': /figure/,
+                    },
+                },
+            },
+        },
+
         // Container divs ::: class  /  :::
         // Strict opener shapes only: type word, optional "title" (straight
         // quotes), optional [label], the | / \ layout tokens, or a typeless
@@ -843,12 +902,43 @@
     // delimiter-specific 'div-delimiter' entry already on 'div'.inside is
     // spread first, so it still wins over the body patterns for the
     // opener/closer lines themselves.
+    var divDelimiterOnly = Prism.languages.carve.div.inside;
+    var figureGroupDelimiterOnly = Prism.languages.carve['figure-group'].inside;
     var divBody = Object.assign({}, Prism.languages.carve);
     delete divBody['abbreviation-definition'];
     Prism.languages.carve.div.inside = Object.assign(
         {},
-        Prism.languages.carve.div.inside,
+        divDelimiterOnly,
         divBody
+    );
+
+    // A composite figure's body is the div body MINUS 'figure-group' (PART 9
+    // §4c: GROUPS DO NOT NEST - a bare `::: figure` inside an open group is a
+    // generic container at any depth, corpus 318-composite-figures-9). Removing
+    // the entry is what makes the inner opener fall to 'div', which is exactly
+    // the generic reading the clause asks for.
+    //
+    // 'div' inside a group is its OWN token object, so the exclusion survives a
+    // level of nesting: the top-level 'div' still offers 'figure-group' (a bare
+    // opener inside a `::: note` IS a group - only a group suppresses one), and
+    // this copy does not, so `::: figure` > `::: note` > `::: figure` reads
+    // generic too.
+    //
+    // RESIDUAL, written down rather than left to be rediscovered: a bare opener
+    // reached through a LIST ITEM or a BLOCKQUOTE inside a group is tokenized by
+    // the top-level rules again, so it over-colours as a group there. That is
+    // the same block-context limit every rule in this file has (see the
+    // indented-block-openers note in the module docblock); tree-sitter-carve is
+    // where a real container model lives.
+    var figureGroupBody = Object.assign({}, divBody);
+    delete figureGroupBody['figure-group'];
+    var divInGroup = Object.assign({}, Prism.languages.carve.div);
+    figureGroupBody.div = divInGroup;
+    divInGroup.inside = Object.assign({}, divDelimiterOnly, figureGroupBody);
+    Prism.languages.carve['figure-group'].inside = Object.assign(
+        {},
+        figureGroupDelimiterOnly,
+        figureGroupBody
     );
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).

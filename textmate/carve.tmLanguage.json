@@ -28,6 +28,9 @@
       "include": "#line_comment"
     },
     {
+      "include": "#figure_group"
+    },
+    {
       "include": "#admonition"
     },
     {
@@ -245,6 +248,9 @@
           "include": "#line_comment"
         },
         {
+          "include": "#figure_group"
+        },
+        {
           "include": "#admonition"
         },
         {
@@ -285,6 +291,168 @@
         }
       ],
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set - which incorrectly let `#abbreviation` fire inside a div (PART 9: abbreviation definitions are recognized at document level only; the sibling list-item and blockquote cases already read correctly, but only because their own line mechanics happen to block it, not because either detects the container). The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus `#abbreviation` (the one construct this fix targets); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before."
+    },
+    "admonition_in_group": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?:[ \\t]*(\\||\\\\)|[ \\t]*([a-zA-Z_][\\w-]*)(?:[ \\t]+(\"[^\"\\n]*\"))?(?:[ \\t]+(\\[[^\\]\\n]*\\]))?|[ \\t]*(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "3": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.admonition.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "6": {
+          "name": "constant.other.label.admonition.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "comment": "The generic container, reached only from INSIDE a composite figure group. Identical to `#admonition` except that its body offers `#admonition_in_group` and never `#figure_group`, so a bare `::: figure` at any depth inside an open group scopes as the generic container the clause says it degrades to (PART 9 §4c, GROUPS DO NOT NEST; corpus 318-composite-figures-9). Scope names are deliberately unchanged - it IS an admonition, and a consumer selecting `meta.admonition.carve` must keep seeing it."
+    },
+    "figure_group": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,}) +(figure)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.figure-group.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.figure-group.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.figure-group.carve"
+        }
+      },
+      "name": "meta.figure-group.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "comment": "Composite figure (PART 9 §4c, markup-carve/carve#1215). The kind word `figure` is RESERVED among the `:::` types: a BARE opener - the fence, its separator, the word `figure`, and NOTHING else - is ONE figure of ordered panels, not an admonition, so it carries its own scope and this rule sits BEFORE `#admonition` everywhere the generic container is reachable. The `[ \\t]*$` tail is the whole distinction: an opener carrying a quoted title or a `[label]` (`::: figure \"T\"`, `::: figure [g]`) does not match here at all and falls through to `#admonition`, which is the generic Tier-2 container the clause says it stays. GROUPS DO NOT NEST: a bare `::: figure` at ANY depth inside an open group is a generic container, so this rule's body reaches `#admonition_in_group` rather than `#admonition` - that variant is the same generic container with `#figure_group` removed from its own body, which is what carries the rule down a chain of `:::` containers. RESIDUAL, written down rather than left to be rediscovered: a bare opener reached through a LIST ITEM or a BLOCKQUOTE inside a group goes through `#container_blocks`, which still offers `#figure_group`, so it over-colours as a group there. That is the same block-context limit every line-based rule in this file has (carve-grammars#71); tree-sitter-carve is where a real container model lives. THE SEPARATOR IS A SPACE RUN, never a tab (grammar.ebnf PART 7, MARKER SEPARATORS; corpus 254): `:::<TAB>figure` is a paragraph, so this rule does not claim it and the line falls to `#admonition`, which over-colours it exactly as it does today - a pre-existing trade this rule neither widens nor fixes. Trailing whitespace after the kind word is insignificant and may be a tab. The closer backreferences the opener's colon run (`\\1`), the exact-length rule `#admonition` already follows. THE CAPTION AFTER THE CLOSER needs no rule here: the group caption is an ordinary `^ ` line one line below the closing fence, which `#caption` already claims at the document level."
     },
     "blockquote": {
       "match": "^(?:\\A\\x{FEFF})?(>)(?= |$) ?(.*)$",
@@ -1455,6 +1623,9 @@
         },
         {
           "include": "#line_comment"
+        },
+        {
+          "include": "#figure_group"
         },
         {
           "include": "#admonition"
