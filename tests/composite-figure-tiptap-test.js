@@ -19,6 +19,7 @@
  * quietly agreeing with itself.
  */
 import assert from 'node:assert';
+import { readFileSync } from 'node:fs';
 import { Window } from 'happy-dom';
 import { Editor } from '@tiptap/core';
 import { getSchema } from '@tiptap/core';
@@ -207,6 +208,22 @@ ok('the blank line between panels is what keeps them apart', () => {
         normalizeAst(parse(GROUP)),
         'the blank line makes no difference - this test is asserting nothing',
     );
+});
+
+ok('the published schema map names the node', () => {
+    // tests/schema-map-test.js checks the map against the CarveKit schema and
+    // against the pinned spec vocabulary. Neither can see a MISSING entry for a
+    // type the pinned spec does not define yet, which is exactly this one, so
+    // the map is checked here against the bridge that produces the node.
+    const map = JSON.parse(readFileSync(new URL('../tiptap/schema-map.json', import.meta.url), 'utf8'));
+    assert.strictEqual(map.types.figure_group?.kind, 'node');
+    assert.strictEqual(map.types.figure_group?.pm, 'carveFigureGroup');
+    assert.strictEqual(
+        map.types.figure_group.pm,
+        carveToProseMirror(GROUP).content[0].type,
+        'the map names a ProseMirror node the loader does not build',
+    );
+    assert.ok(!('figure_group' in map.unmapped));
 });
 
 ok('CarveKit registers the node and a mounted editor keeps it', () => {
