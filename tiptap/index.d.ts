@@ -28,6 +28,7 @@ export const CarveTag: Node;
 export const CarveUnsupported: Node;
 export const CarveUnsupportedInline: Node;
 export const CarveFigure: Node;
+export const CarveFigureGroup: Node;
 export const CarveCaption: Node;
 export const CarveRawBlock: Node;
 export const CarveComment: Node;

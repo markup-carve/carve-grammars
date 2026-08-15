@@ -449,6 +449,37 @@ export function serializeToCarve(doc) {
                 break;
             }
 
+            case 'carveFigureGroup': {
+                // A composite figure (PART 9 §4c). The opener is BARE - fence,
+                // separator, the kind word - or it is not this production at
+                // all: `::: figure "T"` and `::: figure [g]` parse as generic
+                // containers, so a title or a label written here would not come
+                // back as a group. Group attributes ride the preceding
+                // attribute line, exactly as they do on a div.
+                const groupAttrs = serializeAttributes(node.attrs);
+                if (groupAttrs) output += groupAttrs + '\n';
+                const groupContent = node.content || [];
+                // The trailing carveCaption is the GROUP caption and belongs
+                // below the closer - the one thing that makes this container
+                // different from every other `:::` in this file. Nothing else
+                // can be a bare caption here: a `^ ` line inside the body
+                // attaches to its local host or is an ordinary paragraph.
+                const last = groupContent[groupContent.length - 1];
+                const groupCaption = last?.type === 'carveCaption' ? last : null;
+                const panels = groupCaption ? groupContent.slice(0, -1) : groupContent;
+                const groupFence = ':'.repeat(carveDivFenceLength(fenceDepth));
+                output += groupFence + ' figure\n';
+                panels.forEach((child, i) => {
+                    serializeNode(child, indent, fenceDepth + 1);
+                    // Panels are captioned blocks; without the blank line the
+                    // next panel's first line continues the previous caption.
+                    if (i < panels.length - 1) output += '\n';
+                });
+                output += groupFence + '\n';
+                if (groupCaption) serializeNode(groupCaption, indent, fenceDepth);
+                break;
+            }
+
             case 'carveSection':
                 for (const child of node.content || []) serializeNode(child, indent, fenceDepth);
                 break;

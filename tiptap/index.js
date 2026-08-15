@@ -51,7 +51,7 @@ export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
 export { CarveUnsupported } from './extensions/carve-unsupported.js';
 export { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
-export { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
+export { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';
 export { CarveRawBlock } from './extensions/carve-raw-block.js';
 export { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
 export { CarveSourcePreservation } from './extensions/carve-source-preservation.js';

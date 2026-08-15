@@ -479,6 +479,9 @@ function convertBlock(node, ctx) {
             };
         case 'figure':
             return convertFigure(node, ctx);
+        case 'figure-group':
+        case 'figure_group':
+            return convertFigureGroup(node, ctx);
 
         default:
             return unsupported(node.type, node, ctx);
@@ -507,6 +510,34 @@ function convertFigure(node, ctx) {
     const attrs = convertAttrs(node.attrs);
     if (attrs) figure.attrs = attrs;
     return figure;
+}
+
+/**
+ * A composite figure (PART 9 §4c): one figure of ordered panels.
+ *
+ * `children` are ordinary blocks in SOURCE ORDER - the panels are the `figure`
+ * and `table` nodes among them, and non-panel content sits between them in
+ * place. There is no `panels` array to read and none to build: which children
+ * are panels is derived by type, the way the renderer derives it, so the two
+ * can never disagree.
+ *
+ * The group is discriminated by its TYPE. It carries no `target`, and this
+ * function must never be reached by sniffing for that missing field.
+ */
+function convertFigureGroup(node, ctx) {
+    const content = convertBlocks(node.children || [], ctx);
+    // The group caption is written BELOW the closing fence, but it is the
+    // group's own caption, so it rides as the last child and the serializer
+    // puts it back where it was authored. Absent means uncaptioned: an empty
+    // `carveCaption` would write a bare `^ ` line the author never typed.
+    if (node.caption) {
+        content.push({ type: 'carveCaption', content: convertInline(node.caption, ctx) });
+    }
+    const group = { type: 'carveFigureGroup' };
+    const attrs = convertAttrs(node.attrs);
+    if (attrs) group.attrs = attrs;
+    if (content.length) group.content = content;
+    return group;
 }
 
 function blockImage(node) {

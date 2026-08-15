@@ -119,6 +119,11 @@
       "kind": "node",
       "pm": "carveFigure"
     },
+    "figure_group": {
+      "kind": "node",
+      "pm": "carveFigureGroup",
+      "notes": "a composite figure (PART 9 §4c): children in source order, the panels being the figure and table nodes among them. The group caption rides as a trailing carveCaption child even though it is authored below the closing fence. Deliberately no target, no title, no label - a bridge discriminates on the TYPE, never by probing for the target a figure has and this does not"
+    },
     "caption": {
       "kind": "node",
       "pm": "carveCaption"

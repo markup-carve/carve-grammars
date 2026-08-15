@@ -29,6 +29,24 @@ All notable changes to `carve-grammars` are documented here.
   The `^ ` line after the closing fence is the group caption and keeps the
   caption scope it already had.
 
+- **A composite figure is a node the editor holds** (PART 9 §4c,
+  markup-carve/carve#1122). `CarveKit` registers `carveFigureGroup`,
+  `carveToProseMirror` builds one for a bare `::: figure` container, and the
+  serializer writes it back - opener, panels in source order, closing fence,
+  and the group caption on the line below the closer, where it was authored.
+  Its direct `carveFigure` and `table` children are the panels; everything else
+  is plain group content kept in place between them, not dropped and not
+  re-attached. The node deliberately carries no `target`, no title and no
+  label, so a bridge tells it from a `figure` by the type rather than by
+  probing for a missing field, and `figure_group` leaves the schema map's
+  undeclared set. An opener carrying a quoted title or a `[label]` is a
+  different production and still loads as the generic container it always was,
+  with its metadata intact. Previously the loader had no case for the type at
+  all: a document holding a composite figure threw, or under `unsupported:
+  'preserve'` became one opaque source atom whose first edit lost the
+  structure. The bundled `@markup-carve/carve` pin moves with it, onto a
+  carve-js commit that parses the construct.
+
 - **CarveKit registers every authored Carve construct** (mirror of
   carve-php's bridge completion, markup-carve/carve-php#1266). Ten node types
   leave the schema map's `unmapped` list: `carveFrontmatter`,

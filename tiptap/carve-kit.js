@@ -33,7 +33,7 @@ import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveUnsupported } from './extensions/carve-unsupported.js';
 import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
-import { CarveFigure, CarveCaption } from './extensions/carve-figure.js';
+import { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';
 import { CarveRawBlock } from './extensions/carve-raw-block.js';
 import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
 import { CarveCitation } from './extensions/carve-citation.js';
@@ -654,6 +654,11 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveFigure !== false) {
             extensions.push(CarveFigure.configure(this.options.carveFigure ?? {}));
+            // A composite figure (PART 9 §4c) is registered with the figure it
+            // groups: its panels ARE carveFigure nodes, so turning figures off
+            // and leaving the group on would register a container whose content
+            // the schema cannot hold.
+            extensions.push(CarveFigureGroup.configure(this.options.carveFigureGroup ?? {}));
             extensions.push(CarveCaption.configure(this.options.carveCaption ?? {}));
         }
         if (this.options.carveFrontmatter !== false) {
