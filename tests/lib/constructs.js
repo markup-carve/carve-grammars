@@ -686,6 +686,17 @@ export const LITERALS = [
         payload: 'figure',
         scopes: { prism: 'figure-group', highlightjs: 'section', textmate: 'figure-group' },
     },
+    {
+        // A TAB DOES NOT SEPARATE (grammar.ebnf PART 7; corpus 254 renders
+        // `:::<TAB>note` as a paragraph). The generic container rules take
+        // `[ \t]` and knowingly over-colour this, which is the pre-existing
+        // trade in all three grammars - so the assertion here is only that the
+        // NEW scope does not claim it, not that the line stays unscoped.
+        name: 'a tab does not separate a composite figure opener',
+        sample: ':::\tfigure\nBody.\n:::\n',
+        payload: 'figure',
+        scopes: { prism: 'figure-group', highlightjs: 'section', textmate: 'figure-group' },
+    },
 ];
 
 /*
@@ -707,7 +718,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 155
-export const MIN_LITERALS = 27
+export const MIN_LITERALS = 28
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

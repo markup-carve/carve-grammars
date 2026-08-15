@@ -388,6 +388,13 @@
         // not match here at all and falls through to 'div', which is the
         // generic Tier-2 container the clause says it stays.
         //
+        // The separator is a SPACE run, never a tab (grammar.ebnf PART 7,
+        // MARKER SEPARATORS; corpus 254 renders `:::<TAB>note` as a paragraph).
+        // A tab-separated opener is not claimed here and falls to 'div', which
+        // over-colours it exactly as it does today - a pre-existing trade this
+        // rule neither widens nor fixes. Trailing whitespace after the kind
+        // word is insignificant and may be a tab.
+        //
         // The whole-container span, the lazy tail and the `\1` backreference
         // to the opener's colon run are 'div' below, unchanged - see its
         // comment for why the pattern reaches its own closer.
@@ -396,7 +403,7 @@
         // generic container, which is what the `inside` composed after this
         // object literal arranges (the group's body holds no 'figure-group').
         'figure-group': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})[ \t]+figure[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -417,7 +424,7 @@
                 // to its end (`$` with no `m` is the end of the token, and an
                 // unclosed group has no closer line to match).
                 'figure-group-delimiter': {
-                    pattern: /^\uFEFF?[ \t]*:{3,}[ \t]+figure[ \t]*(?=\n|$)|(?<=\n)[ \t]*:{3,}[ \t]*$/,
+                    pattern: /^\uFEFF?[ \t]*:{3,} +figure[ \t]*(?=\n|$)|(?<=\n)[ \t]*:{3,}[ \t]*$/,
                     inside: {
                         'punctuation': /:{3,}/,
                         'class-name': /figure/,

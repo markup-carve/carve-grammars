@@ -613,6 +613,13 @@
     // here at all and falls to DIV_BLOCK, which is the generic Tier-2 container
     // the clause says it stays.
     //
+    // The separator is a SPACE run, never a tab (grammar.ebnf PART 7, MARKER
+    // SEPARATORS; corpus 254 renders `:::<TAB>note` as a paragraph). A
+    // tab-separated opener is not claimed here and falls to DIV_BLOCK, which
+    // over-colours it exactly as it does today - a pre-existing trade this mode
+    // neither widens nor fixes. Trailing whitespace after the kind word is
+    // insignificant and may be a tab.
+    //
     // Closer width is carried in `resp.data` and compared on `on:end`, the same
     // idiom DIV_BLOCK and BLOCK_COMMENT already use, so the closer matches the
     // opener's colon run EXACTLY. `contains` is assigned below, once the full
@@ -639,7 +646,7 @@
 
     const FIGURE_GROUP_BLOCK = {
         beginScope: 'section',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})[ \t]+figure[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$/,
         'on:begin': pushFence('_groupFences'),
         endScope: 'section',
         end: /^[ \t]*(:{3,})[ \t]*$/,
