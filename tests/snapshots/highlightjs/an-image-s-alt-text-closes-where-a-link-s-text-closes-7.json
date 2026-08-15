@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "![t[z]][r]\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ cap"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /i.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

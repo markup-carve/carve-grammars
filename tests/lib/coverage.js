@@ -204,6 +204,57 @@ const TIPTAP_COVERED = [
     '209-an-unresolved-reference-image-takes-no-caption',
     '231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose',
     '244-the-same-column-written-with-four-spaces',
+
+    // Classified with the spec bump to 49b8deb. Each was MEASURED, not assumed:
+    // every file in every one of these categories converts to rich ProseMirror
+    // nodes (no whole-document fallback atom) and reparses to the same AST.
+    // `318-composite-figures` is the one worth naming - all eleven documents
+    // reach real `carveFigureGroup` nodes holding `carveFigure` panels and a
+    // trailing `carveCaption`, which is what carve-grammars#225 built and what
+    // no corpus document could exercise while the pin predated PART 9 §4c.
+    //
+    // Fourteen of these (`282` through `292`, and the language-attribute run)
+    // predate this bump: they landed while the tiptap lists were classifying
+    // nothing, because `coversAll` satisfies the partition on its own. The
+    // check added below closes that, so the lists cannot drift again.
+    '282-two-blank-lines-detach-a-caption',
+    '284-a-ragged-table-keeps-each-row-s-cell-count',
+    '285-adjacent-block-openers-in-an-attached-run-stay-separate',
+    '286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption',
+    '287-a-column-zero-definition-ends-an-open-list-item',
+    '288-heading-index-plain-text-covers-visible-leaves-and-rejects-an-empty-key',
+    '289-a-structural-attribute-leads-the-author-s-own',
+    '290-adjacent-sibling-lists-survive-the-round-trip',
+    '291-a-fence-keeps-the-blank-line-at-the-end-of-its-content',
+    '292-a-boolean-and-a-key-value-of-the-same-name-are-one-attribute',
+    '293-a-semantic-name-renames-the-span-and-the-leftovers-ride-the-element',
+    '294-a-language-attribute-is-exact-sugar-for-lang',
+    '295-a-malformed-language-tag-leaves-the-whole-block-literal',
+    '296-a-language-attribute-and-lang-are-one-key',
+    '297-the-language-sigil-takes-no-padding',
+    '298-a-boolean-lang-is-the-third-spelling-of-the-same-key',
+    '299-the-semantic-registry-holds-no-element-carve-already-spells',
+    '300-two-attributes-need-a-separator-between-them',
+    '301-a-derived-title-yields-to-an-authored-one',
+    '302-a-math-span-s-base-class-keeps-the-class-slot-in-place',
+    '303-a-marker-glued-to-a-name-opens-nothing',
+    '304-an-angle-bracket-is-escaped-only-where-it-opens-markup',
+    '305-an-abbreviation-expands-inside-an-inline-container',
+    '306-a-captioned-quote-holds-more-than-one-block',
+    '307-an-empty-inline-note-is-literal',
+    '308-a-multi-letter-ordered-marker-opens-no-list',
+    '309-a-note-s-content-recognizes-no-note',
+    '310-a-footnote-in-link-text-nests-the-anchors',
+    '311-a-footnote-in-reference-link-text-nests-the-anchors-too',
+    '312-a-note-body-s-own-references-resolve',
+    '313-a-reference-link-s-text-survives-its-own-frame',
+    '314-a-footnote-in-an-unresolved-reference-is-not-a-reference',
+    '315-an-inline-note-s-content-resolves-after-the-note',
+    '316-an-image-s-alt-text-closes-where-a-link-s-text-closes',
+    '317-an-editorial-comment-s-bracket-is-content-not-the-close',
+    '318-composite-figures',
+    '319-cell-attributes-bind-after-the-kind-and-alignment-markers',
+    '320-the-canonical-writer-glues-a-code-fence-to-its-info-string',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

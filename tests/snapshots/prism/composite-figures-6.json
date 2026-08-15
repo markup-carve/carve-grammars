@@ -1,0 +1,74 @@
+[
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter",
+    "text": " "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "figure-group>image",
+    "text": "one"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "figure-group>image",
+    "text": "a.png"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "figure-group>caption",
+    "text": " (a) One"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: Detached"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

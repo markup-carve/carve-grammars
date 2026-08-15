@@ -1,14 +1,10 @@
 [
   {
     "scope": "function",
-    "text": ":foo[a]"
-  },
-  {
-    "scope": "attr",
-    "text": "{.cls}"
+    "text": ":foo[a [b]"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " c]\n"
   }
 ]

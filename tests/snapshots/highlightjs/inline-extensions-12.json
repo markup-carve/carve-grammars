@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "function",
+    "text": ":widget[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i .c k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

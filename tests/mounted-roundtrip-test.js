@@ -92,5 +92,35 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 //   288-heading-index-plain-text-covers-visible-leaves-and-rejects-an-empty-key
 //   and 296-a-language-attribute-and-lang-are-one-key-4, the latter protected
 //   above.
-assert.strictEqual(changed.length, 173, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 173 -> 191 when `spec/` moved from 988fdc8 to 49b8deb. The corpus grew by 316
+// documents, so the count had to move; what matters is that NOTHING already in
+// the corpus moved with it. Keyed by source text rather than by filename, all
+// 918 documents present under both pins returned the same verdict - zero flips
+// in either direction. The net +18 is 19 new movers minus one source the corpus
+// dropped (the old `45-inline-extensions-9`, retired when upstream rewrote that
+// category around semantic spans). Every one of the 19 was read:
+//
+// - Eight are one defect: a link or image whose TEXT holds another anchor. The
+//   projection flattens the nesting and moves the inner anchor out behind the
+//   outer one - `a [t^[n]](/u) b` comes back as `a [t](/u)[^1] b`, and
+//   `a [x ![t[z]][r] y](/u) b` splits the link in two around the image. The
+//   reference forms re-emit their definitions a second time on top of that.
+//   `310`, `311` (x3), `312-3`, `313-4`, `314` (x3) and `316-3` / `316-8`.
+// - Five are the semantic element name, which is authored as a value-less
+//   attribute and dropped: `[Ctrl+C]{kbd}` comes back as `[Ctrl+C]{}`, so the
+//   rendered element degrades from `kbd` to a plain span. Only the BOOLEAN name
+//   is lost - `[x]{#k .key kbd}` keeps its id and class, and `{dfn="a term"}`
+//   survives intact. `45-inline-extensions-2` / `-8` / `-10`, `71-attribute-
+//   edge-cases-11` and `299-3`.
+// - `307-an-empty-inline-note-is-literal-3`: `x ^[]{.c}` is literal text, and
+//   the projection writes back a bare `x ^`, losing the run entirely.
+// - `318-composite-figures-6`: a caption detached by TWO blank lines is
+//   re-emitted after one, which re-attaches it to the group - the exact
+//   distinction that document exists to pin.
+//
+// The other 81 new documents are render-equivalent through a mount, including
+// the remaining ten of `318-composite-figures`: the loader builds real
+// `carveFigureGroup` nodes holding `carveFigure` panels and a trailing
+// `carveCaption`, and they survive the editor.
+assert.strictEqual(changed.length, 191, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

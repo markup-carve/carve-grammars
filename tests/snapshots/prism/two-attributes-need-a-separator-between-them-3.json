@@ -1,0 +1,18 @@
+[
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "text",
+    "text": "{"
+  },
+  {
+    "type": "tag",
+    "text": "#i"
+  },
+  {
+    "type": "text",
+    "text": ".c}\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": " >"
+  },
+  {
+    "type": "blockquote",
+    "text": " I never said that."
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Quoted in the report"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

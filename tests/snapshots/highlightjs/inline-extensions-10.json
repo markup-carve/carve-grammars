@@ -1,23 +1,23 @@
 [
   {
     "scope": "string",
-    "text": "[*Ctrl*+C]"
-  },
-  {
-    "scope": "attr",
-    "text": "{#copy .shortcut kbd data-key=\"copy\" onclick=\"alert(1)\"}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "string",
     "text": "[x]"
   },
   {
     "scope": "attr",
-    "text": "{kbd onclick=\"alert(1)\"}"
+    "text": "{samp}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[y]"
+  },
+  {
+    "scope": "attr",
+    "text": "{dfn=\"a term\"}"
   },
   {
     "scope": null,

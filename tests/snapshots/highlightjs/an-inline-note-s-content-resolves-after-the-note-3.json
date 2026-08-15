@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "symbol",
+    "text": "^[see [t]"
+  },
+  {
+    "scope": null,
+    "text": "[r]] b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,43 +1,15 @@
 [
   {
-    "type": "extension>function",
-    "text": ":kbd"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "*Ctrl*+C"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
+    "type": "span",
+    "text": "[HTML]"
   },
   {
     "type": "attributes>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
-    "text": "#copy"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".shortcut"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
     "type": "attributes>attr-name",
-    "text": "data-key"
+    "text": "abbr"
   },
   {
     "type": "attributes>punctuation",
@@ -45,15 +17,27 @@
   },
   {
     "type": "attributes>string",
-    "text": "\"copy\""
+    "text": "\"HyperText Markup Language\""
   },
   {
-    "type": "attributes",
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
     "text": " "
   },
   {
+    "type": "span",
+    "text": "[Noon]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
     "type": "attributes>attr-name",
-    "text": "onclick"
+    "text": "time"
   },
   {
     "type": "attributes>punctuation",
@@ -61,7 +45,27 @@
   },
   {
     "type": "attributes>string",
-    "text": "\"alert(1)\""
+    "text": "\"12:00\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "span",
+    "text": "[Tab]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "kbd"
   },
   {
     "type": "attributes>punctuation",

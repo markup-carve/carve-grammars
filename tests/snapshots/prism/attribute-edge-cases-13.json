@@ -1,11 +1,39 @@
 [
   {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "title"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"a\\\""
+  },
+  {
+    "type": "attributes",
+    "text": "b\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
     "type": "title>punctuation",
     "text": "#"
   },
   {
     "type": "title",
-    "text": " H {???}"
+    "text": " H"
   },
   {
     "type": "text",

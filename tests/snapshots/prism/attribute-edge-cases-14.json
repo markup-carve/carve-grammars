@@ -1,18 +1,14 @@
 [
   {
-    "type": "span",
-    "text": "[x]"
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " H {???}"
   },
   {
     "type": "text",
-    "text": "{.123} and "
-  },
-  {
-    "type": "span",
-    "text": "[y]"
-  },
-  {
-    "type": "text",
-    "text": "{12=v}\n"
+    "text": "\n"
   }
 ]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "a ![t[z[q]]]"
+  },
+  {
+    "scope": "string",
+    "text": "[r]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /i.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

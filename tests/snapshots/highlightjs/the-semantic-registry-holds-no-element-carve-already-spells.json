@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "code",
+    "text": "`x`"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "!`x`"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "addition",
+    "text": "=x="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

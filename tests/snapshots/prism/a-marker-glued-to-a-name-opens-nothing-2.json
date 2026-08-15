@@ -1,0 +1,14 @@
+[
+  {
+    "type": "mention",
+    "text": "@a"
+  },
+  {
+    "type": "mention",
+    "text": "@b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "a [x ![t[z]][r] y](/u) b\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /i.png"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

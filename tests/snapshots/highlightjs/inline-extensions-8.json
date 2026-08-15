@@ -1,11 +1,35 @@
 [
   {
-    "scope": "function",
-    "text": ":kbd[*Ctrl*+C]"
+    "scope": "string",
+    "text": "[HTML]"
   },
   {
     "scope": "attr",
-    "text": "{#copy .shortcut data-key=\"copy\" onclick=\"alert(1)\"}"
+    "text": "{abbr=\"HyperText Markup Language\"}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[Noon]"
+  },
+  {
+    "scope": "attr",
+    "text": "{time=\"12:00\"}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[Tab]"
+  },
+  {
+    "scope": "attr",
+    "text": "{kbd}"
   },
   {
     "scope": null,

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: Long Form"
+  },
+  {
+    "scope": null,
+    "text": "\n\nThe "
+  },
+  {
+    "scope": "function",
+    "text": ":kbd[HTML]"
+  },
+  {
+    "scope": null,
+    "text": " key.\n"
+  }
+]

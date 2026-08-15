@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "symbol",
+    "text": "^[t{# ]"
+  },
+  {
+    "scope": null,
+    "text": " #}z] b\n"
+  }
+]

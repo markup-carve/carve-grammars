@@ -1,0 +1,114 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>string",
+    "text": "\"A titled figure div\""
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "div>image",
+    "text": "one"
+  },
+  {
+    "type": "div>image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "div>image",
+    "text": "a.png"
+  },
+  {
+    "type": "div>image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "div>caption",
+    "text": " (a) One"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Not a group caption"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>symbol",
+    "text": "[g]"
+  },
+  {
+    "type": "div",
+    "text": "\nBody.\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

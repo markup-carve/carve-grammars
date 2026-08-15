@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "a [t"
+  },
+  {
+    "type": "footnote",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": "][nope] b "
+  },
+  {
+    "type": "footnote",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": " c\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^1]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " n"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

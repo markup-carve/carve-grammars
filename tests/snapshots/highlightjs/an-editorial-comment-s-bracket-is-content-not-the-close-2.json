@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a [t"
+  },
+  {
+    "scope": "comment",
+    "text": "{# ] #}"
+  },
+  {
+    "scope": null,
+    "text": "z]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

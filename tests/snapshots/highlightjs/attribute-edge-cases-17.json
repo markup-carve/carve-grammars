@@ -4,11 +4,7 @@
     "text": "[x]"
   },
   {
-    "scope": "attr",
-    "text": "{.a1 #b2 k3=v}"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "{.ok .1}\n"
   }
 ]

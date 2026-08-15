@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> git bisect run ./check"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ The release runbook"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

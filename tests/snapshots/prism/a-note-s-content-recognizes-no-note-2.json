@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "a [^1"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " c]\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^1]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " n"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

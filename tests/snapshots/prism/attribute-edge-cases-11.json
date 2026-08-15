@@ -8,20 +8,20 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
-    "text": "title"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>string",
-    "text": "\"a\\\""
+    "type": "attributes>id",
+    "text": "#k"
   },
   {
     "type": "attributes",
-    "text": "b\""
+    "text": " "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".key"
+  },
+  {
+    "type": "attributes",
+    "text": " kbd"
   },
   {
     "type": "attributes>punctuation",

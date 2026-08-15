@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "symbol",
+    "text": "@a"
+  },
+  {
+    "scope": null,
+    "text": "@b\n"
+  }
+]

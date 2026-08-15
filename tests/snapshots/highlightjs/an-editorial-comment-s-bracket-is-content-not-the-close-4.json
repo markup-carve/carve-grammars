@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a ![t"
+  },
+  {
+    "scope": "comment",
+    "text": "{# ] #}"
+  },
+  {
+    "scope": null,
+    "text": "z](/i.png) b\n"
+  }
+]

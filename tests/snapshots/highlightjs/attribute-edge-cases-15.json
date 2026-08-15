@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": "{.a!b}\n"
+    "text": "{.123} and "
+  },
+  {
+    "scope": "string",
+    "text": "[y]"
+  },
+  {
+    "scope": null,
+    "text": "{12=v}\n"
   }
 ]

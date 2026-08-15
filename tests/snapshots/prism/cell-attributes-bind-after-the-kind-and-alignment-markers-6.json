@@ -1,0 +1,122 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "<"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".h"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " Name "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " Score "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".head"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " Ann "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".num"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " 9 "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".win"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

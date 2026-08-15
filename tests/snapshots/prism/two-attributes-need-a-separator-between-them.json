@@ -1,0 +1,10 @@
+[
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "text",
+    "text": "{.a.b}\n"
+  }
+]

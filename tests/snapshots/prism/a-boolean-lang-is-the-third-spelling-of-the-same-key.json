@@ -1,0 +1,50 @@
+[
+  {
+    "type": "span",
+    "text": "[a]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>language",
+    "text": ":fr"
+  },
+  {
+    "type": "attributes",
+    "text": " lang"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "span",
+    "text": "[b]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes",
+    "text": "lang "
+  },
+  {
+    "type": "attributes>language",
+    "text": ":fr"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

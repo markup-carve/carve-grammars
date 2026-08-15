@@ -1,7 +1,15 @@
 [
   {
+    "scope": "attr",
+    "text": "{title=\"a\\\"b\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
     "scope": "section",
-    "text": "# H {???}"
+    "text": "# H"
   },
   {
     "scope": null,
