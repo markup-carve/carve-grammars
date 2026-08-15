@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: figure \"A titled figure div\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![one](a.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ (a) One"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Not a group caption"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: figure [g]"
+  },
+  {
+    "scope": null,
+    "text": "\nBody.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

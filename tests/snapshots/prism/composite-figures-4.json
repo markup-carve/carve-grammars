@@ -1,0 +1,74 @@
+[
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter",
+    "text": " "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "figure-group>image",
+    "text": "lone"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "figure-group>image",
+    "text": "l.png"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "figure-group>caption",
+    "text": " The only panel"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: One panel is valid"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

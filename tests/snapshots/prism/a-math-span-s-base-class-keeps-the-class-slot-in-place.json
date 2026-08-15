@@ -1,0 +1,46 @@
+[
+  {
+    "type": "math",
+    "text": "$`E=mc^2`"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#i"
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "k"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes",
+    "text": "v"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

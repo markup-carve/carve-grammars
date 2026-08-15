@@ -1,66 +1,6 @@
 [
   {
     "type": "span",
-    "text": "[*Ctrl*+C]"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>id",
-    "text": "#copy"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".shortcut"
-  },
-  {
-    "type": "attributes",
-    "text": " kbd "
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "data-key"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>string",
-    "text": "\"copy\""
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "onclick"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>string",
-    "text": "\"alert(1)\""
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "span",
     "text": "[x]"
   },
   {
@@ -69,11 +9,27 @@
   },
   {
     "type": "attributes",
-    "text": "kbd "
+    "text": "samp"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "span",
+    "text": "[y]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
   },
   {
     "type": "attributes>attr-name",
-    "text": "onclick"
+    "text": "dfn"
   },
   {
     "type": "attributes>punctuation",
@@ -81,7 +37,7 @@
   },
   {
     "type": "attributes>string",
-    "text": "\"alert(1)\""
+    "text": "\"a term\""
   },
   {
     "type": "attributes>punctuation",

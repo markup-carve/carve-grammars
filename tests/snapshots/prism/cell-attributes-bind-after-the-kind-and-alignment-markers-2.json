@@ -1,0 +1,50 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "~"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>id",
+    "text": "#score"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " Score "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " 9 "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

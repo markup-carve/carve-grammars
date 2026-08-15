@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "a ![t[z[q]]]"
+  },
+  {
+    "type": "span",
+    "text": "[r]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " b\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /i.png"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -13,7 +13,7 @@
   },
   {
     "scope": "function",
-    "text": ":kbd[Ctrl]"
+    "text": ":widget[Ctrl]"
   },
   {
     "scope": null,

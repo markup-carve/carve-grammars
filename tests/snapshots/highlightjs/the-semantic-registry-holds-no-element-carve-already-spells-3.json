@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "[*b*]"
+  },
+  {
+    "scope": "attr",
+    "text": "{code}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "[*b*]"
+  },
+  {
+    "scope": "attr",
+    "text": "{mark}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

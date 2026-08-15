@@ -1,0 +1,26 @@
+[
+  {
+    "type": "code",
+    "text": "`x`"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "literal",
+    "text": "!`x`"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "highlight",
+    "text": "=x="
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

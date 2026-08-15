@@ -1,0 +1,142 @@
+[
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter",
+    "text": " "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "figure-group",
+    "text": "\nBoth panels were shot on the same day.\n\n"
+  },
+  {
+    "type": "figure-group>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "figure-group>attributes>id",
+    "text": "#fig-s-a"
+  },
+  {
+    "type": "figure-group>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "figure-group>image",
+    "text": "one"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "figure-group>image",
+    "text": "a.png"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "figure-group>caption",
+    "text": " (a) One"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n\n"
+  },
+  {
+    "type": "figure-group>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "figure-group>attributes>id",
+    "text": "#fig-s-b"
+  },
+  {
+    "type": "figure-group>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "figure-group>image",
+    "text": "two"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "figure-group>image",
+    "text": "b.png"
+  },
+  {
+    "type": "figure-group>image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "figure-group>caption",
+    "text": " (b) Two"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " Figure #: With a note between the panels"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

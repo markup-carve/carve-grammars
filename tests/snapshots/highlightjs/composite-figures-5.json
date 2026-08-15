@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "section",
+    "text": "::: figure"
+  },
+  {
+    "scope": null,
+    "text": "\nBoth panels were shot on the same day.\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#fig-s-a}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![one](a.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ (a) One"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#fig-s-b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![two](b.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ (b) Two"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: With a note between the panels"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

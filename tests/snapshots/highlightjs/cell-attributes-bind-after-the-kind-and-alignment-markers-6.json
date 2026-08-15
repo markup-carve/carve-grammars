@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|=<{.h} Name |=>{.c} Score |{.head}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Ann |>{.num} 9 |{.win}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

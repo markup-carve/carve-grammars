@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "a [t"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": "][nope] b "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": " c\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

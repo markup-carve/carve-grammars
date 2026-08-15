@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "$`E=mc^2`"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i .c k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

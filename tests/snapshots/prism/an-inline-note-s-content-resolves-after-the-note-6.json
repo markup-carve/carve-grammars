@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "</#h>"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " b\n\n"
+  },
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

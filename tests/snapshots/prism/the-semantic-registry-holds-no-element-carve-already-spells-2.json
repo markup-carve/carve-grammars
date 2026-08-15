@@ -1,0 +1,42 @@
+[
+  {
+    "type": "extension>function",
+    "text": ":code"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "*b*"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "extension>function",
+    "text": ":mark"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "*b*"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,7 +1,7 @@
 [
   {
     "type": "extension>function",
-    "text": ":abbr"
+    "text": ":foo"
   },
   {
     "type": "extension>punctuation",
@@ -9,7 +9,7 @@
   },
   {
     "type": "extension",
-    "text": "HTML"
+    "text": "a"
   },
   {
     "type": "extension>punctuation",
@@ -20,180 +20,12 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
-    "text": "title"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>string",
-    "text": "\"HyperText Markup Language\""
+    "type": "attributes>class-name",
+    "text": ".cls"
   },
   {
     "type": "attributes>punctuation",
     "text": "}"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":cite"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "The Book"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":dfn"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "term"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "extension>function",
-    "text": ":samp"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "ready"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":var"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "x"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":time"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "noon"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "datetime"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes>string",
-    "text": "\"12:00\""
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":code"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "x"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "extension>function",
-    "text": ":mark"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension",
-    "text": "relevant"
-  },
-  {
-    "type": "extension>punctuation",
-    "text": "]"
   },
   {
     "type": "text",

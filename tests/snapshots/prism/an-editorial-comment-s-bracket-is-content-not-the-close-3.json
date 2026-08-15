@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "t{# "
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " #}z] b\n"
+  }
+]

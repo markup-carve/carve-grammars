@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "a [t"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote",
+    "text": "n"
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "][r] b\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

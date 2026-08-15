@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[HTML]"
+  },
+  {
+    "scope": "attr",
+    "text": "{abbr=\"HyperText Markup Language\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

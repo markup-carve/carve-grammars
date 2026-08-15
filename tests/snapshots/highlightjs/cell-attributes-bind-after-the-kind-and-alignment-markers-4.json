@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "string",
+    "text": "|{#x}< content |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

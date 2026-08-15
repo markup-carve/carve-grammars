@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a ![t]z][r] b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /i.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

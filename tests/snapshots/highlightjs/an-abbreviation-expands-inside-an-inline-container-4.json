@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: Long Form"
+  },
+  {
+    "scope": null,
+    "text": "\n\nBoth "
+  },
+  {
+    "scope": "strong",
+    "text": "*HTML*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[HTML](/u)"
+  },
+  {
+    "scope": null,
+    "text": " expand.\n"
+  }
+]

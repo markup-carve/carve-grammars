@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

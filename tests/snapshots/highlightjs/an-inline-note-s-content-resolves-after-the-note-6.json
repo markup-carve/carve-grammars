@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "symbol",
+    "text": "^[</#h>]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# h"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

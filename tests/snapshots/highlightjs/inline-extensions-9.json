@@ -1,11 +1,11 @@
 [
   {
     "scope": "string",
-    "text": "[CSS]"
+    "text": "[*Ctrl*+C]"
   },
   {
     "scope": "attr",
-    "text": "{dfn abbr=\"Cascading Style Sheets\"}"
+    "text": "{#copy .shortcut kbd data-key=\"copy\" onclick=\"alert(1)\"}"
   },
   {
     "scope": null,
@@ -13,23 +13,11 @@
   },
   {
     "scope": "string",
-    "text": "[Noon]"
-  },
-  {
-    "scope": "attr",
-    "text": "{time=\"12:00\"}"
-  },
-  {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "string",
     "text": "[x]"
   },
   {
     "scope": "attr",
-    "text": "{code mark samp var kbd cite}"
+    "text": "{kbd onclick=\"alert(1)\"}"
   },
   {
     "scope": null,

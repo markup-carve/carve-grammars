@@ -4,43 +4,7 @@
     "text": "[x]"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".a1"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>id",
-    "text": "#b2"
-  },
-  {
-    "type": "attributes",
-    "text": " "
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "k3"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes",
-    "text": "v"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "{.ok .1}\n"
   }
 ]

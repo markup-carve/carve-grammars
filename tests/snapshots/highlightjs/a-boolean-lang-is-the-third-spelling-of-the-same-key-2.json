@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{lang}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

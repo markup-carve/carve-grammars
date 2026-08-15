@@ -1,18 +1,10 @@
 [
   {
-    "scope": "string",
-    "text": "[x]"
+    "scope": "section",
+    "text": "# H {???}"
   },
   {
     "scope": null,
-    "text": "{.123} and "
-  },
-  {
-    "scope": "string",
-    "text": "[y]"
-  },
-  {
-    "scope": null,
-    "text": "{12=v}\n"
+    "text": "\n"
   }
 ]

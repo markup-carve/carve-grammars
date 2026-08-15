@@ -1,0 +1,30 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>id",
+    "text": "#x"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": "< content "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

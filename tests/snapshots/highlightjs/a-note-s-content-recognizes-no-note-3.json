@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "x "
+  },
+  {
+    "scope": "symbol",
+    "text": "^[a ^[b ^[c]"
+  },
+  {
+    "scope": null,
+    "text": " d] e]\n"
+  }
+]

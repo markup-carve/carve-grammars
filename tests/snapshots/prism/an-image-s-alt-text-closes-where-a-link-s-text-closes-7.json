@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "![t[z]][r]\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " cap"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /i.png"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

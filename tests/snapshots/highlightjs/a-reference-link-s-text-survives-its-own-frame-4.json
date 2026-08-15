@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "link",
+    "text": "[t![z][r2]"
+  },
+  {
+    "scope": null,
+    "text": "][r] b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r2]: /i.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,6 +1,22 @@
 [
   {
+    "type": "extension>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "bar"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
     "type": "text",
-    "text": ":_[x]\n"
+    "text": "\n"
   }
 ]

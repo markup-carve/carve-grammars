@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|=~{#score} Score |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| 9 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

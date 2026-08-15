@@ -1,0 +1,90 @@
+[
+  {
+    "type": "span",
+    "text": "[x]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "abbr"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"derived\""
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "title"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"authored\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "span",
+    "text": "[y]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "time"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"2026\""
+  },
+  {
+    "type": "attributes",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "datetime"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"custom\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

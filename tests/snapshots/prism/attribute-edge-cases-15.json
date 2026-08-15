@@ -5,6 +5,14 @@
   },
   {
     "type": "text",
-    "text": "{.a!b}\n"
+    "text": "{.123} and "
+  },
+  {
+    "type": "span",
+    "text": "[y]"
+  },
+  {
+    "type": "text",
+    "text": "{12=v}\n"
   }
 ]
