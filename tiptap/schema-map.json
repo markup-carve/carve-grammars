@@ -151,6 +151,56 @@
       "pm": "carveEmbed",
       "notes": "partial: only media embeds are modeled, via the directive stamped in carveSource"
     },
+    "frontmatter": {
+      "kind": "node",
+      "pm": "carveFrontmatter",
+      "notes": "atom; content and format attrs"
+    },
+    "link_reference_definition": {
+      "kind": "node",
+      "pm": "carveLinkRefDef",
+      "notes": "atom; label, href and title attrs. Carrying the definition is what lets a `[text][label]` reference keep its spelling"
+    },
+    "inline_footnote": {
+      "kind": "node",
+      "pm": "carveInlineNote",
+      "notes": "inline content; the number is a resolution artifact and is not carried"
+    },
+    "raw_inline": {
+      "kind": "node",
+      "pm": "carveRawInline",
+      "notes": "inline atom; content and format attrs"
+    },
+    "literal_inline": {
+      "kind": "node",
+      "pm": "carveLiteral",
+      "notes": "inline atom; content attr"
+    },
+    "substitution": {
+      "kind": "node",
+      "pm": "carveSubstitution",
+      "notes": "inline atom; oldText and newText attrs"
+    },
+    "symbol": {
+      "kind": "node",
+      "pm": "carveSymbol",
+      "notes": "inline atom; name attr"
+    },
+    "citation_group": {
+      "kind": "node",
+      "pm": "carveCitation",
+      "notes": "inline atom; raw and integral attrs, plus items whose prefix/locator/suffix are ProseMirror inline arrays"
+    },
+    "heading_ref": {
+      "kind": "node",
+      "pm": "carveCrossref",
+      "notes": "inline atom; target attr. The resolved href is a resolution artifact and is not carried"
+    },
+    "section": {
+      "kind": "node",
+      "pm": "carveSection",
+      "notes": "a rendering wrapper: the bridge hoists its children through a carveSection node so the heading and body survive"
+    },
     "strong": {
       "kind": "mark",
       "pm": "bold"
@@ -216,21 +266,11 @@
     }
   },
   "unmapped": {
-    "abbreviation_def": "abbreviation definitions are document metadata, not editor content",
-    "link_reference_definition": "link reference definitions are document metadata, not editor content - the same call as abbreviation_def, and the reference that uses one is serialized as an ordinary link",
+    "abbreviation_def": "abbreviation definitions ride on the doc node's attrs",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
-    "citation_group": "citations are not modeled",
-    "frontmatter": "front matter is not modeled by the serializer",
-    "heading_ref": "cross-reference links to heading ids are not modeled",
-    "inline_footnote": "inline footnotes are not modeled",
-    "raw_inline": "raw passthrough inlines are not modeled",
     "raw_text": "raw text is the payload of a raw block, not a node an editor holds",
     "escaped_text": "escaping is a source-level concern; the editor holds the escaped character as text",
-    "literal_inline": "inline literals are not modeled",
     "smart_punctuation": "smart-typography output is lossy on reparse, so it is not modeled",
-    "soft_break": "a soft break is whitespace in the ProseMirror model",
-    "substitution": "critic-substitute inline nodes are not modeled by the serializer",
-    "symbol": "symbol inline nodes are not modeled",
-    "section": "section wrappers are a rendering construct, not editor content"
+    "soft_break": "a soft break is whitespace in the ProseMirror model"
   }
 }

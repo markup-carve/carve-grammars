@@ -4,6 +4,21 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Added
+
+- **CarveKit registers every authored Carve construct** (mirror of
+  carve-php's bridge completion, markup-carve/carve-php#1266). Ten node types
+  leave the schema map's `unmapped` list: `carveFrontmatter`,
+  `carveLinkRefDef`, `carveInlineNote`, `carveRawInline`, `carveLiteral`,
+  `carveSubstitution`, `carveSymbol`, `carveCitation`, `carveCrossref` and
+  `carveSection`, each with the same attrs carve-php emits, and the
+  serializer writes canonical Carve source for all of them. `CarveCaption`
+  gains a `short` attr for a structured format's short caption, which the
+  serializer skips - Carve 0.1 source has no spelling for it. With the
+  definitions carried, a `[text][label]` reference arriving from another
+  engine keeps its spelling. The still-unmapped remainder is bookkeeping no
+  editor holds: caption numbers, escapes, smart typography, soft breaks.
+
 ### Fixed
 
 - **The `{:TAG}` language attribute reaches the editor**, not just the
