@@ -105,6 +105,80 @@ export const CONSTRUCTS = [
     { name: "escaped-quote link title", sample: "[t](/url \"ti\\\"tle\")", payload: "/url", textmate: "markup.underline.link" },
     { name: "autolink", sample: "<https://example.com>", payload: "https://example.com", textmate: "markup.underline.link" },
     { name: "image", sample: "![alt](img.jpg)", payload: "![", textmate: "punctuation.definition.image" },
+    // A NESTED BRACKET RUN IN A LABEL (carve-grammars#226). The spec closes a
+    // link label or an image alt text at the MATCHING `]` (grammar.ebnf
+    // `link_text`, SEMANTIC CONSTRAINT), and the scan is escape-aware. Every
+    // grammar here spelled the body `[^\]]*`, which closes at the FIRST `]`:
+    // the rule then wanted a `(` or a `[`, found the second `]`, and gave up,
+    // so the whole construct recorded as prose in Prism, in highlight.js AND in
+    // TextMate. `a ![t[z]](/i.png) b` renders `<img src="/i.png" alt="t[z]">`.
+    //
+    // LINKS NEVER NEST (grammar.ebnf): the inner run is TEXT, never a second
+    // link, so one scope over the construct is the right answer and there is no
+    // inner link to assert.
+    //
+    // The counter-example is in LITERALS below: an UNBALANCED opener
+    // (`[outer[z](/u)`) must not scope from the outer `[`, which is what the
+    // `[^\]]*` body did. Positives alone cannot catch that - a body that simply
+    // admits `[` passes every entry here and fails there.
+    {
+        name: "inline image whose alt text holds a bracket run",
+        sample: "a ![t[z]](/i.png) b", payload: "t[z]", textmate: "string.other.image.alt",
+    },
+    {
+        name: "inline link whose text holds a bracket run",
+        sample: "a [t[z]](/u) b", payload: "t[z]", textmate: "string.other.link.title",
+    },
+    {
+        name: "reference link whose text holds a bracket run",
+        sample: "a [t[z]][ref] b", payload: "t[z]", textmate: "string.other.link.title",
+    },
+    {
+        // All three grammars scope a reference IMAGE through their reference-LINK
+        // rule and leave the `!` outside the token - true of `![alt][ref]` too,
+        // and unrelated to the bracket run. The selector names what the grammar
+        // actually says rather than pinning a fix this entry is not making.
+        name: "reference image whose alt text holds a bracket run",
+        sample: "a ![t[z]][ref] b", payload: "t[z]", textmate: "string.other.link.title",
+    },
+    {
+        // Three levels in. The body is unrolled, not recursive, so depth is a
+        // real bound worth pinning above the one-level case.
+        name: "link text nested three deep",
+        sample: "a [a[b[c]]](/u) b", payload: "a[b[c]]", textmate: "string.other.link.title",
+    },
+    {
+        // An ESCAPED opener is literal text, so the run is not unbalanced and
+        // this IS a link. It worked before by accident (`[^\]]*` never looked at
+        // `[`); it works now because the scan resolves escapes, which is the
+        // half of the rule that keeps `[t\[z](/u)` from reading as an unbalanced
+        // opener.
+        // The payload is `tt` and NOT the whole `tt\[zz`, because the engine
+        // check also counts a token whose text is CONTAINED BY the payload. The
+        // escape rule scopes `\[` on its own, and `\[` is inside `tt\[zz`, so
+        // the wide spelling reported this construct as covered with the label
+        // rule matching nothing at all - a check that could not fail. Measured
+        // by deleting the escape branch from the label body: with `tt` the entry
+        // fails, with `tt\[zz` it passes.
+        name: "link text with an escaped opening bracket",
+        sample: "a [tt\\[zz](/u) b", payload: "tt", textmate: "string.other.link.title",
+    },
+    {
+        // The other direction, and this one never worked: an escaped `]` is not
+        // the close, so `[zz\]yy](/u)` is a link whose text is `zz]yy`. Narrow
+        // payload for the same reason as above - `\]` is a scoped token of its
+        // own and sits inside any payload that spells the escape out.
+        name: "link text with an escaped closing bracket",
+        sample: "a [zz\\]yy](/u) b", payload: "yy", textmate: "string.other.link.title",
+    },
+    {
+        // A bracketed SPAN takes the same balanced label - `[t[z]]{.c}` renders
+        // `<span class="c">t[z]</span>` - so it is the same defect and shares the
+        // fix. TextMate has no span-text rule at all, which is a separate gap.
+        name: "span whose text holds a bracket run",
+        sample: "a [t[z]]{.c} b", payload: "t[z]", textmate: "string.other.link.title",
+        skip: { textmate: 'the TextMate grammar has no rule for the span TEXT - only its trailing attribute block is scoped, for `[plain]{.c}` as much as for this. A separate gap from the bracket run, and not widened here' },
+    },
     { name: "footnote ref", sample: "text[^1] end", payload: "1", textmate: "constant.other.footnote" },
     { name: "mention", sample: "hi @user here", payload: "@user", textmate: "mention" },
     { name: "tag", sample: "a #tagname here", payload: "#tagname", textmate: "tag" },
@@ -396,6 +470,30 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    // THE COUNTER-EXAMPLE TO THE BRACKET-RUN CONSTRUCTS ABOVE (carve-grammars#226).
+    //
+    // An UNBALANCED opener is not a label. `a [outer[z](/u) b` renders
+    // `a [outer<a href="/u">z</a> b` - the outer `[` is prose and the LINK
+    // starts at the inner one. A `[^\]]*` body could not say that: it scanned
+    // past the inner `[` as ordinary text and scoped the whole run from the
+    // outer bracket.
+    //
+    // This is the shape the positives cannot catch. Widening the body to admit
+    // `[` at all passes every nested-bracket construct above and fails here,
+    // which is the only reason both halves exist.
+    {
+        name: 'an unbalanced bracket run does not open a label',
+        sample: 'a [outer[z](/u) b\n',
+        // `outer`, not `outer[z`: Prism splits the label at the inner bracket, so
+        // before the fix no token contained `outer[z` and the check could not
+        // fail there. `outer` sat in one token, scoped `url`.
+        payload: 'outer',
+        // TextMate's selector is the label capture and not a bare `link`: Shiki
+        // merges the prose `a [outer` with the following `[`, whose scope IS
+        // `punctuation.definition.link`, so `link` would report a failure the
+        // grammar is not making.
+        scopes: { prism: 'url', highlightjs: 'link', textmate: 'string.other.link.title' },
+    },
     // An INLINE attribute block does not span lines. `attributes` pads and separates
     // with `opt_ws` - "spaces/tabs only, no line breaks" (markup-carve/carve#897) -
     // and only a standalone attribute LINE crosses a newline, through
@@ -717,8 +815,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 155
-export const MIN_LITERALS = 28
+export const MIN_CONSTRUCTS = 171
+export const MIN_LITERALS = 30
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -737,11 +835,12 @@ export const MIN_LITERALS = 28
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    textmate: 155,
-    // Two constructs are skipped for Prism and four for highlight.js; each says
-    // why in its own `skip` entry, and every skip is subtracted here.
-    prism: 153,
-    highlightjs: 151,
+    // Two constructs are skipped for TextMate, two for Prism and four for
+    // highlight.js; each says why in its own `skip` entry, and every skip is
+    // subtracted here.
+    textmate: 169,
+    prism: 169,
+    highlightjs: 167,
 };
 
 /**

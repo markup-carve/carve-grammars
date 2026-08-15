@@ -112,6 +112,23 @@
     // rules, and they cannot drift apart again.
     const GLUED_ATTR_BLOCK =
         '(?=\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
+    // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
+    // bracketed span. See the long note on Prism's `bracketText`, which this
+    // mirrors; the short version is that the spec closes a label at the
+    // MATCHING `]` and the scan is escape-aware, while a `[^\]]*` body closes
+    // at the FIRST `]`. That left `![t[z]](/i.png)` - an image - entirely
+    // unscoped, and scoped the unbalanced `[t[z](/u)` from the outer `[` where
+    // the engine reads `[t` as prose (carve-grammars#226).
+    //
+    // The nesting is unrolled to FOUR levels because a regex cannot count;
+    // deeper stays unscoped, which is what every depth did before.
+    const BRACKET_CHAR = /(?:[^\[\]\\]|\\[\s\S])/.source;
+    let BRACKET_TEXT = BRACKET_CHAR + '*';
+    for (let depth = 0; depth < 3; depth++) {
+        BRACKET_TEXT = '(?:' + BRACKET_CHAR + '|\\[' + BRACKET_TEXT + '\\])*';
+    }
+    // The same body, required to be non-empty, for the rules that reject `[]`.
+    const BRACKET_TEXT_NONEMPTY = '(?!\\])' + BRACKET_TEXT;
     /**
      * A begin/end mode opens its span the moment `begin` matches, whether or
      * not the closer ever arrives - so an unpartnered delimiter colors every
@@ -301,7 +318,7 @@
     // Inline links: [text](url) with optional trailing attributes
     const LINK = {
         className: 'link',
-        begin: /\[[^\]]*\]\([^)]*\)(\{[^}]+\})?/,
+        begin: new RegExp('\\[' + BRACKET_TEXT + '\\]\\([^)]*\\)(\\{[^}]+\\})?'),
         relevance: 5,
     };
 
@@ -322,14 +339,14 @@
     // Images: ![alt](url) with optional trailing attributes
     const IMAGE = {
         className: 'link',
-        begin: /!\[[^\]]*\]\([^)]*\)(\{[^}]+\})?/,
+        begin: new RegExp('!\\[' + BRACKET_TEXT + '\\]\\([^)]*\\)(\\{[^}]+\\})?'),
         relevance: 5,
     };
 
     // Reference links: [text][ref] with optional trailing attributes
     const REFERENCE_LINK = {
         className: 'link',
-        begin: /\[[^\]]+\]\[[^\]]*\](\{[^}]+\})?/,
+        begin: new RegExp('\\[' + BRACKET_TEXT_NONEMPTY + '\\]\\[[^\\]]*\\](\\{[^}]+\\})?'),
         relevance: 5,
     };
 
@@ -338,7 +355,7 @@
         className: 'string',
         // Only the bracket run; the trailing `{...}` is left to ATTRIBUTE so it
         // scopes as an attribute block rather than vanishing into the span.
-        begin: /\[[^\]]+\](?=\{)/,
+        begin: new RegExp('\\[' + BRACKET_TEXT_NONEMPTY + '\\](?=\\{)'),
         relevance: 5,
     };
 

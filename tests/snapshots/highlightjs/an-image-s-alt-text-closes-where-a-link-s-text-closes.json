@@ -1,7 +1,15 @@
 [
   {
     "scope": null,
-    "text": "a ![t[z]][r] b\n\n"
+    "text": "a !"
+  },
+  {
+    "scope": "link",
+    "text": "[t[z]][r]"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
   },
   {
     "scope": "symbol",

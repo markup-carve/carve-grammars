@@ -32,8 +32,20 @@
     "text": "]"
   },
   {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
     "type": "text",
-    "text": "][r] b\n\n"
+    "text": " b\n\n"
   },
   {
     "type": "reference-definition>constant",

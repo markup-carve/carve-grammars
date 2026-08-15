@@ -1,10 +1,10 @@
 [
   {
     "scope": "link",
-    "text": "[[x](y)"
+    "text": "[[x](y)](z)"
   },
   {
     "scope": null,
-    "text": "](z)\n"
+    "text": "\n"
   }
 ]

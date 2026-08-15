@@ -109,6 +109,38 @@
     // from the attribute rule again.
     var gluedAttrBlock =
         '(?=\\{\\s*(?:' + attrItem + '(?:\\s+' + attrItem + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
+    // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
+    // bracketed span.
+    //
+    // The spec (`resources/grammar.ebnf`, `link_text`) says the label ends at
+    // the MATCHING `]`, and that the scan is escape-aware. A `[^\]]*` body says
+    // neither: it stops at the FIRST `]`, so `![t[z]](/i.png)` closed the label
+    // at `z]`, wanted a `(` and found the second `]`, and the whole image went
+    // unscoped (carve-grammars#226). The same body also accepted an UNBALANCED
+    // opener - `[t[z](/u)` scoped from the outer `[`, where the engine reads
+    // `[t` as prose and `[z](/u)` as the link.
+    //
+    // Escape-awareness is not an extra: without it `\[` would read as an
+    // unbalanced opener and `[t\[z](/u)` would STOP being scoped. It also makes
+    // `[a\]b](/u)` a link, which it always was in the engine.
+    //
+    // LINKS NEVER NEST (grammar.ebnf, SEMANTIC CONSTRAINT): an inner bracket
+    // run is part of the TEXT, never a second link, so there is one scope over
+    // the whole construct and no `inside` recursion here.
+    //
+    // A regex cannot count, so the nesting is unrolled to FOUR levels. Deeper
+    // than that the construct stays unscoped - which is what every depth did
+    // before, so the bound loses nothing that used to work.
+    var bracketChar = /(?:[^\[\]\\]|\\[\s\S])/.source;
+    var bracketText = bracketChar + '*';
+    for (var bracketDepth = 0; bracketDepth < 3; bracketDepth++) {
+        bracketText = '(?:' + bracketChar + '|\\[' + bracketText + '\\])*';
+    }
+    // The same body, required to be non-empty, for the rules that reject `[]`.
+    var bracketTextNonEmpty = '(?!\\])' + bracketText;
+    // ... and additionally not opening on the `^` that marks a footnote
+    // reference, for the two span rules that guarded against it before.
+    var bracketTextSpan = '(?![\\]^])' + bracketText;
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -116,10 +148,10 @@
     // (corpus 123). Prism tokenizes left to right, so the span and its empty
     // block have to be ONE rule -- a lookbehind would lose its `]` to the span.
     var spanEmptyAttrs = {
-        pattern: /\[[^\^\]][^\]]*\]\{\s*\}/,
+        pattern: new RegExp('\\[' + bracketTextSpan + '\\]\\{\\s*\\}'),
         inside: {
             'attr-value': { pattern: /\{\s*\}/, inside: { 'punctuation': /[{}]/ } },
-            'string': /\[[^\]]*\]/,
+            'string': new RegExp('\\[' + bracketText + '\\]'),
         },
     };
     var attributes = {
@@ -701,7 +733,7 @@
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {
-            pattern: /!\[[^\]]*\]\([^\s)]+(?:[ \t]+"(?:[^"\\]|\\[\s\S])*")?\)/,
+            pattern: new RegExp('!\\[' + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
             greedy: true,
             alias: 'url',
             inside: {
@@ -760,7 +792,7 @@
                 // The link text may be empty ([](url), spec corpus 03-links-8)
                 // and the title may contain backslash-escaped quotes:
                 // [t](/url "ti\"tle") (spec corpus 03-links-4).
-                pattern: /\[[^\]]*\]\([^\s)]+(?:[ \t]+"(?:[^"\\]|\\[\s\S])*")?\)/,
+                pattern: new RegExp('\\[' + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
                 greedy: true,
                 inside: {
                     'string': /"(?:[^"\\]|\\[\s\S])*"/,
@@ -768,7 +800,7 @@
                 },
             },
             {
-                pattern: /\[[^\]]+\]\[[^\]]*\]/,
+                pattern: new RegExp('\\[' + bracketTextNonEmpty + '\\]\\[[^\\]]*\\]'),
                 greedy: true,
                 inside: {
                     'punctuation': /\[|\]\[|\]/,
@@ -807,7 +839,7 @@
         },
 
         'span': {
-            pattern: /\[[^\^\]][^\]]*\](?=\{)/,
+            pattern: new RegExp('\\[' + bracketTextSpan + '\\](?=\\{)'),
             alias: 'string',
         },
 

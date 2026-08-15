@@ -1,15 +1,43 @@
 [
   {
     "type": "text",
-    "text": "a [t"
+    "text": "a "
   },
   {
-    "type": "footnote",
-    "text": "[^1]"
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "t"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "^1"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "nope"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
   },
   {
     "type": "text",
-    "text": "][nope] b\n\n"
+    "text": " b\n\n"
   },
   {
     "type": "reference-definition>constant",

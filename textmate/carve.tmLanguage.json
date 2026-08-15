@@ -980,7 +980,8 @@
       "name": "markup.raw.inline.carve"
     },
     "image": {
-      "match": "(!\\[)([^\\]]*)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
+      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.image.carve"
@@ -1006,7 +1007,8 @@
       }
     },
     "link_inline": {
-      "match": "(\\[)([^\\]]+)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
+      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()([^)\\s]+)(?:\\s+\"((?:[^\"\\\\]|\\\\.)*)\")?(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"
@@ -1032,7 +1034,8 @@
       }
     },
     "link_ref": {
-      "match": "(\\[)([^\\]]+)(\\])(\\[)([^\\]]*)(\\])",
+      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"

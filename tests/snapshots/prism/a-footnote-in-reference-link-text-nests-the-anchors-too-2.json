@@ -1,23 +1,43 @@
 [
   {
     "type": "text",
-    "text": "a [t"
+    "text": "a "
   },
   {
-    "type": "inline-footnote>punctuation",
-    "text": "^["
+    "type": "url>punctuation",
+    "text": "["
   },
   {
-    "type": "inline-footnote",
+    "type": "url",
+    "text": "t^"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
     "text": "n"
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
     "text": "]"
   },
   {
     "type": "text",
-    "text": "][r] b\n\n"
+    "text": " b\n\n"
   },
   {
     "type": "reference-definition>constant",

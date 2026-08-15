@@ -29,18 +29,22 @@
   },
   {
     "type": "url>punctuation",
-    "text": "]("
+    "text": "]"
   },
   {
     "type": "url",
-    "text": "/i.png"
+    "text": "(/i.png) b"
   },
   {
     "type": "url>punctuation",
-    "text": ")"
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
   },
   {
     "type": "text",
-    "text": " b][]\n"
+    "text": "\n"
   }
 ]

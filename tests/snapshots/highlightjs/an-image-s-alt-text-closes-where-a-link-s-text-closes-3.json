@@ -1,15 +1,11 @@
 [
   {
     "scope": null,
-    "text": "a ![t[z[q]]]"
+    "text": "a !"
   },
   {
-    "scope": "string",
-    "text": "[r]"
-  },
-  {
-    "scope": "attr",
-    "text": "{.c}"
+    "scope": "link",
+    "text": "[t[z[q]]][r]{.c}"
   },
   {
     "scope": null,
