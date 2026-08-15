@@ -56,12 +56,17 @@ const IMPLEMENTATION_TYPES = new Set([
  * Types the map covers that the PINNED spec does not define yet. Each must
  * disappear from this list when `spec/` is bumped - the test enforces that.
  *
- * Empty as of the bump to carve `92bef65`: the spec now defines every type the
- * map carries. `critic_comment` was promoted out of here by that bump, as
+ * `critic_comment` was promoted out of here by the bump to carve `92bef65`, as
  * `admonition`, `autolink`, `caption_number`, `citation_group`, `heading_ref`
  * and `substitution` were by the one before it - the gate working as designed.
+ *
+ * `figure_group` is here for the usual reason: `@markup-carve/carve` already
+ * parses a bare `::: figure` into one, and the CarveKit schema now holds it,
+ * while `spec/` still points at a commit whose profile vocabulary predates
+ * PART 9 §4c. The next `spec/` bump promotes it and this list goes back to
+ * empty.
  */
-const AHEAD_OF_PIN = new Set([]);
+const AHEAD_OF_PIN = new Set(['figure_group']);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {
