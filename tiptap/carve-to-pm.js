@@ -489,7 +489,12 @@ function convertBlock(node, ctx) {
         case 'comment':
             return {
                 type: 'carveComment',
-                attrs: { block: Boolean(node.block) },
+                // `delimited` is the `%%{ ... }%%` form (PART 9 section 21a). The
+                // engine pinned here does not emit it yet and carve-php does, so
+                // it is written from the start rather than added later - a wire
+                // that gains a field is a wire two bridges disagree about until
+                // both move.
+                attrs: { block: Boolean(node.block), delimited: Boolean(node.delimited) },
                 content: node.content ? [{ type: 'text', text: node.content }] : [],
             };
         case 'figure':
@@ -993,7 +998,10 @@ function convertInlineNode(node, marks, ctx) {
             return [{ type: 'text', text: node.text || '', marks: [...marks, { type: 'carveCriticComment' }] }];
 
         case 'comment':
-            return [{ type: 'carveCommentInline', attrs: { content: node.content || '' } }];
+            return [{
+                type: 'carveCommentInline',
+                attrs: { content: node.content || '', delimited: Boolean(node.delimited) },
+            }];
 
         default: {
             const markType = INLINE_MARKS[node.type];

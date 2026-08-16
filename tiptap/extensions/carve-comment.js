@@ -9,7 +9,7 @@ export const CarveComment = Node.create({
     code: true,
     defining: true,
     addAttributes() {
-        return { block: { default: false } };
+        return { block: { default: false }, delimited: { default: false } };
     },
     parseHTML() { return [{ tag: 'pre[data-carve-comment]' }]; },
     renderHTML({ HTMLAttributes }) {
@@ -24,7 +24,7 @@ export const CarveCommentInline = Node.create({
     inline: true,
     atom: true,
     addAttributes() {
-        return { content: { default: '' } };
+        return { content: { default: '' }, delimited: { default: false } };
     },
     parseHTML() { return [{ tag: 'span[data-carve-comment-inline]' }]; },
     renderHTML({ HTMLAttributes, node }) {

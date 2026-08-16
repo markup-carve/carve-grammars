@@ -1066,7 +1066,8 @@
           {
             "type": "carveComment",
             "attrs": {
-              "block": false
+              "block": false,
+              "delimited": false
             },
             "content": [
               {
@@ -1174,7 +1175,7 @@
     },
     {
       "name": "citation-group",
-      "carve": "A [@a2020, p. 3; see @b2021] end.\n\n[@a2020]: {} A.\n[@b2021]: {} B.\n",
+      "carve": "A [@a2020, p. 3; see @b2021] and [+@c2019] end.\n",
       "extensions": [
         "citations"
       ],
@@ -1221,46 +1222,24 @@
               },
               {
                 "type": "text",
+                "text": " and "
+              },
+              {
+                "type": "carveCitation",
+                "attrs": {
+                  "raw": "[+@c2019]",
+                  "integral": true,
+                  "items": [
+                    {
+                      "key": "c2019",
+                      "suppressAuthor": false
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "text",
                 "text": " end."
-              }
-            ]
-          },
-          {
-            "type": "paragraph",
-            "content": [
-              {
-                "type": "carveCitation",
-                "attrs": {
-                  "raw": "[@a2020]",
-                  "integral": false,
-                  "items": [
-                    {
-                      "key": "a2020",
-                      "suppressAuthor": false
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "text",
-                "text": ": {} A.\n"
-              },
-              {
-                "type": "carveCitation",
-                "attrs": {
-                  "raw": "[@b2021]",
-                  "integral": false,
-                  "items": [
-                    {
-                      "key": "b2021",
-                      "suppressAuthor": false
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "text",
-                "text": ": {} B."
               }
             ]
           }

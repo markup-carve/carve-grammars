@@ -228,7 +228,8 @@
       "notes": "block attr distinguishes %% line comments from fenced comments",
       "attrs": {
         "block": "true for a fenced comment, false for a %% line",
-        "content": "the comment text, carveCommentInline only"
+        "content": "the comment text, carveCommentInline only",
+        "delimited": "true for the `%%{ ... }%%` form (PART 9 section 21a)"
       }
     },
     "mention": {
