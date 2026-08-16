@@ -371,7 +371,26 @@ export function serializeToCarve(doc) {
                 const divLabel = rawDivLabel != null && rawDivLabel !== ''
                     ? ' [' + String(rawDivLabel).replace(/]/g, '\\]') + ']'
                     : '';
-                output += divFence + (divClass ? ' ' + divClass : '') + divTitle + divLabel + '\n';
+                // `carveTyped` is how the class was WRITTEN: as the kind word on
+                // the opener, or in an attribute run above a bare fence. Both
+                // are `carveDiv`, and guessing from the class rewrote every
+                // attributed div as a typed one - a different document.
+                const divTyped = node.attrs?.carveTyped !== false;
+                // Everything the opener does not carry goes on the attribute
+                // line, id and key/values included. Nothing wrote them at all
+                // before, so `{#s}` above a container was dropped in silence.
+                // The opener carries the KIND, which is the first class; any
+                // further class the author wrote in an attribute run goes back
+                // on the attribute line, where it came from.
+                const divClasses = String(divClass).split(/\s+/).filter(Boolean);
+                const divKind = divTyped ? (divClasses[0] || '') : '';
+                const divRestClasses = divTyped ? divClasses.slice(1) : divClasses;
+                const divAttrLine = serializeAttributes(
+                    { ...node.attrs, class: divRestClasses.join(' ') },
+                    ['title', 'label', 'carveTyped'],
+                );
+                if (divAttrLine) output += divAttrLine + '\n';
+                output += divFence + (divKind ? ' ' + divKind : '') + divTitle + divLabel + '\n';
                 // Serialize children with blank line separation (like doc level)
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth + 1);

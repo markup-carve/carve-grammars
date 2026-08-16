@@ -947,7 +947,8 @@
           {
             "type": "carveDiv",
             "attrs": {
-              "class": "note"
+              "class": "note",
+              "carveTyped": true
             },
             "content": [
               {
@@ -1240,6 +1241,34 @@
               {
                 "type": "text",
                 "text": " end."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "attributed-div",
+      "carve": "{#s .sidebar}\n:::\nBody.\n:::\n",
+      "pm": {
+        "type": "doc",
+        "content": [
+          {
+            "type": "carveDiv",
+            "attrs": {
+              "id": "s",
+              "class": "sidebar",
+              "carveTyped": false
+            },
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Body."
+                  }
+                ]
               }
             ]
           }

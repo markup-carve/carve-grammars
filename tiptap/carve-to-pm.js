@@ -665,7 +665,14 @@ function convertAdmonition(node, ctx) {
             content: convertBlocks(node.children || [], ctx),
         };
     }
-    const attrs = { class: node.kind || '' };
+    // `carveTyped` says the KIND WORD was written on the opener. One
+    // ProseMirror node serves two Carve types - `admonition` and `div` - and
+    // without the flag a bridge cannot tell `::: sidebar` from
+    // `{.sidebar}` above a bare `:::`, so every attributed div came back
+    // rewritten as a typed one.
+    const authored = convertAttrs(node.attrs) || {};
+    const classes = [node.kind || '', authored.class || ''].filter(Boolean).join(' ');
+    const attrs = { ...authored, class: classes, carveTyped: true };
     const title = inlinePlainText(node.title || []);
     if (title !== '') attrs.title = title;
     if (node.label != null) attrs.label = node.label;
@@ -1124,6 +1131,9 @@ function convertDivAttrs(node) {
     if (!attrs.class && node.class) attrs.class = node.class;
     if (!attrs.class) attrs.class = '';
     if (node.title) attrs.title = inlinePlainText(node.title);
+    // A BARE `:::` - whatever classes it carries came from an attribute run,
+    // and writing them back as a kind word would change the document.
+    attrs.carveTyped = false;
     return attrs;
 }
 

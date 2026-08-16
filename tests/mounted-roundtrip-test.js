@@ -143,5 +143,11 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // The serializer could only derive looseness from an item holding more than one
 // block, so `- a` / blank / `- b` came back tight - the paragraph inside each
 // item lost, which the bridges page names as the first thing HTML cannot hold.
-assert.strictEqual(changed.length, 180, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 180 -> 177 when a `carveDiv` started saying HOW its class was written. One
+// ProseMirror node serves both `div` and `admonition`, and nothing in the
+// document said which was authored, so `{.sidebar}` above a bare `:::` came
+// back as `::: sidebar` - a different document. The same pass writes a
+// container's attribute run, which nothing wrote at all: a `{#s}` above a
+// container was dropped in silence.
+assert.strictEqual(changed.length, 177, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
