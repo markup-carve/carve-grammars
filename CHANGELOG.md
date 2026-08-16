@@ -40,6 +40,13 @@ All notable changes to `carve-grammars` are documented here.
   attribute run - a carried construct with editable fields, not a preserved blob
   of source.
 
+- **A fence title is no longer also written as an attribute line.** It reaches
+  the loader twice - as the fence's own `header` and as a `title` key derived
+  from it - and both were written, so `` ```php "T" `` came back with a
+  `{title="T"}` line above the same fence: an attribute run the author never
+  wrote. Invisible until the run's authored order started being compared,
+  because the reparsed key/values matched either way.
+
 - **No grammar rule scans to the end of the document any more.** Prism and
   highlight.js hand the whole document to each pattern and retry at successive
   positions, so a quantifier that can run to the end of the input costs O(n) at

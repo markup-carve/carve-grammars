@@ -316,7 +316,20 @@ export function serializeToCarve(doc) {
                 const fence = '`'.repeat(Math.max(3, longest + 1));
                 const header = node.attrs?.carveHeader != null ? ` "${String(node.attrs.carveHeader).replace(/"/g, '\\"')}"` : '';
                 const label = node.attrs?.carveLabel != null ? ` [${String(node.attrs.carveLabel).replace(/]/g, '\\]')}]` : '';
-                const blockAttrs = serializeAttributes(node.attrs, ['language', 'carveLanguageRaw', 'carveHeader', 'carveLabel']);
+                // A fence title reaches the loader TWICE: as `header` and, derived
+                // from it, as a `title` key. Written from both, the round trip
+                // grew an attribute line the author never wrote - `` ```php "T" ``
+                // came back as `{title="T"}` above the same fence. It went
+                // unnoticed because the reparsed key/values matched either way;
+                // the run's authored ORDER is what made it visible
+                // (markup-carve/carve-grammars#240).
+                const runAttrs = { ...node.attrs };
+                if (node.attrs?.carveHeader != null
+                    && runAttrs.carveKeyValues?.title === node.attrs.carveHeader) {
+                    const { title, ...rest } = runAttrs.carveKeyValues;
+                    runAttrs.carveKeyValues = Object.keys(rest).length ? rest : null;
+                }
+                const blockAttrs = serializeAttributes(runAttrs, ['language', 'carveLanguageRaw', 'carveHeader', 'carveLabel']);
                 if (blockAttrs) output += blockAttrs + '\n';
                 output += fence + lang + header + label + '\n' + code + '\n' + fence + '\n';
                 break;

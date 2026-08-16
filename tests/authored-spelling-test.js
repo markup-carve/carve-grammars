@@ -206,6 +206,28 @@ ok('an attribute the order does not name is written after the ones it does', () 
     assert.strictEqual(serializeToCarve(doc).trim(), '{key="c" .a #b data-new="1"}\npara');
 });
 
+ok('a fence title does not also become an attribute line', () => {
+    /*
+     * The title reaches the loader TWICE - as the fence's own `header`, and as
+     * a `title` key derived from it - and both were written, so `` ```php "T" ``
+     * came back with a `{title="T"}` line above the same fence: an attribute
+     * run the author never wrote. It survived because the reparsed key/values
+     * match either way; only the run's ORDER, which the reparse invents and the
+     * original does not have, tells the two documents apart. Found the moment
+     * `order` stopped being stripped as volatile.
+     */
+    assert.strictEqual(written('```php "T"\nx\n```'), '```php "T"\nx\n```');
+    assert.strictEqual(mounted('```php "T"\nx\n```'), '```php "T"\nx\n```');
+    assert.strictEqual(written('```php "T" [L]\nx\n```'), '```php "T" [L]\nx\n```');
+    // An authored run above the fence is still written, in its own order.
+    assert.strictEqual(written('{.c #i}\n```php "T"\nx\n```'), '{.c #i}\n```php "T"\nx\n```');
+    // And a `title` key that is NOT the fence's title stays.
+    assert.strictEqual(
+        written('{title="other"}\n```php\nx\n```'),
+        '{title="other"}\n```php\nx\n```',
+    );
+});
+
 /* ---------------------------------------------------------------- part 2 */
 
 ok('inline code KEEPS its attribute run', () => {
