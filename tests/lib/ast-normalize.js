@@ -11,17 +11,22 @@
  */
 
 // Keys that carry source coordinates or are otherwise volatile across a
-// serialize/reparse cycle. `order` is carve-js's record of the textual order in
-// which `.class`/`#id` attribute tokens appeared; the serializer emits a
-// canonical `#id .class` order, so the *set* of attributes is what matters, not
-// their original spelling order. `srcByteLength` records the byte size of the
-// source string, which legitimately differs between the original and the
-// re-serialized form even when the document structure is identical.
+// serialize/reparse cycle. `srcByteLength` records the byte size of the source
+// string, which legitimately differs between the original and the re-serialized
+// form even when the document structure is identical.
+//
+// `order` USED TO BE HERE. It is carve-js's record of the textual order in which
+// an attribute run's `#id`/`.class`/`key` tokens appeared, and the excuse for
+// stripping it was that the serializer emits a canonical order anyway, so only
+// the SET of attributes matters. That is the shape of every silent loss: the
+// gate stopped measuring the one thing the bridge was dropping, so
+// `{key=c .a #b}` returning `{#b .a key="c"}` could not fail here. The wire
+// carries the order now (markup-carve/carve-grammars#240), so the check measures
+// it (see tiptap/extensions/carve-attribute-slots.js).
 const VOLATILE_KEYS = new Set([
     'pos',
     'startLine', 'endLine', 'startColumn', 'endColumn', 'startOffset', 'endOffset',
     'line', 'column', 'offset',
-    'order',
     'srcByteLength',
 ]);
 

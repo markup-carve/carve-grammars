@@ -17,6 +17,7 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import HardBreak from '@tiptap/extension-hard-break';
+import { attributeOrderSlot, attributeSlots } from './extensions/carve-attribute-slots.js';
 import { CarveHeading } from './extensions/carve-heading.js';
 
 import { CarveInsert } from './extensions/carve-insert.js';
@@ -33,6 +34,7 @@ import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveUnsupported } from './extensions/carve-unsupported.js';
 import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
+import { CarveEmptyMark } from './extensions/carve-empty-mark.js';
 import { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';
 import { CarveRawBlock } from './extensions/carve-raw-block.js';
 import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
@@ -161,7 +163,17 @@ export const CarveKit = Extension.create({
                         id: { default: null },
                         class: { default: null },
                         carveKeyValues: { default: null },
+                        ...attributeOrderSlot(),
                     },
+                }, {
+                    // `` `code`{.cls} `` is an attribute run on INLINE CODE. The
+                    // stock Code mark declares no attributes at all, so the run
+                    // had nowhere to go: it was dropped on the way in, the
+                    // serializer had nothing left to write, and NOTHING reported
+                    // it - the caller was told the document round-tripped
+                    // (markup-carve/carve-grammars#240).
+                    types: ['code'],
+                    attributes: attributeSlots(),
                 }, {
                     // LOOSE or TIGHT is content: a loose list read back as tight
                     // loses the paragraph inside each item. The serializer can
@@ -243,6 +255,7 @@ export const CarveKit = Extension.create({
                         id: { default: null },
                         class: { default: null },
                         carveKeyValues: { default: null },
+                        ...attributeOrderSlot(),
                     };
                 },
 
@@ -395,6 +408,7 @@ export const CarveKit = Extension.create({
                         id: { default: null },
                         class: { default: null, parseHTML: authoredClasses },
                         carveKeyValues: { default: null },
+                        ...attributeOrderSlot(),
                     };
                 },
                 parseHTML() {
@@ -469,6 +483,7 @@ export const CarveKit = Extension.create({
                             id: { default: null },
                             class: { default: null },
                             carveKeyValues: { default: null },
+                            ...attributeOrderSlot(),
                         };
                     },
                     addKeyboardShortcuts() {
@@ -502,6 +517,7 @@ export const CarveKit = Extension.create({
                         id: { default: null },
                         class: { default: null },
                         carveKeyValues: { default: null },
+                        ...attributeOrderSlot(),
                     };
                 },
             }).configure({ inline: true, ...(this.options.image ?? {}) }));
@@ -514,7 +530,8 @@ export const CarveKit = Extension.create({
                 ...this.options.table,
             }));
             const tableAttrs = {
-                id: { default: null }, class: { default: null }, carveKeyValues: { default: null }, textAlign: { default: null },
+                id: { default: null }, class: { default: null }, carveKeyValues: { default: null },
+                ...attributeOrderSlot(), textAlign: { default: null },
             };
             const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
             const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
@@ -572,6 +589,7 @@ export const CarveKit = Extension.create({
                         id: { default: null },
                         class: { default: null, parseHTML: authoredClasses },
                         carveKeyValues: { default: null },
+                        ...attributeOrderSlot(),
                     };
                 },
                 parseHTML() {
@@ -663,6 +681,9 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveUnsupportedInline !== false) {
             extensions.push(CarveUnsupportedInline.configure(this.options.carveUnsupportedInline ?? {}));
+        }
+        if (this.options.carveEmptyMark !== false) {
+            extensions.push(CarveEmptyMark.configure(this.options.carveEmptyMark ?? {}));
         }
         if (this.options.carveFigure !== false) {
             extensions.push(CarveFigure.configure(this.options.carveFigure ?? {}));

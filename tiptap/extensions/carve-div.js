@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { attributeOrderSlot } from './carve-attribute-slots.js';
 
 /**
  * First direct child that carries the admonition-title class (carve-php and
@@ -74,6 +75,7 @@ export const CarveDiv = Node.create({
         return {
             id: { default: null },
             carveKeyValues: { default: null },
+            ...attributeOrderSlot(),
             label: { default: null },
             // Whether the class was written as the KIND WORD on the opener or in
             // an attribute run above a bare fence. Undeclared, it was dropped on

@@ -992,12 +992,17 @@ export function serializeToCarve(doc) {
                 result += node.attrs?.carveSource || '';
                 return;
             }
+            if (node.type === 'carveEmptyMark') {
+                result += emptyMarkSource(node.attrs);
+                return;
+            }
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
 
                 // Check each mark type
-                const hasCode = marks.some(m => m.type === 'code');
+                const codeMark = marks.find(m => m.type === 'code');
+                const hasCode = !!codeMark;
                 const hasBold = marks.some(m => m.type === 'bold');
                 const hasItalic = marks.some(m => m.type === 'italic');
                 const hasHighlight = marks.some(m => m.type === 'highlight');
@@ -1055,7 +1060,10 @@ export function serializeToCarve(doc) {
                     const longest = (text.match(/`+/g) || []).reduce((m, r) => Math.max(m, r.length), 0);
                     const fence = '`'.repeat(longest + 1);
                     const pad = (text.startsWith('`') || text.endsWith('`') || text === '') ? ' ' : '';
-                    t = fence + pad + text + pad + fence;
+                    // The attribute run belongs to the code span itself, so it
+                    // goes on directly after the closing fence and inside any
+                    // mark that wraps this run.
+                    t = fence + pad + text + pad + fence + serializeAttributes(codeMark?.attrs);
                 } else if (isEmphasized) {
                     // NOT trailing-safe, whatever follows this run: the
                     // mark's own closing delimiter comes next, and a
@@ -1425,6 +1433,46 @@ function resolvedSpaces(text, trailingSafe) {
 }
 
 /**
+ * Write back a Carve mark whose content is EMPTY.
+ *
+ * `carveEmptyMark` is the atom the loader produces where a mark has no text to
+ * attach to: `[](https://example.com)`, `[]{.a}`, `{++}` and `{--}` all parse to
+ * a mark-producing node with no children, and a ProseMirror mark cannot span
+ * zero characters. Each is written back in its own spelling, attribute run and
+ * all - not as a preserved blob of source (markup-carve/carve-grammars#240).
+ *
+ * @param {object} attrs - The atom's attributes.
+ * @returns {string} Carve source for the construct, or '' for a mark this
+ *   serializer has no empty spelling for.
+ */
+function emptyMarkSource(attrs) {
+    const markAttrs = attrs?.markAttrs || {};
+    switch (attrs?.markType) {
+        case 'link': {
+            const title = markAttrs.title ? ' "' + escapeTitle(markAttrs.title) + '"' : '';
+            const run = serializeAttributes(
+                linkAttrRun(markAttrs),
+                ['href', 'title', 'carveRef', 'carveRawRef', 'carveReferenceDefinition', 'carveAutolink'],
+            );
+
+            return '[](' + (markAttrs.href || '') + title + ')' + run;
+        }
+        case 'carveSpan':
+            // `[]` on its own is literal brackets on the next parse, so the run
+            // - or the blessed empty `{}` - is what makes it a span.
+            return '[]' + (serializeAttributes(markAttrs, [], true) || '{}');
+        case 'carveAbbreviation':
+            return '[]{abbr="' + escapeTitle(markAttrs.title || '') + '"}';
+        case 'carveInsert':
+            return '{++}' + serializeAttributes(markAttrs);
+        case 'carveDelete':
+            return '{--}' + serializeAttributes(markAttrs);
+        default:
+            return '';
+    }
+}
+
+/**
  * Escape a quoted link/image title so a `"` or `\` in it cannot terminate or
  * corrupt the `"..."` title.
  */
@@ -1449,12 +1497,16 @@ function escapeTitle(title) {
  */
 function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     if (!attrs) return '';
-    const ignore = new Set(['id', 'class', 'carveKeyValues', ...skip]);
+    const ignore = new Set(['id', 'class', 'carveKeyValues', 'carveAttrOrder', ...skip]);
+    // Each entry is [slot, token]: the SLOT is the name `carveAttrOrder` uses
+    // (`#id`, `.class`, or the key), the token is what gets written. Collected
+    // in canonical order first, then replayed in the authored one where the
+    // document says what that was.
     const parts = [];
-    if (attrs.id) parts.push('#' + attrs.id);
+    if (attrs.id) parts.push(['#id', '#' + attrs.id]);
     if (attrs.class && !(placeholderClass && attrs.class === 'custom')) {
         for (const c of String(attrs.class).split(/\s+/).filter(Boolean)) {
-            parts.push('.' + c);
+            parts.push(['.class', '.' + c]);
         }
     }
     const pair = (k, v) => k + '="' + String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
@@ -1466,8 +1518,8 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     };
     for (const [k, v] of Object.entries(attrs)) {
         if (ignore.has(k) || v == null || v === false) continue;
-        if (k === 'lang') parts.push(language(v));
-        else if (v !== '') parts.push(pair(k, v));
+        if (k === 'lang') parts.push([k, language(v)]);
+        else if (v !== '') parts.push([k, pair(k, v)]);
     }
     // A node that keeps authored key/values in one declared attribute - Tiptap
     // needs every attribute declared, and `data-k=v` cannot be known upfront.
@@ -1475,14 +1527,46 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
         for (const [k, v] of Object.entries(attrs.carveKeyValues)) {
             if (v == null || v === false || (v === '' && k !== 'lang')) continue;
             if (k === 'lang') {
-                if (attrs.lang == null) parts.push(language(v));
+                if (attrs.lang == null) parts.push([k, language(v)]);
             } else {
-                parts.push(pair(k, v));
+                parts.push([k, pair(k, v)]);
             }
         }
     }
 
-    return parts.length ? '{' + parts.join(' ') + '}' : '';
+    return parts.length ? '{' + orderedTokens(parts, attrs.carveAttrOrder).join(' ') + '}' : '';
+}
+
+/**
+ * Replay an attribute run in the order it was WRITTEN.
+ *
+ * The three slots are an unordered ProseMirror attribute map, so without this
+ * `{key=c .a #b}` comes back `{#b .a key="c"}` - the same document under a
+ * different spelling, which is exactly what a formatter may not do. `order` is
+ * the AST's own record, carried across the wire as `carveAttrOrder`.
+ *
+ * Slots the run no longer has are skipped (an id deleted in the editor), and a
+ * slot the order does not name goes last (an attribute the editor added). All
+ * of a node's classes stay contiguous at the position of the first one, which is
+ * what the AST records: `{.a #i .b}` is written `{.a .b #i}`, and reparses to
+ * the same order and the same class list.
+ *
+ * @param {Array<[string, string]>} parts - [slot, token] in canonical order.
+ * @param {*} order - `carveAttrOrder`, when the document carries one.
+ * @returns {string[]} tokens, ready to join.
+ */
+function orderedTokens(parts, order) {
+    if (!Array.isArray(order) || order.length === 0) return parts.map(([, token]) => token);
+    const rank = new Map();
+    for (const slot of order) {
+        if (typeof slot === 'string' && !rank.has(slot)) rank.set(slot, rank.size);
+    }
+    // Stable, so parts sharing a slot keep their relative order and a part the
+    // order does not name keeps its canonical position among the others.
+    return parts
+        .map((part, index) => ({ part, index, rank: rank.has(part[0]) ? rank.get(part[0]) : rank.size }))
+        .sort((a, b) => (a.rank - b.rank) || (a.index - b.index))
+        .map(({ part }) => part[1]);
 }
 
 export default serializeToCarve;

@@ -52,6 +52,7 @@ export { CarveMention, CarveTag } from './extensions/carve-mention.js';
 export { CarveInlineExtension } from './extensions/carve-inline-extension.js';
 export { CarveUnsupported } from './extensions/carve-unsupported.js';
 export { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
+export { CarveEmptyMark } from './extensions/carve-empty-mark.js';
 export { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';
 export { CarveRawBlock } from './extensions/carve-raw-block.js';
 export { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';

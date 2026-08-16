@@ -6,6 +6,40 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- **An attribute run comes back in the order it was WRITTEN.** `{key=c .a #b}`
+  returned `{#b .a key="c"}` - the same document under a different spelling,
+  which makes a formatter's contract unmeetable: an editor has to be able to
+  hand back what the author typed. The cause was structural rather than a bug.
+  ProseMirror attributes are an unordered map and the canonical shape splits one
+  authored run into `id`, `class` and a `carveKeyValues` bag, so the order had
+  nowhere to live - even though the AST records it and every other lossy shape
+  in this bridge either reports itself or is genuinely unrepresentable.
+
+  `carveAttrOrder` carries it: the AST's `order` field verbatim, an array whose
+  entries are `#id`, `.class` and each key by name. Declared on every node and
+  mark that already carried `carveKeyValues`, published in `schema-map.json`,
+  pinned by `tiptap/wire-fixtures.json`. A document without it still writes the
+  canonical order, so nothing an editor builds from scratch changes.
+
+  Values are still written quoted (`key="c"`): the AST records the value and not
+  whether the author quoted it, so that half genuinely cannot be recovered.
+
+- **`` `code`{.cls} `` keeps its attribute run.** The stock Code mark declares
+  no attributes at all, so the run was dropped on the way in, the serializer had
+  nothing left to write, and NOTHING reported it - the caller was told the
+  document round-tripped. The mark carries `id`, `class`, `carveKeyValues` and
+  `carveAttrOrder` now.
+
+- **A mark with no content stops vanishing.** `[](https://example.com)` alone in
+  a file came back as an EMPTY DOCUMENT: a ProseMirror mark needs text to attach
+  to, and an empty label has none. `[]{.a}`, `{++}` and `{--}` are the same
+  defect and disappeared the same way, all four in silence.
+
+  Each loads as a `carveEmptyMark` atom holding the mark it stands for and that
+  mark's attributes, so it is written back with its destination, title and
+  attribute run - a carried construct with editable fields, not a preserved blob
+  of source.
+
 - **No grammar rule scans to the end of the document any more.** Prism and
   highlight.js hand the whole document to each pattern and retry at successive
   positions, so a quantifier that can run to the end of the input costs O(n) at

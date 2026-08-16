@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { attributeOrderSlot } from './carve-attribute-slots.js';
 
 export const CarveFigure = Node.create({
     name: 'carveFigure',
@@ -10,6 +11,7 @@ export const CarveFigure = Node.create({
             id: { default: null },
             class: { default: null },
             carveKeyValues: { default: null },
+            ...attributeOrderSlot(),
         };
     },
     parseHTML() { return [{ tag: 'figure[data-carve-figure]' }]; },
@@ -48,6 +50,7 @@ export const CarveFigureGroup = Node.create({
             id: { default: null },
             class: { default: null },
             carveKeyValues: { default: null },
+            ...attributeOrderSlot(),
         };
     },
     parseHTML() { return [{ tag: 'figure[data-carve-figure-group]' }]; },

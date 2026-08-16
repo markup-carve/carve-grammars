@@ -160,10 +160,15 @@ function stableAst(value) {
 function normalizeAst(value) {
     if (Array.isArray(value)) return value.map(normalizeAst);
     if (value === null || typeof value !== 'object') return value;
+    // `order` is deliberately NOT here. It is the run's authored spelling, and
+    // the `preserve` losslessness check is what decides whether the rich
+    // projection may be written back: with `order` stripped, a document whose
+    // attribute run would be respelled looked write-identical and was written
+    // back respelled (markup-carve/carve-grammars#240).
     const volatile = new Set([
         'pos', 'startLine', 'endLine', 'startColumn', 'endColumn',
         'startOffset', 'endOffset', 'line', 'column', 'offset',
-        'order', 'srcByteLength',
+        'srcByteLength',
     ]);
     const emptyArrays = new Set(['children', 'items', 'cells', 'rows']);
     const out = {};
@@ -899,10 +904,21 @@ function convertInlineNode(node, marks, ctx) {
         case 'hard_break':
             return [{ type: 'hardBreak' }];
 
-        case 'code':
+        case 'code': {
+            // An attribute run on inline code (`` `x`{.cls} ``) belongs to the
+            // code mark. The stock mark declares no attributes, so the run used
+            // to be dropped on the way in with nothing reporting it - the
+            // caller was told the document round-tripped
+            // (markup-carve/carve-grammars#240).
+            const codeAttrs = convertAttrs(node.attrs);
             return node.value
-                ? [{ type: 'text', text: node.value, marks: [...marks, { type: 'code' }] }]
+                ? [{
+                    type: 'text',
+                    text: node.value,
+                    marks: [...marks, { type: 'code', ...(codeAttrs ? { attrs: codeAttrs } : {}) }],
+                }]
                 : [];
+        }
 
         case 'image': {
             const attrs = { alt: node.alt || '', src: node.src || '' };
@@ -918,11 +934,7 @@ function convertInlineNode(node, marks, ctx) {
         }
 
         case 'math': {
-            const attrs = { src: node.content || '', display: !!node.display };
-            const a = node.attrs || {};
-            if (a.id) attrs.id = a.id;
-            if (a.classes && a.classes.length) attrs.class = a.classes.join(' ');
-            if (a.keyValues && Object.keys(a.keyValues).length) attrs.carveKeyValues = { ...a.keyValues };
+            const attrs = { src: node.content || '', display: !!node.display, ...(convertAttrs(node.attrs) || {}) };
 
             return [{ type: 'carveMath', attrs, ...(marks.length ? { marks } : {}) }];
         }
@@ -1096,6 +1108,25 @@ function convertInlineNode(node, marks, ctx) {
 }
 
 function descend(node, marks, ctx) {
+    // A mark needs TEXT to attach to, and these four constructs have none:
+    // `[](https://example.com)`, `[]{.a}`, `{++}` and `{--}` all parse to a
+    // mark-producing node with no children. Walking those children produced
+    // nothing, so the construct disappeared - a lone empty-label link came back
+    // as an EMPTY DOCUMENT, in silence (markup-carve/carve-grammars#240). The
+    // mark and its attributes ride on an atom instead, which writes back the
+    // same construct with the same destination, title and attribute run.
+    if ((node.children || []).length === 0 && marks.length) {
+        const own = marks[marks.length - 1];
+
+        return [{
+            type: 'carveEmptyMark',
+            attrs: {
+                markType: own.type,
+                ...(own.attrs && Object.keys(own.attrs).length ? { markAttrs: { ...own.attrs } } : {}),
+            },
+            ...(marks.length > 1 ? { marks: marks.slice(0, -1) } : {}),
+        }];
+    }
     const out = [];
     for (const child of node.children || []) {
         out.push(...convertInlineNode(child, marks, ctx));
@@ -1123,6 +1154,12 @@ function convertAttrs(attrs) {
     if (attrs.id) out.id = attrs.id;
     if (attrs.classes && attrs.classes.length) out.class = attrs.classes.join(' ');
     if (attrs.keyValues && Object.keys(attrs.keyValues).length) out.carveKeyValues = { ...attrs.keyValues };
+    // The ORDER the run was written in. Splitting one authored run across three
+    // unordered slots is what loses it, so it travels as its own attribute and
+    // the serializer replays it (markup-carve/carve-grammars#240).
+    if (Object.keys(out).length && Array.isArray(attrs.order) && attrs.order.length) {
+        out.carveAttrOrder = [...attrs.order];
+    }
     return Object.keys(out).length ? out : null;
 }
 

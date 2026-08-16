@@ -476,6 +476,13 @@ the `CarveKit` schema with the declared node/mark kind, and every type in the
 pinned spec vocabulary must have a decision. Types the map covers ahead of the
 `spec/` pin are declared explicitly and must be removed once the pin catches up.
 
+Two sections are keyed by ProseMirror name rather than by Carve type, because
+neither names a Carve construct: `preservationNodes` (`carveUnsupported` and
+`carveUnsupportedInline`, the atoms holding a construct's exact source) and
+`markCarrierNodes` (`carveEmptyMark`, the atom a mark with no content rides on).
+Both are part of the wire - an unknown ProseMirror name is an error rather than a
+skip - so a bridge has to read them alongside `types`.
+
 Restating this mapping per engine is what the spec's own node-vocabulary test was
 written to prevent: carve-php once emitted `citation-group` while every other
 implementation spelled it with underscores.
@@ -487,6 +494,21 @@ implementation spelled it with underscores.
   `[text]{#me .note}`, `![alt](src){.wide}`. Inline attrs trail their target;
   block attrs (headings) sit on the **preceding** line (strict djot), e.g.
   `{#slug}` then `# Title`.
+- **Attribute order** - a run is written back in the order it was AUTHORED, not
+  in a canonical one. ProseMirror attributes are an unordered map, so the order
+  travels as its own attribute, `carveAttrOrder`: the AST's `order` field
+  verbatim, an array whose entries are `#id`, `.class` and each key by name.
+
+  ```js
+  carveToProseMirror('[x]{key=c .a #b}')
+  // the carveSpan mark carries: { id: 'b', class: 'a',
+  //   carveKeyValues: { key: 'c' }, carveAttrOrder: ['key', '.class', '#id'] }
+  ```
+
+  All of a node's classes stay contiguous at the position of the first one,
+  which is what the AST records. A document with no `carveAttrOrder` - anything
+  an editor builds from scratch - writes the canonical `#id .class key="val"`
+  order, and a slot the order names but the document no longer has is skipped.
 - **Math** - `CarveMath` (inline atom) serializes to `` $`x` `` and, with
   `display: true`, `` $$`x` ``. Math has no closing `$` sentinel (grammar.ebnf
   PART 9 §18): the `$` / `$$` prefix opens a verbatim span and the backtick run

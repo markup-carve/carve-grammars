@@ -1,5 +1,6 @@
 import Heading from '@tiptap/extension-heading';
 import { mergeAttributes } from '@tiptap/core';
+import { attributeOrderSlot } from './carve-attribute-slots.js';
 
 const STRUCTURAL_ATTRIBUTES = new Set(['id', 'class']);
 
@@ -32,6 +33,7 @@ export const CarveHeading = Heading.extend({
                 },
                 renderHTML: attributes => attributes.carveKeyValues ?? {},
             },
+            ...attributeOrderSlot(),
         };
     },
 

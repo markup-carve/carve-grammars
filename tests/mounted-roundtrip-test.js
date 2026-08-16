@@ -68,6 +68,15 @@ const fixed = [
     '07-blockquote-with-attribution',
     '55-blockquote-caption-after-a-blank-line',
     '282-two-blank-lines-detach-a-caption-5',
+    // The three silent losses of markup-carve/carve-grammars#240. Protected
+    // because each failed in SILENCE rather than through a visible fallback:
+    // `03-links-8` is `[](https://example.com)` alone in a file, which came back
+    // as an EMPTY DOCUMENT; `13-attributes-2` is `` `code`{.cls} ``, whose run
+    // had no slot on the code mark; `307-...-3` is `x ^[]{.c}`, an empty span
+    // the projection wrote back as a bare `x ^`.
+    '03-links-8',
+    '13-attributes-2',
+    '307-an-empty-inline-note-is-literal-3',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
 // 177 -> 173 when the `@markup-carve/carve` pin moved onto the withdrawal of
@@ -149,5 +158,25 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // back as `::: sidebar` - a different document. The same pass writes a
 // container's attribute run, which nothing wrote at all: a `{#s}` above a
 // container was dropped in silence.
-assert.strictEqual(changed.length, 177, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 177 -> 174 when a mark with no content, and an attribute run on inline code,
+// stopped vanishing (markup-carve/carve-grammars#240). Three moved out and none
+// moved in:
+//
+// - `03-links-8` is the whole of `[](https://example.com)`. A ProseMirror mark
+//   needs text to attach to, so the link had nowhere to land and the document
+//   came back EMPTY. It is a `carveEmptyMark` atom now, written back with its
+//   destination, title and attribute run.
+// - `13-attributes-2` is `` `code`{.cls} ``. The stock Code mark declares no
+//   attributes, so the run was dropped on the way in and the serializer had
+//   nothing left to write. The mark carries the slots now.
+// - `307-an-empty-inline-note-is-literal-3` is `x ^[]{.c}`, an EMPTY SPAN, the
+//   same defect as the link: it came back as a bare `x ^`.
+//
+// Note what this gate could not see, which is why all three survived it for so
+// long: it compares RENDERED HTML with its attributes sorted. That comparison is
+// blind to the order an attribute run was written in - the third defect in the
+// same issue - so `{key=c .a #b}` returning `{#b .a key="c"}` never showed up
+// here and never could. The round-trip gates compare the reparsed AST, which
+// used to strip `order` as volatile for the same reason. It does not any more.
+assert.strictEqual(changed.length, 174, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

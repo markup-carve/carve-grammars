@@ -13,6 +13,7 @@
       "kind": "node",
       "pm": "paragraph",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id"
@@ -23,6 +24,7 @@
       "pm": "heading",
       "notes": "level plus authored id, classes, and key/value attributes",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "every other authored key=value, as one map",
         "class": "authored classes, space separated",
         "id": "authored id",
@@ -46,6 +48,7 @@
       "pm": "codeBlock",
       "notes": "language attr; carveLanguageRaw carries the unnormalized info string",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveHeader": "fence title",
         "carveKeyValues": "authored key=values",
         "carveLabel": "fence label",
@@ -68,6 +71,7 @@
       ],
       "notes": "listType selects; taskList when items carry a task marker",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveBareMarker": "true for the bare `.` marker",
         "carveDelim": "marker delimiter: . or )",
         "carveKeyValues": "authored key=values",
@@ -85,6 +89,7 @@
       ],
       "notes": "taskItem inside a taskList",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored marker key=values",
         "checked": "task item state, taskItem only",
         "class": "authored marker classes",
@@ -156,6 +161,7 @@
       ],
       "notes": "carveTabSet/carveTab are the `tabs`/`tab` classes; every other class is carveDiv",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "carveTyped": "true when the KIND WORD was written on the opener (`::: note`), false when the classes came from an attribute run above a bare `:::`. One ProseMirror node serves both `div` and `admonition`, and nothing else in the document says which was authored",
         "class": "the kind word plus authored classes",
@@ -170,6 +176,7 @@
       "aliasOf": "div",
       "notes": "profile vocabulary only: an admonition is a div with a type class",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "carveTyped": "true when the KIND WORD was written on the opener (`::: note`), false when the classes came from an attribute run above a bare `:::`. One ProseMirror node serves both `div` and `admonition`, and nothing else in the document says which was authored",
         "class": "the kind word plus authored classes",
@@ -201,7 +208,7 @@
     "figure_group": {
       "kind": "node",
       "pm": "carveFigureGroup",
-      "notes": "a composite figure (PART 9 §4c): children in source order, the panels being the figure and table nodes among them. The group caption rides as a trailing carveCaption child even though it is authored below the closing fence. Deliberately no target, no title, no label - a bridge discriminates on the TYPE, never by probing for the target a figure has and this does not",
+      "notes": "a composite figure (PART 9 \u00a74c): children in source order, the panels being the figure and table nodes among them. The group caption rides as a trailing carveCaption child even though it is authored below the closing fence. Deliberately no target, no title, no label - a bridge discriminates on the TYPE, never by probing for the target a figure has and this does not",
       "attrs": {
         "class": "authored classes",
         "id": "authored id"
@@ -263,6 +270,7 @@
       ],
       "notes": "carveInlineExtension is the general form - inline, name plus editable children, `:name[content]`. carveEmbed stays for a MEDIA directive, which is a block atom and cannot hold inline children; it is reached through the HTML route rather than from the AST",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
@@ -283,6 +291,7 @@
       "pm": "carveLinkRefDef",
       "notes": "atom; label, href and title attrs. Carrying the definition is what lets a `[text][label]` reference keep its spelling",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "the definition's own trailing attribute run",
         "class": "the definition's own trailing attribute run",
         "href": "destination",
@@ -296,6 +305,7 @@
       "pm": "carveInlineNote",
       "notes": "inline content; the number is a resolution artifact and is not carried",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id"
@@ -306,6 +316,7 @@
       "pm": "carveRawInline",
       "notes": "inline atom; content and format attrs",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "content": "the raw payload",
@@ -318,6 +329,7 @@
       "pm": "carveLiteral",
       "notes": "inline atom; content attr",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "content": "the literal payload",
@@ -329,6 +341,7 @@
       "pm": "carveSubstitution",
       "notes": "inline atom; oldText and newText attrs",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
@@ -341,6 +354,7 @@
       "pm": "carveSymbol",
       "notes": "inline atom; name attr",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
@@ -352,6 +366,7 @@
       "pm": "carveCitation",
       "notes": "inline atom; raw and integral attrs, plus items whose prefix/locator/suffix are ProseMirror inline arrays",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
@@ -365,6 +380,7 @@
       "pm": "carveCrossref",
       "notes": "inline atom; target attr. The resolved href is a resolution artifact and is not carried",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
@@ -394,7 +410,14 @@
     },
     "code": {
       "kind": "mark",
-      "pm": "code"
+      "pm": "code",
+      "notes": "an attribute run on inline code (`` `x`{.cls} ``) belongs to the code mark; the stock Tiptap mark declares no attributes, so a bridge has to add these",
+      "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes",
+        "id": "authored id"
+      }
     },
     "highlight": {
       "kind": "mark",
@@ -426,6 +449,7 @@
       "pm": "carveSpan",
       "notes": "carries id, class and extra attributes. Stock tiptap/extension-text-style emits `textStyle`, deliberately NOT accepted: it is a carrier mark for color/fontFamily/fontSize, so mapping it here would put presentational attributes into a Carve document. An application that wants that registers `textStyle` itself.",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id"
@@ -442,6 +466,7 @@
       "kind": "mark",
       "pm": "link",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveAutolink": "true for the `<https://e.com>` form",
         "carveKeyValues": "authored key=values",
         "carveRawRef": "the reference as written",
@@ -484,6 +509,17 @@
       "attrs": {
         "carveSource": "the construct as written, exactly; written back verbatim",
         "carveType": "the Carve node type the atom stands in for"
+      }
+    }
+  },
+  "markCarrierNodes": {
+    "about": "Not a Carve type either: the node a bridge writes for a MARK WITH NO CONTENT. A ProseMirror mark cannot span zero characters, and four Carve constructs parse to a mark-producing node with no children - `[](https://example.com)`, `[]{.a}`, `{++}` and `{--}`. Walking their children produces nothing, so before this node existed each one simply disappeared: a document that was only an empty-label link came back EMPTY, and nothing reported it. A bridge writes this atom instead and reads it back as the construct it names; a bridge that cannot must say so through its dropped/degraded report rather than drop the node.",
+    "carveEmptyMark": {
+      "kind": "node",
+      "group": "inline",
+      "attrs": {
+        "markAttrs": "the mark's own attributes, as one map: a link's `href`/`title` and any authored run, a span's id/class/key-values. Absent where the mark had none",
+        "markType": "the ProseMirror mark this atom stands for: `link`, `carveSpan`, `carveAbbreviation`, `carveInsert` or `carveDelete`"
       }
     }
   }

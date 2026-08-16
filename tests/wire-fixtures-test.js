@@ -78,11 +78,22 @@ ok('every attribute the fixtures use is declared in the map', () => {
     // Reverse direction: an attribute a bridge produces but the map never
     // names is exactly the drift this pair of files exists to stop.
     const declared = new Map();
+    const add = (pm, entry) => {
+        const set = declared.get(pm) || new Set();
+        for (const attr of Object.keys(entry.attrs || {})) set.add(attr);
+        declared.set(pm, set);
+    };
     for (const entry of Object.values(map.types)) {
-        for (const pm of [entry.pm].flat()) {
-            const set = declared.get(pm) || new Set();
-            for (const attr of Object.keys(entry.attrs || {})) set.add(attr);
-            declared.set(pm, set);
+        for (const pm of [entry.pm].flat()) add(pm, entry);
+    }
+    // The sections keyed by ProseMirror name rather than by Carve type: the
+    // preservation atoms, and the carrier for a mark with no content. They are
+    // as much part of the wire as the mapped types - a bridge that does not know
+    // `carveEmptyMark` reads an empty-label link as an unknown node.
+    for (const section of [map.preservationNodes, map.markCarrierNodes]) {
+        for (const [pm, entry] of Object.entries(section || {})) {
+            if (pm === 'about') continue;
+            add(pm, entry);
         }
     }
 
