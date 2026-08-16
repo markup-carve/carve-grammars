@@ -157,6 +157,7 @@
       "notes": "carveTabSet/carveTab are the `tabs`/`tab` classes; every other class is carveDiv",
       "attrs": {
         "carveKeyValues": "authored key=values",
+        "carveTyped": "true when the KIND WORD was written on the opener (`::: note`), false when the classes came from an attribute run above a bare `:::`. One ProseMirror node serves both `div` and `admonition`, and nothing else in the document says which was authored",
         "class": "the kind word plus authored classes",
         "id": "authored id",
         "label": "tab label, carveTab only",
@@ -167,7 +168,15 @@
       "kind": "node",
       "pm": "carveDiv",
       "aliasOf": "div",
-      "notes": "profile vocabulary only: an admonition is a div with a type class"
+      "notes": "profile vocabulary only: an admonition is a div with a type class",
+      "attrs": {
+        "carveKeyValues": "authored key=values",
+        "carveTyped": "true when the KIND WORD was written on the opener (`::: note`), false when the classes came from an attribute run above a bare `:::`. One ProseMirror node serves both `div` and `admonition`, and nothing else in the document says which was authored",
+        "class": "the kind word plus authored classes",
+        "id": "authored id",
+        "label": "tab label, carveTab only",
+        "title": "fence title"
+      }
     },
     "definition_list": {
       "kind": "node",

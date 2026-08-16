@@ -75,6 +75,14 @@ export const CarveDiv = Node.create({
             id: { default: null },
             carveKeyValues: { default: null },
             label: { default: null },
+            // Whether the class was written as the KIND WORD on the opener or in
+            // an attribute run above a bare fence. Undeclared, it was dropped on
+            // mount and every attributed div came back rewritten as a typed one.
+            carveTyped: {
+                default: null,
+                parseHTML: element => (element.getAttribute('data-carve-typed') === 'false' ? false : null),
+                renderHTML: attributes => (attributes.carveTyped === false ? { 'data-carve-typed': 'false' } : {}),
+            },
             class: {
                 default: null,
                 parseHTML: element => element.getAttribute('data-carve-class')

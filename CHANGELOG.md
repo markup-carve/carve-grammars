@@ -36,6 +36,16 @@ All notable changes to `carve-grammars` are documented here.
   that finds this class; it is not in CI, because a timing measurement on a
   machine carrying other load measures the load.
 
+### Fixed
+
+- **A `carveDiv` says how its class was written**, and a container's attribute
+  run is written back. One ProseMirror node serves both `div` and `admonition`,
+  and nothing in the document said which the author wrote, so `{.sidebar}` above
+  a bare `:::` came back as `::: sidebar` - a different document, and one whose
+  class is now the container's KIND. `carveTyped` records it. In the same pass a
+  container's `{#id}` and key/values are written at all: the serializer emitted
+  the opener and dropped everything the opener could not carry.
+
 ### Added
 
 - **`carveToProseMirrorWithReport(source, options)`**, so the bridge says what
