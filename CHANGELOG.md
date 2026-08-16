@@ -4,6 +4,25 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+### Fixed
+
+- **The citation rule no longer scans to the end of the document.** Prism and
+  highlight.js hand the whole document to each pattern and retry at successive
+  positions, and the citation body was `[^\]@]*@...` - so on input carrying many
+  `[` and no `@`, every one of those positions scanned to the end before
+  failing. That is quadratic in the document, measured at x4 per doubling on
+  both engines: 192 KB of unclosed brackets took roughly 22 seconds, which is a
+  hung tab for anyone highlighting untrusted Carve in a browser.
+
+  Both scans are now bounded, which makes the per-position cost a constant and
+  the whole tokenize linear. At 48 KB of unclosed brackets Prism falls from
+  1430ms to 57ms and highlight.js from 1479ms to 80ms, and both then double
+  rather than quadruple. Ordinary documents are unaffected, and a citation whose
+  prefix or locator runs past the bound stays unhighlighted rather than slow.
+
+  The TextMate grammar is not affected: its citation lookahead is already
+  line-bounded, and TextMate engines tokenize a line at a time.
+
 ### Added
 
 - **`aliasOf` in `tiptap/schema-map.json`**, so a bridge reading the map back
