@@ -168,6 +168,71 @@ const UNREACHABLE_MARKS = new Map([
     + 'so a document using one throws before the mark is reached'],
 ]);
 
+/*
+ * NODES the map declares that the converter cannot yet PRODUCE, with the reason.
+ *
+ * The mark side of this gate has existed since the four editorial marks were
+ * found registered, serializable and unreachable. Nothing checked the same thing
+ * for NODES, and eleven of them were in exactly that state: named in the map as
+ * carried, registered in `CarveKit`, handled by the serializer on the way back -
+ * and constructed by no code path at all. A document using one does not fail; it
+ * lands as an opaque `carveUnsupported` atom holding its source, which
+ * round-trips and so passes every gate this repo had. 185 of the 1025 corpus
+ * files carry such an atom.
+ *
+ * An entry here is a promise the map has not kept yet, not a decision. A type
+ * the editor model genuinely should not hold belongs in the map's `unmapped`
+ * block instead, where it is a documented absence rather than a pending one.
+ */
+const UNREACHABLE_NODES = new Map([]);
+
+ok('every node the map declares is reachable from the converter', () => {
+  // The node twin of the mark check below. A ProseMirror node name the
+  // converter never writes cannot be produced, however completely the schema
+  // registers it and however well the serializer reads it back.
+  const converterSource = readFileSync(resolve(here, '../tiptap/carve-to-pm.js'), 'utf8');
+  const emits = (pmName) => converterSource.includes(`'${pmName}'`);
+  const declared = Object.entries(map.types).filter(([, entry]) => entry.kind === 'node');
+
+  const unreachable = declared
+    .filter(([carveType]) => !UNREACHABLE_NODES.has(carveType))
+    .filter(([, entry]) => ![entry.pm].flat().some(emits))
+    .map(([carveType]) => carveType)
+    .sort();
+  assert.deepStrictEqual(
+    unreachable, [],
+    'nodes declared in schema-map.json that the converter never produces: ' + unreachable.join(', '),
+  );
+
+  const stale = [...UNREACHABLE_NODES.keys()]
+    .filter((carveType) => [map.types[carveType]?.pm].flat().some(emits))
+    .sort();
+  assert.deepStrictEqual(
+    stale, [],
+    'UNREACHABLE_NODES entries the converter now produces (delete them): ' + stale.join(', '),
+  );
+});
+
+ok('every unreachable node carries a reason', () => {
+  const empty = [...UNREACHABLE_NODES]
+    .filter(([, reason]) => typeof reason !== 'string' || reason.trim() === '')
+    .map(([type]) => type);
+  assert.deepStrictEqual(empty, [], `UNREACHABLE_NODES without a reason: ${empty.join(', ')}`);
+});
+
+ok('every unreachable node is a type the map claims to carry', () => {
+  // A type in `unmapped` is a documented absence; listing it here as well would
+  // claim it is merely pending, which is the confusion this pair of lists exists
+  // to prevent.
+  const contradictory = [...UNREACHABLE_NODES.keys()]
+    .filter((carveType) => !(carveType in map.types) || carveType in map.unmapped)
+    .sort();
+  assert.deepStrictEqual(
+    contradictory, [],
+    `UNREACHABLE_NODES entries the map does not declare as carried: ${contradictory.join(', ')}`,
+  );
+});
+
 ok('every mark the map declares is reachable from the converter', () => {
   // The map is checked against the spec and against the CarveKit schema, but
   // NOTHING used to check it against the converter that has to produce those

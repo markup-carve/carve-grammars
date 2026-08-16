@@ -152,6 +152,10 @@ function trimSource(text) {
     return text.replace(ASCII_EDGE_WS, '');
 }
 
+// Attributes of a `carveLinkRefDef` that ARE the definition line rather than an
+// authored attribute run on it.
+const LINK_REF_DEF_ATTR_KEYS = ['label', 'href', 'title'];
+
 export function serializeToCarve(doc) {
     const preservedSource = doc?.attrs?.carveSource;
     const preservedFingerprint = doc?.attrs?.carveFingerprint;
@@ -480,9 +484,18 @@ export function serializeToCarve(doc) {
                 break;
             }
 
-            case 'carveSection':
-                for (const child of node.content || []) serializeNode(child, indent, fenceDepth);
+            case 'carveSection': {
+                // A wrapper that writes nothing of its own, so its children need
+                // the same blank line between them that they would get at the
+                // top level - without it a section's heading and body came back
+                // glued together.
+                const children = node.content || [];
+                children.forEach((child, i) => {
+                    serializeNode(child, indent, fenceDepth);
+                    if (i < children.length - 1) output += '\n';
+                });
                 break;
+            }
 
             case 'carveFrontmatter': {
                 const format = node.attrs?.format || 'yaml';
@@ -493,8 +506,15 @@ export function serializeToCarve(doc) {
             }
 
             case 'carveLinkRefDef': {
+                const label = node.attrs?.label || '';
                 const title = node.attrs?.title != null ? ` "${escapeTitle(String(node.attrs.title))}"` : '';
-                output += `[${node.attrs?.label || ''}]: ${node.attrs?.href || ''}${title}\n`;
+                const attributes = serializeAttributes(node.attrs, LINK_REF_DEF_ATTR_KEYS);
+                output += `[${label}]: ${node.attrs?.href || ''}${title}`
+                    + (attributes ? ` ${attributes}` : '') + '\n';
+                // The definition is written HERE, where the author put it, so
+                // the collector that re-derives definitions from the references
+                // resolving them must not append a second copy at the end.
+                referenceDefs.set(label, null);
                 break;
             }
 
@@ -847,7 +867,25 @@ export function serializeToCarve(doc) {
         return text;
     }
 
-    function serializeInline(content) {
+    function serializeInline(rawContent) {
+        // An inline ATOM inside a MARK - `[see </#H>](/u)`, `*:rocket:*` - carries
+        // that mark like any other inline node, but only the text branch below
+        // knows how to write a mark's delimiters. So the atom was written after
+        // the link instead of inside it (`[see ](/u)</#H>`), and an emphasis
+        // around one was dropped entirely (`*:rocket:*` -> `:rocket:`). Spell
+        // each such atom on its own (no marks, so this recursion terminates) and
+        // hand the result to the text path as a verbatim run that still carries
+        // the marks.
+        const content = (rawContent || []).map((node) => (
+            node && node.type !== 'text' && (node.marks || []).length
+                ? {
+                    type: 'text',
+                    text: serializeInline([{ ...node, marks: [] }]),
+                    marks: node.marks,
+                    carveVerbatim: true,
+                }
+                : node
+        ));
         if (!content) return '';
         let result = '';
 
@@ -873,37 +911,50 @@ export function serializeToCarve(doc) {
 
         content.forEach((node, idx) => {
             if (node.type === 'carveInlineNote') {
-                result += '^[' + serializeInline(node.content) + ']';
+                // A note's content recognizes NO note (carve corpus 309), so a
+                // `[^label]` inside the body is literal text there and the
+                // structural escaper's `\\[^` is not only unnecessary but
+                // wrong - it re-spells text the author wrote plain.
+                const body = serializeInline(node.content).replace(/\\\[(?=\^)/g, '[');
+                result += '^[' + body + ']' + serializeAttributes(node.attrs, []);
                 return;
             }
             if (node.type === 'carveRawInline') {
                 const raw = node.attrs?.content || '';
                 const longest = (raw.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
                 const fence = '`'.repeat(longest + 1);
-                result += `${fence}${raw}${fence}{=${node.attrs?.format || ''}}`;
+                result += `${fence}${raw}${fence}{=${node.attrs?.format || ''}}`
+                    + serializeAttributes(node.attrs, ['content', 'format']);
                 return;
             }
             if (node.type === 'carveLiteral') {
                 const literal = node.attrs?.content || '';
                 const longest = (literal.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
                 const fence = '`'.repeat(longest + 1);
-                result += `!${fence}${literal}${fence}`;
+                result += `!${fence}${literal}${fence}` + serializeAttributes(node.attrs, ['content']);
                 return;
             }
             if (node.type === 'carveSubstitution') {
-                result += `{~${node.attrs?.oldText || ''}~>${node.attrs?.newText || ''}~}`;
+                result += `{~${node.attrs?.oldText || ''}~>${node.attrs?.newText || ''}~}`
+                    + serializeAttributes(node.attrs, ['oldText', 'newText']);
+                return;
+            }
+            if (node.type === 'carveInlineExtension') {
+                result += `:${node.attrs?.name || ''}[${serializeInline(node.content)}]`
+                    + serializeAttributes(node.attrs, ['name']);
                 return;
             }
             if (node.type === 'carveSymbol') {
-                result += `:${node.attrs?.name || ''}:`;
+                result += `:${node.attrs?.name || ''}:` + serializeAttributes(node.attrs, ['name']);
                 return;
             }
             if (node.type === 'carveCitation') {
-                result += node.attrs?.raw || '';
+                result += (node.attrs?.raw || '')
+                    + serializeAttributes(node.attrs, ['raw', 'integral', 'items']);
                 return;
             }
             if (node.type === 'carveCrossref') {
-                result += `</#${node.attrs?.target || ''}>`;
+                result += `</#${node.attrs?.target || ''}>` + serializeAttributes(node.attrs, ['target']);
                 return;
             }
             if (node.type === 'carveCommentInline') {
@@ -960,6 +1011,11 @@ export function serializeToCarve(doc) {
                 let t;
                 if (writeAutolink) {
                     t = '<' + autoRaw + '>';
+                } else if (node.carveVerbatim) {
+                    // An inline ATOM that sits inside a link: already written in
+                    // its own spelling by the pre-pass below, and re-escaping it
+                    // would spell the construct as prose.
+                    t = text;
                 } else if (hasCriticComment) {
                     // An editorial comment's content is LITERAL - nothing inside
                     // it is markup - so it is emitted raw. Escaping it the way
@@ -1209,8 +1265,9 @@ export function serializeToCarve(doc) {
     if (result.startsWith(LEADING_SPACE_SENTINEL)) {
         result = ' ' + result.slice(LEADING_SPACE_SENTINEL.length);
     }
-    if (referenceDefs.size > 0) {
-        const defs = [...referenceDefs.values()];
+    // A `null` value is a label a `carveLinkRefDef` node already wrote in place.
+    const defs = [...referenceDefs.values()].filter((line) => line != null);
+    if (defs.length > 0) {
         result += '\n\n' + defs.join('\n');
     }
     return result;
@@ -1273,7 +1330,11 @@ function escapeLeadingDelimiter(s) {
     return s
         .replace(/^\*(?!\*)/, '\\*')
         .replace(/^~(?!~)/, '\\~')
-        .replace(/^\^(?!\^)/, '\\^')
+        // A lone `^` is LITERAL text - sup is the braced `{^ ^}` form only - so
+        // the only leading caret that needs an escape is the one that would open
+        // an inline note against a following `[`. Escaping every caret spelled
+        // `[^1]{.k}` back as `[\\^1]{.k}`.
+        .replace(/^\^(?=\[)/, '\\^')
         .replace(/^\/(?!\/)/, '\\/')
         .replace(/^_(?!_)/, '\\_');
 }

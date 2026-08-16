@@ -49,6 +49,7 @@ export { CarveMath } from './extensions/carve-math.js';
 export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
 export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
+export { CarveInlineExtension } from './extensions/carve-inline-extension.js';
 export { CarveUnsupported } from './extensions/carve-unsupported.js';
 export { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
 export { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';

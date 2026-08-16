@@ -2,6 +2,8 @@ import type { Extension, JSONContent, Mark, Node } from '@tiptap/core';
 
 export interface CarveLoaderOptions {
   unsupported?: 'throw' | 'preserve';
+  /** Passed straight to the engine's `parse()`, so extension-gated constructs (citations, ...) reach the bridge. */
+  parse?: Record<string, unknown>;
 }
 
 export interface CarveAstNode {
@@ -38,6 +40,7 @@ export const CarveHeading: Node;
 
 export const CarveKeymap: Extension;
 export const CarveSourcePreservation: Extension;
+export const CarveInlineExtension: Node;
 
 export function carveToProseMirror(
   source: string,

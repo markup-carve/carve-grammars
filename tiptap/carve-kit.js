@@ -39,6 +39,7 @@ import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js'
 import { CarveCitation } from './extensions/carve-citation.js';
 import { CarveCrossref } from './extensions/carve-crossref.js';
 import { CarveFrontmatter } from './extensions/carve-frontmatter.js';
+import { CarveInlineExtension } from './extensions/carve-inline-extension.js';
 import { CarveInlineNote } from './extensions/carve-inline-note.js';
 import { CarveLinkRefDef } from './extensions/carve-link-ref-def.js';
 import { CarveLiteral } from './extensions/carve-literal.js';
@@ -666,6 +667,9 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveLinkRefDef !== false) {
             extensions.push(CarveLinkRefDef.configure(this.options.carveLinkRefDef ?? {}));
+        }
+        if (this.options.carveInlineExtension !== false) {
+            extensions.push(CarveInlineExtension.configure(this.options.carveInlineExtension ?? {}));
         }
         if (this.options.carveInlineNote !== false) {
             extensions.push(CarveInlineNote.configure(this.options.carveInlineNote ?? {}));

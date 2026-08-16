@@ -55,7 +55,11 @@ export const INLINE_MARKS = {
  * @returns {object} ProseMirror `doc` node.
  */
 export function carveToProseMirror(source, options = {}) {
-    const ast = parse(source);
+    // Extension-gated constructs (citations, among others) only appear in the
+    // AST when the engine is told about them, and the loader parsed with no
+    // options at all - so no caller could ever load a document holding one, and
+    // the mapping for it could not be exercised.
+    const ast = parse(source, options.parse);
     const sourceLayout = toSourceLayout(source, toAstJson(ast));
     let doc;
     try {
@@ -150,16 +154,16 @@ export function astToProseMirror(ast, options = {}) {
     }
     const content = [];
     if (ast.frontmatter) {
-        if (ctx.unsupported === 'preserve' && ctx.source) {
-            const frontmatterSource = sourceFor(ast.frontmatter, ctx);
-            if (!frontmatterSource) return opaqueDocument(ctx.source);
-            // Frontmatter has no rich editor model yet, but its own position is
-            // exact. Keep only that prefix opaque so the document body remains
-            // structured and editable.
-            content.push({ type: 'carveUnsupported', attrs: { carveSource: frontmatterSource } });
-        } else {
-            unsupported('frontmatter', ast, ctx);
-        }
+        // `carveFrontmatter` is an atom carrying the block VERBATIM (PART 12
+        // section 7 keeps it unparsed), so the editor holds the same text the
+        // author wrote and the serializer rebuilds the fences around it.
+        content.push({
+            type: 'carveFrontmatter',
+            attrs: {
+                format: ast.frontmatter.format || 'yaml',
+                content: ast.frontmatter.content || '',
+            },
+        });
     }
     const body = ast.children || [];
     // Retain the semantic tree. If its canonical spelling is lossy, the public
@@ -483,6 +487,26 @@ function convertBlock(node, ctx) {
         case 'figure_group':
             return convertFigureGroup(node, ctx);
 
+        case 'link_reference_definition': {
+            // Carrying the definition as a NODE is what lets `[text][label]`
+            // keep its spelling without the serializer having to reconstruct a
+            // definition line from the reference that resolved it. The
+            // serializer registers the label as written so the reference
+            // collector does not append a second copy at the end.
+            const attrs = { label: node.label || '', href: node.href || '' };
+            if (node.title != null) attrs.title = node.title;
+            const authored = convertAttrs(node.attrs);
+            if (authored) Object.assign(attrs, authored);
+            return { type: 'carveLinkRefDef', attrs };
+        }
+
+        // A rendering wrapper rather than authored source: no Carve spelling
+        // opens a section, so `parse()` never emits one. An AST that arrives
+        // from elsewhere - another engine's `ast-json`, a patch - can hold one,
+        // and its children have to survive.
+        case 'section':
+            return { type: 'carveSection', content: convertBlocks(node.children || [], ctx) };
+
         default:
             return unsupported(node.type, node, ctx);
     }
@@ -716,6 +740,26 @@ function mergeAdjacentText(nodes) {
 }
 
 /**
+ * One citation item. `prefix`, `locator` and `suffix` are inline arrays in the
+ * AST and stay inline arrays here, converted like any other inline content; the
+ * scalar fields the engine derives (`locatorLabel`, `locatorValue`) ride along
+ * so a consumer that understands them does not have to re-derive them from the
+ * locator text.
+ * @param {object} item
+ * @returns {object}
+ */
+function convertCitationItem(item, ctx) {
+    const out = { key: item.key || '', suppressAuthor: !!item.suppressAuthor };
+    for (const field of ['prefix', 'locator', 'suffix']) {
+        if (Array.isArray(item[field]) && item[field].length) out[field] = convertInline(item[field], ctx);
+    }
+    for (const field of ['locatorLabel', 'locatorValue']) {
+        if (item[field] != null) out[field] = item[field];
+    }
+    return out;
+}
+
+/**
  * Convert one inline node into ProseMirror inline nodes, carrying the set of
  * accumulated marks down to the leaf text nodes.
  * @param {object} node
@@ -782,7 +826,7 @@ function convertInlineNode(node, marks, ctx) {
             if (a.classes && a.classes.length) attrs.class = a.classes.join(' ');
             if (a.keyValues && Object.keys(a.keyValues).length) attrs.keyValues = { ...a.keyValues };
 
-            return [{ type: 'carveMath', attrs }];
+            return [{ type: 'carveMath', attrs, ...(marks.length ? { marks } : {}) }];
         }
 
         // All three spellings. carve-js split `footnote` into `footnote_ref`
@@ -791,19 +835,38 @@ function convertInlineNode(node, marks, ctx) {
         // form keeps either release order safe. An inline footnote has no
         // label of its own, which the fallback already covers.
         case 'inline_footnote':
-            // Inline notes carry arbitrary marked inline content, while the
-            // editor presents footnotes as an atom. Preserve that atom's exact
-            // local spelling rather than degrading it into a labelled ref.
-            return [{ type: 'carveFootnote', attrs: { carveSource: sourceFor(node, ctx) } }];
+            // The note's body is ORDINARY inline content and the editor has a
+            // node for it, so it is carried as one - `carveInlineNote` holding
+            // converted children. Keeping it as a `carveFootnote` atom stamped
+            // with its source made the body uneditable and left `carveInlineNote`
+            // registered, mapped and produced by nothing.
+            return [{
+                type: 'carveInlineNote',
+                ...(convertAttrs(node.attrs) ? { attrs: convertAttrs(node.attrs) } : {}),
+                ...(marks.length ? { marks } : {}),
+                content: convertInline(node.inline || node.children || [], ctx),
+            }];
         case 'footnote':
         case 'footnote_ref':
-            return [{ type: 'carveFootnote', attrs: { label: node.id || 'note' } }];
+            return [{
+                type: 'carveFootnote',
+                attrs: { label: node.id || 'note' },
+                ...(marks.length ? { marks } : {}),
+            }];
 
         case 'mention':
-            return [{ type: 'carveMention', attrs: { id: node.user || node.id || '' } }];
+            return [{
+                type: 'carveMention',
+                attrs: { id: node.user || node.id || '' },
+                ...(marks.length ? { marks } : {}),
+            }];
 
         case 'tag':
-            return [{ type: 'carveTag', attrs: { id: node.name || node.id || '' } }];
+            return [{
+                type: 'carveTag',
+                attrs: { id: node.name || node.id || '' },
+                ...(marks.length ? { marks } : {}),
+            }];
 
         case 'link': {
             const attrs = { href: node.href || '' };
@@ -838,6 +901,78 @@ function convertInlineNode(node, marks, ctx) {
             const attrs = { href: node.href || text, autolink: true, ...(convertAttrs(node.attrs) || {}) };
             return [{ type: 'text', text, marks: [...marks, { type: 'link', attrs }] }];
         }
+
+        // Each of these takes an authored attribute run of its own
+        // (`:rocket:{.big}`, `:widget[x]{#i k=v}`), so the authored attributes
+        // are merged in and the node declares slots for them - without both,
+        // the run is dropped on the way in and the serializer cannot write it.
+        case 'symbol':
+            return [{
+                type: 'carveSymbol',
+                attrs: { name: node.name || '', ...(convertAttrs(node.attrs) || {}) },
+                ...(marks.length ? { marks } : {}),
+            }];
+
+        case 'literal_inline':
+            return [{
+                type: 'carveLiteral',
+                attrs: { content: node.content || '', ...(convertAttrs(node.attrs) || {}) },
+                ...(marks.length ? { marks } : {}),
+            }];
+
+        case 'substitution':
+            return [{
+                type: 'carveSubstitution',
+                attrs: {
+                    oldText: node.oldText || '',
+                    newText: node.newText || '',
+                    ...(convertAttrs(node.attrs) || {}),
+                },
+                ...(marks.length ? { marks } : {}),
+            }];
+
+        case 'raw_inline':
+            return [{
+                type: 'carveRawInline',
+                attrs: {
+                    format: node.format || '',
+                    content: node.content || '',
+                    ...(convertAttrs(node.attrs) || {}),
+                },
+                ...(marks.length ? { marks } : {}),
+            }];
+
+        case 'inline_extension':
+            // `:name[content]`. NOT `carveEmbed`: that node is a block atom for
+            // a media directive, and an inline extension is inline content with
+            // children. Media keeps its own path in through the HTML route.
+            return [{
+                type: 'carveInlineExtension',
+                attrs: { name: node.name || '', ...(convertAttrs(node.attrs) || {}) },
+                ...(marks.length ? { marks } : {}),
+                content: convertInline(node.content || node.children || [], ctx),
+            }];
+
+        case 'heading_ref':
+            // `</#target>`. The RESOLVED href is a resolution artifact and is
+            // deliberately not carried - the target is what the author wrote.
+            return [{
+                type: 'carveCrossref',
+                attrs: { target: node.target || '', ...(convertAttrs(node.attrs) || {}) },
+                ...(marks.length ? { marks } : {}),
+            }];
+
+        case 'citation_group':
+            return [{
+                type: 'carveCitation',
+                attrs: {
+                    raw: node.raw || '',
+                    integral: node.mode === 'integral',
+                    items: (node.items || []).map((item) => convertCitationItem(item, ctx)),
+                    ...(convertAttrs(node.attrs) || {}),
+                },
+                ...(marks.length ? { marks } : {}),
+            }];
 
         case 'span':
             return convertSpan(node, marks, ctx);

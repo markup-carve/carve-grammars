@@ -122,5 +122,22 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // the remaining ten of `318-composite-figures`: the loader builds real
 // `carveFigureGroup` nodes holding `carveFigure` panels and a trailing
 // `carveCaption`, and they survive the editor.
-assert.strictEqual(changed.length, 191, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 191 -> 184 when the eleven map-declared nodes the converter never built got
+// producers (`carveFrontmatter`, `carveLinkRefDef`, `carveSymbol`,
+// `carveLiteral`, `carveSubstitution`, `carveRawInline`,
+// `carveInlineExtension`, `carveCitation`, `carveCrossref`, `carveInlineNote`,
+// `carveSection`). Six documents moved OUT and none moved in:
+//
+// - `194-2`, `195`, `202`, `266-11`, `266-14`, `266-15`: a link reference
+//   definition is a node now, written where the author put it and carrying its
+//   own trailing attribute run, instead of being re-derived from the reference
+//   that resolved it and appended at the end of the document.
+// - one more moved out once an inline ATOM started carrying its marks: an
+//   emphasis around a symbol, a math span, a mention or an inline note was
+//   dropped entirely on the way back, because only the text path writes a
+//   mark's delimiters.
+//
+// The rest of the list is unchanged, which is the point: every construct that
+// gained a rich node kept its mounted projection render-equivalent.
+assert.strictEqual(changed.length, 184, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

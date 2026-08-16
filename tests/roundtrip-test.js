@@ -207,13 +207,15 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
 }
 
 {
-    // Frontmatter is source-local: metadata remains opaque, while body blocks
-    // stay editable instead of the complete document becoming one atom.
+    // Frontmatter is a NODE, not an opaque prefix: the block is carried
+    // verbatim - PART 12 section 7 keeps it unparsed - in a carveFrontmatter
+    // atom the editor can show and the serializer rebuilds the fences around.
     const source = '--- yaml\ntitle: T\n---\n\n# Editable\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.deepStrictEqual(pm.content.map((node) => node.type), [
-        'carveUnsupported', 'heading',
+        'carveFrontmatter', 'heading',
     ]);
+    assert.deepStrictEqual(pm.content[0].attrs, { format: 'yaml', content: 'title: T' });
     assert.deepStrictEqual(
         normalizeAst(parse(serializeToCarve(pm))),
         normalizeAst(parse(source)),
