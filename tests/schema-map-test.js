@@ -184,19 +184,7 @@ const UNREACHABLE_MARKS = new Map([
  * the editor model genuinely should not hold belongs in the map's `unmapped`
  * block instead, where it is a documented absence rather than a pending one.
  */
-const UNREACHABLE_NODES = new Map([
-  ['frontmatter', 'the loader keeps the frontmatter prefix as an opaque atom; nothing builds carveFrontmatter'],
-  ['link_reference_definition', 'the definition is re-emitted from the reference that resolves it; nothing builds carveLinkRefDef'],
-  ['symbol', 'no converter case; `:rocket:` lands as opaque source'],
-  ['literal_inline', 'no converter case; !`x` lands as opaque source'],
-  ['substitution', 'no converter case; `{~a~>b~}` lands as opaque source'],
-  ['raw_inline', 'no converter case; `` `x`{=html} `` lands as opaque source'],
-  ['inline_extension', 'no converter case; carveEmbed is reachable only through the HTML route'],
-  ['citation_group', 'no converter case, and no corpus document exercises one'],
-  ['heading_ref', 'no converter case; a crossref lands as opaque source in all 18 corpus files that hold one'],
-  ['inline_footnote', 'the converter builds carveFootnote with a carveSource attr, not carveInlineNote'],
-  ['section', 'no converter case'],
-]);
+const UNREACHABLE_NODES = new Map([]);
 
 ok('every node the map declares is reachable from the converter', () => {
   // The node twin of the mark check below. A ProseMirror node name the

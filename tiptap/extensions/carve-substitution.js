@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /** An authored CriticMarkup substitution. */
 export const CarveSubstitution = Node.create({
@@ -7,7 +8,7 @@ export const CarveSubstitution = Node.create({
     inline: true,
     atom: true,
     addAttributes() {
-        return { oldText: { default: '' }, newText: { default: '' } };
+        return { oldText: { default: '' }, newText: { default: '' }, ...attributeSlots(['data-carve-substitution']) };
     },
     parseHTML() { return [{ tag: 'span[data-carve-substitution]' }]; },
     renderHTML({ HTMLAttributes, node }) {

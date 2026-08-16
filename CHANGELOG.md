@@ -38,6 +38,42 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- **Eleven map-declared nodes are actually built now.** `carveFrontmatter`,
+  `carveLinkRefDef`, `carveSymbol`, `carveLiteral`, `carveSubstitution`,
+  `carveRawInline`, `carveCitation`, `carveCrossref`, `carveInlineNote` and
+  `carveSection` were named in `schema-map.json` as carried, registered in
+  `CarveKit` and handled by the serializer - and constructed by no code path, so
+  a document using one loaded as an opaque source atom instead. 185 of the 1025
+  corpus files carried such an atom. `carveInlineExtension` is new: it is the
+  general `:name[content]` form, which could not share `carveEmbed` because that
+  node is a block atom for a media directive and an inline extension has inline
+  children.
+
+  An inline footnote now loads as `carveInlineNote` holding EDITABLE content
+  rather than a `carveFootnote` atom stamped with its source, and a link
+  reference definition is written where the author put it, with its own trailing
+  attribute run, rather than being re-derived from the reference that resolved
+  it and appended at the end.
+
+- **`carveToProseMirror(source, { parse })`** passes options through to the
+  engine. Extension-gated constructs only appear in the AST when the engine is
+  told about them, so no caller could load a document holding a citation group -
+  and the mapping for one could not be exercised.
+
+- **An inline atom inside a mark keeps the mark.** The atom carries it like any
+  other inline node, but only the text path writes a mark's delimiters, so
+  `*:rocket:*` came back as `:rocket:` and `[see </#H>](/u)` as
+  `[see ](/u)</#H>` - the emphasis dropped and the atom moved out of the link.
+  Applies to symbols, literals, math, mentions, tags, footnote references and
+  inline notes alike.
+
+- **An authored attribute run survives on every construct that takes one.**
+  `:rocket:{.big}`, `!`x`{.ipa}`, `:widget[x]{#i k=v}`, `^[note]{.ref}`
+  and `[ex]: /u {.external}` kept their id, classes and key/values on the way
+  in, and the nodes declare slots for them so a mounted editor does not drop
+  them.
+
+
 - **`aliasOf` in `tiptap/schema-map.json`**, so a bridge reading the map back
   the other way is not left to decide by iteration order. Two Carve types can
   name the same ProseMirror node or mark - `carveDiv` is both `div` and

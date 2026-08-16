@@ -154,8 +154,11 @@
     },
     "inline_extension": {
       "kind": "node",
-      "pm": "carveEmbed",
-      "notes": "partial: only media embeds are modeled, via the directive stamped in carveSource"
+      "pm": [
+        "carveInlineExtension",
+        "carveEmbed"
+      ],
+      "notes": "carveInlineExtension is the general form - inline, name plus editable children, `:name[content]`. carveEmbed stays for a MEDIA directive, which is a block atom and cannot hold inline children; it is reached through the HTML route rather than from the AST"
     },
     "frontmatter": {
       "kind": "node",
