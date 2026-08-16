@@ -63,4 +63,4 @@ export { CarveHeading } from './extensions/carve-heading.js';
 export { serializeToCarve, escapeCarve, carveMediaDirective } from './serializer.js';
 
 // Loader
-export { carveToProseMirror, astToProseMirror, UnsupportedNodeError } from './carve-to-pm.js';
+export { carveToProseMirror, carveToProseMirrorWithReport, astToProseMirror, UnsupportedNodeError } from './carve-to-pm.js';

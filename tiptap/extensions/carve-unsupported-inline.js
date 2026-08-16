@@ -9,6 +9,13 @@ export const CarveUnsupportedInline = Node.create({
 
     addAttributes() {
         return {
+            // The TYPE this atom stands in for. Without it a caller can see
+            // that something was preserved and never learn what.
+            carveType: {
+                default: '',
+                parseHTML: element => element.getAttribute('data-carve-type') || '',
+                renderHTML: attributes => (attributes.carveType ? { 'data-carve-type': attributes.carveType } : {}),
+            },
             carveSource: {
                 default: '',
                 parseHTML: element => element.getAttribute('data-carve-source') || '',
