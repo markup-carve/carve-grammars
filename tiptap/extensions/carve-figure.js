@@ -9,7 +9,7 @@ export const CarveFigure = Node.create({
         return {
             id: { default: null },
             class: { default: null },
-            keyValues: { default: null },
+            carveKeyValues: { default: null },
         };
     },
     parseHTML() { return [{ tag: 'figure[data-carve-figure]' }]; },
@@ -47,7 +47,7 @@ export const CarveFigureGroup = Node.create({
         return {
             id: { default: null },
             class: { default: null },
-            keyValues: { default: null },
+            carveKeyValues: { default: null },
         };
     },
     parseHTML() { return [{ tag: 'figure[data-carve-figure-group]' }]; },

@@ -38,6 +38,34 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- **The published map names ATTRIBUTES, not only nodes**, and
+  `tiptap/wire-fixtures.json` pins the shape: 30 Carve sources with the exact
+  ProseMirror document a bridge must produce for each. Names alone were never
+  the contract - two bridges to this same editor model produced different
+  attribute vocabularies for the same document, and nothing compared them, so a
+  document stored by one lost its reference spelling, its list tightness and its
+  cell spans when read by the other. A bridge in another runtime copies the
+  fixtures and asserts against them.
+
+- **A list carries whether the author wrote it loose or tight.** `carveTight` on
+  `bulletList`, `orderedList` and `taskList`. The serializer could only DERIVE
+  looseness from an item holding more than one block, so `- a` / blank line /
+  `- b` came back tight - losing the paragraph inside each item, which is
+  content and not styling.
+
+### Changed
+
+- **A Carve attribute on a stock ProseMirror node is spelled with a `carve`
+  prefix.** `ref`, `rawRef`, `referenceDefinition` and `autolink` on the link
+  mark and image node; `delim`, `olType` and `bareMarker` on `orderedList`;
+  `languageRaw`, `header` and `label` on `codeBlock`; `keyValues` everywhere.
+  A bare name on a node this schema does not own collides with whatever another
+  extension - or the application - puts there, and carve-php already used the
+  prefixed spelling for the link attributes. Nodes this schema owns keep bare
+  names: `carveCitation` has `raw`, not `carveRaw`. **Breaking** for a stored
+  ProseMirror document written by 0.1.4 or earlier: the old keys are not read.
+
+
 - **Eleven map-declared nodes are actually built now.** `carveFrontmatter`,
   `carveLinkRefDef`, `carveSymbol`, `carveLiteral`, `carveSubstitution`,
   `carveRawInline`, `carveCitation`, `carveCrossref`, `carveInlineNote` and

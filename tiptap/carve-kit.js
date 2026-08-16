@@ -160,7 +160,17 @@ export const CarveKit = Extension.create({
                     attributes: {
                         id: { default: null },
                         class: { default: null },
-                        keyValues: { default: null },
+                        carveKeyValues: { default: null },
+                    },
+                }, {
+                    // LOOSE or TIGHT is content: a loose list read back as tight
+                    // loses the paragraph inside each item. The serializer can
+                    // only derive looseness from an item holding more than one
+                    // block, so an authored `- a` / blank / `- b` needs the flag
+                    // the author's blank lines set.
+                    types: ['bulletList', 'orderedList', 'taskList'],
+                    attributes: {
+                        carveTight: { default: null },
                     },
                 }];
             },
@@ -216,7 +226,7 @@ export const CarveKit = Extension.create({
                 addAttributes() {
                     return {
                         ...this.parent?.(),
-                        languageRaw: {
+                        carveLanguageRaw: {
                             default: null,
                             parseHTML: element => {
                                 // Check parent <pre> for data-language-raw
@@ -224,15 +234,15 @@ export const CarveKit = Extension.create({
                                 return pre?.getAttribute('data-language-raw') || null;
                             },
                             renderHTML: attributes => {
-                                if (!attributes.languageRaw) return {};
-                                return { 'data-language-raw': attributes.languageRaw };
+                                if (!attributes.carveLanguageRaw) return {};
+                                return { 'data-language-raw': attributes.carveLanguageRaw };
                             },
                         },
-                        header: { default: null },
-                        label: { default: null },
+                        carveHeader: { default: null },
+                        carveLabel: { default: null },
                         id: { default: null },
                         class: { default: null },
-                        keyValues: { default: null },
+                        carveKeyValues: { default: null },
                     };
                 },
 
@@ -247,8 +257,8 @@ export const CarveKit = Extension.create({
                     return ({ node, editor, getPos }) => {
                         let current = node;
                         const pre = document.createElement('pre');
-                        if (node.attrs.languageRaw) {
-                            pre.setAttribute('data-language-raw', node.attrs.languageRaw);
+                        if (node.attrs.carveLanguageRaw) {
+                            pre.setAttribute('data-language-raw', node.attrs.carveLanguageRaw);
                         }
 
                         const select = document.createElement('select');
@@ -356,7 +366,8 @@ export const CarveKit = Extension.create({
 
         // Custom OrderedList carrying the MARKER STYLE. Carve writes ordered
         // markers four ways (`1.`, `1)`, `a.`, `iv.`) plus the bare `.` form,
-        // and the AST records which (`olType`, `delim`, `bareMarker`). Tiptap's
+        // and the converter records which in (`carveOlType`, `carveDelim`,
+        // `carveBareMarker`). Tiptap's
         // OrderedList declares only `start`, so without these an `a.` list came
         // back as `1.` - a different document.
         if (this.options.orderedList !== false) {
@@ -364,9 +375,9 @@ export const CarveKit = Extension.create({
                 addAttributes() {
                     return {
                         ...this.parent?.(),
-                        olType: { default: null },
-                        delim: { default: null },
-                        bareMarker: { default: null },
+                        carveOlType: { default: null },
+                        carveDelim: { default: null },
+                        carveBareMarker: { default: null },
                     };
                 },
             });
@@ -383,7 +394,7 @@ export const CarveKit = Extension.create({
                         ...this.parent?.(),
                         id: { default: null },
                         class: { default: null, parseHTML: authoredClasses },
-                        keyValues: { default: null },
+                        carveKeyValues: { default: null },
                     };
                 },
                 parseHTML() {
@@ -433,7 +444,7 @@ export const CarveKit = Extension.create({
                     ...this.options.link,
                 }).extend({
                     // A REFERENCE link keeps the label the author wrote. The
-                    // converter puts `ref`/`rawRef` on the mark (PART 12
+                    // converter puts `carveRef`/`carveRawRef` on the mark (PART 12
                     // section 3a) and the serializer writes the reference form
                     // from them - but ProseMirror drops any attribute the mark
                     // does not declare, so without this the metadata survives
@@ -443,21 +454,21 @@ export const CarveKit = Extension.create({
                         return {
                             ...this.parent?.(),
                             title: { default: null },
-                            ref: { default: null },
-                            rawRef: { default: null },
-                            referenceDefinition: { default: null },
+                            carveRef: { default: null },
+                            carveRawRef: { default: null },
+                            carveReferenceDefinition: { default: null },
                             // An AUTOLINK is `<https://e.com>`; the same target
                             // written `[t](https://e.com)` is a different node
                             // in the AST, so the spelling has to survive as
                             // metadata or every autolink comes back as an
                             // inline link.
-                            autolink: { default: null },
+                            carveAutolink: { default: null },
                             // An ATTRIBUTE RUN on the link (`[t](/u){#id .c}`).
                             // Without these the run was dropped in silence: an
                             // id and classes the author wrote simply vanished.
                             id: { default: null },
                             class: { default: null },
-                            keyValues: { default: null },
+                            carveKeyValues: { default: null },
                         };
                     },
                     addKeyboardShortcuts() {
@@ -486,11 +497,11 @@ export const CarveKit = Extension.create({
                 addAttributes() {
                     return {
                         ...this.parent?.(),
-                        ref: { default: null },
-                        rawRef: { default: null },
+                        carveRef: { default: null },
+                        carveRawRef: { default: null },
                         id: { default: null },
                         class: { default: null },
-                        keyValues: { default: null },
+                        carveKeyValues: { default: null },
                     };
                 },
             }).configure({ inline: true, ...(this.options.image ?? {}) }));
@@ -503,7 +514,7 @@ export const CarveKit = Extension.create({
                 ...this.options.table,
             }));
             const tableAttrs = {
-                id: { default: null }, class: { default: null }, keyValues: { default: null }, textAlign: { default: null },
+                id: { default: null }, class: { default: null }, carveKeyValues: { default: null }, textAlign: { default: null },
             };
             const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
             const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
@@ -560,7 +571,7 @@ export const CarveKit = Extension.create({
                         // plain item does: `-{.c} [ ] text`.
                         id: { default: null },
                         class: { default: null, parseHTML: authoredClasses },
-                        keyValues: { default: null },
+                        carveKeyValues: { default: null },
                     };
                 },
                 parseHTML() {

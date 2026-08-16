@@ -22,7 +22,7 @@ export const CarveHeading = Heading.extend({
                 parseHTML: element => element.getAttribute('class') || null,
                 renderHTML: attributes => attributes.class ? { class: attributes.class } : {},
             },
-            keyValues: {
+            carveKeyValues: {
                 default: null,
                 parseHTML: element => {
                     const entries = [...element.attributes]
@@ -30,7 +30,7 @@ export const CarveHeading = Heading.extend({
                         .map(attribute => [attribute.name, attribute.value]);
                     return entries.length ? Object.fromEntries(entries) : null;
                 },
-                renderHTML: attributes => attributes.keyValues ?? {},
+                renderHTML: attributes => attributes.carveKeyValues ?? {},
             },
         };
     },

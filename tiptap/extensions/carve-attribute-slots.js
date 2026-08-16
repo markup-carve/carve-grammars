@@ -5,7 +5,7 @@
  * Tiptap keeps only attributes a node DECLARES, so a node without these slots
  * drops the author's attribute run on the way in and the serializer has nothing
  * left to write. `id` and `class` are their own slots because they render as
- * real HTML attributes; everything else travels together in `keyValues`, since
+ * real HTML attributes; everything else travels together in `carveKeyValues`, since
  * the names are the author's and cannot be declared upfront.
  *
  * @param {string[]} own - HTML attribute names this node renders itself, which
@@ -26,7 +26,7 @@ export function attributeSlots(own = []) {
             parseHTML: element => element.getAttribute('class') || null,
             renderHTML: attributes => (attributes.class ? { class: attributes.class } : {}),
         },
-        keyValues: {
+        carveKeyValues: {
             default: null,
             parseHTML: element => {
                 const pairs = {};
@@ -36,7 +36,7 @@ export function attributeSlots(own = []) {
 
                 return Object.keys(pairs).length ? pairs : null;
             },
-            renderHTML: attributes => ({ ...(attributes.keyValues || {}) }),
+            renderHTML: attributes => ({ ...(attributes.carveKeyValues || {}) }),
         },
     };
 }

@@ -142,11 +142,11 @@ check('escapes a closing bracket inside a link label',
 check('a reference label split by an inner mark stays one collapsed link',
     doc(para(
         { type: 'text', text: 'bold', marks: [
-            { type: 'link', attrs: { href: '/x', ref: '*bold* heading', rawRef: '[*bold* heading][]' } },
+            { type: 'link', attrs: { href: '/x', carveRef: '*bold* heading', carveRawRef: '[*bold* heading][]' } },
             { type: 'bold' },
         ] },
         { type: 'text', text: ' heading', marks: [
-            { type: 'link', attrs: { href: '/x', ref: '*bold* heading', rawRef: '[*bold* heading][]' } },
+            { type: 'link', attrs: { href: '/x', carveRef: '*bold* heading', carveRawRef: '[*bold* heading][]' } },
         ] },
     )),
     '[*bold* heading][]\n\n[*bold* heading]: /x');
@@ -591,20 +591,20 @@ check('a continuation block is indented to the attributed content column',
     '-{.c} item\n\n      para');
 
 check('an alphabetic marker keeps its style and its ordinal',
-    doc({ type: 'orderedList', attrs: { start: 2, olType: 'a', delim: '.' }, content: [
+    doc({ type: 'orderedList', attrs: { start: 2, carveOlType: 'a', carveDelim: '.' }, content: [
         listItem(null, para(text('x'))),
         listItem(null, para(text('y'))),
     ] }),
     'b. x\nc. y');
 
 check('a roman marker keeps its style',
-    doc({ type: 'orderedList', attrs: { start: 4, olType: 'i', delim: '.' }, content: [
+    doc({ type: 'orderedList', attrs: { start: 4, carveOlType: 'i', carveDelim: '.' }, content: [
         listItem(null, para(text('x'))),
     ] }),
     'iv. x');
 
 check('an UPPERCASE roman marker stays uppercase',
-    doc({ type: 'orderedList', attrs: { start: 4, olType: 'I', delim: ')' }, content: [
+    doc({ type: 'orderedList', attrs: { start: 4, carveOlType: 'I', carveDelim: ')' }, content: [
         listItem(null, para(text('x'))),
     ] }),
     'IV) x');
@@ -613,20 +613,20 @@ check('an UPPERCASE roman marker stays uppercase',
 // looking at the NEXT marker, so a one-item list has no writable token: roman 5
 // written `v.` reads back as alphabetic 22. The decimal token keeps the ordinal.
 check('an ambiguous single-letter roman token falls back to the decimal form',
-    doc({ type: 'orderedList', attrs: { start: 5, olType: 'i', delim: '.' }, content: [
+    doc({ type: 'orderedList', attrs: { start: 5, carveOlType: 'i', carveDelim: '.' }, content: [
         listItem(null, para(text('x'))),
     ] }),
     '5. x');
 
 check('the same token is written when a second item disambiguates it',
-    doc({ type: 'orderedList', attrs: { start: 5, olType: 'i', delim: '.' }, content: [
+    doc({ type: 'orderedList', attrs: { start: 5, carveOlType: 'i', carveDelim: '.' }, content: [
         listItem(null, para(text('x'))),
         listItem(null, para(text('y'))),
     ] }),
     'v. x\nvi. y');
 
 check('a bare-dot marker keeps its bare form',
-    doc({ type: 'orderedList', attrs: { start: 1, delim: '.', bareMarker: true }, content: [
+    doc({ type: 'orderedList', attrs: { start: 1, carveDelim: '.', carveBareMarker: true }, content: [
         listItem(null, para(text('x'))),
     ] }),
     '. x');
@@ -636,31 +636,31 @@ check('a bare-dot marker keeps its bare form',
 const linked = (t, attrs) => ({ type: 'text', text: t, marks: [{ type: 'link', attrs }] });
 
 check('an autolink is written in its own form, not as an inline link',
-    doc(para(linked('https://e.com', { href: 'https://e.com', autolink: true }))),
+    doc(para(linked('https://e.com', { href: 'https://e.com', carveAutolink: true }))),
     '<https://e.com>');
 
 check('an email autolink carries the mailto the parser added',
-    doc(para(linked('a@b.com', { href: 'mailto:a@b.com', autolink: true }))),
+    doc(para(linked('a@b.com', { href: 'mailto:a@b.com', carveAutolink: true }))),
     '<a@b.com>');
 
 // An autolink's content is LITERAL, so the escaped label must not be what the
 // target is compared against - `*` in a URL used to downgrade the form.
 check('an autolink containing an emphasis character keeps its form',
-    doc(para(linked('https://e.com/a*b*', { href: 'https://e.com/a*b*', autolink: true }))),
+    doc(para(linked('https://e.com/a*b*', { href: 'https://e.com/a*b*', carveAutolink: true }))),
     '<https://e.com/a*b*>');
 
 check('an autolink whose text no longer matches its target writes the link form',
-    doc(para(linked('edited', { href: 'https://e.com', autolink: true }))),
+    doc(para(linked('edited', { href: 'https://e.com', carveAutolink: true }))),
     '[edited](https://e.com)');
 
 check('an attribute run on an autolink survives too',
-    doc(para(linked('https://e.com', { href: 'https://e.com', autolink: true, id: 'id', class: 'c' }))),
+    doc(para(linked('https://e.com', { href: 'https://e.com', carveAutolink: true, id: 'id', class: 'c' }))),
     '<https://e.com>{#id .c}');
 
 // The autolink form is decided before any mark wrapper, so emphasis wraps it
 // rather than replacing it.
 check('an autolink inside emphasis keeps both',
-    doc(para({ type: 'text', text: 'https://e.com', marks: [{ type: 'bold' }, { type: 'link', attrs: { href: 'https://e.com', autolink: true } }] })),
+    doc(para({ type: 'text', text: 'https://e.com', marks: [{ type: 'bold' }, { type: 'link', attrs: { href: 'https://e.com', carveAutolink: true } }] })),
     '*<https://e.com>*');
 
 check("a link's attribute run survives",
@@ -668,7 +668,7 @@ check("a link's attribute run survives",
     '[t](/u){#id .c}');
 
 check('an attribute run on a reference link follows the label',
-    doc(para(linked('t', { href: '/u', ref: 'r', keyValues: { 'data-x': '1' } })), para(text(''))),
+    doc(para(linked('t', { href: '/u', carveRef: 'r', carveKeyValues: { 'data-x': '1' } })), para(text(''))),
     '[t][r]{data-x="1"}\n\n[r]: /u');
 
 // --- marks that had no reachable producer ------------------------------------

@@ -130,7 +130,7 @@ function toRoman(num) {
 //
 // Only the stock DEFAULTS are dropped: a link that really does carry
 // `rel="me"` keeps it, and a Carve-authored `{target="x"}` arrives in
-// `keyValues` rather than here, so it is never affected either way.
+// `carveKeyValues` rather than here, so it is never affected either way.
 const TIPTAP_LINK_DEFAULTS = { target: '_blank', rel: 'noopener noreferrer nofollow' };
 
 function linkAttrRun(attrs) {
@@ -227,26 +227,30 @@ export function serializeToCarve(doc) {
             case 'bulletList':
             case 'orderedList':
             case 'taskList':
-                const listAttrs = serializeAttributes(node.attrs, ['start', 'type', 'olType', 'delim', 'bareMarker']);
+                const listAttrs = serializeAttributes(node.attrs, ['start', 'type', 'carveOlType', 'carveDelim', 'carveBareMarker', 'carveTight']);
                 if (listAttrs) output += listAttrs + '\n';
                 // A list is "loose" when an item holds more than one
                 // paragraph-level block. A nested sub-list does NOT count - an
                 // item of `paragraph + sublist` is still tight, so don't let it
                 // force blank lines that would turn the whole list loose.
-                const isLoose = (node.content || []).some((item) => {
+                // `carveTight` is what the author WROTE, and it decides where it
+                // is present: a list whose items hold one paragraph each is
+                // loose or tight purely by the blank lines between them, which
+                // no amount of looking at the items can recover.
+                const isLoose = node.attrs?.carveTight === false || (node.content || []).some((item) => {
                     const blocks = (item.content || []).filter(
                         (b) => !['bulletList', 'orderedList', 'taskList'].includes(b.type),
                     );
                     return blocks.length > 1;
                 });
                 let num = node.attrs?.start || 1;
-                // `olType` comes from the Carve AST; `type` is what Tiptap's own
+                // `carveOlType` carries the style from the Carve AST; `type` is what Tiptap's own
                 // OrderedList records when the editor is seeded from rendered
                 // HTML (`<ol type="a">`). Reading only the first lost every
                 // alphabetic and roman list on the WYSIWYG path.
                 const htmlType = /^[aAiI]$/.test(String(node.attrs?.type ?? '')) ? node.attrs.type : null;
-                const olType = node.attrs?.olType || htmlType;
-                const delim = node.attrs?.delim === ')' ? ')' : '.';
+                const olType = node.attrs?.carveOlType || htmlType;
+                const delim = node.attrs?.carveDelim === ')' ? ')' : '.';
                 (node.content || []).forEach((item, i) => {
                     // The marker splits in two around the attribute slot: a
                     // marker attribute goes directly after the marker CHARACTER
@@ -255,7 +259,7 @@ export function serializeToCarve(doc) {
                     // makes the brace run an inline span on the item's text.
                     let marker, taskBox = '';
                     if (node.type === 'orderedList') {
-                        marker = (node.attrs?.bareMarker ? '' : orderedToken(num, olType, (node.content || []).length)) + delim;
+                        marker = (node.attrs?.carveBareMarker ? '' : orderedToken(num, olType, (node.content || []).length)) + delim;
                         num++;
                     } else if (node.type === 'taskList') {
                         marker = '-';
@@ -310,9 +314,9 @@ export function serializeToCarve(doc) {
                 const code = (node.content || []).map(c => c.text || '').join('').replace(/\n$/, '');
                 const longest = (code.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
                 const fence = '`'.repeat(Math.max(3, longest + 1));
-                const header = node.attrs?.header != null ? ` "${String(node.attrs.header).replace(/"/g, '\\"')}"` : '';
-                const label = node.attrs?.label != null ? ` [${String(node.attrs.label).replace(/]/g, '\\]')}]` : '';
-                const blockAttrs = serializeAttributes(node.attrs, ['language', 'languageRaw', 'header', 'label']);
+                const header = node.attrs?.carveHeader != null ? ` "${String(node.attrs.carveHeader).replace(/"/g, '\\"')}"` : '';
+                const label = node.attrs?.carveLabel != null ? ` [${String(node.attrs.carveLabel).replace(/]/g, '\\]')}]` : '';
+                const blockAttrs = serializeAttributes(node.attrs, ['language', 'carveLanguageRaw', 'carveHeader', 'carveLabel']);
                 if (blockAttrs) output += blockAttrs + '\n';
                 output += fence + lang + header + label + '\n' + code + '\n' + fence + '\n';
                 break;
@@ -893,7 +897,7 @@ export function serializeToCarve(doc) {
             const candidate = content[index];
             if (candidate?.type !== 'text') return null;
             const mark = (candidate.marks || []).find((item) => item.type === 'link');
-            return typeof mark?.attrs?.ref === 'string' && mark.attrs.ref !== '' ? mark : null;
+            return typeof mark?.attrs?.carveRef === 'string' && mark.attrs.carveRef !== '' ? mark : null;
         };
         const markAt = (index, type) => {
             const candidate = content[index];
@@ -905,7 +909,7 @@ export function serializeToCarve(doc) {
             && pmFingerprint(left.attrs || {}) === pmFingerprint(right.attrs || {}));
         const sameReferenceLink = (left, right) => {
             if (!left || !right) return false;
-            const keys = ['href', 'title', 'ref', 'rawRef', 'referenceDefinition'];
+            const keys = ['href', 'title', 'carveRef', 'carveRawRef', 'carveReferenceDefinition'];
             return keys.every((key) => (left.attrs?.[key] ?? '') === (right.attrs?.[key] ?? ''));
         };
 
@@ -1003,7 +1007,7 @@ export function serializeToCarve(doc) {
                 // `*<https://e.com>*` keeps its emphasis.
                 const autoRaw = node.text || '';
                 const autoTarget = link?.attrs?.href || '';
-                const writeAutolink = !!link?.attrs?.autolink
+                const writeAutolink = !!link?.attrs?.carveAutolink
                     && !link.attrs?.title
                     && (autoRaw === autoTarget || 'mailto:' + autoRaw === autoTarget)
                     // `>` would close the form early and whitespace ends it.
@@ -1116,7 +1120,7 @@ export function serializeToCarve(doc) {
                 if (link) {
                     let replayedReferenceSource = false;
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
-                    const ref = link.attrs?.ref;
+                    const ref = link.attrs?.carveRef;
                     const referenceContinuesNext = typeof ref === 'string' && ref !== ''
                         && sameReferenceLink(link, referenceLinkAt(idx + 1));
                     if (writeAutolink) {
@@ -1127,7 +1131,7 @@ export function serializeToCarve(doc) {
                         const continuesNext = referenceContinuesNext;
                         // COLLAPSED (`[text][]`) where the label is the link's
                         // own text, FULL (`[text][label]`) otherwise - the two
-                        // forms the language has. `rawRef` records which one was
+                        // forms the language has. `carveRawRef` records which one was
                         // written; the text may have been edited since, so the
                         // label is compared rather than the raw string replayed.
                         //
@@ -1138,7 +1142,7 @@ export function serializeToCarve(doc) {
                         // into two unrelated references.
                         if (!continuesPrevious) t = '[' + t;
                         if (!continuesNext) {
-                            const rawRef = link.attrs?.rawRef || '';
+                            const rawRef = link.attrs?.carveRawRef || '';
                             if (!continuesPrevious && rawRef.startsWith(t + ']')) {
                                 t = rawRef;
                                 replayedReferenceSource = true;
@@ -1154,7 +1158,7 @@ export function serializeToCarve(doc) {
                         // had - one that turns literal text into a link to the
                         // empty string on the next parse.
                         if (link.attrs.href && !referenceDefs.has(ref)) {
-                            referenceDefs.set(ref, link.attrs.referenceDefinition
+                            referenceDefs.set(ref, link.attrs.carveReferenceDefinition
                                 || '[' + ref + ']: ' + link.attrs.href + title);
                         }
                     } else {
@@ -1174,7 +1178,7 @@ export function serializeToCarve(doc) {
                     // adjacent text runs that make up one marked label.
                     const linkContinuesNext = sameMark(link, markAt(idx + 1, 'link'));
                     if (!referenceContinuesNext && !linkContinuesNext && !replayedReferenceSource) {
-                        t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'ref', 'rawRef', 'referenceDefinition', 'autolink']);
+                        t += serializeAttributes(linkAttrRun(link.attrs), ['href', 'title', 'carveRef', 'carveRawRef', 'carveReferenceDefinition', 'carveAutolink']);
                     }
                 }
                 if (carveSpan) {
@@ -1213,8 +1217,8 @@ export function serializeToCarve(doc) {
                 const alt = node.attrs?.alt || '';
                 const src = node.attrs?.src || '';
                 const title = node.attrs?.title ? ' "' + escapeTitle(node.attrs.title) + '"' : '';
-                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title', 'ref', 'rawRef']);
-                const ref = node.attrs?.ref;
+                const imgAttrs = serializeAttributes(node.attrs, ['alt', 'src', 'title', 'carveRef', 'carveRawRef']);
+                const ref = node.attrs?.carveRef;
                 if (typeof ref === 'string' && ref !== '') {
                     // Collapsed where the label IS the alt text, full otherwise -
                     // the same two forms the link path writes, and the definition
@@ -1426,7 +1430,7 @@ function escapeTitle(title) {
  */
 function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     if (!attrs) return '';
-    const ignore = new Set(['id', 'class', 'keyValues', ...skip]);
+    const ignore = new Set(['id', 'class', 'carveKeyValues', ...skip]);
     const parts = [];
     if (attrs.id) parts.push('#' + attrs.id);
     if (attrs.class && !(placeholderClass && attrs.class === 'custom')) {
@@ -1448,8 +1452,8 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     }
     // A node that keeps authored key/values in one declared attribute - Tiptap
     // needs every attribute declared, and `data-k=v` cannot be known upfront.
-    if (attrs.keyValues && typeof attrs.keyValues === 'object') {
-        for (const [k, v] of Object.entries(attrs.keyValues)) {
+    if (attrs.carveKeyValues && typeof attrs.carveKeyValues === 'object') {
+        for (const [k, v] of Object.entries(attrs.carveKeyValues)) {
             if (v == null || v === false || (v === '' && k !== 'lang')) continue;
             if (k === 'lang') {
                 if (attrs.lang == null) parts.push(language(v));
