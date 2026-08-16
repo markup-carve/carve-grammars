@@ -38,6 +38,21 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- **`carveToProseMirrorWithReport(source, options)`**, so the bridge says what
+  the editor model could not hold. It returns the document plus `preserved`
+  (Carve types kept as exact source rather than as an editable node) and
+  `degraded` (types whose text survives while the node does not). The bridges
+  contract has always required this of a bridge - carve-php has exposed
+  `droppedTypes()`/`degradedTypes()` since it had one - and this bridge reported
+  nothing at all, so an application storing Carve could not tell a fully
+  editable document from one carrying blobs of unparsed source.
+
+  The preservation atoms now carry `carveType` beside `carveSource`, naming the
+  construct they stand in for, and `schema-map.json` describes both as part of
+  the wire rather than as one bridge's private shape - a `carveUnsupported`
+  crossing to another runtime was refused as an unknown name.
+
+
 - **The published map names ATTRIBUTES, not only nodes**, and
   `tiptap/wire-fixtures.json` pins the shape: 30 Carve sources with the exact
   ProseMirror document a bridge must produce for each. Names alone were never

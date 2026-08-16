@@ -54,6 +54,27 @@ export const INLINE_MARKS = {
  * @param {{unsupported?: 'throw'|'preserve'}} [options]
  * @returns {object} ProseMirror `doc` node.
  */
+/**
+ * Load Carve and say what the editor model could not hold.
+ *
+ * The same conversion `carveToProseMirror` performs, with the report the
+ * bridges contract asks for: an application storing documents can refuse to
+ * save one that lost something instead of finding out later that it did.
+ *
+ * @param {string} source - Carve source.
+ * @param {object} [options] - As `carveToProseMirror`.
+ * @returns {{doc: object, preserved: object<string, string>, degraded: object<string, string>}}
+ *   `preserved` names each Carve type kept as exact source rather than as an
+ *   editable node; `degraded` names each type whose text survives while the node
+ *   does not.
+ */
+export function carveToProseMirrorWithReport(source, options = {}) {
+    const report = {};
+    const doc = carveToProseMirror(source, { ...options, report });
+
+    return { doc, preserved: report.preserved || {}, degraded: report.degraded || {} };
+}
+
 export function carveToProseMirror(source, options = {}) {
     // Extension-gated constructs (citations, among others) only appear in the
     // AST when the engine is told about them, and the loader parsed with no
@@ -61,12 +82,13 @@ export function carveToProseMirror(source, options = {}) {
     // the mapping for it could not be exercised.
     const ast = parse(source, options.parse);
     const sourceLayout = toSourceLayout(source, toAstJson(ast));
+    const reporting = options.report && typeof options.report === 'object' ? { report: options.report } : null;
     let doc;
     try {
         doc = astToProseMirror(ast, { ...options, source });
     } catch (error) {
         if ((options.unsupported ?? 'throw') === 'preserve' && error instanceof UnsupportedNodeError) {
-            return opaqueDocument(source);
+            return opaqueDocument(source, reporting);
         }
         throw error;
     }
@@ -82,24 +104,37 @@ export function carveToProseMirror(source, options = {}) {
     if ((options.unsupported ?? 'throw') === 'preserve') {
         if (doc.content?.length === 1 && doc.content[0]?.type === 'carveUnsupported'
             && doc.content[0].attrs?.carveSource !== source) {
-            return opaqueDocument(source);
+            return opaqueDocument(source, reporting);
         }
         try {
-            const reparsed = parse(serializeToCarve(doc));
-            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, sourceLayout);
+            const reparsed = parse(serializeToCarve(doc), options.parse);
+            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, sourceLayout, reporting);
         } catch {
-            return sourceEnvelope(doc, sourceLayout);
+            return sourceEnvelope(doc, sourceLayout, reporting);
         }
     }
 
     return doc;
 }
 
-function opaqueDocument(source) {
-    return { type: 'doc', content: [{ type: 'carveUnsupported', attrs: { carveSource: source } }] };
+function opaqueDocument(source, ctx = null) {
+    record(ctx, 'preserved', 'document',
+        'the whole document is kept as exact source; nothing in it is editable');
+
+    return {
+        type: 'doc',
+        content: [{ type: 'carveUnsupported', attrs: { carveSource: source, carveType: 'document' } }],
+    };
 }
 
-function sourceEnvelope(doc, sourceLayout) {
+function sourceEnvelope(doc, sourceLayout, ctx = null) {
+    // The rich projection is kept, but writing it back would not reproduce the
+    // document, so the source rides along and the serializer replays it while
+    // the document is untouched. The FIRST EDIT invalidates the fingerprint and
+    // the projection becomes what is written - which is why this is reported.
+    record(ctx, 'preserved', 'document',
+        'the rich projection is not write-identical; the source envelope carries the document until it is edited');
+
     const clean = { ...doc };
     delete clean.attrs;
     return {
@@ -200,6 +235,13 @@ function makeContext(options) {
     return {
         unsupported: unsupportedMode,
         source,
+        // What the editor model could not hold, filled as it happens. A bridge
+        // REPORTS; the caller decides whether a document that lost something
+        // may be stored (docs/format-bridges.md). carve-php has exposed
+        // droppedTypes()/degradedTypes() since it had a bridge at all; this one
+        // reported nothing, so a Tiptap application storing Carve had no way to
+        // learn that a construct arrived as an opaque atom.
+        report: options.report && typeof options.report === 'object' ? options.report : null,
         lineOffsets: source ? lineOffsets(source) : [],
         // Parser positions are normalized across BOM/CRLF/CR input, so source
         // slicing by line/column is deliberately avoided for those documents.
@@ -216,10 +258,30 @@ function lineOffsets(source) {
     return offsets;
 }
 
+/**
+ * Record what the editor model could not hold.
+ * @param {object} ctx
+ * @param {'preserved'|'degraded'} bucket
+ * @param {string} type - The Carve node type.
+ * @param {string} reason
+ */
+function record(ctx, bucket, type, reason) {
+    if (!ctx?.report) return;
+    const into = ctx.report[bucket] || (ctx.report[bucket] = {});
+    if (!(type in into)) into[type] = reason;
+}
+
 function unsupported(type, node, ctx) {
     if (ctx?.unsupported === 'preserve') {
         const carveSource = sourceFor(node, ctx);
-        if (carveSource) return { type: 'carveUnsupported', attrs: { carveSource } };
+        if (carveSource) {
+            record(ctx, 'preserved', type, 'kept as exact source in a carveUnsupported atom; not editable');
+
+            // The TYPE the atom stands in for, not only its source. Without it
+            // a caller can see that something was preserved and never learn
+            // what, which is the same silence the atom exists to avoid.
+            return { type: 'carveUnsupported', attrs: { carveSource, carveType: type } };
+        }
     }
     throw new UnsupportedNodeError(type, node);
 }
@@ -332,8 +394,8 @@ function localizeLossyBlock(node, converted, carveSource, ctx) {
     return { type: 'carveUnsupported', attrs: { carveSource } };
 }
 
-function unsupportedInlineSource(carveSource) {
-    return { type: 'carveUnsupportedInline', attrs: { carveSource } };
+function unsupportedInlineSource(carveSource, type = 'inline') {
+    return { type: 'carveUnsupportedInline', attrs: { carveSource, carveType: type } };
 }
 
 function sourceForInlineChildren(children, ctx) {
@@ -712,7 +774,9 @@ function convertInline(nodes, ctx) {
             if (ctx.unsupported === 'preserve' && error instanceof UnsupportedNodeError) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
-                    out.push({ type: 'carveUnsupportedInline', attrs: { carveSource } });
+                    record(ctx, 'preserved', error.nodeType || node.type,
+                        'kept as exact source in a carveUnsupportedInline atom; not editable');
+                    out.push(unsupportedInlineSource(carveSource, error.nodeType || node.type));
                     continue;
                 }
             }
@@ -796,6 +860,15 @@ function convertInlineNode(node, marks, ctx) {
         // round trip through an escape could not even be measured - and the
         // serializer emits escapes (carve-grammars#145).
         case 'escaped_text':
+            // Degraded, not dropped: the backslash is a source-level spelling
+            // the editor has no place for, and the CHARACTER survives as text.
+            // Guarded on the type because `text` falls through to here - without
+            // it every document with any text at all reported an escape.
+            if (node.type === 'escaped_text') {
+                record(ctx, 'degraded', 'escaped_text',
+                    'the escape is a source spelling; the character survives as text');
+            }
+
             return node.value
                 ? [{ type: 'text', text: node.value, ...(marks.length ? { marks } : {}) }]
                 : [];
@@ -811,6 +884,8 @@ function convertInlineNode(node, marks, ctx) {
             // a block interrupts the paragraph at parse time (PART 9 §10 I1),
             // so a soft break is only ever followed by text that opens nothing.
             // (Marks never span a soft break in practice.)
+            record(ctx, 'degraded', 'soft_break', 'a soft break is whitespace in the ProseMirror model');
+
             return [{ type: 'text', text: '\n' }];
 
         case 'hard-break':

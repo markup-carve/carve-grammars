@@ -47,6 +47,18 @@ export function carveToProseMirror(
   options?: CarveLoaderOptions,
 ): JSONContent;
 
+export interface CarveLossReport {
+  /** Carve types kept as exact source rather than as an editable node. */
+  preserved: Record<string, string>;
+  /** Carve types whose node is gone while their text survives. */
+  degraded: Record<string, string>;
+}
+
+export function carveToProseMirrorWithReport(
+  source: string,
+  options?: CarveLoaderOptions,
+): { doc: JSONContent } & CarveLossReport;
+
 export function astToProseMirror(
   ast: CarveAstNode,
   options?: CarveLoaderOptions & { source?: string },
