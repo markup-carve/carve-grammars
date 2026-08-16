@@ -53,6 +53,10 @@ function roundTrip(file) {
         wholeDocumentFallback = pm.content?.length === 1
             && pm.content[0]?.type === 'carveUnsupported'
             && pm.content[0]?.attrs?.carveSource === file.source;
+        // Whether the loader had to wrap the document in a SOURCE ENVELOPE: the
+        // rich projection is kept but is not write-identical, so the source
+        // rides along and the first edit is what starts writing the projection.
+        if (pm.attrs?.carveSource) envelopedFiles.push(file.name);
         carve2 = serializeToCarve(pm);
     } catch (e) {
         return { ok: false, reason: e.nodeType ? `unsupported ${e.nodeType}` : e.message };
@@ -70,6 +74,7 @@ let failures = 0;
 let coveredFilesChecked = 0;
 const skipShouldPromote = [];
 const wholeDocumentFallbackCategories = new Set();
+const envelopedFiles = [];
 
 for (const category of listCategories()) {
     const files = filesByCategory.get(category) || [];
@@ -115,6 +120,42 @@ if (skipShouldPromote.length) {
 }
 
 assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (see above)`);
+
+/*
+ * How many documents the loader could not write back FAITHFULLY, as a ratchet.
+ *
+ * Every round trip above passes whether or not the projection is any good:
+ * `preserve` reacts to a lossy projection by keeping the source and replaying
+ * it, so a serializer that writes the wrong thing still reparses to the same
+ * AST. The sweep kept measuring and stopped being able to say no. Measured
+ * while proving the fixes in markup-carve/carve-grammars#240: a deliberately
+ * broken `#id` token - every attributed document in the corpus written back
+ * with the wrong id - left this file completely green.
+ *
+ * The envelope count is the number that moves. Under that same broken `#id` it
+ * goes 254 -> 291. It is not a pass/fail property (an enveloped document is
+ * still stored losslessly), which is why it is a RATCHET: raising it means the
+ * editable projection got worse for that many documents, and that is a decision
+ * to state, not a number to absorb.
+ *
+ * 256 -> 254 in the pass that carried an attribute run's authored order, an
+ * attribute run on inline code, and a mark with no content. Two moved out:
+ * `03-links-8` (`[](https://example.com)`) and `13-attributes-2`
+ * (`` `code`{.cls} ``). Seven fence-title documents moved IN and back out
+ * again: with `order` no longer stripped as volatile, the duplicate
+ * `{title="..."}` line the code-block writer had always emitted became visible,
+ * and it is gone.
+ */
+assert.strictEqual(
+    envelopedFiles.length, 254,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 254`,
+);
+
+assert.strictEqual(
+    wholeDocumentFallbackCategories.size, 0,
+    'covered categories that need the whole-document source envelope: '
+    + [...wholeDocumentFallbackCategories].sort().join(', '),
+);
 
 {
     // A heading reference has no external definition. Its source-sensitive

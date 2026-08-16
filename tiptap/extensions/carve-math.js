@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { attributeOrderSlot } from './carve-attribute-slots.js';
 
 /**
  * Carve Math node extension for Tiptap.
@@ -91,6 +92,7 @@ export const CarveMath = Node.create({
                 },
                 renderHTML: attributes => attributes.carveKeyValues || {},
             },
+            ...attributeOrderSlot(),
         };
     },
 

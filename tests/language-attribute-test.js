@@ -88,7 +88,11 @@ const CASES = [
     { source: '[x]{:}', langs: [''], written: '[x]{:}' },
     // A language alongside another attribute, so the row cannot pass by a
     // reading that only accepts `{:TAG}` as the entire attribute block.
-    { source: '[y]{:fr .note}', langs: ['fr'], written: '[y]{.note :fr}' },
+    // ... and it comes back in the order it was WRITTEN. This row used to expect
+    // `[y]{.note :fr}`: the run was split across unordered slots and rebuilt in a
+    // canonical order, so the same document came back with a different spelling
+    // (markup-carve/carve-grammars#240).
+    { source: '[y]{:fr .note}', langs: ['fr'], written: '[y]{:fr .note}' },
     // The long spelling of the same attribute. It reaches the loader as the
     // same span, and the serializer writes the canonical short form back.
     { source: '[z]{lang="fr"}', langs: ['fr'], written: '[z]{:fr}' },

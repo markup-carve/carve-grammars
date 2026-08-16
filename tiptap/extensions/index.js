@@ -15,6 +15,7 @@ export { CarveAbbreviation } from './carve-abbreviation.js';
 export { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './carve-definition-list.js';
 export { CarveUnsupported } from './carve-unsupported.js';
 export { CarveUnsupportedInline } from './carve-unsupported-inline.js';
+export { CarveEmptyMark } from './carve-empty-mark.js';
 export { CarveFigure, CarveFigureGroup, CarveCaption } from './carve-figure.js';
 export { CarveRawBlock } from './carve-raw-block.js';
 export { CarveComment, CarveCommentInline } from './carve-comment.js';

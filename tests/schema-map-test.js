@@ -96,6 +96,26 @@ ok('every mapped ProseMirror name is registered by CarveKit', () => {
   assert.deepStrictEqual(missing, [], `names absent from the CarveKit schema: ${missing.join(', ')}`);
 });
 
+ok('every node keyed by ProseMirror name is registered, with the kind it declares', () => {
+  /*
+   * `preservationNodes` and `markCarrierNodes` are keyed by ProseMirror name
+   * rather than by Carve type, so the two checks above - which walk `types` -
+   * never looked at them. They are no less part of the wire: a bridge that does
+   * not know `carveEmptyMark` reads an empty-label link as an unknown node, and
+   * an unknown ProseMirror name is an error rather than a skip. Nothing checked
+   * `preservationNodes` against the schema at all until this ran.
+   */
+  const wrong = [];
+  for (const section of [map.preservationNodes, map.markCarrierNodes]) {
+    for (const [pm, entry] of Object.entries(section || {})) {
+      if (pm === 'about') continue;
+      if (!schemaNames.has(pm)) wrong.push(`${pm} is absent from the CarveKit schema`);
+      else if ((pm in schema.marks) !== (entry.kind === 'mark')) wrong.push(`${pm} declared ${entry.kind}`);
+    }
+  }
+  assert.deepStrictEqual(wrong, [], wrong.join(', '));
+});
+
 ok('the declared node/mark kind agrees with the CarveKit schema', () => {
   const wrong = [];
   for (const [carveType, entry] of Object.entries(map.types)) {

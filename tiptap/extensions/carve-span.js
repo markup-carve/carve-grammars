@@ -1,4 +1,5 @@
 import { Mark, mergeAttributes } from '@tiptap/core';
+import { attributeOrderSlot } from './carve-attribute-slots.js';
 
 /**
  * Carve Span mark extension for Tiptap
@@ -63,6 +64,7 @@ export const CarveSpan = Mark.create({
                     ? { 'data-carve-key-values': JSON.stringify(attributes.carveKeyValues) }
                     : {},
             },
+            ...attributeOrderSlot(),
         };
     },
 
