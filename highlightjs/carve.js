@@ -431,7 +431,7 @@
     // first to claim those suffixed forms).
     const CITATION = {
         className: 'symbol',
-        begin: /\[\+?(?:[^\]@]*@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*[^\]]*)\](?!\(|\[|\{)/,
+        begin: /\[\+?(?:[^\]@]{0,512}@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*[^\]]{0,512})\](?!\(|\[|\{)/,
         relevance: 8,
     };
 

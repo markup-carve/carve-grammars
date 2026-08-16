@@ -766,7 +766,7 @@
         // `(url)`, `[ref]`, or `{attrs}` suffix. The bracket MUST contain at
         // least one `@key` item.
         'citation': {
-            pattern: /\[\+?(?:[^\]@]*@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*(?:[^\]]*)?)\](?!\(|\[|\{)/,
+            pattern: /\[\+?(?:[^\]@]{0,512}@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*(?:[^\]]{0,512})?)\](?!\(|\[|\{)/,
             greedy: true,
             alias: 'string',
             inside: {
