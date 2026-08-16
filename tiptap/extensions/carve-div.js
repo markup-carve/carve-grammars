@@ -73,7 +73,7 @@ export const CarveDiv = Node.create({
     addAttributes() {
         return {
             id: { default: null },
-            keyValues: { default: null },
+            carveKeyValues: { default: null },
             label: { default: null },
             class: {
                 default: null,

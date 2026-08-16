@@ -52,15 +52,15 @@ export const CarveSpan = Mark.create({
                 parseHTML: element => element.hasAttribute('lang') ? element.getAttribute('lang') : null,
                 renderHTML: attributes => attributes.lang === null ? {} : { lang: attributes.lang },
             },
-            keyValues: {
+            carveKeyValues: {
                 default: null,
                 parseHTML: element => {
                     const raw = element.getAttribute('data-carve-key-values');
                     if (!raw) return null;
                     try { return JSON.parse(raw); } catch { return null; }
                 },
-                renderHTML: attributes => attributes.keyValues
-                    ? { 'data-carve-key-values': JSON.stringify(attributes.keyValues) }
+                renderHTML: attributes => attributes.carveKeyValues
+                    ? { 'data-carve-key-values': JSON.stringify(attributes.carveKeyValues) }
                     : {},
             },
         };

@@ -380,6 +380,7 @@ function convertBlock(node, ctx) {
                 if (checkedItems.length !== (node.items || []).length) return unsupported('mixed-task-list', node, ctx);
                 return {
                     type: 'taskList',
+                    ...(typeof node.tight === 'boolean' ? { attrs: { carveTight: node.tight } } : {}),
                     content: (node.items || []).map((it) => ({
                         type: 'taskItem',
                         attrs: { checked: !!it.checked, ...(convertAttrs(it.attrs) || {}) },
@@ -402,13 +403,21 @@ function convertBlock(node, ctx) {
             };
             const listAttrs = convertAttrs(node.attrs);
             if (listAttrs) listNode.attrs = listAttrs;
+            // LOOSE or TIGHT is content, not styling: a loose list read back as
+            // tight loses the paragraph inside each item. The serializer can
+            // only DERIVE looseness from an item holding more than one block,
+            // which misses the authored `- a\n\n- b` - every such list came
+            // back tight.
+            if (typeof node.tight === 'boolean') {
+                listNode.attrs = { ...(listNode.attrs || {}), carveTight: node.tight };
+            }
             if (node.ordered) {
                 listNode.attrs = { ...(listNode.attrs || {}), start: node.start || 1 };
                 // The MARKER STYLE: `1.` / `1)` / `a.` / `iv.` / the bare `.`.
                 // Dropping it rewrote every alpha and roman list as `1.`.
-                if (node.olType) listNode.attrs.olType = node.olType;
-                if (node.delim) listNode.attrs.delim = node.delim;
-                if (node.bareMarker) listNode.attrs.bareMarker = true;
+                if (node.olType) listNode.attrs.carveOlType = node.olType;
+                if (node.delim) listNode.attrs.carveDelim = node.delim;
+                if (node.bareMarker) listNode.attrs.carveBareMarker = true;
             }
             return listNode;
         }
@@ -420,8 +429,10 @@ function convertBlock(node, ctx) {
         case 'code-block':
         case 'code_block': {
             const attrs = { language: node.lang || '', ...(convertAttrs(node.attrs) || {}) };
-            if (typeof node.header === 'string') attrs.header = node.header;
-            if (typeof node.label === 'string') attrs.label = node.label;
+            // Fence metadata rides a STOCK codeBlock, so it is carve-prefixed:
+            // `header` and `label` are names any other extension may claim.
+            if (typeof node.header === 'string') attrs.carveHeader = node.header;
+            if (typeof node.label === 'string') attrs.carveLabel = node.label;
             return {
                 type: 'codeBlock',
                 attrs,
@@ -478,7 +489,12 @@ function convertBlock(node, ctx) {
         case 'comment':
             return {
                 type: 'carveComment',
-                attrs: { block: Boolean(node.block) },
+                // `delimited` is the `%%{ ... }%%` form (PART 9 section 21a). The
+                // engine pinned here does not emit it yet and carve-php does, so
+                // it is written from the start rather than added later - a wire
+                // that gains a field is a wire two bridges disagree about until
+                // both move.
+                attrs: { block: Boolean(node.block), delimited: Boolean(node.delimited) },
                 content: node.content ? [{ type: 'text', text: node.content }] : [],
             };
         case 'figure':
@@ -567,8 +583,8 @@ function convertFigureGroup(node, ctx) {
 function blockImage(node) {
     const attrs = { alt: node.alt || '', src: node.src || '' };
     if (node.title) attrs.title = node.title;
-    if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
-    if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
+    if (typeof node.ref === 'string' && node.ref !== '') attrs.carveRef = node.ref;
+    if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.carveRawRef = node.rawRef;
     Object.assign(attrs, convertAttrs(node.attrs) || {});
     return { type: 'paragraph', content: [{ type: 'image', attrs }] };
 }
@@ -814,8 +830,8 @@ function convertInlineNode(node, marks, ctx) {
             // links and left images behind, so `![moon][m]` came back as
             // `![moon](/moon.png)` - the reference form gone and the definition
             // with it.
-            if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
-            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
+            if (typeof node.ref === 'string' && node.ref !== '') attrs.carveRef = node.ref;
+            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.carveRawRef = node.rawRef;
             return [{ type: 'image', attrs }];
         }
 
@@ -824,7 +840,7 @@ function convertInlineNode(node, marks, ctx) {
             const a = node.attrs || {};
             if (a.id) attrs.id = a.id;
             if (a.classes && a.classes.length) attrs.class = a.classes.join(' ');
-            if (a.keyValues && Object.keys(a.keyValues).length) attrs.keyValues = { ...a.keyValues };
+            if (a.keyValues && Object.keys(a.keyValues).length) attrs.carveKeyValues = { ...a.keyValues };
 
             return [{ type: 'carveMath', attrs, ...(marks.length ? { marks } : {}) }];
         }
@@ -877,10 +893,10 @@ function convertInlineNode(node, marks, ctx) {
             // serializer with nothing to write but the resolved destination, so
             // a round trip rewrote `[click][a]` as `[click](…)` - the exact
             // distinction 3a exists to keep (carve-grammars#101).
-            if (typeof node.ref === 'string' && node.ref !== '') attrs.ref = node.ref;
-            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.rawRef = node.rawRef;
+            if (typeof node.ref === 'string' && node.ref !== '') attrs.carveRef = node.ref;
+            if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.carveRawRef = node.rawRef;
             const definitionSource = referenceDefinitionSource(node.ref, ctx);
-            if (definitionSource) attrs.referenceDefinition = definitionSource;
+            if (definitionSource) attrs.carveReferenceDefinition = definitionSource;
             // A resolved reference carries the definition's attributes merged
             // into every use. Only attributes present in rawRef were authored
             // on this particular link; the definition line is preserved
@@ -898,7 +914,7 @@ function convertInlineNode(node, marks, ctx) {
             const text = node.text ?? node.href ?? '';
             // An autolink takes an attribute run of its own
             // (`<https://e.com>{#id .c}` renders the id and class on the `<a>`).
-            const attrs = { href: node.href || text, autolink: true, ...(convertAttrs(node.attrs) || {}) };
+            const attrs = { href: node.href || text, carveAutolink: true, ...(convertAttrs(node.attrs) || {}) };
             return [{ type: 'text', text, marks: [...marks, { type: 'link', attrs }] }];
         }
 
@@ -982,7 +998,10 @@ function convertInlineNode(node, marks, ctx) {
             return [{ type: 'text', text: node.text || '', marks: [...marks, { type: 'carveCriticComment' }] }];
 
         case 'comment':
-            return [{ type: 'carveCommentInline', attrs: { content: node.content || '' } }];
+            return [{
+                type: 'carveCommentInline',
+                attrs: { content: node.content || '', delimited: Boolean(node.delimited) },
+            }];
 
         default: {
             const markType = INLINE_MARKS[node.type];
@@ -1021,7 +1040,7 @@ function convertAttrs(attrs) {
     const out = {};
     if (attrs.id) out.id = attrs.id;
     if (attrs.classes && attrs.classes.length) out.class = attrs.classes.join(' ');
-    if (attrs.keyValues && Object.keys(attrs.keyValues).length) out.keyValues = { ...attrs.keyValues };
+    if (attrs.keyValues && Object.keys(attrs.keyValues).length) out.carveKeyValues = { ...attrs.keyValues };
     return Object.keys(out).length ? out : null;
 }
 

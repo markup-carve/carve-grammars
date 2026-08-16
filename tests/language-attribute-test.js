@@ -42,7 +42,7 @@ const { CarveKit, carveToProseMirror, serializeToCarve } = await import('../tipt
 
 /**
  * Collect the language every `carveSpan` mark in a loader document carries.
- * The loader routes an attribute with a value through `keyValues`; the mark's
+ * The loader routes an attribute with a value through `carveKeyValues`; the mark's
  * dedicated `lang` attribute is what the HTML parse path fills in, so read
  * both rather than pinning today's routing.
  */
@@ -52,7 +52,7 @@ function spanLanguages(doc) {
         for (const mark of node.marks || []) {
             if (mark.type !== 'carveSpan') continue;
             const attrs = mark.attrs || {};
-            const lang = attrs.keyValues?.lang ?? attrs.lang;
+            const lang = attrs.carveKeyValues?.lang ?? attrs.lang;
             if (lang !== undefined && lang !== null) found.push(lang);
         }
         for (const child of node.content || []) walk(child);

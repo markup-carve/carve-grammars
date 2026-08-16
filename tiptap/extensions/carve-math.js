@@ -78,7 +78,7 @@ export const CarveMath = Node.create({
             // Authored key/values (`data-k=v`) cannot each be a declared Tiptap
             // attribute, since the names are the author's. They travel together
             // in one map instead.
-            keyValues: {
+            carveKeyValues: {
                 default: null,
                 parseHTML: element => {
                     const own = new Set(['id', 'class', 'data-carve-math', 'data-display']);
@@ -89,7 +89,7 @@ export const CarveMath = Node.create({
 
                     return Object.keys(pairs).length ? pairs : null;
                 },
-                renderHTML: attributes => attributes.keyValues || {},
+                renderHTML: attributes => attributes.carveKeyValues || {},
             },
         };
     },

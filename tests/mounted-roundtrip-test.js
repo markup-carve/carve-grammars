@@ -139,5 +139,9 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 //
 // The rest of the list is unchanged, which is the point: every construct that
 // gained a rich node kept its mounted projection render-equivalent.
-assert.strictEqual(changed.length, 184, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 184 -> 180 when a list started carrying whether the AUTHOR wrote it loose.
+// The serializer could only derive looseness from an item holding more than one
+// block, so `- a` / blank / `- b` came back tight - the paragraph inside each
+// item lost, which the bridges page names as the first thing HTML cannot hold.
+assert.strictEqual(changed.length, 180, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
