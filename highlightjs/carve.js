@@ -122,10 +122,15 @@
     //
     // The nesting is unrolled to FOUR levels because a regex cannot count;
     // deeper stays unscoped, which is what every depth did before.
+    //
+    // Every quantifier here is BOUNDED, for the reason Prism's copy gives: an
+    // unbounded body is a scan to the end of the document at every `[` the
+    // tokenizer tries, and it tries each position.
     const BRACKET_CHAR = /(?:[^\[\]\\]|\\[\s\S])/.source;
-    let BRACKET_TEXT = BRACKET_CHAR + '*';
+    const BRACKET_SCAN = '{0,512}';
+    let BRACKET_TEXT = BRACKET_CHAR + BRACKET_SCAN;
     for (let depth = 0; depth < 3; depth++) {
-        BRACKET_TEXT = '(?:' + BRACKET_CHAR + '|\\[' + BRACKET_TEXT + '\\])*';
+        BRACKET_TEXT = '(?:' + BRACKET_CHAR + '|\\[' + BRACKET_TEXT + '\\])' + BRACKET_SCAN;
     }
     // The same body, required to be non-empty, for the rules that reject `[]`.
     const BRACKET_TEXT_NONEMPTY = '(?!\\])' + BRACKET_TEXT;
@@ -325,7 +330,7 @@
     // Autolinks: <https://...> or <mailto:...>
     const AUTOLINK = {
         className: 'link',
-        begin: /<(?:https?:\/\/|mailto:)[^>]+>/,
+        begin: /<(?:https?:\/\/|mailto:)[^>]{1,2048}>/,
         relevance: 5,
     };
 
@@ -370,7 +375,7 @@
     // Footnote references: [^note]
     const FOOTNOTE_REF = {
         className: 'symbol',
-        begin: /\[\^[^\]]+\]/,
+        begin: /\[\^[^\]]{1,512}\]/,
         relevance: 5,
     };
 
@@ -378,7 +383,7 @@
     // leads, which is what separates it from the reference above.
     const INLINE_FOOTNOTE = {
         className: 'symbol',
-        begin: /\^\[[^\]\n]*\]/,
+        begin: /\^\[[^\]\n]{0,512}\]/,
         relevance: 5,
     };
 
@@ -750,7 +755,7 @@
         className: 'comment',
         // The closing `#}` is required, or this would swallow an attribute
         // block whose id comes first (`{#id .class}`).
-        begin: /\{#(?=[^}\n]*#\})/,
+        begin: /\{#(?=[^}\n]{0,4096}#\})/,
         end: /#\}/,
         relevance: 5,
     };

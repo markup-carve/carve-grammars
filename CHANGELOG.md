@@ -6,22 +6,35 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
-- **The citation rule no longer scans to the end of the document.** Prism and
+- **No grammar rule scans to the end of the document any more.** Prism and
   highlight.js hand the whole document to each pattern and retry at successive
-  positions, and the citation body was `[^\]@]*@...` - so on input carrying many
-  `[` and no `@`, every one of those positions scanned to the end before
-  failing. That is quadratic in the document, measured at x4 per doubling on
-  both engines: 192 KB of unclosed brackets took roughly 22 seconds, which is a
-  hung tab for anyone highlighting untrusted Carve in a browser.
+  positions, so a quantifier that can run to the end of the input costs O(n) at
+  each of n positions - quadratic in the document rather than in the construct.
+  Nine opener shapes measured at x4 per doubling; 192 KB of one of them took
+  roughly 22 seconds, which is a hung tab for anyone highlighting untrusted
+  Carve in a browser.
 
-  Both scans are now bounded, which makes the per-position cost a constant and
-  the whole tokenize linear. At 48 KB of unclosed brackets Prism falls from
-  1430ms to 57ms and highlight.js from 1479ms to 80ms, and both then double
-  rather than quadruple. Ordinary documents are unaffected, and a citation whose
-  prefix or locator runs past the bound stays unhighlighted rather than slow.
+  Bounded now, in both grammars: the citation body, the balanced-bracket label
+  shared by links, images and spans, the inline-link destination, the reference
+  label, the autolink, the critic comment, the footnote reference, the inline
+  footnote, the fenced-block info string, and the backtick run and body of an
+  inline code span. Every shape moved from x4 to x2 per doubling. At 48 KB, in
+  Prism: a backtick run 5081ms to 71ms, an escaped bracket 3141ms to 196ms, a
+  tilde 1438ms to 69ms, a footnote opener 1338ms to 92ms, an angle bracket
+  2021ms to 262ms; in highlight.js a footnote opener 1529ms to 115ms and a
+  critic opener 1038ms to 256ms.
 
-  The TextMate grammar is not affected: its citation lookahead is already
-  line-bounded, and TextMate engines tokenize a line at a time.
+  Ordinary documents are unaffected. What changes is that a construct longer
+  than its bound stops being highlighted rather than being highlighted slowly -
+  a link destination past 2048 characters, a label or citation past 512, a code
+  span past 4096, or a code span fenced by more than 16 backticks. The body of a
+  fenced block is deliberately left unbounded: that is real content and may be
+  as long as the author likes.
+
+  The TextMate grammar is unaffected - TextMate engines tokenize a line at a
+  time, so document length never compounds. `npm run perf:sweep` is the tool
+  that finds this class; it is not in CI, because a timing measurement on a
+  machine carrying other load measures the load.
 
 ### Added
 

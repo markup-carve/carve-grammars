@@ -131,10 +131,16 @@
     // A regex cannot count, so the nesting is unrolled to FOUR levels. Deeper
     // than that the construct stays unscoped - which is what every depth did
     // before, so the bound loses nothing that used to work.
+    // Every quantifier here is BOUNDED. Unbounded, the body is a scan to the
+    // end of the document at every `[` the tokenizer tries, and Prism tries
+    // each position - which is quadratic in the document, not in the label. An
+    // escaped bracket is an ordinary body character, so `\[` repeated is one
+    // long label candidate and was the worst shape of all.
     var bracketChar = /(?:[^\[\]\\]|\\[\s\S])/.source;
-    var bracketText = bracketChar + '*';
+    var BRACKET_SCAN = '{0,512}';
+    var bracketText = bracketChar + BRACKET_SCAN;
     for (var bracketDepth = 0; bracketDepth < 3; bracketDepth++) {
-        bracketText = '(?:' + bracketChar + '|\\[' + bracketText + '\\])*';
+        bracketText = '(?:' + bracketChar + '|\\[' + bracketText + '\\])' + BRACKET_SCAN;
     }
     // The same body, required to be non-empty, for the rules that reject `[]`.
     var bracketTextNonEmpty = '(?!\\])' + bracketText;
@@ -333,7 +339,7 @@
         'code-block': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(`{3,}|~{3,})[ \t]*[^\n]*\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(`{3,}|~{3,})[ \t]*[^\n]{0,512}\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
             greedy: true,
             inside: {
                 'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
@@ -719,21 +725,21 @@
 
         // Raw inline passthrough: `code`{=format}
         'raw-inline': {
-            pattern: /(`+)(?:[^`]|[^`][\s\S]*?[^`])\1\{=[A-Za-z_][\w-]*\}/,
+            pattern: /(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1\{=[A-Za-z_][\w-]*\}/,
             greedy: true,
             alias: 'string',
         },
 
         // Inline code spans
         'code': {
-            pattern: /(`+)(?:[^`]|[^`][\s\S]*?[^`])\1/,
+            pattern: /(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1/,
             greedy: true,
         },
 
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {
-            pattern: new RegExp('!\\[' + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+            pattern: new RegExp('!\\[' + bracketText + '\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
             greedy: true,
             alias: 'url',
             inside: {
@@ -746,7 +752,7 @@
         // from the reference `[^label]` below - the caret leads here - and
         // matched first so neither rule claims the other's brackets.
         'inline-footnote': {
-            pattern: /\^\[[^\]\n]*\]/,
+            pattern: /\^\[[^\]\n]{0,512}\]/,
             alias: 'symbol',
             // The body is ordinary inline content - `^[see *later*]` keeps its
             // bold - so the shared inline rules apply inside it.
@@ -757,7 +763,7 @@
 
         // Footnote references: [^label]
         'footnote': {
-            pattern: /\[\^[^\]]+\]/,
+            pattern: /\[\^[^\]]{1,512}\]/,
             alias: 'symbol',
         },
 
@@ -800,7 +806,7 @@
                 },
             },
             {
-                pattern: new RegExp('\\[' + bracketTextNonEmpty + '\\]\\[[^\\]]*\\]'),
+                pattern: new RegExp('\\[' + bracketTextNonEmpty + '\\]\\[[^\\]]{0,512}\\]'),
                 greedy: true,
                 inside: {
                     'punctuation': /\[|\]\[|\]/,
@@ -808,7 +814,7 @@
             },
             {
                 // autolink <https://...> and <mailto-ish>
-                pattern: /<[a-zA-Z][a-zA-Z0-9+.-]*:[^>\s]+>|<[^>\s@]+@[^>\s]+>/,
+                pattern: /<[a-zA-Z][a-zA-Z0-9+.-]*:[^>\s]{1,2048}>|<[^>\s@]{1,2048}@[^>\s]{1,2048}>/,
                 greedy: true,
             },
         ],
@@ -857,7 +863,7 @@
             alias: 'important',
         },
         'critic-comment': {
-            pattern: /\{#[^}]*#\}/,
+            pattern: /\{#[^}]{0,4096}#\}/,
             alias: 'comment',
         },
 
