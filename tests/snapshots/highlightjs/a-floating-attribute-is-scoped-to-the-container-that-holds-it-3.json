@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n  "
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": "\n\ntail\n"
+  }
+]

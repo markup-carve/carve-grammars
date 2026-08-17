@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\np1\np2\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

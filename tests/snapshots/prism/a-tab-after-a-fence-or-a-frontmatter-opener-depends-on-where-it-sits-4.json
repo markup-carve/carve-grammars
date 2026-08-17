@@ -1,0 +1,22 @@
+[
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\t\ntitle: x\n"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  }
+]

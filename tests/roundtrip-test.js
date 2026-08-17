@@ -145,10 +145,18 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * again: with `order` no longer stripped as volatile, the duplicate
  * `{title="..."}` line the code-block writer had always emitted became visible,
  * and it is gone.
+ *
+ * 254 -> 289 with the spec bump to carve b6917ab, and the whole rise is NEW
+ * corpus. The number alone cannot say that - a bump adds documents and worsens
+ * the projection in the same step, and the sum looks identical either way - so
+ * it was measured per category: the fourteen categories this bump added (321
+ * through 334) contribute all 35, and the pre-existing categories still
+ * contribute exactly 254, document for document. No document that used to be
+ * written back faithfully stopped being.
  */
 assert.strictEqual(
-    envelopedFiles.length, 254,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 254`,
+    envelopedFiles.length, 289,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 289`,
 );
 
 assert.strictEqual(

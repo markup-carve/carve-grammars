@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "string",
+    "text": "| a {% hidden %} b | c |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "|---|---|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| d %% tail | e |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

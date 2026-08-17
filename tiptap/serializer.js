@@ -156,6 +156,10 @@ function trimSource(text) {
 // authored attribute run on it.
 const LINK_REF_DEF_ATTR_KEYS = ['label', 'href', 'title'];
 
+// The same distinction for a `carveCitationDefinition`: `key` IS the definition
+// line, not part of the authored `{author= year=}` run that leads the entry.
+const CITATION_DEF_ATTR_KEYS = ['key'];
+
 export function serializeToCarve(doc) {
     const preservedSource = doc?.attrs?.carveSource;
     const preservedFingerprint = doc?.attrs?.carveFingerprint;
@@ -551,6 +555,18 @@ export function serializeToCarve(doc) {
                 // the collector that re-derives definitions from the references
                 // resolving them must not append a second copy at the end.
                 referenceDefs.set(label, null);
+                break;
+            }
+
+            case 'carveCitationDefinition': {
+                // `[@key]: {metadata} entry`. The metadata block LEADS the
+                // entry text here, unlike the link reference definition above
+                // where the authored run trails the destination.
+                const attributes = serializeAttributes(node.attrs, CITATION_DEF_ATTR_KEYS);
+                const entry = serializeInline(node.content);
+                output += `[@${node.attrs?.key || ''}]:`
+                    + (attributes ? ` ${attributes}` : '')
+                    + (entry ? ` ${entry}` : '') + '\n';
                 break;
             }
 

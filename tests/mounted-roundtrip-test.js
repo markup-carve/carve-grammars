@@ -178,5 +178,10 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // same issue - so `{key=c .a #b}` returning `{#b .a key="c"}` never showed up
 // here and never could. The round-trip gates compare the reparsed AST, which
 // used to strip `order` as volatile for the same reason. It does not any more.
-assert.strictEqual(changed.length, 174, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 174 -> 198 with the spec bump to carve b6917ab. Attributed before it was
+// raised, the same way the envelope ratchet was: the fourteen categories the
+// bump added (321 through 334) account for all 24, and the pre-existing
+// categories still account for exactly 174. No document that used to render
+// equivalently stopped doing so.
+assert.strictEqual(changed.length, 198, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

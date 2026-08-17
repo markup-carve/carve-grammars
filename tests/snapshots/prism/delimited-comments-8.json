@@ -1,0 +1,66 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a {% hidden %} b "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "---"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "---"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " d "
+  },
+  {
+    "type": "comment",
+    "text": "%% tail | e |"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

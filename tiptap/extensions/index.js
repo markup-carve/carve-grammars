@@ -24,6 +24,7 @@ export { CarveCrossref } from './carve-crossref.js';
 export { CarveFrontmatter } from './carve-frontmatter.js';
 export { CarveInlineExtension } from './carve-inline-extension.js';
 export { CarveInlineNote } from './carve-inline-note.js';
+export { CarveCitationDefinition } from './carve-citation-definition.js';
 export { CarveLinkRefDef } from './carve-link-ref-def.js';
 export { CarveLiteral } from './carve-literal.js';
 export { CarveRawInline } from './carve-raw-inline.js';

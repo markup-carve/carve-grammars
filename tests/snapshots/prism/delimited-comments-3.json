@@ -1,0 +1,6 @@
+[
+  {
+    "type": "text",
+    "text": "a {% one\ntwo %} b\n"
+  }
+]

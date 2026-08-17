@@ -255,6 +255,38 @@ const TIPTAP_COVERED = [
     '318-composite-figures',
     '319-cell-attributes-bind-after-the-kind-and-alignment-markers',
     '320-the-canonical-writer-glues-a-code-fence-to-its-info-string',
+
+    // Classified with the spec bump to b6917ab. Measured, not assumed: every
+    // file in every one of these categories converts without the
+    // whole-document fallback atom and reparses to the same AST. Several reach
+    // the rich projection only under a SOURCE ENVELOPE (the projection is not
+    // write-identical, so the source rides along) - that is still covered, and
+    // the round-trip test's own enveloped accounting is what reports it.
+    //
+    // `321-delimited-comments` is covered for a reason worth stating plainly,
+    // because the bare word "covered" would flatter it: the pinned engine does
+    // not implement `{% ... %}` at all. It parses `foo {% bar %} baz` as one
+    // text run and renders `<p>foo {% bar %} baz</p>`, where the corpus fixture
+    // at this spec commit expects `<p>foo  baz</p>`. So the category round-trips
+    // because there is no `comment` node in the tree to lose - NOT because the
+    // converter's long-standing comment gap closed. That gap is still open and
+    // still behind the line-comment fallback entries below. When the engine
+    // ships delimited comments this category will need re-measuring, and it
+    // will most likely move to fallback.
+    '321-delimited-comments',
+    '322-an-attribute-block-reaches-the-nested-list-it-precedes',
+    '323-a-block-attached-after-an-invisible-line-leaves-the-item-tight',
+    '324-an-abbreviation-definition-in-an-item-body-is-paragraph-text',
+    '325-an-attribute-line-after-a-continuation-marker-attributes-the-attached-block',
+    '326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open',
+    '327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent',
+    '328-an-unclosed-verbatim-run-in-a-row-stops-at-the-closing-pipe',
+    '329-a-floating-attribute-is-scoped-to-the-container-that-holds-it',
+    '330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits',
+    '331-an-unclosed-inline-run-in-a-line-block-reaches-the-end-of-the-block',
+    '332-which-inline-content-a-heading-id-is-derived-from',
+    '333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe',
+    '334-a-label-beginning-with-an-at-sign-is-not-a-reference-label',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

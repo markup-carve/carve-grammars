@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "section",
+    "text": "# a [link](/u) b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

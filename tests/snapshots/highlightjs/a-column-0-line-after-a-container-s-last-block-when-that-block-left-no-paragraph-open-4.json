@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
+  }
+]

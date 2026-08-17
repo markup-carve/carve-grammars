@@ -1,0 +1,14 @@
+[
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " a [link](/u) b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  }
+]

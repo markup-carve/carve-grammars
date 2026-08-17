@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "para\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

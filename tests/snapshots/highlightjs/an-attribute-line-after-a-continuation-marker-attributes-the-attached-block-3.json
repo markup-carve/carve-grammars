@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]

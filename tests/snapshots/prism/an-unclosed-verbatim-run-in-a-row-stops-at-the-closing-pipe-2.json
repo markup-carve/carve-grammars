@@ -1,0 +1,50 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a `b "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c d "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " e "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " f "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

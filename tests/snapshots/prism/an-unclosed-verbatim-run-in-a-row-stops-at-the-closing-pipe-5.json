@@ -1,0 +1,34 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a `x"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "` "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
