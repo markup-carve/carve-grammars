@@ -21,6 +21,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js'
+import { MARKER_LINE_FENCES, NOT_CLOSED_AT_COLUMN_0, GLUED_IS_NOT_A_FENCE } from './lib/marker-line-fences.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
@@ -261,3 +262,59 @@ for (const { name, sample, payload, scopes } of LITERALS) {
 console.log(`  ${litPass === LITERALS.length ? '✓' : '✗'} textmate sweep: ${litPass}/${LITERALS.length} literal shapes stay unscoped`)
 if (litPass !== LITERALS.length) process.exit(1)
 
+
+// MARKER-LINE COMMENT FENCES (tests/lib/marker-line-fences.js, corpus 337,
+// carve-grammars#243).
+//
+// Driven off the same table the Prism and highlight.js batteries in
+// tests/grammar-test.js use, for the reason this file's own header gives about
+// its inventory: two hand-maintained lists is how a construct ends up covered
+// in one sweep and absent from another. All three grammars here were wrong on
+// this shape, and each was wrong differently.
+//
+// BOTH DIRECTIONS, because the failures ran in opposite directions and a
+// one-sided check passes one of them. This grammar managed both at once: the
+// `%%%` after the marker fell through to `#trailing_comment` and scoped as a
+// LINE comment so no block opened, the hidden definition came back as a live
+// `meta.link.reference.def.carve`, and the real closer was then taken for an
+// opener and swallowed the paragraph below.
+let fencePass = 0
+const fenceFails = []
+// Collected PER LINE, not per token: without the fix the hidden definition is
+// split across four live tokens, so a per-token content test finds no token
+// holding the whole needle and reports "not tokenized" for what is really
+// "tokenized as live syntax". A diagnostic that names the wrong failure is how
+// a real one gets read past.
+const scopesOfLinesContaining = (sample, needle) => {
+  const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })
+  return tokens
+    .filter(line => line.map(tk => tk.content ?? '').join('').includes(needle))
+    .flatMap(line => line.flatMap(tk => (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName))))
+}
+const isHidden = (scopes) => scopes.some(s => s.startsWith('comment.'))
+
+for (const { label, src, hidden, visible } of MARKER_LINE_FENCES) {
+  const hiddenScopes = scopesOfLinesContaining(src, hidden)
+  const visibleScopes = scopesOfLinesContaining(src, visible)
+  if (!hiddenScopes.length) {
+    fenceFails.push(`FAIL(fence) ${label}: no line carries the fence body ${JSON.stringify(hidden)}`)
+  } else if (!isHidden(hiddenScopes)) {
+    fenceFails.push(`FAIL(fence) ${label}: hidden body scoped live as ${[...new Set(hiddenScopes)].join(',')}`)
+  } else if (isHidden(visibleScopes)) {
+    fenceFails.push(`FAIL(fence) ${label}: the comment swallowed the block after its closer`)
+  } else { fencePass++ }
+}
+
+for (const [label, shape] of [
+  ['a column-0 line is not the fence closer', NOT_CLOSED_AT_COLUMN_0],
+  ['a glued percent run is not a fence', GLUED_IS_NOT_A_FENCE],
+]) {
+  if (isHidden(scopesOfLinesContaining(shape.src, shape.visible))) {
+    fenceFails.push(`FAIL(fence) ${label}: ${JSON.stringify(shape.visible)} must stay visible`)
+  } else { fencePass++ }
+}
+
+const fenceTotal = MARKER_LINE_FENCES.length + 2
+console.log(`  ${fenceFails.length ? '✗' : '✓'} textmate sweep: ${fencePass}/${fenceTotal} marker-line comment fences hide their body and close`)
+fenceFails.forEach(f => console.log(f))
+if (fenceFails.length) process.exit(1)

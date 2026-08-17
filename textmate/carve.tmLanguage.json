@@ -1609,9 +1609,18 @@
         }
       }
     },
+    "block_comment_on_marker_line": {
+      "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, carve-grammars#243). `#block_comment` cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. So the `%%%` fell through to `#trailing_comment` and scoped as a LINE comment, no block opened, the hidden body came back as live syntax, and the real closer was then taken for an opener. Anchored on \\G rather than ^: \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a percent run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because it sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE. Without it an unclosed opener would run to end of document.",
+      "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
+      "end": "^[ \\t]+\\1(?!%)[^\\n]*$|^(?=[^ \\t\\n])",
+      "name": "comment.block.carve"
+    },
     "container_blocks": {
-      "comment": "The block pattern set a container's body reaches, shared by every list-item rule so the three of them cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only. `#link_ref_def_in_container` stands in for `#link_ref_def`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the item's content column.",
+      "comment": "The block pattern set a container's body reaches, shared by every list-item rule so the three of them cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only. `#link_ref_def_in_container` stands in for `#link_ref_def`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the item's content column. `#block_comment_on_marker_line` leads, and is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
       "patterns": [
+        {
+          "include": "#block_comment_on_marker_line"
+        },
         {
           "include": "#fenced_code_in_container"
         },
