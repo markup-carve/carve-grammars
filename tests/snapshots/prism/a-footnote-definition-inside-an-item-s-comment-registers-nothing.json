@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%\n  [^f]: note body\n  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n\ntext"
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

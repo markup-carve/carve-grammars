@@ -287,6 +287,36 @@ const TIPTAP_COVERED = [
     '332-which-inline-content-a-heading-id-is-derived-from',
     '333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe',
     '334-a-label-beginning-with-an-at-sign-is-not-a-reference-label',
+    // The seven documents markup-carve/carve#1311 added, pinning that a comment
+    // fence hides its body at EVERY column and not only at column 0. Measured
+    // one by one through the source-aware loader rather than assumed: all seven
+    // are AST-idempotent, so covered is the only classification the round-trip
+    // test would accept - a skip has to genuinely fail for at least one file.
+    //
+    // What the loader does with each, since "idempotent" alone does not say:
+    //
+    // - 335, 336, 338: the comment survives as an opaque run inside the item
+    //   and the definition inside it stays unregistered on reparse. The
+    //   serializer writes a blank line between the item's text and the fence,
+    //   which loosens nothing the AST records.
+    // - 337 needs the source envelope. The fence opens on the item's MARKER
+    //   line, and the projection cannot place a block there, so the document
+    //   rides along as source. It is the one document of the seven that moves
+    //   the envelope ratchet (see tests/roundtrip-test.js).
+    // - 339 is the wider `%%%%` fence. The serializer canonicalizes it back to
+    //   `%%%`, which is safe: it widens on demand, so a fence whose body holds
+    //   a `%%%` line is re-emitted at `%%%%` and still hides its body.
+    // - 340 defines an abbreviation inside a column-0 comment; the loader
+    //   builds a real `carveComment` and the definition never registers.
+    // - 341 is the fence inside a colon container, which stays inside the
+    //   `carveDiv` rather than escaping it.
+    '335-a-comment-fence-at-an-item-s-content-column-registers-nothing-either',
+    '336-a-footnote-definition-inside-an-item-s-comment-registers-nothing',
+    '337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too',
+    '338-a-comment-fence-one-item-deeper-registers-nothing-either',
+    '339-a-wider-comment-fence-inside-an-item-hides-its-body-the-same-way',
+    '340-an-abbreviation-inside-a-comment-defines-nothing',
+    '341-a-comment-fence-inside-a-colon-container-registers-nothing',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

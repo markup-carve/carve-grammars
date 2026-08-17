@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "%%%\n*[HTML]: HyperText Markup Language\n%%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\nHTML here\n"
+  }
+]

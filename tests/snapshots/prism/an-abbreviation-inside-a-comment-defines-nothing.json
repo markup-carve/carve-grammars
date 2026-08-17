@@ -1,0 +1,10 @@
+[
+  {
+    "type": "comment",
+    "text": "%%%\n*[HTML]: HyperText Markup Language\n%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n\nHTML here\n"
+  }
+]

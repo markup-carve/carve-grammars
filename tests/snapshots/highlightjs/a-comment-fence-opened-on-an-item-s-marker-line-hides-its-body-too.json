@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " %%%\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [r]: /url"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "  %%%\n\n[r][]\n"
+  }
+]

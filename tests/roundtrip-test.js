@@ -153,10 +153,27 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * through 334) contribute all 35, and the pre-existing categories still
  * contribute exactly 254, document for document. No document that used to be
  * written back faithfully stopped being.
+ *
+ * 289 -> 290 with the spec bump to carve 8b80822, attributed the same way
+ * before it was raised. The enveloped list was dumped under both pins and
+ * diffed by name: exactly ONE name is added and NONE is removed, so the
+ * pre-existing corpus still contributes exactly 289, document for document.
+ *
+ * The one addition is `337-a-comment-fence-opened-on-an-item-s-marker-line-
+ * hides-its-body-too`, one of the seven documents markup-carve/carve#1311 added.
+ * Its fence opens on the item's MARKER line:
+ *
+ *     - %%%
+ *       [r]: /url
+ *       %%%
+ *
+ * The projection has no slot for a block that starts on a marker line, so the
+ * document keeps its source and the first edit is what starts writing the
+ * projection. The other six of the seven are written back faithfully.
  */
 assert.strictEqual(
-    envelopedFiles.length, 289,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 289`,
+    envelopedFiles.length, 290,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 290`,
 );
 
 assert.strictEqual(
