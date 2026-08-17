@@ -9,23 +9,11 @@
   },
   {
     "scope": "quote",
-    "text": "> %%%"
+    "text": "> "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> x"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> %%%"
+    "scope": "comment",
+    "text": "%%%\n> x\n> %%%"
   },
   {
     "scope": null,

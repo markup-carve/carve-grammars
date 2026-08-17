@@ -471,6 +471,48 @@
         relevance: 10,
     };
 
+    // A comment fence may open on a BLOCK-QUOTE marker line (`> %%%`), and then
+    // its body is hidden exactly as it is anywhere else - \u00A724 S2 and \u00A728 make a
+    // comment's body verbatim and invisible WHEREVER the fence sits. Corpus 70
+    // pins this spelling: `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders
+    // the quote with `q` and `body` only.
+    //
+    // `BLOCK_COMMENT` cannot reach it - its begin allows only whitespace before
+    // the run - so all three lines scoped as plain quote and nothing was marked
+    // hidden. It lives in BLOCKQUOTE's `contains` rather than in the top-level
+    // list because BLOCKQUOTE ends at `$`: a mode that begins at column 0 would
+    // out-rank it and take the marker, and a mode outside it never gets to run
+    // on a quote line at all. Reached from here the marker stays a quote, which
+    // is tree-sitter-carve's split too - the `fenced_comment_block` sits inside
+    // the quote's `content`, beside the `block_quote_marker`.
+    const QUOTE_MARKER_BEFORE_FENCE = '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:> )+';
+    // A line carrying a quote marker of its own. Every line from opener to
+    // closer must be one: an UNMARKED line is where the quote can end, and the
+    // engine degrades an unclosed opener to a line comment rather than hiding
+    // anything (`> %%%` / `> c` / blank leaves `c` VISIBLE). The engine does
+    // absorb an unmarked LAZY continuation into a fence that closes later;
+    // refusing it costs a mis-scope there and buys never hiding a visible block.
+    const QUOTE_MARKED_LINE = '(?:\\n[ \\t]*>[^\\n]*)';
+    const BLOCK_COMMENT_ON_QUOTE_MARKER_LINE = {
+        className: 'comment',
+        // The closer is REQUIRED up front, as in BLOCK_COMMENT_ON_MARKER_LINE
+        // below: highlight.js has no begin->end backreference, so without the
+        // guard an opener with no closer runs to end of file, and on this shape
+        // an unclosed opener is the common case.
+        begin: RegExp(
+            '(?<=' + QUOTE_MARKER_BEFORE_FENCE + ')(%{3,})(?!%)[^\\n]*$'
+            + '(?=' + QUOTE_MARKED_LINE + '*?\\n[ \\t]*(?:> )+\\1(?!%)[^\\n]*$)',
+        ),
+        'on:begin': (m, resp) => {
+            resp.data._quoteFenceWidth = m[1].length;
+        },
+        end: /^[ \t]*(?:> )+(%{3,})[^\n]*$/,
+        'on:end': (m, resp) => {
+            if (m[1].length !== resp.data._quoteFenceWidth) resp.ignoreMatch();
+        },
+        relevance: 10,
+    };
+
     // Blockquotes: a `>` marker followed by a SPACE, or alone on its line.
     //
     // Verified against carve-rs: `>no space`, `>>x`, `>> x` and `>\tx` are all
@@ -483,6 +525,9 @@
         // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?= |$)/,
         end: /$/,
+        // The ONE construct a quote line contains: a comment fence opened on
+        // the marker line, which outlives the `$` that ends every other quote.
+        contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE],
         relevance: 0,
     };
 
@@ -707,8 +752,16 @@
     };
 
     // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
-    // CriticMarkup comment `{# ... #}`. (An earlier rule here matched
-    // `{% ... %}`, which is Jinja/Liquid syntax and does not exist in Carve.)
+    // CriticMarkup comment `{# ... #}`.
+    //
+    // An earlier rule here matched `{% ... %}` as Jinja/Liquid syntax that did
+    // not exist in Carve. That was true when it was written: §21a
+    // (markup-carve/carve#1239) has since taken Djot's delimited comment
+    // unchanged, and the corpus pins it in the eight `321-delimited-comments*`
+    // documents. It is still absent from all four grammars in the org on
+    // purpose - the pinned engine renders `a {% hidden %} b` with the braces
+    // intact, so scoping it would hide text the reader's engine prints
+    // (carve-grammars#247). Do not delete a `{% %}` rule as unsupported syntax.
     const LINE_COMMENT = {
         className: 'comment',
         begin: /(?:^|(?<=\s))%%(?!%)/,

@@ -34,6 +34,9 @@
       "include": "#admonition"
     },
     {
+      "include": "#block_comment_on_quote_marker_line"
+    },
+    {
       "include": "#blockquote"
     },
     {
@@ -254,6 +257,9 @@
           "include": "#admonition"
         },
         {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
           "include": "#blockquote"
         },
         {
@@ -341,6 +347,9 @@
           "include": "#admonition_in_group"
         },
         {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
           "include": "#blockquote"
         },
         {
@@ -414,6 +423,9 @@
         },
         {
           "include": "#admonition_in_group"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
         },
         {
           "include": "#blockquote"
@@ -1609,6 +1621,28 @@
         }
       }
     },
+    "block_comment_on_quote_marker_line": {
+      "comment": "A COMMENT FENCE MAY OPEN ON A BLOCK-QUOTE MARKER LINE (`> %%%`) too, and the same rule hides its body: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits (corpus 70-blocks-that-render-to-nothing - `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders the quote with `q` and `body` only, carve-grammars#245). `#block_comment` cannot reach it: its begin allows only whitespace before the run, so all three lines fell through to `#blockquote` and scoped as plain quote with nothing marked hidden. This rule leads `#blockquote` at every site that includes it, and the marker run is capture 1 so it keeps its quote scope - tree-sitter-carve splits it the same way, with the `fenced_comment_block` inside the quote's `content` beside the `block_quote_marker`. The end has TWO branches. The first is the closer, which repeats the opener's MARKER RUN as well as its fence width, so a fence opened at `> > ` is not closed at `> `. The second is a zero-width quote boundary: an UNMARKED line is where the quote can end, and the engine degrades an unclosed opener to a line comment rather than hiding anything (`> %%%` / `> c` / blank line leaves `c` VISIBLE). Unlike the Prism and highlight.js grammars this one cannot demand the closer up front - a TextMate begin sees one line - so an unclosed opener still hides the rest of its own quote here; the boundary branch is what keeps that from reaching the document below it. Anchored at COLUMN 0 for the same reason `#blockquote` is (carve-grammars#138): an indented marker at the top level is literal text, `  > %%%` renders `<p>&gt; ...</p>` against the pinned engine, so `#block_comment_on_quote_marker_line_in_container` takes over inside a container.",
+      "begin": "^(?:\\A\\x{FEFF})?((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        }
+      },
+      "end": "^\\1\\2(?!%)[^\\n]*$|^(?!>)",
+      "name": "comment.block.carve"
+    },
+    "block_comment_on_quote_marker_line_in_container": {
+      "comment": "The in-container form of `#block_comment_on_quote_marker_line` - see there for what it pins and why. Leading whitespace is the container's own indent, so it is allowed here and only here, exactly as `#blockquote_in_container` splits from `#blockquote`. Reached from `#container_blocks`, whose `end` has already established that an indented line inside the container sits at or beyond the item's content column.",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
+      "name": "comment.block.carve"
+    },
     "block_comment_on_marker_line": {
       "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, carve-grammars#243). `#block_comment` cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. So the `%%%` fell through to `#trailing_comment` and scoped as a LINE comment, no block opened, the hidden body came back as live syntax, and the real closer was then taken for an opener. Anchored on \\G rather than ^: \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a percent run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because it sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE. Without it an unclosed opener would run to end of document.",
       "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
@@ -1641,6 +1675,9 @@
         },
         {
           "include": "#admonition"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line_in_container"
         },
         {
           "include": "#blockquote_in_container"
