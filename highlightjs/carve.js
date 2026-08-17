@@ -743,6 +743,50 @@
         },
         relevance: 10,
     };
+    // A fence may also open on a list item's MARKER LINE (`- %%%`), and then
+    // the body is hidden exactly as it is anywhere else - §24 S2 and §28 make a
+    // comment's body verbatim and invisible WHEREVER the fence sits (corpus
+    // 337). `BLOCK_COMMENT` above cannot reach that shape: its begin is
+    // line-anchored, so on `- %%%` it never fires, the scanner then takes the
+    // REAL closer on the next line for an opener, and the comment runs to end
+    // of file - swallowing every block after the item.
+    //
+    // The marker is matched in a LOOKBEHIND rather than consumed, so
+    // `TASK_LIST`/`LIST_BULLET`/`LIST_NUMBER` still scope it as a bullet (which
+    // is what tree-sitter-carve does too: a `fenced_comment_block` sits INSIDE
+    // `list_item_content`, beside a `list_marker_*`, not over it).
+    const LIST_MARKER_BEFORE_FENCE =
+        '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+        + '(?:(?:[-*][ \\t]+)*[-*][ \\t]+(?:\\[[ xX\\-_>?]\\][ \\t]+)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ \\t]+|\\.[ \\t]+)';
+    // A line that is blank, or indented by at least one column. A COLUMN-0 line
+    // is neither, and that is the point: it ends the container and with it the
+    // fence, so it must not be skipped over while looking for the closer
+    // (corpus 326-6 - `- %%%` / `c` / `%%%` leaves `c` and the trailing
+    // paragraph VISIBLE, with the unclosed opener degrading to a line comment).
+    const BLANK_OR_INDENTED_LINE = '(?:\\n(?![ \\t]*[^ \\t\\n])[^\\n]*|\\n[ \\t]+[^\\n]*)';
+    const BLOCK_COMMENT_ON_MARKER_LINE = {
+        className: 'comment',
+        // The closer is REQUIRED up front, unlike `BLOCK_COMMENT`. highlight.js
+        // has no begin->end backreference, so without this guard an opener with
+        // no closer would run to end of file - and on this shape an unclosed
+        // opener is the common case (a column-0 line ends the item), where the
+        // right answer is a one-line comment, not a swallowed document.
+        begin: RegExp(
+            '(?<=' + LIST_MARKER_BEFORE_FENCE + ')(%{3,})(?!%)[^\\n]*$'
+            + '(?=' + BLANK_OR_INDENTED_LINE + '*?\\n[ \\t]+\\1(?!%)[^\\n]*$)',
+        ),
+        'on:begin': (m, resp) => {
+            resp.data._fenceWidth = m[1].length;
+        },
+        // `[ \t]+`, not `[ \t]*`: the closer sits at the item's content column,
+        // and a column-0 run is a different block entirely (see above).
+        end: /^[ \t]+(%{3,})[^\n]*$/,
+        'on:end': (m, resp) => {
+            if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
+        },
+        relevance: 10,
+    };
     const CRITIC_SUB = {
         className: 'meta',
         // The `~>` arrow is what distinguishes a substitution from a forced
@@ -915,6 +959,7 @@
         INSERT,            // {+text+}
         DELETE,            // {-text-}
         BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
+        BLOCK_COMMENT_ON_MARKER_LINE,  // `- %%%` - the marker is left to the list rules
         LINE_COMMENT,      // %% to end of line
         CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE

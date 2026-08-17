@@ -287,6 +287,19 @@
         'm',
     );
 
+    // A list item's MARKER, as it may appear before a block opener on the same
+    // line (the marker branches of the 'list' pattern below, plus the optional
+    // task box). Used by the marker-line comment fence.
+    var listMarkerBeforeBlock =
+        '[ \\t]*(?:(?:[-*][ \\t]+)*[-*][ \\t]+(?:\\[[ xX\\-_>?]\\][ \\t]+)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ \\t]+|\\.[ \\t]+)';
+
+    // A line that is blank, or indented by at least one column. A COLUMN-0 line
+    // is neither, and that is the point: it ends the container and with it an
+    // open fence, so the scan for a closer must not cross one (corpus 326-6 -
+    // `- %%%` / `c` / `%%%` leaves `c` and the trailing paragraph VISIBLE).
+    var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^\\n]*\\n)';
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -296,6 +309,34 @@
         // `=FORMAT` (```=html), matched by #code-block below - so `%%% html`
         // is a comment and its body must stay scoped as one.
         'comment': [
+            {
+                // A fence may open on a list item's MARKER LINE (`- %%%`), and
+                // then its body is hidden exactly as it is anywhere else - §24
+                // S2 and §28 make a comment's body verbatim and invisible
+                // WHEREVER the fence sits (corpus 337). The column-anchored
+                // pattern below cannot reach that shape, so the hidden body
+                // came back as LIVE syntax: the reference definition inside the
+                // fence scoped as a `reference-definition`, and the real closer
+                // as a separate line comment.
+                //
+                // The marker is capture group 1 and `lookbehind` keeps it out
+                // of the token, so it stays available to the 'list' rule -
+                // tree-sitter-carve models it the same way, with the
+                // `fenced_comment_block` INSIDE `list_item_content` beside the
+                // `list_marker_*` rather than over it.
+                //
+                // The closer is group 2 (group 1 being the lookbehind), matched
+                // as a backreference for the exact-width rule, and it must be
+                // INDENTED: a column-0 run is a different block (see
+                // `blankOrIndentedLine`).
+                pattern: RegExp(
+                    '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
+                    + '(%{3,})(?!%)[^\\n]*\\n' + blankOrIndentedLine + '*?[ \\t]+\\2(?!%)[^\\n]*$',
+                    'm',
+                ),
+                lookbehind: true,
+                greedy: true,
+            },
             {
                 // The closer is a backreference, so it matches the opener's
                 // length EXACTLY: a longer run does not close a shorter fence

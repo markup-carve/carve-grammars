@@ -5,15 +5,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n  a\n\n  b\n"
-  },
-  {
-    "type": "comment",
-    "text": "  %%%"
+    "text": "%%%\n  a\n\n  b\n  %%%"
   },
   {
     "type": "text",
