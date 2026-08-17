@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {.k}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> tail"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

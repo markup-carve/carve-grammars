@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "Run "
+  },
+  {
+    "type": "code",
+    "text": "`a {% x %} b`"
+  },
+  {
+    "type": "text",
+    "text": " then done.\n"
+  }
+]

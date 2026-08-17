@@ -1,0 +1,22 @@
+[
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": " a "
+  },
+  {
+    "type": "title>superscript",
+    "text": "{^up^}"
+  },
+  {
+    "type": "title",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

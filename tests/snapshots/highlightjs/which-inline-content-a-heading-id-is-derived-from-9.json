@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "section",
+    "text": "# a ^[note] b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

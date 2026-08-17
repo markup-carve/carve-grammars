@@ -483,6 +483,18 @@
       "pm": "link",
       "aliasOf": "link",
       "notes": "profile vocabulary only: an autolink is a link whose text is its destination"
+    },
+    "citation_definition": {
+      "kind": "node",
+      "pm": "carveCitationDefinition",
+      "notes": "block; `key` plus the entry's INLINE content as children, shaped after `link_reference_definition` per PART 12 section 18. New spec vocabulary at carve b6917ab that no engine parse produces yet, so it reaches the editor only over the AST-JSON wire",
+      "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "the leading `{author= year=}` metadata block; `author` and `year` feed author-date mode",
+        "class": "authored classes",
+        "id": "authored id",
+        "key": "the citation key as written, without the `@`; the same string `citation.key` carries at the use site"
+      }
     }
   },
   "unmapped": {

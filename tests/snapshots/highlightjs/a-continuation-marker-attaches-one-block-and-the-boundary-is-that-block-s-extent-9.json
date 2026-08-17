@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> quoted"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# H"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

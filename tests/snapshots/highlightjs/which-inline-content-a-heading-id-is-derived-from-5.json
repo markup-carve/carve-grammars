@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "section",
+    "text": "# a ![alt](i.png) b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

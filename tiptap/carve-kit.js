@@ -39,6 +39,7 @@ import { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-
 import { CarveRawBlock } from './extensions/carve-raw-block.js';
 import { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
 import { CarveCitation } from './extensions/carve-citation.js';
+import { CarveCitationDefinition } from './extensions/carve-citation-definition.js';
 import { CarveCrossref } from './extensions/carve-crossref.js';
 import { CarveFrontmatter } from './extensions/carve-frontmatter.js';
 import { CarveInlineExtension } from './extensions/carve-inline-extension.js';
@@ -699,6 +700,9 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveLinkRefDef !== false) {
             extensions.push(CarveLinkRefDef.configure(this.options.carveLinkRefDef ?? {}));
+        }
+        if (this.options.carveCitationDefinition !== false) {
+            extensions.push(CarveCitationDefinition.configure(this.options.carveCitationDefinition ?? {}));
         }
         if (this.options.carveInlineExtension !== false) {
             extensions.push(CarveInlineExtension.configure(this.options.carveInlineExtension ?? {}));

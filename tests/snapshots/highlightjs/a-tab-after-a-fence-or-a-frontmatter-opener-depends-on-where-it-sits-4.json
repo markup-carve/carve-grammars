@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\t\ntitle: x\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\n\nbody\n"
+  }
+]

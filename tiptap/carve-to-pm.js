@@ -583,6 +583,25 @@ function convertBlock(node, ctx) {
             return { type: 'carveLinkRefDef', attrs };
         }
 
+        // The bibliography twin of the definition above, new spec vocabulary at
+        // carve b6917ab (PART 12 section 18). Carried for the same reason the
+        // `section` case below is: no parse this bridge can run produces one
+        // yet - the pinned engine still reads `[@key]: entry` as a paragraph
+        // holding a mention - but the AST-JSON wire is shared, so an AST that
+        // arrives from another engine or from a patch can hold one, and it has
+        // to survive rather than land as an opaque atom.
+        case 'citation_definition': {
+            const attrs = { key: node.key || '' };
+            const authored = convertAttrs(node.attrs);
+            if (authored) Object.assign(attrs, authored);
+
+            return {
+                type: 'carveCitationDefinition',
+                attrs,
+                content: convertInline(node.children || [], ctx),
+            };
+        }
+
         // A rendering wrapper rather than authored source: no Carve spelling
         // opens a section, so `parse()` never emits one. An AST that arrives
         // from elsewhere - another engine's `ast-json`, a patch - can hold one,

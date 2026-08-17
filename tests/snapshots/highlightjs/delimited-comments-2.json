@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "strong",
+    "text": "*bo{% c %}ld*"
+  },
+  {
+    "scope": null,
+    "text": " text\n"
+  }
+]
