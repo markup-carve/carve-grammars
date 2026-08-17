@@ -176,6 +176,16 @@ if (realPrism) {
     // written once: the snapshot for corpus 186 pinned highlight.js swallowing
     // the rest of the document here, because a snapshot pins whatever the
     // grammar does - only an assertion about CLOSING can fail.
+    //
+    // What this loop does NOT reach: an opener on a list item's MARKER line
+    // (`- %%%`, closer at the item's content column). Every indent it generates
+    // puts the opener on a line of its own, so both grammars pass it while
+    // still getting the marker-line form wrong - highlight.js swallows the rest
+    // of the document, Prism scopes the hidden body as live syntax. The corpus
+    // grew that shape with markup-carve/carve#1311, and its snapshot goldens
+    // now pin the wrong output for both. Tracked in
+    // markup-carve/carve-grammars#243; the fix belongs with the grammars, not
+    // with a widened sample here.
     for (const indent of ['', ' ', '  ', '\t']) {
         const label = indent === '' ? 'column 0' : `indent ${JSON.stringify(indent)}`;
         ok(`prism: a comment fence at ${label} closes and does not swallow the next block`, () => {
