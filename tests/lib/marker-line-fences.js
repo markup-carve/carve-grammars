@@ -84,3 +84,77 @@ export const GLUED_IS_NOT_A_FENCE = {
     src: '- /a/%%% x\n  b\n\nafter\n',
     visible: 'after',
 };
+
+/**
+ * The same rule at a BLOCK-QUOTE marker (carve-grammars#245).
+ *
+ * `> %%%` opens a fence whose body is hidden for the same reason a list item's
+ * is - §24 S2 and §28 hide a comment's body WHEREVER the fence sits - and none
+ * of the three grammars modelled it either. Corpus 70 pins the spelling:
+ *
+ *     > q
+ *     > %%%
+ *     > x
+ *     > %%%
+ *     > body
+ *
+ * renders `<blockquote><p>q</p><p>body</p></blockquote>`: `x` is hidden and the
+ * quote continues after the closer.
+ *
+ * MILDER THAN THE LIST CASE, and worth saying which way. Nothing swallowed the
+ * rest of the document here, so every failure was a mis-scope: Prism scoped the
+ * two `%%%` runs as trailing line comments and left the hidden body as live
+ * quote content; highlight.js and the TextMate grammar scoped all three lines
+ * as plain quote with no comment scope anywhere.
+ *
+ * BOTH DIRECTIONS, for the reason the list table above gives: the hidden body
+ * carries a comment scope AND the block after the closer carries none. Two of
+ * the three failures pass a hidden-body-only check.
+ *
+ * The ORACLE is tree-sitter-carve again, which puts a `fenced_comment_block`
+ * inside the quote's `content`, beside the `block_quote_marker` rather than
+ * over it - so the marker keeps its quote scope in all three grammars here.
+ */
+export const QUOTE_MARKER_LINE_FENCES = [
+    { label: 'a quote marker', src: '> %%%\n> [r]: /url\n> %%%\n\nafter\n' },
+    { label: 'a nested quote marker', src: '> > %%%\n> > [r]: /url\n> > %%%\n\nafter\n' },
+    { label: 'a wider quote fence', src: '> %%%%\n> [r]: /url\n> %%%%\n\nafter\n' },
+    { label: 'an insignificant tail on a quote fence', src: '> %%% TODO\n> [r]: /url\n> %%% end\n\nafter\n' },
+    { label: 'a marked blank line in the body', src: '> %%%\n> [r]: /url\n>\n> x\n> %%%\n\nafter\n' },
+    // Corpus 70's own shape: the fence opens BELOW quote content and the quote
+    // goes on after the closer, so `after` is a check on the closer as much as
+    // the two shapes above are checks on the opener.
+    { label: 'a fence below quote content', src: '> q\n> %%%\n> [r]: /url\n> %%%\n> after\n' },
+    { label: 'a quote inside a list item', src: '- a\n  > %%%\n  > [r]: /url\n  > %%%\n\nafter\n' },
+    { label: 'a quote inside an admonition', src: '::: note\n> %%%\n> [r]: /url\n> %%%\n:::\n\nafter\n' },
+    // The closer matches the opener's width EXACTLY, at a quote marker too: the
+    // `> %%%%` inside this fence does not close it, so the definition BELOW it
+    // is still hidden and only the real `> %%%` ends the run. Drop the width
+    // backreference and the fence closes early, which shows up as the hidden
+    // definition scoping live - the direction a bare "did it swallow?" check
+    // cannot see. The other direction of the same rule (`> %%%` offered a
+    // `> %%%%` closer and staying open) is not assertable across all three:
+    // the TextMate grammar cannot demand a closer up front, so an unclosed
+    // fence hides the rest of its quote there either way.
+    { label: 'a wider run inside the fence', src: '> %%%\n> a\n> %%%%\n> [r]: /url\n> %%%\n> after\n' },
+].map((c) => ({ ...c, hidden: '[r]: /url', visible: 'after' }));
+
+/**
+ * An UNMARKED line is where a quote can end, and with it an open fence.
+ *
+ * `> %%%` with no closer degrades to a line comment and leaves its body
+ * visible, so nothing below the quote may be hidden. Prism and highlight.js get
+ * the whole shape right because both demand the closer up front; the TextMate
+ * grammar cannot (a begin sees one line) and still hides the rest of the QUOTE,
+ * which is why the assertion is on the line past the quote boundary rather than
+ * on the body - the boundary is the part all three can hold.
+ *
+ * Spelled `visibleline` rather than the corpus's `c` for the reason
+ * NOT_CLOSED_AT_COLUMN_0 gives: a single letter is in half the scope names a
+ * token stream carries.
+ */
+export const QUOTE_NOT_CLOSED = {
+    src: '> %%%\n> [r]: /url\n\nvisibleline\n',
+    visible: 'visibleline',
+};
+

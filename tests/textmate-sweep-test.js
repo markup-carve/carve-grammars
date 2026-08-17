@@ -21,7 +21,13 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
 import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js'
-import { MARKER_LINE_FENCES, NOT_CLOSED_AT_COLUMN_0, GLUED_IS_NOT_A_FENCE } from './lib/marker-line-fences.js'
+import {
+  MARKER_LINE_FENCES,
+  NOT_CLOSED_AT_COLUMN_0,
+  GLUED_IS_NOT_A_FENCE,
+  QUOTE_MARKER_LINE_FENCES,
+  QUOTE_NOT_CLOSED,
+} from './lib/marker-line-fences.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
@@ -293,7 +299,7 @@ const scopesOfLinesContaining = (sample, needle) => {
 }
 const isHidden = (scopes) => scopes.some(s => s.startsWith('comment.'))
 
-for (const { label, src, hidden, visible } of MARKER_LINE_FENCES) {
+for (const { label, src, hidden, visible } of [...MARKER_LINE_FENCES, ...QUOTE_MARKER_LINE_FENCES]) {
   const hiddenScopes = scopesOfLinesContaining(src, hidden)
   const visibleScopes = scopesOfLinesContaining(src, visible)
   if (!hiddenScopes.length) {
@@ -308,13 +314,14 @@ for (const { label, src, hidden, visible } of MARKER_LINE_FENCES) {
 for (const [label, shape] of [
   ['a column-0 line is not the fence closer', NOT_CLOSED_AT_COLUMN_0],
   ['a glued percent run is not a fence', GLUED_IS_NOT_A_FENCE],
+  ['an unmarked line stops an unclosed quote fence', QUOTE_NOT_CLOSED],
 ]) {
   if (isHidden(scopesOfLinesContaining(shape.src, shape.visible))) {
     fenceFails.push(`FAIL(fence) ${label}: ${JSON.stringify(shape.visible)} must stay visible`)
   } else { fencePass++ }
 }
 
-const fenceTotal = MARKER_LINE_FENCES.length + 2
+const fenceTotal = MARKER_LINE_FENCES.length + QUOTE_MARKER_LINE_FENCES.length + 3
 console.log(`  ${fenceFails.length ? '✗' : '✓'} textmate sweep: ${fencePass}/${fenceTotal} marker-line comment fences hide their body and close`)
 fenceFails.forEach(f => console.log(f))
 if (fenceFails.length) process.exit(1)

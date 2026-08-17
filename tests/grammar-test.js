@@ -10,7 +10,12 @@ import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-import { MARKER_LINE_FENCES, NOT_CLOSED_AT_COLUMN_0 } from './lib/marker-line-fences.js';
+import {
+    MARKER_LINE_FENCES,
+    NOT_CLOSED_AT_COLUMN_0,
+    QUOTE_MARKER_LINE_FENCES,
+    QUOTE_NOT_CLOSED,
+} from './lib/marker-line-fences.js';
 
 const require = createRequire(import.meta.url);
 
@@ -231,6 +236,44 @@ if (realPrism) {
         );
     });
 
+    for (const { label, src, hidden, visible } of QUOTE_MARKER_LINE_FENCES) {
+        ok(`prism: a comment fence opened on ${label} hides its body and closes`, () => {
+            const comments = prismComments(src);
+            assert.ok(comments.length > 0, `expected a comment token for ${JSON.stringify(src)}`);
+            assert.ok(
+                comments.some((c) => c.includes(hidden)),
+                `the fence body must be INSIDE the comment, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    for (const [label, shape] of [
+        ['an unmarked line ends the quote, so an unclosed fence stops there', QUOTE_NOT_CLOSED],
+    ]) {
+        ok(`prism: ${label}`, () => {
+            const comments = prismComments(shape.src);
+            assert.ok(
+                !comments.some((c) => c.includes(shape.visible)),
+                `${JSON.stringify(shape.visible)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    ok('prism: the quote marker before a fence stays a quote', () => {
+        // The marker run is inside the `lookbehind` group, not the token, so
+        // the 'blockquote' rule still owns it - the same split tree-sitter-carve
+        // makes, with the fence inside the quote's content beside the marker.
+        const tokens = realPrism.tokenize('> %%%\n> x\n> %%%\n', carvePrism);
+        assert.ok(
+            tokens.some((t) => typeof t !== 'string' && t.type === 'blockquote'),
+            `expected the marker to stay a blockquote: ${JSON.stringify(tokens)}`,
+        );
+    });
+
     ok('prism: the closer matches the opener width exactly', () => {
         // `%%%%` does not close `%%%` (that is what lets a longer fence nest a
         // shorter one), so neither fence line opens a block here: each degrades
@@ -448,6 +491,41 @@ if (realHljs) {
             !comments.some((c) => c.includes(NOT_CLOSED_AT_COLUMN_0.visible)),
             `column-0 paragraphs must stay visible, got: ${JSON.stringify(comments)}`,
         );
+    });
+
+    for (const { label, src, hidden, visible } of QUOTE_MARKER_LINE_FENCES) {
+        ok(`hljs: a comment fence opened on ${label} hides its body and closes`, () => {
+            const comments = hljsComments(src);
+            assert.ok(comments.length > 0, `expected a comment span for ${JSON.stringify(src)}`);
+            assert.ok(
+                comments.some((c) => c.includes(hidden)),
+                `the fence body must be INSIDE the comment, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    for (const [label, shape] of [
+        ['an unmarked line ends the quote, so an unclosed fence stops there', QUOTE_NOT_CLOSED],
+    ]) {
+        ok(`hljs: ${label}`, () => {
+            const comments = hljsComments(shape.src);
+            assert.ok(
+                !comments.some((c) => c.includes(shape.visible)),
+                `${JSON.stringify(shape.visible)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    ok('hljs: the quote marker before a fence stays a quote', () => {
+        // The fence mode is reached from BLOCKQUOTE's `contains`, so the marker
+        // is already inside the quote when the comment opens - the same split
+        // tree-sitter-carve makes.
+        const { value } = realHljs.highlight('> %%%\n> x\n> %%%\n', { language: 'carve' });
+        assert.ok(value.includes('hljs-quote'), `expected the marker to stay a quote: ${value}`);
     });
 
     ok('hljs: the list marker before a fence stays a bullet', () => {

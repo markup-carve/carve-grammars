@@ -300,6 +300,26 @@
     // `- %%%` / `c` / `%%%` leaves `c` and the trailing paragraph VISIBLE).
     var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^\\n]*\\n)';
 
+    // A BLOCK-QUOTE marker run, as it appears before a block opener on the same
+    // line. `> `, not `>+` and not `>\s`: the separator is a literal space and
+    // nesting is written one marker per space (`> > x`), which is what the
+    // 'blockquote' pattern below already enforces.
+    //
+    // `[ \t]*`, so an indented quote inside a container is reached. A quote
+    // opened on a LIST item's own marker line (`- > %%%`) is NOT: neither of
+    // the other two grammars in this package can reach that line-start-anchored
+    // (highlight.js has no mode for a quote after a marker, and the TextMate
+    // container rules have already consumed the marker by then), and a shape
+    // one grammar handles and two do not is the drift `tests/lib/
+    // marker-line-fences.js` exists to prevent.
+    var quoteMarkerBeforeBlock = '[ \\t]*((?:> )+)';
+
+    // A line that carries a quote marker. Everything from a quote-marked fence
+    // opener to its closer has to be one of these: an UNMARKED line is where
+    // the quote can end, and a fence that scanned across one would hide text
+    // the engine renders (see the note on the quote branch below).
+    var quoteMarkedLine = '(?:[ \\t]*>[^\\n]*\\n)';
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -332,6 +352,37 @@
                 pattern: RegExp(
                     '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
                     + '(%{3,})(?!%)[^\\n]*\\n' + blankOrIndentedLine + '*?[ \\t]+\\2(?!%)[^\\n]*$',
+                    'm',
+                ),
+                lookbehind: true,
+                greedy: true,
+            },
+            {
+                // The same rule at a BLOCK-QUOTE marker (`> %%%`): §24 S2 and
+                // §28 hide a comment's body WHEREVER the fence sits, and corpus
+                // 70 pins this spelling - `> q` / `> %%%` / `> x` / `> %%%` /
+                // `> body` renders the quote with `q` and `body` only.
+                // The column-anchored pattern below cannot reach it either, so
+                // the two `%%%` runs scoped as trailing line comments while the
+                // hidden `x` between them came back as live quote content.
+                //
+                // The marker run is group 2 inside the group-1 lookbehind, so
+                // it stays available to the 'blockquote' rule. tree-sitter-carve
+                // splits it the same way: the `fenced_comment_block` sits inside
+                // the quote's `content`, beside the `block_quote_marker`.
+                //
+                // The closer repeats the marker run (`\2`) as well as the fence
+                // width (`\3`), so a fence opened at `> > ` is not closed at
+                // `> `. Every line between them must carry a marker of its own:
+                // an unmarked line is where the quote can END, and the engine
+                // degrades an unclosed opener to a line comment rather than
+                // hiding anything (`> %%%` / `> c` / blank leaves `c` VISIBLE).
+                // The engine does absorb an unmarked LAZY continuation into a
+                // fence that closes later; refusing it here costs a mis-scope
+                // on that shape and buys never hiding a visible block.
+                pattern: RegExp(
+                    '^((?:(?<![\\s\\S])\\uFEFF)?' + quoteMarkerBeforeBlock + ')'
+                    + '(%{3,})(?!%)[^\\n]*\\n' + quoteMarkedLine + '*?[ \\t]*\\2\\3(?!%)[^\\n]*$',
                     'm',
                 ),
                 lookbehind: true,
