@@ -5,27 +5,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "reference-definition>constant",
-    "text": "  [r]:"
-  },
-  {
-    "type": "reference-definition",
-    "text": " /url"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "comment",
-    "text": "  %%%"
+    "text": "%%%\n  [r]: /url\n  %%%"
   },
   {
     "type": "text",

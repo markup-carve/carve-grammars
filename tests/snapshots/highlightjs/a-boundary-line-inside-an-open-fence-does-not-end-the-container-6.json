@@ -5,10 +5,14 @@
   },
   {
     "scope": null,
-    "text": " %%%\n  a\n\n  b\n"
+    "text": " "
   },
   {
     "scope": "comment",
-    "text": "  %%%\n"
+    "text": "%%%\n  a\n\n  b\n  %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

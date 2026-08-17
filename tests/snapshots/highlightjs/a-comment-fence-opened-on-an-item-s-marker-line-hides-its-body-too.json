@@ -5,18 +5,22 @@
   },
   {
     "scope": null,
-    "text": " %%%\n"
+    "text": " "
   },
   {
-    "scope": "symbol",
-    "text": "  [r]: /url"
+    "scope": "comment",
+    "text": "%%%\n  [r]: /url\n  %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
   },
   {
     "scope": null,
     "text": "\n"
-  },
-  {
-    "scope": "comment",
-    "text": "  %%%\n\n[r][]\n"
   }
 ]

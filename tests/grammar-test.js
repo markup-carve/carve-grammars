@@ -10,6 +10,7 @@ import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
+import { MARKER_LINE_FENCES, NOT_CLOSED_AT_COLUMN_0 } from './lib/marker-line-fences.js';
 
 const require = createRequire(import.meta.url);
 
@@ -87,6 +88,7 @@ function validateToken(tok, path, seen = new Set()) {
         }
     }
 }
+
 
 // Load the Prism grammar exactly once. If prismjs is installed, register
 // against it (so the real tokenizer/highlighter is available below); otherwise
@@ -179,13 +181,11 @@ if (realPrism) {
     //
     // What this loop does NOT reach: an opener on a list item's MARKER line
     // (`- %%%`, closer at the item's content column). Every indent it generates
-    // puts the opener on a line of its own, so both grammars pass it while
-    // still getting the marker-line form wrong - highlight.js swallows the rest
-    // of the document, Prism scopes the hidden body as live syntax. The corpus
-    // grew that shape with markup-carve/carve#1311, and its snapshot goldens
-    // now pin the wrong output for both. Tracked in
-    // markup-carve/carve-grammars#243; the fix belongs with the grammars, not
-    // with a widened sample here.
+    // puts the opener on a line of its OWN, which is exactly the blind spot
+    // that let the marker-line form stay broken in both grammars while this
+    // suite was green (carve-grammars#243). Widening the indents here cannot
+    // reach it - a marker is not an indent - so the marker-line shapes have
+    // their own battery below, and it stays separate on purpose.
     for (const indent of ['', ' ', '  ', '\t']) {
         const label = indent === '' ? 'column 0' : `indent ${JSON.stringify(indent)}`;
         ok(`prism: a comment fence at ${label} closes and does not swallow the next block`, () => {
@@ -201,6 +201,35 @@ if (realPrism) {
             );
         });
     }
+
+    // tests/lib/marker-line-fences.js says what these pin and why BOTH
+    // directions have to be asserted.
+    const prismComments = (src) => realPrism.tokenize(src, carvePrism)
+        .filter((t) => typeof t !== 'string' && t.type === 'comment')
+        .map((t) => String(t.content));
+
+    for (const { label, src, hidden, visible } of MARKER_LINE_FENCES) {
+        ok(`prism: a comment fence opened on ${label} hides its body and closes`, () => {
+            const comments = prismComments(src);
+            assert.ok(comments.length > 0, `expected a comment token for ${JSON.stringify(src)}`);
+            assert.ok(
+                comments.some((c) => c.includes(hidden)),
+                `the fence body must be INSIDE the comment, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    ok('prism: a column-0 line ends the item, so it is not the fence closer', () => {
+        const comments = prismComments(NOT_CLOSED_AT_COLUMN_0.src);
+        assert.ok(
+            !comments.some((c) => c.includes(NOT_CLOSED_AT_COLUMN_0.visible)),
+            `column-0 paragraphs must stay visible, got: ${JSON.stringify(comments)}`,
+        );
+    });
 
     ok('prism: the closer matches the opener width exactly', () => {
         // `%%%%` does not close `%%%` (that is what lets a longer fence nest a
@@ -390,6 +419,44 @@ if (realHljs) {
             );
         });
     }
+
+    // tests/lib/marker-line-fences.js says what these pin and why BOTH
+    // directions have to be asserted.
+    const hljsComments = (src) => [
+        ...realHljs.highlight(src, { language: 'carve' }).value
+            .matchAll(/<span class="hljs-comment">([\s\S]*?)<\/span>/g),
+    ].map((m) => m[1]);
+
+    for (const { label, src, hidden, visible } of MARKER_LINE_FENCES) {
+        ok(`hljs: a comment fence opened on ${label} hides its body and closes`, () => {
+            const comments = hljsComments(src);
+            assert.ok(comments.length > 0, `expected a comment span for ${JSON.stringify(src)}`);
+            assert.ok(
+                comments.some((c) => c.includes(hidden)),
+                `the fence body must be INSIDE the comment, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    ok('hljs: a column-0 line ends the item, so it is not the fence closer', () => {
+        const comments = hljsComments(NOT_CLOSED_AT_COLUMN_0.src);
+        assert.ok(
+            !comments.some((c) => c.includes(NOT_CLOSED_AT_COLUMN_0.visible)),
+            `column-0 paragraphs must stay visible, got: ${JSON.stringify(comments)}`,
+        );
+    });
+
+    ok('hljs: the list marker before a fence stays a bullet', () => {
+        // The marker is matched in a LOOKBEHIND, not consumed, so the list
+        // rules still own it - the same split tree-sitter-carve makes. Consumed
+        // instead, the fix would have traded one wrong scope for another.
+        const { value } = realHljs.highlight('- %%%\n  x\n  %%%\n', { language: 'carve' });
+        assert.ok(value.includes('hljs-bullet'), `expected the marker to stay a bullet: ${value}`);
+    });
 
     ok('hljs: a mid-document --- does not swallow the rest of the document', () => {
         // The `---` is a horizontal rule (meta), but it must NOT start a
