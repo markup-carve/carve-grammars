@@ -1,0 +1,98 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "^ Top "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "v Bottom "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "<^ Paired "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "v> Reverse "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "~> Middle "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " d "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " e "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
