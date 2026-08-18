@@ -483,6 +483,23 @@ export const LITERALS = [
         payload: '^',
         scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
     },
+    // The pair must be HORIZONTAL FIRST (carve#1407). `<^` is alignment; `v>`
+    // and `~>` are ordinary cell content, exactly like the lone marker above.
+    // The grammar accepted both orders and no case said otherwise, because the
+    // positive entry uses `>^` - a form that stayed valid across the ruling, so
+    // it could not tell the two rules apart.
+    {
+        name: 'a reverse-order table alignment pair is content, not alignment',
+        sample: '|v> value |\n',
+        payload: 'v>',
+        scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
+    },
+    {
+        name: 'a vertical-first middle pair is content, not alignment',
+        sample: '|~> value |\n',
+        payload: '~>',
+        scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
+    },
     // THE COUNTER-EXAMPLE TO THE BRACKET-RUN CONSTRUCTS ABOVE (carve-grammars#226).
     //
     // An UNBALANCED opener is not a label. `a [outer[z](/u) b` renders
