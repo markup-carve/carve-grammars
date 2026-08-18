@@ -483,6 +483,12 @@ export const LITERALS = [
         payload: '^',
         scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
     },
+    {
+        name: 'a reverse-order table alignment pair is content, not alignment',
+        sample: '|v> value |\n',
+        payload: 'v>',
+        scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
+    },
     // THE COUNTER-EXAMPLE TO THE BRACKET-RUN CONSTRUCTS ABOVE (carve-grammars#226).
     //
     // An UNBALANCED opener is not a label. `a [outer[z](/u) b` renders
