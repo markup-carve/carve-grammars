@@ -336,6 +336,7 @@ const TIPTAP_COVERED = [
     '357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders',
     '358-what-a-content-column-block-does-not-reach',
     '359-a-footnote-definition-s-block-runs-to-the-end-of-its-body',
+    '360-a-definition-behind-an-alternating-container-prefix-registers-at-the-innermost-content-column',
     // Promoted out of `fallback` when the reverse check in
     // tests/roundtrip-test.js was added: every file in each of these is written
     // back faithfully, so the recorded reason had nothing left to explain.
