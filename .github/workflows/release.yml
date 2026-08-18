@@ -29,6 +29,23 @@ jobs:
             exit 1
           fi
 
+      # A git dependency ships to every consumer: npm skips its integrity
+      # check, the install needs git and GitHub reachability (and resolves over
+      # SSH wherever an insteadOf rewrite is configured), and a commit pin stops
+      # tracking the engine's releases. 0.1.4 shipped with the engine pinned to
+      # a carve-js commit for exactly this reason and nothing noticed, because
+      # the manifest was never inspected before publishing.
+      - name: No dependency is installed over git
+        run: |
+          bad="$(node -p '
+            const d = require("./package.json");
+            Object.entries({...d.dependencies, ...d.peerDependencies} ?? {})
+              .filter(([, v]) => /^(github:|git\+|git:)/.test(v))
+              .map(([k, v]) => k + " -> " + v).join("\n")')"
+          [ -z "$bad" ] \
+            || { echo "::error::git dependencies would ship to consumers:"; echo "$bad"; exit 1; }
+          echo "all dependencies resolve from the registry"
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22

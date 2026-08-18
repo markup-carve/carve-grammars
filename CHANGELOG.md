@@ -7,6 +7,7 @@ All notable changes to `carve-grammars` are documented here.
 ### Changed
 
 - TextMate scopes vertical table alignment only in a two-axis run with a horizontal partner; lone `^` and `v` remain ordinary cell content.
+- The Carve engine is an ordinary registry range (`^0.1.4`) instead of a pinned carve-js commit. Installing 0.1.4 cloned the engine over git, which skips npm's integrity check, needs git and GitHub reachability at install time, and stops tracking engine releases. Fixes #274.
 
 ## [0.1.4] - 2026-08-18
 
