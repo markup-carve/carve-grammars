@@ -268,6 +268,7 @@ const TIPTAP_COVERED = [
     '315-an-inline-note-s-content-resolves-after-the-note',
     '316-an-image-s-alt-text-closes-where-a-link-s-text-closes',
     '317-an-editorial-comment-s-bracket-is-content-not-the-close',
+    '375-a-table-cell-can-inherit-horizontal-alignment',
     '318-composite-figures',
     '319-cell-attributes-bind-after-the-kind-and-alignment-markers',
     '320-the-canonical-writer-glues-a-code-fence-to-its-info-string',
@@ -438,6 +439,7 @@ const TIPTAP_COVERED = [
 // fixing a rich mapping promotes the category out of fallback without changing
 // the public preservation guarantee.
 const TIPTAP_SKIP = new Map([
+    ['374-a-collected-definition-closes-the-item-paragraph', 'collected definitions are not represented in the structured editor tree, so all four forms require the source envelope'],
     ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
     ['268-trailing-whitespace-on-a-content-line-is-dropped', 'some whitespace-sensitive forms reparse differently and others contain unsupported literal-inline or line-block nodes'],
     ['269-a-definition-body-continuation-indented-past-its-column-is-lazy-text', 'the definition continuation indentation is normalized and reparses to a different AST'],

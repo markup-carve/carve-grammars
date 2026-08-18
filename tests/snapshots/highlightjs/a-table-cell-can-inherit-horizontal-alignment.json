@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "string",
+    "text": "|=>^ Name |= Value |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|?v Bottom |?~ Middle |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|?^ Top | plain |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|? lone |v? reversed |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|?< wrong |^< axes |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

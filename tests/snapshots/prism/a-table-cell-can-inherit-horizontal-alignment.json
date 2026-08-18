@@ -1,0 +1,122 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": ">^ Name "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": " Value "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "?v Bottom "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "?~ Middle "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "?^ Top "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " plain "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "? lone "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "v? reversed "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "?< wrong "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "^< axes "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
