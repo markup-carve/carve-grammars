@@ -1,18 +1,14 @@
 [
   {
-    "scope": "literal",
-    "text": "---"
+    "scope": "meta",
+    "text": "--- toml\ntitle = \"My Document\"\n"
   },
   {
-    "scope": null,
-    "text": " toml\ntitle = \"My Document\"\n"
+    "scope": "punctuation",
+    "text": "---"
   },
   {
     "scope": "meta",
-    "text": "---"
-  },
-  {
-    "scope": null,
     "text": "\n\nContent begins here.\n"
   }
 ]

@@ -1,18 +1,38 @@
 [
   {
     "scope": "meta",
-    "text": "---"
+    "text": "---\n"
   },
   {
-    "scope": null,
-    "text": "\ntitle: My Document\nauthor: Jane Doe\ndate: 2026-03-15\n"
+    "scope": "symbol",
+    "text": "title"
   },
   {
     "scope": "meta",
+    "text": ": My Document\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "author"
+  },
+  {
+    "scope": "meta",
+    "text": ": Jane Doe\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "date"
+  },
+  {
+    "scope": "meta",
+    "text": ": 2026-03-15\n"
+  },
+  {
+    "scope": "punctuation",
     "text": "---"
   },
   {
-    "scope": null,
+    "scope": "meta",
     "text": "\n\nContent begins here.\n"
   }
 ]
