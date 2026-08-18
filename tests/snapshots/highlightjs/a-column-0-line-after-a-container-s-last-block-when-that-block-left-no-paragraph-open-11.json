@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " > # H\ntail\n"
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> # H"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
   }
 ]

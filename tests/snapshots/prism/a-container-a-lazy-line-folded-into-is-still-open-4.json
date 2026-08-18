@@ -4,8 +4,16 @@
     "text": "- "
   },
   {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " a"
+  },
+  {
     "type": "text",
-    "text": "> a\nd\n"
+    "text": "\nd\n"
   },
   {
     "type": "blockquote>punctuation",

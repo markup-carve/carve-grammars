@@ -23,6 +23,9 @@ import { dirname, resolve } from 'node:path'
 import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js'
 import {
   MARKER_LINE_FENCES,
+  MARKER_LINE_NOT_A_QUOTE,
+  MARKER_LINE_QUOTES,
+  MARKER_LINE_QUOTE_FENCES,
   NOT_CLOSED_AT_COLUMN_0,
   GLUED_IS_NOT_A_FENCE,
   QUOTE_MARKER_LINE_FENCES,
@@ -299,7 +302,7 @@ const scopesOfLinesContaining = (sample, needle) => {
 }
 const isHidden = (scopes) => scopes.some(s => s.startsWith('comment.'))
 
-for (const { label, src, hidden, visible } of [...MARKER_LINE_FENCES, ...QUOTE_MARKER_LINE_FENCES]) {
+for (const { label, src, hidden, visible } of [...MARKER_LINE_FENCES, ...QUOTE_MARKER_LINE_FENCES, ...MARKER_LINE_QUOTE_FENCES]) {
   const hiddenScopes = scopesOfLinesContaining(src, hidden)
   const visibleScopes = scopesOfLinesContaining(src, visible)
   if (!hiddenScopes.length) {
@@ -321,7 +324,42 @@ for (const [label, shape] of [
   } else { fencePass++ }
 }
 
-const fenceTotal = MARKER_LINE_FENCES.length + QUOTE_MARKER_LINE_FENCES.length + 3
+const fenceTotal = MARKER_LINE_FENCES.length + QUOTE_MARKER_LINE_FENCES.length + MARKER_LINE_QUOTE_FENCES.length + 3
 console.log(`  ${fenceFails.length ? '✗' : '✓'} textmate sweep: ${fencePass}/${fenceTotal} marker-line comment fences hide their body and close`)
 fenceFails.forEach(f => console.log(f))
 if (fenceFails.length) process.exit(1)
+
+// A QUOTE OPENED ON A LIST ITEM'S MARKER LINE (tests/lib/marker-line-fences.js,
+// carve-grammars#259). Same table the Prism and highlight.js batteries read,
+// asserted in this grammar's own vocabulary: the quoted run has to carry a
+// `markup.quote` scope, and the block past the item must not.
+//
+// The scope NAME rather than "scoped at all", for the reason this file's header
+// gives: a TextMate scope name is a contract with every consumer, and the
+// failure here was the list rule taking the whole line - which is very much a
+// scope, just the wrong one.
+let quotePass = 0
+const quoteFails = []
+const isQuoted = (scopes) => scopes.some(s => s.includes('markup.quote'))
+
+for (const { label, src, quoted, outside } of MARKER_LINE_QUOTES) {
+  const quotedScopes = scopesOfLinesContaining(src, quoted)
+  if (!quotedScopes.length) {
+    quoteFails.push(`FAIL(quote) ${label}: no line carries ${JSON.stringify(quoted)}`)
+  } else if (!isQuoted(quotedScopes)) {
+    quoteFails.push(`FAIL(quote) ${label}: the quoted run scoped as ${[...new Set(quotedScopes)].join(',')}`)
+  } else if (isQuoted(scopesOfLinesContaining(src, outside))) {
+    quoteFails.push(`FAIL(quote) ${label}: the quote ran past the item and took ${JSON.stringify(outside)}`)
+  } else { quotePass++ }
+}
+
+for (const { label, src, notQuoted } of MARKER_LINE_NOT_A_QUOTE) {
+  if (isQuoted(scopesOfLinesContaining(src, notQuoted))) {
+    quoteFails.push(`FAIL(quote) ${label}: ${JSON.stringify(notQuoted)} must not be scoped as a quote`)
+  } else { quotePass++ }
+}
+
+const quoteTotal = MARKER_LINE_QUOTES.length + MARKER_LINE_NOT_A_QUOTE.length
+console.log(`  ${quoteFails.length ? '✗' : '✓'} textmate sweep: ${quotePass}/${quoteTotal} marker-line quotes take the rest of their line`)
+quoteFails.forEach(f => console.log(f))
+if (quoteFails.length) process.exit(1)

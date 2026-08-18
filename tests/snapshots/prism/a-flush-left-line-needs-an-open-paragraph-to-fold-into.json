@@ -4,7 +4,11 @@
     "text": ". "
   },
   {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
     "type": "text",
-    "text": ">\nX\n"
+    "text": "\nX\n"
   }
 ]

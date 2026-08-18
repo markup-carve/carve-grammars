@@ -4,7 +4,11 @@
     "text": "- "
   },
   {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
     "type": "text",
-    "text": ">\nlazy\n"
+    "text": "\nlazy\n"
   }
 ]

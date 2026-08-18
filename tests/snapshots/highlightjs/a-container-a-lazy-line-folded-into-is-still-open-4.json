@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " > a\nd\n"
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> a"
+  },
+  {
+    "scope": null,
+    "text": "\nd\n"
   },
   {
     "scope": "quote",

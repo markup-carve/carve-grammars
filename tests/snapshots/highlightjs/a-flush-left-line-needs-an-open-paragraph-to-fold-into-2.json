@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " >\nlazy\n"
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\nlazy\n"
   }
 ]

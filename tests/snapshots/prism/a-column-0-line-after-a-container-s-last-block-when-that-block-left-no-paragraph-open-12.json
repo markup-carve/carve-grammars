@@ -4,7 +4,15 @@
     "text": "- "
   },
   {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
     "type": "text",
-    "text": "> q\ntail\n"
+    "text": "\ntail\n"
   }
 ]

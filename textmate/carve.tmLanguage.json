@@ -1643,6 +1643,30 @@
       "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
       "name": "comment.block.carve"
     },
+    "block_comment_on_quote_on_marker_line": {
+      "comment": "A COMMENT FENCE MAY OPEN ON A QUOTE THAT ITSELF OPENED ON A LIST ITEM'S MARKER LINE (`- > %%%`). carve-grammars#246 left this shape out on the ground that a shape one grammar handles and two do not is drift, and Prism and highlight.js reach it now, so the reason has inverted (carve-grammars#259). Anchored on \\\\G rather than ^, exactly as `#block_comment_on_marker_line` is and for the same reason: \\\\G matches at the current scan position, which on a marker line is where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\\\t])` guard keeps it to a marker line specifically - a later match on the same line moves the \\\\G anchor too. It LEADS `#blockquote_on_marker_line` in `#container_blocks`, which would otherwise take the same position and leave the fence to `#trailing_comment` as a LINE comment, with the hidden body coming back as live syntax. The end is `#block_comment_on_quote_marker_line`'s, unchanged: the closer repeats the opener's marker run and fence width, and the second branch is a zero-width quote boundary so an unclosed opener cannot reach the document below.",
+      "begin": "\\G(?<=[ \\t])((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
+      "name": "comment.block.carve"
+    },
+    "blockquote_on_marker_line": {
+      "comment": "A BLOCK QUOTE MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- > x`, `1. > x`, `- - > x`, `- [ ] > x`), and it takes the rest of that line: carve-js renders `<ul><li><blockquote><p>x</p></blockquote></li></ul>`. Neither `#blockquote` nor `#blockquote_in_container` can reach it - both are anchored on ^, and the container's own begin match has already consumed the marker by the time this line is scanned - so the whole line fell through to the list rule and everything after the marker carried no quote scope at all (carve-grammars#259). Anchored on \\\\G with the same `(?<=[ \\\\t])` guard `#block_comment_on_marker_line` uses, for the reasons stated there. Reachable ONLY from `#container_blocks`, so a document-level line can never take it. The marker run is capture 1 and keeps its quote punctuation scope, which is tree-sitter-carve's split: the `block_quote` sits inside `list_item_content` beside the `list_marker_*` rather than over it.",
+      "match": "\\G(?<=[ \\t])(>)(?= |$) ?(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "markup.quote.carve"
+        }
+      },
+      "name": "markup.quote.carve"
+    },
     "block_comment_on_marker_line": {
       "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, carve-grammars#243). `#block_comment` cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. So the `%%%` fell through to `#trailing_comment` and scoped as a LINE comment, no block opened, the hidden body came back as live syntax, and the real closer was then taken for an opener. Anchored on \\G rather than ^: \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a percent run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because it sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE. Without it an unclosed opener would run to end of document.",
       "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
@@ -1654,6 +1678,12 @@
       "patterns": [
         {
           "include": "#block_comment_on_marker_line"
+        },
+        {
+          "include": "#block_comment_on_quote_on_marker_line"
+        },
+        {
+          "include": "#blockquote_on_marker_line"
         },
         {
           "include": "#fenced_code_in_container"
