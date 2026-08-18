@@ -76,7 +76,7 @@ check('a delimited inline comment preserves the following text',
     'foo {% bar %} baz');
 
 check('a delimited inline comment stays glued inside a mark',
-    doc(para(text('bo', 'bold'), { type: 'carveCommentInline', attrs: { content: 'c', delimited: true }, marks: [{ type: 'bold' }] }, text('ld', 'bold'), text(' text'))),
+    { ...carveToProseMirror('*bo{% c %}ld* text\n', { unsupported: 'throw' }), attrs: undefined },
     '*bo{% c %}ld* text');
 
 // A `]` inside a linked comment has no clean answer: escaping it keeps the

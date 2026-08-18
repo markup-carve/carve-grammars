@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## Unreleased
 
+- Add a CI gate that validates spec section citations against the pinned spec revision.
+
 ### Fixed
 
 - Add `{% … %}` delimited inline comments to the Prism, highlight.js and

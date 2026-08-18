@@ -28,6 +28,8 @@ jobs:
       # (a git dependency whose `prepare` script builds its dist on install).
       - name: Install dependencies
         run: npm ci
+      - name: Validate spec citations
+        run: npm run test:citations
 
       # Coverage matrix first (fails fast if a corpus category is unclassified
       # for any grammar), then the golden snapshot and round-trip suites, then

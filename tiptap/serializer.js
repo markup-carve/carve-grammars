@@ -947,6 +947,7 @@ export function serializeToCarve(doc) {
         ));
         if (!content) return '';
         let result = '';
+        let resumeDelimitedBold = false;
 
         const referenceLinkAt = (index) => {
             const candidate = content[index];
@@ -1018,6 +1019,16 @@ export function serializeToCarve(doc) {
             }
             if (node.type === 'carveCommentInline') {
                 if (node.attrs?.delimited) {
+                    const previous = content[idx - 1];
+                    const next = content[idx + 1];
+                    const bridgesBold = previous?.type === 'text' && next?.type === 'text'
+                        && (previous.marks || []).some((mark) => mark.type === 'bold')
+                        && (next.marks || []).some((mark) => mark.type === 'bold')
+                        && result.endsWith('*');
+                    if (bridgesBold) {
+                        result = result.slice(0, -1);
+                        resumeDelimitedBold = true;
+                    }
                     result += `{%${node.attrs?.content ? ` ${node.attrs.content} ` : ''}%}`;
                     return;
                 }
@@ -1184,6 +1195,10 @@ export function serializeToCarve(doc) {
                 if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
+                if (resumeDelimitedBold && hasBold && t.startsWith('*')) {
+                    t = t.slice(1);
+                    resumeDelimitedBold = false;
+                }
                 if (link) {
                     let replayedReferenceSource = false;
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';
