@@ -304,10 +304,47 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *   leaves at the same time. An unclosed code span in a line block now reaches
  *   the end of the block and swallows the comment line, so the two variants
  *   swap places for the same reason.
+ *
+ * 329 -> 341 with the spec bump to carve 22f7f47, which takes the corpus from
+ * 1245 documents to 1259. Both directions: 12 in and ZERO out. The bump is
+ * purely additive - five categories appended at file end, nothing renumbered
+ * and no existing corpus file touched, checked with a name diff and a stat over
+ * the submodule range - so the pre-existing 1245 still contribute exactly 329.
+ * That was verified rather than left to construction: both lists were dumped
+ * under both submodule commits and compared by SOURCE TEXT, and of the 1234
+ * distinct sources present under both, ZERO flipped in either direction.
+ *
+ * Twelve of the fourteen new documents, not fourteen. The count was measured
+ * one document at a time, because the last bump moved this ratchet by ONE for
+ * four new documents and extrapolating from the document count would have been
+ * wrong in both directions. The two that need no envelope are
+ * `363-a-task-item-s-checkbox-is-not-decided-by-its-first-block`, whose blocks
+ * are ordinary item content, and
+ * `364-only-lazy-folding-demotes-a-marker-line-colon-opener-2`, the variant
+ * whose colon opener a lazy line demotes to text, so there is no container left
+ * to lose.
+ *
+ * The twelve are one serializer habit seen from five angles: a block the author
+ * opened ON the marker line is written back indented to the item's content
+ * column.
+ *
+ *     - ::: d
+ *       b
+ *
+ * comes back as
+ *
+ *     -   ::: d
+ *       b
+ *       :::
+ *
+ * and once the opener has moved to column 4 the body at column 2 no longer
+ * reaches it, so the container degrades to literal item text. These are
+ * protected fallbacks, not silent losses: the envelope keeps the source and the
+ * first edit is what starts writing the projection.
  */
 assert.strictEqual(
-    envelopedFiles.length, 329,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 329`,
+    envelopedFiles.length, 341,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 341`,
 );
 
 assert.strictEqual(
