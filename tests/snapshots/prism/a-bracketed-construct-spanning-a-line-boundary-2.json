@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "An "
+  },
+  {
+    "type": "span",
+    "text": "[a\nb]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " span.\n"
+  }
+]

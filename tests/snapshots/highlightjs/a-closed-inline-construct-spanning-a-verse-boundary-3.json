@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*Roses are red,\nViolets are blue.*"
+  },
+  {
+    "scope": null,
+    "text": "\nAnd so are you.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

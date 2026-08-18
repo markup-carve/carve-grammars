@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "![a\nb](/i)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ A caption."
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

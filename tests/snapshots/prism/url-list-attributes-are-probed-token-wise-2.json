@@ -1,0 +1,54 @@
+[
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "a"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "safe.png"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "srcset"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes",
+    "text": "\"safe"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".png"
+  },
+  {
+    "type": "attributes",
+    "text": " 1x, javascript:alert(1) 2x\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

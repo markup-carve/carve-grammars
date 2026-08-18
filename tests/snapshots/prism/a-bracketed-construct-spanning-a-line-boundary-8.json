@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "An "
+  },
+  {
+    "type": "inserted",
+    "text": "{+a\nb+}"
+  },
+  {
+    "type": "text",
+    "text": " insertion.\n"
+  }
+]

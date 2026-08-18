@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\na\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%% secret"
+  },
+  {
+    "scope": null,
+    "text": "\nc\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

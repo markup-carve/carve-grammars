@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "- "
+  },
+  {
+    "type": "comment",
+    "text": "%% c"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

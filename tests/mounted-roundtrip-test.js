@@ -183,5 +183,25 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // bump added (321 through 334) account for all 24, and the pre-existing
 // categories still account for exactly 174. No document that used to render
 // equivalently stopped doing so.
-assert.strictEqual(changed.length, 198, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 198 -> 239 with the spec bump to carve 287b4b8. Attributed before it was
+// raised, the same way as above, and keyed by SOURCE TEXT rather than by
+// filename so a renumber cannot be mistaken for a mover: of the 1123 source
+// texts present under both pins, ZERO flipped in either direction. The
+// pre-existing corpus still accounts for exactly 198, and all 41 of the rise
+// are new documents.
+//
+// The 41 concentrate in the rulings the bump carries, which is the honest
+// reading of them: seven in the column-0-line-after-a-container category, five
+// each in the bracketed-construct-spanning-a-line-boundary and
+// block-at-a-container's-content-column categories, four each in
+// definition-at-a-container's-content-column and
+// container-whose-table-ends-on-a-continuation-row, three each in the two
+// line-block backslash categories, and the rest in ones and twos. The
+// projection does not model those constructs richly yet, so they keep their
+// source and are protected fallbacks rather than silent losses.
+//
+// The pin then moved again to 0490ae5, which adds category 359 and two more
+// documents. The count does NOT move: both are render-equivalent through a
+// mount, so 239 covers 1241 documents rather than 1239.
+assert.strictEqual(changed.length, 239, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

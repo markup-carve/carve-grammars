@@ -1,0 +1,62 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " \\# heading"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " C\\# is a language"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "escape",
+    "text": "\\#"
+  },
+  {
+    "type": "text",
+    "text": " heading\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "tag",
+    "text": "#tag"
+  },
+  {
+    "type": "text",
+    "text": " rest\n"
+  }
+]

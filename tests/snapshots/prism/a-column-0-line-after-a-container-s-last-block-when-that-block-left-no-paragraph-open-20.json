@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\ntail\n"
+  }
+]

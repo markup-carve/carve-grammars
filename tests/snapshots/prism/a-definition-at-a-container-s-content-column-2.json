@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n\nx"
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

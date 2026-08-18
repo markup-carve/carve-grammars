@@ -1,0 +1,22 @@
+[
+  {
+    "type": "extension>function",
+    "text": ":span"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension",
+    "text": "a\nb"
+  },
+  {
+    "type": "extension>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " here.\n"
+  }
+]

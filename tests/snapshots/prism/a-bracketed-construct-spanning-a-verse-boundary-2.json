@@ -1,0 +1,46 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>span",
+    "text": "[Roses are red,\nViolets are blue.]"
+  },
+  {
+    "type": "div>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "div>attributes>class-name",
+    "text": ".verse"
+  },
+  {
+    "type": "div>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

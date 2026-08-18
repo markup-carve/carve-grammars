@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[a\nb][r]"
+  },
+  {
+    "scope": null,
+    "text": " resolves.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

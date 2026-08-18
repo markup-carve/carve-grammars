@@ -317,6 +317,25 @@ const TIPTAP_COVERED = [
     '339-a-wider-comment-fence-inside-an-item-hides-its-body-the-same-way',
     '340-an-abbreviation-inside-a-comment-defines-nothing',
     '341-a-comment-fence-inside-a-colon-container-registers-nothing',
+    // freeze bump 287b4b8 - measured, all round-trip
+    '342-url-list-attributes-are-probed-token-wise',
+    '343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position',
+    '344-a-comment-only-line-in-a-line-block-is-removed-before-any-inline-run',
+    '345-a-line-block-s-hard-break-keeps-its-backslash',
+    '346-a-line-block-s-last-body-line-keeps-its-backslash',
+    '347-a-comment-fence-reached-through-a-quote-registers-nothing-either',
+    '348-a-closed-inline-construct-spanning-a-verse-boundary',
+    '349-a-container-whose-table-ends-on-a-continuation-row',
+    '350-a-definition-at-a-container-s-content-column',
+    '351-a-bracketed-construct-spanning-a-line-boundary',
+    '352-a-bracketed-construct-s-identifiers-stay-on-one-line',
+    '353-a-bracketed-construct-spanning-a-verse-boundary',
+    '354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold',
+    '355-a-container-whose-table-ends-on-a-joined-header-row',
+    '356-a-quote-inside-a-quote-is-asked-what-it-ends-on',
+    '357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders',
+    '358-what-a-content-column-block-does-not-reach',
+    '359-a-footnote-definition-s-block-runs-to-the-end-of-its-body',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

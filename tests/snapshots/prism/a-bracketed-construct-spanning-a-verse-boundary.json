@@ -1,0 +1,50 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
+    "text": "\nSee "
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>url",
+    "text": "Roses are red,\nViolets are blue."
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "div>url",
+    "text": "/u"
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

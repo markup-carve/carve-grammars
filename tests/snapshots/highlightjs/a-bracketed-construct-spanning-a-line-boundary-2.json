@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "An "
+  },
+  {
+    "scope": "string",
+    "text": "[a\nb]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": " span.\n"
+  }
+]
