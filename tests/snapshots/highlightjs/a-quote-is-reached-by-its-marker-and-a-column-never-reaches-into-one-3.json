@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [r]: /url"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

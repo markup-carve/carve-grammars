@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{aligns=\"right,,center\" valigns=\"top,middle,bottom\" widths=\"25,50,25\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| A | B | C |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| D | E | F |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

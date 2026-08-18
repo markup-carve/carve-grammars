@@ -27,6 +27,12 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    'a-heading-at-an-item-s-content-column-leaves-no-paragraph-open',
+    'a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one',
+    'a-raw-block-keeps-the-blank-line-at-the-end-of-its-payload-too',
+    'a-table-alignment-run-carries-two-independent-axes',
+    'an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open',
+    'table-columns-carry-alignment-vertical-alignment-and-widths',
     '103-marker-line-nested-lists',
     '114-fence-opener-with-a-nested-list-body-inside-a-list-item',
     '168-headings-inside-containers-are-not-wrapped',

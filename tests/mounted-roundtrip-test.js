@@ -267,7 +267,9 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // engine move is the strongest single signal in the measurement.
 //
 // Marker-line block serialization and attribute placement reduce the protected
-// fallback population from 251 to 203. Pin both directions: an unexplained
-// increase is a regression, while a decrease must retire its stale reasons.
-assert.strictEqual(changed.length, 203, `mounted rich projection changed for ${changed.length} corpus documents`);
+// fallback population from 251 to 203. Four documents in the six categories
+// added by carve c5e874d change under the mounted rich projection, taking the
+// population to 207. Pin both directions: an unexplained increase is a
+// regression, while a decrease must retire its stale reasons.
+assert.strictEqual(changed.length, 207, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "q\n"
+  },
+  {
+    "type": "code-block",
+    "text": "  ```\n  y\n  "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]
