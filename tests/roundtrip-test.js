@@ -236,10 +236,28 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * The pin then moved again to 0490ae5, which adds category 359 and two more
  * documents. The count does NOT move: both are written back faithfully, so
  * 336 covers 1241 documents rather than 1239.
+ *
+ * 336 -> 337 with the spec bump to carve 0f6b990. That bump is purely
+ * additive - it adds category 360 and its four documents and touches no
+ * existing corpus file - so the pre-existing 1241 still contribute exactly
+ * 336 by construction, and the split is between the four new documents alone.
+ * Three of them are written back faithfully. The one addition is
+ * `360-a-definition-behind-an-alternating-container-prefix-registers-at-the-
+ * innermost-content-column-3`, the variant whose innermost block is a heading:
+ *
+ *     - > - - x
+ *       >     # h
+ *
+ * The projection does not model a prefix that alternates list and quote, so
+ * writing it back respells the markers and opens a blank quote line between
+ * the item text and the heading, which moves the heading out of the item it
+ * was written into. The document therefore keeps its source. The sibling
+ * variants, whose innermost block is a link reference definition or a footnote
+ * definition, survive because the definition leaves the flow entirely.
  */
 assert.strictEqual(
-    envelopedFiles.length, 336,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 336`,
+    envelopedFiles.length, 337,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 337`,
 );
 
 assert.strictEqual(

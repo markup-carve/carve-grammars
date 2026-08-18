@@ -203,5 +203,23 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // The pin then moved again to 0490ae5, which adds category 359 and two more
 // documents. The count does NOT move: both are render-equivalent through a
 // mount, so 239 covers 1241 documents rather than 1239.
-assert.strictEqual(changed.length, 239, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 239 -> 240 with the spec bump to carve 0f6b990. That bump adds category 360
+// and its four documents and touches no existing corpus file, so the
+// pre-existing 1241 still account for exactly 239 by construction and the one
+// mover is among the four. It is the `-3` variant, the same document that
+// starts riding the source envelope in tests/roundtrip-test.js, and the two
+// gates agree for the same reason. Its innermost block is a heading behind an
+// alternating list/quote prefix:
+//
+//     - > - - x
+//       >     # h
+//
+// Written back through a mount, the prefix is respelled and a blank quote line
+// appears between the item text and the heading, so the heading leaves the
+// item it was written into and the render differs. A protected fallback, not a
+// silent loss: the envelope keeps the source. The three sibling variants, whose
+// innermost block is a link reference or footnote definition, are
+// render-equivalent because a definition leaves the flow entirely.
+assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
