@@ -221,5 +221,49 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // silent loss: the envelope keeps the source. The three sibling variants, whose
 // innermost block is a link reference or footnote definition, are
 // render-equivalent because a definition leaves the flow entirely.
-assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 240 -> 239 when the `@markup-carve/carve` pin moved 83 commits onto carve-js
+// main (2dc3232e). The headline is the least informative number in this file:
+// 24 documents came IN and 25 went OUT. Reported in both directions for that
+// reason. The corpus is unchanged in this bump, so every mover is the engine,
+// and 50 of the 51 documents that move either ratchet are documents the new
+// engine reads differently - measured by re-rendering each one under both
+// pins, not inferred from the category names.
+//
+// The 25 leaving are the container-content-column family the engines fixed for
+// this release (markup-carve/carve#1364 and siblings): ten in `326`, three each
+// in `349`, `350` and `357`, two in `355`, one each in `327`, `329`, `344` and
+// `345`. Twenty-three of the twenty-five. The projection did not improve; the
+// engine started parsing them correctly, and the projection was already right.
+//
+// The 24 arriving are the same four clusters the envelope ratchet records
+// (`322` x5, `319` x4, `348` x3, `353` x3, `326` x2, `323` x1, `344` x1), plus
+// two this gate sees and the envelope does not:
+//
+// - Four `321-delimited-comments`. NOT a regression: carve-js main implements
+//   `{% ... %}` and the pinned engine did not, so a `comment` node exists in
+//   the tree where before there was nothing to lose. The tree-sitter grammar
+//   modelled the construct first, which is markup-carve/carve-grammars#247.
+//   What this gate is now reporting is a real serializer defect the node
+//   exposed: `carveCommentInline` carries a `delimited` attribute that the
+//   serializer ignores, so `foo {% bar %} baz` is written back as the LINE
+//   comment `foo %% bar`, and everything after the comment on that line is
+//   destroyed. The four are enveloped, so the source survives until the first
+//   edit. Raised separately rather than fixed inside a pin bump.
+// - `337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too` is
+//   the ONE mover of the fifty-one whose source both engines read identically.
+//   It moved because the engine changed its reading of what the serializer
+//   WRITES: the marker line comes back as `-   %%%`, padding the content column
+//   to 4, and a body line at column 2 no longer reaches it, so the fence is
+//   unterminated and `[r]: /url` escapes as a paragraph. Same content-column
+//   family as the departures, seen from the writing side.
+//
+// The `fixed` list above did not fire. Not one of the seventeen guarded
+// documents regressed under the new engine - not the three silent losses of
+// markup-carve/carve-grammars#240, not the four caption-on-a-quote documents,
+// not `296-a-language-attribute-and-lang-are-one-key-4`. Worth stating rather
+// than leaving implied: those are the failures that happen in SILENCE instead
+// of behind a visible fallback, so this list staying quiet across an 83-commit
+// engine move is the strongest single signal in the measurement.
+assert.strictEqual(changed.length, 239, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

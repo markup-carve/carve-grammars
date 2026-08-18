@@ -263,16 +263,31 @@ const TIPTAP_COVERED = [
     // write-identical, so the source rides along) - that is still covered, and
     // the round-trip test's own enveloped accounting is what reports it.
     //
-    // `321-delimited-comments` is covered for a reason worth stating plainly,
-    // because the bare word "covered" would flatter it: the pinned engine does
-    // not implement `{% ... %}` at all. It parses `foo {% bar %} baz` as one
-    // text run and renders `<p>foo {% bar %} baz</p>`, where the corpus fixture
-    // at this spec commit expects `<p>foo  baz</p>`. So the category round-trips
-    // because there is no `comment` node in the tree to lose - NOT because the
-    // converter's long-standing comment gap closed. That gap is still open and
-    // still behind the line-comment fallback entries below. When the engine
-    // ships delimited comments this category will need re-measuring, and it
-    // will most likely move to fallback.
+    // `321-delimited-comments` was covered for a reason worth stating plainly,
+    // because the bare word "covered" would have flattered it: the engine
+    // pinned at the time did not implement `{% ... %}` at all. It parsed
+    // `foo {% bar %} baz` as one text run and rendered
+    // `<p>foo {% bar %} baz</p>`, where the corpus fixture expects
+    // `<p>foo  baz</p>`. So the category round-tripped because there was no
+    // `comment` node in the tree to lose. That note ended by predicting the
+    // category would "most likely move to fallback" once an engine shipped
+    // delimited comments.
+    //
+    // The engine has now shipped them, and the prediction was WRONG. Measured
+    // when the pin moved to carve-js main (2dc3232e): all eight documents still
+    // convert without the whole-document fallback atom and still reparse to the
+    // same AST, so the category stays covered on the evidence rather than on
+    // the old reason. Six of the eight reach the rich projection under a SOURCE
+    // ENVELOPE, which is what carries them, and the envelope is exactly the
+    // mechanism the paragraph above says is still covered.
+    //
+    // What the new node did expose is a serializer defect, and it is recorded
+    // here so the word "covered" is not read as "clean": `carveCommentInline`
+    // carries a `delimited` attribute the serializer never branches on, so a
+    // delimited comment is written back as the LINE comment `%%`, which
+    // swallows the rest of the line. `foo {% bar %} baz` comes back as
+    // `foo %% bar`. Four of the eight lose their mounted render-equivalence to
+    // it, which tests/mounted-roundtrip-test.js records and attributes.
     '321-delimited-comments',
     '322-an-attribute-block-reaches-the-nested-list-it-precedes',
     '323-a-block-attached-after-an-invisible-line-leaves-the-item-tight',
