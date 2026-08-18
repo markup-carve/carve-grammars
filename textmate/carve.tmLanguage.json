@@ -613,7 +613,7 @@
       "end": "$",
       "patterns": [
         {
-          "match": "(\\|=)([<~>]?)",
+          "match": "(\\|=)((?:[<~>][\\^~v]|[\\^~v][<~>]|[<~>]))(?= |\\{)",
           "captures": {
             "1": {
               "name": "keyword.operator.table.header.carve"
@@ -624,7 +624,15 @@
           }
         },
         {
-          "match": "(\\|)([<~>])(?=\\s)",
+          "match": "(\\|=)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.table.header.carve"
+            }
+          }
+        },
+        {
+          "match": "(\\|)((?:[<~>][\\^~v]|[\\^~v][<~>]|[<~>]))(?= |\\{)",
           "captures": {
             "1": {
               "name": "punctuation.separator.table.carve"

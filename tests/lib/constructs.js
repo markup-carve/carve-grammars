@@ -312,6 +312,16 @@ export const CONSTRUCTS = [
     { name: "composite figure group caption", sample: "::: figure\n![one](a.png)\n:::\n^ Figure #: Group\n", payload: "Group", textmate: "markup.caption" },
     { name: "table sep", sample: "| a | b |", payload: "|", textmate: "punctuation.separator.table" },
     { name: "table align", sample: "|=> Age |", payload: ">", textmate: "keyword.operator.table.alignment" },
+    {
+        name: "table paired vertical align",
+        sample: "|=>^ Qty |",
+        payload: ">^",
+        textmate: "keyword.operator.table.alignment",
+        skip: {
+            prism: "the Prism grammar scopes whole table rows rather than alignment runs",
+            highlightjs: "the highlight.js grammar scopes whole table rows rather than alignment runs",
+        },
+    },
     { name: "table rowspan", sample: "| ^ | spanned |", payload: "^", textmate: "keyword.operator.table.rowspan" },
     { name: "table colspan", sample: "| a | < |", payload: "<", textmate: "keyword.operator.table.colspan" },
     { name: "gfm delimiter row", sample: "| a | b |\n|---|--:|", payload: "--:", textmate: "keyword.operator.table.alignment" },
@@ -467,6 +477,12 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    {
+        name: 'a lone vertical table marker is content, not alignment',
+        sample: '|^ value |\n',
+        payload: '^',
+        scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
+    },
     // THE COUNTER-EXAMPLE TO THE BRACKET-RUN CONSTRUCTS ABOVE (carve-grammars#226).
     //
     // An UNBALANCED opener is not a label. `a [outer[z](/u) b` renders

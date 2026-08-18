@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Changed
+
+- TextMate scopes vertical table alignment only in a two-axis run with a horizontal partner; lone `^` and `v` remain ordinary cell content.
+
 ## [0.1.4] - 2026-08-18
 
 ### Breaking

@@ -31,6 +31,8 @@ const TIPTAP_COVERED = [
     'a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one',
     'a-raw-block-keeps-the-blank-line-at-the-end-of-its-payload-too',
     'a-table-alignment-run-carries-two-independent-axes',
+    'a-vertical-table-marker-needs-a-horizontal-partner',
+    'an-all-blank-raw-payload-still-emits-its-line',
     'an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open',
     'table-columns-carry-alignment-vertical-alignment-and-widths',
     '103-marker-line-nested-lists',
