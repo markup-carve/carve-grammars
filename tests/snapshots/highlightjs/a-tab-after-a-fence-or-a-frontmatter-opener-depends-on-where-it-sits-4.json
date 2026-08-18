@@ -1,18 +1,22 @@
 [
   {
-    "scope": "literal",
-    "text": "---"
+    "scope": "meta",
+    "text": "---\t\n"
   },
   {
-    "scope": null,
-    "text": "\t\ntitle: x\n"
+    "scope": "symbol",
+    "text": "title"
   },
   {
     "scope": "meta",
+    "text": ": x\n"
+  },
+  {
+    "scope": "punctuation",
     "text": "---"
   },
   {
-    "scope": null,
+    "scope": "meta",
     "text": "\n\nbody\n"
   }
 ]

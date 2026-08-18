@@ -50,7 +50,6 @@ export const CONSTRUCTS = [
     {
         name: 'an attribute line spans lines', sample: '{.a\n.b}\n\nparagraph\n',
         payload: '{.a', textmate: 'meta.attributes', attr: true,
-        skip: { textmate: 'the TextMate attribute rule is single-line, so it misses the standalone multi-line block too - the other direction of #164, not fixed here' },
     },
     { name: "italic", sample: "some /italic/ text", payload: "italic", textmate: "markup.italic" },
     { name: "bold", sample: "some *bold* text", payload: "bold", textmate: "markup.bold" },
@@ -177,7 +176,6 @@ export const CONSTRUCTS = [
         // fix. TextMate has no span-text rule at all, which is a separate gap.
         name: "span whose text holds a bracket run",
         sample: "a [t[z]]{.c} b", payload: "t[z]", textmate: "string.other.link.title",
-        skip: { textmate: 'the TextMate grammar has no rule for the span TEXT - only its trailing attribute block is scoped, for `[plain]{.c}` as much as for this. A separate gap from the bracket run, and not widened here' },
     },
     { name: "footnote ref", sample: "text[^1] end", payload: "1", textmate: "constant.other.footnote" },
     { name: "mention", sample: "hi @user here", payload: "@user", textmate: "mention" },
@@ -333,7 +331,6 @@ export const CONSTRUCTS = [
         // where the coverage question is asked.
         name: "frontmatter", sample: "---\ntitle: Doc\n---\n\nText", payload: "title",
         textmate: "frontmatter",
-        skip: { highlightjs: "no front-matter rule, so front matter is deliberately not highlighted" },
     },
     { name: "display math", sample: "$$`\\int_0^1 x`", payload: "\\int_0^1 x", textmate: "markup.math" },
     { name: "trailing comment", sample: "text %% trailing", payload: "trailing", textmate: "comment" },
@@ -416,7 +413,6 @@ export const CONSTRUCTS = [
         // the allowance to land in there.
         name: "byte order mark before front matter", sample: "\uFEFF---\ntitle: Doc\n---\n\nText",
         payload: "title", textmate: "frontmatter",
-        skip: { highlightjs: "no front-matter rule, so front matter is deliberately not highlighted" },
     },
     // COLUMN SENSITIVITY, the other half. A definition AT a list item's content
     // column IS a definition and must stay highlighted - carve-php#765 and
@@ -836,12 +832,12 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // Two constructs are skipped for TextMate, two for Prism and four for
+    // Two constructs are skipped for Prism and two for
     // highlight.js; each says why in its own `skip` entry, and every skip is
     // subtracted here.
-    textmate: 169,
+    textmate: 171,
     prism: 169,
-    highlightjs: 167,
+    highlightjs: 169,
 };
 
 /**

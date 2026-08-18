@@ -185,6 +185,20 @@
         relevance: 5,
     };
 
+    // Front matter is valid only at byte offset zero. Unlike the historical
+    // `^---$` rule, the negative lookbehind below cannot match a thematic break
+    // on a later line even though highlight.js compiles modes with `m`.
+    const FRONT_MATTER = {
+        className: 'meta',
+        begin: /^(?<![\s\S])\uFEFF?---(?:[A-Za-z0-9_-]+| [A-Za-z0-9_-]+)?[ \t]*$/,
+        end: /^---[ \t]*$/,
+        relevance: 10,
+        contains: [
+            { className: 'symbol', begin: /^[A-Za-z_][\w-]*(?=[ \t]*:)/ },
+            { className: 'punctuation', begin: /---/ },
+        ],
+    };
+
     // Headings: # to ######
     const HEADING = {
         className: 'section',
@@ -1049,15 +1063,8 @@
     HEADING.contains = [HEADING_TAG];
 
     const CONTAINS = [
-        // NOTE: front matter is intentionally NOT highlighted. It is valid
-        // only at the very top of the document, but highlight.js has no
-        // document-start anchor, so a `^---$` begin would also match a bare
-        // `---` horizontal rule mid-document and swallow everything up to
-        // the next `---`. The horizontal-rule rule below handles `---`
-        // lines instead. (Prism anchors front matter via `^` with no `m`
-        // flag; see prism/carve.js.)
-
         // Block-level elements (order matters - more specific first)
+        FRONT_MATTER,
         HEADING,
         CODE_FENCE_START,
         CODE_FENCE_END,

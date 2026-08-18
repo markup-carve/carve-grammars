@@ -8,6 +8,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Highlight document-start front matter in highlight.js, scope multiline
+  standalone attribute blocks in TextMate, and scope bracketed span text rather
+  than only its trailing attributes.
+
 - Add `{% … %}` delimited inline comments to the Prism, highlight.js and
   TextMate/Shiki grammars, and preserve that spelling in the Tiptap serializer
   without turning the remainder of its line into a comment

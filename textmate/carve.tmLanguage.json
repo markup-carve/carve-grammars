@@ -869,6 +869,9 @@
           "include": "#citation"
         },
         {
+          "include": "#span"
+        },
+        {
           "include": "#link_inline"
         },
         {
@@ -918,6 +921,9 @@
         },
         {
           "include": "#attributes_empty"
+        },
+        {
+          "include": "#attributes_multiline"
         },
         {
           "include": "#attributes"
@@ -1206,6 +1212,18 @@
         }
       }
     },
+    "attributes_multiline": {
+      "begin": "^(\\{)(?=[ \\t]*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:[ \\t]|$))",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.attributes.carve" }
+      },
+      "end": "(\\})[ \\t]*$",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.attributes.carve" }
+      },
+      "name": "meta.attributes.carve",
+      "comment": "A standalone attribute line may span physical lines. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
+    },
     "attributes": {
       "match": "(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
       "captures": {
@@ -1221,6 +1239,18 @@
       },
       "name": "meta.attributes.carve",
       "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons."
+    },
+    "span": {
+      "comment": "Balanced bracketed span text followed by a valid attribute block. Kept ahead of links so its text receives a stable span scope rather than only the trailing attributes being visible.",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
+      "captures": {
+        "1": { "name": "punctuation.definition.span.carve" },
+        "2": { "name": "string.other.link.title.carve" },
+        "3": { "name": "punctuation.definition.span.carve" },
+        "4": { "name": "punctuation.definition.attributes.carve" },
+        "5": { "name": "meta.attributes.carve" },
+        "6": { "name": "punctuation.definition.attributes.carve" }
+      }
     },
     "bold_italic": {
       "match": "(/\\*)([^*]+)(\\*/)",

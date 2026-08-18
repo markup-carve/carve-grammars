@@ -1,18 +1,22 @@
 [
   {
-    "scope": "literal",
-    "text": "---"
+    "scope": "meta",
+    "text": "--- yaml\n"
   },
   {
-    "scope": null,
-    "text": " yaml\ntitle: T\n"
+    "scope": "symbol",
+    "text": "title"
   },
   {
     "scope": "meta",
+    "text": ": T\n"
+  },
+  {
+    "scope": "punctuation",
     "text": "---"
   },
   {
-    "scope": null,
+    "scope": "meta",
     "text": "\n\nbody\n"
   }
 ]
