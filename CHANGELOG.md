@@ -2,326 +2,112 @@
 
 All notable changes to `carve-grammars` are documented here.
 
-## Unreleased
+## [Unreleased]
 
-- Add a CI gate that validates spec section citations against the pinned spec revision.
+## [0.1.4] - 2026-08-18
 
-### Fixed
+### Breaking
 
-- Highlight document-start front matter in highlight.js, scope multiline
-  standalone attribute blocks in TextMate, and scope bracketed span text rather
-  than only its trailing attributes.
-
-- Add `{% … %}` delimited inline comments to the Prism, highlight.js and
-  TextMate/Shiki grammars, and preserve that spelling in the Tiptap serializer
-  without turning the remainder of its line into a comment
-  (markup-carve/carve-grammars#247, #265).
-- Keep list marker-line block openers at the marker and serialize cell
-  attributes after their kind/alignment markers; indent nested-list attribute
-  lines to the parent content column (markup-carve/carve-grammars#266, #267).
-
-- **An attribute run comes back in the order it was WRITTEN.** `{key=c .a #b}`
-  returned `{#b .a key="c"}` - the same document under a different spelling,
-  which makes a formatter's contract unmeetable: an editor has to be able to
-  hand back what the author typed. The cause was structural rather than a bug.
-  ProseMirror attributes are an unordered map and the canonical shape splits one
-  authored run into `id`, `class` and a `carveKeyValues` bag, so the order had
-  nowhere to live - even though the AST records it and every other lossy shape
-  in this bridge either reports itself or is genuinely unrepresentable.
-
-  `carveAttrOrder` carries it: the AST's `order` field verbatim, an array whose
-  entries are `#id`, `.class` and each key by name. Declared on every node and
-  mark that already carried `carveKeyValues`, published in `schema-map.json`,
-  pinned by `tiptap/wire-fixtures.json`. A document without it still writes the
-  canonical order, so nothing an editor builds from scratch changes.
-
-  Values are still written quoted (`key="c"`): the AST records the value and not
-  whether the author quoted it, so that half genuinely cannot be recovered.
-
-- **`` `code`{.cls} `` keeps its attribute run.** The stock Code mark declares
-  no attributes at all, so the run was dropped on the way in, the serializer had
-  nothing left to write, and NOTHING reported it - the caller was told the
-  document round-tripped. The mark carries `id`, `class`, `carveKeyValues` and
-  `carveAttrOrder` now.
-
-- **A mark with no content stops vanishing.** `[](https://example.com)` alone in
-  a file came back as an EMPTY DOCUMENT: a ProseMirror mark needs text to attach
-  to, and an empty label has none. `[]{.a}`, `{++}` and `{--}` are the same
-  defect and disappeared the same way, all four in silence.
-
-  Each loads as a `carveEmptyMark` atom holding the mark it stands for and that
-  mark's attributes, so it is written back with its destination, title and
-  attribute run - a carried construct with editable fields, not a preserved blob
-  of source.
-
-- **A fence title is no longer also written as an attribute line.** It reaches
-  the loader twice - as the fence's own `header` and as a `title` key derived
-  from it - and both were written, so `` ```php "T" `` came back with a
-  `{title="T"}` line above the same fence: an attribute run the author never
-  wrote. Invisible until the run's authored order started being compared,
-  because the reparsed key/values matched either way.
-
-- **No grammar rule scans to the end of the document any more.** Prism and
-  highlight.js hand the whole document to each pattern and retry at successive
-  positions, so a quantifier that can run to the end of the input costs O(n) at
-  each of n positions - quadratic in the document rather than in the construct.
-  Nine opener shapes measured at x4 per doubling; 192 KB of one of them took
-  roughly 22 seconds, which is a hung tab for anyone highlighting untrusted
-  Carve in a browser.
-
-  Bounded now, in both grammars: the citation body, the balanced-bracket label
-  shared by links, images and spans, the inline-link destination, the reference
-  label, the autolink, the critic comment, the footnote reference, the inline
-  footnote, the fenced-block info string, and the backtick run and body of an
-  inline code span. Every shape moved from x4 to x2 per doubling. At 48 KB, in
-  Prism: a backtick run 5081ms to 71ms, an escaped bracket 3141ms to 196ms, a
-  tilde 1438ms to 69ms, a footnote opener 1338ms to 92ms, an angle bracket
-  2021ms to 262ms; in highlight.js a footnote opener 1529ms to 115ms and a
-  critic opener 1038ms to 256ms.
-
-  Ordinary documents are unaffected. What changes is that a construct longer
-  than its bound stops being highlighted rather than being highlighted slowly -
-  a link destination past 2048 characters, a label or citation past 512, a code
-  span past 4096, or a code span fenced by more than 16 backticks. The body of a
-  fenced block is deliberately left unbounded: that is real content and may be
-  as long as the author likes.
-
-  The TextMate grammar is unaffected - TextMate engines tokenize a line at a
-  time, so document length never compounds. `npm run perf:sweep` is the tool
-  that finds this class; it is not in CI, because a timing measurement on a
-  machine carrying other load measures the load.
-
-### Fixed
-
-- **A `carveDiv` says how its class was written**, and a container's attribute
-  run is written back. One ProseMirror node serves both `div` and `admonition`,
-  and nothing in the document said which the author wrote, so `{.sidebar}` above
-  a bare `:::` came back as `::: sidebar` - a different document, and one whose
-  class is now the container's KIND. `carveTyped` records it. In the same pass a
-  container's `{#id}` and key/values are written at all: the serializer emitted
-  the opener and dropped everything the opener could not carry.
+- Carve attributes on stock ProseMirror nodes carry a `carve` prefix
+  (`carveRef`, `carveDelim`, `carveOlType`, `carveHeader`, `carveKeyValues` and
+  friends). A ProseMirror document stored by 0.1.3 or earlier is not read at the
+  old keys (#236).
 
 ### Added
 
-- **`carveToProseMirrorWithReport(source, options)`**, so the bridge says what
-  the editor model could not hold. It returns the document plus `preserved`
-  (Carve types kept as exact source rather than as an editable node) and
-  `degraded` (types whose text survives while the node does not). The bridges
-  contract has always required this of a bridge - carve-php has exposed
-  `droppedTypes()`/`degradedTypes()` since it had one - and this bridge reported
-  nothing at all, so an application storing Carve could not tell a fully
-  editable document from one carrying blobs of unparsed source.
+- A framework-independent `<carve-editor>` Web Component from
+  `@markup-carve/carve-grammars/editor`, with declarative content, programmatic
+  updates, `readonly`, `defineCarveEditor()` and a `carve-editor::part(editor)`
+  hook (#209).
+- TypeScript declarations for the root, `/tiptap` and `/editor` entry points,
+  with a downstream-consumer compile in CI (#208).
+- `carveToProseMirrorWithReport(source, options)`, so the bridge reports what
+  the editor model could not hold: `preserved` (kept as exact source) and
+  `degraded` (text survives, node does not) (#237).
+- Semantic language attributes: `{:TAG}` and `{:}` highlight in Prism and
+  highlight.js and survive the Tiptap HTML and AST paths (#213); TextMate
+  accepts them, and the construct joins the shared sweep inventory that had let
+  the gap ship green (#214).
+- Composite figures are their own construct in all three grammars - a bare
+  `::: figure` opener is a figure group rather than an admonition (#223,
+  markup-carve/carve#1215).
+- A composite figure is a node the editor holds: `CarveKit` registers
+  `carveFigureGroup`, and opener, panels, closer and group caption round-trip
+  (#225, markup-carve/carve#1122).
+- `CarveKit` registers every authored Carve construct; ten node types leave the
+  schema map's unmapped list, matching carve-php's bridge (#221,
+  markup-carve/carve-php#1266).
+- Eleven map-declared nodes are actually built rather than loading as opaque
+  source atoms, including `carveInlineNote` with editable content and a new
+  `carveInlineExtension` for the general `:name[content]` form (#235).
+- `tiptap/wire-fixtures.json` pins 30 sources to the exact ProseMirror document
+  a bridge must produce, and `schema-map.json` publishes attributes rather than
+  only node names (#236).
+- `carveAttrOrder` carries an attribute run's authored order, and `carveTight`
+  records whether a list was written loose or tight (#236, #241).
+- `aliasOf` in `tiptap/schema-map.json` names the owner when two Carve types
+  share a ProseMirror name, so a sorted-map reader stops routing every labelled
+  div down the admonition path (#224, markup-carve/carve-rs#993).
+- `carveToProseMirror(source, { parse })` passes options through to the engine,
+  so extension-gated constructs can load at all (#235).
+- `{% … %}` delimited inline comments in Prism, highlight.js and TextMate,
+  preserved by the Tiptap serializer, plus a CI gate that validates spec section
+  citations against the pinned spec revision (#268).
 
-  The preservation atoms now carry `carveType` beside `carveSource`, naming the
-  construct they stand in for, and `schema-map.json` describes both as part of
-  the wire rather than as one bridge's private shape - a `carveUnsupported`
-  crossing to another runtime was refused as an unknown name.
+### Fixed
 
-
-- **The published map names ATTRIBUTES, not only nodes**, and
-  `tiptap/wire-fixtures.json` pins the shape: 30 Carve sources with the exact
-  ProseMirror document a bridge must produce for each. Names alone were never
-  the contract - two bridges to this same editor model produced different
-  attribute vocabularies for the same document, and nothing compared them, so a
-  document stored by one lost its reference spelling, its list tightness and its
-  cell spans when read by the other. A bridge in another runtime copies the
-  fixtures and asserts against them.
-
-- **A list carries whether the author wrote it loose or tight.** `carveTight` on
-  `bulletList`, `orderedList` and `taskList`. The serializer could only DERIVE
-  looseness from an item holding more than one block, so `- a` / blank line /
-  `- b` came back tight - losing the paragraph inside each item, which is
-  content and not styling.
+- A quote's caption is a figure caption again (`carveFigure` + `carveCaption`)
+  and survives an edit, following the withdrawal of `block_quote.attribution`
+  in markup-carve/carve#1213 (#218, #220).
+- A block opened on a list item's or block quote's marker line stays at the
+  marker: a quote in all three grammars (#261), a `%%%` comment fence whose body
+  stays hidden (#244, #246), and a fenced block in the serializer (#268).
+- An unterminated `%%%` run no longer greys out the rest of the document in
+  highlight.js; it degrades to a line comment as PART 9 section 28 requires
+  (#262).
+- A list marker glued to a language attribute (`-{:fr} item`) is still a list
+  marker in Prism and highlight.js (#216).
+- The `{:TAG}` language attribute reaches the editor, not only the highlighters:
+  the bundled engine pin moves onto a commit that parses it (#217).
+- A label closes at the MATCHING bracket in all three grammars, so
+  `![t[z]](/i.png)` is highlighted and an unbalanced `[t[z](/u)` is not (#227).
+- A container's closing fence no longer opens a phantom container in
+  highlight.js, which had cost mode precedence for every construct sharing a
+  div's opener (#223).
+- No grammar rule scans to the end of the document any more. The citation body,
+  bracket labels, link destinations, reference labels, autolinks, critic
+  comments, footnote references, inline notes, fence info strings and inline
+  code spans are bounded in Prism and highlight.js, moving nine opener shapes
+  from quadratic to linear in document length (#228, #229). A construct longer
+  than its bound stops being highlighted rather than being highlighted slowly.
+- `carveDiv` records whether the author wrote a class or an admonition kind, and
+  a container's `{#id}` and key/values are written back at all (#239).
+- The bridge hands back the attribute run the author typed: `` `code`{.cls} ``
+  keeps its run, a fence title is no longer also written as an attribute line,
+  and a mark with no content (`[](https://example.com)`, `[]{.a}`, `{++}`,
+  `{--}`) loads as a `carveEmptyMark` atom instead of vanishing (#241).
+- An inline atom inside a mark keeps the mark, so `*:rocket:*` and
+  `[see </#H>](/u)` stop losing the emphasis or moving the atom out of the link,
+  and an authored attribute run survives on every construct that takes one
+  (#235).
+- highlight.js highlights document-start front matter and keeps malformed typed
+  openers literal; TextMate scopes standalone multiline attribute blocks and
+  bracketed span text rather than only its trailing attributes (#269).
+- Table cell attributes serialize after their kind and alignment markers, and
+  nested-list attribute lines indent to the parent content column (#266, #267).
 
 ### Changed
 
-- **A Carve attribute on a stock ProseMirror node is spelled with a `carve`
-  prefix.** `ref`, `rawRef`, `referenceDefinition` and `autolink` on the link
-  mark and image node; `delim`, `olType` and `bareMarker` on `orderedList`;
-  `languageRaw`, `header` and `label` on `codeBlock`; `keyValues` everywhere.
-  A bare name on a node this schema does not own collides with whatever another
-  extension - or the application - puts there, and carve-php already used the
-  prefixed spelling for the link attributes. Nodes this schema owns keep bare
-  names: `carveCitation` has `raw`, not `carveRaw`. **Breaking** for a stored
-  ProseMirror document written by 0.1.4 or earlier: the old keys are not read.
-
-
-- **Eleven map-declared nodes are actually built now.** `carveFrontmatter`,
-  `carveLinkRefDef`, `carveSymbol`, `carveLiteral`, `carveSubstitution`,
-  `carveRawInline`, `carveCitation`, `carveCrossref`, `carveInlineNote` and
-  `carveSection` were named in `schema-map.json` as carried, registered in
-  `CarveKit` and handled by the serializer - and constructed by no code path, so
-  a document using one loaded as an opaque source atom instead. 185 of the 1025
-  corpus files carried such an atom. `carveInlineExtension` is new: it is the
-  general `:name[content]` form, which could not share `carveEmbed` because that
-  node is a block atom for a media directive and an inline extension has inline
-  children.
-
-  An inline footnote now loads as `carveInlineNote` holding EDITABLE content
-  rather than a `carveFootnote` atom stamped with its source, and a link
-  reference definition is written where the author put it, with its own trailing
-  attribute run, rather than being re-derived from the reference that resolved
-  it and appended at the end.
-
-- **`carveToProseMirror(source, { parse })`** passes options through to the
-  engine. Extension-gated constructs only appear in the AST when the engine is
-  told about them, so no caller could load a document holding a citation group -
-  and the mapping for one could not be exercised.
-
-- **An inline atom inside a mark keeps the mark.** The atom carries it like any
-  other inline node, but only the text path writes a mark's delimiters, so
-  `*:rocket:*` came back as `:rocket:` and `[see </#H>](/u)` as
-  `[see ](/u)</#H>` - the emphasis dropped and the atom moved out of the link.
-  Applies to symbols, literals, math, mentions, tags, footnote references and
-  inline notes alike.
-
-- **An authored attribute run survives on every construct that takes one.**
-  `:rocket:{.big}`, `!`x`{.ipa}`, `:widget[x]{#i k=v}`, `^[note]{.ref}`
-  and `[ex]: /u {.external}` kept their id, classes and key/values on the way
-  in, and the nodes declare slots for them so a mounted editor does not drop
-  them.
-
-
-- **`aliasOf` in `tiptap/schema-map.json`**, so a bridge reading the map back
-  the other way is not left to decide by iteration order. Two Carve types can
-  name the same ProseMirror node or mark - `carveDiv` is both `div` and
-  `admonition`, `link` is both `link` and `autolink` - and a bridge turning that
-  name into one Carve type had nothing to consult. carve-php happens to get the
-  owner because PHP preserves this file's key order; carve-rs walks a sorted map
-  and got the alias, which routed every labelled div down the admonition path
-  and dropped the label (markup-carve/carve-rs#993). `admonition` and `autolink`
-  now carry `aliasOf`, and the suite fails if a shared name is left with no
-  single owner or an alias points at a type that does not claim it.
-
-- **Composite figures are their own construct in all three grammars** (PART 9
-  §4c, markup-carve/carve#1215). A BARE `::: figure` opener - the fence, its
-  separator, the kind word, and nothing else - is one figure of ordered panels,
-  so it now carries `meta.figure-group.carve` /
-  `entity.name.tag.figure-group.carve` in TextMate, a `figure-group` token in
-  Prism and `section` in highlight.js, instead of reading as an admonition. An
-  opener that carries a quoted title or a `[label]` is not that production and
-  stays the generic container it has always been, and a bare opener inside an
-  open group degrades to a generic container too, because groups do not nest.
-  The `^ ` line after the closing fence is the group caption and keeps the
-  caption scope it already had.
-
-- **A composite figure is a node the editor holds** (PART 9 §4c,
-  markup-carve/carve#1122). `CarveKit` registers `carveFigureGroup`,
-  `carveToProseMirror` builds one for a bare `::: figure` container, and the
-  serializer writes it back - opener, panels in source order, closing fence,
-  and the group caption on the line below the closer, where it was authored.
-  Its direct `carveFigure` and `table` children are the panels; everything else
-  is plain group content kept in place between them, not dropped and not
-  re-attached. The node deliberately carries no `target`, no title and no
-  label, so a bridge tells it from a `figure` by the type rather than by
-  probing for a missing field, and `figure_group` leaves the schema map's
-  undeclared set. An opener carrying a quoted title or a `[label]` is a
-  different production and still loads as the generic container it always was,
-  with its metadata intact. Previously the loader had no case for the type at
-  all: a document holding a composite figure threw, or under `unsupported:
-  'preserve'` became one opaque source atom whose first edit lost the
-  structure. The bundled `@markup-carve/carve` pin moves with it, onto a
-  carve-js commit that parses the construct.
-
-- **CarveKit registers every authored Carve construct** (mirror of
-  carve-php's bridge completion, markup-carve/carve-php#1266). Ten node types
-  leave the schema map's `unmapped` list: `carveFrontmatter`,
-  `carveLinkRefDef`, `carveInlineNote`, `carveRawInline`, `carveLiteral`,
-  `carveSubstitution`, `carveSymbol`, `carveCitation`, `carveCrossref` and
-  `carveSection`, each with the same attrs carve-php emits, and the
-  serializer writes canonical Carve source for all of them. `CarveCaption`
-  gains a `short` attr for a structured format's short caption, which the
-  serializer skips - Carve 0.1 source has no spelling for it. With the
-  definitions carried, a `[text][label]` reference arriving from another
-  engine keeps its spelling. The still-unmapped remainder is bookkeeping no
-  editor holds: caption numbers, escapes, smart typography, soft breaks.
-
-### Fixed
-
-- **A link, image or span whose label holds a bracket run is highlighted**, in
-  Prism, in highlight.js AND in TextMate. The spec closes a label at the
-  MATCHING `]` and resolves escapes on the way (`grammar.ebnf`, `link_text`);
-  all three grammars spelled the label `[^\]]*`, which closes at the FIRST `]`.
-  The rule then wanted a `(` or a `[`, found the second `]` and gave up, so
-
-  ```
-  a ![t[z]](/i.png) b
-  ```
-
-  recorded as prose in every engine even though it renders
-
-  ```html
-  <p>a <img src="/i.png" alt="t[z]"> b</p>
-  ```
-
-  The same body accepted the opposite shape too: an UNBALANCED opener scoped
-  from the outer `[`, so `a [t[z](/u) b` coloured `[t` as part of a link where
-  the engine reads it as prose and starts the link at the inner bracket. Both
-  directions are fixed, for inline and reference links, inline and reference
-  images, and bracketed spans, along with a label carrying an escaped `[` or
-  `]`. Nesting is matched four levels deep; deeper labels stay unscoped, as
-  every depth did before.
-
-  A side effect worth naming: the old label body scanned to end of input for
-  every `[` it could not close, and the new one stops at the bracket it cannot
-  close. On 192 KB of unclosed openers the label pattern alone drops from 18.9s
-  to 1.8ms, and tokenizing that whole document drops from 116s to 22s in Prism
-  and from 108s to 25s in highlight.js. What is left belongs to other rules that
-  still spell a bracket body `[^\]]*` and are untouched here, so this is a large
-  cut and not a cure. Measured on a machine under other load; read the ratio
-  rather than the absolute.
-
-- **A container's closing fence no longer opens a phantom container in
-  highlight.js.** A div's `contains` was tried before its own `end` and led
-  with `'self'`, whose opener tail is optional, so a bare `:::` closer matched
-  it and the rest of the document stayed inside a container that never closed.
-  Every construct kept its own scope, which is why this went unseen; what it
-  actually cost was mode PRECEDENCE, so any construct sharing an opener with a
-  div read as a div from the first container line onward.
-
-- **The `{:TAG}` language attribute reaches the editor**, not just the
-  highlighters. `carveToProseMirror` reads the bundled `@markup-carve/carve`,
-  which was pinned to a commit that predates the engine production, so
-  `[bonjour]{:fr}` loaded as one plain text node and an editor built on this
-  package showed the attribute as literal text instead of a span. The pin now
-  tracks a carve-js commit that parses it, and the loader produces a
-  `carveSpan` mark carrying the language for `{:fr}`, `{:de-DE}`, `{:}`, a
-  language beside another attribute, and the long `lang="fr"` spelling.
-
-## 0.1.4 - 2026-08-11
-
-### Added
-
-- **A framework-independent `<carve-editor>` Web Component** is available from
-  `@markup-carve/carve-grammars/editor` (#209). Consumers interact with a
-  string `value` and ordinary bubbling, composed `input` events while Tiptap
-  remains an implementation detail. The element loads through the shared AST
-  bridge in `unsupported: 'preserve'` mode, so authored footnote labels and
-  constructs without a rich editor representation survive load/save instead
-  of passing through HTML or disappearing.
-
-  Declarative initial content, programmatic updates, `readonly`, native focus
-  options, disconnect/reconnect cleanup and the
-  `carve-editor::part(editor)` styling hook are included. Registration is
-  explicit and idempotent through `defineCarveEditor()`, and importing the
-  module itself is safe in a DOM-less environment.
-
-- **First-class TypeScript declarations for the Tiptap package** (#208). The
-  root and `/tiptap` entry points now type `CarveKit`, the public extensions,
-  AST loading, serialization and `UnsupportedNodeError`. The `/editor` entry
-  point types the custom element, its `input` detail and registration helper.
-  A downstream-consumer compile is part of `npm test`, so missing or stale
-  declarations fail CI rather than reaching a published package.
-
-### Verification
-
-- The complete grammar, serializer, AST/editor round-trip and 892-document
-  corpus suites pass on Node.js 18, 20 and 22. A separate full-suite job keeps
-  the advertised Tiptap 2 support tested while the default suite runs against
-  Tiptap 3.
-- Package dry runs assert that the JavaScript and declaration files for the
-  typed Tiptap and Web Component entry points are included in the tarball.
-
+- The spec corpus pin moves from carve `c19d1a4` to the `22f7f47` freeze:
+  892 to 1259 documents, 288 to 365 categories, every added category classified
+  rather than regenerated (#250, #257, #264).
+- The bundled `@markup-carve/carve` engine pin moves to carve-js `2dc3232e`,
+  83 commits forward. Both projection ratchets moved in both directions:
+  the source envelope 337 to 329 (18 in, 26 out) and the mounted projection
+  240 to 239 (24 in, 25 out) (#263).
+- Highlighter construct coverage: highlight.js 170 of 170 applicable, TextMate
+  172 of 172, Prism 170 of 170. The only deliberate skips left are the two
+  container-column reference-definition cases in the line-based engines (#269).
 ## 0.1.3 - 2026-08-10
 
 ### Fixed
