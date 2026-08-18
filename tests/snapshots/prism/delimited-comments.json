@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "foo {% bar %} baz\n"
+    "text": "foo "
+  },
+  {
+    "type": "comment",
+    "text": "{% bar %}"
+  },
+  {
+    "type": "text",
+    "text": " baz\n"
   }
 ]

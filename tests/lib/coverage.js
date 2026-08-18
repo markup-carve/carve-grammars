@@ -27,6 +27,14 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    '103-marker-line-nested-lists',
+    '114-fence-opener-with-a-nested-list-body-inside-a-list-item',
+    '168-headings-inside-containers-are-not-wrapped',
+    '170-attribute-braces-on-a-list-item-marker-line',
+    '190-a-blank-after-a-comment-still-ends-the-item',
+    '278-a-list-marker-at-the-content-column-inside-an-open-fence',
+    '280-a-container-a-lazy-line-folded-into-is-still-open',
+    '97-table-cell-attributes',
     '283-an-empty-footnote-body-is-written-with-the-empty-sentinel',
     '14-frontmatter',
     // The source-aware loader preserves constructs without a rich ProseMirror
@@ -431,9 +439,7 @@ const TIPTAP_SKIP = new Map([
     ['275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text', 'collapsed heading references are not preserved faithfully and reparse to a different AST'],
     ['276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column', 'list/fence indentation is normalized and all variants reparse to a different AST'],
     ['277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open', 'comments are unsupported, and the non-comment variant reparses differently'],
-    ['278-a-list-marker-at-the-content-column-inside-an-open-fence', 'the nested list/fence structure is normalized and reparses to a different AST'],
     ['279-a-boundary-line-inside-an-open-fence-does-not-end-the-container', 'comment variants are unsupported and the remaining container-boundary forms reparse differently'],
-    ['280-a-container-a-lazy-line-folded-into-is-still-open', 'one lazy container continuation is normalized and reparses to a different AST'],
     ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
     ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
     ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
@@ -455,7 +461,6 @@ const TIPTAP_SKIP = new Map([
     ['184-a-caret-is-a-reference-label-not-an-empty-footnote', 'the reference-link gap (#101) with the destination lost as well: `[^]: /u` plus `see [text][^].` comes back as `see [text]().` - an empty destination, not just an inlined one. The second example escapes instead: a bare `see [^].` re-serializes as `see \\[^].`'],
     ['186-a-comment-fence-is-a-comment-at-any-column-too', 'same `comment` gap - the indented fence is still a comment node, so the converter throws before the column question is reached'],
     ['188-a-comment-under-a-nested-item-does-not-close-it', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
-    ['190-a-blank-after-a-comment-still-ends-the-item', 'the converter has no node type for `comment` and throws, the same gap as 69-opaque-spans-inside-a-container'],
     ['191-a-comment-fence-under-a-nested-item-does-not-close-it-either', 'same `comment` gap, fence form - the converter meets the comment node before the nesting question the category is about'],
     ['193-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition', 'two gaps at once. The abbreviation form loses BOTH its escaping and its column: `  *[HTML]: Hyper Text` comes back as `\\*\\[HTML]: Hyper Text` flush left, so the line is no longer at the content column the category is about. The `-2` form is the opposite - the link definition there IS collected (correctly, carve-rs#570 / carve-php#765), so the serializer writes `see [t](/u)` and the definition is gone'],
     ['194-a-definition-inside-a-container-is-collected-at-that-container-s-content-column', 'the reference-link gap (#101), and the first example shows its worst form: `> - a` plus a definition at the quoted item column comes back as `see [t]()` - an EMPTY destination. The third escapes instead, re-serializing the definition as `> \\[r]: /u` inside the quote'],
@@ -491,14 +496,11 @@ const TIPTAP_SKIP = new Map([
     ['92-strong-emphasis-starting-with-a-link', 'a link-in-emphasis edge case is lossy on reparse'],
     ['95-boolean-attributes', 'boolean key/value attributes on spans are not modeled'],
     ['96-table-span-marker-in-first-column', 'rowspan/colspan filler cells are not reconstructed'],
-    ['97-table-cell-attributes', 'per-cell attributes are lossy through the serializer'],
     ['101-heading-marker-column-zero', 'an indented (literal) # is re-emitted column-0 as a heading on reparse'],
-    ['103-marker-line-nested-lists', 'marker-line nested lists (- - A) are lossy on reparse'],
     ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],
     ['105-colspan-marker-scans-left-past-a-consumed-cell', 'table span-marker cells are not modeled'],
     ['107-link-destination-parentheses-balance', 'round-trips to a different AST'],
     ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
-    ['114-fence-opener-with-a-nested-list-body-inside-a-list-item', 'admonition blocks are not modeled'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
     ['126-editorial-markup-takes-a-trailing-attribute', 'editorial markup with a trailing attribute is lossy on reparse'],
     ['127-emphasis-opener-slash-adjacency', 'the converter does not model the `emphasis` node'],
@@ -522,8 +524,6 @@ const TIPTAP_SKIP = new Map([
     ['160-outer-item-with-an-internal-blank-before-an-attached-block-is-loose', 'round-trips to a different AST'],
     ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
-    ['168-headings-inside-containers-are-not-wrapped', 'a heading inside a quote or div reparses into a different AST'],
-    ['170-attribute-braces-on-a-list-item-marker-line', 'headings with attributes are not represented (attrs only support id)'],
 ]);
 
 export const COVERAGE = {

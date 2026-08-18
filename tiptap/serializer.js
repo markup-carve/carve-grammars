@@ -232,7 +232,7 @@ export function serializeToCarve(doc) {
             case 'orderedList':
             case 'taskList':
                 const listAttrs = serializeAttributes(node.attrs, ['start', 'type', 'carveOlType', 'carveDelim', 'carveBareMarker', 'carveTight']);
-                if (listAttrs) output += listAttrs + '\n';
+                if (listAttrs) output += indent + listAttrs + '\n';
                 // A list is "loose" when an item holds more than one
                 // paragraph-level block. A nested sub-list does NOT count - an
                 // item of `paragraph + sublist` is still tight, so don't let it
@@ -760,10 +760,8 @@ export function serializeToCarve(doc) {
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
                 const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveSpanMarker']);
-                // A cell attribute run sits immediately after `|`, before the
-                // header/alignment marker: `|{.hot}= value`. Putting it after
-                // `=` makes the braces literal cell text.
-                line += '|' + cellAttrs + (c.header ? '=' : '') + align + ' ' + c.content + ' ';
+                // Cell attributes bind after the kind/alignment markers.
+                line += '|' + (c.header ? '=' : '') + align + cellAttrs + ' ' + c.content + ' ';
             }
             const rowAttrs = serializeAttributes(row.attrs, ['textAlign']);
             output += line + '|' + rowAttrs + '\n';
@@ -795,6 +793,15 @@ export function serializeToCarve(doc) {
                 // at column 0, where a block opener stops being text
                 // (carve-grammars#145).
                 output += escapeContinuationOpeners(serializeInline(child.content)) + '\n';
+            } else if (i === 0) {
+                // The caller has already written this item's marker and one
+                // separating space. A block authored on that marker line must
+                // therefore put its opener here, not at the content column;
+                // only the following physical lines are indented there.
+                const blockText = serializeNodeToString(child);
+                blockText.split('\n').forEach((line, lineIndex) => {
+                    output += (lineIndex === 0 ? line : contentIndent + line) + '\n';
+                });
             } else if (isList(child.type)) {
                 // A nested list opens at the parent's content column, so its
                 // own markers are emitted at that indent.
@@ -940,6 +947,7 @@ export function serializeToCarve(doc) {
         ));
         if (!content) return '';
         let result = '';
+        let resumeDelimitedBold = false;
 
         const referenceLinkAt = (index) => {
             const candidate = content[index];
@@ -1010,6 +1018,20 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveCommentInline') {
+                if (node.attrs?.delimited) {
+                    const previous = content[idx - 1];
+                    const next = content[idx + 1];
+                    const bridgesBold = previous?.type === 'text' && next?.type === 'text'
+                        && (previous.marks || []).some((mark) => mark.type === 'bold')
+                        && (next.marks || []).some((mark) => mark.type === 'bold')
+                        && result.endsWith('*');
+                    if (bridgesBold) {
+                        result = result.slice(0, -1);
+                        resumeDelimitedBold = true;
+                    }
+                    result += `{%${node.attrs?.content ? ` ${node.attrs.content} ` : ''}%}`;
+                    return;
+                }
                 // Inline comments require a separating space. Without it,
                 // mounting `text %% note` and serializing produced
                 // `text%% note`, which reparses as visible paragraph text.
@@ -1173,6 +1195,10 @@ export function serializeToCarve(doc) {
                 if (hasUnderline) t = '_' + t + '_';
                 if (hasItalic) t = '/' + t + '/';
                 if (hasBold) t = '*' + t + '*';
+                if (resumeDelimitedBold && hasBold && t.startsWith('*')) {
+                    t = t.slice(1);
+                    resumeDelimitedBold = false;
+                }
                 if (link) {
                     let replayedReferenceSource = false;
                     const title = link.attrs?.title ? ' "' + escapeTitle(link.attrs.title) + '"' : '';

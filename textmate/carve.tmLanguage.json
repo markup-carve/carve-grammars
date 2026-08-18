@@ -197,6 +197,10 @@
       "end": "^\\s*\\1(?!%)[^\\n]*$",
       "name": "comment.block.carve"
     },
+    "inline_comment": {
+      "match": "\\{%[^\\n]*?%\\}",
+      "name": "comment.block.inline.carve"
+    },
     "line_comment": {
       "match": "^(?:\\A\\x{FEFF})?\\s*%%(?!%).*$",
       "name": "comment.line.percent.carve"
@@ -851,6 +855,9 @@
         },
         {
           "include": "#code_inline"
+        },
+        {
+          "include": "#inline_comment"
         },
         {
           "include": "#trailing_comment"
