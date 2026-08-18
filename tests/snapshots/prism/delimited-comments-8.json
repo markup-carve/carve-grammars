@@ -5,23 +5,15 @@
   },
   {
     "type": "table",
-    "text": " a {% hidden %} b "
+    "text": " a "
   },
   {
-    "type": "table>punctuation",
-    "text": "|"
-  },
-  {
-    "type": "table",
-    "text": " c "
-  },
-  {
-    "type": "table>punctuation",
-    "text": "|"
+    "type": "comment",
+    "text": "{% hidden %}"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": " b | c |\n"
   },
   {
     "type": "table>punctuation",

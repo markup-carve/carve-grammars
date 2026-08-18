@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "a {% one {% two %} b\n"
+    "text": "a "
+  },
+  {
+    "type": "comment",
+    "text": "{% one {% two %}"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
   }
 ]

@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "foo {% bar %} baz\n"
+    "text": "foo "
+  },
+  {
+    "scope": "comment",
+    "text": "{% bar %}"
+  },
+  {
+    "scope": null,
+    "text": " baz\n"
   }
 ]

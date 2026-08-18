@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "a {% one {% two %} b\n"
+    "text": "a "
+  },
+  {
+    "scope": "comment",
+    "text": "{% one {% two %}"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
   }
 ]
