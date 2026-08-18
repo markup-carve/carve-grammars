@@ -5,6 +5,10 @@
   },
   {
     "scope": "comment",
-    "text": "%%%\nsecret\n\nafter\n"
+    "text": "%%%"
+  },
+  {
+    "scope": null,
+    "text": "\nsecret\n\nafter\n"
   }
 ]

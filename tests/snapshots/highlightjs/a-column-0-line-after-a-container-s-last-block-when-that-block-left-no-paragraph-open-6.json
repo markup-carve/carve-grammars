@@ -5,10 +5,22 @@
   },
   {
     "scope": null,
-    "text": " %%%\nc\n"
+    "text": " "
   },
   {
     "scope": "comment",
-    "text": "%%%\ntail\n"
+    "text": "%%%"
+  },
+  {
+    "scope": null,
+    "text": "\nc\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%%%"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
   }
 ]

@@ -538,6 +538,26 @@
         relevance: 10,
     };
 
+    // The other half of the rule above: an UNTERMINATED `%{3,}` run opens
+    // nothing and degrades to a LINE comment (PART 9 S28), so it must still
+    // scope as one. Placed after `BLOCK_COMMENT` in `contains`, which consumes
+    // every fence that does have a closer - the same pair Prism carries, where
+    // the unterminated pattern sits after the block form for the same reason.
+    //
+    // The marker prefixes are here as well, so `- %%%` and `> %%%` with no
+    // closer grey their opener out too rather than losing the run entirely.
+    // Reached inside a quote through `BLOCKQUOTE.contains`, since a mode that
+    // begins at column 0 never runs on a quote line.
+    const UNTERMINATED_BLOCK_COMMENT = {
+        className: 'comment',
+        begin: RegExp(
+            '(?:^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+            + '|(?<=' + LIST_MARKER_BEFORE_BLOCK + ')'
+            + '|(?<=' + QUOTE_MARKER_BEFORE_FENCE + '))%{3,}',
+        ),
+        end: /$/,
+        relevance: 5,
+    };
     // Blockquotes: a `>` marker followed by a SPACE, or alone on its line.
     //
     // Verified against carve-rs: `>no space`, `>>x`, `>> x` and `>\tx` are all
@@ -561,7 +581,11 @@
         end: /$/,
         // The ONE construct a quote line contains: a comment fence opened on
         // the marker line, which outlives the `$` that ends every other quote.
-        contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE],
+        // The two constructs a quote line contains: a comment fence opened on
+        // the marker line, which outlives the `$` that ends every other quote,
+        // and the unterminated form of the same run, which does not (it is a
+        // line comment, so it ends where the quote line does).
+        contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE, UNTERMINATED_BLOCK_COMMENT],
         relevance: 0,
     };
 
@@ -815,7 +839,36 @@
     // `ignoreMatch()` - the same idiom the bundled markdown grammar uses.
     const BLOCK_COMMENT = {
         className: 'comment',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})[^\n]*$/,
+        // THE CLOSER IS REQUIRED UP FRONT, as in both marker-line fences below,
+        // and for the reason they already give: highlight.js has no begin->end
+        // backreference, so an opener with no closer runs to END OF FILE. That
+        // is the worst failure a highlighter has - everything below one stray
+        // `%%%` is greyed out - and PART 9 S28 says the opposite happens: an
+        // UNTERMINATED run opens nothing, degrades to a line comment, and leaves
+        // the block below it visible (`%%%` / blank / `after` renders
+        // `<p>after</p>`). Measured at every indent, column 0 included, and the
+        // swallow reproduced at all of them (carve-grammars#260).
+        //
+        // The lookahead carries the width rule too: `\1(?!%)` matches the
+        // opener's run EXACTLY, so `%%%` offered a `%%%%` closer is still
+        // unterminated - which the engine renders with the body VISIBLE between
+        // two vanished runs, not hidden.
+        // THE FORWARD SCAN IS BOUNDED, and the bound is the whole reason this
+        // lookahead is affordable. Proving there is NO closer costs a scan to
+        // end of input, and a document can hold one unmatched run per fence
+        // WIDTH, so an adversarial file pays that scan many times over: 2000
+        // runs of increasing width (2 MB) took 2045 ms unbounded and 40 ms at
+        // 8000 characters, and the bounded form grows linearly where the
+        // unbounded one grows with the square. Prism carries the same unbounded
+        // scan and measured 14.2 s on the 8 MB case, so this is the rule's cost
+        // rather than this engine's (carve-grammars#260).
+        //
+        // A closer further than 8000 characters below its opener is therefore
+        // not found, and the fence degrades to a line comment. That is the SAFE
+        // direction and the one this whole rule is about: a run that opens
+        // nothing leaves the text below it VISIBLE, where the failure being
+        // fixed here hid it.
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*$(?=[\s\S]{0,8000}?\n[ \t]*\1(?!%)[^\n]*$)/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -1045,6 +1098,7 @@
         DELETE,            // {-text-}
         BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
         BLOCK_COMMENT_ON_MARKER_LINE,  // `- %%%` - the marker is left to the list rules
+        UNTERMINATED_BLOCK_COMMENT,    // a `%%%` run with no closer - AFTER both fences
         LINE_COMMENT,      // %% to end of line
         CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE

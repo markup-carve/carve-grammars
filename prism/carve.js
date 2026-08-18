@@ -400,7 +400,20 @@
                 // The closer is a backreference, so it matches the opener's
                 // length EXACTLY: a longer run does not close a shorter fence
                 // (hence the `(?!%)`), which is what lets `%%%%` nest `%%%`.
-                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]*?^[ \t]*\1(?!%)[^\n]*$/m,
+                //
+                // THE SCAN IS BOUNDED, for the reason the highlight.js grammar
+                // states beside its own copy of this rule: proving there is no
+                // closer costs a scan to end of input, and a document can hold
+                // one unmatched run per fence WIDTH, so an adversarial file pays
+                // it many times over. 2000 runs of increasing width (2 MB) took
+                // 1801 ms here unbounded, and 8 MB took 14.2 s; the bounded form
+                // grows linearly (carve-grammars#260).
+                //
+                // A closer further than 8000 characters below its opener is not
+                // found and the run degrades to the unterminated pattern below,
+                // which is the SAFE direction: a run that opens nothing leaves
+                // the text under it VISIBLE.
+                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]{0,8000}?^[ \t]*\1(?!%)[^\n]*$/m,
                 greedy: true,
             },
             {
