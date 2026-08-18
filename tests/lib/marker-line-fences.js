@@ -68,8 +68,25 @@ export const MARKER_LINE_FENCES = [
  * have nothing to do with the fence.
  */
 export const NOT_CLOSED_AT_COLUMN_0 = {
-    src: '- %%%\nvisibleline\n%%%\ntail\n',
-    visible: 'visibleline',
+    src: '- %%%\nvisibleline\n%%%\ntailline\n',
+    // BOTH lines, and the second one is the load-bearing half. Corpus 326-6 is
+    // this document, and the engine renders `c` AND `tail` as visible
+    // paragraphs: the item's opener degrades to a line comment, the column-0
+    // run is a second one, and neither hides anything. Checking only the line
+    // ABOVE the second run passed while highlight.js took that run for an
+    // opener and swallowed everything below it to end of file
+    // (carve-grammars#260) - the one-direction check this table's own header
+    // warns about, in the shape nobody looked at.
+    visible: ['visibleline', 'tailline'],
+    // `tailline` is RECORDED for the TextMate grammar rather than asserted, and
+    // it is the same refusal `tests/lib/unterminated-fences.js` states in full:
+    // the container boundary ends the item's fence at `visibleline` correctly,
+    // and then the COLUMN-0 `%%%` below it opens `#block_comment`, which cannot
+    // require its closer up front and so runs to end of file. Prism and
+    // highlight.js both decline that opener and keep `tailline` visible.
+    // Asserted the other way round in the sweep - it must STILL swallow - so a
+    // grammar that later bounds it fails and forces this entry out.
+    textmateRecorded: ['tailline'],
 };
 
 /**

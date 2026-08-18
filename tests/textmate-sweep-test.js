@@ -31,6 +31,7 @@ import {
   QUOTE_MARKER_LINE_FENCES,
   QUOTE_NOT_CLOSED,
 } from './lib/marker-line-fences.js'
+import { UNTERMINATED_FENCES, TEXTMATE_CANNOT_BOUND } from './lib/unterminated-fences.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const grammar = JSON.parse(readFileSync(resolve(__dirname, '../textmate/carve.tmLanguage.json'), 'utf8'))
@@ -319,8 +320,22 @@ for (const [label, shape] of [
   ['a glued percent run is not a fence', GLUED_IS_NOT_A_FENCE],
   ['an unmarked line stops an unclosed quote fence', QUOTE_NOT_CLOSED],
 ]) {
-  if (isHidden(scopesOfLinesContaining(shape.src, shape.visible))) {
-    fenceFails.push(`FAIL(fence) ${label}: ${JSON.stringify(shape.visible)} must stay visible`)
+  // `visible` may name one line or several: corpus 326-6 keeps TWO paragraphs
+  // visible and checking only the first passed through a runaway comment.
+  const all = Array.isArray(shape.visible) ? shape.visible : [shape.visible]
+  const recorded = shape.textmateRecorded ?? []
+  const bad = all.filter((needle) => {
+    const scopes = scopesOfLinesContaining(shape.src, needle)
+    if (!scopes.length) return true
+    // A RECORDED needle is asserted the other way: this grammar is known to
+    // swallow it, so it failing to swallow means the record has gone stale.
+    return recorded.includes(needle) ? !isHidden(scopes) : isHidden(scopes)
+  })
+  if (bad.length) {
+    fenceFails.push(
+      `FAIL(fence) ${label}: ${JSON.stringify(bad)} - each must stay visible, `
+      + `except ${JSON.stringify(recorded)}, which is recorded as swallowed and must stay so`,
+    )
   } else { fencePass++ }
 }
 
@@ -363,3 +378,34 @@ const quoteTotal = MARKER_LINE_QUOTES.length + MARKER_LINE_NOT_A_QUOTE.length
 console.log(`  ${quoteFails.length ? '✗' : '✓'} textmate sweep: ${quotePass}/${quoteTotal} marker-line quotes take the rest of their line`)
 quoteFails.forEach(f => console.log(f))
 if (quoteFails.length) process.exit(1)
+
+// AN UNTERMINATED `%{3,}` RUN (tests/lib/unterminated-fences.js,
+// carve-grammars#260). Prism and highlight.js decline it and fall through to a
+// line comment; this grammar cannot, and TEXTMATE_CANNOT_BOUND says why.
+//
+// RECORDED IN BOTH DIRECTIONS, not skipped. A skip is a sentence nobody runs: it
+// stays true whatever the grammar does, so the day this becomes reachable the
+// record would quietly describe a shape that no longer behaves that way. Asserted
+// the other way round instead - every shape here MUST still swallow - so a change
+// that fixes one fails this check and forces the entry out of the list. Same
+// three-direction discipline the corpus over-acceptance record uses.
+let boundPass = 0
+const boundFails = []
+for (const { label, src, visible } of UNTERMINATED_FENCES) {
+  const scopes = scopesOfLinesContaining(src, visible)
+  if (!scopes.length) {
+    boundFails.push(`FAIL(unterminated) ${label}: no line carries ${JSON.stringify(visible)}`)
+  } else if (isHidden(scopes)) { boundPass++ } else {
+    boundFails.push(
+      `FAIL(unterminated) ${label}: ${JSON.stringify(visible)} is no longer swallowed - this grammar `
+      + 'now bounds an unclosed run, so delete the entry from UNTERMINATED_FENCES\'s recorded list '
+      + 'and assert it like Prism and highlight.js do',
+    )
+  }
+}
+console.log(
+  `  ${boundFails.length ? '✗' : '✓'} textmate sweep: ${boundPass}/${UNTERMINATED_FENCES.length} `
+  + `unterminated runs still swallow, as recorded (${TEXTMATE_CANNOT_BOUND})`,
+)
+boundFails.forEach(f => console.log(f))
+if (boundFails.length) process.exit(1)

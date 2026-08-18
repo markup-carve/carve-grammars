@@ -19,6 +19,7 @@ import {
     QUOTE_MARKER_LINE_FENCES,
     QUOTE_NOT_CLOSED,
 } from './lib/marker-line-fences.js';
+import { UNTERMINATED_FENCES } from './lib/unterminated-fences.js';
 
 const require = createRequire(import.meta.url);
 
@@ -233,10 +234,16 @@ if (realPrism) {
 
     ok('prism: a column-0 line ends the item, so it is not the fence closer', () => {
         const comments = prismComments(NOT_CLOSED_AT_COLUMN_0.src);
-        assert.ok(
-            !comments.some((c) => c.includes(NOT_CLOSED_AT_COLUMN_0.visible)),
-            `column-0 paragraphs must stay visible, got: ${JSON.stringify(comments)}`,
-        );
+        for (const needle of NOT_CLOSED_AT_COLUMN_0.visible) {
+            assert.ok(
+                NOT_CLOSED_AT_COLUMN_0.src.includes(needle),
+                `the table has no ${JSON.stringify(needle)} in its source`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(needle)),
+                `${JSON.stringify(needle)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+        }
     });
 
     for (const { label, src, hidden, visible } of [...QUOTE_MARKER_LINE_FENCES, ...MARKER_LINE_QUOTE_FENCES]) {
@@ -291,6 +298,23 @@ if (realPrism) {
             assert.ok(
                 !prismScopesOf(src, notQuoted).some((p) => p.includes('blockquote')),
                 `${JSON.stringify(notQuoted)} must not be scoped as a quote`,
+            );
+        });
+    }
+
+    // tests/lib/unterminated-fences.js says what these pin and why BOTH
+    // directions are asserted: the block below the run stays visible, and the
+    // run itself is still greyed out.
+    for (const { label, src, visible, run } of UNTERMINATED_FENCES) {
+        ok(`prism: ${label} with no closer opens nothing`, () => {
+            const comments = prismComments(src);
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `${JSON.stringify(visible)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                comments.some((c) => c.includes(run)),
+                `the run itself must still be a comment, got: ${JSON.stringify(comments)}`,
             );
         });
     }
@@ -531,10 +555,16 @@ if (realHljs) {
 
     ok('hljs: a column-0 line ends the item, so it is not the fence closer', () => {
         const comments = hljsComments(NOT_CLOSED_AT_COLUMN_0.src);
-        assert.ok(
-            !comments.some((c) => c.includes(NOT_CLOSED_AT_COLUMN_0.visible)),
-            `column-0 paragraphs must stay visible, got: ${JSON.stringify(comments)}`,
-        );
+        for (const needle of NOT_CLOSED_AT_COLUMN_0.visible) {
+            assert.ok(
+                NOT_CLOSED_AT_COLUMN_0.src.includes(needle),
+                `the table has no ${JSON.stringify(needle)} in its source`,
+            );
+            assert.ok(
+                !comments.some((c) => c.includes(needle)),
+                `${JSON.stringify(needle)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+        }
     });
 
     for (const { label, src, hidden, visible } of [...QUOTE_MARKER_LINE_FENCES, ...MARKER_LINE_QUOTE_FENCES]) {
@@ -579,6 +609,20 @@ if (realHljs) {
             assert.ok(
                 !hljsQuotes(src).some((q) => q.includes(notQuoted)),
                 `${JSON.stringify(notQuoted)} must not be scoped as a quote`,
+            );
+        });
+    }
+
+    for (const { label, src, visible, run } of UNTERMINATED_FENCES) {
+        ok(`hljs: ${label} with no closer opens nothing`, () => {
+            const comments = hljsComments(src);
+            assert.ok(
+                !comments.some((c) => c.includes(visible)),
+                `${JSON.stringify(visible)} must stay visible, got: ${JSON.stringify(comments)}`,
+            );
+            assert.ok(
+                comments.some((c) => c.includes(run)),
+                `the run itself must still be a comment, got: ${JSON.stringify(comments)}`,
             );
         });
     }

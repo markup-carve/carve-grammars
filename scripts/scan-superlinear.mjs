@@ -79,5 +79,56 @@ for (const r of rows) {
         + `  ${r.hl.toFixed(1).padStart(10)}  ${r.hlRatio.toFixed(2).padStart(5)}${flag}`,
     );
 }
+// SHAPES A REPEATED OPENER CANNOT REACH.
+//
+// Everything above is one unit repeated, which finds a quantifier that runs to
+// the end of the document from each of n positions. It cannot find a rule whose
+// cost comes from a DOCUMENT-WIDE SEARCH that only fails - a lookahead proving
+// there is no closer scans to end of input, and it is paid once per distinct
+// fence WIDTH, so it needs a document with many widths rather than many copies
+// of one. Measured before this section existed: 2000 `%` runs of increasing
+// width took 2.0 s in highlight.js and 1.8 s in Prism, 8 MB took 16.3 s and
+// 14.2 s, and the sweep above reported 0 superlinear throughout
+// (carve-grammars#260).
+//
+// Sized by LINE COUNT rather than bytes, because a document of distinct-width
+// runs is quadratic in its own line count - the ratio to read is time against
+// bytes, which is why both are printed.
+const widths = (lines) => {
+    const out = [];
+    for (let i = 0; i < lines; i += 1) out.push('%'.repeat(3 + i));
+    return `${out.join('\n')}\n`;
+};
+
+console.log('\nsearch shapes (cost per distinct fence width, not per position)');
+console.log(`shape                  bytes  prism      ratio    hljs       ratio`);
+for (const [label, gen] of [['increasing % widths', widths]]) {
+    const small = gen(500);
+    const large = gen(2000);
+    const bytesRatio = large.length / small.length;
+    const prism = [small, large].map((src) => time(() => Prism.tokenize(src, Prism.languages.carve)));
+    const hl = [small, large].map((src) => time(() => hljs.highlight(src, { language: 'carve' })));
+    // The input itself grows by `bytesRatio`, so LINEAR cost shows as that
+    // ratio and not as 2 - the limit is the bytes ratio itself, not a multiple
+    // of it. Measured at these two sizes, the bounded scan comes in at 4.4
+    // against a bytes ratio of 15.8 and the unbounded one at 58.2, so the two
+    // are nowhere near each other and the threshold needs no tuning margin.
+    // `SUSPECT` is deliberately not used here: it is calibrated for the
+    // repeated-opener rows above, where the input doubles rather than growing
+    // with the square of its own line count.
+    const limit = bytesRatio;
+    const prismRatio = prism[1] / Math.max(prism[0], 0.01);
+    const hlRatio = hl[1] / Math.max(hl[0], 0.01);
+    const superlinear = (ms, ratio) => ms > FLOOR && ratio > limit;
+    const flag = superlinear(prism[1], prismRatio) || superlinear(hl[1], hlRatio)
+        ? '  <-- SUPERLINEAR' : '';
+    if (flag) suspects++;
+    console.log(
+        `${label.padEnd(20)} ${String(large.length).padStart(8)}  ${prism[1].toFixed(1).padStart(9)}  ${prismRatio.toFixed(2).padStart(5)}`
+        + `  ${hl[1].toFixed(1).padStart(9)}  ${hlRatio.toFixed(2).padStart(5)}${flag}`
+        + `   (bytes x${bytesRatio.toFixed(1)}, limit ${limit.toFixed(1)})`,
+    );
+}
+
 console.log(`\n${suspects} superlinear (ratio > ${SUSPECT} with a measurable absolute time)`);
 process.exit(suspects ? 1 : 0);
