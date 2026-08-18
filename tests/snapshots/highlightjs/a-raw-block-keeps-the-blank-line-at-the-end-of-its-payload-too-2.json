@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "code",
+    "text": "```=html\n  b\n\n- s\n"
+  }
+]

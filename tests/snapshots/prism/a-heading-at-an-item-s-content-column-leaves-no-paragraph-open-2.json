@@ -1,0 +1,10 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "| a |\n  prose\ntail\n"
+  }
+]

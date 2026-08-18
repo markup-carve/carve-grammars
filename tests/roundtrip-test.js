@@ -325,12 +325,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * to lose.
  *
  * Marker-line blocks now stay on the marker line, reducing the pinned envelope
- * population from 341 to 296. Keep the exact count so a serializer change must
- * account for both newly faithful and newly lossy documents.
+ * population from 341 to 296. The six categories added by carve c5e874d add
+ * seventeen documents; seven need the envelope, taking the population to 303.
+ * Keep the exact count so a serializer change must account for both newly
+ * faithful and newly lossy documents.
  */
 assert.strictEqual(
-    envelopedFiles.length, 296,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 296`,
+    envelopedFiles.length, 303,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 303`,
 );
 
 assert.strictEqual(
