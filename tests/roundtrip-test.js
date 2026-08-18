@@ -22,10 +22,11 @@ import { listCorpusFiles, listCategories } from './lib/corpus.js';
 import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { normalizeAst } from './lib/ast-normalize.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
-import { COVERAGE, isCovered, skipReason } from './lib/coverage.js';
+import { COVERAGE, isCovered, skipReason, slugOf } from './lib/coverage.js';
 
 console.log('carve-grammars serializer round-trip:');
 
+const liveSlugs = new Set(listCategories().map(slugOf));
 const filesByCategory = new Map();
 for (const f of listCorpusFiles()) {
     if (!filesByCategory.has(f.category)) filesByCategory.set(f.category, []);
@@ -111,6 +112,54 @@ console.log(`  covered files checked: ${coveredFilesChecked}`);
 const coveredCategoryCount = listCategories().filter((category) => isCovered('tiptap', category)).length;
 console.log(`  covered categories: ${coveredCategoryCount}, skipped: ${COVERAGE.tiptap.skip.size}`);
 console.log(`  structured/source-local: ${coveredCategoryCount - wholeDocumentFallbackCategories.size}, whole-document fallback: ${wholeDocumentFallbackCategories.size}`);
+
+/*
+ * A FALLBACK ENTRY THAT NO LONGER FALLS BACK.
+ *
+ * `COVERAGE.tiptap.fallback` records, per category, the concrete reason its
+ * structured conversion is not lossless. Two gates read it today: the coverage
+ * matrix checks that covered+fallback classify every LIVE category, and that
+ * each entry carries a non-empty reason. Both ask whether the entry is
+ * well-formed. Neither asks whether it is still TRUE.
+ *
+ * That is the one-sided shape this repository has already been bitten by in the
+ * snapshot goldens, and the sibling grammar states the principle outright: a
+ * reason nobody points at is an excuse that outlived the gap it excused. A
+ * fallback entry is worse than an unexplained one, because it reads as a
+ * measured limitation - "table captions are dropped on serialize", "the
+ * converter has no node type for `comment`, so it throws" - long after the
+ * mapping that closed it landed. The next person planning work reads a map of
+ * gaps, and a quarter of it is a map of gaps that were fixed.
+ *
+ * The observable test, given every category is covered and hard-asserted above:
+ * a category whose structured conversion is genuinely lossy has at least one
+ * file riding the SOURCE ENVELOPE, because that is what the loader does when the
+ * projection is not write-identical. Zero enveloped files means the projection
+ * is faithful for the whole category and the entry has nothing left to explain.
+ *
+ * Measured when this was added: 34 of the 133 entries were in exactly that
+ * state, and are promoted to `covered` in the same change.
+ */
+{
+    const envelopedCategories = new Set(
+        envelopedFiles.map((name) => slugOf(name.replace(/-\d+$/, ''))),
+    );
+    const fallbackShouldPromote = [];
+    for (const key of COVERAGE.tiptap.fallback.keys()) {
+        const slug = slugOf(key);
+        // Only judge categories the live corpus still has; a stale KEY is the
+        // coverage matrix's job, not this one.
+        if (!liveSlugs.has(slug)) continue;
+        if (!envelopedCategories.has(slug)) fallbackShouldPromote.push(key);
+    }
+    if (fallbackShouldPromote.length) {
+        console.log('\nThe following FALLBACK categories are written back faithfully for every file.');
+        console.log('Their recorded reason no longer describes anything. Move each to');
+        console.log('tiptap.covered and delete the reason:');
+        for (const c of fallbackShouldPromote.sort()) console.log(`    - ${c}`);
+        failures++;
+    }
+}
 
 if (skipShouldPromote.length) {
     console.log('\nThe following SKIPPED categories now round-trip cleanly for every file.');
