@@ -324,27 +324,13 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * whose colon opener a lazy line demotes to text, so there is no container left
  * to lose.
  *
- * The twelve are one serializer habit seen from five angles: a block the author
- * opened ON the marker line is written back indented to the item's content
- * column.
- *
- *     - ::: d
- *       b
- *
- * comes back as
- *
- *     -   ::: d
- *       b
- *       :::
- *
- * and once the opener has moved to column 4 the body at column 2 no longer
- * reaches it, so the container degrades to literal item text. These are
- * protected fallbacks, not silent losses: the envelope keeps the source and the
- * first edit is what starts writing the projection.
+ * Marker-line blocks now stay on the marker line, reducing the pinned envelope
+ * population from 341 to 296. Keep the exact count so a serializer change must
+ * account for both newly faithful and newly lossy documents.
  */
 assert.strictEqual(
-    envelopedFiles.length, 341,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 341`,
+    envelopedFiles.length, 296,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 296`,
 );
 
 assert.strictEqual(
