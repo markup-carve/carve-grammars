@@ -254,10 +254,60 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * was written into. The document therefore keeps its source. The sibling
  * variants, whose innermost block is a link reference definition or a footnote
  * definition, survive because the definition leaves the flow entirely.
+ *
+ * 337 -> 329 when the `@markup-carve/carve` pin moved 83 commits onto carve-js
+ * main (2dc3232e). Reported in BOTH directions, because the net is a lie here:
+ * 18 documents came IN and 26 went OUT, so 44 moved under a headline of -8.
+ * The corpus did not change in this bump, so every mover is the engine.
+ *
+ * Which was checked rather than assumed. The enveloped list was dumped under
+ * both pins and diffed by name, then each of the movers was re-rendered under
+ * both engines: 50 of the 51 documents that move either ratchet are documents
+ * the new engine READS DIFFERENTLY. Not one moved because the serializer
+ * changed, because it did not.
+ *
+ * The 26 leaving are the point of the bump. Twenty-three of them are the
+ * container-content-column family the engines fixed for this release
+ * (markup-carve/carve#1364 and siblings): ten in `326-a-column-0-line-after-a-
+ * container-s-last-block-when-that-block-left-no-paragraph-open`, three each in
+ * `349`, `350` and `357`, two each in `333` and `355`, one each in `327` and
+ * `329`. `- | a | b |` over a column-0 `tail` used to put the tail INSIDE the
+ * item; it is a sibling paragraph now, which is a shape the projection writes
+ * back faithfully. The editable projection got better because the engine
+ * started parsing those documents correctly.
+ *
+ * The 18 arriving are four clusters plus four singles:
+ *
+ * - `322-an-attribute-block-reaches-the-nested-list-it-precedes` (5) and
+ *   `319-cell-attributes-bind-after-the-kind-and-alignment-markers` (4) are the
+ *   same shape, and neither is a ruling from this cycle. The old engine did not
+ *   implement either construct, so both sides agreed by mutual ignorance: on
+ *   `|={.total} Total |= 99 |` it read `{.total}` as cell TEXT, and on an
+ *   indented `{.x}` above a nested list it dropped the run. The new engine
+ *   binds both. The serializer then writes each in the WRONG PLACE - the cell
+ *   run before the markers as `|{.total}=` instead of after them, and the list
+ *   run at column 0 instead of at the item's content column, which detaches the
+ *   nested list from its item. Those are pre-existing serializer defects that
+ *   only became observable once the attribute existed to misplace. Both keep
+ *   their source, so they are protected fallbacks rather than silent losses.
+ * - `348-a-closed-inline-construct-spanning-a-verse-boundary` (3) and
+ *   `353-a-bracketed-construct-spanning-a-verse-boundary` (2) ARE rulings from
+ *   this release, so their arrival is expected: the engine started modelling a
+ *   construct the projection has no rich slot for yet.
+ * - Two are `326` moving the other way (`-7` and `-8`). Same fix, opposite
+ *   effect: `- [r]: /u` over a column-0 `tail` leaves the item EMPTY and lifts
+ *   the tail out, and an empty item followed by a sibling paragraph is a shape
+ *   the projection does not write back. That is why the split inside `326` had
+ *   to be measured rather than read off the category name.
+ * - `323-...-leaves-the-item-tight` and `344-a-comment-only-line-in-a-line-
+ *   block-is-removed-before-any-inline-run` contribute one each, and `344-3`
+ *   leaves at the same time. An unclosed code span in a line block now reaches
+ *   the end of the block and swallows the comment line, so the two variants
+ *   swap places for the same reason.
  */
 assert.strictEqual(
-    envelopedFiles.length, 337,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 337`,
+    envelopedFiles.length, 329,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 329`,
 );
 
 assert.strictEqual(
