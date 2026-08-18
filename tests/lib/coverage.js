@@ -352,6 +352,30 @@ const TIPTAP_COVERED = [
     '358-what-a-content-column-block-does-not-reach',
     '359-a-footnote-definition-s-block-runs-to-the-end-of-its-body',
     '360-a-definition-behind-an-alternating-container-prefix-registers-at-the-innermost-content-column',
+
+    // Classified with the spec bump to carve 22f7f47, which appends five
+    // categories and fourteen documents and renumbers nothing. Measured, one
+    // document at a time, not inferred from the category names: all fourteen
+    // convert WITHOUT the whole-document fallback atom and all fourteen reparse
+    // to the same AST, so every one of the five is covered and none needed a
+    // protected fallback entry.
+    //
+    // Twelve of the fourteen reach the rich projection only under a SOURCE
+    // ENVELOPE, which is still covered and is what the two ratchets report. The
+    // shape behind almost all of them is one serializer habit: a block that the
+    // author opened ON the marker line comes back indented to the item's
+    // content column, `- ::: d` as `-   ::: d`, and once the opener moves the
+    // body no longer sits where the container can see it. The two that need no
+    // envelope are the two whose blocks are ordinary item content:
+    // `363-a-task-item-s-checkbox-is-not-decided-by-its-first-block` and
+    // `364-only-lazy-folding-demotes-a-marker-line-colon-opener-2`, the variant
+    // whose colon opener is demoted to text by a lazy line and so has no
+    // container to lose.
+    '361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line',
+    '362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line',
+    '363-a-task-item-s-checkbox-is-not-decided-by-its-first-block',
+    '364-only-lazy-folding-demotes-a-marker-line-colon-opener',
+    '365-a-blank-line-before-a-sibling-marker-separates-the-items-whatever-consumed-it',
     // Promoted out of `fallback` when the reverse check in
     // tests/roundtrip-test.js was added: every file in each of these is written
     // back faithfully, so the recorded reason had nothing left to explain.

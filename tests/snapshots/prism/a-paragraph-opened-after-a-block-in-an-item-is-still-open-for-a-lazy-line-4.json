@@ -1,0 +1,10 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "| a |\n  b\n\ntail\n"
+  }
+]
