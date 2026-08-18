@@ -290,9 +290,15 @@
     // A list item's MARKER, as it may appear before a block opener on the same
     // line (the marker branches of the 'list' pattern below, plus the optional
     // task box). Used by the marker-line comment fence.
+    // EVERY SEPARATOR IS A LITERAL SPACE, never a tab: `-<TAB>a`, `1.<TAB>a` and
+    // `- [x]<TAB>a` are paragraphs in the engine, which the shared block battery
+    // already pins per marker. Written `[ \t]+` this admitted `-<TAB>%%%` as a
+    // marker-line fence, and once the quote rules started sharing the prefix it
+    // would have coloured `-<TAB>> q` as a quote on a line the language renders
+    // as prose (carve-grammars#259).
     var listMarkerBeforeBlock =
-        '[ \\t]*(?:(?:[-*][ \\t]+)*[-*][ \\t]+(?:\\[[ xX\\-_>?]\\][ \\t]+)?'
-        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ \\t]+|\\.[ \\t]+)';
+        '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
     // A line that is blank, or indented by at least one column. A COLUMN-0 line
     // is neither, and that is the point: it ends the container and with it an
@@ -305,14 +311,16 @@
     // nesting is written one marker per space (`> > x`), which is what the
     // 'blockquote' pattern below already enforces.
     //
-    // `[ \t]*`, so an indented quote inside a container is reached. A quote
-    // opened on a LIST item's own marker line (`- > %%%`) is NOT: neither of
-    // the other two grammars in this package can reach that line-start-anchored
-    // (highlight.js has no mode for a quote after a marker, and the TextMate
-    // container rules have already consumed the marker by then), and a shape
-    // one grammar handles and two do not is the drift `tests/lib/
+    // The run may itself sit after a LIST ITEM'S MARKER (`- > %%%`), which is
+    // why `listMarkerBeforeBlock` is an alternative to the plain indent rather
+    // than a separate pattern: a quote opens on an item's own marker line and
+    // takes the rest of it, and carve-js nests both the quote and whatever
+    // follows the marker inside the item. carve-grammars#246 left this out
+    // because two of the three grammars here could not reach it; both can now,
+    // so the reason for leaving it out has inverted - a shape one grammar
+    // handles and two do not is exactly the drift `tests/lib/
     // marker-line-fences.js` exists to prevent.
-    var quoteMarkerBeforeBlock = '[ \\t]*((?:> )+)';
+    var quoteMarkerBeforeBlock = '(?:' + listMarkerBeforeBlock + '|[ \\t]*)((?:> )+)';
 
     // A line that carries a quote marker. Everything from a quote-marked fence
     // opener to its closer has to be one of these: an UNMARKED line is where
@@ -677,14 +685,6 @@
         // `>\tx` is a paragraph too. Matching a run, or accepting any
         // whitespace, colored `>>= operator` and `>=3 items` as quotes when the
         // language calls them prose (markup-carve/carve#525).
-        'blockquote': {
-            // Anchored `^[ \t]*` on purpose - no container model here, see the
-            // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: .*)?$/m,
-            inside: Object.assign({
-                'punctuation': /^\uFEFF?[ \t]*>/,
-            }, inline),
-        },
 
         // List markers: -, * and ordered (1. a) i.), task [ ]/[x]. The
         // definition-list description marker `:  ` used to be a third branch
@@ -721,6 +721,43 @@
             inside: {
                 'constant': /\[[ xX\-_>?]\]/,
             },
+        },
+        // AFTER 'list', deliberately, and that placement is the whole of the
+        // marker-line fix (carve-grammars#259).
+        //
+        // A quote may open on a list item's OWN MARKER LINE - `- > x`, `1. > x`,
+        // `- - > x`, `- [ ] > x` - and it takes the rest of that line: carve-js
+        // renders `<ul><li><blockquote><p>x</p></blockquote></li></ul>`. This
+        // pattern is line-anchored and cannot see past a marker, so while it ran
+        // BEFORE 'list' the whole line reached 'list', the marker was scoped and
+        // everything after it carried no scope at all.
+        //
+        // Run after 'list', the marker is a token before this rule is reached and
+        // what is left of the line is a string beginning at the `>`, which `^`
+        // matches - so both scopes land: the marker stays a list (its checkbox
+        // included) and the quote takes the rest. That is tree-sitter-carve's
+        // split too, with the `block_quote` inside `list_item_content` beside
+        // the `list_marker_*` rather than over it.
+        //
+        // A LOOKBEHIND WAS THE OTHER OPTION AND IS WORSE. Keeping the marker in
+        // a Prism `lookbehind` group leaves `- ` as a fragment with nothing
+        // after it, and 'list' requires content past its marker (MARKER REQUIRES
+        // CONTENT, below), so the marker ends up scoped as nothing - which is
+        // what the marker-line comment fence above does today. Measured both
+        // ways against the 2490 goldens: the same 20 move either way, and only
+        // this one keeps the marker.
+        //
+        // No line-start conflict is created by the move: 'list' needs a bullet
+        // or ordered marker at the line start and this rule needs a `>` there,
+        // so no line can match both at the same position, and only the leftover
+        // of a marker line behaves differently.
+        'blockquote': {
+            // Anchored `^[ \t]*` on purpose - no container model here, see the
+            // indented-block-openers note in the module docblock (carve-grammars#138).
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: .*)?$/m,
+            inside: Object.assign({
+                'punctuation': /^\uFEFF?[ \t]*>/,
+            }, inline),
         },
 
         // Definition-list entry: `:: term` through its `:  def` line(s)

@@ -12,6 +12,9 @@ import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 import {
     MARKER_LINE_FENCES,
+    MARKER_LINE_NOT_A_QUOTE,
+    MARKER_LINE_QUOTES,
+    MARKER_LINE_QUOTE_FENCES,
     NOT_CLOSED_AT_COLUMN_0,
     QUOTE_MARKER_LINE_FENCES,
     QUOTE_NOT_CLOSED,
@@ -236,7 +239,7 @@ if (realPrism) {
         );
     });
 
-    for (const { label, src, hidden, visible } of QUOTE_MARKER_LINE_FENCES) {
+    for (const { label, src, hidden, visible } of [...QUOTE_MARKER_LINE_FENCES, ...MARKER_LINE_QUOTE_FENCES]) {
         ok(`prism: a comment fence opened on ${label} hides its body and closes`, () => {
             const comments = prismComments(src);
             assert.ok(comments.length > 0, `expected a comment token for ${JSON.stringify(src)}`);
@@ -247,6 +250,47 @@ if (realPrism) {
             assert.ok(
                 !comments.some((c) => c.includes(visible)),
                 `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    // tests/lib/marker-line-fences.js says what MARKER_LINE_QUOTES pins and why
+    // BOTH directions are asserted here: the quoted run carries a quote scope,
+    // and the block past the item carries none.
+    const prismScopesOf = (src, needle) => {
+        const out = [];
+        const walk = (tok, path) => {
+            if (typeof tok === 'string') {
+                if (tok.includes(needle)) out.push(path);
+                return;
+            }
+            if (Array.isArray(tok)) { tok.forEach((t) => walk(t, path)); return; }
+            walk(tok.content, path ? `${path}>${tok.type}` : tok.type);
+        };
+        walk(realPrism.tokenize(src, carvePrism), '');
+        return out;
+    };
+
+    for (const { label, src, quoted, outside } of MARKER_LINE_QUOTES) {
+        ok(`prism: a quote opened on ${label} takes the rest of the line`, () => {
+            const quotedScopes = prismScopesOf(src, quoted);
+            assert.ok(quotedScopes.length > 0, `no run holds ${JSON.stringify(quoted)}`);
+            assert.ok(
+                quotedScopes.some((p) => p.includes('blockquote')),
+                `the quoted run must carry a quote scope, got: ${JSON.stringify(quotedScopes)}`,
+            );
+            assert.ok(
+                !prismScopesOf(src, outside).some((p) => p.includes('blockquote')),
+                `${JSON.stringify(outside)} must be outside the quote`,
+            );
+        });
+    }
+
+    for (const { label, src, notQuoted } of MARKER_LINE_NOT_A_QUOTE) {
+        ok(`prism: ${label} on a marker line is not a quote`, () => {
+            assert.ok(
+                !prismScopesOf(src, notQuoted).some((p) => p.includes('blockquote')),
+                `${JSON.stringify(notQuoted)} must not be scoped as a quote`,
             );
         });
     }
@@ -493,7 +537,7 @@ if (realHljs) {
         );
     });
 
-    for (const { label, src, hidden, visible } of QUOTE_MARKER_LINE_FENCES) {
+    for (const { label, src, hidden, visible } of [...QUOTE_MARKER_LINE_FENCES, ...MARKER_LINE_QUOTE_FENCES]) {
         ok(`hljs: a comment fence opened on ${label} hides its body and closes`, () => {
             const comments = hljsComments(src);
             assert.ok(comments.length > 0, `expected a comment span for ${JSON.stringify(src)}`);
@@ -504,6 +548,37 @@ if (realHljs) {
             assert.ok(
                 !comments.some((c) => c.includes(visible)),
                 `the comment must end at its closer, got: ${JSON.stringify(comments)}`,
+            );
+        });
+    }
+
+    // The same two directions in highlight.js's vocabulary: the quoted run sits
+    // inside an `hljs-quote` span and the block past the item does not.
+    const hljsQuotes = (src) => [
+        ...realHljs.highlight(src, { language: 'carve' }).value
+            .matchAll(/<span class="hljs-quote">([\s\S]*?)<\/span>/g),
+    ].map((m) => m[1]);
+
+    for (const { label, src, quoted, outside } of MARKER_LINE_QUOTES) {
+        ok(`hljs: a quote opened on ${label} takes the rest of the line`, () => {
+            const quotes = hljsQuotes(src);
+            assert.ok(quotes.length > 0, `expected a quote span for ${JSON.stringify(src)}`);
+            assert.ok(
+                quotes.some((q) => q.includes(quoted)),
+                `the quoted run must be INSIDE the quote, got: ${JSON.stringify(quotes)}`,
+            );
+            assert.ok(
+                !quotes.some((q) => q.includes(outside)),
+                `the quote must end at the item, got: ${JSON.stringify(quotes)}`,
+            );
+        });
+    }
+
+    for (const { label, src, notQuoted } of MARKER_LINE_NOT_A_QUOTE) {
+        ok(`hljs: ${label} on a marker line is not a quote`, () => {
+            assert.ok(
+                !hljsQuotes(src).some((q) => q.includes(notQuoted)),
+                `${JSON.stringify(notQuoted)} must not be scoped as a quote`,
             );
         });
     }

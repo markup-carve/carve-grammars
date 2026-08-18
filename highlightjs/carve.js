@@ -471,6 +471,26 @@
         relevance: 10,
     };
 
+    // A list item's MARKER, as it may appear before a block opener on the same
+    // line. Matched in a LOOKBEHIND everywhere it is used rather than consumed,
+    // so `TASK_LIST`/`LIST_BULLET`/`LIST_NUMBER` still scope it - which is
+    // tree-sitter-carve's split too, with the block INSIDE `list_item_content`
+    // beside the `list_marker_*` rather than over it.
+    //
+    // Used by the marker-line comment fence AND by the quote rules below: a
+    // quote may open on an item's own marker line (`- > x`), where carve-js
+    // nests the quote and everything after the marker inside the item.
+    // EVERY SEPARATOR IS A LITERAL SPACE, never a tab: `-<TAB>a`, `1.<TAB>a` and
+    // `- [x]<TAB>a` are paragraphs in the engine, which the shared block battery
+    // already pins per marker. Written `[ \t]+` this admitted `-<TAB>%%%` as a
+    // marker-line fence, and with the quote rules sharing the prefix it coloured
+    // `-<TAB>> q` as a quote on a line the language renders as prose
+    // (carve-grammars#259).
+    const LIST_MARKER_BEFORE_BLOCK =
+        '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+        + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
+
     // A comment fence may open on a BLOCK-QUOTE marker line (`> %%%`), and then
     // its body is hidden exactly as it is anywhere else - \u00A724 S2 and \u00A728 make a
     // comment's body verbatim and invisible WHEREVER the fence sits. Corpus 70
@@ -485,7 +505,12 @@
     // on a quote line at all. Reached from here the marker stays a quote, which
     // is tree-sitter-carve's split too - the `fenced_comment_block` sits inside
     // the quote's `content`, beside the `block_quote_marker`.
-    const QUOTE_MARKER_BEFORE_FENCE = '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:> )+';
+    // The marker run may itself follow a LIST ITEM'S marker (`- > %%%`), so the
+    // list prefix is an alternative to the plain line start rather than a rule of
+    // its own. carve-grammars#246 left that shape out because two of the three
+    // grammars here could not reach it; a lookbehind reaches it here.
+    const QUOTE_MARKER_BEFORE_FENCE =
+        '(?:' + LIST_MARKER_BEFORE_BLOCK + '|^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*)(?:> )+';
     // A line carrying a quote marker of its own. Every line from opener to
     // closer must be one: an UNMARKED line is where the quote can end, and the
     // engine degrades an unclosed opener to a line comment rather than hiding
@@ -523,7 +548,16 @@
         className: 'quote',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?= |$)/,
+        // A LIST ITEM'S MARKER may stand before the `>` on the same line
+        // (`- > x`, `1. > x`, `- - > x`, `- [ ] > x`). Reached through a
+        // lookbehind so the marker is not consumed and the list rules still
+        // scope it. Without this branch the marker scoped as a bullet and the
+        // rest of the line carried no scope at all, where carve-js nests it
+        // (carve-grammars#259).
+        begin: RegExp(
+            '(?:^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
+            + '>(?= |$)',
+        ),
         end: /$/,
         // The ONE construct a quote line contains: a comment fence opened on
         // the marker line, which outlives the `$` that ends every other quote.
@@ -808,10 +842,8 @@
     // `TASK_LIST`/`LIST_BULLET`/`LIST_NUMBER` still scope it as a bullet (which
     // is what tree-sitter-carve does too: a `fenced_comment_block` sits INSIDE
     // `list_item_content`, beside a `list_marker_*`, not over it).
-    const LIST_MARKER_BEFORE_FENCE =
-        '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-        + '(?:(?:[-*][ \\t]+)*[-*][ \\t]+(?:\\[[ xX\\-_>?]\\][ \\t]+)?'
-        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ \\t]+|\\.[ \\t]+)';
+    // `LIST_MARKER_BEFORE_BLOCK` is defined above BLOCKQUOTE, which needs the
+    // same prefix for `- > x`.
     // A line that is blank, or indented by at least one column. A COLUMN-0 line
     // is neither, and that is the point: it ends the container and with it the
     // fence, so it must not be skipped over while looking for the closer
@@ -826,7 +858,7 @@
         // opener is the common case (a column-0 line ends the item), where the
         // right answer is a one-line comment, not a swallowed document.
         begin: RegExp(
-            '(?<=' + LIST_MARKER_BEFORE_FENCE + ')(%{3,})(?!%)[^\\n]*$'
+            '(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(%{3,})(?!%)[^\\n]*$'
             + '(?=' + BLANK_OR_INDENTED_LINE + '*?\\n[ \\t]+\\1(?!%)[^\\n]*$)',
         ),
         'on:begin': (m, resp) => {
