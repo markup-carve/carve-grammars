@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "quote",
+    "text": "> \\# heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> C\\# is a language"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\#"
+  },
+  {
+    "scope": null,
+    "text": " heading\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\#"
+  },
+  {
+    "scope": null,
+    "text": "tag rest\n"
+  }
+]

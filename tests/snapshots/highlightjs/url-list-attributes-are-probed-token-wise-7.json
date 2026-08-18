@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[y](safe.html){ping=\"https://example.com/a,data:x\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

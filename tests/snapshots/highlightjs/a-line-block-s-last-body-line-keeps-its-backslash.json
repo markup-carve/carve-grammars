@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\na"
+  },
+  {
+    "scope": "meta",
+    "text": "\\"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "a\nb"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "/i"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

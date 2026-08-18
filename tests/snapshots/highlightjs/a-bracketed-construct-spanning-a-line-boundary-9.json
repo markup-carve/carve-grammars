@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "A "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/a\nb/}"
+  },
+  {
+    "scope": null,
+    "text": " run.\n"
+  }
+]

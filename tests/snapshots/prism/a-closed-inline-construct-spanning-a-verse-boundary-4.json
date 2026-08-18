@@ -1,0 +1,34 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
+    "text": "\n*Roses are red,"
+  },
+  {
+    "type": "div>hard-break",
+    "text": "\\"
+  },
+  {
+    "type": "div",
+    "text": "\nViolets are blue.*\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

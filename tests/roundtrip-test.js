@@ -170,10 +170,27 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * The projection has no slot for a block that starts on a marker line, so the
  * document keeps its source and the first edit is what starts writing the
  * projection. The other six of the seven are written back faithfully.
+ *
+ * 290 -> 336 with the spec bump to carve 287b4b8, attributed the same way
+ * before it was raised. The enveloped list was dumped under both pins and
+ * diffed by SLUG: 46 names are added and NONE is removed, so the pre-existing
+ * corpus still contributes exactly 290, document for document.
+ *
+ * Of the 46, thirty-nine come from the seventeen categories the bump adds. The
+ * remaining seven all sit in one PRE-EXISTING category,
+ * `a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-
+ * paragraph-open` - which is why the split had to be checked rather than
+ * assumed from the category list. That category grew from 13 files to 29, and
+ * all seven are among the sixteen NEW variants (-14, -15, -16, -17, -19, -23,
+ * -29). Not one document that used to be written back faithfully stopped being.
+ *
+ * The pin then moved again to 0490ae5, which adds category 359 and two more
+ * documents. The count does NOT move: both are written back faithfully, so
+ * 336 covers 1241 documents rather than 1239.
  */
 assert.strictEqual(
-    envelopedFiles.length, 290,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 290`,
+    envelopedFiles.length, 336,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 336`,
 );
 
 assert.strictEqual(

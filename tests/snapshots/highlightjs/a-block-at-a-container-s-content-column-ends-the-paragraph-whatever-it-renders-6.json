@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [r]: /u"
+  },
+  {
+    "scope": null,
+    "text": "\n    \"T\"\ntail\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

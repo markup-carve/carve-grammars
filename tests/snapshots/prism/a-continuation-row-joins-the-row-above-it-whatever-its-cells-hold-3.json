@@ -1,0 +1,50 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": "a "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " - "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " cont "
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

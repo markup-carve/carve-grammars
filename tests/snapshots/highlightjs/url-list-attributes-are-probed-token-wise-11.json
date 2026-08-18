@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[y](safe.html){ping=\"java script:alert(1)\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

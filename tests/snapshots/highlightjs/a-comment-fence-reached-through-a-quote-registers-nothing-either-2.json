@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "comment",
+    "text": "%%%\n> [^f]: note\n> %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](safe.png){srcset=\"safe.png 1x,javascript:alert(1) 2x\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^f]: t"
+  },
+  {
+    "scope": null,
+    "text": "\n    more\ntail\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

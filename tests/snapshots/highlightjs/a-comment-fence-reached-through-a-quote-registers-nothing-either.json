@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "comment",
+    "text": "%%%\n> [r]: /url\n> %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]
