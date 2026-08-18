@@ -327,12 +327,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * Marker-line blocks now stay on the marker line, reducing the pinned envelope
  * population from 341 to 296. The six categories added by carve c5e874d add
  * seventeen documents; seven need the envelope, taking the population to 303.
+ * The next spec pin adds four collected-definition variants that all require
+ * the envelope, while inherited table alignment round-trips structurally: 307.
  * Keep the exact count so a serializer change must account for both newly
  * faithful and newly lossy documents.
  */
 assert.strictEqual(
-    envelopedFiles.length, 303,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 303`,
+    envelopedFiles.length, 307,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 307`,
 );
 
 assert.strictEqual(

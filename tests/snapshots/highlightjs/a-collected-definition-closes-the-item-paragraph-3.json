@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [^f]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n    more\ntail\n"
+  }
+]
