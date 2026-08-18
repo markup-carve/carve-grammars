@@ -266,20 +266,8 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // of behind a visible fallback, so this list staying quiet across an 83-commit
 // engine move is the strongest single signal in the measurement.
 //
-// 239 -> 251 with the spec bump to carve 22f7f47, which takes the corpus from
-// 1245 documents to 1259. Both directions: 12 in and ZERO out, the same twelve
-// the envelope ratchet records, and for the same reason - a block opened on the
-// marker line is written back at the item's content column, and the body no
-// longer reaches the opener. The two that stay render-equivalent are
-// `363-a-task-item-s-checkbox-is-not-decided-by-its-first-block` and
-// `364-only-lazy-folding-demotes-a-marker-line-colon-opener-2`.
-//
-// Twelve of fourteen, measured per document rather than assumed: on the
-// previous bump four new documents moved this ratchet by ONE, so the document
-// count is not the answer. Nothing pre-existing moved, which was checked by
-// SOURCE TEXT rather than by filename: of the 1234 distinct sources present
-// under both submodule commits, zero flipped in either direction.
-//
-// The `fixed` list did not fire on this bump either.
-assert.strictEqual(changed.length, 251, `mounted rich projection changed for ${changed.length} corpus documents`);
+// Marker-line block serialization and attribute placement reduce the protected
+// fallback population from 251 to 203. Pin both directions: an unexplained
+// increase is a regression, while a decrease must retire its stale reasons.
+assert.strictEqual(changed.length, 203, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
