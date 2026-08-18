@@ -28,7 +28,7 @@
  */
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
-import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { listCorpusFiles } from './lib/corpus.js';
 import { coveredCategories, slugOf } from './lib/coverage.js';
@@ -223,6 +223,46 @@ for (const file of corpus) {
         const tokens = hljsTokens(file.source);
         sanityHljs(file.name, file.source, tokens);
         snapshot('highlightjs', file.name, tokens);
+    }
+}
+
+/*
+ * ORPHAN GOLDENS: a golden whose corpus file is gone.
+ *
+ * The comparison above is one-sided by construction. It walks the CORPUS and
+ * asks each file for its golden, so a NEW corpus file is a hard failure (no
+ * golden) - but a REMOVED one is invisible, because nothing ever walks the
+ * goldens and asks which corpus file they belong to. The directory only grows.
+ *
+ * That direction matters more than it sounds. A stale golden is a recorded
+ * answer to a question the language stopped asking, and it reads exactly like
+ * a live one: same shape, same slug, sitting in the same directory. It also
+ * hides a corpus that SHRANK - delete a document upstream and this suite stays
+ * green with the golden still in the tree, so `snapshots:update` keeps
+ * rewriting a file for a document that no longer exists.
+ *
+ * Measured while adding this: four goldens per grammar had outlived their
+ * category (`a-semantic-span-keeps-its-wrapper-unless-consumption-empties-it`,
+ * retired upstream), and nothing here could say so.
+ */
+{
+    const liveSlugs = new Set(corpus.map((f) => slugOf(f.name)));
+    const orphans = [];
+    for (const grammar of ['prism', 'highlightjs']) {
+        const dir = `${SNAP_DIR}/${grammar}`;
+        if (!existsSync(dir)) continue;
+        for (const file of readdirSync(dir)) {
+            if (!file.endsWith('.json')) continue;
+            const slug = file.replace(/\.json$/, '');
+            if (!liveSlugs.has(slug)) orphans.push(`${grammar}/${file}`);
+        }
+    }
+    if (orphans.length) {
+        failures += orphans.length;
+        console.log(`  \u2717 ${orphans.length} golden(s) have no corpus file:`);
+        for (const o of orphans.sort()) console.log(`      - ${o}`);
+        console.log('      the corpus document was removed or renamed upstream;');
+        console.log('      delete the golden, or restore the document it belongs to');
     }
 }
 
