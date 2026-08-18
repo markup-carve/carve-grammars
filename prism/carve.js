@@ -338,6 +338,10 @@
         // is a comment and its body must stay scoped as one.
         'comment': [
             {
+                pattern: /\{%[^\n]*?%\}/,
+                greedy: true,
+            },
+            {
                 // A fence may open on a list item's MARKER LINE (`- %%%`), and
                 // then its body is hidden exactly as it is anywhere else - §24
                 // S2 and §28 make a comment's body verbatim and invisible

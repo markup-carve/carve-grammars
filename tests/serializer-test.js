@@ -71,6 +71,14 @@ check('an editorial comment does not escape its content',
     doc(para(text('a '), text(' note *not markup* ', 'carveCriticComment'), text(' b'))),
     'a {# note *not markup* #} b');
 
+check('a delimited inline comment preserves the following text',
+    doc(para(text('foo '), { type: 'carveCommentInline', attrs: { content: 'bar', delimited: true } }, text(' baz'))),
+    'foo {% bar %} baz');
+
+check('a delimited inline comment stays glued inside a mark',
+    doc(para(text('bo', 'bold'), { type: 'carveCommentInline', attrs: { content: 'c', delimited: true }, marks: [{ type: 'bold' }] }, text('ld', 'bold'), text(' text'))),
+    '*bo{% c %}ld* text');
+
 // A `]` inside a linked comment has no clean answer: escaping it keeps the
 // link and silently corrupts the comment, since no escape is resolved inside
 // `{# ... #}`. Content integrity wins - the label ends early and the link
@@ -191,6 +199,22 @@ check('list item: paragraph then code block',
         ] },
     ] }),
     '- a\n\n  ```\n  x=1\n  ```');
+
+check('list item: code block opened on the marker line',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [
+            { type: 'codeBlock', attrs: { language: '' }, content: [{ type: 'text', text: 'b' }] },
+        ] },
+    ] }),
+    '- ```\n  b\n  ```');
+
+check('list item: div opened on the marker line',
+    doc({ type: 'bulletList', content: [
+        { type: 'listItem', content: [
+            { type: 'carveDiv', attrs: { class: 'd' }, content: [para(text('b'))] },
+        ] },
+    ] }),
+    '- ::: d\n  b\n  :::');
 
 check('list item: paragraph then block quote',
     doc({ type: 'bulletList', content: [

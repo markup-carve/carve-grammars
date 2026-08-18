@@ -185,6 +185,7 @@ export const CONSTRUCTS = [
     { name: "inline math", sample: "a $`e=mc^2` b", payload: "e=mc^2", textmate: "markup.math" },
     { name: "inline literal", sample: "a !`/kaet/` b", payload: "/kaet/", textmate: "markup.raw.inline.content" },
     { name: "inline literal multi", sample: "a !``x ` y`` b", payload: "x ` y", textmate: "markup.raw.inline.content" },
+    { name: "delimited inline comment", sample: "a {% hidden %} b", payload: "hidden", textmate: "comment.block.inline" },
     { name: "inline extension", sample: ":youtube[ID]{.a}", payload: "youtube", textmate: "extension" },
     { name: "inline extension with attrs", sample: "a :kbd[Ctrl]{.k} b", payload: "Ctrl", textmate: "string.unquoted.extension" },
     { name: "symbol shortcode", sample: "Great :rocket: end", payload: "rocket", textmate: "constant.language.symbol" },

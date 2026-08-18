@@ -6,6 +6,14 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Add `{% … %}` delimited inline comments to the Prism, highlight.js and
+  TextMate/Shiki grammars, and preserve that spelling in the Tiptap serializer
+  without turning the remainder of its line into a comment
+  (markup-carve/carve-grammars#247, #265).
+- Keep list marker-line block openers at the marker and serialize cell
+  attributes after their kind/alignment markers; indent nested-list attribute
+  lines to the parent content column (markup-carve/carve-grammars#266, #267).
+
 - **An attribute run comes back in the order it was WRITTEN.** `{key=c .a #b}`
   returned `{#b .a key="c"}` - the same document under a different spelling,
   which makes a formatter's contract unmeetable: an editor has to be able to

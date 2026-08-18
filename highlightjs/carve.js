@@ -812,14 +812,12 @@
     // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
     // CriticMarkup comment `{# ... #}`.
     //
-    // An earlier rule here matched `{% ... %}` as Jinja/Liquid syntax that did
-    // not exist in Carve. That was true when it was written: §21a
-    // (markup-carve/carve#1239) has since taken Djot's delimited comment
-    // unchanged, and the corpus pins it in the eight `321-delimited-comments*`
-    // documents. It is still absent from all four grammars in the org on
-    // purpose - the pinned engine renders `a {% hidden %} b` with the braces
-    // intact, so scoping it would hide text the reader's engine prints
-    // (carve-grammars#247). Do not delete a `{% %}` rule as unsupported syntax.
+    const DELIMITED_COMMENT = {
+        className: 'comment',
+        begin: /\{%/,
+        end: /%\}/,
+        relevance: 5,
+    };
     const LINE_COMMENT = {
         className: 'comment',
         begin: /(?:^|(?<=\s))%%(?!%)/,
@@ -1099,6 +1097,7 @@
         BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
         BLOCK_COMMENT_ON_MARKER_LINE,  // `- %%%` - the marker is left to the list rules
         UNTERMINATED_BLOCK_COMMENT,    // a `%%%` run with no closer - AFTER both fences
+        DELIMITED_COMMENT, // {% ... %}
         LINE_COMMENT,      // %% to end of line
         CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
