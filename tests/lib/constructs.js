@@ -489,6 +489,16 @@ export const LITERALS = [
         payload: 'v>',
         scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
     },
+    // `~>` reaches the rule by a different route than `v>`. Before #277 the
+    // alternation admitted BOTH orders, and a leading `~` followed by `>` or `<`
+    // had its own branch - the pair could have been fixed for `v>` and left
+    // scoping `~>`. One case per route, so a partial fix cannot pass.
+    {
+        name: 'a vertical-first middle pair is content, not alignment',
+        sample: '|~> value |\n',
+        payload: '~>',
+        scopes: { prism: 'operator', highlightjs: 'meta', textmate: 'keyword.operator.table.alignment' },
+    },
     // THE COUNTER-EXAMPLE TO THE BRACKET-RUN CONSTRUCTS ABOVE (carve-grammars#226).
     //
     // An UNBALANCED opener is not a label. `a [outer[z](/u) b` renders
