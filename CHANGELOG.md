@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Changed
 
+- A vertical-first middle pair (`~>`) is pinned as ordinary cell content alongside `v>`. The two reach the alignment rule by different routes, so a partial fix could pass on one and scope the other.
 - TextMate scopes vertical table alignment only in a two-axis run with a horizontal partner; lone `^` and `v` remain ordinary cell content.
 - The Carve engine is an ordinary registry range (`^0.1.4`) instead of a pinned carve-js commit. Installing 0.1.4 cloned the engine over git, which skips npm's integrity check, needs git and GitHub reachability at install time, and stops tracking engine releases. Fixes #274.
 
