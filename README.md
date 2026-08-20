@@ -6,7 +6,14 @@ Grammars for the [Carve](https://github.com/markup-carve/carve) markup language:
 - **Prism** and **highlight.js** syntax-highlighting grammars for rendering Carve source on the web;
 - a **TextMate** grammar (`textmate/carve.tmLanguage.json`) for TextMate-based highlighters such as Shiki (used by VitePress).
 
-Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The Tiptap mark mapping mirrors `carve-php`'s `HtmlToCarve` converter; the highlighting grammars mirror the canonical token set in [`carve/resources/grammar.ebnf`](https://github.com/markup-carve/carve) and the TextMate grammar in [vscode-carve](https://github.com/markup-carve/vscode-carve).
+Modeled on [djot-grammars](https://github.com/php-collective/djot-grammars), adapted to Carve's syntax. The Tiptap mark mapping mirrors `carve-php`'s `HtmlToCarve` converter; the highlighting grammars mirror the canonical token set in [`carve/resources/grammar.ebnf`](https://github.com/markup-carve/carve).
+
+The TextMate grammar here is a **separate lineage** from the one in
+[vscode-carve](https://github.com/markup-carve/vscode-carve), not a copy of it. The two
+agree on the constructs they cover and differ in how they name scopes - this one carries
+116 scope names against vscode-carve's 151, with `entity.name.tag.*` where that one uses
+`entity.name.type.*`, and so on. Neither is derived from the other, and a scope name
+present here is not a promise that the editor grammars use the same one.
 
 > **Status:** Tiptap integration, plus Prism, highlight.js and TextMate grammars.
 > Sibling editor grammars live in their own repos: editor-bundled **TextMate** copies in
