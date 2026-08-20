@@ -8,11 +8,19 @@
     "text": " a\n"
   },
   {
-    "scope": "punctuation",
-    "text": "+"
+    "scope": "bullet",
+    "text": "  -"
   },
   {
     "scope": null,
-    "text": "\nc\n"
+    "text": " b\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  +"
+  },
+  {
+    "scope": null,
+    "text": "\n  c\n"
   }
 ]

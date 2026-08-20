@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\na "
+  },
+  {
+    "scope": "string",
+    "text": "!`b\nc d\n:::\n"
+  }
+]

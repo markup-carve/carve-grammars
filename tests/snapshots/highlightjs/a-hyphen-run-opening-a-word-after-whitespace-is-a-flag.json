@@ -1,0 +1,50 @@
+[
+  {
+    "scope": null,
+    "text": "git log --oneline and --force-with-lease stay literal.\n\nBut pages 1"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": "10, the Mon"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": "Fri window, a"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "- b"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " and a "
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " b all convert.\n"
+  }
+]

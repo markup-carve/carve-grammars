@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "<!"
+  },
+  {
+    "type": "typography",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": " a comment "
+  },
+  {
+    "type": "typography",
+    "text": "-->"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

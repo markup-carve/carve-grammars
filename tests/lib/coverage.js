@@ -432,6 +432,27 @@ const TIPTAP_COVERED = [
     '90-superscript-in-a-table-cell',
     '98-table-row-attributes',
     '99-table-header-cell-rowspan',
+
+    // Arrived with the bump to bfec478 (carve 0.1.3-62). Measured with the
+    // round-trip loop rather than classified by eye: every file in each of
+    // these converts to rich ProseMirror nodes - none falls back to a
+    // whole-document `carveUnsupported` atom - and reparses to the same AST.
+    // Several ride the source envelope, which is a write-identity note and not
+    // a coverage one, so they belong here rather than in `fallback`.
+    '376-pipe-tables-can-state-head-and-foot-row-counts',
+    '377-an-unclosed-inline-literal-reaches-the-end-of-its-block',
+    '378-a-terminal-comment-in-a-quote-leaves-no-paragraph-open',
+    '379-a-reference-definition-cannot-take-its-destination-from-the-next-line',
+    '380-a-terminal-comment-line-still-leaves-an-empty-verse-line',
+    '381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item',
+    '382-a-marker-line-link-definition-is-collected-where-no-paragraph-is-open',
+    '383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container',
+    '384-a-continuation-marker-attaches-only-a-flush-left-block',
+    '385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag',
+    '386-the-doubled-run-is-the-canonical-arrow-in-both-families',
+    '387-a-braced-hyphen-pair-is-an-en-dash',
+    '388-an-empty-brace-pair-is-not-a-construct',
+    '389-a-boolean-attribute-does-not-start-with-an-underscore',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

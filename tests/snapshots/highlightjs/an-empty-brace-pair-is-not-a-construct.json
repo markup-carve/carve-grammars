@@ -1,0 +1,118 @@
+[
+  {
+    "scope": null,
+    "text": "Empty pairs are text: "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{//}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "strong",
+    "text": "{**}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{__}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "deletion",
+    "text": "{~~}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "built_in",
+    "text": "{^^}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "built_in",
+    "text": "{,,}"
+  },
+  {
+    "scope": null,
+    "text": " {"
+  },
+  {
+    "scope": "addition",
+    "text": "=="
+  },
+  {
+    "scope": null,
+    "text": "} "
+  },
+  {
+    "scope": "addition",
+    "text": "{++}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "{##}"
+  },
+  {
+    "scope": null,
+    "text": ".\n\nA pair that holds something is the construct: "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/i/}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "strong",
+    "text": "{*b*}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "deletion",
+    "text": "{~s~}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "addition",
+    "text": "{+ins+}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "{# c #}"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

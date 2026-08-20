@@ -273,5 +273,23 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // also need the protected source envelope; inherited table alignment does not,
 // taking the measured population to 211. Pin both directions: an unexplained increase is a
 // regression, while a decrease must retire its stale reasons.
-assert.strictEqual(changed.length, 211, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// The bump to bfec478 takes it to 230. The nineteen added are all in the
+// fourteen NEW categories, and the pre-existing population is still exactly
+// 211 - counted, not inferred, by splitting the changed list on the category
+// prefix, so nothing flipped in either direction under the new engine:
+//
+//     376 head-and-foot-row-counts          1   382 marker-line-link-def     1
+//     377 unclosed-inline-literal           3   383 lazy-marker-line-def     2
+//     379 reference-definition-destination  2   384 continuation-flush-left  1
+//     380 terminal-comment-line-verse       1   388 empty-brace-pair         1
+//     381 resumed-lazy-run                  4   389 boolean-attr-underscore  3
+//
+// Every one is a definition, a marker-line collection or an attribute
+// placement - the three families this projection has never held structurally.
+// The inline rulings in the same pin (385 hyphen-run flags, 386 canonical
+// arrows, 387 braced en dash, 378 terminal comment in a quote) add nothing
+// here, which is the expected shape: an inline ruling does not disturb the
+// block projection.
+assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

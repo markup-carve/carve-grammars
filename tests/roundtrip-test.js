@@ -331,10 +331,40 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * the envelope, while inherited table alignment round-trips structurally: 307.
  * Keep the exact count so a serializer change must account for both newly
  * faithful and newly lossy documents.
+ *
+ * The bump to bfec478 adds fourteen categories and 43 documents, of which 30
+ * need the envelope: 307 -> 337. Measured per category, not extrapolated, in
+ * the order the corpus lists them:
+ *
+ *     376 head-and-foot-row-counts              1 of 1
+ *     377 unclosed-inline-literal               3 of 3
+ *     378 terminal-comment-in-a-quote           0 of 2
+ *     379 reference-definition-destination      3 of 3
+ *     380 terminal-comment-line-verse           1 of 1
+ *     381 resumed-lazy-run                      8 of 8
+ *     382 marker-line-link-definition           2 of 2
+ *     383 lazy-marker-line-s-definition         4 of 5
+ *     384 continuation-marker-flush-left        4 of 6
+ *     385 hyphen-run-flag                       0 of 2
+ *     386 doubled-run-canonical-arrow           0 of 1
+ *     387 braced-hyphen-en-dash                 0 of 2
+ *     388 empty-brace-pair                      1 of 2
+ *     389 boolean-attribute-underscore          3 of 4
+ *
+ * The four categories at zero are all INLINE rulings, which is the pattern -
+ * an inline construct leaves the block projection intact, so nothing forces
+ * the envelope. The ones at full count are definition and marker-line
+ * collection, which the structured tree still cannot hold.
+ *
+ * No existing document flipped: the new categories account for exactly 30 and
+ * the total moved by exactly 30. The three existing documents whose SOURCE the
+ * bump changed were re-measured directly - `20-smart-typography-arrows-and-
+ * symbols` and `68-nested-containers` need no envelope, and
+ * `88-list-continuation-marker` needs 4 of 6, the count it already had.
  */
 assert.strictEqual(
-    envelopedFiles.length, 307,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 307`,
+    envelopedFiles.length, 337,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 337`,
 );
 
 assert.strictEqual(

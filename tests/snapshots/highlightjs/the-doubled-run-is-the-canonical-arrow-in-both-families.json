@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "Flow: a "
-  },
-  {
-    "scope": "literal",
-    "text": "-->"
-  },
-  {
-    "scope": null,
-    "text": " b "
+    "text": "Canonical: "
   },
   {
     "scope": "literal",
@@ -17,7 +9,15 @@
   },
   {
     "scope": null,
-    "text": " c "
+    "text": " "
+  },
+  {
+    "scope": "literal",
+    "text": "-->"
+  },
+  {
+    "scope": null,
+    "text": " "
   },
   {
     "scope": "literal",
@@ -25,7 +25,15 @@
   },
   {
     "scope": null,
-    "text": " d "
+    "text": " and "
+  },
+  {
+    "scope": "literal",
+    "text": "<=="
+  },
+  {
+    "scope": null,
+    "text": " "
   },
   {
     "scope": "addition",
@@ -33,62 +41,46 @@
   },
   {
     "scope": null,
-    "text": "> e; x "
+    "text": "> "
   },
   {
     "scope": "literal",
-    "text": "!="
+    "text": "<=>"
   },
   {
     "scope": null,
-    "text": " y, p "
+    "text": "\n\nDeprecated but still rendered: "
   },
   {
     "scope": "literal",
-    "text": "<="
+    "text": "<-"
   },
   {
     "scope": null,
-    "text": " q, r "
+    "text": " "
   },
   {
     "scope": "literal",
-    "text": ">="
+    "text": "->"
   },
   {
     "scope": null,
-    "text": " s, "
+    "text": " "
   },
   {
     "scope": "literal",
-    "text": "+-"
+    "text": "<->"
   },
   {
     "scope": null,
-    "text": "1.\n"
+    "text": "\n\nNot an arrow: key "
   },
   {
-    "scope": "literal",
-    "text": "(c)"
-  },
-  {
-    "scope": null,
-    "text": " 2024, "
-  },
-  {
-    "scope": "literal",
-    "text": "(r)"
+    "scope": "addition",
+    "text": "=> value stays literal, and p <="
   },
   {
     "scope": null,
-    "text": ", "
-  },
-  {
-    "scope": "literal",
-    "text": "(tm)"
-  },
-  {
-    "scope": null,
-    "text": ". Dates like 1/2/2024 stay literal.\n"
+    "text": " q is a comparison.\n"
   }
 ]

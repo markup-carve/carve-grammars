@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "The bare run is flag-shaped and stays literal: a "
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "(p) b.\n\nThe braced form converts wherever it stands: a "
+  },
+  {
+    "scope": "deletion",
+    "text": "{--}"
+  },
+  {
+    "scope": null,
+    "text": "(p) b, x"
+  },
+  {
+    "scope": "deletion",
+    "text": "{--}"
+  },
+  {
+    "scope": null,
+    "text": "y, "
+  },
+  {
+    "scope": "deletion",
+    "text": "{--}"
+  },
+  {
+    "scope": null,
+    "text": "start.\n"
+  }
+]

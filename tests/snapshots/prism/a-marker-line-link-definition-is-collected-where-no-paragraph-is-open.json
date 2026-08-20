@@ -1,0 +1,54 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "* "
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[d]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " u"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "go"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "d"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

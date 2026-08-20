@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "<!"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": " a comment "
+  },
+  {
+    "scope": "literal",
+    "text": "-->"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
