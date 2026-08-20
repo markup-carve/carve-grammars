@@ -1,18 +1,18 @@
 [
   {
     "scope": "bullet",
-    "text": "-"
+    "text": "* *"
   },
   {
     "scope": null,
-    "text": " a\n"
+    "text": " u\n"
   },
   {
-    "scope": "punctuation",
-    "text": "+"
+    "scope": "comment",
+    "text": "%%"
   },
   {
     "scope": null,
-    "text": "\nc\n"
+    "text": "\n :\n"
   }
 ]

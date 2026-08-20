@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "* "
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[d]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

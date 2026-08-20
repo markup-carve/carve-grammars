@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "comment",
+    "text": "%%%\n> hidden\n> %%%"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
+  }
+]

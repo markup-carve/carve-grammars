@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[f]: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " [d]: u\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[go][d]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

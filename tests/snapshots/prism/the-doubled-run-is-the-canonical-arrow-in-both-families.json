@@ -1,15 +1,7 @@
 [
   {
     "type": "text",
-    "text": "Flow: a "
-  },
-  {
-    "type": "typography",
-    "text": "-->"
-  },
-  {
-    "type": "text",
-    "text": " b "
+    "text": "Canonical: "
   },
   {
     "type": "typography",
@@ -17,7 +9,15 @@
   },
   {
     "type": "text",
-    "text": " c "
+    "text": " "
+  },
+  {
+    "type": "typography",
+    "text": "-->"
+  },
+  {
+    "type": "text",
+    "text": " "
   },
   {
     "type": "typography",
@@ -25,7 +25,15 @@
   },
   {
     "type": "text",
-    "text": " d "
+    "text": " and "
+  },
+  {
+    "type": "typography",
+    "text": "<=="
+  },
+  {
+    "type": "text",
+    "text": " "
   },
   {
     "type": "typography",
@@ -33,62 +41,46 @@
   },
   {
     "type": "text",
-    "text": " e; x "
+    "text": " "
   },
   {
     "type": "typography",
-    "text": "!="
+    "text": "<=>"
   },
   {
     "type": "text",
-    "text": " y, p "
+    "text": "\n\nDeprecated but still rendered: "
   },
   {
     "type": "typography",
-    "text": "<="
+    "text": "<-"
   },
   {
     "type": "text",
-    "text": " q, r "
+    "text": " "
   },
   {
     "type": "typography",
-    "text": ">="
+    "text": "->"
   },
   {
     "type": "text",
-    "text": " s, "
+    "text": " "
   },
   {
     "type": "typography",
-    "text": "+-"
+    "text": "<->"
   },
   {
     "type": "text",
-    "text": "1.\n"
+    "text": "\n\nNot an arrow: key "
   },
   {
-    "type": "typography",
-    "text": "(c)"
-  },
-  {
-    "type": "text",
-    "text": " 2024, "
-  },
-  {
-    "type": "typography",
-    "text": "(r)"
+    "type": "highlight",
+    "text": "=> value stays literal, and p <="
   },
   {
     "type": "text",
-    "text": ", "
-  },
-  {
-    "type": "typography",
-    "text": "(tm)"
-  },
-  {
-    "type": "text",
-    "text": ". Dates like 1/2/2024 stay literal.\n"
+    "text": " q is a comparison.\n"
   }
 ]

@@ -1069,8 +1069,19 @@
             pattern: /\\(?=\n)/,
             alias: 'constant',
         },
+        // The doubled run is canonical in both arrow families (carve#1442), so
+        // `-->` `<--` `<-->` and `==>` `<==` `<=>` are listed BEFORE the single
+        // forms and before the dash rule - otherwise `-->` scopes as an en dash
+        // followed by a stray `>`. `=>` alone is no longer an arrow and is gone
+        // from the set; `<=` stays, as the comparison it always was.
+        //
+        // A hyphen run that OPENS a word after whitespace is a command-line
+        // flag and stays literal (carve#1443), so `--oneline` is not an en dash
+        // while `1--10`, `Mon--Fri` and `a -- b` still are. That is the guard
+        // around the dash alternatives: preceded by a non-space, or not
+        // followed by a word character.
         'typography': {
-            pattern: /\.\.\.|---|--|<->|<-|->|=>|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+            pattern: /\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
             alias: 'constant',
         },
     };

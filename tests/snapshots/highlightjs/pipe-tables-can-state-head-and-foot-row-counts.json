@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "attr",
+    "text": "{header-rows=2 footer-rows=1}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Region | Q1 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| Detail | EUR |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|= North | 11 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "| All | 33 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "meta",
+    "text": "{~a~>~}"
+  },
+  {
+    "scope": null,
+    "text": " deletes, "
+  },
+  {
+    "scope": "meta",
+    "text": "{~~>b~}"
+  },
+  {
+    "scope": null,
+    "text": " inserts, and "
+  },
+  {
+    "scope": "meta",
+    "text": "{~~>~}"
+  },
+  {
+    "scope": null,
+    "text": " still does both to nothing.\n"
+  }
+]

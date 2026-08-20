@@ -437,9 +437,20 @@
 
     // Smart typography, the same set the Prism grammar carries. Not invented
     // here: dashes, arrows, comparisons and the symbol trio.
+    //
+    // The doubled run is canonical in both arrow families (carve#1442), so
+    // `-->` `<--` `<-->` and `==>` `<==` `<=>` are listed BEFORE the single
+    // forms and before the dash rule - otherwise `-->` scopes as an en dash
+    // plus a stray `>`. `=>` alone is no longer an arrow and is gone from the
+    // set; `<=` stays, as the comparison it always was.
+    //
+    // A hyphen run that OPENS a word after whitespace is a command-line flag
+    // and stays literal (carve#1443), so `--oneline` is not an en dash while
+    // `1--10`, `Mon--Fri` and `a -- b` still are. That is the guard around the
+    // dash alternatives: preceded by a non-space, or not followed by a word.
     const TYPOGRAPHY = {
         className: 'literal',
-        begin: /\.\.\.|---|--|<->|<-|->|=>|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+        begin: /\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
         relevance: 0,
     };
 

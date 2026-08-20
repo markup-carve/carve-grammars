@@ -1,0 +1,26 @@
+[
+  {
+    "type": "changed",
+    "text": "{~a~>~}"
+  },
+  {
+    "type": "text",
+    "text": " deletes, "
+  },
+  {
+    "type": "changed",
+    "text": "{~~>b~}"
+  },
+  {
+    "type": "text",
+    "text": " inserts, and "
+  },
+  {
+    "type": "changed",
+    "text": "{~~>~}"
+  },
+  {
+    "type": "text",
+    "text": " still does both to nothing.\n"
+  }
+]

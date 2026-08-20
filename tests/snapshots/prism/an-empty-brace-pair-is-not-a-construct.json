@@ -1,0 +1,118 @@
+[
+  {
+    "type": "text",
+    "text": "Empty pairs are text: "
+  },
+  {
+    "type": "forced-italic",
+    "text": "{//}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "forced-bold",
+    "text": "{**}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "forced-underline",
+    "text": "{__}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "forced-strike",
+    "text": "{~~}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "superscript",
+    "text": "{^^}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "subscript",
+    "text": "{,,}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "highlight",
+    "text": "{==}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "inserted",
+    "text": "{++}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "critic-comment",
+    "text": "{##}"
+  },
+  {
+    "type": "text",
+    "text": ".\n\nA pair that holds something is the construct: "
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/i/}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*b*}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "forced-strike",
+    "text": "{~s~}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "inserted",
+    "text": "{+ins+}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "critic-comment",
+    "text": "{# c #}"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]
