@@ -4,11 +4,15 @@
     "text": "```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nabc \n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

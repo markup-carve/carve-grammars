@@ -5,10 +5,10 @@
   },
   {
     "scope": "keyword",
-    "text": "```\ncode"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\ncode\n"
   }
 ]

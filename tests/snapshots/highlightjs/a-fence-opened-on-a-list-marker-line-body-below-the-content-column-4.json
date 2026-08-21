@@ -9,6 +9,10 @@
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

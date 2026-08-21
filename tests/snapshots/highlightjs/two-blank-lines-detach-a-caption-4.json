@@ -4,16 +4,16 @@
     "text": "```lua"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nlocal n = 1\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n\n"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\n\n\n"
   },
   {
     "scope": "title",

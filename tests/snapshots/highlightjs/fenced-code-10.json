@@ -8,8 +8,16 @@
     "text": "\n"
   },
   {
+    "scope": "keyword",
+    "text": "```php \"from the header\""
+  },
+  {
     "scope": "code",
-    "text": "```php \"from the header\"\ncode\n```"
+    "text": "\ncode\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

@@ -1,14 +1,10 @@
 [
   {
-    "scope": "keyword",
-    "text": "```  php"
+    "scope": "code",
+    "text": "```  php\nx = 1\n```"
   },
   {
     "scope": null,
-    "text": "\nx = 1\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\n"
+    "text": "\n"
   }
 ]

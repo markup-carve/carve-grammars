@@ -5,11 +5,19 @@
   },
   {
     "scope": null,
-    "text": "\n\n  "
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ```=html"
   },
   {
     "scope": "code",
-    "text": "```=html\n  <b>x</b>\n  <i>y</i>\n  ```"
+    "text": "\n  <b>x</b>\n  <i>y</i>\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ```"
   },
   {
     "scope": null,

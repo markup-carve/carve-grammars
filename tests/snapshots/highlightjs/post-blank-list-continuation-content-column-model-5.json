@@ -9,14 +9,18 @@
   },
   {
     "scope": "keyword",
-    "text": "```\nc"
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\nc\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,
     "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\n"
   }
 ]

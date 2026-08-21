@@ -9,19 +9,19 @@
   },
   {
     "scope": "keyword",
-    "text": "  ```\n  code"
+    "text": "  ```"
   },
   {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\n  code\n"
   },
   {
     "scope": "keyword",
-    "text": "  ```\n"
+    "text": "  ```"
   },
   {
     "scope": null,
-    "text": "\nsee"
+    "text": "\n\nsee"
   },
   {
     "scope": "symbol",

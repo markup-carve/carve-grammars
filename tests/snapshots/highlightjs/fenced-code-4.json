@@ -12,11 +12,15 @@
     "text": "```php"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\ncode\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

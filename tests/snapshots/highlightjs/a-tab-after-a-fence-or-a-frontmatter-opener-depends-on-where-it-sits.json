@@ -1,14 +1,10 @@
 [
   {
-    "scope": "keyword",
-    "text": "```\tphp"
+    "scope": "code",
+    "text": "```\tphp\nx\n```"
   },
   {
     "scope": null,
-    "text": "\nx\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\n"
+    "text": "\n"
   }
 ]

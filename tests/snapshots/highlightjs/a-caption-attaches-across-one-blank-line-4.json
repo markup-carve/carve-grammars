@@ -4,16 +4,16 @@
     "text": "```python"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\ndef greet():\n    return 1\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\n\n"
   },
   {
     "scope": "title",

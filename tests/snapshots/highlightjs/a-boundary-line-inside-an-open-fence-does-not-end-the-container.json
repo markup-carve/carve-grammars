@@ -17,27 +17,19 @@
   },
   {
     "scope": "keyword",
-    "text": "```\na"
+    "text": "```"
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "symbol",
-    "text": "[^z]: zz"
-  },
-  {
-    "scope": null,
-    "text": "\nb\n"
+    "scope": "code",
+    "text": "\na\n[^z]: zz\nb\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\nsee"
+    "text": "\n\nsee"
   },
   {
     "scope": "symbol",

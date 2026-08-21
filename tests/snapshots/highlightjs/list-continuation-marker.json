@@ -20,7 +20,7 @@
     "text": "```sh"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\ndocker build -t app .\n"
   },
   {

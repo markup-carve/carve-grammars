@@ -4,43 +4,15 @@
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "section",
-    "text": "# not a heading"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "emphasis",
-    "text": "/not italic/"
-  },
-  {
-    "scope": null,
-    "text": "  "
-  },
-  {
-    "scope": "strong",
-    "text": "*not bold*"
-  },
-  {
-    "scope": null,
-    "text": "  "
-  },
-  {
-    "scope": "symbol",
-    "text": "#notatag"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\n# not a heading\n/not italic/  *not bold*  #notatag\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

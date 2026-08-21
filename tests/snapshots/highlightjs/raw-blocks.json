@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```=html"
+  },
+  {
     "scope": "code",
-    "text": "```=html\n<custom-el>Verbatim HTML</custom-el>\n```"
+    "text": "\n<custom-el>Verbatim HTML</custom-el>\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,
