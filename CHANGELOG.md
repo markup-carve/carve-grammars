@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- **`package.json` is importable, so the installed version can be read back** (#287). The subpath was not in `exports`, so reading it threw `ERR_PACKAGE_PATH_NOT_EXPORTED` - which reads as the package being absent rather than the subpath being closed. Seventeen entries and four wildcards covered no file at the package root. Only that one file is opened; every other path stays refused.
+
 ### Changed
 
 - A vertical-first middle pair (`~>`) is pinned as ordinary cell content alongside `v>`. The two reach the alignment rule by different routes, so a partial fix could pass on one and scope the other.
