@@ -1,6 +1,10 @@
 [
   {
+    "type": "literal",
+    "text": "!`unclosed"
+  },
+  {
     "type": "text",
-    "text": "!`unclosed\n"
+    "text": "\n"
   }
 ]

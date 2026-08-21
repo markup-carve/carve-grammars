@@ -187,10 +187,10 @@ function* strings(alphabet, maxLength) {
  * The alphabet always carries the construct's OWN delimiter characters plus
  * `*` and `/`, two emphasis delimiters, so a body can close one emphasis shape
  * while opening another. A newline is in it wherever the construct may hold
- * one and the two grammars agree that it may: the three inline comment shapes
- * are generated on a single line, because a `{% ... %}` that spans a line break
- * is a residual pinned at the end of this file rather than a shape either
- * grammar handles today.
+ * one: `{% ... %}` and `{# ... #}` may, and since carve-grammars#312 both
+ * grammars read them that way, so their bodies are generated across breaks.
+ * `%%` to end of line may not - the newline IS its closer - so those two rows
+ * stay on one line.
  */
 const CONSTRUCTS = [
     { name: 'code_block', wrap: (b) => ['```\n', b, '\n```\n'], alphabet: ['`', '~', '*', '/', '\n', ' '] },
@@ -212,9 +212,57 @@ const CONSTRUCTS = [
     },
     { name: 'comment_line', wrap: (b) => ['%% ', b, '\n'], alphabet: ['%', '*', '/', ' '], holds: engineRendersNothing },
     { name: 'inline_comment', wrap: (b) => ['text %% ', b, '\n'], alphabet: ['%', '*', '/', ' '], holds: engineRendersNothing },
-    { name: 'braced_comment', wrap: (b) => ['a {% ', b, ' %} z\n'], alphabet: ['%', '*', '{', '}', ' '], holds: engineRendersNothing },
-    { name: 'editorial_comment', wrap: (b) => ['a {# ', b, ' #} z\n'], alphabet: ['#', '*', '{', '}', ' '], holds: engineKeepsLiteral },
+    {
+        name: 'braced_comment',
+        wrap: (b) => ['a {% ', b, ' %} z\n'],
+        alphabet: ['%', '*', '{', '}', ' ', '\n'],
+        holds: engineRendersNothing,
+        skipBlockOpeners: true,
+    },
+    {
+        name: 'editorial_comment',
+        wrap: (b) => ['a {# ', b, ' #} z\n'],
+        alphabet: ['#', '*', '{', '}', ' ', '\n'],
+        holds: engineKeepsLiteral,
+        skipBlockOpeners: true,
+    },
+    /*
+     * An UNPARTNERED verbatim run, which is a code span to the end of its
+     * paragraph (carve-grammars#312). Generated the same way as the closed
+     * rows and gated the same way - `holds` asks the ENGINE where the payload
+     * begins and ends, so a body that closes the run, or that ends the
+     * paragraph, is skipped instead of asserted about.
+     */
+    {
+        name: 'code_span with no closing run',
+        wrap: (b) => ['a `', b, '\n'],
+        alphabet: ['`', '*', '/', ' ', '\n'],
+        holds: (source) => engineReadsVerbatim(source, 3, source.length - 1),
+        skipBlockOpeners: true,
+    },
+    {
+        name: 'code_span with no closing run, on a wide run',
+        wrap: (b) => ['a ``', b, '\n'],
+        alphabet: ['`', '*', ' ', '\n'],
+        holds: (source) => engineReadsVerbatim(source, 4, source.length - 1),
+        skipBlockOpeners: true,
+    },
 ];
+
+/*
+ * A GENERATED LINE THAT OPENS A BLOCK, which neither grammar has a container
+ * model to reason about.
+ *
+ * Both files match block rules first and inline rules after, so a `* ` at the
+ * start of a generated continuation line is taken as a list marker before any
+ * inline comment can span it - `a {#` / `* #} z` colours a bold run inside a
+ * comment. That is real, and it is one shape wider than carve-grammars#312:
+ * fixing it means teaching a flat token map which blocks may appear inside an
+ * inline construct. It is pinned as a residual at the end of this file and
+ * skipped here, so the row keeps asserting the multi-line bodies it CAN answer
+ * for instead of being reduced to single-line ones again.
+ */
+const OPENS_A_BLOCK = /\n[ \t]*(?:[-*+][ \t]|\d+[.)][ \t]|#{1,6} |[`~:]{3,}|>[ \t]|\|)/;
 
 /** The longest generated body. Every row runs the same space on both engines. */
 const BODY_LENGTH = 3;
@@ -244,6 +292,7 @@ function sweep(row, tokenize) {
                 continue; // the engine refused the document; it is not a case about payloads
             }
             if (!holds) continue;
+            if (row.skipBlockOpeners && OPENS_A_BLOCK.test(source)) continue;
             considered++;
             if (measure(tokenize, source) === 'leaks') leaks.push(source);
         }
@@ -352,14 +401,15 @@ for (const [engine, tokenize] of ENGINES) {
  */
 const CLOSER_SHAPED_LINES = [
     '```', '`````', '~~~', '``', '``` x', '````', '~~~~', '```  ', '```~', '~~~`',
+    '  ```', '   ```', '\t```', '  ~~~', '  ````',
 ];
 
 /*
- * An INDENTED run belongs in this list by rights - it is the sample-text case,
- * and the reason the closer is compared to its opener's own column at all - but
- * Prism ends its block there, so the two engines answer differently and the
- * shape is pinned in the residual table below instead, where each engine's
- * answer is stated (carve-grammars#312).
+ * The indented run is in that list. It is the sample-text case, and the reason
+ * the closer is compared to its opener's own column at all: until
+ * carve-grammars#312 Prism ended its block there and everything after went
+ * live, so the shape sat in the residual table with each engine's answer
+ * stated instead of being asserted on both.
  */
 
 console.log('\nthe payload lines that look like a delimiter:');
@@ -383,6 +433,61 @@ for (const [engine, tokenize] of ENGINES) {
             leaks.slice(0, 5), [],
             `${engine}: ${leaks.length} of ${considered} blocks end at a delimiter-shaped line that the `
                 + `engine keeps as content. First: ${JSON.stringify(leaks[0])}`,
+        );
+    });
+}
+
+/*
+ * EVERY CLOSER WIDTH AND EVERY CLOSER COLUMN, generated.
+ *
+ * The two numbers a fenced rule has to get right, and the two it got wrong
+ * (carve-grammars#312): PART 9 §2 closes on the same character at
+ * `len(close) >= len(open)`, at the OPENER's own column. Prism spelled the
+ * closer as a backreference, which is an exact width, and let it sit at any
+ * indent - so `~~~` closed by `~~~~` was no block at all and a run indented
+ * past the opener ended one early. Both leave a verbatim payload live.
+ *
+ * Generated over the cross product rather than sampled, and every case is
+ * gated on the ENGINE reading that exact region as a payload, so a pair that
+ * does NOT make one block is skipped instead of asserted about. That gate is
+ * also what makes the row two-sided: a widening that closed on ANYTHING would
+ * fail it, because the engine disagrees on the narrow closers and the indented
+ * ones.
+ */
+const FENCE_WIDTHS = [3, 4, 5];
+const CLOSER_INDENTS = ['', ' ', '  ', '   '];
+
+console.log('\nevery closer width and column:');
+
+for (const [engine, tokenize] of ENGINES) {
+    ok(`${engine}: a closer at least as long, at the opener's column, and nowhere else`, () => {
+        const leaks = [];
+        let considered = 0;
+        for (const character of ['`', '~']) {
+            for (const open of FENCE_WIDTHS) {
+                for (const close of [...FENCE_WIDTHS, 6]) {
+                    for (const indent of CLOSER_INDENTS) {
+                        for (const openIndent of ['', ' ']) {
+                            const opener = openIndent + character.repeat(open);
+                            const body = `x ${PAYLOAD} y`;
+                            const source = `${opener}\n${body}\n${indent}${character.repeat(close)}\n`;
+                            if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length)) {
+                                continue;
+                            }
+                            considered++;
+                            if (measure(tokenize, source) === 'leaks') leaks.push(source);
+                        }
+                    }
+                }
+            }
+        }
+        // 18 of the 192 pairs make one block in the engine, which is the
+        // point of the row: the other 174 are closers it refuses.
+        assert.ok(considered >= 16, `only ${considered} of these fences made one block in the engine`);
+        assert.deepStrictEqual(
+            leaks.slice(0, 5), [],
+            `${engine}: ${leaks.length} of ${considered} opener/closer pairs leak. `
+                + `First: ${JSON.stringify(leaks[0])}`,
         );
     });
 }
@@ -435,6 +540,13 @@ for (const [engine, tokenize] of ENGINES) {
  * container it would then swallow the container's own closer and every block
  * after it - which the spec says explicitly does not happen (grammar.ebnf,
  * A CLOSER IS REQUIRED). Prism has required a closer since long before this.
+ *
+ * The four rows carve-grammars#312 named are GONE from this table, which is
+ * how a fixed residual leaves: an exact-width closer, an indented run, an
+ * unclosed inline run and a comment across a line break are each asserted
+ * inert now, most of them by a generated sweep above rather than by one
+ * document. What remains below is the same trade at a width no name can
+ * settle, and one ordering a flat token map cannot.
  */
 const RESIDUALS = [
     {
@@ -444,41 +556,36 @@ const RESIDUALS = [
         ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js',
     },
     {
-        // The other half of this row is the fix: highlight.js reads the closer
-        // the way PART 9 §2 states it - same character, len(close) >= len(open) -
-        // where a colon fence wants an exact length (§12), and that difference
-        // is why `DIV_BLOCK`'s width check is `!==` and the code fence's is `<`.
-        what: 'a closer longer than its opener does not close a fence',
-        source: '~~~\n*b*\n~~~~\n',
+        /*
+         * The WIDER half of the run this grammar now reads. A run of one or
+         * two backticks with no partner is an inline code span to the end of
+         * its paragraph and is scoped as one (carve-grammars#312); three or
+         * more is the shape a flat token map cannot tell from an unterminated
+         * code fence, and opening a span over it is the trade the row above
+         * declines to make. Left here rather than guessed at, since the answer
+         * needs a container model.
+         */
+        what: 'an unclosed verbatim run of three or more backticks leaks its paragraph',
+        source: 'a ```x *b* y\n',
         engines: ['prism'],
-        ticket: '#312',
+        ticket: 'the same trade as the row above, one construct over',
     },
     {
-        // The other half of this row is the fix too: highlight.js compares a
-        // candidate closer's indent against its OPENER's, so a run indented past
-        // it stays payload - which is what lets a fence hold a fence.
-        what: 'a fence closes at an indented run the engine keeps as payload',
-        source: '```\n  ```\n*b*\n```\n',
+        /*
+         * A BLOCK OPENER INSIDE AN INLINE COMMENT. Both files match block
+         * rules before inline ones, so the `* ` at the start of the second
+         * line is a list marker before any comment can span it - and the run
+         * before it colours. The generated sweep skips this shape for the two
+         * comment rows (`OPENS_A_BLOCK`) and it is pinned here instead, so
+         * skipping it is a stated exclusion rather than a silent one.
+         *
+         * `{% ... %}` is inert on the same shape because its rule matches
+         * earlier than the list rule; that is the ordering, not a decision.
+         */
+        what: 'a comment whose continuation line opens a block is broken by the block rule',
+        source: 'a {# *b*\n* #} z\n',
         engines: ['prism'],
-        ticket: '#312',
-    },
-    {
-        what: 'an unclosed inline verbatim run leaks the rest of its paragraph',
-        source: 'a `x *b* y\n',
-        engines: ['prism'],
-        ticket: '#312',
-    },
-    {
-        what: 'a braced comment across a line break is not one comment',
-        source: 'a {% x\n*b* y %} z\n',
-        engines: ['prism'],
-        ticket: '#312',
-    },
-    {
-        what: 'an editorial comment across a line break is not one comment',
-        source: 'a {# x\n*b* y #} z\n',
-        engines: ['highlightjs'],
-        ticket: '#312',
+        ticket: 'needs a container model, carve-grammars#312',
     },
 ];
 

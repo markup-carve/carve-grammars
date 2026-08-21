@@ -341,6 +341,39 @@
      */
     function verbatimFence({ className, sigil = '', relevance = 0 }) {
         const RUN = '(?<!`)`+(?!`)';
+        /*
+         * A PARAGRAPH BREAK ALSO ENDS THE SPAN.
+         *
+         * An unpartnered run has no closer to find, and a mode with no closer
+         * ahead runs to END OF FILE - so `unclosed `code here`, a blank line,
+         * and the rest of the document came back scoped as code. That is the
+         * runaway carve-grammars#81 took out of every emphasis mode, still in
+         * this one because a verbatim run has no `illegal` to trip on.
+         *
+         * The engine ends the run at the same place: an unpartnered run is a
+         * code span reaching to the end of its PARAGRAPH, and the paragraph
+         * stops at the blank line. So this is where the span stops rather than
+         * where it is abandoned, and the text before the break keeps its
+         * scope. `tests/unclosed-delimiter-test.js` drives it.
+         *
+         * AT A RUN OF ONE OR TWO ONLY, for the reason the Prism grammar bounds
+         * its own unpartnered run the same way: a run of three or more is
+         * fence-shaped, and a fence carried on a list marker (`- ```) lands in
+         * THIS mode, because the block rule above is anchored at the start of
+         * a line and cannot reach it. Such a block may legitimately hold a
+         * blank line - corpus 75-list-nesting-and-looseness-5 is a fence whose
+         * body is two paragraphs - so ending it at the break would put the
+         * second half of its payload back in play.
+         */
+        // The `\r` is there so a CRLF document gets the same answer: a blank
+        // line is `\r\n\r\n`, and without it the span ran past the break to
+        // end of file on exactly the input this guard exists for.
+        //
+        // Named BREAK and not PARAGRAPH_BREAK: the construct ledger's probe reads
+        // this file's UPPER_CASE constants as its vocabulary, and a constant
+        // holding the word `paragraph` would seed `paragraph` as a rule this
+        // grammar has (tests/construct-ledger-test.js).
+        const BREAK = '\\n[ \\t\\r]*\\n';
         // The width is read off match[0], NOT a capture group: highlight.js
         // concatenates every sibling mode's `begin` into one alternation, so
         // group NUMBERS shift with unrelated modes and an index-based read
@@ -353,8 +386,16 @@
             'on:begin': (m, resp) => {
                 resp.data._fenceWidth = widthOf(m[0]);
             },
-            end: new RegExp(RUN),
+            end: new RegExp(RUN + '|' + BREAK),
             'on:end': (m, resp) => {
+                // The paragraph break is an end in its own right, not a
+                // candidate closer, so it is never width-checked - but it only
+                // ends a run too narrow to be a fence.
+                if (!m[0].includes('`')) {
+                    if (resp.data._fenceWidth >= 3) resp.ignoreMatch();
+
+                    return;
+                }
                 if (widthOf(m[0]) !== resp.data._fenceWidth) resp.ignoreMatch();
             },
             relevance,
@@ -1185,7 +1226,21 @@
         className: 'comment',
         // The closing `#}` is required, or this would swallow an attribute
         // block whose id comes first (`{#id .class}`).
-        begin: /\{#(?=[^}\n]{0,4096}#\})/,
+        //
+        // A LINE BREAK IS PART OF THE BODY, and only this guard said otherwise:
+        // `end` already spans lines, so a `{#` that opened ran to its `#}`
+        // wherever that was. Line-bounded, the guard refused to open at all on
+        // `a {# x` / `*b* y #} z` - which the engine renders as ONE comment with
+        // the run LITERAL inside it - so the run coloured as bold, markup inside
+        // a payload that is not Carve (carve-grammars#312).
+        //
+        // The newline is TEMPERED rather than admitted: a BLANK line ends the
+        // paragraph and therefore the comment, measured - `a {# x` / `` /
+        // `*b* y #} z` is two paragraphs with the delimiters literal in both.
+        // The body still excludes `}` entirely, so the `#}` the guard finds is
+        // the first one and `end` cannot overshoot it, and the scan stays
+        // bounded at the 4096 carve-grammars#300 gave it.
+        begin: /\{#(?=(?:[^}\n]|\n(?![ \t\r]*\n)){0,4096}#\})/,
         end: /#\}/,
         relevance: 5,
     };

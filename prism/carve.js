@@ -303,6 +303,59 @@
     // blank line (corpus 25-definition-lists-7) scoped correctly.
     var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$|\*{3,}[ \t]*$|_{3,}[ \t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+[.)][ \t]|\.[ \t])/.source;
 
+    /*
+     * THE PIECES OF AN UNPARTNERED VERBATIM RUN (carve-grammars#312).
+     *
+     * A backtick run with no closing partner still opens a verbatim span in
+     * the engine, and it reaches the end of its PARAGRAPH: `` a `x *b* y ``
+     * renders `<p>a <code>x *b* y</code></p>`, across soft line breaks and
+     * all. Written only as a paired pattern, none of that matched and the
+     * body stayed live markup.
+     *
+     * `notEscaped` is backslash PARITY, not "no backslash before it". An odd
+     * run of backslashes escapes the backtick and there is no span; an even
+     * one is escaped backslashes and the backtick opens as usual - the engine
+     * reads `` a \\`x `` as a literal backslash followed by a code span.
+     * Bounded at 32 pairs, past which the guard gives up and the run opens.
+     *
+     * The `\r` in the blank-line guards is for CRLF input, where a blank line
+     * is `\r\n\r\n` and a guard written on `\n` alone never sees one.
+     *
+     * `maximalRun` and `narrowRun` differ only in width, and the difference is
+     * where the fence ambiguity lives: a bare run of three or more cannot be
+     * told from an unterminated code fence without a container model, so the
+     * bare form takes one or two. Behind a `$`, `$$` or `!` sigil there is no
+     * such ambiguity - a fence never carries one - so those take any width.
+     *
+     * `unpartneredTail` is the rest of the paragraph: to a blank line, and to
+     * any line that opens or closes another block. That second bound is the
+     * one that matters. A span with no closer ahead that ran on would swallow
+     * its container's own closer and every block after it - the hazard
+     * `fencedVerbatim` states in the highlight.js grammar - so `::: note` /
+     * `` a `x `` / `:::` ends the span before the closer. `otherBlockOpener` is
+     * the same line test the definition-list rule below uses, so there is one
+     * answer in this file to "where does a paragraph stop". It is wider than
+     * the engine on one shape: a bullet does not interrupt an open run there
+     * and it does here, which is the span giving ground rather than taking a
+     * line it should not.
+     */
+    var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    var maximalRun = '(?<!`)`+(?!`)';
+    var narrowRun = '(?<!`)`{1,2}(?!`)';
+    var unpartneredTail =
+        '[^\\n]{0,4096}(?:\\n(?![ \\t\\r]*$)(?!' + otherBlockOpener + ')[^\\n]{0,4096}){0,64}';
+
+    /**
+     * An unpartnered verbatim run behind `sigil`, to the end of its paragraph.
+     *
+     * @param {string} sigil - the construct's prefix, as regex source.
+     * @param {string} run - `maximalRun` or `narrowRun`.
+     * @returns {RegExp} the pattern.
+     */
+    function unpartneredRun(sigil, run) {
+        return RegExp(notEscaped + sigil + run + unpartneredTail, 'm');
+    }
+
     // A definition-list entry: the opening term line plus every following
     // line that is not some OTHER block opener (see above).
     var definitionListPattern = RegExp(
@@ -392,10 +445,24 @@
                 // next door, and raising it costs nothing on an unclosed
                 // opener - the run stops at the next `%` either way, so the
                 // bound caps a body, not a failure. A body past the bounds
-                // (over 4 KB between two `%`, or over 32 non-closing `%` on
-                // one line) is not matched and the `{%` stays plain text,
-                // which is the safe direction.
-                pattern: /\{%[^%\n]{0,4096}(?:%(?!\})[^%\n]{0,4096}){0,32}%\}/,
+                // (over 4 KB between two `%`, or over 32 non-closing `%`) is
+                // not matched and the `{%` stays plain text, which is the safe
+                // direction.
+                //
+                // A LINE BREAK IS PART OF THE BODY. `a {% x` / `*b* y %} z`
+                // renders `<p>a  z</p>` - one comment, spanning the break -
+                // and the line-bounded class matched none of it, so the run
+                // inside a hidden comment coloured as bold
+                // (carve-grammars#312). The newline is TEMPERED rather than
+                // admitted: a BLANK line ends the paragraph and therefore the
+                // comment, measured - `a {% x` / `` / `*b* y %} z` is two
+                // paragraphs with the delimiters literal in both.
+                //
+                // The unrolling is untouched by that. `[^%\n]` and
+                // `\n(?![ \t]*\n)` are disjoint, so each character is still
+                // matched by exactly one branch and an unclosed `{%` still
+                // gives up at the next `%` rather than scanning ahead.
+                pattern: /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/,
                 greedy: true,
             },
             {
@@ -513,7 +580,29 @@
         'code-block': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(`{3,}|~{3,})[ \t]*[^\n]{0,512}\n[\s\S]*?^[ \t]*\1[ \t]*$/m,
+            //
+            // THE CLOSER MATCHES ITS OPENER on three counts, and `\1` alone
+            // carried only one of them (carve-grammars#312):
+            //
+            //   SAME CHARACTER, group 3. `\1` already gave that, since it
+            //   repeats the opener's own run.
+            //
+            //   AT LEAST AS LONG, `\2\3*`. PART 9 §2 is `len(close) >=
+            //   len(open)`, and the engine agrees: `~~~` closed by `~~~~` is
+            //   ONE code block. On an exact-width `\1` the fence stayed
+            //   unmatched and `*b*` under it coloured as bold - a payload the
+            //   engine keeps verbatim, scoped as markup.
+            //
+            //   AT THE OPENER'S OWN COLUMN, `\1`. A run indented past the
+            //   opener is CONTENT, which is what lets a fence hold a fence as
+            //   sample text - the shape every document describing Carve in
+            //   Carve is made of. With `[ \t]*` the block ended at the
+            //   indented run and everything after it went live.
+            //
+            // The width rule is the code fence's and not the colon fence's,
+            // which wants an exact length (§12) - the same distinction
+            // `fencedVerbatim` states next to highlight.js's copy of this rule.
+            pattern: /^(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\n]{0,512}\n[\s\S]*?^\1\2\3*[ \t]*$/m,
             greedy: true,
             inside: {
                 'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
@@ -905,13 +994,37 @@
         // what disambiguates currency: `$5` has no following backtick run and
         // stays literal text.
         'math': [
+            /*
+             * The closing run is the WHOLE run, as in the `code` rule below
+             * and for the same reason: a run longer than the opener's is
+             * content, so pairing the opener with part of a wider run ended
+             * the span early and coloured what followed (carve-grammars#312).
+             * Guarded on BOTH sides here where the `code` rule needs only the
+             * trailing guard: this body is a lazy any-character run, so it can
+             * end ON a backtick and leave the closer as the second half of a
+             * pair, where the `code` rule's body ends on a non-backtick by
+             * construction.
+             */
             {
-                pattern: /\$\$(`+)[\s\S]*?\1/,
+                pattern: /\$\$(`+)[\s\S]*?(?<!`)\1(?!`)/,
                 greedy: true,
                 alias: 'string',
             },
             {
-                pattern: /\$(`+)[\s\S]*?\1/,
+                pattern: /\$(`+)[\s\S]*?(?<!`)\1(?!`)/,
+                greedy: true,
+                alias: 'string',
+            },
+            // ... and with no closing run at all, which is still math and not
+            // a stray `$` before a code span. Any width: the sigil is what
+            // opens it, so there is no fence to be confused with.
+            {
+                pattern: unpartneredRun('\\$\\$', maximalRun),
+                greedy: true,
+                alias: 'string',
+            },
+            {
+                pattern: unpartneredRun('\\$', maximalRun),
                 greedy: true,
                 alias: 'string',
             },
@@ -920,11 +1033,22 @@
         // Inline literal: !`...` - a `!` prefix on a verbatim backtick run,
         // rendered as prose (no <code>). Parallel to the `$`-prefixed math
         // token above; must precede `code` so the leading `!` claims the span.
-        'literal': {
-            pattern: /!(`+)[\s\S]*?\1/,
-            greedy: true,
-            alias: 'string',
-        },
+        'literal': [
+            {
+                // The closing run is the WHOLE run - see the note on `math` above.
+                pattern: /!(`+)[\s\S]*?(?<!`)\1(?!`)/,
+                greedy: true,
+                alias: 'string',
+            },
+            {
+                // ... and with no closing run, which is still a literal: the
+                // engine renders `` !`unclosed `` as `!<code>unclosed</code>`,
+                // so the `!` belongs to this token and not to the prose.
+                pattern: unpartneredRun('!', maximalRun),
+                greedy: true,
+                alias: 'string',
+            },
+        ],
 
         // Raw inline passthrough: `code`{=format}
         'raw-inline': {
@@ -934,10 +1058,72 @@
         },
 
         // Inline code spans
-        'code': {
-            pattern: /(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1/,
-            greedy: true,
-        },
+        'code': [
+            {
+                /*
+                 * THE CLOSING RUN IS THE WHOLE RUN, which the trailing
+                 * not-a-backtick is what says. A code span closes on a run of
+                 * the SAME length, so a longer run is content: the engine
+                 * reads `` a `*``*b* `` as one span running to the end of the
+                 * paragraph, and this rule paired the opener with the FIRST of
+                 * the two backticks, ended the span early and coloured the
+                 * `*b*` after it (carve-grammars#312). The leading guard is
+                 * the same statement about the opener - a run is entered at
+                 * its own start, never one character in.
+                 */
+                pattern: /(?<!`)(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1(?!`)/,
+                greedy: true,
+            },
+            {
+                /*
+                 * A BACKTICK RUN WITH NO PARTNER IS STILL A CODE SPAN, and it
+                 * runs to the end of its PARAGRAPH: `` a `x *b* y `` renders
+                 * `<p>a <code>x *b* y</code></p>`, and it keeps going across a
+                 * soft line break (`` a `x `` / `second line` is one code span
+                 * holding both). The pattern above requires a closing run, so
+                 * none of that matched and the body stayed live markup - the
+                 * carve-grammars#312 leak.
+                 *
+                 * NO CLOSER IS LOOKED FOR, because none is left to find: this
+                 * entry runs after the paired pattern in the same token and
+                 * Prism applies the entries of an array in order, so every run
+                 * that HAS a partner is already consumed. A
+                 * `(?![\s\S]*?\1)` lookahead would answer the same question
+                 * at O(n) per backtick, which is the quadratic shape
+                 * carve-grammars#298 and #300 took out of this file.
+                 *
+                 * THE SPAN STOPS WHERE THE BLOCK DOES - at a blank line, and
+                 * at any line that opens or closes another block. Both are
+                 * measured: `` a `x *b* y `` / `` / `next *c*` leaves the
+                 * second paragraph's bold live, and `::: note` / `` a `x *b* y ``
+                 * / `:::` ends the span before the closer rather than eating
+                 * it. That second bound is the one that matters, and it is the
+                 * hazard `fencedVerbatim` states next door: a span with no
+                 * closer ahead that ran on would swallow its container's own
+                 * closer and every block after it. `otherBlockOpener` is the
+                 * same line test the definition-list rule uses, so there is one
+                 * answer in this file to "where does a paragraph stop".
+                 *
+                 * It is wider than the engine on exactly one shape: a bullet
+                 * does NOT interrupt an open run there (`` a `x `` / `- item`
+                 * is one code span holding the bullet), and it does here. That
+                 * is the safe direction - the span gives ground rather than
+                 * taking a line it should not.
+                 *
+                 * `tests/unclosed-delimiter-test.js` pins that an unpartnered
+                 * opener never reaches past the break.
+                 *
+                 * The pieces, and why each is shaped the way it is, are on
+                 * `unpartneredRun` above `Prism.languages.carve`. The width
+                 * bound is the one that matters here: a bare run of three or
+                 * more cannot be told from an unterminated code fence, which
+                 * is a residual this grammar keeps on purpose rather than
+                 * guessing at (tests/opaque-payload-test.js).
+                 */
+                pattern: unpartneredRun('', narrowRun),
+                greedy: true,
+            },
+        ],
 
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.

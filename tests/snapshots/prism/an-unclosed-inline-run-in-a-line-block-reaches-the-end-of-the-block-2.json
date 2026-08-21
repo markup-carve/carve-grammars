@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "a `b\nc d\n"
+    "text": "a "
+  },
+  {
+    "type": "code",
+    "text": "`b\nc d"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

@@ -53,10 +53,15 @@ const BOUNDED = {
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],
         ['bracket label body', "var BRACKET_SCAN =", 1],
-        // Matched on `/\\{%[^` rather than on the bounded class, so a REVERT of
-        // this rule trips the bounds assertion below instead of the
-        // "is still there" one - the failure has to name the defect.
-        ['inline comment', '/\\{%[^', 3],
+        // Matched on the TEMPERED `%`, not on the body class, so a REVERT of
+        // this rule to an unrolled-but-unbounded form still finds the line and
+        // trips the bounds assertion below rather than the "is still there"
+        // one - the failure has to name the defect. The body class itself is
+        // no longer a usable marker: since carve-grammars#312 the run also
+        // takes a newline that no blank line follows, so the rule is spelled
+        // `(?:[^%\n]|\n(?![ \t]*\n))` and a marker written against the bare
+        // class would pin the rule to the version that could not span a break.
+        ['inline comment', '%(?!\\})', 3],
         // carve-grammars#300 - the nine siblings of the rule above, each
         // matched on its opener plus the first character of its body class for
         // the same reason.
@@ -76,7 +81,11 @@ const BOUNDED = {
         ['footnote reference', '/\\[\\^[^\\]]', 1],
         ['inline footnote', '/\\^\\[[^\\]\\n]', 1],
         ['autolink', 'https?:\\/\\/|mailto:', 1],
-        ['critic comment', '/\\{#(?=[^}\\n]', 1],
+        // Matched on the opener alone for the reason the Prism row above gives:
+        // the guard is `(?:[^}\n]|\n(?![ \t]*\n))` since carve-grammars#312,
+        // and a marker written against the bare class would pin the line-bounded
+        // spelling that could not see a comment spanning a break.
+        ['critic comment', 'begin: /\\{#', 1],
         ['bracket label body', 'const BRACKET_SCAN =', 1],
         // carve-grammars#300. THIRTEEN modes are built from this one line, so
         // it is the single highest-value line in the file to pin: the run that

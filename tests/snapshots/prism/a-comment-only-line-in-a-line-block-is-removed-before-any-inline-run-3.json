@@ -13,15 +13,15 @@
   },
   {
     "type": "text",
-    "text": "\na `b\nx "
+    "text": "\na "
   },
   {
-    "type": "comment",
-    "text": "%% secret"
+    "type": "code",
+    "text": "`b\nx %% secret\nc"
   },
   {
     "type": "text",
-    "text": "\nc\n"
+    "text": "\n"
   },
   {
     "type": "div>div-delimiter>punctuation",
