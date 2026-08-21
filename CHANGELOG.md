@@ -4,6 +4,14 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Tab sets and code groups are editable as widgets.** Both render an interactive bar: click a label to switch, double-click to rename, `+` to add, `×` to remove (refused on the last panel), `‹`/`›` to reorder. A code group had no bar at all before this, so its per-block `[label]`s were invisible and it rendered as a plain stack of code blocks; a tab set had one that could only switch. Switching still dispatches nothing - it sets `data-active` and the stylesheet does the rest - so moving between panels never marks the document dirty. The other four are ordinary undoable edits.
+
+  A code group deliberately stays a plain `carveDiv`: giving it node types to mirror the tab-set shape would change what the serializer sees for a change that is only about presentation, so the document shape and the round trip are untouched.
+
+- **`@markup-carve/carve-grammars/tiptap/editor.css`** - the stylesheet the bars need. It is not decoration: switching is only an attribute, so without it every panel shows at once and clicking a label appears to do nothing. It shipped nowhere before, so wp-carve wrote its own copy of the tab-set rules and every other consumer had an inert bar. Reads carve-css tokens when present, falls back to literals otherwise.
+
 ### Fixed
 
 - Nine more braced inline constructs (`{~` `{-` `{+` `{^` `{_` `{=` `{,` `{/` `{*`) are linear instead of quadratic in both Prism and highlight.js. 48 KB of one opener took up to 1.9 s and now takes at most 43 ms; every construct moved from x4 to x2 per doubling. Highlighting is unchanged on all 1325 corpus documents and on the bodies that hold a non-closing delimiter, such as `{/a/b/}` (#300).

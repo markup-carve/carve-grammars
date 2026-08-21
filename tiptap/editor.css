@@ -1,0 +1,193 @@
+/*
+ * Editor chrome for the interactive bars on tab sets and code groups.
+ *
+ * This is not optional decoration. The bar switches panels by setting
+ * `data-active` on the wrapper and nothing else - no transaction, no DOM
+ * surgery - so without these rules every panel is visible at once and clicking
+ * a label appears to do nothing. The behaviour lives here.
+ *
+ * It shipped nowhere until now: wp-carve wrote its own copy of the tab-set
+ * rules, and every other consumer of CarveKit (carve-wysiwyg, the playground,
+ * anyone embedding the editor element) had an inert bar. Import it once:
+ *
+ *   import '@markup-carve/carve-grammars/tiptap/editor.css'
+ *
+ * Colours come from carve-css tokens WHEN THEY ARE PRESENT and fall back to
+ * literals otherwise, so this composes with that package without depending on
+ * it - the editor is often mounted inside a host's own admin UI that has
+ * neither.
+ */
+
+.carve-tabset,
+.carve-codegroup {
+  border: 1px solid var(--carve-rule, #e3e6ea);
+  border-radius: var(--carve-radius, 3px);
+  margin-block-end: var(--carve-space-4, 1rem);
+}
+
+.carve-tabset-bar,
+.carve-codegroup-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px 0;
+  border-block-end: 1px solid var(--carve-rule, #e3e6ea);
+  background: var(--carve-sunk, #f4f5f7);
+}
+
+.carve-tabset-tab,
+.carve-codegroup-tab {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--carve-font-size-small, 0.875em);
+  font-weight: 600;
+  color: var(--carve-ink-soft, #5a626d);
+  padding: 6px 12px;
+  border-block-end: 3px solid transparent;
+  /* A label is a name, not prose: wrapping one mid-word makes the strip jump. */
+  white-space: nowrap;
+}
+
+.carve-tabset-tab:hover,
+.carve-codegroup-tab:hover {
+  color: var(--carve-ink, #16191d);
+}
+
+/*
+ * The active panel.
+ *
+ * `data-active` is an INDEX, so each panel is addressed by position with
+ * :nth-child. That is why the rules are written out rather than generated: CSS
+ * cannot compute a selector from an attribute value.
+ *
+ * Nine panels are covered. A tenth stays visible rather than disappearing,
+ * which is the right way for this to degrade - an author with ten tabs sees all
+ * of them and can still edit, instead of losing content behind a bar that
+ * cannot reach it.
+ */
+.carve-tabset-panels > *,
+.carve-codegroup-panels > * {
+  display: none;
+}
+.carve-tabset[data-active="0"] .carve-tabset-panels > :nth-child(1),
+.carve-tabset[data-active="1"] .carve-tabset-panels > :nth-child(2),
+.carve-tabset[data-active="2"] .carve-tabset-panels > :nth-child(3),
+.carve-tabset[data-active="3"] .carve-tabset-panels > :nth-child(4),
+.carve-tabset[data-active="4"] .carve-tabset-panels > :nth-child(5),
+.carve-tabset[data-active="5"] .carve-tabset-panels > :nth-child(6),
+.carve-tabset[data-active="6"] .carve-tabset-panels > :nth-child(7),
+.carve-tabset[data-active="7"] .carve-tabset-panels > :nth-child(8),
+.carve-tabset[data-active="8"] .carve-tabset-panels > :nth-child(9),
+.carve-codegroup[data-active="0"] .carve-codegroup-panels > :nth-child(1),
+.carve-codegroup[data-active="1"] .carve-codegroup-panels > :nth-child(2),
+.carve-codegroup[data-active="2"] .carve-codegroup-panels > :nth-child(3),
+.carve-codegroup[data-active="3"] .carve-codegroup-panels > :nth-child(4),
+.carve-codegroup[data-active="4"] .carve-codegroup-panels > :nth-child(5),
+.carve-codegroup[data-active="5"] .carve-codegroup-panels > :nth-child(6),
+.carve-codegroup[data-active="6"] .carve-codegroup-panels > :nth-child(7),
+.carve-codegroup[data-active="7"] .carve-codegroup-panels > :nth-child(8),
+.carve-codegroup[data-active="8"] .carve-codegroup-panels > :nth-child(9) {
+  display: block;
+}
+/* Past the ninth, show everything rather than nothing. */
+.carve-tabset:not([data-active="0"]):not([data-active="1"]):not([data-active="2"]):not([data-active="3"]):not([data-active="4"]):not([data-active="5"]):not([data-active="6"]):not([data-active="7"]):not([data-active="8"]) .carve-tabset-panels > *,
+.carve-codegroup:not([data-active="0"]):not([data-active="1"]):not([data-active="2"]):not([data-active="3"]):not([data-active="4"]):not([data-active="5"]):not([data-active="6"]):not([data-active="7"]):not([data-active="8"]) .carve-codegroup-panels > * {
+  display: block;
+}
+
+/* The active label. Written after the panel rules so specificity is not the
+ * thing deciding it. */
+.carve-tabset[data-active="0"] .carve-tabset-tab:nth-child(1),
+.carve-tabset[data-active="1"] .carve-tabset-tab:nth-child(2),
+.carve-tabset[data-active="2"] .carve-tabset-tab:nth-child(3),
+.carve-tabset[data-active="3"] .carve-tabset-tab:nth-child(4),
+.carve-tabset[data-active="4"] .carve-tabset-tab:nth-child(5),
+.carve-tabset[data-active="5"] .carve-tabset-tab:nth-child(6),
+.carve-tabset[data-active="6"] .carve-tabset-tab:nth-child(7),
+.carve-tabset[data-active="7"] .carve-tabset-tab:nth-child(8),
+.carve-tabset[data-active="8"] .carve-tabset-tab:nth-child(9),
+.carve-codegroup[data-active="0"] .carve-codegroup-tab:nth-child(1),
+.carve-codegroup[data-active="1"] .carve-codegroup-tab:nth-child(2),
+.carve-codegroup[data-active="2"] .carve-codegroup-tab:nth-child(3),
+.carve-codegroup[data-active="3"] .carve-codegroup-tab:nth-child(4),
+.carve-codegroup[data-active="4"] .carve-codegroup-tab:nth-child(5),
+.carve-codegroup[data-active="5"] .carve-codegroup-tab:nth-child(6),
+.carve-codegroup[data-active="6"] .carve-codegroup-tab:nth-child(7),
+.carve-codegroup[data-active="7"] .carve-codegroup-tab:nth-child(8),
+.carve-codegroup[data-active="8"] .carve-codegroup-tab:nth-child(9) {
+  color: var(--carve-accent, #14607f);
+  border-block-end-color: var(--carve-accent, #14607f);
+}
+
+.carve-tabset-panels,
+.carve-codegroup-panels {
+  padding: var(--carve-space-3, 0.75rem);
+}
+
+/* Rename, inline, in the label's own place so the strip does not reflow. */
+.carve-tabset-rename,
+.carve-codegroup-rename {
+  font: inherit;
+  font-size: var(--carve-font-size-small, 0.875em);
+  font-weight: 600;
+  padding: 5px 10px;
+  margin: 0;
+  border: 1px solid var(--carve-accent, #14607f);
+  border-radius: var(--carve-radius, 3px);
+  background: var(--carve-surface, #fff);
+  color: var(--carve-ink, #16191d);
+  min-width: 6ch;
+  /* Roughly the width of the longest sensible label; longer ones scroll rather
+   * than pushing the rest of the bar off the edge. */
+  max-width: 24ch;
+}
+
+/* Add / remove / reorder sit apart from the labels, pushed to the far end, so
+ * they are never mistaken for another tab. */
+.carve-tabset-controls,
+.carve-codegroup-controls {
+  display: inline-flex;
+  gap: 2px;
+  margin-inline-start: auto;
+  padding-inline-end: 4px;
+}
+
+.carve-tabset-controls button,
+.carve-codegroup-controls button {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: var(--carve-radius, 3px);
+  color: var(--carve-ink-soft, #5a626d);
+}
+
+.carve-tabset-controls button:hover,
+.carve-codegroup-controls button:hover {
+  background: var(--carve-surface, #fff);
+  color: var(--carve-ink, #16191d);
+}
+
+.carve-tabset-remove:hover,
+.carve-codegroup-remove:hover {
+  color: var(--carve-danger, #9c2c1c);
+}
+
+/* The bar is chrome and must show a focus ring like any other control set. */
+.carve-tabset-bar :focus-visible,
+.carve-codegroup-bar :focus-visible {
+  outline: 2px solid var(--carve-accent, #14607f);
+  outline-offset: -2px;
+}
+
+/* A code group's panels are code blocks, which bring their own frame. */
+.carve-codegroup-panels > pre {
+  margin: 0;
+}
