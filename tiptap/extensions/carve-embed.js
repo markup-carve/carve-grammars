@@ -31,7 +31,7 @@ function embedPreviewSrc(attrs) {
  *
  * @example
  * ```js
- * import { CarveEmbed } from 'carve-grammars/tiptap'
+ * import { CarveEmbed } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [CarveEmbed],

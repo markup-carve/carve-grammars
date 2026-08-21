@@ -6,7 +6,7 @@
  * @example Basic usage with CarveKit
  * ```js
  * import { Editor } from '@tiptap/core'
- * import { CarveKit, serializeToCarve } from 'carve-grammars/tiptap'
+ * import { CarveKit, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   element: document.getElementById('editor'),
@@ -22,7 +22,7 @@
  * ```js
  * import { Editor } from '@tiptap/core'
  * import StarterKit from '@tiptap/starter-kit'
- * import { CarveInsert, CarveDelete, CarveDiv, serializeToCarve } from 'carve-grammars/tiptap'
+ * import { CarveInsert, CarveDelete, CarveDiv, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [
@@ -34,7 +34,7 @@
  * })
  * ```
  *
- * @module carve-grammars/tiptap
+ * @module @markup-carve/carve-grammars/tiptap
  */
 
 // Main kit

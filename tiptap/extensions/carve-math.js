@@ -13,7 +13,7 @@ import { attributeOrderSlot } from './carve-attribute-slots.js';
  *
  * @example
  * ```js
- * import { CarveMath } from 'carve-grammars/tiptap'
+ * import { CarveMath } from '@markup-carve/carve-grammars/tiptap'
  *
  * editor.chain().focus().insertCarveMath({ src: 'E = mc^2' }).run()
  * ```

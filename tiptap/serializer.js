@@ -5,7 +5,7 @@
  *
  * @example
  * ```js
- * import { serializeToCarve } from 'carve-grammars/tiptap'
+ * import { serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({ ... })
  *

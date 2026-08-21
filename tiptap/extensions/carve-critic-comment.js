@@ -7,7 +7,7 @@ import { Mark, mergeAttributes } from '@tiptap/core';
  *
  * @example
  * ```js
- * import { CarveCriticComment } from 'carve-grammars/tiptap'
+ * import { CarveCriticComment } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [CarveCriticComment],

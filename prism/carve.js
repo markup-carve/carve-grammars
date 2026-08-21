@@ -13,7 +13,7 @@
  *
  * ```js
  * import Prism from 'prismjs';
- * import 'carve-grammars/prism/carve.js'; // registers Prism.languages.carve
+ * import '@markup-carve/carve-grammars/prism/carve.js'; // registers Prism.languages.carve
  *
  * const html = Prism.highlight(src, Prism.languages.carve, 'carve');
  * ```
@@ -83,7 +83,7 @@
  * holds a literal byte order mark: it is invisible, and an editor or a
  * normalizing filter can drop the one character a rule is about.
  *
- * @module carve-grammars/prism/carve
+ * @module @markup-carve/carve-grammars/prism/carve
  */
 (function (Prism) {
     if (!Prism) {
