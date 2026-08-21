@@ -625,3 +625,53 @@ vendored as the `spec/` git submodule (`git submodule update --init`).
 
 `npm test` runs all of the above plus the structural grammar and serializer
 unit tests. CI runs the same on Node 18, 20 and 22.
+
+### The construct ledger: ten surfaces, one derived list
+
+Carve's syntax lives on ten grammar surfaces - `tree-sitter-carve`, the four
+here (TextMate, Prism, highlight.js, Tiptap), `vscode-carve`, `intellij-carve`,
+`sublime-carve`, `vim-carve` and `emacs-carve` - and nothing used to measure
+them against the same construct list. `{%` comments landed on five of them and
+had no rule at all on the other five, with nothing going red
+(markup-carve/carve#1239, #284).
+
+`npm test` now runs `tests/construct-ledger-test.js`, which holds
+`tests/lib/construct-ledger.json` to three rules:
+
+- **The construct list is derived, never written.** `scripts/spec-constructs.mjs`
+  reads the alternatives of the `block` and `inline_element` productions out of
+  the spec's normative `spec/resources/grammar.ebnf`. A clause that adds a
+  construct makes every surface unclassified until someone says what it did
+  about it. A hand-maintained checklist would go stale in exactly that case,
+  because whoever forgot the grammar rule also forgot the checklist row.
+- **Three columns, not two.** Each construct on each surface is `IMPLEMENTED`
+  (with the name that surface gives it), `UNSUPPORTED` (with a reason - an empty
+  reason fails), or `GAP` (with a ticket). A construct in none of them fails the
+  test. Without the third column a legitimate gap - a Prism tokenizer cannot do
+  what a tree-sitter grammar does - reads as a defect, and a check with a high
+  noise floor gets muted.
+- **Two axes per construct.** Recognizing a construct and keeping its payload
+  inert are different questions, and a surface can be right about the first and
+  wrong about the second: on four editor surfaces `{% *not bold* %}` colored a
+  bold run inside a comment. Every entry declares which, and for Prism and
+  highlight.js the answer is measured on every run by tokenizing a sample with a
+  live marker inside the payload, so it cannot rot.
+
+Re-measure after changing a grammar:
+
+```bash
+node scripts/seed-construct-ledger.mjs
+```
+
+That reads the four surfaces here directly. The six in other repositories are
+read from checkouts named by environment variables, and any that is not given
+keeps the row already recorded, with the commit it was read at:
+
+```bash
+CARVE_SURFACE_VIM_CARVE=../vim-carve \
+CARVE_SURFACE_EMACS_CARVE=../emacs-carve \
+  node scripts/seed-construct-ledger.mjs
+```
+
+Statuses are measured; reasons, notes and tickets are written by hand and
+carried across a re-measurement, so a re-run never drops a stated reason.
