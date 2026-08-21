@@ -6,13 +6,15 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
-- **`package.json` is importable, so the installed version can be read back** (#287). The subpath was not in `exports`, so reading it threw `ERR_PACKAGE_PATH_NOT_EXPORTED` - which reads as the package being absent rather than the subpath being closed. Seventeen entries and four wildcards covered no file at the package root. Only that one file is opened; every other path stays refused.
+- Prism and highlight.js scope the canonical doubled arrows (`-->`, `<--`, `<-->`, `==>`, `<==`, `<=>`) as one arrow instead of an en dash plus a stray `>`, and `=>` alone is no longer an arrow (#282, markup-carve/carve#1442).
+- A hyphen run that opens a word after whitespace is a command-line flag in both highlighters: `--oneline` stays literal, while `1--10`, `Mon--Fri` and `a -- b` remain en dashes (#282, markup-carve/carve#1443).
+- `package.json` is in `exports`, so the installed version can be read back through the package specifier instead of throwing `ERR_PACKAGE_PATH_NOT_EXPORTED`. Only that file is opened at the package root; every other path stays refused (#288, #287).
+- The `empty-span-and-editorial-marks` wire fixture no longer spells an empty `{++}` or `{--}`, shapes no Carve source produces now that an empty brace pair is text. `carveEmptyMark` and the schema map are unchanged (#285).
 
 ### Changed
 
-- A vertical-first middle pair (`~>`) is pinned as ordinary cell content alongside `v>`. The two reach the alignment rule by different routes, so a partial fix could pass on one and scope the other.
-- TextMate scopes vertical table alignment only in a two-axis run with a horizontal partner; lone `^` and `v` remain ordinary cell content.
-- The Carve engine is an ordinary registry range (`^0.1.4`) instead of a pinned carve-js commit. Installing 0.1.4 cloned the engine over git, which skips npm's integrity check, needs git and GitHub reachability at install time, and stops tracking engine releases. Fixes #274.
+- TextMate scopes a table alignment run only when it is horizontal-first with a vertical partner (`<^`, `>v`); a lone `^` or `v` and a vertical-first pair (`^<`, `v>`, `~>`) stay ordinary cell content (#273, #277, #281).
+- The Carve engine is an ordinary registry range (`^0.1.4`) instead of a pinned carve-js commit. Installing 0.1.4 cloned the engine over git, which skips npm's integrity check, needs git and GitHub reachability at install time, and stops tracking engine releases (#276, #274).
 
 ## [0.1.4] - 2026-08-18
 
