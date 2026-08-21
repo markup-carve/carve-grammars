@@ -19,6 +19,7 @@
  * rule at a time from the grammar object, re-tokenize, and the one that
  * collapses the time is the one to bound.
  */
+import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
@@ -31,11 +32,41 @@ hljs.registerLanguage('carve', (await import('../highlightjs/carve.mjs')).defaul
 
 // One repetition per opener the grammars react to, plus two-character baits
 // that get further into a rule before failing.
+//
+// HAND-WRITTEN, WHICH IS WHY IT WENT STALE. Of the eleven `{X ... X}`
+// constructs the grammars spell, this list named two - `{#` and `{%` - so the
+// same defect went reported on those and unreported on the other nine
+// (carve-grammars#298, #300). The braced family is therefore DERIVED from the
+// grammars below rather than typed here, the way `tests/line-ambiguity-test.js`
+// discovers its line groups: a `{X ... X}` rule added later is swept without an
+// edit to this file.
 const UNITS = [
     '[', '{', '(', '`', '*', '_', '<', '!', ':', '|', '^', '~', '=', '$', '@', '#', '\\', '"', "'", '+', '-', '>',
     '[a', '{a', '(a', '`a', '![', '[@', '[^', '{.', '<h', ':::', '|a', '^[', '$$', '~~', '==', '**', '__', '//',
-    '<<', '{#', '{%', '%%', '\\[', '[[', '((', '{{',
+    '<<', '%%', '\\[', '[[', '((', '{{',
 ];
+
+/*
+ * Every `{X ... X}` construct either grammar spells, read out of the source.
+ *
+ * A character counts when it appears BOTH right after a `\{` and right before a
+ * `\}` somewhere in the file - that pairing is what makes it a braced
+ * construct rather than an incidental `{` in a character class, and it is why
+ * `{)` `{[` `{|` (all from classes like `[\s{]`) do not come out of this.
+ * Alphanumerics are excluded: `{a` is already a bait above and is not a
+ * delimiter.
+ */
+const bracedOpeners = () => {
+    const opens = new Set();
+    const closes = new Set();
+    for (const file of ['../prism/carve.js', '../highlightjs/carve.js']) {
+        const src = readFileSync(new URL(file, import.meta.url), 'utf8');
+        for (const m of src.matchAll(/\\\{\\?([^\sA-Za-z0-9\\])/g)) opens.add(m[1]);
+        for (const m of src.matchAll(/\\?([^\sA-Za-z0-9\\])\\\}/g)) closes.add(m[1]);
+    }
+    return [...opens].filter((c) => closes.has(c)).sort().map((c) => `{${c}`);
+};
+UNITS.push(...bracedOpeners().filter((u) => !UNITS.includes(u)));
 const SMALL = 12000;
 const LARGE = 24000;
 const SUSPECT = 3;

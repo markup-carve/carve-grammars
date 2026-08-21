@@ -51,6 +51,10 @@ const BOUNDED = {
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],
         ['bracket label body', "var BRACKET_SCAN =", 1],
+        // Matched on `/\\{%[^` rather than on the bounded class, so a REVERT of
+        // this rule trips the bounds assertion below instead of the
+        // "is still there" one - the failure has to name the defect.
+        ['inline comment', '/\\{%[^', 3],
     ],
     'highlightjs/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
@@ -67,7 +71,15 @@ const BOUNDED = {
 // resolve escapes - matching `[^` up to the first bare `]` stops INSIDE the
 // class and reports nothing, which is a check that cannot fail. That was the
 // first version of this test, found by reverting a rule and watching it pass.
-const UNBOUNDED = /\[\^(?:\\.|[^\\\]])*\][*+](?!\?)/g;
+//
+// THE TRAILING `?` IS PART OF THE SHAPE, NOT AN EXEMPTION. This used to end in
+// `(?!\?)`, which excluded the LAZY quantifiers - so `[^\n]*?` was invisible to
+// the one check that exists to find unbounded scanning. Lazy and greedy cost
+// the same when the match FAILS, and failing is where the quadratic cost comes
+// from: the engine still has to try every length before it gives up. The
+// exclusion hid a live quadratic in `prism/carve.js` (the `{% %}` rule, 312 ms
+// on 48 KB of openers, carve-grammars#298) through every run of this file.
+const UNBOUNDED = /\[\^(?:\\.|[^\\\]])*\][*+]\??/g;
 const BOUND = /\{\d*,\d+\}/g;
 
 for (const [file, rules] of Object.entries(BOUNDED)) {
@@ -102,5 +114,70 @@ for (const [file, rules] of Object.entries(BOUNDED)) {
         });
     }
 }
+
+/*
+ * THE ORACLE HAS TO BE SEEN REJECTING SOMETHING.
+ *
+ * Everything above asserts that lines in the shipped grammars are clean, so it
+ * passes just as happily when `UNBOUNDED` matches nothing at all - which is
+ * exactly what happened for two releases while the `(?!\?)` was there. Each
+ * line below is the REAL pre-fix text of a rule this repo has already had to
+ * bound, taken from the commit before its fix, and the check must report every
+ * one of them.
+ *
+ * `{%` is the lazy one. It is reported only by the widened regex; the narrow
+ * form is kept beside it and asserted to MISS it, so the widening is pinned by
+ * a demonstration rather than by a comment.
+ */
+const MUST_REPORT = [
+    // prism/carve.js before #229 - inline footnote, greedy `*`.
+    ['inline footnote, pre-#229', String.raw`            pattern: /\^\[[^\]\n]*\]/,`],
+    // prism/carve.js before #229 - footnote reference, greedy `+`.
+    ['footnote reference, pre-#229', String.raw`            pattern: /\[\^[^\]]+\]/,`],
+    // prism/carve.js before #229 - critic comment, greedy `*`.
+    ['critic comment, pre-#229', String.raw`            pattern: /\{#[^}]*#\}/,`],
+    // prism/carve.js before #298 - inline comment, LAZY `*?`. Invisible to the
+    // narrow regex, which is the defect this list exists to pin.
+    ['inline comment, pre-#298', String.raw`                pattern: /\{%[^\n]*?%\}/,`],
+];
+
+// A bounded scan is not a finding, lazy or not. Without this the check could
+// be "widened" into flagging every quantifier and would still pass above.
+const MUST_NOT_REPORT = [
+    // The bounded-LAZY near miss: carve-grammars#298 proposed this shape for
+    // the rule above. It is bounded, so it is not a finding - and it is the
+    // case a widening done by deleting the `?` from the QUANTIFIER instead of
+    // from the lookahead would get wrong. The shipped rules are not repeated
+    // here; the registry loop above already reads them out of the files, so a
+    // copy would only rot.
+    ['a bounded lazy scan', String.raw`                pattern: /\{%[^\n]{0,512}?%\}/,`],
+];
+
+const NARROW = /\[\^(?:\\.|[^\\\]])*\][*+](?!\?)/g;
+
+console.log('\noracle fixtures:');
+for (const [name, line] of MUST_REPORT) {
+    ok(`reports ${name}`, () => {
+        assert.ok(
+            (line.match(UNBOUNDED) || []).length > 0,
+            `UNBOUNDED did not report ${JSON.stringify(line)} - the check cannot fail, `
+                + 'so the clean results above mean nothing',
+        );
+    });
+}
+for (const [name, line] of MUST_NOT_REPORT) {
+    ok(`leaves ${name} alone`, () => {
+        assert.deepStrictEqual(line.match(UNBOUNDED) || [], [], `UNBOUNDED wrongly reported ${name}`);
+    });
+}
+ok('the lazy fixture is the one the narrow regex missed', () => {
+    const lazy = MUST_REPORT.find(([name]) => name.includes('#298'))[1];
+    assert.deepStrictEqual(
+        lazy.match(NARROW) || [],
+        [],
+        'the pre-#298 rule is no longer a demonstration of the blind spot - pick one that is',
+    );
+    assert.deepStrictEqual(lazy.match(UNBOUNDED), ['[^\\n]*?']);
+});
 
 console.log(`\n${passed} passed`);
