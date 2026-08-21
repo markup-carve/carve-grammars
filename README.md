@@ -174,6 +174,63 @@ of figures, advanced tables, comments, raw passthrough, and source-layout edge
 cases. `tiptap/schema-map.json` is the public rich-mapping authority;
 `tests/lib/coverage.js` records why structured conversion falls back.
 
+## Tab sets and code groups in the editor
+
+A tab set and a code group are the same thing to a reader - a strip of labels,
+one panel visible. In the editor they were not. A `:::: tabs` container had a
+bar that could only switch panels; a `:::: code-group` had no bar at all, so it
+rendered as a plain vertical stack of code blocks with its `[one.js]` labels
+invisible and no way to tell it apart from two adjacent code blocks. Neither
+could be edited as a widget: adding, removing, renaming or reordering a panel
+meant leaving the visual editor and editing source.
+
+Both now render an interactive bar:
+
+| Action | How |
+| --- | --- |
+| switch panel | click a label |
+| rename | double-click a label, then Enter (Escape abandons) |
+| add | `+` |
+| remove | `×` - refuses on the last panel |
+| reorder | `‹` / `›` |
+
+**Switching dispatches nothing.** It sets `data-active` on the wrapper and the
+stylesheet does the rest, so moving between tabs never marks the document dirty
+or reaches the serializer. The other four change the document and are undoable
+like any other edit.
+
+**The stylesheet is required, not decoration.** Because switching is only an
+attribute, without these rules every panel is visible at once and clicking a
+label appears to do nothing:
+
+```js
+import '@markup-carve/carve-grammars/tiptap/editor.css'
+```
+
+It reads carve-css custom properties when they are present and falls back to
+literals otherwise, so it composes with that package without depending on it.
+
+Two things worth knowing:
+
+- **A code group is still a plain `carveDiv`.** It arrives as a div with
+  `class: "code-group"` whose children carry their own `carveLabel`, and giving
+  it dedicated node types to mirror the tab-set shape would change what the
+  serializer sees for a change that is entirely about presentation. So the bar
+  attaches to the existing node: the document shape, the serializer and the
+  round trip are untouched. The cost is that the nodeView is called for every
+  div, so every other kind - admonitions, figures, plain containers - is handed
+  straight back to the schema's own `toDOM`.
+- **A code group mounted from HTML shows languages, not labels.** carve-js's
+  HTML for a code group emits bare `<pre>` children and drops the per-block
+  `[label]`, so `one.js` is not recoverable from that seed and the bar falls
+  back to `js`. Mounted from the AST (`carveToProseMirror`) the labels survive
+  and are shown. Renaming writes `carveLabel` and never touches the language, so
+  changing a tab's caption cannot silently restyle the code.
+
+Disable the code-group bar with `CarveKit.configure({ carveCodeGroup: false })`,
+or keep it read-only with
+`CarveKit.configure({ carveCodeGroup: { editable: false } })`.
+
 ## Framework-independent editor element
 
 Applications that do not otherwise use Tiptap can mount the same lossless

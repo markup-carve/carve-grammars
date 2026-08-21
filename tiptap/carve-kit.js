@@ -25,6 +25,7 @@ import { CarveDelete } from './extensions/carve-delete.js';
 import { CarveCriticComment } from './extensions/carve-critic-comment.js';
 import { CarveDiv } from './extensions/carve-div.js';
 import { CarveTabSet, CarveTab } from './extensions/carve-tabs.js';
+import { CarveCodeGroup } from './extensions/carve-code-group.js';
 import { CarveSpan } from './extensions/carve-span.js';
 import { CarveFootnote } from './extensions/carve-footnote.js';
 import { CarveMath } from './extensions/carve-math.js';
@@ -638,6 +639,14 @@ export const CarveKit = Extension.create({
         if (this.options.carveTabs !== false) {
             extensions.push(CarveTabSet.configure(this.options.carveTabs ?? {}));
             extensions.push(CarveTab.configure(this.options.carveTabs ?? {}));
+        }
+
+        // Code groups (:::: code-group). An Extension rather than a Node: a code
+        // group already arrives as a carveDiv whose children carry their own
+        // labels, so this attaches a bar to the existing node and leaves the
+        // document shape - and therefore the serializer - alone.
+        if (this.options.carveCodeGroup !== false) {
+            extensions.push(CarveCodeGroup.configure(this.options.carveCodeGroup ?? {}));
         }
 
         // Span with class mark (maps to [text]{.class})

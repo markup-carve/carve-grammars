@@ -1,5 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 
+import { createPanelBarView, movePanelWithin } from './panel-bar.js';
+
 /**
  * Carve tab-set nodes for Tiptap.
  *
@@ -35,68 +37,50 @@ export const CarveTabSet = Node.create({
         return ['div', mergeAttributes(HTMLAttributes, { class: 'tabs' }), 0];
     },
 
-    // Interactive tab bar. The wrapper holds a (non-editable) row of buttons -
-    // one per tab, labelled from each carveTab's `label` - plus the editable
-    // panel container (contentDOM) where the tab nodes render. Active-tab state
-    // is view-local: a `data-active` index on the wrapper that CSS uses to show
-    // one panel at a time; clicking a button just moves it. No ProseMirror
-    // transaction, so switching tabs never touches the document or serialize.
+    // Interactive tab bar: switch, rename, add, remove and reorder.
+    //
+    // The bar itself lives in panel-bar.js and is shared with code groups,
+    // which are the same thing to a reader and were not the same thing here.
+    // This file supplies only what is specific to a tab set: where the label
+    // lives (`carveTab.attrs.label`) and what a new tab is made of.
+    //
+    // Switching is view-local and dispatches nothing. The other four change the
+    // document, so they go through transactions and are undoable.
     addNodeView() {
-        return ({ node }) => {
-            const dom = document.createElement('div');
-            dom.className = 'carve-tabset';
-            dom.setAttribute('data-active', '0');
+        return createPanelBarView({
+            className: 'carve-tabset',
+            noun: 'tab',
+            labelOf: child => child?.attrs?.label ?? null,
+            fallbackLabel: index => `Tab ${index + 1}`,
 
-            const bar = document.createElement('div');
-            bar.className = 'carve-tabset-bar';
-            bar.contentEditable = 'false';
+            setLabel: ({ tr, index, value, childPos }) => {
+                const pos = childPos(index);
+                if (pos == null) return false;
+                tr.setNodeAttribute(pos, 'label', value);
+                return true;
+            },
 
-            const panels = document.createElement('div');
-            panels.className = 'carve-tabset-panels';
+            addPanel: ({ tr, state, node, pos, index }) => {
+                const type = state.schema.nodes.carveTab;
+                const paragraph = state.schema.nodes.paragraph;
+                if (!type || !paragraph) return false;
+                const tab = type.create({ label: `Tab ${index + 1}`, selected: false }, paragraph.create());
+                // +1 to step inside the set, then past every existing child.
+                tr.insert(pos + 1 + node.content.size, tab);
+                return true;
+            },
 
-            const renderBar = (n) => {
-                bar.textContent = '';
-                n.forEach((tab, _offset, index) => {
-                    const btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'carve-tabset-tab';
-                    btn.textContent = tab.attrs?.label || `Tab ${index + 1}`;
-                    btn.addEventListener('mousedown', (e) => {
-                        // mousedown (not click) so the editor selection isn't
-                        // moved into the button before we switch.
-                        e.preventDefault();
-                        dom.setAttribute('data-active', String(index));
-                    });
-                    bar.appendChild(btn);
-                });
-                // Default the active tab to the one flagged `selected`, else 0.
-                let active = 0;
-                n.forEach((tab, _o, i) => {
-                    if (tab.attrs?.selected) active = i;
-                });
-                dom.setAttribute('data-active', String(active));
-            };
+            removePanel: ({ tr, node, index, childPos }) => {
+                if (node.childCount <= 1) return false;
+                const from = childPos(index);
+                const child = node.maybeChild(index);
+                if (from == null || !child) return false;
+                tr.delete(from, from + child.nodeSize);
+                return true;
+            },
 
-            renderBar(node);
-            dom.appendChild(bar);
-            dom.appendChild(panels);
-
-            return {
-                dom,
-                contentDOM: panels,
-                update: (updated) => {
-                    if (updated.type.name !== 'carveTabSet') return false;
-                    const active = dom.getAttribute('data-active');
-                    renderBar(updated);
-                    // renderBar resets active to the selected tab; keep the
-                    // user's current choice if it is still in range.
-                    if (active != null && Number(active) < updated.childCount) {
-                        dom.setAttribute('data-active', active);
-                    }
-                    return true;
-                },
-            };
-        };
+            movePanel: ({ tr, node, pos, from, to, childPos }) => movePanelWithin({ tr, node, pos, from, to, childPos }),
+        });
     },
 });
 
