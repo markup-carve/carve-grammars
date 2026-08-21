@@ -304,7 +304,19 @@
     // is neither, and that is the point: it ends the container and with it an
     // open fence, so the scan for a closer must not cross one (corpus 326-6 -
     // `- %%%` / `c` / `%%%` leaves `c` and the trailing paragraph VISIBLE).
-    var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^\\n]*\\n)';
+    // Both alternatives are DISJOINT and each decomposes ONE way, which is what
+    // keeps the repetition below linear. `[ \t]+[^\n]*\n` was neither: a
+    // whitespace-only line satisfies it AND the blank branch, and `[^\n]`
+    // itself accepts a space, so `  x` splits two ways at the same end
+    // position. A `*?` repetition of that group then had 2^n parses of an n-line
+    // body, and an UNCLOSED fence makes the engine walk all of them before it
+    // gives up - `- %%%` plus 24 indented lines took 421 ms, plus 30 does not
+    // finish (carve-grammars#294). Requiring a NON-BLANK character after the
+    // indent removes both: the branches no longer overlap, and `[ \t]+` can no
+    // longer trade characters with what follows it. The matched LANGUAGE is
+    // unchanged - a whitespace-only indented line is still the blank branch -
+    // so no highlighting moves.
+    var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^ \\t\\n][^\\n]*\\n)';
 
     // A BLOCK-QUOTE marker run, as it appears before a block opener on the same
     // line. `> `, not `>+` and not `>\s`: the separator is a literal space and

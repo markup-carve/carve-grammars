@@ -925,7 +925,18 @@
     // fence, so it must not be skipped over while looking for the closer
     // (corpus 326-6 - `- %%%` / `c` / `%%%` leaves `c` and the trailing
     // paragraph VISIBLE, with the unclosed opener degrading to a line comment).
-    const BLANK_OR_INDENTED_LINE = '(?:\\n(?![ \\t]*[^ \\t\\n])[^\\n]*|\\n[ \\t]+[^\\n]*)';
+    // Both alternatives are DISJOINT and each decomposes ONE way, which is what
+    // keeps the `*?` repetition below linear. The previous pair was neither: a
+    // whitespace-only line satisfied the blank branch AND `\n[ \t]+[^\n]*`,
+    // and `[^\n]` itself accepts a space, so `  x` split two ways at the same
+    // end position. That gave an n-line body 2^n parses, and an UNCLOSED fence
+    // makes the engine walk all of them before the lookahead fails - `- %%%`
+    // plus 24 indented lines took 379 ms, plus 30 does not finish
+    // (carve-grammars#294). The blank branch now consumes the whitespace run
+    // itself and asserts the line ENDS there, and the indented branch requires a
+    // non-blank character after the indent. Same matched LANGUAGE as before, so
+    // no highlighting moves.
+    const BLANK_OR_INDENTED_LINE = '(?:\\n[ \\t]*(?![^\\n])|\\n[ \\t]+[^ \\t\\n][^\\n]*)';
     const BLOCK_COMMENT_ON_MARKER_LINE = {
         className: 'comment',
         // The closer is REQUIRED up front, unlike `BLOCK_COMMENT`. highlight.js
