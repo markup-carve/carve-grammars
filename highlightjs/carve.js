@@ -925,7 +925,17 @@
     // fence, so it must not be skipped over while looking for the closer
     // (corpus 326-6 - `- %%%` / `c` / `%%%` leaves `c` and the trailing
     // paragraph VISIBLE, with the unclosed opener degrading to a line comment).
-    const BLANK_OR_INDENTED_LINE = '(?:\\n(?![ \\t]*[^ \\t\\n])[^\\n]*|\\n[ \\t]+[^\\n]*)';
+    //
+    // THE TWO ALTERNATIVES MUST BE DISJOINT. A whitespace-only indented line
+    // matched BOTH of them - the first because the line holds no non-blank
+    // character, the second because it holds at least one space - so the
+    // repetition could split the same input many ways and the lookahead proving
+    // there is a closer backtracked EXPONENTIALLY. Requiring a non-blank
+    // character in the indented alternative leaves exactly one of them able to
+    // match any given line. Measured on the sweep's `unclosed fence in item`
+    // shape: 8.3 s at 24 lines before, under a millisecond after.
+    const BLANK_OR_INDENTED_LINE =
+        '(?:\\n(?![ \\t]*[^ \\t\\n])[^\\n]*|\\n[ \\t]+[^ \\t\\n][^\\n]*)';
     const BLOCK_COMMENT_ON_MARKER_LINE = {
         className: 'comment',
         // The closer is REQUIRED up front, unlike `BLOCK_COMMENT`. highlight.js

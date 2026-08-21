@@ -100,11 +100,31 @@ const widths = (lines) => {
     return `${out.join('\n')}\n`;
 };
 
+// A SHAPE WHOSE REPEATED UNIT IS A LINE, which neither section above can build.
+//
+// A container-marked fence scans for its closer over a repetition of LINES, so
+// the cost comes from how the group matching one line is written. Two
+// alternatives that can both match the same line let the repetition split the
+// same input many ways, and the scan backtracks exponentially - which is what
+// `blankOrIndentedLine` did until the alternatives were made disjoint
+// (carve-grammars#294). No amount of one repeated character reaches this: the
+// unit has to be a line, and the fence has to stay open to the end.
+//
+// SIZED IN TENS OF LINES, not hundreds, and deliberately so. Exponential cost
+// means a regression here does not finish at 500 lines in any useful sense -
+// the previous defect took 7.4 s at 22 lines and roughly six times that per two
+// lines after. Small sizes keep this sweep terminating while a regression still
+// shows up as an enormous ratio.
+const unclosedFenceInItem = (lines) => `- %%%\n${'  x\n'.repeat(lines)}${' '.repeat(20)}\n`;
+
 console.log('\nsearch shapes (cost per distinct fence width, not per position)');
 console.log(`shape                  bytes  prism      ratio    hljs       ratio`);
-for (const [label, gen] of [['increasing % widths', widths]]) {
-    const small = gen(500);
-    const large = gen(2000);
+for (const [label, gen, smallN, largeN] of [
+    ['increasing % widths', widths, 500, 2000],
+    ['unclosed fence in item', unclosedFenceInItem, 20, 24],
+]) {
+    const small = gen(smallN);
+    const large = gen(largeN);
     const bytesRatio = large.length / small.length;
     const prism = [small, large].map((src) => time(() => Prism.tokenize(src, Prism.languages.carve)));
     const hl = [small, large].map((src) => time(() => hljs.highlight(src, { language: 'carve' })));

@@ -7,6 +7,7 @@ All notable changes to `carve-grammars` are documented here.
 ### Fixed
 
 - Prism and highlight.js answer the `crv` fence word, so a ```` ```crv ```` block highlights on every surface this package ships rather than under Shiki alone. Prism also keeps `carvemd` and Shiki keeps `Carve` (#290).
+- **Exponential backtracking on an unclosed comment fence in a list item, in both the Prism and highlight.js grammars** (#294). Each grammar described "a line that is blank, or indented" as two alternatives that could both match a whitespace-only indented line, so the scan for a closer could split the same input many ways. A `- %%%` opener followed by 22 indented lines and no closer took 7.4 s under Prism and 8.3 s under highlight.js; it is now under a millisecond, and flat at 2000 lines. `npm run perf:sweep` gained a line-shaped family, which is what found the highlight.js half.
 - Prism and highlight.js scope the canonical doubled arrows (`-->`, `<--`, `<-->`, `==>`, `<==`, `<=>`) as one arrow instead of an en dash plus a stray `>`, and `=>` alone is no longer an arrow (#282, markup-carve/carve#1442).
 - A hyphen run that opens a word after whitespace is a command-line flag in both highlighters: `--oneline` stays literal, while `1--10`, `Mon--Fri` and `a -- b` remain en dashes (#282, markup-carve/carve#1443).
 - `package.json` is in `exports`, so the installed version can be read back through the package specifier instead of throwing `ERR_PACKAGE_PATH_NOT_EXPORTED`. Only that file is opened at the package root; every other path stays refused (#288, #287).

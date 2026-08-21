@@ -304,7 +304,16 @@
     // is neither, and that is the point: it ends the container and with it an
     // open fence, so the scan for a closer must not cross one (corpus 326-6 -
     // `- %%%` / `c` / `%%%` leaves `c` and the trailing paragraph VISIBLE).
-    var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^\\n]*\\n)';
+    //
+    // THE TWO ALTERNATIVES MUST BE DISJOINT. Written as
+    // `(?:[ \t]*\n|[ \t]+[^\n]*\n)` they both match a run of spaces before a
+    // newline, so a repetition of the group could split the same input many
+    // ways and the scan for a closer backtracked EXPONENTIALLY: measured
+    // against 0.1.4, a `- %%%` opener followed by n indented lines and no
+    // closer took 359 ms at n=18, 1.2 s at n=20 and 7.4 s at n=22. Requiring a
+    // non-whitespace character in the second alternative makes exactly one of
+    // them able to match any given line.
+    var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^\\s][^\\n]*\\n)';
 
     // A BLOCK-QUOTE marker run, as it appears before a block opener on the same
     // line. `> `, not `>+` and not `>\s`: the separator is a literal space and
