@@ -56,7 +56,14 @@ function ok(name, fn) {
  * ------------------------------------------------------------------ */
 
 const Prism = require('prismjs');
-require(resolve(here, '..', 'prism', 'carve.js'));
+// `prism/carve.js` is ESM under this package's `"type": "module"`, and
+// `require()` of ESM is a Node 20.17+/22 affordance - Node 18 refuses it, which
+// is a CI row. Loaded the way `scripts/scan-superlinear.mjs` loads it: the
+// module registers itself against a global `Prism`, so the global is set for
+// the duration of the import and removed again.
+globalThis.Prism = Prism;
+await import('../prism/carve.js');
+delete globalThis.Prism;
 
 /**
  * Every RegExp anywhere in Prism's `carve` grammar, keyed by token name.
