@@ -40,6 +40,15 @@ export const VERBATIM_SAMPLES = {
     comment_block: '%%%\nx *b* y\n%%%\n',
     inline_comment: 'text %% x *b* y\n',
     braced_comment: 'a {% x *b* y %} z\n',
+    /*
+     * The editorial comment `{# ... #}` joined this list in carve-grammars#309.
+     * Its payload is not Carve either - the engine renders
+     * `<span class="critic-comment"> *b* </span>`, with the run LITERAL inside
+     * it - and the list not naming it meant nothing measured it on any surface.
+     * That is the ledger's own first axis applied to its second: a construct
+     * missing from this list is a payload nobody asked about.
+     */
+    editorial_comment: 'a {# x *b* y #} z\n',
     autolink: 'a <https://e.example/*b*> z\n',
 };
 

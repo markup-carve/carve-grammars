@@ -4,11 +4,15 @@
     "text": "```python"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nprint(\"hi\")\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

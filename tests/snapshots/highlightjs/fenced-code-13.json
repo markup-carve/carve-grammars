@@ -4,11 +4,15 @@
     "text": "~~~yaml"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nkey: value\n"
   },
   {
     "scope": "keyword",
-    "text": "~~~\n"
+    "text": "~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

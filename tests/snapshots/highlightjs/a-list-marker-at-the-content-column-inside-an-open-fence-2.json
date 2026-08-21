@@ -12,19 +12,15 @@
     "text": "  ```"
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "  -"
-  },
-  {
-    "scope": null,
-    "text": " x\n"
+    "scope": "code",
+    "text": "\n  - x\n"
   },
   {
     "scope": "keyword",
-    "text": "  ```\n"
+    "text": "  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

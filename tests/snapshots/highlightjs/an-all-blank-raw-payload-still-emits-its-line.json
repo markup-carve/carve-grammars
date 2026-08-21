@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```=html"
+  },
+  {
     "scope": "code",
-    "text": "```=html\n\n```"
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

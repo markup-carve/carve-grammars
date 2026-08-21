@@ -9,11 +9,11 @@
   },
   {
     "scope": "keyword",
-    "text": "```\nx"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": "\nx\n\n"
   },
   {
     "scope": "keyword",

@@ -4,7 +4,7 @@
     "text": "```python"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\ndef greet():\n    return 1\n"
   },
   {

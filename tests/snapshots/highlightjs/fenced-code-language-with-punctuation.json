@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```c++"
+  },
+  {
     "scope": "code",
-    "text": "```c++\nint main() {}\n```"
+    "text": "\nint main() {}\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

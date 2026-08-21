@@ -12,24 +12,16 @@
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\n:::\n"
   },
   {
     "scope": "keyword",
-    "text": ":::"
+    "text": "```"
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\nbody"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\nbody\n"
   },
   {
     "scope": "keyword",

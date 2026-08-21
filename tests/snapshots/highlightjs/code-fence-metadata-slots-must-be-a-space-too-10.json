@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```js \"T\" [L]"
+  },
+  {
     "scope": "code",
-    "text": "```js \"T\" [L]\nx\n```"
+    "text": "\nx\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

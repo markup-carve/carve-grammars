@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```js \"*.config.js\""
+  },
+  {
     "scope": "code",
-    "text": "```js \"*.config.js\"\nexport default {}\n```"
+    "text": "\nexport default {}\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

@@ -4,27 +4,15 @@
     "text": "````markdown"
   },
   {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\n```python\nprint(\"hi\")\n```\n"
   },
   {
     "scope": "keyword",
-    "text": "```python"
-  },
-  {
-    "scope": null,
-    "text": "\nprint(\"hi\")\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```"
+    "text": "````"
   },
   {
     "scope": null,
     "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "````\n"
   }
 ]

@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```php \"src/Auth.php\""
+  },
+  {
     "scope": "code",
-    "text": "```php \"src/Auth.php\"\n$ok = true;\n```"
+    "text": "\n$ok = true;\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

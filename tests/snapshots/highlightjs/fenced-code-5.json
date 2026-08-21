@@ -1,7 +1,15 @@
 [
   {
+    "scope": "keyword",
+    "text": "```php [NPM]"
+  },
+  {
     "scope": "code",
-    "text": "```php [NPM]\nnpm install x\n```"
+    "text": "\nnpm install x\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,

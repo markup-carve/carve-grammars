@@ -4,11 +4,15 @@
     "text": "``` php"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nx = 1\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

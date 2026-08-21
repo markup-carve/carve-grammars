@@ -12,6 +12,7 @@
     "comment_block",
     "inline_comment",
     "braced_comment",
+    "editorial_comment",
     "autolink"
   ],
   "surfaces": {
@@ -312,7 +313,8 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "critic_comment",
-          "payload": "parsed"
+          "payload": "unmeasured",
+          "ticket": "#307"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -682,7 +684,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "critic-comment",
-          "payload": "parsed"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -779,9 +781,8 @@
         },
         "code_block": {
           "status": "IMPLEMENTED",
-          "evidence": "CODE_FENCE_END",
-          "payload": "leaks",
-          "payloadNote": "an emphasis run inside the payload is scoped as markup"
+          "evidence": "CODE_BLOCK",
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -844,9 +845,9 @@
           "payload": "inert"
         },
         "raw_block": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "RAW_BLOCK",
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -1051,7 +1052,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "CRITIC_COMMENT",
-          "payload": "parsed"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -1424,7 +1425,8 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "critic_comment",
-          "payload": "parsed"
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -1802,7 +1804,8 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "editorial_comment",
-          "payload": "parsed"
+          "payload": "unmeasured",
+          "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -3319,7 +3322,8 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "carveCriticCom",
-          "payload": "parsed"
+          "payload": "unmeasured",
+          "ticket": "markup-carve/vim-carve#26"
         },
         "mention": {
           "status": "IMPLEMENTED",

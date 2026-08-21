@@ -44,7 +44,7 @@
     "text": "```js"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nconst x = 1\n"
   },
   {

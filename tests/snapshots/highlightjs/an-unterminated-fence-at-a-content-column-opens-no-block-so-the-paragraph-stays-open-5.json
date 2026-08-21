@@ -9,10 +9,10 @@
   },
   {
     "scope": "keyword",
-    "text": "  ```\n  b"
+    "text": "  ```"
   },
   {
     "scope": null,
-    "text": "\ntail\n"
+    "text": "\n  b\ntail\n"
   }
 ]

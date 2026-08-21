@@ -1,14 +1,10 @@
 [
   {
-    "scope": "keyword",
-    "text": "``` \tjs"
+    "scope": "code",
+    "text": "``` \tjs\nx\n```"
   },
   {
     "scope": null,
-    "text": "\nx\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\n"
+    "text": "\n"
   }
 ]

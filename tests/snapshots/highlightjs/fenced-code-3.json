@@ -4,11 +4,15 @@
     "text": "```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nplain text\n"
   },
   {
     "scope": "keyword",
-    "text": "```\n"
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

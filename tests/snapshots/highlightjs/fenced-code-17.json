@@ -1,22 +1,18 @@
 [
   {
     "scope": "keyword",
-    "text": "```\ncode"
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\ncode\n  ```\nstill code\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
   },
   {
     "scope": null,
     "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  ```"
-  },
-  {
-    "scope": null,
-    "text": "\nstill code\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```\n"
   }
 ]

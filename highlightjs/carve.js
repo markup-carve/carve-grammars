@@ -61,7 +61,7 @@
  * class is Unicode White_Space plus U+FEFF (markup-carve/carve#806), and that is
  * the outlier. `(?<![\s\S])` is true only where nothing precedes.
  *
- * Only OPENERS carry it. A closer (`CODE_FENCE_END`, the div and block-comment
+ * Only OPENERS carry it. A closer (the code, div and block-comment
  * `end`s) and a definition body line cannot be line 1, so they are untouched.
  * `LINE_COMMENT` needs nothing either, but for a reason worth naming: its
  * `(?<=\s)` already admits the mark, because JavaScript's `\s` holds U+FEFF.
@@ -739,21 +739,185 @@
         contains: [DEFINITION_TERM_MARKER, DEFINITION_TERM],
     };
 
-    // Code fence opening: ``` or ~~~ with optional language
-    const CODE_FENCE_START = {
-        className: 'keyword',
-        // Anchored `^[ \t]*` on purpose - no container model here, see the
-        // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*[`~]{3,}\s*[a-zA-Z]*$/,
-        relevance: 10,
-    };
+    /*
+     * FENCED CODE AND RAW BLOCKS - ONE MODE PER BLOCK, NOT ONE PER DELIMITER.
+     *
+     * A code block's payload is NOT Carve (spec PART 9 §2, `code_content`:
+     * "any text until matching fence, preserved literally"), and until
+     * carve-grammars#309 this file said so about the delimiters only: the
+     * opener and the closer were two independent single-line modes with
+     * NOTHING between them, so the body was handed to the full top-level mode
+     * list and
+     *
+     *     ```
+     *     x *b* y
+     *     ```
+     *
+     * coloured `*b*` `strong` inside code. That is the markup-carve/carve#1239
+     * shape one construct over - a payload that is recognized and still live -
+     * and it is worse than leaving the block unhighlighted, because the output
+     * then claims the document says something it does not.
+     *
+     * A begin/end mode with an EMPTY `contains` is what makes a payload inert
+     * in this engine: highlight.js offers a mode's `contains` and nothing else
+     * inside it, so an empty list is the whole suppression. The two delimiter
+     * lines keep the `keyword` scope they always had through `beginScope` /
+     * `endScope`, and the body carries `code`.
+     *
+     * THE CLOSER IS REQUIRED UP FRONT, the same guard `BLOCK_COMMENT` carries
+     * below and for the same engine reason: highlight.js has no begin->end
+     * backreference, so a mode that opens on an unpartnered fence runs to END
+     * OF FILE and greys out the rest of the document.
+     *
+     * THE FORWARD SCAN IS BOUNDED, because proving there is NO closer costs a
+     * scan to end of input and a document can carry many openers that have
+     * none. The bound is 32 KB rather than the 8 KB `BLOCK_COMMENT` uses, and
+     * the difference is the point: a code block THAT BIG is an ordinary
+     * document (32 KB is some 800 lines of source), and past the bound the
+     * fence opens no mode and its payload goes back to being live prose - which
+     * is this issue again, at a size. Measured on a hostile 200 KB document
+     * carrying 100 openers with no closer ahead of any of them: 23 ms at 8 KB,
+     * 57 ms at 32 KB, 114 ms at 64 KB, 284 ms at 256 KB, linear in the bound
+     * and linear in the document at each of them. 32 KB buys the blocks people
+     * write for a cost that stays in the tens of milliseconds on a document
+     * built to be slow.
+     *
+     * A HOSTILE DOCUMENT IS ALSO HARDER TO BUILD HERE than for `%%%`, which is
+     * why the bounds differ at all. A comment fence closes on an EXACT width,
+     * so a file of runs of INCREASING width leaves every one of them unmatched
+     * and pays the scan once each - linear input, quadratic work. A code fence
+     * closes on any run at least as long, so that same file matches every
+     * opener at the next line; leaving N openers unmatched needs strictly
+     * DECREASING widths, which costs O(N^2) characters to write down.
+     *
+     * WHAT THAT TRADES AWAY, written down rather than left to be rediscovered:
+     * an unterminated fence at DOCUMENT level really does open a block that
+     * runs to the end (grammar.ebnf, A CLOSER IS REQUIRED: "``` alone ... still
+     * opens a code block that runs to the end"), and here it does not - it
+     * falls to `LONE_CODE_FENCE` below, which colours the delimiter
+     * line and leaves the lines under it as prose. That is the reading this
+     * file had for every fence before #309, kept for the one shape it is still
+     * right about: inside a container an opener with no closer opens NOTHING,
+     * and a mode that ran to end of file there would swallow the container's
+     * own closer and every block after it.
+     *
+     * THE CLOSER MATCHES ITS OPENER, and the rule is not the colon fence's.
+     * A code fence closes on the SAME fence character at a length >= the
+     * opener's (PART 9 §2, `code_fence_close`), where a colon fence wants an
+     * exact length (§12) - so `DIV_BLOCK`'s width check next door is `!==` and
+     * this one is `<`. Measured against the engine: ``` closed by ```` is one
+     * code block, ```` closed by ``` is not.
+     */
 
-    // Code fence closing: ``` or ~~~
-    const CODE_FENCE_END = {
+    // What may follow the fence on the opener line (grammar.ebnf
+    // `code_fence_info`): a language token, then an optional "title", then an
+    // optional [label]; or a title and label; or a label alone - in that fixed
+    // order, and nothing else. The punctuation in the language token is the
+    // grammar's (`c++`, `f#`, `asp.net`, `text/html`), and it may start with a
+    // digit; a leading `=` is excluded there because that is the raw opener.
+    //
+    // STRICTER THAN THE `\s*[a-zA-Z]*` IT REPLACES, and wider where it counts.
+    // The old spelling took no `c++`, no `text/html`, no digit and no `=html`,
+    // so every one of those fences was NOT recognized and its body was live
+    // prose - the same leak this rule is about, reached through the opener
+    // rather than through the missing body. It also spelled the separator
+    // `\s*`, which under the `m` flag these patterns compile with reaches
+    // ACROSS the newline: on ```` ```\nfoo ```` the opener matched `` ```\nfoo ``
+    // and scoped the first line of the payload as a delimiter.
+    const FENCE_LANGUAGE = '[A-Za-z0-9_+#./-]+';
+    const FENCE_TITLE = '"[^"\\n]*"';
+    const FENCE_LABEL = '\\[[^\\]\\n]*\\]';
+    const CODE_FENCE_INFO =
+        '(?:' + FENCE_LANGUAGE + '(?: +' + FENCE_TITLE + ')?(?: +' + FENCE_LABEL + ')?'
+        + '|' + FENCE_TITLE + '(?: +' + FENCE_LABEL + ')?'
+        + '|' + FENCE_LABEL + ')';
+    // A raw block is a code fence whose info string is `=` immediately followed
+    // by a format name (grammar.ebnf `raw_block`): ```=html, and ``` =html with
+    // the one permitted space, but never ```= html. It takes no title and no
+    // label.
+    const RAW_FENCE_INFO = '=[A-Za-z_][\\w-]*';
+    // The ONE optional space between the fence and its info string is the
+    // grammar's `[space]`, singular and never a tab: ```` ```  js ```` and
+    // ```` ```<TAB>js ```` are paragraphs in the engine, where ```` ``` js ````
+    // is a fence. Trailing whitespace after the info string is not part of it.
+    const fenceOpener = (info) =>
+        '^(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(([`~])\\3{2,})(?: ?' + info + ')?[ \\t]*$'
+        // The closer, required ahead, on a line of its own: the opener's own
+        // indent (`\1`), then the same character (`\3`) at a length at least
+        // the opener's (`\2`, then any number more of it).
+        + '(?=[\\s\\S]{0,32768}?\\n\\1\\2\\3*[ \\t]*$)';
+
+    /**
+     * A fenced block whose payload is verbatim.
+     *
+     * @param {string} info - the info-string shape this fence carries.
+     * @returns {object} a highlight.js mode with an inert body.
+     */
+    const fencedVerbatim = (info) => ({
+        className: 'code',
+        // Anchored `^[ \t]*` on purpose - no container model here, see the
+        // indented-block-openers note in the module docblock (carve-grammars#138).
+        beginScope: 'keyword',
+        begin: new RegExp(fenceOpener(info)),
+        'on:begin': (m, resp) => {
+            resp.data._codeFence = { indent: m[1], run: m[2] };
+        },
+        endScope: 'keyword',
+        // The closer is a HOMOGENEOUS run: ONE fence character repeated, not a
+        // character class repeated. A mixed line is payload, which is what the
+        // engine calls it - a backtick fence is not closed by a run of three
+        // backticks and a tilde.
+        end: /^([ \t]*)(`{3,}|~{3,})[ \t]*$/,
+        // THE CLOSER SITS AT THE OPENER'S OWN COLUMN, and a run indented past it
+        // is payload. That is what lets a fence hold a fence as sample text -
+        // the shape every document describing Carve in Carve is made of:
+        //
+        //     ```
+        //       ```
+        //     *still code*
+        //     ```
+        //
+        // is ONE code block whose content is the indented run and the line under
+        // it (measured; PART 9 §2, COLUMN-EXACT DELIMITERS). Compared to the
+        // opener's indent rather than anchored at column 0, because a fence
+        // inside a list item is legitimately indented and this grammar has no
+        // container model to tell the two apart - see the note in the module
+        // docblock.
+        'on:end': (m, resp) => {
+            const open = resp.data._codeFence;
+            const closes = open
+                && m[1] === open.indent
+                && m[2][0] === open.run[0]
+                && m[2].length >= open.run.length;
+            if (!closes) resp.ignoreMatch();
+        },
+        // THE PAYLOAD IS INERT, and this empty list is where that is said.
+        contains: [],
+        relevance: 10,
+    });
+
+    const CODE_BLOCK = fencedVerbatim(CODE_FENCE_INFO);
+    const RAW_BLOCK = fencedVerbatim(RAW_FENCE_INFO);
+
+    // A FENCE LINE THIS GRAMMAR DOES NOT PAIR: an opener with no closer ahead,
+    // and the closer of a pair the rules above did not take. It stays what both
+    // delimiter rules were before #309 - a single-line mode that colours the run
+    // and claims nothing under it.
+    //
+    // ONE MODE, not the two this replaced. `CODE_FENCE_START` and
+    // `CODE_FENCE_END` matched the same lines once the opener rule stopped
+    // requiring the info string to be a bare word: whichever came first in
+    // `contains` took every fence line and the other could not fire. A rule that
+    // cannot fire is the defect this repository has shipped three times
+    // (carve-grammars#295, #298, #300), so there is one rule with one name.
+    const LONE_CODE_FENCE = {
         className: 'keyword',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^[ \t]*[`~]{3,}$/,
+        begin: new RegExp(
+            '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:`{3,}|~{3,})'
+            + '(?: ?(?:' + CODE_FENCE_INFO + '|' + RAW_FENCE_INFO + '))?[ \\t]*$',
+        ),
         relevance: 10,
     };
 
@@ -1138,8 +1302,9 @@
         // Block-level elements (order matters - more specific first)
         FRONT_MATTER,
         HEADING,
-        CODE_FENCE_START,
-        CODE_FENCE_END,
+        CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
+        RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string
+        LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,
         HORIZONTAL_RULE,
