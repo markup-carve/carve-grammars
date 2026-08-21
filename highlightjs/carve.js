@@ -1188,8 +1188,14 @@
     DIV_BLOCK_IN_GROUP.contains = [...IN_GROUP.filter((mode) => mode !== DIV_BLOCK_IN_GROUP), 'self'];
 
     return {
+        // `crv` is the canonical file extension, and every surface this package
+        // ships answers it (tests/lib/aliases.js). `registerLanguage` registers
+        // the definition's own aliases, so listing it here is the whole
+        // registration. No casing variant belongs in this list: highlight.js
+        // lowercases both what it stores and what `getLanguage` is asked for,
+        // so `Carve` already resolves and a second spelling would be dead.
         name: 'Carve',
-        aliases: ['carve'],
+        aliases: ['carve', 'crv'],
         case_insensitive: false,
         contains: CONTAINS,
     };

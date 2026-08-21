@@ -1138,6 +1138,12 @@
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
     Prism.languages.carvemd = Prism.languages.carve;
+
+    // The canonical file extension is a fence word too, and every surface this
+    // package ships answers it (tests/lib/aliases.js). Lowercase because
+    // `Prism.util.getLanguage` lowercases the `language-xxx` class, so an
+    // uppercase key would be assignable and unreachable.
+    Prism.languages.crv = Prism.languages.carve;
 })(
     (typeof globalThis !== 'undefined' && globalThis.Prism)
         ? globalThis.Prism
