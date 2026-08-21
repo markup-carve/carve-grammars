@@ -15,7 +15,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
  *
  * @example
  * ```js
- * import { CarveFootnoteDefinition } from 'carve-grammars/tiptap'
+ * import { CarveFootnoteDefinition } from '@markup-carve/carve-grammars/tiptap'
  *
  * editor.chain().focus().insertCarveFootnoteDefinition({ label: '1' }).run()
  * ```

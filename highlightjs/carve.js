@@ -9,7 +9,7 @@
  *
  * This file is a UMD module so it works in every documented integration:
  *
- * - ESM: `import carve from 'carve-grammars/highlightjs/carve.js'` (resolved to
+ * - ESM: `import carve from '@markup-carve/carve-grammars/highlightjs/carve.js'` (resolved to
  *   the carve.mjs shim via the package `exports` map), then
  *   `hljs.registerLanguage('carve', carve)`.
  * - Classic `<script src=".../highlightjs/carve.js">` after highlight.js: it

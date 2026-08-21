@@ -8,7 +8,7 @@ import { attributeOrderSlot } from './carve-attribute-slots.js';
  *
  * @example
  * ```js
- * import { CarveSpan } from 'carve-grammars/tiptap'
+ * import { CarveSpan } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [CarveSpan],

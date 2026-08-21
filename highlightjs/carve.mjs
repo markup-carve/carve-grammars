@@ -8,14 +8,14 @@
  *
  * ```js
  * import hljs from 'highlight.js';
- * import carve from 'carve-grammars/highlightjs/carve.js';
+ * import carve from '@markup-carve/carve-grammars/highlightjs/carve.js';
  * hljs.registerLanguage('carve', carve);
  * ```
  *
  * (The package `exports` map routes the ESM `import` of `./highlightjs/carve.js`
  * to this file.)
  *
- * @module carve-grammars/highlightjs/carve
+ * @module @markup-carve/carve-grammars/highlightjs/carve
  */
 import './carve.js';
 
