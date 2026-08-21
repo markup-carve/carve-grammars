@@ -350,7 +350,29 @@
         // is a comment and its body must stay scoped as one.
         'comment': [
             {
-                pattern: /\{%[^\n]*?%\}/,
+                // Inline comment `{% ... %}`. The body may contain a `%` that
+                // is not the closer's (`{% 50% off %}` is one comment in the
+                // engine), so the scan cannot simply exclude `%` the way the
+                // critic rule excludes `}` - but written `[^\n]*?` it scans to
+                // end of LINE from every position and never finds a closer in
+                // a document made of openers, which is quadratic in the
+                // document (carve-grammars#298: 5.2 ms at 6 KB, 312 ms at
+                // 48 KB, x4 per doubling, and it ships).
+                //
+                // Unrolled instead: a run of non-`%`, then any number of `%`
+                // that is NOT the closer followed by another such run. Same
+                // language - "no newline and no `%}`" - but every step is
+                // forced, so an unclosed `{%` gives up at the next `%` rather
+                // than at the end of the line, and both repetitions are
+                // BOUNDED, which is what `tests/scans-are-bounded-test.js`
+                // pins. The run bound matches the critic comment's `{0,4096}`
+                // next door, and raising it costs nothing on an unclosed
+                // opener - the run stops at the next `%` either way, so the
+                // bound caps a body, not a failure. A body past the bounds
+                // (over 4 KB between two `%`, or over 32 non-closing `%` on
+                // one line) is not matched and the `{%` stays plain text,
+                // which is the safe direction.
+                pattern: /\{%[^%\n]{0,4096}(?:%(?!\})[^%\n]{0,4096}){0,32}%\}/,
                 greedy: true,
             },
             {

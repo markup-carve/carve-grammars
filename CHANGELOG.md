@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Prism no longer scans to the end of the line from every position on an unclosed `{%` inline comment, so a document made of `{%` openers is linear instead of quadratic: 48 KB of them took 312 ms and now takes 9.5 ms. Highlighting is unchanged on every corpus document (#298).
 - An unclosed `%%%` comment fence opened on a list item's marker no longer makes Prism and highlight.js backtrack exponentially: `- %%%` followed by a couple of dozen ordinary indented lines took hundreds of milliseconds and a thirty-line one did not finish, which hangs any page highlighting untrusted Carve. Flat at 2000 lines now, with highlighting unchanged (#294).
 - Prism and highlight.js answer the `crv` fence word, so a ```` ```crv ```` block highlights on every surface this package ships rather than under Shiki alone. Prism also keeps `carvemd` and Shiki keeps `Carve` (#290).
 - Prism and highlight.js scope the canonical doubled arrows (`-->`, `<--`, `<-->`, `==>`, `<==`, `<=>`) as one arrow instead of an en dash plus a stray `>`, and `=>` alone is no longer an arrow (#282, markup-carve/carve#1442).
