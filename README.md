@@ -200,6 +200,10 @@ installed with `carve-grammars`.
 
 ## Syntax highlighting
 
+Both `carve` and `crv` work as the fence word on every surface - Prism,
+highlight.js and Shiki all answer the file extension as well as the language
+name.
+
 Render Carve source as highlighted HTML on the web. Both grammars cover the full
 Carve token set: headings, lists, tables, blockquotes, fenced/raw blocks,
 container divs, front matter and comments, plus inline emphasis

@@ -13,6 +13,7 @@ import {
     carveMarkdown,
     extendTheme,
 } from '../shiki/index.js';
+import { REQUIRED_ALIASES } from './lib/aliases.js';
 
 let passed = 0;
 function ok(name, fn) {
@@ -25,6 +26,15 @@ ok('grammar is named carve and has the repository', () => {
     assert.strictEqual(carveGrammar.name, 'carve');
     assert.ok(carveGrammar.repository.subscript);
     assert.ok(carveGrammar.repository.math_inline);
+});
+
+ok('grammar answers every required alias', () => {
+    for (const alias of REQUIRED_ALIASES) {
+        assert.ok(
+            carveGrammar.name === alias || (carveGrammar.aliases ?? []).includes(alias),
+            `grammar answers neither name nor alias ${alias}`,
+        );
+    }
 });
 
 ok('light and dark extras cover the same scopes', () => {

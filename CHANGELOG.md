@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **`crv` highlights everywhere, not just under Shiki** (#290). The Shiki grammar carried the `crv` alias from the start while the Prism and highlight.js definitions answered only `carve`, so a ```` ```crv ```` fence highlighted on a VitePress site and fell through to plain text on a Prism or highlight.js one. `tests/lib/aliases.js` now holds the one required set and all three surfaces are asserted against it.
+
 ### Fixed
 
 - Prism and highlight.js scope the canonical doubled arrows (`-->`, `<--`, `<-->`, `==>`, `<==`, `<=>`) as one arrow instead of an en dash plus a stray `>`, and `=>` alone is no longer an arrow (#282, markup-carve/carve#1442).
@@ -1052,7 +1056,7 @@ All notable changes to `carve-grammars` are documented here.
   intraword delimiters stay literal per spec (matching italic/underline/highlight).
 - Full TextMate sweep test (67 positive + 6 intraword-negative cases via Shiki)
   runs in CI.
-- `carve-grammars/shiki`: shared Shiki/VitePress kit (grammar + GitHub themes
+- `@markup-carve/carve-grammars/shiki`: shared Shiki/VitePress kit (grammar + GitHub themes
   extended with Carve scope colors + styling transformer + companion CSS), so
   all Carve docs sites configure highlighting from one import.
 - TextMate grammar shipped in the npm package (`textmate/carve.tmLanguage.json`).
@@ -1076,10 +1080,10 @@ All notable changes to `carve-grammars` are documented here.
 Initial release. Syntax + editor integration for the Carve markup language.
 
 ### Grammars
-- Prism.js language definition (`carve-grammars/prism/carve.js`).
-- highlight.js language definition (`carve-grammars/highlightjs/carve.js`).
+- Prism.js language definition (`@markup-carve/carve-grammars/prism/carve.js`).
+- highlight.js language definition (`@markup-carve/carve-grammars/highlightjs/carve.js`).
 
-### Tiptap integration (`carve-grammars/tiptap`)
+### Tiptap integration (`@markup-carve/carve-grammars/tiptap`)
 - `CarveKit` - one Extension bundle: StarterKit plus Carve marks and nodes,
   keyboard map, and an in-block code-language picker.
 - `serializeToCarve(json)` - convert a Tiptap/ProseMirror document to Carve

@@ -20,6 +20,7 @@ import {
     QUOTE_NOT_CLOSED,
 } from './lib/marker-line-fences.js';
 import { UNTERMINATED_FENCES } from './lib/unterminated-fences.js';
+import { REQUIRED_ALIASES } from './lib/aliases.js';
 
 const require = createRequire(import.meta.url);
 
@@ -113,6 +114,13 @@ const carvePrism = prismHost.languages.carve;
 
 ok('prism: grammar registered on Prism.languages.carve', () => {
     assert.ok(carvePrism, 'Prism.languages.carve not defined');
+});
+
+ok('prism: every required alias resolves to the same grammar', () => {
+    for (const alias of REQUIRED_ALIASES) {
+        assert.ok(prismHost.languages[alias], `Prism.languages.${alias} not defined`);
+        assert.strictEqual(prismHost.languages[alias], carvePrism, `Prism.languages.${alias} is not the carve grammar`);
+    }
 });
 
 ok('prism: required token names present', () => {
@@ -458,7 +466,10 @@ ok('hljs: carve.js loads as a classic <script> and self-registers', () => {
 
 ok('hljs: definition has name, aliases, contains', () => {
     assert.strictEqual(def.name, 'Carve');
-    assert.ok(Array.isArray(def.aliases) && def.aliases.includes('carve'), 'aliases must include carve');
+    assert.ok(Array.isArray(def.aliases), 'aliases must be an array');
+    for (const alias of REQUIRED_ALIASES) {
+        assert.ok(def.aliases.includes(alias), `aliases must include ${alias}`);
+    }
     assert.ok(Array.isArray(def.contains) && def.contains.length > 0, 'contains must be a non-empty array');
 });
 

@@ -97,7 +97,7 @@ const CODE_LANGS = [
  * @example
  * ```js
  * import { Editor } from '@tiptap/core'
- * import { CarveKit, serializeToCarve } from 'carve-grammars/tiptap'
+ * import { CarveKit, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   element: document.getElementById('editor'),
@@ -111,7 +111,7 @@ const CODE_LANGS = [
  *
  * @example Configuration
  * ```js
- * import { CarveKit } from 'carve-grammars/tiptap'
+ * import { CarveKit } from '@markup-carve/carve-grammars/tiptap'
  *
  * // Disable specific features
  * CarveKit.configure({

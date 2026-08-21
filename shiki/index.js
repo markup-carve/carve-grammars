@@ -10,13 +10,13 @@
  * VitePress usage:
  *
  *   // .vitepress/config.ts
- *   import { carveMarkdown } from 'carve-grammars/shiki'
+ *   import { carveMarkdown } from '@markup-carve/carve-grammars/shiki'
  *   export default defineConfig({
  *     markdown: { ...carveMarkdown() },
  *   })
  *
  *   // .vitepress/theme/index.ts
- *   import 'carve-grammars/shiki/carve.css'
+ *   import '@markup-carve/carve-grammars/shiki/carve.css'
  */
 import { createRequire } from 'node:module'
 import githubLight from '@shikijs/themes/github-light'
@@ -134,7 +134,7 @@ const FontStyle = { Italic: 1, Bold: 2, Underline: 4, Strikethrough: 8 }
 
 /**
  * Shiki code transformer that tags tokens the HTML emitter cannot style
- * directly. Pair with `carve-grammars/shiki/carve.css`, which styles the
+ * directly. Pair with `@markup-carve/carve-grammars/shiki/carve.css`, which styles the
  * emitted `data-carve-*` attributes.
  */
 export const carveStylingTransformer = {

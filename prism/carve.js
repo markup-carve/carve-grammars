@@ -13,7 +13,7 @@
  *
  * ```js
  * import Prism from 'prismjs';
- * import 'carve-grammars/prism/carve.js'; // registers Prism.languages.carve
+ * import '@markup-carve/carve-grammars/prism/carve.js'; // registers Prism.languages.carve
  *
  * const html = Prism.highlight(src, Prism.languages.carve, 'carve');
  * ```
@@ -83,7 +83,7 @@
  * holds a literal byte order mark: it is invisible, and an editor or a
  * normalizing filter can drop the one character a rule is about.
  *
- * @module carve-grammars/prism/carve
+ * @module @markup-carve/carve-grammars/prism/carve
  */
 (function (Prism) {
     if (!Prism) {
@@ -1138,6 +1138,12 @@
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
     Prism.languages.carvemd = Prism.languages.carve;
+
+    // `crv` is the file extension, so it is the fence word a docs site reaches
+    // for as readily as `carve`. The Shiki grammar has carried the alias since
+    // it was added; registering it here keeps the three surfaces answering the
+    // same set of names.
+    Prism.languages.crv = Prism.languages.carve;
 })(
     (typeof globalThis !== 'undefined' && globalThis.Prism)
         ? globalThis.Prism

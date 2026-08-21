@@ -52,7 +52,7 @@ function contentWithoutTitle(element) {
  *
  * @example
  * ```js
- * import { CarveDiv } from 'carve-grammars/tiptap'
+ * import { CarveDiv } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [CarveDiv],

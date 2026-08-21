@@ -7,7 +7,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
  *
  * @example
  * ```js
- * import { CarveFootnote } from 'carve-grammars/tiptap'
+ * import { CarveFootnote } from '@markup-carve/carve-grammars/tiptap'
  *
  * const editor = new Editor({
  *   extensions: [CarveFootnote],
