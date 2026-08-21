@@ -24,7 +24,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { specConstructs } from './spec-constructs.mjs';
-import { SURFACES, probe, rootVariable } from './surface-probe.mjs';
+import { INDISTINGUISHABLE, SURFACES, probe, rootVariable } from './surface-probe.mjs';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from '../tests/lib/payload-inertness.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -108,6 +108,15 @@ for (const [id, surface] of Object.entries(SURFACES)) {
         if (hits.has(name)) {
             entry.status = 'IMPLEMENTED';
             entry.evidence = hits.get(name);
+        } else if (INDISTINGUISHABLE[name] && hits.has(INDISTINGUISHABLE[name])) {
+            /*
+             * The surface names this construct's SIBLING and not it, and the
+             * two spellings are one rule wherever a grammar folds them. A name
+             * cannot separate them, so the honest reading is "not measured",
+             * not "not there" - see INDISTINGUISHABLE in surface-probe.mjs.
+             */
+            entry.status = 'UNMEASURED';
+            entry.ticket = old.ticket || was.gapTicket || '';
         } else if (UNSUPPORTED[name] && (UNSUPPORTED_ON[name] || []).includes(id)) {
             entry.status = 'UNSUPPORTED';
             entry.reason = old.reason || UNSUPPORTED[name];
@@ -150,6 +159,7 @@ const counts = Object.entries(ledger.surfaces).map(([id, record]) => {
     const values = Object.values(record.constructs || {});
     const by = (status) => values.filter((entry) => entry.status === status).length;
 
-    return `${id.padEnd(20)} ${by('IMPLEMENTED')} implemented  ${by('UNSUPPORTED')} unsupported  ${by('GAP')} gap`;
+    return `${id.padEnd(20)} ${by('IMPLEMENTED')} implemented  ${by('UNSUPPORTED')} unsupported  `
+        + `${by('UNMEASURED')} unmeasured  ${by('GAP')} gap`;
 });
 console.log(counts.join('\n'));

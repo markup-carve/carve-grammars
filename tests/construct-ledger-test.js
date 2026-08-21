@@ -32,8 +32,11 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { mkdtempSync, writeFileSync as write } from 'node:fs';
+import { tmpdir } from 'node:os';
+
 import { specConstructs } from '../scripts/spec-constructs.mjs';
-import { SIGNATURES, SURFACES, probe } from '../scripts/surface-probe.mjs';
+import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, vocabulary } from '../scripts/surface-probe.mjs';
 import { validate } from './lib/construct-ledger.js';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
@@ -116,6 +119,106 @@ ok('the signature table is total over the derived list', () => {
 
 ok('the verbatim list and the samples that measure it are the same list', () => {
     assert.deepStrictEqual(ledger.verbatimPayload, VERBATIM);
+});
+
+ok('every construct the probe cannot decide names a real sibling', () => {
+    // carve-grammars#314. `UNMEASURED` is only honest while both halves are
+    // constructs the grammar still has; a stale entry would mute a row.
+    for (const [construct, sibling] of Object.entries(INDISTINGUISHABLE)) {
+        assert.ok(names.includes(construct), `INDISTINGUISHABLE names ${construct}, not a construct`);
+        assert.ok(names.includes(sibling), `${construct}'s sibling ${sibling} is not a construct`);
+    }
+});
+
+ok('an UNMEASURED row is a blind spot, not a gap wearing a hat', () => {
+    /*
+     * The state means "the surface names this construct's sibling and a name
+     * cannot separate the two". If the sibling is NOT implemented there, no
+     * name was folded and the row is an ordinary gap - which is the way the
+     * state would get used to quiet one.
+     */
+    for (const [id, record] of Object.entries(ledger.surfaces)) {
+        for (const [name, entry] of Object.entries(record.constructs || {})) {
+            if (entry.status !== 'UNMEASURED') continue;
+            const sibling = INDISTINGUISHABLE[name];
+            assert.ok(sibling, `${id}/${name}: UNMEASURED, but the probe has no blind spot for it`);
+            assert.strictEqual(
+                record.constructs[sibling].status, 'IMPLEMENTED',
+                `${id}/${name}: UNMEASURED says the sibling rule ${sibling} could be carrying this `
+                    + 'construct too, and that surface has no rule for the sibling either - so it is a GAP',
+            );
+        }
+    }
+});
+
+console.log('\nthe probe reads a surface\'s vocabulary and not its prose:');
+
+ok('the tree-sitter read is the union of rules, externals and node types', () => {
+    /*
+     * carve-grammars#314: reading `rules` alone under-read that grammar by 150
+     * names, and five constructs with a rule read as gaps. Driven over a
+     * synthetic checkout rather than the real one so it fails on the
+     * EXTRACTOR - the real grammar is in another repository and is not always
+     * there to read.
+     */
+    const root = mkdtempSync(resolve(tmpdir(), 'carve-probe-'));
+    write(resolve(root, 'grammar.json'), JSON.stringify({
+        rules: { heading: {} },
+        externals: [{ type: 'EXTERNAL', name: 'hard_line_break' }, { type: 'STRING', value: '#' }],
+    }));
+    write(resolve(root, 'node-types.json'), JSON.stringify([
+        { type: 'paragraph', named: true },
+        { type: 'TODO', named: false },
+        { type: 'table', named: true, children: { types: [{ type: 'table_cell', named: true }] } },
+    ]));
+
+    const surface = SURFACES['tree-sitter-carve'];
+    const saved = surface.files;
+    surface.files = ['grammar.json', 'node-types.json'];
+    try {
+        const found = vocabulary('tree-sitter-carve', root).map((entry) => entry.raw);
+        for (const name of ['heading', 'hard_line_break', 'paragraph', 'table_cell']) {
+            assert.ok(found.includes(name), `the tree-sitter read lost ${name}: ${found.join(', ')}`);
+        }
+        // ... and an ANONYMOUS node type is a literal, not a name for anything.
+        assert.ok(!found.includes('TODO'), `an unnamed node type reached the vocabulary: ${found.join(', ')}`);
+    } finally {
+        surface.files = saved;
+    }
+});
+
+ok('the Tiptap read skips the section that says what is NOT modeled', () => {
+    /*
+     * carve-grammars#311 stopped this extractor reading the map's prose
+     * VALUES; the same sentences were still arriving as KEYS, and `unmapped`
+     * is a whole section of them. Nine constructs - the eight smart-typography
+     * ones and soft_break - were IMPLEMENTED on the strength of an entry
+     * saying they are not modeled (carve-grammars#314).
+     */
+    const map = JSON.parse(readFileSync(resolve(repoRoot, 'tiptap', 'schema-map.json'), 'utf8'));
+    const unmapped = Object.keys(map.unmapped);
+    assert.ok(unmapped.includes('smart_punctuation'), 'the fixture this test is about moved');
+
+    // The map only. `carve-to-pm.js` has a `case` for three of these, because
+    // a converter still has to DO something when it meets a node it cannot
+    // model, and that case really is a name the surface gives the construct.
+    const surface = SURFACES.tiptap;
+    const saved = surface.files;
+    surface.files = ['tiptap/schema-map.json'];
+    let found;
+    try {
+        found = new Set(vocabulary('tiptap', repoRoot).map((entry) => entry.raw));
+    } finally {
+        surface.files = saved;
+    }
+    const leaked = unmapped.filter((name) => found.has(name));
+    assert.deepStrictEqual(
+        leaked, [],
+        `schema-map.json's "unmapped" section says these are NOT modeled and they are in the `
+            + `vocabulary anyway: ${leaked.join(', ')}`,
+    );
+    // The section the map DOES declare types in is still read.
+    assert.ok(found.has('code_block'), 'the Tiptap read lost the types section');
 });
 
 console.log('\nthe four surfaces in this repository, re-probed:');
@@ -213,6 +316,12 @@ const BROKEN = [
         doc.surfaces.example.constructs[list[0]] = { status: 'UNSUPPORTED', payload: 'none' };
 
         return [doc, 'empty reason'];
+    }],
+    ['an UNMEASURED entry with no ticket', (list) => {
+        const doc = soundLedger(list);
+        doc.surfaces.example.constructs[list[0]] = { status: 'UNMEASURED', ticket: '', payload: 'none' };
+
+        return [doc, 'UNMEASURED needs a ticket'];
     }],
     ['a GAP with no ticket', (list) => {
         const doc = soundLedger(list);

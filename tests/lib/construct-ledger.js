@@ -30,8 +30,17 @@
  * `GAP` says nobody has done it yet.
  */
 
-/** The statuses a ledger entry may carry. */
-export const STATUSES = ['IMPLEMENTED', 'UNSUPPORTED', 'GAP'];
+/**
+ * The statuses a ledger entry may carry.
+ *
+ * `UNMEASURED` is the fourth, and it is about the INSTRUMENT rather than the
+ * surface: the probe reads names, and five constructs share their name with a
+ * sibling (`{/x/}` and `/x/` are two constructs and one rule name). On a
+ * surface nobody has read, "no rule found" would be a claim the probe cannot
+ * make, so the row says so and carries a ticket. carve-grammars#314; the
+ * payload axis grew the same state in carve-grammars#313.
+ */
+export const STATUSES = ['IMPLEMENTED', 'UNSUPPORTED', 'GAP', 'UNMEASURED'];
 
 /**
  * The payload axis - the second thing tracked per construct.
@@ -118,6 +127,12 @@ export function validate(constructs, ledger) {
             }
             if (entry.status === 'GAP' && !TICKET.test(entry.ticket || '')) {
                 findings.push(`${at}: GAP needs a ticket like owner/repo#123, got ${JSON.stringify(entry.ticket)}`);
+            }
+            if (entry.status === 'UNMEASURED' && !TICKET.test(entry.ticket || '')) {
+                findings.push(
+                    `${at}: UNMEASURED needs a ticket, the same as a GAP does - it is a blind spot `
+                    + `someone has to look at, got ${JSON.stringify(entry.ticket)}`,
+                );
             }
 
             if (!PAYLOADS.includes(entry.payload)) {

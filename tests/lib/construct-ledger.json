@@ -171,7 +171,7 @@
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "autolink",
+          "evidence": "link_inline",
           "payload": "parsed"
         },
         "reference_link": {
@@ -276,7 +276,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#307",
           "payload": "none"
         },
@@ -323,7 +323,7 @@
         },
         "tag": {
           "status": "IMPLEMENTED",
-          "evidence": "variable.other.tag.carve",
+          "evidence": "tag",
           "payload": "parsed"
         },
         "symbol": {
@@ -870,9 +870,9 @@
           "payload": "none"
         },
         "block_attributes": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "ATTRIBUTE",
+          "payload": "parsed"
         },
         "blank_line": {
           "status": "UNSUPPORTED",
@@ -976,7 +976,7 @@
         },
         "strikethrough": {
           "status": "IMPLEMENTED",
-          "evidence": "FORCED_STRIKE",
+          "evidence": "STRIKETHROUGH",
           "payload": "parsed"
         },
         "highlight": {
@@ -1015,7 +1015,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#309",
           "payload": "none"
         },
@@ -1060,9 +1060,9 @@
           "payload": "parsed"
         },
         "tag": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "TAG",
+          "payload": "parsed"
         },
         "symbol": {
           "status": "IMPLEMENTED",
@@ -1144,7 +1144,7 @@
         },
         "thematic_break": {
           "status": "IMPLEMENTED",
-          "evidence": "horizontalRule",
+          "evidence": "thematic_break",
           "payload": "parsed"
         },
         "code_block": {
@@ -1204,14 +1204,16 @@
           "payload": "parsed"
         },
         "comment_block": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carveComment",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "comment_line": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carveComment",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
@@ -1221,7 +1223,7 @@
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
-          "evidence": "carveLinkRefDef",
+          "evidence": "link_reference_definition",
           "payload": "parsed"
         },
         "footnote_definition": {
@@ -1267,9 +1269,10 @@
           "ticket": "#310"
         },
         "code_span": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "code",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "autolink": {
           "status": "IMPLEMENTED",
@@ -1318,23 +1321,25 @@
           "payload": "none"
         },
         "math_inline": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "math",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "math_display": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "math",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
-          "evidence": "italic",
+          "evidence": "emphasis",
           "payload": "parsed"
         },
         "strong": {
           "status": "IMPLEMENTED",
-          "evidence": "bold",
+          "evidence": "strong",
           "payload": "parsed"
         },
         "bold_italic": {
@@ -1358,22 +1363,22 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#310",
           "payload": "none"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#310",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#310",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#310",
           "payload": "none"
         },
@@ -1388,7 +1393,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "#310",
           "payload": "none"
         },
@@ -1399,7 +1404,7 @@
         },
         "inline_footnote": {
           "status": "IMPLEMENTED",
-          "evidence": "carveInlineNote",
+          "evidence": "inline_footnote",
           "payload": "parsed"
         },
         "extension_inline": {
@@ -1435,7 +1440,7 @@
         },
         "tag": {
           "status": "IMPLEMENTED",
-          "evidence": "carveTag",
+          "evidence": "tag",
           "payload": "parsed"
         },
         "symbol": {
@@ -1444,44 +1449,44 @@
           "payload": "parsed"
         },
         "em_dash": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "en_dash": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "braced_en_dash": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "ellipsis": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "smart_quote": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "arrow": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "comparison": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "typographic_symbol": {
-          "status": "IMPLEMENTED",
-          "evidence": "smart_punctuation",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
@@ -1508,7 +1513,7 @@
     },
     "tree-sitter-carve": {
       "repo": "markup-carve/tree-sitter-carve",
-      "commit": "bc7df34",
+      "commit": "863abfa",
       "measured": "2026-08-21",
       "gapTicket": "markup-carve/tree-sitter-carve#245",
       "constructs": {
@@ -1554,14 +1559,14 @@
           "payload": "parsed"
         },
         "line_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "line_block_marker",
+          "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "local_hard_break_marker",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "GAP",
@@ -1613,7 +1618,7 @@
         },
         "paragraph": {
           "status": "IMPLEMENTED",
-          "evidence": "_paragraph",
+          "evidence": "paragraph",
           "payload": "parsed"
         },
         "block_attributes": {
@@ -1644,9 +1649,10 @@
           "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "code_span": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "verbatim",
+          "payload": "unmeasured",
+          "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "autolink": {
           "status": "IMPLEMENTED",
@@ -1655,13 +1661,13 @@
           "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "auto_text_link": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "auto_text_link",
+          "payload": "parsed"
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "_link",
+          "evidence": "inline_link",
           "payload": "parsed"
         },
         "reference_link": {
@@ -1681,7 +1687,7 @@
         },
         "inline_image": {
           "status": "IMPLEMENTED",
-          "evidence": "_image",
+          "evidence": "inline_image",
           "payload": "parsed"
         },
         "reference_image": {
@@ -1737,24 +1743,24 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis_begin",
+          "payload": "parsed"
         },
         "forced_strong": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "strong_begin",
+          "payload": "parsed"
         },
         "forced_underline": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "underline_begin",
+          "payload": "parsed"
         },
         "forced_strike": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "strikethrough_begin",
+          "payload": "parsed"
         },
         "forced_super": {
           "status": "IMPLEMENTED",
@@ -1767,9 +1773,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "highlighted_begin",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -1813,9 +1819,9 @@
           "payload": "parsed"
         },
         "tag": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "tag",
+          "payload": "parsed"
         },
         "symbol": {
           "status": "IMPLEMENTED",
@@ -1864,19 +1870,20 @@
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "inline_comment",
+          "evidence": "trailing_comment",
           "payload": "unmeasured",
           "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "braced_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "braced_comment",
+          "payload": "unmeasured",
+          "ticket": "markup-carve/tree-sitter-carve#245"
         },
         "hard_break": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "hard_line_break",
+          "payload": "parsed"
         },
         "soft_break": {
           "status": "UNSUPPORTED",
@@ -1965,7 +1972,7 @@
         },
         "comment_line": {
           "status": "IMPLEMENTED",
-          "evidence": "inline-comment",
+          "evidence": "comment.line.percent.carve",
           "payload": "unmeasured",
           "ticket": "markup-carve/vscode-carve#150"
         },
@@ -2041,7 +2048,7 @@
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "links",
+          "evidence": "markup.underline.link.carve",
           "payload": "parsed"
         },
         "reference_link": {
@@ -2122,17 +2129,17 @@
           "payload": "parsed"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vscode-carve#150",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vscode-carve#150",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vscode-carve#150",
           "payload": "none"
         },
@@ -2147,7 +2154,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vscode-carve#150",
           "payload": "none"
         },
@@ -2182,9 +2189,10 @@
           "payload": "parsed"
         },
         "editorial_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "comment.block.critic.carve",
+          "payload": "unmeasured",
+          "ticket": "markup-carve/vscode-carve#150"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -2345,7 +2353,7 @@
         },
         "comment_line": {
           "status": "IMPLEMENTED",
-          "evidence": "inline-comment",
+          "evidence": "comment.line.percent.carve",
           "payload": "unmeasured",
           "ticket": "markup-carve/intellij-carve#97"
         },
@@ -2421,7 +2429,7 @@
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "links",
+          "evidence": "markup.underline.link.carve",
           "payload": "parsed"
         },
         "reference_link": {
@@ -2497,22 +2505,22 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
         },
@@ -2527,7 +2535,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
         },
@@ -2562,9 +2570,10 @@
           "payload": "parsed"
         },
         "editorial_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "comment.block.critic.carve",
+          "payload": "unmeasured",
+          "ticket": "markup-carve/intellij-carve#97"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -2725,7 +2734,7 @@
         },
         "comment_line": {
           "status": "IMPLEMENTED",
-          "evidence": "inline-comment",
+          "evidence": "comment.line.percent.carve",
           "payload": "unmeasured",
           "ticket": "markup-carve/sublime-carve#31"
         },
@@ -2747,7 +2756,7 @@
         },
         "abbreviation_definition": {
           "status": "IMPLEMENTED",
-          "evidence": "meta.abbreviation.definition.carve",
+          "evidence": "entity.name.abbreviation.carve",
           "payload": "parsed"
         },
         "paragraph": {
@@ -2801,7 +2810,7 @@
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "links",
+          "evidence": "markup.underline.link.carve",
           "payload": "parsed"
         },
         "reference_link": {
@@ -2882,17 +2891,17 @@
           "payload": "parsed"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/sublime-carve#31",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/sublime-carve#31",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/sublime-carve#31",
           "payload": "none"
         },
@@ -2907,14 +2916,14 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/sublime-carve#31",
           "payload": "none"
         },
         "reference_footnote": {
-          "status": "GAP",
-          "ticket": "markup-carve/sublime-carve#31",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "constant.other.footnote.carve",
+          "payload": "parsed"
         },
         "inline_footnote": {
           "status": "IMPLEMENTED",
@@ -2928,12 +2937,12 @@
         },
         "addition": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.inserted.critic.carve",
+          "evidence": "markup.inserted.carve",
           "payload": "parsed"
         },
         "deletion": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.deleted.critic.carve",
+          "evidence": "markup.deleted.carve",
           "payload": "parsed"
         },
         "substitution": {
@@ -2942,9 +2951,10 @@
           "payload": "parsed"
         },
         "editorial_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/sublime-carve#31",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "comment.block.critic.carve",
+          "payload": "unmeasured",
+          "ticket": "markup-carve/sublime-carve#31"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -3255,22 +3265,22 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vim-carve#26",
           "payload": "none"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vim-carve#26",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vim-carve#26",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vim-carve#26",
           "payload": "none"
         },
@@ -3285,7 +3295,7 @@
           "payload": "none"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/vim-carve#26",
           "payload": "none"
         },
@@ -3483,7 +3493,7 @@
         },
         "comment_line": {
           "status": "IMPLEMENTED",
-          "evidence": "A DELIMITED INLINE COMMENT, `{% ... %}' (PART 9 S21a,",
+          "evidence": "Block comment fences %%% ... %%% and line comments %%.",
           "payload": "unmeasured",
           "ticket": "markup-carve/emacs-carve#19"
         },
@@ -3634,22 +3644,22 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         },
         "forced_strong": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         },
         "forced_underline": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         },
         "forced_strike": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         },
@@ -3664,7 +3674,7 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "GAP",
+          "status": "UNMEASURED",
           "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         },
