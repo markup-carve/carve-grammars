@@ -35,16 +35,13 @@ jobs:
       # tracking the engine's releases. 0.1.4 shipped with the engine pinned to
       # a carve-js commit for exactly this reason and nothing noticed, because
       # the manifest was never inspected before publishing.
+      #
+      # The rule lives in a script rather than inline here so that its own
+      # behavior is testable: `tests/no-git-dependencies-test.js` runs it over
+      # the acceptance matrix on every pull request. Inline, it only ever ran on
+      # a tag push, which is the worst moment to learn the guard is wrong.
       - name: No dependency is installed over git
-        run: |
-          bad="$(node -p '
-            const d = require("./package.json");
-            Object.entries({...d.dependencies, ...d.peerDependencies} ?? {})
-              .filter(([, v]) => /^(github:|git\+|git:)/.test(v))
-              .map(([k, v]) => k + " -> " + v).join("\n")')"
-          [ -z "$bad" ] \
-            || { echo "::error::git dependencies would ship to consumers:"; echo "$bad"; exit 1; }
-          echo "all dependencies resolve from the registry"
+        run: node scripts/no-git-dependencies.mjs
 
       - uses: actions/setup-node@v4
         with:
