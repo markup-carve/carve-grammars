@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- An unclosed `%%%` comment fence opened on a list item's marker no longer makes Prism and highlight.js backtrack exponentially: `- %%%` followed by a couple of dozen ordinary indented lines took hundreds of milliseconds and a thirty-line one did not finish, which hangs any page highlighting untrusted Carve. Flat at 2000 lines now, with highlighting unchanged (#294).
 - Prism and highlight.js answer the `crv` fence word, so a ```` ```crv ```` block highlights on every surface this package ships rather than under Shiki alone. Prism also keeps `carvemd` and Shiki keeps `Carve` (#290).
 - Prism and highlight.js scope the canonical doubled arrows (`-->`, `<--`, `<-->`, `==>`, `<==`, `<=>`) as one arrow instead of an en dash plus a stray `>`, and `=>` alone is no longer an arrow (#282, markup-carve/carve#1442).
 - A hyphen run that opens a word after whitespace is a command-line flag in both highlighters: `--oneline` stays literal, while `1--10`, `Mon--Fri` and `a -- b` remain en dashes (#282, markup-carve/carve#1443).

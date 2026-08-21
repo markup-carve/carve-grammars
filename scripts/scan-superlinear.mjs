@@ -130,5 +130,93 @@ for (const [label, gen] of [['increasing % widths', widths]]) {
     );
 }
 
+// SHAPES SIZED IN LINES, NOT CHARACTERS.
+//
+// Both families above build their input out of ONE UNIT REPEATED, and the unit
+// is a character or two. Nothing they generate contains a repeated LINE, so
+// nothing they generate reaches a rule whose repetition counts LINES - which is
+// what a fence body is. Both grammars scan for a comment fence's closer by
+// repeating a "one line of the body" group, and when the fence never closes the
+// engine has to disprove every parse of the body before it gives up. The cost of
+// that failure is the NUMBER OF PARSES, so an ambiguous line group is
+// EXPONENTIAL in the line count rather than quadratic in the byte count. Shipped
+// in 0.1.4 and invisible to this script until this section existed: `- %%%` plus
+// 24 indented lines took 421 ms in Prism and 379 ms in highlight.js, and the two
+// families above reported 0 superlinear throughout (carve-grammars#294).
+//
+// The ladder is walked from small to large and STOPS at the first flagged rung,
+// or at the first measurement over `CEILING`. Both stops are required, because
+// the defect this is looking for does not finish: the pre-fix grammar takes
+// 421 ms at 24 lines and does not return at 30, so a fixed large size would hang
+// this script rather than report from it.
+//
+// The bottom rungs step by FOUR LINES rather than doubling, for the same reason.
+// An exponential shape is too cheap to distinguish from noise at 16 lines and
+// already unbounded at 32, so a doubling ladder steps straight over the only
+// sizes where it is both visible and affordable. Four lines apart, the pre-fix
+// grammar goes 1.6 ms -> 26 ms while a linear one grows by a quarter.
+//
+// A LINEAR shape costs the size ratio, whatever that ratio is, so the threshold
+// is relative to it: `sizeRatio * 1.5`, which is exactly `SUSPECT` on the
+// doubling rungs above and scales down on the four-line ones.
+const LADDER = [16, 20, 24, 28, 32, 64, 128, 256, 512, 1024, 2048];
+const CEILING = 1000;
+const SUSPECT_MARGIN = 1.5;
+// Lower than `FLOOR`: these ratios are x4 per four lines rather than x4 per
+// doubling, so a few milliseconds against a few tenths is already a signal, and
+// waiting for 25 ms means waiting for the rung that costs two minutes.
+const LINE_FLOOR = 5;
+
+const lineShapes = [
+    ['unclosed %%% on a bullet', (n) => `- %%%\n${'  x\n'.repeat(n)}`],
+    ['closed %%% on a bullet', (n) => `- %%%\n${'  x\n'.repeat(n)}  %%%\n`],
+    ['unclosed %%% in a quote', (n) => `> %%%\n${'> x\n'.repeat(n)}`],
+    ['unclosed %%% at column 0', (n) => `%%%\n${'  x\n'.repeat(n)}`],
+];
+
+console.log('\nline shapes (cost per PARSE of the body, not per position)');
+console.log('shape                            lines  prism      ratio    hljs       ratio');
+for (const [label, gen] of lineShapes) {
+    // One warm run before the ladder: the first tokenize of a shape pays for
+    // JIT, and paying it inside the ladder shows up as a ratio under 1 on the
+    // second rung and hides the ones above it.
+    time(() => Prism.tokenize(gen(LADDER[0]), Prism.languages.carve));
+    time(() => hljs.highlight(gen(LADDER[0]), { language: 'carve' }));
+
+    let prev = null;
+    let worstPrism = 0;
+    let worstHl = 0;
+    // A ratio is only evidence next to a measurable absolute time, the same rule
+    // the rows above follow - but the ratio is PRINTED either way, so a row that
+    // is growing fast while still cheap stays visible instead of reading as 0.
+    let flagged = false;
+    let last = { lines: 0, prism: 0, hl: 0 };
+    for (const lines of LADDER) {
+        const src = gen(lines);
+        const prism = time(() => Prism.tokenize(src, Prism.languages.carve));
+        const hl = time(() => hljs.highlight(src, { language: 'carve' }));
+        if (prev) {
+            const limit = (lines / prev.lines) * SUSPECT_MARGIN;
+            const pr = prism / Math.max(prev.prism, 0.01);
+            const hr = hl / Math.max(prev.hl, 0.01);
+            worstPrism = Math.max(worstPrism, pr);
+            worstHl = Math.max(worstHl, hr);
+            flagged = flagged
+                || (prism > LINE_FLOOR && pr > limit)
+                || (hl > LINE_FLOOR && hr > limit);
+        }
+        prev = { lines, prism, hl };
+        last = { lines, prism, hl };
+        if (flagged || prism > CEILING || hl > CEILING) break;
+    }
+    const flag = flagged ? '  <-- SUPERLINEAR' : '';
+    if (flag) suspects++;
+    console.log(
+        `${label.padEnd(30)} ${String(last.lines).padStart(6)}  ${last.prism.toFixed(1).padStart(9)}`
+        + `  ${worstPrism.toFixed(2).padStart(5)}  ${last.hl.toFixed(1).padStart(9)}`
+        + `  ${worstHl.toFixed(2).padStart(5)}${flag}`,
+    );
+}
+
 console.log(`\n${suspects} superlinear (ratio > ${SUSPECT} with a measurable absolute time)`);
 process.exit(suspects ? 1 : 0);
