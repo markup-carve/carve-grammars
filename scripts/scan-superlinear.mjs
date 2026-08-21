@@ -19,8 +19,9 @@
  * rule at a time from the grammar object, re-tokenize, and the one that
  * collapses the time is the one to bound.
  */
-import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+
+import { bracedOpeners } from './braced-openers.mjs';
 
 const require = createRequire(import.meta.url);
 const Prism = require('prismjs');
@@ -46,26 +47,10 @@ const UNITS = [
     '<<', '%%', '\\[', '[[', '((', '{{',
 ];
 
-/*
- * Every `{X ... X}` construct either grammar spells, read out of the source.
- *
- * A character counts when it appears BOTH right after a `\{` and right before a
- * `\}` somewhere in the file - that pairing is what makes it a braced
- * construct rather than an incidental `{` in a character class, and it is why
- * `{)` `{[` `{|` (all from classes like `[\s{]`) do not come out of this.
- * Alphanumerics are excluded: `{a` is already a bait above and is not a
- * delimiter.
- */
-const bracedOpeners = () => {
-    const opens = new Set();
-    const closes = new Set();
-    for (const file of ['../prism/carve.js', '../highlightjs/carve.js']) {
-        const src = readFileSync(new URL(file, import.meta.url), 'utf8');
-        for (const m of src.matchAll(/\\\{\\?([^\sA-Za-z0-9\\])/g)) opens.add(m[1]);
-        for (const m of src.matchAll(/\\?([^\sA-Za-z0-9\\])\\\}/g)) closes.add(m[1]);
-    }
-    return [...opens].filter((c) => closes.has(c)).sort().map((c) => `{${c}`);
-};
+// The derivation itself moved to `scripts/braced-openers.mjs` when #300 gave it
+// a second consumer: `tests/scans-are-bounded-test.js` asserts every construct
+// it names carries bounded scans, so the sweep and the bounds check cannot end
+// up disagreeing about which constructs exist.
 UNITS.push(...bracedOpeners().filter((u) => !UNITS.includes(u)));
 const SMALL = 12000;
 const LARGE = 24000;
