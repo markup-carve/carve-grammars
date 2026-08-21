@@ -24,7 +24,16 @@ import githubDark from '@shikijs/themes/github-dark'
 
 const require = createRequire(import.meta.url)
 
-/** The Carve TextMate grammar, ready for Shiki's `languages` array. */
+/**
+ * The Carve TextMate grammar, ready for Shiki's `languages` array.
+ *
+ * The alias list carries the shared fence words every surface of this package
+ * answers - `carve` and the canonical extension `crv` (tests/lib/aliases.js) -
+ * plus `Carve`. That capitalized spelling is meaningful HERE and nowhere else:
+ * Shiki matches a language name by exact string, so the casing variant is a
+ * distinct, reachable alias, while Prism and highlight.js both lowercase
+ * before they look anything up.
+ */
 export const carveGrammar = {
     ...require('../textmate/carve.tmLanguage.json'),
     name: 'carve',

@@ -303,6 +303,25 @@ can drop the one character a rule is about. The spec corpus is the exception and
 can afford to be - it marks `tests/corpus/**` as `-text`, so
 `250-line-endings-and-a-byte-order-mark-3.crv` really does begin `ef bb bf`.
 
+### Fence words
+
+All three surfaces answer `carve` and `crv`. `.crv` is the canonical file
+extension, so a ` ```crv ` fence highlights wherever a ` ```carve ` one does,
+whichever highlighter a site runs.
+
+| Surface | Answers | Extra |
+|---|---|---|
+| Prism | `carve`, `crv` | `carvemd`, the embedded form |
+| highlight.js | `carve`, `crv` | any casing: `getLanguage` lowercases its argument |
+| Shiki | `carve`, `crv` | `Carve`, because Shiki matches a name by exact string |
+
+The extras differ because the lookups do. Shiki is the only surface where a
+capitalized spelling is a distinct alias worth listing; Prism keys must be
+lowercase, since `Prism.util.getLanguage` lowercases the `language-xxx` class
+before resolving it. `tests/lib/aliases.js` holds the required set and
+`tests/alias-parity-test.js` asserts it on each surface through that surface's
+own registration API.
+
 ### Prism
 
 The grammar registers itself against the global `Prism`, so `Prism` must be
