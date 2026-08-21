@@ -152,10 +152,43 @@
      * @returns {object} the mode's `begin`/`end` pair, so the closer used by
      *   the guard and the closer used by the mode cannot drift apart.
      */
-    const paired = (opener, closer) => ({
-        begin: new RegExp(`${opener.source}(?=(?:[^\\n]|\\n(?!\\s*\\n))*?${closer.source})`),
-        end: closer,
-    });
+    const paired = (opener, closer) => {
+        // The guard used to be written `(?:[^\n]|\n(?!\s*\n))*?` - unbounded,
+        // lazy, and free to cross newlines. Proving there is NO closer therefore
+        // cost a whole paragraph from every position, and a document made of
+        // openers went quadratic in its own length: 400-750 ms on 24 KB across
+        // all eight braced modes, x3.3-6.9 per doubling (carve-grammars#300),
+        // in a file the package ships. THIRTEEN modes pay it, so this is one
+        // site rather than thirteen fixes.
+        //
+        // Unrolled the way `prism/carve.js` unrolls its brace rules: a run that
+        // stops at the closer's own first character, then a bounded repetition
+        // of that character NOT starting a closer, plus another such run. Both
+        // pieces are DERIVED from the `closer` argument - `lead` is its first
+        // (possibly escaped) character, `rest` is everything after it - for the
+        // same reason the guard is generated from the closer at all: the
+        // tempering and the mode's `end` cannot drift apart.
+        //
+        // `lead` followed by a negative lookahead on `rest` reads "this
+        // delimiter is not the closer". Where `rest` is itself negative
+        // (`/=(?![=\w])/`) the double negation means "followed by a word
+        // character", which is right - and at end of input it correctly refuses,
+        // because there the closer WOULD match.
+        //
+        // Same language as before within the bounds. Past them the guard fails
+        // and the mode does not open, which is the safe direction: an unopened
+        // span colors nothing, where an unclosed one used to color the rest of
+        // the document.
+        const [, lead, rest] = /^(\\[\s\S]|[\s\S])([\s\S]*)$/.exec(closer.source);
+        const literal = lead.length === 2 ? lead[1] : lead;
+        const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
+        const run = `(?:[^${inClass}\\n]|\\n(?!\\s*\\n)){0,4096}`;
+        const guard = `${run}(?:${lead}(?!${rest})${run}){0,32}${closer.source}`;
+        return {
+            begin: new RegExp(`${opener.source}(?=${guard})`),
+            end: closer,
+        };
+    };
 
     // Forced intraword family (PART 9 S22). Content may contain the delimiter
     // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
@@ -163,7 +196,18 @@
     const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?=\S)/, /\*\}/), relevance: 5 };
     const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?=\S)/, /\/\}/), relevance: 5 };
     const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?=\S)/, /_\}/), relevance: 5 };
-    const FORCED_STRIKE = { className: 'deletion', ...paired(/\{~(?=\S)(?!.*~>)/, /~\}/), relevance: 5 };
+    // The `(?!...~>)` is what keeps a substitution (`{~old~>new~}`) out of the
+    // strikethrough rule. It used to be spelled `(?!.*~>)`, a greedy scan of the
+    // whole rest of the line that then backtracked over it looking for the
+    // arrow - so on a line with no `>` at all it cost the line from every
+    // position, which is the other half of why `{~` stayed superlinear after
+    // the guard was bounded. Same unrolling as everywhere else here.
+    const NO_ARROW_AHEAD = '(?![^~\\n]{0,4096}(?:~(?!>)[^~\\n]{0,4096}){0,32}~>)';
+    const FORCED_STRIKE = {
+        className: 'deletion',
+        ...paired(new RegExp(`\\{~(?=\\S)${NO_ARROW_AHEAD}`), /~\}/),
+        relevance: 5,
+    };
 
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
@@ -963,7 +1007,13 @@
         className: 'meta',
         // The `~>` arrow is what distinguishes a substitution from a forced
         // strikethrough (`{~gone~}`), so it is required here.
-        begin: /\{~(?=[^}\n]*~>)/,
+        //
+        // The arrow hunt is unrolled for the reason `paired()` above is:
+        // written `[^}\n]*~>` it scanned to end of line from every position and
+        // kept `{~` superlinear even after the guard was bounded (225 ms on
+        // 24 KB, x3.6 per doubling, carve-grammars#300). Tempered on a `~` that
+        // is not the arrow, it gives up at the next `~` instead.
+        begin: /\{~(?=[^~}\n]{0,4096}(?:~(?!>)[^~}\n]{0,4096}){0,32}~>)/,
         end: /~\}/,
         relevance: 10,
     };

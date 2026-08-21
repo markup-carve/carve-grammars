@@ -26,6 +26,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { bracedDelimiters, spellings } from '../scripts/braced-openers.mjs';
+
 const here = dirname(fileURLToPath(import.meta.url));
 let passed = 0;
 function ok(name, fn) {
@@ -55,6 +57,19 @@ const BOUNDED = {
         // this rule trips the bounds assertion below instead of the
         // "is still there" one - the failure has to name the defect.
         ['inline comment', '/\\{%[^', 3],
+        // carve-grammars#300 - the nine siblings of the rule above, each
+        // matched on its opener plus the first character of its body class for
+        // the same reason.
+        ['forced bold', '/\\{\\*(?=\\S)[^', 3],
+        ['forced italic', '/\\{\\/(?=\\S)[^', 3],
+        ['forced underline', '/\\{_(?=\\S)[^', 3],
+        ['forced strike', '/\\{~(?=\\S)[^', 3],
+        ['braced highlight', '/\\{=(?=\\S)[^', 3],
+        ['superscript', '/\\{\\^(?=\\S)[^', 3],
+        ['subscript', '/\\{,(?=\\S)[^', 3],
+        ['critic inserted', '/\\{\\+[^', 3],
+        ['critic deleted', '/\\{-[^', 3],
+        ['critic changed', '/\\{~[^', 2],
     ],
     'highlightjs/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
@@ -63,6 +78,16 @@ const BOUNDED = {
         ['autolink', 'https?:\\/\\/|mailto:', 1],
         ['critic comment', '/\\{#(?=[^}\\n]', 1],
         ['bracket label body', 'const BRACKET_SCAN =', 1],
+        // carve-grammars#300. THIRTEEN modes are built from this one line, so
+        // it is the single highest-value line in the file to pin: the run that
+        // the guard repeats, and the repetition count that stops an unclosed
+        // opener from scanning to the end of the paragraph.
+        ['paired() guard run', 'const run = `(?:[^', 1],
+        ['paired() guard repetition', 'const guard = `${run}', 1],
+        // The two `~` line scans that kept `{~` superlinear after the guard
+        // above was bounded.
+        ['critic substitution arrow', 'begin: /\\{~(?=[^', 2],
+        ['forced strike arrow lookahead', 'const NO_ARROW_AHEAD =', 2],
     ],
 };
 
@@ -178,6 +203,90 @@ ok('the lazy fixture is the one the narrow regex missed', () => {
         'the pre-#298 rule is no longer a demonstration of the blind spot - pick one that is',
     );
     assert.deepStrictEqual(lazy.match(UNBOUNDED), ['[^\\n]*?']);
+});
+
+/*
+ * THE REGISTRY ABOVE IS A HAND-WRITTEN LIST, AND THIS REPO HAS NOW SHIPPED
+ * THREE OF THOSE THAT HID WHAT THEY EXISTED TO COVER.
+ *
+ * The sweep's opener list named two of eleven braced constructs (#298). The
+ * publish guard's URL list missed `owner/repo#sha` (#295). The `npm test`
+ * script is a list of files rather than a glob, so a new test file is dead
+ * until someone remembers it. In every case the list was right when written and
+ * wrong a release later, and in every case nothing failed to say so.
+ *
+ * So the braced family is checked a second way, DERIVED. `{X ... X}` is a
+ * shape both grammars spell many times over, and the set of X is read out of
+ * the grammars themselves (`scripts/braced-openers.mjs` - the same derivation
+ * `npm run perf:sweep` uses to decide what to measure, so the two cannot drift
+ * into disagreeing about which constructs exist). A twelfth braced construct
+ * added tomorrow is bounds-checked without an edit here.
+ *
+ * A rule LINE is checked, not a slice of one, and that is deliberate: it is
+ * what makes the check cheap enough to be derived at all. It does mean a line
+ * carrying a braced form next to something else has to bound the something else
+ * too - `prism/carve.js`'s `highlight` is the one such line, and its bare `=x=`
+ * alternative was bounded in #300 for exactly this reason.
+ */
+console.log('\nthe braced family, derived from the grammars:');
+const delimiters = bracedDelimiters();
+ok('the derivation finds the whole braced family', () => {
+    // Not an expected LIST - a floor. The family has eleven members today and
+    // gains one whenever the language does; what must never happen is the
+    // derivation quietly returning a handful, which is how the sweep's
+    // hand-written list looked right while covering two of eleven.
+    assert.ok(
+        delimiters.length >= 11,
+        `derived only ${delimiters.length} braced delimiters (${delimiters.join(' ')}) - `
+            + 'the derivation broke, and a broken derivation reports success',
+    );
+});
+
+/**
+ * Every source line of `file` that spells `{X` inside a regex.
+ *
+ * @param {string[]} lines - the file, split.
+ * @param {string} delimiter - the braced delimiter character.
+ * @returns {Array<[number, string]>} line number and text.
+ */
+const bracedLines = (lines, delimiter) => {
+    const { open } = spellings(delimiter);
+    return lines
+        .map((text, i) => [i + 1, text])
+        .filter(([, text]) => open.some((o) => text.includes(o)));
+};
+
+for (const file of ['prism/carve.js', 'highlightjs/carve.js']) {
+    const lines = readFileSync(resolve(here, '..', file), 'utf8').split('\n');
+    for (const delimiter of delimiters) {
+        const hits = bracedLines(lines, delimiter);
+        if (hits.length === 0) continue;
+        ok(`${file}: every line spelling {${delimiter} bounds its scans`, () => {
+            for (const [number, text] of hits) {
+                const unbounded = text.match(UNBOUNDED) || [];
+                assert.deepStrictEqual(
+                    unbounded,
+                    [],
+                    `unbounded scan in ${file}:${number}, a line spelling the braced `
+                        + `construct {${delimiter}: ${unbounded.join(', ')}\n  ${text.trim()}\n`
+                        + '  Bound it with {0,N}. This check is DERIVED from the grammars, so it '
+                        + 'covers braced rules nobody added to the registry above.',
+                );
+            }
+        });
+    }
+}
+
+ok('the derived check reports a real pre-fix braced rule', () => {
+    // Same demonstration the registry's oracle fixtures make, on the derived
+    // half: without it, "every braced line is clean" would also be true of a
+    // derivation that found no lines at all.
+    const reverted = [String.raw`            pattern: /\{\*(?=\S)[^\n]*?\*\}/,`];
+    for (const delimiter of ['*']) {
+        const hits = bracedLines(reverted, delimiter);
+        assert.strictEqual(hits.length, 1, `the derived line finder missed the pre-#300 {${delimiter} rule`);
+        assert.deepStrictEqual(hits[0][1].match(UNBOUNDED), ['[^\\n]*?']);
+    }
 });
 
 console.log(`\n${passed} passed`);

@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Nine more braced inline constructs (`{~` `{-` `{+` `{^` `{_` `{=` `{,` `{/` `{*`) are linear instead of quadratic in both Prism and highlight.js. 48 KB of one opener took up to 1.9 s and now takes at most 43 ms; every construct moved from x4 to x2 per doubling. Highlighting is unchanged on all 1325 corpus documents and on the bodies that hold a non-closing delimiter, such as `{/a/b/}` (#300).
 - Prism no longer scans to the end of the line from every position on an unclosed `{%` inline comment, so a document made of `{%` openers is linear instead of quadratic: 48 KB of them took 312 ms and now takes 9.5 ms. Highlighting is unchanged on every corpus document (#298).
 - An unclosed `%%%` comment fence opened on a list item's marker no longer makes Prism and highlight.js backtrack exponentially: `- %%%` followed by a couple of dozen ordinary indented lines took hundreds of milliseconds and a thirty-line one did not finish, which hangs any page highlighting untrusted Carve. Flat at 2000 lines now, with highlighting unchanged (#294).
 - Prism and highlight.js answer the `crv` fence word, so a ```` ```crv ```` block highlights on every surface this package ships rather than under Shiki alone. Prism also keeps `carvemd` and Shiki keeps `Carve` (#290).

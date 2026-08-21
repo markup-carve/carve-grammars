@@ -207,20 +207,36 @@
         // Content may contain the delimiter -- `{/a/b/}` is <em>a/b</em> -- so the
         // run ends at the closing `X}`. These MUST precede 'attributes', or
         // `{_path_}` reads as a boolean attribute instead of <u>path</u>.
+        // UNROLLED SO AN UNCLOSED OPENER GIVES UP AT THE NEXT DELIMITER.
+        // Written `[^\n]*?` these scan to end of LINE from every position, so a
+        // document made of openers is quadratic in its own length - the same
+        // defect `{%` had in #298, on nine more rules (#300; `{~` at 145 ms and
+        // `{-`/`{+` at 211-215 ms on 24 KB, x4 per doubling, in a file the
+        // package ships). Each body is now a run that stops at the closer's own
+        // first character, then a bounded repetition of that character NOT
+        // followed by `}` plus another such run. Same language - the content may
+        // still contain the delimiter, so `{/a/b/}` is one <em> - but every step
+        // is forced. Bounds match the `{%` rule's `{0,4096}`/`{0,32}`; a body
+        // past them is simply not matched and the `{` stays plain text, which is
+        // the safe direction.
         'forced-bold': {
-            pattern: /\{\*(?=\S)[^\n]*?\*\}/,
+            pattern: /\{\*(?=\S)[^*\n]{0,4096}(?:\*(?!\})[^*\n]{0,4096}){0,32}\*\}/,
             alias: 'bold',
         },
         'forced-italic': {
-            pattern: /\{\/(?=\S)[^\n]*?\/\}/,
+            pattern: /\{\/(?=\S)[^/\n]{0,4096}(?:\/(?!\})[^/\n]{0,4096}){0,32}\/\}/,
             alias: 'italic',
         },
         'forced-underline': {
-            pattern: /\{_(?=\S)[^\n]*?_\}/,
+            pattern: /\{_(?=\S)[^_\n]{0,4096}(?:_(?!\})[^_\n]{0,4096}){0,32}_\}/,
             alias: 'underline',
         },
         'forced-strike': {
-            pattern: /\{~(?=\S)(?:(?!~>)[^\n])*?~\}/,
+            // `~` is tempered against BOTH `>` and `}` here: `(?!~>)` in the
+            // old form barred a substitution arrow from the body, and the lazy
+            // scan stopped at the first `~}`, so a `~` inside the body is
+            // neither.
+            pattern: /\{~(?=\S)[^~\n]{0,4096}(?:~(?![>}])[^~\n]{0,4096}){0,32}~\}/,
             alias: 'deleted',
         },
         'bold': {
@@ -244,16 +260,23 @@
             alias: 'deleted',
         },
         'highlight': {
-            pattern: /\{=(?=\S)[^\n]*?=\}|(?<![\w=])=(?=\S)[^=\n]+?(?<=\S)=(?![\w=])/,
+            // ONE TOKEN, TWO FORMS, so the bare `=x=` alternative shares a
+            // line with the braced one. Its `[^=\n]+?` was never the defect
+            // this rule was fixed for - the class already excludes its own
+            // closer, so an unclosed `=` gives up at the next one - but it is
+            // the last unbounded quantifier on a line that spells a braced
+            // construct, and the derived family check below reads lines. Given
+            // a bound, at the same 4096 the rest of the file uses.
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<![\w=])=(?=\S)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
         'superscript': {
-            pattern: /\{\^(?=\S)[^\n]*?\^\}/,
+            pattern: /\{\^(?=\S)[^\^\n]{0,4096}(?:\^(?!\})[^\^\n]{0,4096}){0,32}\^\}/,
             alias: 'important',
         },
         'subscript': {
-            pattern: /\{,(?=\S)[^\n]*?,\}/,
+            pattern: /\{,(?=\S)[^,\n]{0,4096}(?:,(?!\})[^,\n]{0,4096}){0,32},\}/,
             alias: 'important',
         },
     };
@@ -1030,16 +1053,30 @@
         },
 
         // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
+        //
+        // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
+        // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
+        // own character NOR the newline, so an unclosed `{+` scanned to the end
+        // of the DOCUMENT rather than the end of the line (#300: 215 ms for `{+`
+        // and 211 ms for `{-` on 24 KB against 42-145 ms for the seven
+        // line-scanning rules). Unrolled the same way, tempered on `+`/`-`
+        // instead of on `\n`, so the run still crosses lines the way `[^}]*`
+        // did and a body may still hold a non-closing `+`.
         'inserted': {
-            pattern: /\{\+[^}]*\+\}/,
+            pattern: /\{\+[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
             alias: 'inserted',
         },
         'deleted': {
-            pattern: /\{-[^}]*-\}/,
+            pattern: /\{-[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
             alias: 'deleted',
         },
+        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
+        // halves are each delimited by `~`, so the scan already stops at the
+        // next one. Bounded anyway: it is the last unbounded scan in the braced
+        // family, and the derived check below asserts the family as a whole
+        // rather than a list somebody has to remember to extend.
         'changed': {
-            pattern: /\{~[^~]*~>[^~]*~\}/,
+            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
             alias: 'important',
         },
         'critic-comment': {
