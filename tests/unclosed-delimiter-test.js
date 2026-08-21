@@ -44,6 +44,13 @@ const UNCLOSED = [
     ['inline extension', 'a :_[x] b'],
     ['symbol', 'a:b:c and 10:30: meeting, :_x: too.'],
     ['emoticon', '>_< face'],
+
+    // An unpartnered VERBATIM run, which Prism scopes to the end of the
+    // paragraph since carve-grammars#312. That is the engine's reading, and it
+    // is also the shape that would run away: the paragraph break has to stop
+    // it, or the rest of the document is code.
+    ['inline verbatim run', 'unclosed `code here'],
+    ['wide inline verbatim run', 'unclosed ``code here'],
 ];
 
 /**
@@ -71,6 +78,12 @@ const CLOSED = [
     ['strong across a line break', 'a *multi\nline strong* b', 'line strong', ['highlightjs']],
     ['forced underline', 'my{_path_}name', 'path', BOTH],
     ['insert', 'a {+added+} b', 'added', BOTH],
+    // The other side of the two rows above: an unpartnered run must still open
+    // a span, or "never scope it" would pass the runaway check and lose the
+    // fix. Prism only - highlight.js leaves the run unscoped, which is inert
+    // and is not what this file is about.
+    ['unpartnered verbatim run', 'a `payload here\n', 'payload', ['prism']],
+    ['unpartnered run across a line break', 'a `payload\nsecond line\n', 'second line', ['prism']],
 ];
 
 let failed = 0;

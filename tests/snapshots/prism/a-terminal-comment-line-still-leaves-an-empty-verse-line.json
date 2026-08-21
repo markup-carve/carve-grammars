@@ -13,11 +13,11 @@
   },
   {
     "type": "text",
-    "text": "\n`\n"
+    "text": "\n"
   },
   {
-    "type": "comment",
-    "text": "%%"
+    "type": "code",
+    "text": "`\n%%"
   },
   {
     "type": "text",

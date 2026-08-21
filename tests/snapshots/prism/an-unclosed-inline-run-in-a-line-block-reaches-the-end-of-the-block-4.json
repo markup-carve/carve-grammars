@@ -13,7 +13,15 @@
   },
   {
     "type": "div",
-    "text": "\na $`x\nc d\n"
+    "text": "\na "
+  },
+  {
+    "type": "div>math",
+    "text": "$`x\nc d"
+  },
+  {
+    "type": "div",
+    "text": "\n"
   },
   {
     "type": "div>div-delimiter>punctuation",

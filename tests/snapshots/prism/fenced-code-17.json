@@ -5,7 +5,7 @@
   },
   {
     "type": "code-block",
-    "text": "\ncode\n  "
+    "text": "\ncode\n  ```\nstill code\n"
   },
   {
     "type": "code-block>punctuation",
@@ -13,6 +13,6 @@
   },
   {
     "type": "text",
-    "text": "\nstill code\n```\n"
+    "text": "\n"
   }
 ]
