@@ -63,7 +63,7 @@ export const SURFACES = {
     },
     'tree-sitter-carve': {
         repo: 'markup-carve/tree-sitter-carve',
-        files: ['src/grammar.json'],
+        files: ['src/grammar.json', 'src/node-types.json'],
         extract: 'treesitter',
     },
     'vscode-carve': {
@@ -95,6 +95,24 @@ export const SURFACES = {
 
 /** The environment variable naming a checkout of a surface that is not in this repo. */
 export const rootVariable = (id) => `CARVE_SURFACE_${id.toUpperCase().replace(/-/g, '_')}`;
+
+/*
+ * The sections of `tiptap/schema-map.json` that DECLARE a modeled type.
+ *
+ * The file has an anti-list as well: `unmapped` names the constructs the bridge
+ * does NOT model and says why ("smart-typography output is lossy on reparse, so
+ * it is not modeled"). Walking the whole document read those keys as
+ * vocabulary, so nine constructs - the eight smart-typography ones and
+ * `soft_break` - were seeded IMPLEMENTED on the strength of an entry saying
+ * they are not (carve-grammars#314).
+ *
+ * This is the carve-grammars#311 over-read surviving a narrowing: that round
+ * stopped reading the prose VALUES, and the same sentences were still reaching
+ * the vocabulary as KEYS. Naming the modeled sections is what closes it, and it
+ * closes it structurally - a new section is not read until someone says it
+ * declares types.
+ */
+const MODELED_TIPTAP_SECTIONS = ['types', 'preservationNodes', 'markCarrierNodes'];
 
 /*
  * VOCABULARY EXTRACTORS, one per grammar formalism.
@@ -166,7 +184,8 @@ const EXTRACTORS = {
                     flat.push(node);
                 }
             };
-            walk(JSON.parse(text));
+            const map = JSON.parse(text);
+            for (const section of MODELED_TIPTAP_SECTIONS) walk(map[section]);
 
             return flat;
         }
@@ -178,15 +197,73 @@ const EXTRACTORS = {
         ].map((match) => match[1]);
     },
 
-    /** tree-sitter: the rule names of the compiled grammar. */
-    treesitter(text) {
-        return Object.keys(JSON.parse(text).rules || {});
+    /*
+     * tree-sitter: the rule names, the EXTERNAL token names, and the node types
+     * the generated parser actually emits.
+     *
+     * Reading `rules` alone under-read the grammar by 150 names
+     * (carve-grammars#314). Two whole categories of name live outside it:
+     *
+     *   EXTERNALS. Anything the external scanner produces is declared in
+     *   `externals` and has no entry in `rules` - which on this grammar is
+     *   where `hard_line_break` and every list marker are.
+     *
+     *   ALIASED AND INLINED NODES. `node-types.json` is the generated parser's
+     *   own statement of what it puts in a tree, so a rule that reaches the
+     *   tree under another name appears there and nowhere else - `paragraph`,
+     *   `list_item`, `table_cell`, `line_block_marker`, `trailing_comment`.
+     *
+     * The widening is BY STRUCTURE, not by loosening what counts as a name:
+     * each of the three sources is a list of identifiers the grammar declares,
+     * and `node-types.json` is filtered to `named: true` so the anonymous
+     * literal tokens (`X`, `_`, `TODO`) stay out. That discipline is the
+     * lesson of carve-grammars#311, where reading every string in a file
+     * seeded eight constructs off a sentence saying they are NOT modeled.
+     */
+    treesitter(text, file) {
+        const doc = JSON.parse(text);
+
+        if (file.endsWith('node-types.json')) {
+            const out = [];
+            const walk = (node) => {
+                if (Array.isArray(node)) return node.forEach(walk);
+                if (node && typeof node === 'object') {
+                    if (typeof node.type === 'string' && node.named === true) out.push(node.type);
+                    Object.values(node).forEach(walk);
+                }
+
+                return undefined;
+            };
+            walk(doc);
+
+            return out;
+        }
+
+        return [
+            ...Object.keys(doc.rules || {}),
+            ...(doc.externals || []).map((token) => token.name).filter(Boolean),
+        ];
     },
 
-    /** Sublime: every `scope:` / `meta_scope:` value and every context name. */
+    /*
+     * Sublime: every `scope:` / `meta_scope:` value, every NUMBERED CAPTURE
+     * scope, and every context name.
+     *
+     * The captures were the under-read (carve-grammars#314). A
+     * `.sublime-syntax` puts a scope on a whole match with `scope:` and on one
+     * group of it with `captures: {1: ...}`, and this file uses the second form
+     * 357 times - which is where `markup.bold.italic.carve`,
+     * `markup.strikethrough.carve` and `constant.other.reference.crossref.carve`
+     * live. Reading only `scope:` reported those constructs as having no rule.
+     *
+     * The capture pattern stops at whitespace on purpose: a scope value is one
+     * identifier, and letting it run to end of line would join two scopes into
+     * a name that is neither.
+     */
     sublime(text) {
         return [
             ...text.matchAll(/(?:meta_scope|meta_content_scope|scope):\s*([A-Za-z0-9_.\- ]+)/g),
+            ...text.matchAll(/^\s+\d+:\s*([A-Za-z0-9_.-]+)/gm),
             ...text.matchAll(/^ {2}([a-z0-9_-]+):/gm),
         ].map((match) => match[1]);
     },
@@ -223,8 +300,56 @@ const EXTRACTORS = {
     },
 };
 
+/**
+ * The words of a name, in order, lowercased.
+ *
+ * `markup.underline.link.carve` and `carveLinkRefDef` are both sequences of
+ * words; the separators differ and camelCase has none at all, so the split is
+ * on non-alphanumerics AND on a lower-to-upper transition.
+ *
+ * @param {string} text - A name from a surface's vocabulary.
+ * @returns {string[]} The words.
+ */
+const words = (text) => text
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .split(/[^A-Za-z0-9]+/)
+    .filter(Boolean)
+    .map((word) => word.toLowerCase());
+
 /** Lowercase and drop the separators, so `code_block`, `code-block` and `code.block` all meet. */
 export const normalize = (text) => text.toLowerCase().replace(/[^a-z0-9]+/g, '');
+
+/**
+ * The offsets in `normalize(text)` at which a word of `text` begins.
+ *
+ * @param {string} text - A name from a surface's vocabulary.
+ * @returns {Set<number>} The offsets.
+ */
+const wordStarts = (text) => {
+    const starts = new Set();
+    let at = 0;
+    for (const word of words(text)) {
+        starts.add(at);
+        at += word.length;
+    }
+
+    return starts;
+};
+
+/**
+ * Whether `signature` occurs in `entry.norm` starting at a word boundary.
+ *
+ * @param {{norm: string, starts: Set<number>}} entry - A vocabulary entry.
+ * @param {string} signature - A normalized signature.
+ * @returns {boolean} True when some occurrence begins a word.
+ */
+const alignedHit = (entry, signature) => {
+    for (let at = entry.norm.indexOf(signature); at !== -1; at = entry.norm.indexOf(signature, at + 1)) {
+        if (entry.starts.has(at)) return true;
+    }
+
+    return false;
+};
 
 /*
  * Construct -> the names a surface plausibly gives it, normalized on lookup.
@@ -254,7 +379,16 @@ export const SIGNATURES = {
     admonition: ['admonition'],
     div: ['div'],
     comment_block: ['commentblock', 'fencedcomment', 'blockcomment', 'commentsblock'],
-    comment_line: ['commentline', 'linecomment', 'trailingcomment'],
+    /*
+     * `linecomment` is a substring of `inlinecomment`, so on the surfaces that
+     * call the trailing `%%` run `inline-comment` this construct used to be
+     * seeded with the INLINE rule's name as its evidence - a row citing a rule
+     * that is about the other construct. What separates them now is the
+     * word-boundary rank in `probe` below, not a narrower signature: `line` is
+     * a whole word of `comment.line.percent.carve` and only half a word of
+     * `inline-comment`.
+     */
+    comment_line: ['commentline', 'linecomment', 'commentlinepercent'],
     raw_block: ['rawblock'],
     reference_definition: ['referencedefinition', 'linkreferencedefinition', 'refdef', 'referencedef'],
     footnote_definition: ['footnotedefinition', 'footdef', 'footnotedef', 'footnotecontent'],
@@ -267,7 +401,7 @@ export const SIGNATURES = {
     escaped_char: ['escape', 'backslashescape'],
     raw_inline: ['rawinline'],
     literal_inline: ['inlineliteral', 'literalinline', 'markuprawinlineliteral'],
-    code_span: ['codespan', 'inlinecode', 'markuprawcode', 'carvecode', 'codecarve'],
+    code_span: ['codespan', 'inlinecode', 'markuprawcode', 'carvecode', 'codecarve', 'verbatim'],
     autolink: ['autolink'],
     auto_text_link: ['autotextlink', 'crossref', 'crossreference'],
     inline_link: ['inlinelink', 'linkinline', 'carvelink', 'markupunderlinelinkcarve', 'link'],
@@ -289,6 +423,13 @@ export const SIGNATURES = {
     forced_strong: ['forcedstrong', 'forcedbold'],
     forced_underline: ['forcedunderline'],
     forced_strike: ['forcedstrike'],
+    /*
+     * `superscript` and `subscript` are the right names, not a lucky fold.
+     * Carve has NO bare `^x^` / `,x,` spelling - sup and sub are braced-only -
+     * so a rule a surface calls `superscript` can only be `{^ ... ^}`, and
+     * there is no sibling construct for the name to be confused with. The five
+     * constructs below are the ones where that is not true.
+     */
     forced_super: ['superscript', 'forcedsuper'],
     forced_sub: ['subscript', 'forcedsub'],
     forced_highlight: ['forcedhighlight', 'bracedhighlight'],
@@ -298,9 +439,21 @@ export const SIGNATURES = {
     addition: ['inserted', 'insert', 'criticins', 'addition'],
     deletion: ['deleted', 'delete', 'criticdel', 'deletion'],
     substitution: ['substitution', 'changed', 'criticsub'],
-    editorial_comment: ['editorialcomment', 'criticcom', 'commentcritic', 'criticcomment'],
+    editorial_comment: [
+        'editorialcomment', 'criticcom', 'commentcritic', 'criticcomment',
+        // `comment.block.critic.carve`, the scope the TextMate family gives it.
+        'commentblockcritic',
+    ],
     mention: ['mention'],
-    tag: ['symboltag', 'carvetag', 'tagcarve', 'hashtag', 'mentionstags'],
+    /*
+     * `tag` bare, alongside the compounds. Two surfaces have a rule named
+     * exactly `tag` and read as gaps for want of it. It is the shortest
+     * signature in this table and the one most able to land somewhere else -
+     * what keeps it honest is the ranking in `probe`: a signature that IS the
+     * whole name outranks one buried in a longer one, so a vocabulary holding
+     * both `tag` and `entity.name.tag.admonition.carve` cites the first.
+     */
+    tag: ['tag', 'symboltag', 'carvetag', 'tagcarve', 'hashtag', 'mentionstags'],
     symbol: ['symbol'],
     /*
      * The eight smart-typography constructs share one signature set on purpose.
@@ -319,9 +472,16 @@ export const SIGNATURES = {
     arrow: ['smartarrow', 'typography', 'smarttypography', 'smartpunctuation'],
     comparison: ['comparison', 'typography', 'smarttypography', 'smartpunctuation'],
     typographic_symbol: ['typographicsymbol', 'typography', 'smarttypography', 'smartpunctuation'],
-    inline_comment: ['inlinecomment', 'commentlinepercent', 'commentinline'],
+    /*
+     * `trailingcomment` is what this construct is called nearly everywhere: the
+     * spec's `inline_comment` is `%%` to end of line ATTACHED to content, and
+     * six surfaces name that rule `trailing-comment` / `trailing_comment`. It
+     * was on `comment_line` above, where it matched nothing, while the
+     * construct that has it read as a gap.
+     */
+    inline_comment: ['inlinecomment', 'commentinline', 'trailingcomment'],
     braced_comment: ['bracedcomment', 'commentblockinline', 'delimitedcomment'],
-    hard_break: ['hardbreak'],
+    hard_break: ['hardbreak', 'hardlinebreak'],
     soft_break: ['softbreak'],
 };
 
@@ -362,6 +522,80 @@ const SIGNATURE_OVERRIDES = {
         forced_highlight: ['highlight'],
         tag: ['tag'],
     },
+    /*
+     * highlight.js calls the block-attribute rule `ATTRIBUTE`, singular. The
+     * shared table has `attributes` and cannot reach it, and the singular does
+     * not belong in the shared table: on Tiptap it lands on `attributeNaming`,
+     * a key holding an ESSAY about attribute naming rather than a rule - the
+     * carve-grammars#311 over-read, one signature later.
+     */
+    highlightjs: {
+        block_attributes: ['attribute'],
+    },
+    /*
+     * Tiptap's map is keyed by CARVE AST type, and three of its entries carry
+     * two spec constructs each - the map says so itself. `code` is the inline
+     * code mark; `math` is one node with a `display` attr "for the `$$` form";
+     * `comment` is one node whose "block attr distinguishes %% line comments
+     * from fenced comments". The shared table cannot guess `code` or `math`
+     * bare without landing on half the vocabulary of the other nine surfaces.
+     */
+    tiptap: {
+        code_span: ['code'],
+        math_inline: ['math'],
+        math_display: ['math'],
+        comment_line: ['carvecomment'],
+        comment_block: ['carvecomment'],
+    },
+    /*
+     * tree-sitter folds each bare emphasis spelling and its braced twin into
+     * one rule, so the braced constructs have no name of their own. This is
+     * not a guess about the surface: `src/grammar.json` gives
+     * `emphasis_begin` as `choice("{/", seq("/", _non_whitespace_check))`, and
+     * `strong_begin`, `underline_begin`, `strikethrough_begin` and
+     * `highlighted_begin` have the same shape with their own delimiters. The
+     * `{` branch IS the forced spelling, so the rule implements both.
+     *
+     * Recorded here rather than in the shared table because it is a fact about
+     * THIS grammar. On a surface that has not been read, the same shape is
+     * undecidable from a name, and `INDISTINGUISHABLE` below says so out loud
+     * instead of calling it a gap.
+     */
+    'tree-sitter-carve': {
+        forced_emphasis: ['emphasisbegin'],
+        forced_strong: ['strongbegin'],
+        forced_underline: ['underlinebegin'],
+        forced_strike: ['strikethroughbegin'],
+        forced_highlight: ['highlightedbegin'],
+    },
+};
+
+/*
+ * WHERE A NAME CANNOT DECIDE THE QUESTION.
+ *
+ * Five constructs have a bare spelling and a braced one - `/x/` and `{/x/}` -
+ * and the spec counts them as two constructs. A grammar may implement them as
+ * two rules or as one rule with two openers, and BOTH look identical from the
+ * outside: the vocabulary holds `emphasis` and nothing else either way. The
+ * probe reads names, deliberately, so it cannot tell those apart.
+ *
+ * Reporting that as `GAP` is a claim the probe has not earned - it says "no
+ * rule found" when the honest answer is "this instrument cannot see it". So a
+ * construct listed here, on a surface that names its SIBLING but not it, is
+ * seeded `UNMEASURED` with a ticket: visible, counted separately from the real
+ * gaps, and closed by a human reading the rule's opener. carve-grammars#313
+ * introduced the same shape for the payload axis (`payload: "unmeasured"`);
+ * this is the recognition axis of it.
+ *
+ * `forced_super` and `forced_sub` are NOT here: Carve has no bare `^x^`, so a
+ * rule named `superscript` can only be the braced one.
+ */
+export const INDISTINGUISHABLE = {
+    forced_emphasis: 'emphasis',
+    forced_strong: 'strong',
+    forced_underline: 'underline',
+    forced_strike: 'strikethrough',
+    forced_highlight: 'highlight',
 };
 
 /**
@@ -384,7 +618,7 @@ export function vocabulary(id, root = undefined) {
         names.push(...extract(readFileSync(resolve(base, file), 'utf8'), file));
     }
 
-    return names.map((raw) => ({ raw, norm: normalize(raw) }));
+    return names.map((raw) => ({ raw, norm: normalize(raw), starts: wordStarts(raw) }));
 }
 
 /**
@@ -398,6 +632,33 @@ export function vocabulary(id, root = undefined) {
 export function probe(id, root = undefined) {
     const vocab = vocabulary(id, root);
     if (vocab === null) return null;
+
+    /**
+     * How well a name answers to a construct: lower is better.
+     *
+     * 0 - the name IS the construct's name (`abbreviation_definition`).
+     * 1 - a signature is the whole name (`code`, `tag`).
+     * 2 - a signature begins a word of it (`comment.line.percent.carve`).
+     * 3 - every hit is mid-word (`linecomment` inside `inline-comment`).
+     */
+    const rank = (entry, construct, signatures) => {
+        if (entry.norm === normalize(construct)) return 0;
+        if (signatures.includes(entry.norm)) return 1;
+
+        return signatures.some((signature) => alignedHit(entry, signature)) ? 2 : 3;
+    };
+
+    /*
+     * A leading underscore marks a rule the surface keeps to itself -
+     * tree-sitter hides such a rule from the tree, and the same spelling reads
+     * as private everywhere else. It is still a name the grammar gives the
+     * construct, so it still counts as a hit: `_smart_punctuation` is the only
+     * name that grammar has for four typography constructs, and dropping
+     * hidden names outright turned six answered rows back into gaps. It is
+     * only ever the LAST candidate, so `link_reference_definition` is cited
+     * rather than the shorter `_link_ref_def_label_end`.
+     */
+    const hidden = (entry) => (entry.raw.startsWith('_') ? 1 : 0);
 
     const overrides = SIGNATURE_OVERRIDES[id] || {};
     const found = new Map();
@@ -418,6 +679,17 @@ export function probe(id, root = undefined) {
          * tried before the bare `link`. Scoring across every signature at once
          * fixes the order dependency and picks the name a reader would cite.
          *
+         * SHORTEST, BUT ONLY AFTER HOW WELL THE NAME FITS. Shortest alone
+         * reaches INTO a word: `linecomment` is a substring of
+         * `inline-comment`, which is shorter than
+         * `comment.line.percent.carve`, so the block-level `%%` line was cited
+         * as the trailing `%%` rule on three surfaces. `rank` below orders the
+         * candidates - the construct's own name, then a signature that IS the
+         * whole name, then one that begins a word of it, then a mid-word hit -
+         * and length breaks the tie inside a rank. Nothing stops matching: a
+         * mid-word hit is still a hit, it is just the last candidate rather
+         * than the first.
+         *
          * What backstops the rest is the `evidence` field: it goes in the
          * ledger, a reviewer sees it in the diff, and for the four surfaces in
          * this repository the test asserts the shipped grammar still carries
@@ -425,7 +697,10 @@ export function probe(id, root = undefined) {
          */
         const hit = vocab
             .filter((entry) => signatures.some((signature) => entry.norm.includes(signature)))
-            .sort((a, b) => a.raw.length - b.raw.length || a.raw.localeCompare(b.raw))[0];
+            .sort((a, b) => rank(a, construct, signatures) - rank(b, construct, signatures)
+                || hidden(a) - hidden(b)
+                || a.raw.length - b.raw.length
+                || a.raw.localeCompare(b.raw))[0];
         if (hit) found.set(construct, hit.raw);
     }
 
