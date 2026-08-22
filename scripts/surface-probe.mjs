@@ -548,6 +548,55 @@ const SIGNATURE_OVERRIDES = {
         comment_block: ['carvecomment'],
     },
     /*
+     * The Vim syntax names five constructs in its own spelling, and folds two
+     * pairs into one rule each. Read off `syntax/carve.vim` rather than
+     * guessed:
+     *
+     *   `carveComment` is `/%%.*$/` with no anchor, so it is the `%%` LINE
+     *   comment and the trailing one at once - the same fold Prism makes under
+     *   the name `comment`. Naming it for both is what stops the ledger citing
+     *   `carveCommentInline` for `inline_comment`, which it did: that rule is
+     *   the BRACED `{% ... %}` comment, so the row named a rule about another
+     *   construct while the braced row read as a gap.
+     *
+     *   `carveLinkRef` is `/\[[^]]*\]/`, whose star accepts the EMPTY label,
+     *   so the full and collapsed reference links are one rule.
+     *
+     *   `carveSuper`, `carveSub` and `carveExtInline` are the same constructs
+     *   the shared table knows under their longer spellings.
+     */
+    'vim-carve': {
+        comment_line: ['carvecomment'],
+        inline_comment: ['carvecomment'],
+        braced_comment: ['carvecommentinline'],
+        collapsed_reference_link: ['carvelinkref'],
+        forced_super: ['carvesuper'],
+        forced_sub: ['carvesub'],
+        extension_inline: ['extinline'],
+    },
+    /*
+     * The Sublime syntax puts all four braced emphasis spellings in ONE
+     * context, `forced-emphasis` - `{*x*}`, `{/x/}`, `{_x_}` and `{~x~}` are
+     * four `match:` rules inside it - and the braced highlight `{=x=}` is the
+     * first rule of `highlight`. Their SCOPES are deliberately the same as the
+     * bare spellings' so a color scheme lights them up, so the context name is
+     * the only vocabulary they have, and one name cannot carry four constructs
+     * through the shared table. Recorded here rather than by splitting the
+     * contexts on the surface: the rules are right, only the instrument could
+     * not see them.
+     *
+     * `meta.link.reference.carve` is the same empty-label fold as Vim's - the
+     * rule reads `(\[)([^\]]+)(\])(\[)([^\]]*)(\])`, and the second
+     * bracket's star is what makes `[text][]` the same rule as `[text][ref]`.
+     */
+    'sublime-carve': {
+        collapsed_reference_link: ['metalinkreference'],
+        forced_strong: ['forcedemphasis'],
+        forced_underline: ['forcedemphasis'],
+        forced_strike: ['forcedemphasis'],
+        forced_highlight: ['highlight'],
+    },
+    /*
      * tree-sitter folds each bare emphasis spelling and its braced twin into
      * one rule, so the braced constructs have no name of their own. This is
      * not a guess about the surface: `src/grammar.json` gives
