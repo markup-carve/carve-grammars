@@ -675,3 +675,12 @@ CARVE_SURFACE_EMACS_CARVE=../emacs-carve \
 
 Statuses are measured; reasons, notes and tickets are written by hand and
 carried across a re-measurement, so a re-run never drops a stated reason.
+
+One thing a re-run does NOT carry: the payload axis of a surface in another
+repository. It is hand-written, and it is only carried over when the recorded
+value is already `inert` or `leaks` - so a construct that moves from `GAP` to
+`IMPLEMENTED` in the same run arrives with `payload: "unmeasured"` and a ticket,
+even when the person doing the run has just measured it. That is deliberate: a
+seeder cannot tokenize a Vim syntax file, so the alternative is inventing an
+answer. Measure the payload as part of the same pass and write `inert` (or
+`leaks`, with a note) by hand on those rows.
