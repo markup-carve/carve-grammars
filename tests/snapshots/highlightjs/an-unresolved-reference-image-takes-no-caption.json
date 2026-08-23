@@ -1,11 +1,7 @@
 [
   {
-    "scope": null,
-    "text": "!"
-  },
-  {
     "scope": "link",
-    "text": "[a][nope]"
+    "text": "![a][nope]"
   },
   {
     "scope": null,

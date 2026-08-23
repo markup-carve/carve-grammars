@@ -14,6 +14,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- highlight.js scopes a cross-reference with auto text (`</#id>`). It had no rule for one and the id was not left alone: the tag rule claimed `#id`, so every crossref scoped as a hashtag - the defect Prism carried until #308, one surface over (#317).
+- highlight.js scopes a reference image (`![alt][ref]`) and a collapsed one (`![alt][]`) as images. Both fell through to the reference-LINK rule, which matches from the `[` and left the `!` as prose (#317).
+- highlight.js scopes the combined bold-italic delimiter as one run. The emphasis rule already matched it, so it scoped italic and not bold (#317).
+- highlight.js scopes `{=text=}` as a highlight, braces included. The bare `=text=` rule claimed the inner delimiters as a side effect and left the braces as prose, so the fifth braced spelling had no rule of its own where the other four do (#317).
 - A `{% ... %}` comment and a `{# ... #}` editorial comment spanning a line break are one comment in TextMate. Both were line-bounded `match` rules, so a comment written across a break was not recognized at all and the markup inside it coloured - 144 of 469 and 87 of 286 generated documents. Prism and highlight.js were given the multi-line reading in #312; this is the same fix on the TextMate side (#307, #320).
 - An unpartnered verbatim run is a code span to the end of its paragraph in TextMate, as it is in the engine and in Prism, instead of leaving the rest of the paragraph live markup (#307, #320).
 - TextMate and Prism scope a reference image (`![alt][ref]`) and a collapsed one (`![alt][]`) as images. Both fell through to the reference-LINK rule, which matched from the `[` and left the `!` as prose, so the alt text carried a link's scope (#307, #308).

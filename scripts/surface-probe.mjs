@@ -688,6 +688,54 @@ const SIGNATURE_OVERRIDES = {
      */
     highlightjs: {
         block_attributes: ['attribute'],
+        /*
+         * FIVE FOLDS, read off `highlightjs/carve.js` in carve-grammars#317.
+         * Each row read GAP because the shared table cannot reach the name,
+         * not because the rule is missing.
+         *
+         *   DIV_BLOCK's opener takes the layout tokens and the kind word as
+         *   branches of ONE alternation - a colon run, then either a pipe or a
+         *   backslash, or an identifier with its optional title and label - so
+         *   `::: note` and `::: \` are that mode. It is the fold
+         *   `prism`, `textmate` and `vscode-carve` already record under
+         *   their own spellings.
+         *
+         *   `line_block` is here for the same reason and did NOT read GAP: it
+         *   cited a mode called LINE_BLOCK whose opener is a bare `| ` line,
+         *   which Carve renders as a paragraph - a line block opens on a COLON
+         *   FENCE. That mode is now PIPE_LED_LINE, after what it matches, and
+         *   the row cites the container that really scopes `::: |`.
+         *
+         *   REFERENCE_LINK closes on a second bracket pair whose body is
+         *   starred, and the star accepts the EMPTY label, so `[text][]` is
+         *   that rule - the carve-grammars#318 fold, one surface over.
+         *
+         *   LINE_COMMENT opens on a `%%` run at a line start OR after
+         *   whitespace, so the trailing comment attached to content is the same
+         *   mode as the `%%` line. vim-carve records this exact fold for the
+         *   same two constructs.
+         *
+         *   RAW_FORMAT is the `{=FORMAT}` marker, which only a raw inline
+         *   carries; INLINE_CODE scopes the backticked run beside it, so the
+         *   construct is fully scoped by two modes and this is the one named
+         *   for it. The marker rule is not guarded on a preceding code span, so
+         *   a bare `{=html}` in prose scopes too - an over-colour this row
+         *   records rather than introduces.
+         */
+        admonition: ['divblock'],
+        line_block: ['divblock'],
+        local_hard_break_block: ['divblock'],
+        collapsed_reference_link: ['referencelink'],
+        inline_comment: ['linecomment'],
+        raw_inline: ['rawformat'],
+        /*
+         * ... and the same empty-label fold one construct over: REFERENCE_IMAGE
+         * closes on a starred label too, so the collapsed image is that rule
+         * with nothing between its second brackets. `prism`, `textmate` and
+         * `vscode-carve` each record this under their own name for the
+         * reference image.
+         */
+        collapsed_reference_image: ['referenceimage'],
     },
     /*
      * Tiptap's map is keyed by CARVE AST type, and three of its entries carry

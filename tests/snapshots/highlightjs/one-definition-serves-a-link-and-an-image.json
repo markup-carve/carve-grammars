@@ -9,11 +9,11 @@
   },
   {
     "scope": null,
-    "text": " and !"
+    "text": " and "
   },
   {
     "scope": "link",
-    "text": "[moon][m]"
+    "text": "![moon][m]"
   },
   {
     "scope": null,

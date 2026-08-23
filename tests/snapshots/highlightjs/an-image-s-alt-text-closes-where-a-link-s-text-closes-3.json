@@ -1,11 +1,11 @@
 [
   {
     "scope": null,
-    "text": "a !"
+    "text": "a "
   },
   {
     "scope": "link",
-    "text": "[t[z[q]]][r]{.c}"
+    "text": "![t[z[q]]][r]{.c}"
   },
   {
     "scope": null,

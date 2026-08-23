@@ -273,6 +273,42 @@ for (const [id, surface] of Object.entries(SURFACES)) {
                 + `${stale.join(', ')}. ${RESEED}`,
         );
     });
+
+    ok(`${id}: every IMPLEMENTED row cites the name the probe attributes to that construct`, () => {
+        /*
+         * THE OTHER DIRECTION, AND WHY THE TWO CHECKS ABOVE DO NOT COVER IT.
+         *
+         * The evidence check asks whether the cited name is DECLARED anywhere
+         * in the vocabulary. The gap check asks whether a probe hit is recorded
+         * as missing. Neither asks whether the cited name is the one the probe
+         * attributes to THIS construct - so an IMPLEMENTED row seeded off a
+         * SIGNATURE_OVERRIDES entry survives that entry being deleted: the
+         * fold disappears, the probe stops finding the construct, and the row
+         * stays green because DIV_BLOCK is still a declared name.
+         *
+         * Measured on carve-grammars#317, both ways: reverting
+         * `highlightjs/carve.js` and keeping the ledger fails loudly on the
+         * first renamed mode, and reverting the six highlight.js overrides in
+         * `scripts/surface-probe.mjs` and keeping the ledger passed all 35
+         * assertions. Half of that fix was unguarded.
+         *
+         * This closes it by RE-DERIVING the IMPLEMENTED half rather than
+         * re-reading it: the row must say what the instrument says today. The
+         * cost is that a fold has to be written down in the override table
+         * instead of typed into the ledger by hand, which is where a reviewer
+         * can see it and where the reason for it lives.
+         */
+        const wrong = Object.entries(entries)
+            .filter(([name, entry]) => entry.status === 'IMPLEMENTED' && found.get(name) !== entry.evidence)
+            .map(([name, entry]) => `${name} cites ${JSON.stringify(entry.evidence)}, probe says `
+                + `${JSON.stringify(found.get(name) ?? null)}`);
+        assert.deepStrictEqual(
+            wrong, [],
+            `${id}: these rows cite a name the probe does not attribute to the construct - `
+                + `${wrong.join('; ')}. Either the fold belongs in SIGNATURE_OVERRIDES, or the row is `
+                + `a hand-written claim the instrument cannot reach. ${RESEED}`,
+        );
+    });
 }
 
 console.log('\nthe second axis, measured:');

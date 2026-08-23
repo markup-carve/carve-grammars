@@ -49,15 +49,15 @@
   },
   {
     "scope": null,
-    "text": " {"
+    "text": " "
   },
   {
     "scope": "addition",
-    "text": "=="
+    "text": "{==}"
   },
   {
     "scope": null,
-    "text": "} "
+    "text": " "
   },
   {
     "scope": "addition",

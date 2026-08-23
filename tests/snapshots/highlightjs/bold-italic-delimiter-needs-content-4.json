@@ -1,14 +1,14 @@
 [
   {
     "scope": null,
-    "text": "a/"
+    "text": "a"
   },
   {
     "scope": "strong",
-    "text": "*y*"
+    "text": "/*y*/"
   },
   {
     "scope": null,
-    "text": "/b\n"
+    "text": "b\n"
   }
 ]

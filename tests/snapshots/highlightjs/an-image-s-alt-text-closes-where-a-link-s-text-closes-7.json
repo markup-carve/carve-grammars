@@ -1,11 +1,7 @@
 [
   {
-    "scope": null,
-    "text": "!"
-  },
-  {
     "scope": "link",
-    "text": "[t[z]][r]"
+    "text": "![t[z]][r]"
   },
   {
     "scope": null,
