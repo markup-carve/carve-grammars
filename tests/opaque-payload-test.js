@@ -49,6 +49,8 @@ import { createRequire } from 'node:module';
 import { carveToHtml, parse } from '@markup-carve/carve';
 import { PAYLOAD, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
+import { textmateEngines } from './lib/surface-engines.js';
+import { measureModel } from './lib/tiptap-payload.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '..');
@@ -61,7 +63,21 @@ function ok(name, fn) {
     console.log(`  ✓ ${name}`);
 }
 
-const ENGINES = [['prism', prismTokens], ['highlightjs', hljsTokens]];
+/*
+ * EVERY SURFACE THIS PROCESS CAN DRIVE.
+ *
+ * Prism and highlight.js tokenize in process. The TextMate family joins them
+ * through Shiki (carve-grammars#320): `textmate` always, and each of
+ * `vscode-carve` and `intellij-carve` when its checkout is named by the
+ * `CARVE_SURFACE_*` variable `scripts/surface-probe.mjs` already reads. Those
+ * three carried 11 to 13 `payload: "unmeasured"` rows each - the largest
+ * unknown on the ledger - and this sweep is what answers them.
+ *
+ * Tiptap is measured too, below, but not here: it is a schema bridge with no
+ * scopes and no source offsets, so it answers a differently-shaped question
+ * (tests/lib/tiptap-payload.js).
+ */
+const ENGINES = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
 
 /*
  * THE AST TYPES THAT CARRY A VERBATIM PAYLOAD.
@@ -268,15 +284,16 @@ const OPENS_A_BLOCK = /\n[ \t]*(?:[-*+][ \t]|\d+[.)][ \t]|#{1,6} |[`~:]{3,}|>[ \
 const BODY_LENGTH = 3;
 
 /**
- * Sweep one construct on one engine.
+ * Every generated document the ENGINE agrees is about this construct's payload.
+ *
+ * Split out of `sweep` so the tokenizing engines and the Tiptap bridge run the
+ * same space: a second generator beside this one is how two sweeps end up
+ * measuring different documents and reporting the same number.
  *
  * @param {object} row - a `CONSTRUCTS` entry.
- * @param {Function} tokenize - a tokenizer from `tests/lib/engines.js`.
- * @returns {{considered: number, leaks: string[]}} what the sweep saw.
+ * @yields {string} one qualifying document.
  */
-function sweep(row, tokenize) {
-    let considered = 0;
-    const leaks = [];
+function* qualifying(row) {
     for (const body of strings(row.alphabet, BODY_LENGTH)) {
         for (const payloadBody of [PAYLOAD + body, body + PAYLOAD]) {
             const [open, generated, close] = row.wrap(payloadBody);
@@ -293,9 +310,24 @@ function sweep(row, tokenize) {
             }
             if (!holds) continue;
             if (row.skipBlockOpeners && OPENS_A_BLOCK.test(source)) continue;
-            considered++;
-            if (measure(tokenize, source) === 'leaks') leaks.push(source);
+            yield source;
         }
+    }
+}
+
+/**
+ * Sweep one construct on one engine.
+ *
+ * @param {object} row - a `CONSTRUCTS` entry.
+ * @param {Function} tokenize - a tokenizer from `tests/lib/engines.js`.
+ * @returns {{considered: number, leaks: string[]}} what the sweep saw.
+ */
+function sweep(row, tokenize) {
+    let considered = 0;
+    const leaks = [];
+    for (const source of qualifying(row)) {
+        considered++;
+        if (measure(tokenize, source) === 'leaks') leaks.push(source);
     }
 
     return { considered, leaks };
@@ -337,6 +369,79 @@ for (const row of CONSTRUCTS) {
             asserted += considered;
         });
     }
+}
+
+/*
+ * THE SAME GENERATED SPACE, THROUGH THE EDITOR BRIDGE.
+ *
+ * The Tiptap entry is not a tokenizer, so "did a scope open inside the payload"
+ * has no meaning there. The question that survives the change of medium is
+ * whether the payload reaches the editor AS ITSELF: one uninterrupted run,
+ * carrying no mark that claims it is markup. A bridge that parsed the payload
+ * would deliver `b` under a bold mark and the run `*b*` would not be in the
+ * document at all.
+ *
+ * `lost` is therefore its own answer and not a leak, and it is a defect UNLESS
+ * the engine agrees the payload was never a payload. That happens: a body of
+ * `%%%` closes a comment fence and the rest of the opener line is an
+ * insignificant tail, so `%%%` over `%%%*b*` over `%%%` renders nothing (which
+ * is what the row's gate asks) while holding no payload at all. The engine is
+ * asked directly rather than the case being special-cased.
+ */
+const astHoldsPayload = (source) => {
+    let held = false;
+    const walk = (node) => {
+        if (held || !node || typeof node !== 'object') return;
+        if (Array.isArray(node)) return node.forEach(walk);
+        for (const key of ['content', 'value']) {
+            if (typeof node[key] === 'string' && node[key].includes(PAYLOAD)) held = true;
+        }
+        for (const key of Object.keys(node)) {
+            if (key !== 'pos' && typeof node[key] === 'object') walk(node[key]);
+        }
+
+        return undefined;
+    };
+    walk(parse(source).children);
+
+    return held;
+};
+
+console.log('\nevery generated payload, through the Tiptap bridge:');
+
+for (const row of CONSTRUCTS) {
+    ok(`tiptap: ${row.name} reaches the editor model intact`, () => {
+        let considered = 0;
+        const leaks = [];
+        const lost = [];
+        for (const source of qualifying(row)) {
+            let verdict;
+            try {
+                verdict = measureModel(source);
+            } catch {
+                continue; // the bridge refused the document; that is not a payload answer
+            }
+            if (verdict === 'lost' && !astHoldsPayload(source)) continue;
+            considered++;
+            if (verdict === 'leaks') leaks.push(source);
+            if (verdict === 'lost') lost.push(source);
+        }
+        assert.ok(
+            considered >= 8,
+            `tiptap/${row.name}: the engine qualified only ${considered} generated documents, so this `
+                + 'row asserts almost nothing - did the wrapper stop producing the construct?',
+        );
+        assert.deepStrictEqual(
+            leaks.slice(0, 5), [],
+            `tiptap/${row.name}: ${leaks.length} of ${considered} generated documents carry an emphasis `
+                + 'mark over a payload the engine keeps verbatim.',
+        );
+        assert.deepStrictEqual(
+            lost.slice(0, 5), [],
+            `tiptap/${row.name}: ${lost.length} of ${considered} generated documents lose the payload `
+                + 'between the engine and the editor model, though the engine holds it verbatim.',
+        );
+    });
 }
 
 console.log('\nthe opener shapes a corpus does not happen to carry:');

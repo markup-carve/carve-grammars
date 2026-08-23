@@ -40,6 +40,9 @@ import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, vocabulary } from '../s
 import { validate } from './lib/construct-ledger.js';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
+import { textmateEngines } from './lib/surface-engines.js';
+import { unfaithful } from './lib/textmate-engine.js';
+import { measureModel } from './lib/tiptap-payload.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '..');
@@ -274,7 +277,24 @@ for (const [id, surface] of Object.entries(SURFACES)) {
 
 console.log('\nthe second axis, measured:');
 
-for (const [id, tokenize] of [['prism', prismTokens], ['highlightjs', hljsTokens]]) {
+const tokenizers = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
+
+ok('each tokenizer reproduces its input, so a measurement is about the payload', () => {
+    /*
+     * `measure` locates the payload by COUNTING CHARACTERS into the source, so
+     * a tokenizer that drops one reports about the wrong region and passes.
+     * Shiki tokenizes line by line and returns no line endings; the TextMate
+     * adapter puts them back, and this is what says it still does.
+     */
+    for (const [id, tokenize] of tokenizers) {
+        for (const sample of Object.values(VERBATIM_SAMPLES)) {
+            const problem = unfaithful(tokenize, sample);
+            assert.strictEqual(problem, null, `${id}: ${problem}`);
+        }
+    }
+});
+
+for (const [id, tokenize] of tokenizers) {
     ok(`${id}: the recorded payload behavior is what the engine actually does`, () => {
         for (const [name, sample] of Object.entries(VERBATIM_SAMPLES)) {
             const entry = ledger.surfaces[id].constructs[name];
@@ -290,6 +310,25 @@ for (const [id, tokenize] of [['prism', prismTokens], ['highlightjs', hljsTokens
         }
     });
 }
+
+ok('tiptap: the recorded payload behavior is what the bridge actually does', () => {
+    /*
+     * The same axis on the one surface that is not a tokenizer. A schema bridge
+     * has no scopes, so the question is whether the payload reaches the editor
+     * model as one uninterrupted run under no markup mark
+     * (tests/lib/tiptap-payload.js).
+     */
+    for (const [name, sample] of Object.entries(VERBATIM_SAMPLES)) {
+        const entry = ledger.surfaces.tiptap.constructs[name];
+        if (entry.status !== 'IMPLEMENTED') continue;
+        assert.strictEqual(
+            measureModel(sample),
+            entry.payload,
+            `tiptap/${name}: the ledger says "${entry.payload}" and converting `
+                + `${JSON.stringify(sample)} says otherwise.`,
+        );
+    }
+});
 
 /*
  * THE CHECK HAS TO BE SEEN REJECTING SOMETHING.

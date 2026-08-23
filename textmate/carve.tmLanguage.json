@@ -198,7 +198,9 @@
       "name": "comment.block.carve"
     },
     "braced_comment": {
-      "match": "\\{%[^\\n]*?%\\}",
+      "comment": "THE PAYLOAD IS NOT CARVE AND MAY SPAN A LINE BREAK. This was a single-line `match`, so a comment written across a break was not recognized at all and the markup inside it coloured - `a {% *b*` over ` %} z` scoped a strong run inside a comment, which is markup-carve/carve#1239 on the surface it was first reported on. 144 of 469 generated documents leaked before this (carve-grammars#320). Prism and highlight.js were given the multi-line reading in carve-grammars#312; this is the same fix on the TextMate side. The region carries the scope and offers no patterns, so everything between the delimiters is comment. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too.",
+      "begin": "\\{%",
+      "end": "%\\}|^(?=[ \\t]*$)",
       "name": "comment.block.inline.carve"
     },
     "line_comment": {
@@ -865,6 +867,9 @@
           "include": "#code_inline"
         },
         {
+          "include": "#code_inline_unpartnered"
+        },
+        {
           "include": "#braced_comment"
         },
         {
@@ -996,6 +1001,18 @@
         }
       },
       "name": "markup.raw.inline.carve"
+    },
+    "code_inline_unpartnered": {
+      "comment": "AN UNPARTNERED RUN IS A CODE SPAN TO THE END OF ITS PARAGRAPH, which is what the engine does with it and what Prism was taught in carve-grammars#312. Without this rule the run was not a code span at all here, so `a `*b*` coloured a strong inside a verbatim payload - 75 of 111 generated documents, and 37 of 73 on a wide run (carve-grammars#320). Tried AFTER the two closed-span rules, so a run that finds its partner on its own line is still the closed span; this one only sees the runs those cannot match. A BLANK LINE ENDS IT: the paragraph is where the engine stops the span, and a TextMate begin has no way to look ahead for a closer it already knows is not there. The opener is `+ rather than a single backtick so a wide unpartnered run is one opener rather than an opener plus payload.",
+      "begin": "(`+)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.raw.carve"
+        }
+      },
+      "end": "^(?=[ \\t]*$)",
+      "name": "markup.raw.inline.carve",
+      "contentName": "markup.raw.inline.carve"
     },
     "code_inline": {
       "match": "(`)([^`\\n]+)(`)",
@@ -1165,7 +1182,9 @@
       "comment": "Editorial substitution requires the `~>` arrow; a `{~x~}` with no arrow is forced strikethrough (PART 9 S22)."
     },
     "critic_comment": {
-      "match": "\\{#[^}]*#\\}",
+      "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment across a break coloured the markup inside it - 87 of 286 generated documents. Same shape and same fix as `braced_comment`. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too. AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\{#` alone claimed it and every line after it. The guard rejects the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}` - and leaves a multi-line comment, whose first line holds no `}` at all, opening as it should.",
+      "begin": "\\{#(?![^}\\n]*(?<!#)\\})",
+      "end": "#\\}|^(?=[ \\t]*$)",
       "name": "comment.block.critic.carve"
     },
     "forced_strong": {
