@@ -49,7 +49,7 @@ import { createRequire } from 'node:module';
 import { carveToHtml, parse } from '@markup-carve/carve';
 import { PAYLOAD, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
-import { textmateEngines } from './lib/surface-engines.js';
+import { otherEngines, textmateEngines } from './lib/surface-engines.js';
 import { measureModel } from './lib/tiptap-payload.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -73,11 +73,22 @@ function ok(name, fn) {
  * three carried 11 to 13 `payload: "unmeasured"` rows each - the largest
  * unknown on the ledger - and this sweep is what answers them.
  *
+ * tree-sitter and emacs-carve joined last, and they are the two that are not
+ * token maps at all: one answers with a parse tree plus a highlight query, the
+ * other with a `face` text property put on a buffer by font-lock. Both are
+ * driven from their own checkout the same way, so the sweep covers nine of the
+ * ten surfaces from one generated space. The tenth, Tiptap, is below.
+ *
  * Tiptap is measured too, below, but not here: it is a schema bridge with no
  * scopes and no source offsets, so it answers a differently-shaped question
  * (tests/lib/tiptap-payload.js).
  */
-const ENGINES = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
+const ENGINES = [
+    ['prism', prismTokens],
+    ['highlightjs', hljsTokens],
+    ...await textmateEngines(),
+    ...otherEngines(),
+];
 
 /*
  * THE AST TYPES THAT CARRY A VERBATIM PAYLOAD.
@@ -316,6 +327,26 @@ function* qualifying(row) {
 }
 
 /**
+ * Which of `sources` leak, with the engine told the whole set first.
+ *
+ * Every row goes through here rather than calling `measure` in its own loop,
+ * because `prime` is not an optimization on the Emacs tokenizer - it is the
+ * difference between one subprocess and one per document. A row that built its
+ * documents inline and measured them one at a time launched a batch Emacs
+ * several hundred times, which is the batching design defeated by the three
+ * rows that did not use it.
+ *
+ * @param {Function} tokenize - a tokenizer, optionally carrying `prime`.
+ * @param {string[]} sources - the documents to measure.
+ * @returns {string[]} those that leak.
+ */
+function leaking(tokenize, sources) {
+    tokenize.prime?.(sources);
+
+    return sources.filter((source) => measure(tokenize, source) === 'leaks');
+}
+
+/**
  * Sweep one construct on one engine.
  *
  * @param {object} row - a `CONSTRUCTS` entry.
@@ -323,15 +354,184 @@ function* qualifying(row) {
  * @returns {{considered: number, leaks: string[]}} what the sweep saw.
  */
 function sweep(row, tokenize) {
-    let considered = 0;
-    const leaks = [];
-    for (const source of qualifying(row)) {
-        considered++;
-        if (measure(tokenize, source) === 'leaks') leaks.push(source);
+    // Materialized so `leaking` can hand the whole space to the engine at once.
+    const sources = [...qualifying(row)];
+
+    return { considered: sources.length, leaks: leaking(tokenize, sources) };
+}
+
+/*
+ * WHAT A SURFACE IN ANOTHER REPOSITORY IS KNOWN TO LEAK.
+ *
+ * Six of the ten surfaces are grammars this repository cannot edit, and four of
+ * them are reachable here now. So a leak found on one of them is a defect this
+ * suite can MEASURE and not fix, which is the case a red row handles badly: a
+ * check that stays red for something nobody can fix here gets muted, and the
+ * shape is then rediscovered. The residual table at the end of this file
+ * already solved that for one document at a time - each row asserts the shape
+ * STILL leaks, so it cannot outlive its defect - and this is the same
+ * arrangement for a whole generated row.
+ *
+ * Keyed by surface and then by the row's own name, with the ticket the defect
+ * lives on. An entry asserts at least one generated document leaks; a fix makes
+ * this file fail and the entry comes out with it. A surface in THIS repository
+ * is deliberately absent: a leak here is fixable here, so it stays red.
+ *
+ * Measured 2026-08-23 on tree-sitter-carve 3d12600 and emacs-carve b89ef5d.
+ */
+const KNOWN_LEAKS = {
+    'tree-sitter-carve': {
+        /*
+         * A `{% ... %}` and a `{# ... #}` written across a line break are not
+         * one comment, so the markup inside colours. The same single-line guard
+         * Prism and highlight.js carried until carve-grammars#312 and the
+         * TextMate family until carve-grammars#307, on a fourth surface.
+         */
+        braced_comment: { construct: 'braced_comment', ticket: 'markup-carve/tree-sitter-carve#248' },
+        editorial_comment: { construct: 'editorial_comment', ticket: 'markup-carve/tree-sitter-carve#248' },
+        /*
+         * A fence opener whose info string ends in whitespace (```` ```js ````
+         * with a trailing space or tab) opens no block, so the whole body is
+         * live prose. Six of the ninety opener shapes.
+         */
+        'every fence opener the engine accepts keeps its body inert':
+            { construct: 'code_block', ticket: 'markup-carve/tree-sitter-carve#248' },
+        /*
+         * An INDENTED delimiter-shaped line inside the body ends the block
+         * early - `` ``` `` over `` ``` `` at two columns in - so everything
+         * after it is live. That is the sample-text case: a fence holding a
+         * fence is what every document describing Carve in Carve is made of.
+         */
+        'a delimiter-shaped payload line does not end the block early':
+            { construct: 'code_block', ticket: 'markup-carve/tree-sitter-carve#248' },
+    },
+    'emacs-carve': {
+        /*
+         * The `%%%` fence scopes its two DELIMITER LINES and nothing between
+         * them, so the body is ordinary live markup - the carve-grammars#309
+         * shape, one surface over and still shipped.
+         */
+        comment_block: { construct: 'comment_block', ticket: 'markup-carve/emacs-carve#21' },
+        /*
+         * The `{%` and `{#` guards are single-line here too.
+         */
+        braced_comment: { construct: 'braced_comment', ticket: 'markup-carve/emacs-carve#21' },
+        editorial_comment: { construct: 'editorial_comment', ticket: 'markup-carve/emacs-carve#21' },
+        /*
+         * A verbatim run of TWO backticks is paired one character in, so the
+         * outer backtick of each run is left outside the span and a body that
+         * reaches the seam colours.
+         */
+        'code_span on a wide fence': { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
+        /*
+         * An UNPARTNERED run is a code span to the end of its paragraph in the
+         * engine and in three grammars here; this one leaves the rest of the
+         * line live markup instead.
+         */
+        'code_span with no closing run': { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
+        'code_span with no closing run, on a wide run':
+            { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
+    },
+};
+
+/**
+ * Assert what one row found, against what this surface is known to leak.
+ *
+ * @param {string} engine - The surface id.
+ * @param {string} label - The row's name, as it appears in `KNOWN_LEAKS`.
+ * @param {{considered: number, leaks: string[]}} found - What the row measured.
+ * @param {number} floor - The fewest documents that make the row mean anything.
+ * @param {string} complaint - What to say when a leak is NOT known.
+ * @returns {undefined}
+ */
+function verdict(engine, label, found, floor, complaint) {
+    const { considered, leaks } = found;
+    /*
+     * A FLOOR ON THE SPACE, because a sweep that qualifies no document passes.
+     * That is the shape of dead check this repo has shipped three times
+     * (carve-grammars#295, #298, #300).
+     */
+    assert.ok(
+        considered >= floor,
+        `${engine}/${label}: the engine qualified only ${considered} generated documents, so this row `
+            + 'asserts almost nothing - did the wrapper stop producing the construct?',
+    );
+
+    const known = KNOWN_LEAKS[engine]?.[label];
+    if (known) {
+        assert.ok(
+            leaks.length > 0,
+            `${engine}/${label}: recorded as leaking on ${known.ticket}, and every one of ${considered} `
+                + 'generated documents is now inert. If it was FIXED, delete the entry - a recorded leak '
+                + 'that outlives its defect is a claim this suite has stopped checking.',
+        );
+        console.log(`      ${leaks.length} of ${considered} leak, on ${known.ticket}`);
+
+        return;
     }
 
-    return { considered, leaks };
+    assert.deepStrictEqual(leaks.slice(0, 5), [], `${complaint} ${leaks.length} of ${considered}. `
+        + `First: ${JSON.stringify(leaks[0])}`);
 }
+
+/*
+ * THE TABLE ABOVE AND THE LEDGER'S SECOND COLUMN HAVE TO AGREE.
+ *
+ * They are two records of one measurement, written in different vocabularies:
+ * this file speaks in generated ROWS and the ledger in CONSTRUCTS, and a row
+ * carries the construct it is about so the two can be compared. Without this
+ * they drift the way any two hand-kept lists drift - and the direction that
+ * matters is a ledger cell saying `leaks` with nothing asserting the leak, which
+ * is a claim about a defect nobody is measuring any more.
+ */
+console.log('the recorded leaks, against the ledger:');
+
+const ledger = require('./lib/construct-ledger.json');
+
+ok('every ledger row recorded as leaking is asserted by a row above', () => {
+    const orphans = [];
+    for (const [surface, record] of Object.entries(ledger.surfaces)) {
+        const asserts = new Set(Object.values(KNOWN_LEAKS[surface] || {}).map((entry) => entry.construct));
+        for (const [name, entry] of Object.entries(record.constructs)) {
+            if (entry.payload === 'leaks' && !asserts.has(name)) orphans.push(`${surface}/${name}`);
+        }
+    }
+    assert.deepStrictEqual(
+        orphans, [],
+        `these ledger rows record a payload leak that no row in this file asserts - ${orphans.join(', ')}. `
+            + 'A recorded leak with nothing measuring it cannot be seen being fixed, so it outlives its '
+            + 'defect. Add it to KNOWN_LEAKS, or re-measure and correct the row.',
+    );
+});
+
+ok('every asserted leak the ledger has a cell for is recorded as leaking', () => {
+    const disagree = [];
+    const noCell = [];
+    for (const [surface, rows] of Object.entries(KNOWN_LEAKS)) {
+        const entries = ledger.surfaces[surface].constructs;
+        for (const { construct } of Object.values(rows)) {
+            const entry = entries[construct];
+            if (entry.status !== 'IMPLEMENTED') {
+                noCell.push(`${surface}/${construct} (recorded ${entry.status})`);
+                continue;
+            }
+            if (entry.payload !== 'leaks') disagree.push(`${surface}/${construct} records "${entry.payload}"`);
+        }
+    }
+    assert.deepStrictEqual(
+        disagree, [],
+        `this file asserts a leak the ledger contradicts - ${disagree.join(', ')}`,
+    );
+    /*
+     * A construct this file measures leaking while the ledger says the surface
+     * has NO RULE for it has no cell to hold the answer: the ledger's own rule
+     * is that only an IMPLEMENTED construct has a payload to talk about. That
+     * is not an exemption, it is a finding on the RECOGNITION axis - the rule
+     * is there and the row is wrong about it - so it is named out loud here and
+     * on the surface's own note rather than rounded into either column.
+     */
+    for (const at of noCell) console.log(`      no ledger cell: ${at}`);
+});
 
 console.log('the AST types this file locates payloads by:');
 
@@ -351,22 +551,12 @@ let asserted = 0;
 for (const row of CONSTRUCTS) {
     for (const [engine, tokenize] of ENGINES) {
         ok(`${engine}: ${row.name} keeps every generated payload inert`, () => {
-            const { considered, leaks } = sweep(row, tokenize);
-            // A FLOOR ON THE SPACE, because a sweep that qualifies no document
-            // passes. That is the shape of dead check this repo has shipped
-            // three times (carve-grammars#295, #298, #300).
-            assert.ok(
-                considered >= 8,
-                `${engine}/${row.name}: the engine qualified only ${considered} generated documents, so `
-                    + 'this row asserts almost nothing - did the wrapper stop producing the construct?',
-            );
-            assert.deepStrictEqual(
-                leaks.slice(0, 5), [],
-                `${engine}/${row.name}: ${leaks.length} of ${considered} generated documents scope markup `
-                    + 'INSIDE a payload the engine keeps verbatim. A payload that is not Carve must not '
-                    + 'colour the markers in it (carve-grammars#309, markup-carve/carve#1239).',
-            );
-            asserted += considered;
+            const found = sweep(row, tokenize);
+            verdict(engine, row.name, found, 8,
+                `${engine}/${row.name}: generated documents scope markup INSIDE a payload the engine `
+                    + 'keeps verbatim. A payload that is not Carve must not colour the markers in it '
+                    + '(carve-grammars#309, markup-carve/carve#1239):');
+            asserted += found.considered;
         });
     }
 }
@@ -468,8 +658,7 @@ const OPENERS = [
 
 for (const [engine, tokenize] of ENGINES) {
     ok(`${engine}: every fence opener the engine accepts keeps its body inert`, () => {
-        const leaks = [];
-        let considered = 0;
+        const sources = [];
         for (const opener of OPENERS) {
             const fence = /^[`~]+/.exec(opener)[0];
             for (const [body, closer] of [
@@ -479,16 +668,12 @@ for (const [engine, tokenize] of ENGINES) {
             ]) {
                 const source = `${opener}\n${body}\n${closer}\n`;
                 if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length)) continue;
-                considered++;
-                if (measure(tokenize, source) === 'leaks') leaks.push(source);
+                sources.push(source);
             }
         }
-        assert.ok(considered >= 40, `only ${considered} of these openers opened a block in the engine`);
-        assert.deepStrictEqual(
-            leaks.slice(0, 5), [],
-            `${engine}: ${leaks.length} of ${considered} fence shapes leak their body. `
-                + `First: ${JSON.stringify(leaks[0])}`,
-        );
+        verdict(engine, 'every fence opener the engine accepts keeps its body inert',
+            { considered: sources.length, leaks: leaking(tokenize, sources) }, 40,
+            `${engine}: fence shapes leak their body:`);
     });
 }
 
@@ -521,24 +706,19 @@ console.log('\nthe payload lines that look like a delimiter:');
 
 for (const [engine, tokenize] of ENGINES) {
     ok(`${engine}: a delimiter-shaped payload line does not end the block early`, () => {
-        const leaks = [];
-        let considered = 0;
+        const sources = [];
         for (const line of CLOSER_SHAPED_LINES) {
             for (const fence of ['```', '~~~', '````']) {
                 for (const body of [`${line}\n${PAYLOAD}`, `${PAYLOAD}\n${line}`]) {
                     const source = `${fence}\n${body}\n${fence}\n`;
                     if (!engineReadsVerbatim(source, fence.length + 1, fence.length + 1 + body.length)) continue;
-                    considered++;
-                    if (measure(tokenize, source) === 'leaks') leaks.push(source);
+                    sources.push(source);
                 }
             }
         }
-        assert.ok(considered >= 20, `only ${considered} of these bodies stayed one block in the engine`);
-        assert.deepStrictEqual(
-            leaks.slice(0, 5), [],
-            `${engine}: ${leaks.length} of ${considered} blocks end at a delimiter-shaped line that the `
-                + `engine keeps as content. First: ${JSON.stringify(leaks[0])}`,
-        );
+        verdict(engine, 'a delimiter-shaped payload line does not end the block early',
+            { considered: sources.length, leaks: leaking(tokenize, sources) }, 20,
+            `${engine}: blocks end at a delimiter-shaped line the engine keeps as content:`);
     });
 }
 
@@ -566,8 +746,7 @@ console.log('\nevery closer width and column:');
 
 for (const [engine, tokenize] of ENGINES) {
     ok(`${engine}: a closer at least as long, at the opener's column, and nowhere else`, () => {
-        const leaks = [];
-        let considered = 0;
+        const sources = [];
         for (const character of ['`', '~']) {
             for (const open of FENCE_WIDTHS) {
                 for (const close of [...FENCE_WIDTHS, 6]) {
@@ -579,8 +758,7 @@ for (const [engine, tokenize] of ENGINES) {
                             if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length)) {
                                 continue;
                             }
-                            considered++;
-                            if (measure(tokenize, source) === 'leaks') leaks.push(source);
+                            sources.push(source);
                         }
                     }
                 }
@@ -588,12 +766,9 @@ for (const [engine, tokenize] of ENGINES) {
         }
         // 18 of the 192 pairs make one block in the engine, which is the
         // point of the row: the other 174 are closers it refuses.
-        assert.ok(considered >= 16, `only ${considered} of these fences made one block in the engine`);
-        assert.deepStrictEqual(
-            leaks.slice(0, 5), [],
-            `${engine}: ${leaks.length} of ${considered} opener/closer pairs leak. `
-                + `First: ${JSON.stringify(leaks[0])}`,
-        );
+        verdict(engine, "a closer at least as long, at the opener's column, and nowhere else",
+            { considered: sources.length, leaks: leaking(tokenize, sources) }, 16,
+            `${engine}: opener/closer pairs leak:`);
     });
 }
 
@@ -657,8 +832,16 @@ const RESIDUALS = [
     {
         what: 'an unterminated fence at document level leaves its body live',
         source: '```\nx *b* y\n',
-        engines: ['prism', 'highlightjs'],
-        ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js',
+        /*
+         * emacs-carve joined this row when the surface became measurable
+         * (carve-grammars#320). Its cause is not the trade below: the `%%%`
+         * and fence rules there paint delimiter LINES, so a fence with no
+         * closer paints one line and the body was never claimed at all - the
+         * markup-carve/vim-carve#27 cause, and a defect rather than a trade.
+         */
+        engines: ['prism', 'highlightjs', 'emacs-carve'],
+        ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js, and '
+            + 'markup-carve/emacs-carve#21',
     },
     {
         /*
@@ -672,7 +855,10 @@ const RESIDUALS = [
          */
         what: 'an unclosed verbatim run of three or more backticks leaks its paragraph',
         source: 'a ```x *b* y\n',
-        engines: ['prism'],
+        // emacs-carve leaks the ONE- and TWO-backtick widths as well, which
+        // the generated rows above record on markup-carve/emacs-carve#21; this
+        // is the width where no grammar here reads a span.
+        engines: ['prism', 'emacs-carve'],
         ticket: 'the same trade as the row above, one construct over',
     },
     {
@@ -689,8 +875,16 @@ const RESIDUALS = [
          */
         what: 'a comment whose continuation line opens a block is broken by the block rule',
         source: 'a {# *b*\n* #} z\n',
-        engines: ['prism'],
-        ticket: 'needs a container model, carve-grammars#312',
+        /*
+         * tree-sitter and emacs-carve leak this too, for a different reason
+         * each: the tree-sitter grammar does not read a `{# ... #}` across a
+         * line break at all, and the emacs rule's body is `not-newline`. Both
+         * are the single-line guard carve-grammars#312 removed here, so both
+         * are on their own surface's ticket rather than on this trade.
+         */
+        engines: ['prism', 'tree-sitter-carve', 'emacs-carve'],
+        ticket: 'needs a container model, carve-grammars#312; and the single-line '
+            + 'guards on markup-carve/tree-sitter-carve#248 and markup-carve/emacs-carve#21',
     },
 ];
 
@@ -766,6 +960,32 @@ ok('a fenced code block whose body is handed back to the mode list is reported',
 
 ok('the same grammar with the suppression in place is reported inert', () => {
     assert.strictEqual(measure(hljsTokens, '```\nx *b* y\n```\n'), 'inert');
+});
+
+/*
+ * AND EVERY TOKENIZER HAS TO BE SEEN REPORTING ONE.
+ *
+ * The oracle above reverts the highlight.js grammar, which proves the SWEEP
+ * looks inside a payload. It says nothing about the other tokenizers: a
+ * tree-sitter query that matched nothing, or a batch Emacs whose face runs came
+ * back empty, would report every payload inert and every row would pass. Two of
+ * these engines are new (carve-grammars#320) and one of them is a subprocess.
+ *
+ * So each is handed a document where the run really IS markup - `a *b* c`, the
+ * payload spelling outside any construct - and must call it a leak. That is the
+ * same code path the rows use, on the same engine, with the only difference
+ * being whether the run is inside a payload.
+ */
+ok('every tokenizer reports the payload spelling when it is real markup', () => {
+    for (const [engine, tokenize] of ENGINES) {
+        assert.strictEqual(
+            measure(tokenize, `a ${PAYLOAD} c\n`),
+            'leaks',
+            `${engine} does not scope ${JSON.stringify(PAYLOAD)} as markup even OUTSIDE a payload, so `
+                + 'every inert answer it gave above is a tokenizer that reported nothing rather than a '
+                + 'grammar that suppressed something',
+        );
+    }
 });
 
 ok('the sweep itself reports the reverted grammar, not just one sample', () => {
