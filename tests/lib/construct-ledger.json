@@ -3692,8 +3692,8 @@
           "payload": "none"
         },
         "smart_quote": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
+          "status": "UNSUPPORTED",
+          "reason": "the construct is EVERY straight quote and apostrophe in prose, so a rule puts a face on the apostrophe of every contraction and cannot separate the quote an author means from the one inside a word - and unlike a dash run, the information a face would add is already in the character. Ruled in markup-carve/emacs-carve#23; the rest of the typographic family IS painted",
           "payload": "none"
         },
         "arrow": {
