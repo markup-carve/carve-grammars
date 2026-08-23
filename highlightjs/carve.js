@@ -309,7 +309,7 @@
      */
     const BOLD_ITALIC = {
         className: 'strong',
-        begin: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)){1,4096}\*\//,
+        begin: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}\*\//,
         relevance: 5,
     };
 
