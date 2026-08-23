@@ -418,6 +418,30 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * categories were run one at a time through the source-aware loader, all 12
  * convert without the whole-document fallback atom and all 12 reparse to the
  * same AST.
+ *
+ * 342 IS MEASURED AGAINST THE RELEASED ENGINE, and the released engine is 120
+ * commits behind carve-js main. This number therefore moves when carve-js
+ * publishes next, and it was measured ahead of time rather than left to be
+ * discovered as a red tick during a release: built from carve-js main, dropped
+ * into node_modules in place of 0.1.4, and the enveloped list dumped under both
+ * and diffed BY NAME.
+ *
+ * 342 -> 344, and the net of 2 hides the size of it: ELEVEN names are added and
+ * NINE are removed. The nine removals are the projection getting better and
+ * need no defence. The eleven additions are one ruling, not eleven:
+ * `05-lists-23`, `05-lists-25`, `05-lists-26`, `05-lists-27`, `05-lists-28` and
+ * `395-a-longer-run-at-a-list-boundary-is-written-as-exactly-three-blank-lines`
+ * are the six documents carrying a run of four or more blank lines at a list
+ * boundary, which the writer now collapses to exactly three - so their source
+ * no longer survives the projection and the envelope is what keeps it. The
+ * other five (`369` twice, `371`, `373`, `375`) are the quote-marker and
+ * table-alignment rulings landing the same way.
+ *
+ * So when the engine moves, the number moves to 344 and every one of the eleven
+ * has a ruling behind it. What must NOT happen is the assertion being relaxed
+ * to whatever the run reports: the count is a claim about which documents the
+ * projection can carry losslessly, and a count that follows the engine asserts
+ * nothing at all.
  */
 assert.strictEqual(
     envelopedFiles.length, 342,
