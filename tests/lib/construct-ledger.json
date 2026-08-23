@@ -1491,10 +1491,10 @@
     },
     "tree-sitter-carve": {
       "repo": "markup-carve/tree-sitter-carve",
-      "commit": "863abfa",
-      "measured": "2026-08-21",
+      "commit": "d61ab29",
+      "measured": "2026-08-23",
       "gapTicket": "markup-carve/tree-sitter-carve#245",
-      "note": "THE PAYLOAD COLUMN WAS RE-MEASURED AT d61ab29 on 2026-08-23, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. The three leaks this column carried at 3d12600 are all closed: markup-carve/tree-sitter-carve#249 and #251 took the two `code_block` shapes and the braced comment, #254 the editorial comment across a line break. Every generated document of all three rows now measures inert - 0 of 164 fence shapes, 0 of 469 and 0 of 286. The single-sample column said inert while they leaked, which is why the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what this column is read from.",
+      "note": "BOTH AXES ARE NOW READ AT THE SAME COMMIT, d61ab29, which is what this surface's `commit` field says; the payload column used to be ahead of it and the note used to say so. The recognition axis moved because markup-carve/tree-sitter-carve#252 named the admonition and the composite figure group, which were the last two GAP rows on this surface (carve-grammars#334). The payload column is measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. The four leaks this column carried at 3d12600 are all closed: markup-carve/tree-sitter-carve#249 and #251 took the two `code_block` shapes and the braced comment, #254 the editorial comment across a line break. Every generated document of all four rows now measures inert - 0 of 164 fence shapes, 0 of 469 and 0 of 286. The single-sample column said inert while they leaked, which is why the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what this column is read from. ONE CAUTION ABOUT THE EVIDENCE ON THIS SURFACE: before #252 the `admonition` row was not merely unnamed - the nearest word in that grammar was `class_name`, a real rule implementing the dotted class inside an attribute block, so a probe that had scored it would have read the row covered while it was false. The row cites `admonition_type` today, but the evidence for a surface in another repository is re-checked by nobody on a pull request here (tests/construct-ledger-test.js re-probes the four local surfaces only), which is what scripts/surface-drift.mjs reports on.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -1547,14 +1547,14 @@
           "payload": "parsed"
         },
         "figure_group": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "figure_group_marker",
+          "payload": "parsed"
         },
         "admonition": {
-          "status": "GAP",
-          "ticket": "markup-carve/tree-sitter-carve#245",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "admonition_type",
+          "payload": "parsed"
         },
         "div": {
           "status": "IMPLEMENTED",

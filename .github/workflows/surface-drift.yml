@@ -1,0 +1,66 @@
+name: Surface drift
+
+# Every surface's ledger row carries the commit it was read at
+# (`tests/lib/construct-ledger.json`), and until this job nothing read that
+# field. The four grammars in this repository are re-probed against the shipped
+# files on every pull request; the other six are records, and a record nothing
+# compares is a claim that ages silently.
+#
+# It aged twice, and neither was visible from here: `tree-sitter-carve` sat at
+# 863abfa with two GAP rows that markup-carve/tree-sitter-carve#252 had already
+# closed (carve-grammars#334), and `emacs-carve` sat three merges behind with 24
+# gaps that were 2 (carve-grammars#332). The suite was green throughout, because
+# a stale row contradicts nothing the suite reads.
+#
+# Reported, not gated - the same split `spec-drift.yml` uses and for the reason
+# `scripts/engine-drift.mjs` spells out at length: a job that goes red for a
+# merge in another repository is noise, noise teaches people to skip the tab,
+# and this repo has already had one such job read as upstream weather while the
+# thing it watched fell 120 commits behind. Re-seeding a surface is a deliberate
+# review here anyway - a status moving from GAP to IMPLEMENTED is a claim about
+# a rule, and it wants reading.
+#
+# The rule lives in `scripts/surface-drift.mjs`, not in this file, and
+# `tests/surface-drift-test.js` runs it on every pull request. That test also
+# asserts this file names every remote surface, so a surface added to
+# `SURFACES` and forgotten here fails there rather than going unwatched.
+
+on:
+  schedule:
+    # 05:00 UTC daily, alongside the spec-drift and engine-drift runs.
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  surface-pins:
+    runs-on: ubuntu-latest
+    strategy:
+      # Every surface is reported, even when an earlier one refuses: a job that
+      # stops at the first stale row hides the rest of the ledger.
+      fail-fast: false
+      matrix:
+        surface:
+          - id: tree-sitter-carve
+            repo: markup-carve/tree-sitter-carve
+          - id: vscode-carve
+            repo: markup-carve/vscode-carve
+          - id: intellij-carve
+            repo: markup-carve/intellij-carve
+          - id: sublime-carve
+            repo: markup-carve/sublime-carve
+          - id: vim-carve
+            repo: markup-carve/vim-carve
+          - id: emacs-carve
+            repo: markup-carve/emacs-carve
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out ${{ matrix.surface.id }}
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ matrix.surface.repo }}
+          path: surface
+          fetch-depth: 0
+
+      - name: Compare the ledger's reading against ${{ matrix.surface.repo }} main
+        run: node scripts/surface-drift.mjs ${{ matrix.surface.id }} surface
