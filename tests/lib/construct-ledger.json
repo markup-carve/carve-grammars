@@ -1494,6 +1494,7 @@
       "commit": "863abfa",
       "measured": "2026-08-21",
       "gapTicket": "markup-carve/tree-sitter-carve#245",
+      "note": "THE PAYLOAD COLUMN WAS MEASURED AT 3d12600, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. One sample per construct says every row is inert; the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what found the three leaks, which are on markup-carve/tree-sitter-carve#248 - and that gap is why the single-sample column alone is not the answer here.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -1508,8 +1509,9 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code_block",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "leaks",
+          "ticket": "markup-carve/tree-sitter-carve#248",
+          "payloadNote": "a fence opener whose info string ends in whitespace (a language followed by a space or a tab) opens no block, so the body is live prose; and an INDENTED delimiter-shaped line inside the body ends the block early, so everything after it is live. 12 of 164 generated fence shapes"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -1564,20 +1566,17 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "fenced_comment_block",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "comment_line",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
           "evidence": "raw_block",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -1617,26 +1616,22 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "raw_inline",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "inline_literal",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "verbatim",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "autolink",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "auto_text_link": {
           "status": "IMPLEMENTED",
@@ -1681,14 +1676,12 @@
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "inline_math",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "block_math",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -1788,8 +1781,9 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "editorial_comment",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "leaks",
+          "ticket": "markup-carve/tree-sitter-carve#248",
+          "payloadNote": "a `{# ... #}` written across a line break is not one comment, so the markup inside it is scoped. 180 of 286 generated documents"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -1849,14 +1843,14 @@
         "inline_comment": {
           "status": "IMPLEMENTED",
           "evidence": "trailing_comment",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "braced_comment",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/tree-sitter-carve#245"
+          "payload": "leaks",
+          "ticket": "markup-carve/tree-sitter-carve#248",
+          "payloadNote": "a `{% ... %}` written across a line break is not one comment, so the markup inside it is scoped. 185 of 469 generated documents"
         },
         "hard_break": {
           "status": "IMPLEMENTED",
@@ -3361,6 +3355,7 @@
       "commit": "6b5c224",
       "measured": "2026-08-21",
       "gapTicket": "markup-carve/emacs-carve#19",
+      "note": "THE PAYLOAD COLUMN WAS MEASURED AT b89ef5d, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured by fontifying a buffer in batch Emacs and reading back the `face` text property. TWO ROWS THIS COLUMN CANNOT CARRY: the sweep reports `{% ... %}` leaking 147 of 469 generated documents and `{# ... #}` 87 of 286, and both are recorded GAP on the recognition axis - the rules exist (measured: the runs take font-lock-comment-face and carve-critic-face), and the row that should name the braced comment cites the delimited comment's own header while `inline_comment` cites it too. That is the recognition axis reading a rule under another construct's name, on markup-carve/emacs-carve#19; the leaks themselves are on markup-carve/emacs-carve#21 and are asserted in KNOWN_LEAKS whatever the recognition row says.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -3375,8 +3370,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "Skip headings inside fenced code by checking the code face.",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -3431,14 +3425,14 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "Block comment fences %%% ... %%% and line comments %%.",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "leaks",
+          "ticket": "markup-carve/emacs-carve#21",
+          "payloadNote": "the `%%%` fence paints its two DELIMITER LINES and nothing between them, so the body is ordinary live markup. 223 of 312 generated documents"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "Block comment fences %%% ... %%% and line comments %%.",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "GAP",
@@ -3483,26 +3477,24 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "Raw inline code: `code`{=html}",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "Inline literal: !`...`  (a `!' prefix on a verbatim span; renders as",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "carve-code-face",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "leaks",
+          "ticket": "markup-carve/emacs-carve#21",
+          "payloadNote": "a run of two backticks is paired one character in, so a body reaching the seam is scoped; and an unpartnered run leaves the rest of the line live where the engine reads a span to the end of the paragraph. 47 of 234 generated documents"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "Autolinks: <https://...> and <email>.",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "auto_text_link": {
           "status": "IMPLEMENTED",
@@ -3547,14 +3539,12 @@
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "Inline math: $`...`",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "Display math: $$`...`",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -3714,8 +3704,7 @@
         "inline_comment": {
           "status": "IMPLEMENTED",
           "evidence": "A DELIMITED INLINE COMMENT, `{% ... %}' (PART 9 S21a,",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/emacs-carve#19"
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "GAP",

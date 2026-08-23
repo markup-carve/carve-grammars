@@ -14,7 +14,9 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { SURFACES, rootVariable } from '../../scripts/surface-probe.mjs';
+import { emacsEngine } from './emacs-engine.js';
 import { textmateTokenizer } from './textmate-engine.js';
+import { treesitterEngine } from './treesitter-engine.js';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -38,6 +40,33 @@ export async function textmateEngines() {
         if (!existsSync(grammar)) continue;
         out.push([id, await textmateTokenizer(grammar)]);
     }
+
+    return out;
+}
+
+/**
+ * The two surfaces that are neither TextMate nor a tokenizer this repo hosts.
+ *
+ * tree-sitter and emacs-carve are the last surfaces whose payload column was
+ * recorded rather than measured, and both are reachable in process: the
+ * tree-sitter grammar through its built native addon, and emacs-carve through
+ * one batch Emacs that fontifies a buffer and prints back the face runs. Each
+ * needs its own checkout, named by the `CARVE_SURFACE_*` variable
+ * `scripts/surface-probe.mjs` already reads, and is simply absent otherwise -
+ * the same rule the TextMate family follows above.
+ *
+ * intellij-carve is NOT here. Its grammar is a TextMate file and
+ * `textmateEngines()` above reaches it whenever its variable is set; it needs
+ * nothing of its own.
+ *
+ * @returns {Array<[string, Function]>} `[surface id, tokenizer]` pairs.
+ */
+export function otherEngines() {
+    const out = [];
+    const treesitter = treesitterEngine(process.env[rootVariable('tree-sitter-carve')]);
+    if (treesitter) out.push(['tree-sitter-carve', treesitter]);
+    const emacs = emacsEngine(process.env[rootVariable('emacs-carve')]);
+    if (emacs) out.push(['emacs-carve', emacs]);
 
     return out;
 }

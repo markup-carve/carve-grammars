@@ -758,3 +758,29 @@ is hand-written:
 ```bash
 CARVE_SURFACE_VSCODE_CARVE=../vscode-carve node scripts/seed-construct-ledger.mjs
 ```
+
+### The payload sweep reaches nine of the ten surfaces
+
+`tests/opaque-payload-test.js` is the second axis measured over a GENERATED space
+rather than one sample per construct, and one sample is not enough: on
+tree-sitter every row is inert at one sample and three of them leak across the
+sweep. Name a checkout and the sweep drives it:
+
+```bash
+CARVE_SURFACE_TREE_SITTER_CARVE=../tree-sitter-carve \
+CARVE_SURFACE_EMACS_CARVE=../emacs-carve \
+CARVE_SURFACE_VSCODE_CARVE=../vscode-carve \
+  node tests/opaque-payload-test.js
+```
+
+tree-sitter needs its native addon built (`npm install` in that checkout), and
+emacs-carve needs an `emacs` on PATH - the mode is fontified in one batch Emacs
+per sweep row, which is what `prime` on that tokenizer is for. A surface whose
+checkout is not named, or not built, is simply not swept.
+
+A leak on a grammar in ANOTHER repository is a defect this suite can measure and
+not fix, so it is recorded in `KNOWN_LEAKS` with the ticket it lives on and
+asserted to STILL leak. A fix therefore fails this file and the entry comes out
+with the fix, the same arrangement the residual table at the end of it uses for
+one document at a time. A surface in THIS repository is deliberately absent from
+that table: a leak here is fixable here, so it stays red.

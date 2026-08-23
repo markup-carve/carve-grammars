@@ -203,6 +203,10 @@ for (const [id, surface] of Object.entries(SURFACES)) {
         } else {
             entry.payload = old.payload === 'inert' || old.payload === 'leaks' ? old.payload : 'unmeasured';
             if (entry.payload === 'leaks' && old.payloadNote) entry.payloadNote = old.payloadNote;
+            // A RECORDED LEAK'S TICKET IS CARRIED like every other hand-written
+            // field. It was dropped, so re-seeding a surface measured elsewhere
+            // turned "leaks, tracked on emacs-carve#19" into an untracked leak.
+            if (entry.payload === 'leaks' && old.ticket) entry.ticket = old.ticket;
             if (entry.payload === 'unmeasured') entry.ticket = old.ticket || was.gapTicket || '';
         }
 
