@@ -308,5 +308,29 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // way a definition does. The seven other new categories add nothing here: 390,
 // 392 and 393 are inline or cell-local, and 395, 397, 398 and 399 are block
 // EXTENT or a character the parser replaces before anyone reads it.
-assert.strictEqual(changed.length, 233, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// The bump to d0b6c92 takes it to 234, measured the same way: the changed list
+// was dumped under both pins (e88d6e3 and d0b6c92) and diffed by name. Exactly
+// ONE name is added and NONE is removed, so the pre-existing population is
+// still exactly 233, document for document.
+//
+//     403 idle-escape-does-not-spread-from-the-occurrence  1
+//
+// It is the same document that moves the envelope ratchet in
+// tests/roundtrip-test.js, for the same reason, and it belongs to the ESCAPE
+// SPELLING family named above. The source is two lines indented by one space,
+// where `{.note}` is paragraph TEXT. This test strips the envelope on purpose,
+// so the projection writes both lines at column 0 - and there `{.note}` is an
+// attribute block. Measured rather than reasoned:
+//
+//     source     -> <p>{.note}\nThis paragraph.</p>
+//     projection -> <p class="note">This paragraph.</p>
+//
+// So it is a protected fallback in the exact sense this count exists to track:
+// the indent is load-bearing, the projection has no slot for it, and the
+// envelope is what keeps the document from being silently reinterpreted. The
+// other six categories the bump added move nothing here - they are block
+// EXTENT rulings or marker-separator rulings, and a separator run the parser
+// already consumed does not disturb the projection.
+assert.strictEqual(changed.length, 234, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

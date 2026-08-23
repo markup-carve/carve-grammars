@@ -469,6 +469,34 @@ const TIPTAP_COVERED = [
     '397-a-null-byte-is-replaced-before-the-document-is-read',
     '398-a-container-s-span-ends-at-its-last-placed-child',
     '399-a-definition-list-ends-at-its-last-placed-child-too',
+
+    // Arrived with the bump to d0b6c92 (carve 0.1.3-139). Measured the same
+    // way, one file at a time through the source-aware loader: all 12 files
+    // across these 7 categories convert to rich ProseMirror nodes - not one
+    // falls back to a whole-document `carveUnsupported` atom - and every one
+    // reparses to the same AST. Covered is the only classification the
+    // round-trip test would accept for them anyway, because a `fallback` entry
+    // has to genuinely fail for at least one file and none of these does.
+    //
+    // Only `403` needs anything said beyond that: it is the single file of the
+    // twelve that rides the SOURCE ENVELOPE, so its rich projection is kept but
+    // is not write-identical and the source rides along. That is a write-
+    // identity note rather than a coverage one, which is why it belongs here
+    // and not in `fallback`.
+    //
+    // The two separator categories (`404`, `406`) are the ones this bump exists
+    // for - a caption's and a heading's marker separator is a RUN, and none of
+    // it is content (markup-carve/carve#1583, #1587). The serializer already
+    // wrote a single space back and the parser already read the whole run, so
+    // the rule cost the tiptap surface nothing; it is the TextMate side that
+    // had drifted (markup-carve/vscode-carve#146).
+    '400-a-container-starts-at-its-opening-markup-even-where-its-first-child-is-unplaced',
+    '401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not',
+    '402-a-container-ends-at-the-markup-that-closes-it-even-where-its-last-child-is-unplaced',
+    '403-an-idle-escape-does-not-spread-from-the-occurrence-that-needed-one',
+    '404-a-caption-s-marker-separator-is-a-run-and-none-of-it-is-content',
+    '405-a-quote-holding-a-captioned-block-indents-it-like-any-other-nested-block',
+    '406-a-heading-s-marker-separator-is-a-run-and-none-of-it-is-content',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason
