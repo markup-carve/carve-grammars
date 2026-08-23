@@ -260,6 +260,25 @@ const CONSTRUCTS = [
      * begins and ends, so a body that closes the run, or that ends the
      * paragraph, is skipped instead of asserted about.
      */
+    /*
+     * AN UNTERMINATED FENCE, generated. Every other fenced row above supplies a
+     * closer, so the shape where a code block runs to END OF DOCUMENT was
+     * measured by exactly one hand-written document in the residual table below
+     * - one width, one body, three surfaces - and by nothing at all on the
+     * other seven (carve-grammars#332). That is the same absence
+     * tests/lib/unterminated-fences.js was written for one construct over:
+     * "every existing `%%%` case in this package supplies a closer, so nothing
+     * exercised the unterminated shape at all, and highlight.js ran an unclosed
+     * opener to end of file at every indent". The worst failure a highlighter
+     * has, and it survived a full suite because no case omitted the closer.
+     *
+     * `holds` is the DEFAULT here rather than a hand-written span, and that is
+     * the whole reason this row can be generated at all: the engine reports the
+     * payload of an unterminated block as exactly the text after the opener, so
+     * `engineReadsVerbatim` bounds it without arithmetic. A body that closes the
+     * fence, or that the engine reads some other way, simply does not qualify.
+     */
+    { name: 'code_block with no closing fence', wrap: (b) => ['```\n', b, '\n'], alphabet: ['`', '*', '/', '\n', ' '] },
     {
         name: 'code_span with no closing run',
         wrap: (b) => ['a `', b, '\n'],
@@ -389,7 +408,50 @@ function sweep(row, tokenize) {
  * each row asserted its own leak still happened, so the fixes made this file
  * fail and the rows came out with them.
  */
+/**
+ * Every `(engine, label)` pair a row actually measured this run.
+ *
+ * A `KNOWN_LEAKS` entry is keyed by a ROW NAME, and nothing checked that the
+ * name still names a row. Measured on carve-grammars#332 by deleting a row
+ * whose entries stayed: the suite passed. An entry for a row that no longer
+ * runs asserts nothing at all and cannot be seen doing it - the same shape as
+ * the stale entries that ticket was filed about, one level up.
+ *
+ * @type {Map<string, Set<string>>}
+ */
+const VISITED = new Map();
+
 const KNOWN_LEAKS = {
+    /*
+     * THE UNTERMINATED FENCE, on the two grammars that run a mode past it.
+     *
+     * This shape used to be pinned by ONE hand-written document in the residual
+     * table at the end of this file. carve-grammars#332 gave it a generated row,
+     * and the population it turned up is the argument for the change: what read
+     * as one leaking document is 246 of 312 on Prism and 257 of 312 on
+     * highlight.js. The residual row is gone with it - two hand-kept records of
+     * one fact is what this file exists to avoid.
+     *
+     * IT IS A TRADE ON THESE TWO AND A DEFECT NOWHERE ELSE, which is why they
+     * carry the ticket they do rather than a surface ticket. The write-up lives
+     * on `fencedVerbatim` in `highlightjs/carve.js`: a mode that opens on a
+     * fence with no closer ahead runs to end of file, and inside a container it
+     * would then swallow the container's own closer and every block after it -
+     * which the spec says explicitly does not happen (grammar.ebnf, A CLOSER IS
+     * REQUIRED). textmate, tree-sitter-carve and emacs-carve are all inert over
+     * the same generated space; emacs-carve became so at
+     * markup-carve/emacs-carve#29, and before that it was a defect rather than
+     * this trade - its fence rule painted delimiter LINES, so the body was
+     * never claimed at all.
+     */
+    prism: {
+        'code_block with no closing fence':
+            { construct: 'code_block', ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js' },
+    },
+    highlightjs: {
+        'code_block with no closing fence':
+            { construct: 'code_block', ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js' },
+    },
     /*
      * MEASURED FOR THE FIRST TIME IN carve-grammars#329. Its 13 payload rows
      * were the last `unmeasured` cells on the ledger: carve-grammars#320 built
@@ -429,33 +491,6 @@ const KNOWN_LEAKS = {
         'a delimiter-shaped payload line does not end the block early':
             { construct: 'code_block', ticket: 'markup-carve/intellij-carve#97' },
     },
-    'emacs-carve': {
-        /*
-         * The `%%%` fence scopes its two DELIMITER LINES and nothing between
-         * them, so the body is ordinary live markup - the carve-grammars#309
-         * shape, one surface over and still shipped.
-         */
-        comment_block: { construct: 'comment_block', ticket: 'markup-carve/emacs-carve#21' },
-        /*
-         * The `{%` and `{#` guards are single-line here too.
-         */
-        braced_comment: { construct: 'braced_comment', ticket: 'markup-carve/emacs-carve#21' },
-        editorial_comment: { construct: 'editorial_comment', ticket: 'markup-carve/emacs-carve#21' },
-        /*
-         * A verbatim run of TWO backticks is paired one character in, so the
-         * outer backtick of each run is left outside the span and a body that
-         * reaches the seam colours.
-         */
-        'code_span on a wide fence': { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
-        /*
-         * An UNPARTNERED run is a code span to the end of its paragraph in the
-         * engine and in three grammars here; this one leaves the rest of the
-         * line live markup instead.
-         */
-        'code_span with no closing run': { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
-        'code_span with no closing run, on a wide run':
-            { construct: 'code_span', ticket: 'markup-carve/emacs-carve#21' },
-    },
 };
 
 /**
@@ -469,6 +504,7 @@ const KNOWN_LEAKS = {
  * @returns {undefined}
  */
 function verdict(engine, label, found, floor, complaint) {
+    (VISITED.get(engine) ?? VISITED.set(engine, new Set()).get(engine)).add(label);
     const { considered, leaks } = found;
     /*
      * A FLOOR ON THE SPACE, because a sweep that qualifies no document passes.
@@ -838,12 +874,12 @@ for (const [engine, tokenize] of ENGINES) {
  * asserted to STILL leak, so the entry cannot outlive the defect: fixing one
  * fails this test and the row comes out with the fix.
  *
- * The unterminated fence is the one this file's own change traded for, and the
- * trade is written up on `fencedVerbatim` in `highlightjs/carve.js`: a mode
- * that opens on a fence with no closer ahead runs to end of file, and inside a
- * container it would then swallow the container's own closer and every block
- * after it - which the spec says explicitly does not happen (grammar.ebnf,
- * A CLOSER IS REQUIRED). Prism has required a closer since long before this.
+ * THE UNTERMINATED FENCE LEFT THIS TABLE at carve-grammars#332, and it left
+ * upward rather than because it was fixed: the shape now has a GENERATED row
+ * (`code_block with no closing fence`), so it is measured over 312 documents on
+ * every surface instead of over one document on three. That is the direction a
+ * residual should move whenever the sweep can reach it - a residual is a place
+ * to hold a shape the generator cannot produce, not a place to keep one it can.
  *
  * The four rows carve-grammars#312 named are GONE from this table, which is
  * how a fixed residual leaves: an exact-width closer, an indented run, an
@@ -853,20 +889,6 @@ for (const [engine, tokenize] of ENGINES) {
  * settle, and one ordering a flat token map cannot.
  */
 const RESIDUALS = [
-    {
-        what: 'an unterminated fence at document level leaves its body live',
-        source: '```\nx *b* y\n',
-        /*
-         * emacs-carve joined this row when the surface became measurable
-         * (carve-grammars#320). Its cause is not the trade below: the `%%%`
-         * and fence rules there paint delimiter LINES, so a fence with no
-         * closer paints one line and the body was never claimed at all - the
-         * markup-carve/vim-carve#27 cause, and a defect rather than a trade.
-         */
-        engines: ['prism', 'highlightjs', 'emacs-carve'],
-        ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js, and '
-            + 'markup-carve/emacs-carve#21',
-    },
     {
         /*
          * The WIDER half of the run this grammar now reads. A run of one or
@@ -879,11 +901,14 @@ const RESIDUALS = [
          */
         what: 'an unclosed verbatim run of three or more backticks leaks its paragraph',
         source: 'a ```x *b* y\n',
-        // emacs-carve and intellij-carve leak the ONE- and TWO-backtick widths
-        // as well, which the generated rows above record on
-        // markup-carve/emacs-carve#21 and markup-carve/intellij-carve#97; this
-        // is the width where no grammar here reads a span.
-        engines: ['prism', 'emacs-carve', 'intellij-carve'],
+        // intellij-carve leaks the ONE- and TWO-backtick widths as well, which
+        // the generated rows above record on markup-carve/intellij-carve#97;
+        // this is the width where no grammar here reads a span. emacs-carve
+        // left this row at markup-carve/emacs-carve#28, which bounded a
+        // verbatim payload by its paragraph rather than by its line, so the
+        // unpartnered run there now reads the way the engine does at every
+        // width.
+        engines: ['prism', 'intellij-carve'],
         ticket: 'the same trade as the row above, one construct over',
     },
     {
@@ -1035,6 +1060,30 @@ ok('the sweep itself reports the reverted grammar, not just one sample', () => {
         leaks.length > 0,
         'the sweep found nothing wrong with a grammar whose code-block payload is live - it is '
             + 'measuring something other than what it claims',
+    );
+});
+
+ok('every recorded leak names a row that really ran', () => {
+    /*
+     * ONLY FOR THE ENGINES THAT RAN. Six of the ten surfaces need a checkout
+     * named by a CARVE_SURFACE_* variable and are simply absent without one, so
+     * requiring their labels would fail in CI for a surface nobody asked for.
+     * An engine that measured NOTHING is out of scope here; an engine that
+     * measured something and skipped one of its own recorded rows is the defect.
+     */
+    const dead = [];
+    for (const [engine, rows] of Object.entries(KNOWN_LEAKS)) {
+        const seen = VISITED.get(engine);
+        if (!seen) continue;
+        for (const label of Object.keys(rows)) {
+            if (!seen.has(label)) dead.push(`${engine}/${label}`);
+        }
+    }
+    assert.deepStrictEqual(
+        dead, [],
+        `these KNOWN_LEAKS entries name a row that did not run - ${dead.join(', ')}. The row was `
+            + 'renamed or deleted, so the entry asserts nothing and cannot be seen failing. Fix the name, '
+            + 'or delete the entry with the row.',
     );
 });
 
