@@ -377,34 +377,19 @@ function sweep(row, tokenize) {
  * this file fail and the entry comes out with it. A surface in THIS repository
  * is deliberately absent: a leak here is fixable here, so it stays red.
  *
- * Measured 2026-08-23 on tree-sitter-carve 3d12600 and emacs-carve b89ef5d.
+ * Measured 2026-08-23 on emacs-carve b89ef5d.
+ *
+ * TREE-SITTER-CARVE HAS NO ROW LEFT. It carried four, all on
+ * markup-carve/tree-sitter-carve#248, and all four are closed: the two fence
+ * shapes and the braced comment on that repository's #249 and #251, the
+ * editorial comment written across a line break on its #254. Re-measured here
+ * at d61ab29 - 0 of 90, 0 of 74, 0 of 469 and 0 of 286 generated documents
+ * leak, where the same rows measured 6, 6, 185 and 180. The whole surface is
+ * out of this table rather than re-pointed, which is the arrangement working:
+ * each row asserted its own leak still happened, so the fixes made this file
+ * fail and the rows came out with them.
  */
 const KNOWN_LEAKS = {
-    'tree-sitter-carve': {
-        /*
-         * A `{% ... %}` and a `{# ... #}` written across a line break are not
-         * one comment, so the markup inside colours. The same single-line guard
-         * Prism and highlight.js carried until carve-grammars#312 and the
-         * TextMate family until carve-grammars#307, on a fourth surface.
-         */
-        braced_comment: { construct: 'braced_comment', ticket: 'markup-carve/tree-sitter-carve#248' },
-        editorial_comment: { construct: 'editorial_comment', ticket: 'markup-carve/tree-sitter-carve#248' },
-        /*
-         * A fence opener whose info string ends in whitespace (```` ```js ````
-         * with a trailing space or tab) opens no block, so the whole body is
-         * live prose. Six of the ninety opener shapes.
-         */
-        'every fence opener the engine accepts keeps its body inert':
-            { construct: 'code_block', ticket: 'markup-carve/tree-sitter-carve#248' },
-        /*
-         * An INDENTED delimiter-shaped line inside the body ends the block
-         * early - `` ``` `` over `` ``` `` at two columns in - so everything
-         * after it is live. That is the sample-text case: a fence holding a
-         * fence is what every document describing Carve in Carve is made of.
-         */
-        'a delimiter-shaped payload line does not end the block early':
-            { construct: 'code_block', ticket: 'markup-carve/tree-sitter-carve#248' },
-    },
     /*
      * MEASURED FOR THE FIRST TIME IN carve-grammars#329. Its 13 payload rows
      * were the last `unmeasured` cells on the ledger: carve-grammars#320 built
@@ -916,17 +901,30 @@ const RESIDUALS = [
         what: 'a comment whose continuation line opens a block is broken by the block rule',
         source: 'a {# *b*\n* #} z\n',
         /*
-         * tree-sitter, emacs-carve and intellij-carve leak this too, for a
-         * different reason each: the tree-sitter grammar does not read a
-         * `{# ... #}` across a line break at all, the emacs rule's body is
-         * `not-newline`, and the intellij port's is a single-line `match`.
-         * All three are the single-line guard carve-grammars#312 removed here,
-         * so each is on its own surface's ticket rather than on this trade.
+         * emacs-carve and intellij-carve leak this too, for a different reason
+         * each: the emacs rule's body is `not-newline` and the intellij port's
+         * is a single-line `match`. Both are the single-line guard
+         * carve-grammars#312 removed here, so each is on its own surface's
+         * ticket rather than on this trade.
+         *
+         * TREE-SITTER-CARVE IS INERT HERE SINCE markup-carve/tree-sitter-carve#254,
+         * and not because it grew the container model: its comment body crosses
+         * a line end without asking the block machinery anything, so the `* `
+         * is body text. carve-js reads the same document the same way - a
+         * bullet does not interrupt a paragraph in Carve - so the answer is
+         * right, even though the reason is a gap.
+         *
+         * THE GAP IS NOT ON THIS AXIS. Where the continuation line opens a
+         * HEADING (`a {# *b*` / `# *c* #} z`) the payload is inert there too -
+         * measured, no emphasis node over either run - and what is wrong is
+         * that the comment SWALLOWS the heading, which carve-js ends the
+         * paragraph on. That is over-acceptance, not a leak, so it is pinned in
+         * that repository's own fixture next to the braced comment reading it
+         * the same way, and there is nothing for this table to assert.
          */
-        engines: ['prism', 'tree-sitter-carve', 'emacs-carve', 'intellij-carve'],
+        engines: ['prism', 'emacs-carve', 'intellij-carve'],
         ticket: 'needs a container model, carve-grammars#312; and the single-line '
-            + 'guards on markup-carve/tree-sitter-carve#248, markup-carve/emacs-carve#21 '
-            + 'and markup-carve/intellij-carve#97',
+            + 'guards on markup-carve/emacs-carve#21 and markup-carve/intellij-carve#97',
     },
 ];
 
