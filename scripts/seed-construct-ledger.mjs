@@ -98,15 +98,49 @@ function commitOf(root) {
 const previous = existsSync(LEDGER) ? JSON.parse(readFileSync(LEDGER, 'utf8')) : { surfaces: {} };
 const constructs = specConstructs();
 
-/** Measured payload behavior for the two engines this repo can tokenize in process. */
+/*
+ * Measured payload behavior for every surface this process can drive.
+ *
+ * Prism and highlight.js tokenize in process; the TextMate family does too,
+ * through Shiki, and Tiptap answers a model-shaped version of the same
+ * question (carve-grammars#320). Before this, `textmate`, `tiptap`,
+ * `vscode-carve` and `intellij-carve` carried 11 to 13 `unmeasured` rows each
+ * and the second axis was recorded rather than re-measured on seven of the ten
+ * surfaces.
+ *
+ * A surface absent from this map keeps whatever the committed ledger records,
+ * which is what the `unmeasured` state is for.
+ */
 const measured = {};
 {
     const { prismTokens, hljsTokens } = await import('../tests/lib/engines.js');
-    for (const [id, tokenize] of [['prism', prismTokens], ['highlightjs', hljsTokens]]) {
+    const { textmateEngines } = await import('../tests/lib/surface-engines.js');
+    const tokenizers = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
+    for (const [id, tokenize] of tokenizers) {
         measured[id] = Object.fromEntries(
             Object.entries(VERBATIM_SAMPLES).map(([name, sample]) => [name, measure(tokenize, sample)]),
         );
     }
+
+    const { measureModel } = await import('../tests/lib/tiptap-payload.js');
+    measured.tiptap = Object.fromEntries(Object.entries(VERBATIM_SAMPLES).map(([name, sample]) => {
+        const verdict = measureModel(sample);
+        if (verdict === 'lost') {
+            /*
+             * The bridge dropped a payload the engine holds verbatim, which is
+             * neither `inert` nor `leaks` and must not be rounded into either -
+             * the ledger would then record a loss as a pass. Stop, so whoever
+             * runs the seeder reads it.
+             */
+            throw new Error(
+                `tiptap/${name}: the payload of ${JSON.stringify(sample)} is not in the editor model at `
+                    + 'all. That is a third answer the ledger has no column for; fix the bridge or give '
+                    + 'the ledger the column, but do not seed it as inert.',
+            );
+        }
+
+        return [name, verdict];
+    }));
 }
 
 const ledger = {

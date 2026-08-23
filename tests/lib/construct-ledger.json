@@ -35,8 +35,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "fenced_code",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -91,20 +90,17 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "block_comment",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "line_comment",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
           "evidence": "fenced_code",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -144,26 +140,22 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "markup.raw.inline.carve",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "literal_inline",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "code_inline",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "autolink",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "auto_text_link": {
           "status": "IMPLEMENTED",
@@ -208,14 +200,12 @@
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "math_inline",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "math_inline",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -315,8 +305,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "critic_comment",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -376,14 +365,12 @@
         "inline_comment": {
           "status": "IMPLEMENTED",
           "evidence": "trailing_comment",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "braced_comment",
-          "payload": "unmeasured",
-          "ticket": "#307"
+          "payload": "inert"
         },
         "hard_break": {
           "status": "IMPLEMENTED",
@@ -1152,8 +1139,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "codeBlock",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -1208,20 +1194,17 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "carveComment",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "carveComment",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
           "evidence": "raw_block",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -1261,26 +1244,22 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "raw_inline",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "literal_inline",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "code",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "autolink",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "auto_text_link": {
           "status": "IMPLEMENTED",
@@ -1325,14 +1304,12 @@
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "math",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "math",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -1432,8 +1409,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "critic_comment",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -1493,14 +1469,12 @@
         "inline_comment": {
           "status": "IMPLEMENTED",
           "evidence": "carveCommentInline",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "carveComment",
-          "payload": "unmeasured",
-          "ticket": "#310"
+          "payload": "inert"
         },
         "hard_break": {
           "status": "IMPLEMENTED",
