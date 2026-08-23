@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "read the "
+  },
+  {
+    "type": "italic",
+    "text": "/docs/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[x]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "done\n"
+  }
+]

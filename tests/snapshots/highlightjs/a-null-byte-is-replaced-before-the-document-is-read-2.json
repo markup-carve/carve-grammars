@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "`a\u0000b`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

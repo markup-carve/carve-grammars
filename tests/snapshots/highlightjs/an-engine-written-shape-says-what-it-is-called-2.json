@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{aria-label=\"Mine\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note \"Careful\""
+  },
+  {
+    "scope": null,
+    "text": "\nThe author named it.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

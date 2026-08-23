@@ -1,0 +1,42 @@
+[
+  {
+    "type": "text",
+    "text": "An inline "
+  },
+  {
+    "type": "math",
+    "text": "$`x = 1`"
+  },
+  {
+    "type": "text",
+    "text": " and a named "
+  },
+  {
+    "type": "math",
+    "text": "$`y`"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "aria-label"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"why\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " one.\n"
+  }
+]

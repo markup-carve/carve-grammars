@@ -1,7 +1,7 @@
 [
   {
     "scope": "string",
-    "text": "|=a |=b |"
+    "text": "|= a |= b |"
   },
   {
     "scope": null,

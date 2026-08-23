@@ -51,7 +51,17 @@ const MINIMUM_LOSSLESS = 12;
 // Documents whose rich projection is not write-identical, so the loader keeps
 // the source envelope and the first edit is what starts writing the projection.
 // A ceiling: every one is a construct worth giving a real node.
-const MAXIMUM_ENVELOPED = 7;
+//
+// 7 -> 9 with the bump to e88d6e3, and the two are new documents rather than a
+// regression. The pin brings four optional cases - 46 to 49, all tabs - and the
+// two that need the envelope are `48-tabs-aria-single-selection` and
+// `49-tabs-css-single-selection`: the SELECTED tab is state the bridge has no
+// rich node for, so the projection is not write-identical and the source rides
+// along. `46-tabs-css-panel-name` and `47-tabs-aria-panel-binding` need none.
+// The seven that were already here are unchanged, and every one of the nine
+// still passes the load/save equality above, which is the promise `preserve`
+// makes - the ceiling counts constructs still owed a node, not breakage.
+const MAXIMUM_ENVELOPED = 9;
 
 console.log('optional corpus through the bridge:');
 

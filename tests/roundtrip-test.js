@@ -361,10 +361,38 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * bump changed were re-measured directly - `20-smart-typography-arrows-and-
  * symbols` and `68-nested-containers` need no envelope, and
  * `88-list-continuation-marker` needs 4 of 6, the count it already had.
+ *
+ * The bump to e88d6e3 adds ten categories and 26 documents, of which FOUR need
+ * the envelope: 337 -> 341. Measured per category the same way:
+ *
+ *     390 table-cell-marker-run-ends-at-a-space   1 of 5
+ *     391 attribute-line-below-a-list-item        1 of 2
+ *     392 attributed-cell-keeps-its-marker        0 of 2
+ *     393 engine-written-shape-says-its-name      0 of 7
+ *     394 leading-escaped-caret-keeps-its-escape  1 of 1
+ *     395 longer-run-at-a-list-boundary           0 of 1
+ *     396 idle-escape-does-not-spread             1 of 1
+ *     397 null-byte-replaced-before-the-read      0 of 3
+ *     398 container-s-span-ends-at-last-child     0 of 2
+ *     399 definition-list-ends-there-too          0 of 2
+ *
+ * The pattern is the ESCAPE SPELLING, not the construct. Two of the four are
+ * escapes the structured tree does not hold - `\^ not a caption` under an image
+ * and the escaped opener of an indented `## H` - and the third is `|\= a |`,
+ * the same thing inside a table cell. The fourth is an attribute line under a
+ * list item. The six categories at zero are the ones whose ruling is about
+ * block EXTENT or about a character the parser replaces, neither of which
+ * disturbs the projection.
+ *
+ * No existing document flipped here either. The seven documents whose SOURCE
+ * this bump changed - the `319`, `354` and `355` respellings that carve#1460's
+ * "a marker run ends at a space" forced - were re-measured directly and need no
+ * envelope, which is the count they already had; the new categories account for
+ * exactly 4 and the total moved by exactly 4.
  */
 assert.strictEqual(
-    envelopedFiles.length, 337,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 337`,
+    envelopedFiles.length, 341,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 341`,
 );
 
 assert.strictEqual(

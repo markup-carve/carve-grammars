@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](b.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\^"
+  },
+  {
+    "scope": null,
+    "text": " not a caption\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "An inline "
+  },
+  {
+    "scope": "string",
+    "text": "$`x = 1`"
+  },
+  {
+    "scope": null,
+    "text": " and a named "
+  },
+  {
+    "scope": "string",
+    "text": "$`y`"
+  },
+  {
+    "scope": "attr",
+    "text": "{aria-label=\"why\"}"
+  },
+  {
+    "scope": null,
+    "text": " one.\n"
+  }
+]

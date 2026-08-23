@@ -291,5 +291,22 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // arrows, 387 braced en dash, 378 terminal comment in a quote) add nothing
 // here, which is the expected shape: an inline ruling does not disturb the
 // block projection.
-assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// The bump to e88d6e3 takes it to 233, and again the pre-existing population is
+// still exactly 230 - counted by splitting the changed list on the category
+// prefix, not inferred - so nothing flipped in either direction:
+//
+//     391 attribute-line-below-a-list-item        1
+//     394 leading-escaped-caret-keeps-its-escape  1
+//     396 idle-escape-does-not-spread             1
+//
+// 391 is the attribute-placement family already named above. The other two are
+// a FOURTH family, and worth naming rather than folding into the three: they
+// are ESCAPE SPELLING - `\^ not a caption` under an image, and the escaped
+// opener of an indented `## H`. The projection holds the text, not the
+// backslashes the writer chose for it, so an escape ruling moves this count the
+// way a definition does. The seven other new categories add nothing here: 390,
+// 392 and 393 are inline or cell-local, and 395, 397, 398 and 399 are block
+// EXTENT or a character the parser replaces before anyone reads it.
+assert.strictEqual(changed.length, 233, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

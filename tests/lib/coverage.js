@@ -453,6 +453,22 @@ const TIPTAP_COVERED = [
     '387-a-braced-hyphen-pair-is-an-en-dash',
     '388-an-empty-brace-pair-is-not-a-construct',
     '389-a-boolean-attribute-does-not-start-with-an-underscore',
+
+    // Arrived with the bump to e88d6e3 (carve 0.1.3-110). Measured the same
+    // way: the round-trip loop was run over every file in each category, and
+    // all 25 convert to rich ProseMirror nodes - not one falls back to a
+    // whole-document `carveUnsupported` atom - and reparse to the same AST.
+    // None is a `fallback` entry, so none is written as one.
+    '390-a-table-cell-s-marker-run-ends-at-a-space',
+    '391-an-attribute-line-below-a-list-item-interrupts-it',
+    '392-an-attributed-cell-keeps-its-attributes-and-its-literal-marker',
+    '393-an-engine-written-shape-says-what-it-is-called',
+    '394-a-leading-escaped-caret-keeps-its-escape',
+    '395-a-longer-run-at-a-list-boundary-is-written-as-exactly-three-blank-lines',
+    '396-an-idle-escape-does-not-spread-from-the-block-that-needed-one',
+    '397-a-null-byte-is-replaced-before-the-document-is-read',
+    '398-a-container-s-span-ends-at-its-last-placed-child',
+    '399-a-definition-list-ends-at-its-last-placed-child-too',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

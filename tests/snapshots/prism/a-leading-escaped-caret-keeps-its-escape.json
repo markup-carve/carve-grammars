@@ -1,0 +1,34 @@
+[
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "a"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "b.png"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "escape",
+    "text": "\\^"
+  },
+  {
+    "type": "text",
+    "text": " not a caption\n"
+  }
+]
