@@ -1,23 +1,31 @@
 [
   {
     "type": "text",
-    "text": "a "
+    "text": "a ^[see "
   },
   {
-    "type": "inline-footnote>punctuation",
-    "text": "^["
+    "type": "reference-image>punctuation",
+    "text": "!["
   },
   {
-    "type": "inline-footnote",
-    "text": "see ![z"
+    "type": "reference-image",
+    "text": "z"
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "reference-image>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>constant",
+    "text": "r"
+  },
+  {
+    "type": "reference-image>punctuation",
     "text": "]"
   },
   {
     "type": "text",
-    "text": "[r]] b\n\n"
+    "text": "] b\n\n"
   },
   {
     "type": "reference-definition>constant",

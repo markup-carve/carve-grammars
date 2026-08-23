@@ -9,14 +9,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "type": "tag",
-    "text": "#intro"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "intro"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]

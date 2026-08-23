@@ -229,13 +229,30 @@ for (const [id, surface] of Object.entries(SURFACES)) {
     const entries = ledger.surfaces[id].constructs;
 
     ok(`${id}: every IMPLEMENTED row cites a name the shipped grammar really carries`, () => {
-        const sources = surface.files.map((file) => readFileSync(resolve(repoRoot, file), 'utf8')).join('\n');
+        /*
+         * THE VOCABULARY, NOT THE FILE'S TEXT.
+         *
+         * This read the sources as one string and asked whether the evidence
+         * was a SUBSTRING of them, which is the trap the probe's own docblock
+         * describes - a file's prose names the constructs it does NOT have.
+         * `prism/carve.js` carries the comment "Prism has no cross-reference
+         * token at all" beside the lookbehind that worked around the absence,
+         * so `cross-ref` was a substring of that file for as long as the rule
+         * was missing, and a row citing it would have re-checked green
+         * (carve-grammars#307). Deleting a rule and leaving the comment that
+         * explains it is the ordinary way a grammar changes, so this was not a
+         * remote failure mode.
+         *
+         * `vocabulary()` is the same extractor the seed uses, so the re-check
+         * and the seed now agree on what counts as a name.
+         */
+        const declared = new Set(vocabulary(id, repoRoot).map((item) => item.raw));
         for (const [name, entry] of Object.entries(entries)) {
             if (entry.status !== 'IMPLEMENTED') continue;
             assert.ok(
-                sources.includes(entry.evidence),
+                declared.has(entry.evidence),
                 `${id}/${name}: the ledger cites ${JSON.stringify(entry.evidence)} as the rule for this `
-                    + 'construct and no such name is in the grammar any more - the rule was renamed or '
+                    + 'construct and the grammar declares no such name any more - the rule was renamed or '
                     + 'removed, so the row is a claim about something that is not there',
             );
         }

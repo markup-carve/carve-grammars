@@ -133,12 +133,14 @@ export const CONSTRUCTS = [
         sample: "a [t[z]][ref] b", payload: "t[z]", textmate: "string.other.link.title",
     },
     {
-        // All three grammars scope a reference IMAGE through their reference-LINK
-        // rule and leave the `!` outside the token - true of `![alt][ref]` too,
-        // and unrelated to the bracket run. The selector names what the grammar
-        // actually says rather than pinning a fix this entry is not making.
+        // This entry used to read `string.other.link.title`, with a comment
+        // saying all three grammars scoped a reference IMAGE through their
+        // reference-LINK rule and left the `!` outside the token - the defect
+        // written down beside the check that could have caught it. It is fixed
+        // (carve-grammars#307): the alt text is an image's, and the selector
+        // says so.
         name: "reference image whose alt text holds a bracket run",
-        sample: "a ![t[z]][ref] b", payload: "t[z]", textmate: "string.other.link.title",
+        sample: "a ![t[z]][ref] b", payload: "t[z]", textmate: "string.other.image.alt",
     },
     {
         // Three levels in. The body is unrolled, not recursive, so depth is a
@@ -233,6 +235,24 @@ export const CONSTRUCTS = [
     { name: "link punct", sample: "[text](https://x.de)", payload: "[", textmate: "punctuation.definition.link" },
     { name: "wiki link", sample: "[Page Name][]", payload: "Page Name", textmate: "string.other.link.title" },
     { name: "cross-ref", sample: "see </#section-id> here", payload: "section-id", textmate: "markup.underline.link.cross-reference" },
+    /*
+     * The two reference IMAGE spellings, which had no entry here at all - so
+     * the only thing asserting them was the bracket-run pair below, whose
+     * TextMate selector had been written to the defect (carve-grammars#307).
+     * The payload is the alt text and the selector is an IMAGE scope, which is
+     * what separates these from the reference LINK the three grammars used to
+     * claim them as.
+     */
+    {
+        name: "reference image", sample: "a ![alt][r] b", payload: "alt",
+        textmate: "string.other.image.alt",
+        skip: { highlightjs: "no reference-image rule: the reference-link mode claims the brackets and leaves the `!` as prose - markup-carve/carve-grammars#317" },
+    },
+    {
+        name: "collapsed reference image", sample: "a ![alt][] b", payload: "alt",
+        textmate: "string.other.image.alt",
+        skip: { highlightjs: "no reference-image rule: the reference-link mode claims the brackets and leaves the `!` as prose - markup-carve/carve-grammars#317" },
+    },
     { name: "citation integral", sample: "see [+@smith2020] here", payload: "+", textmate: "keyword.operator.citation.integral" },
     { name: "citation punct", sample: "see [@smith2020] here", payload: "[", textmate: "punctuation.definition.citation" },
     { name: "callout marker in fence", sample: "``` js\nconst a = 1 <1>\n```", payload: "1", textmate: "constant.numeric.callout" },
@@ -844,7 +864,7 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 171
+export const MIN_CONSTRUCTS = 173
 export const MIN_LITERALS = 30
 
 /*
@@ -864,11 +884,11 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // Two constructs are skipped for Prism and two for
+    // Two constructs are skipped for Prism and four for
     // highlight.js; each says why in its own `skip` entry, and every skip is
     // subtracted here.
-    textmate: 171,
-    prism: 169,
+    textmate: 173,
+    prism: 171,
     highlightjs: 169,
 };
 

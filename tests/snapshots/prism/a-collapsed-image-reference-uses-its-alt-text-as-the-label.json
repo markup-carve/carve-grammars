@@ -1,22 +1,18 @@
 [
   {
-    "type": "text",
-    "text": "!"
+    "type": "reference-image>punctuation",
+    "text": "!["
   },
   {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url",
+    "type": "reference-image",
     "text": "moon"
   },
   {
-    "type": "url>punctuation",
+    "type": "reference-image>punctuation",
     "text": "]["
   },
   {
-    "type": "url>punctuation",
+    "type": "reference-image>punctuation",
     "text": "]"
   },
   {

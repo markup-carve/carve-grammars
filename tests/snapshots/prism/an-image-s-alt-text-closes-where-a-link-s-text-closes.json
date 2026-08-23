@@ -1,38 +1,30 @@
 [
   {
     "type": "text",
-    "text": "a !"
+    "text": "a "
   },
   {
-    "type": "url>punctuation",
-    "text": "["
+    "type": "reference-image>punctuation",
+    "text": "!["
   },
   {
-    "type": "url",
-    "text": "t"
+    "type": "reference-image",
+    "text": "t[z"
   },
   {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url",
-    "text": "z"
-  },
-  {
-    "type": "url>punctuation",
+    "type": "reference-image>punctuation",
     "text": "]"
   },
   {
-    "type": "url>punctuation",
+    "type": "reference-image>punctuation",
     "text": "]["
   },
   {
-    "type": "url",
+    "type": "reference-image>constant",
     "text": "r"
   },
   {
-    "type": "url>punctuation",
+    "type": "reference-image>punctuation",
     "text": "]"
   },
   {

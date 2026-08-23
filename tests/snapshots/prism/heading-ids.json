@@ -85,30 +85,70 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee <"
+    "text": "\n\nSee "
   },
   {
-    "type": "italic",
-    "text": "/#cafe-notes>, </"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
   },
   {
-    "type": "tag",
-    "text": "#section-2024-recap"
+    "type": "cross-ref",
+    "text": "cafe-notes"
   },
   {
-    "type": "text",
-    "text": ">, <"
-  },
-  {
-    "type": "italic",
-    "text": "/#setup-2>, and </"
-  },
-  {
-    "type": "tag",
-    "text": "#api-v2"
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "section-2024-recap"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "setup-2"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", and "
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "api-v2"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
   }
 ]

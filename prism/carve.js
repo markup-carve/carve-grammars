@@ -656,13 +656,16 @@
                 // modeling everything a heading could theoretically hold.
                 //
                 // NOT the same regex as the top-level 'tag' token below: this
-                // one also excludes a `#` immediately after `</`, because
-                // Prism has no cross-reference token at all
-                // (`auto_text_link = "</#", crossref_id, '>'`,
-                // grammar.ebnf) - without the exclusion this rule claimed the
-                // `#a` inside a heading cross-reference `</#a>` and broke
-                // corpus 118 (`# A </#a>`), which pins the whole thing
-                // staying unscoped. The `(?<!<\/)` is real JS lookbehind
+                // one also excludes a `#` immediately after `</`, because this
+                // nested set does not offer 'cross-ref' - without the
+                // exclusion this rule claimed the `#a` inside a heading
+                // cross-reference `</#a>` and broke corpus 118 (`# A </#a>`),
+                // which pins the whole thing staying unscoped. Until
+                // carve-grammars#307 this comment read "Prism has no
+                // cross-reference token at all", and the exclusion was the
+                // only place in the file that knew the construct existed: at
+                // document level the unguarded 'tag' token coloured every
+                // `</#id>` as a hashtag. The `(?<!<\/)` is real JS lookbehind
                 // (already used elsewhere in this file, e.g. 'highlight'
                 // above) rather than Prism's own single-char lookbehind
                 // trick, because the exclusion needs to see two characters
@@ -1137,6 +1140,49 @@
             },
         },
 
+        // Reference images: ![alt][ref] and the collapsed ![alt][].
+        //
+        // The spec gives an image the same three forms a link has
+        // (grammar.ebnf `reference_image`, `collapsed_reference_image`) and
+        // says only the leading `!` and the `<img src>` output differ. This
+        // file had a rule for the inline form alone, so both reference forms
+        // fell through to 'url' below, which matched from the `[` and scoped
+        // them as a reference LINK with the `!` left as prose. That is worse
+        // than leaving them unscoped: the output says the document holds a
+        // link where it holds an image. It also read IMPLEMENTED on the
+        // construct ledger, because the per-surface naming table asserted a
+        // fold onto 'image' that this grammar did not make.
+        //
+        // BEFORE 'url' for that reason, and after 'image', which needs a `](`
+        // and so cannot claim either of these.
+        //
+        // RESIDUAL, the same one the inline 'image' rule above already has: an
+        // image inside an INLINE NOTE takes the note's scope with it. The note
+        // rule's body is `[^\]\n]{0,512}`, which cannot hold a `]`, so
+        // `^[see ![z][r]]` was never one note token - it was a note ending at
+        // the image's first `]`, with `[r]] b` left as prose. This rule claims
+        // the image instead, so the image is right and the note is unscoped,
+        // which is exactly what `^[see ![z](/i.png)]` has always done one
+        // spelling over. Making the note bracket-balanced (and giving it the
+        // image and link tokens inside) is what fixes both, and it is a change
+        // to the note rule rather than to this one.
+        //
+        // ONE RULE FOR BOTH FORMS: the reference label is `[^\]\n]{0,512}`, whose
+        // `{0,512}` accepts the EMPTY label - the same fold vim-carve and
+        // sublime-carve make for the collapsed reference link
+        // (carve-grammars#318), and the one 'url' already makes here. The alt
+        // text may be empty too, so it uses `bracketText` rather than the
+        // non-empty body: `![][r]` is an image, where `[][r]` is not a link.
+        'reference-image': {
+            pattern: new RegExp('!\\[' + bracketText + '\\]\\[[^\\]\\n]{0,512}\\]'),
+            greedy: true,
+            alias: 'url',
+            inside: {
+                'constant': /(?<=\]\[)[^\]\n]+(?=\]$)/,
+                'punctuation': /!\[|\]\[|\]/,
+            },
+        },
+
         // Inline footnote: ^[content] (corpus 23-inline-footnotes). Distinct
         // from the reference `[^label]` below - the caret leads here - and
         // matched first so neither rule claims the other's brackets.
@@ -1179,6 +1225,27 @@
         'code-callout': {
             pattern: /<\d+>/,
             alias: 'symbol',
+        },
+
+        // Cross-reference with auto text: </#id> (grammar.ebnf
+        // `auto_text_link`).
+        //
+        // This grammar had no rule for it, and the run was not left alone: the
+        // id begins with `#`, so 'tag' below claimed `#sec-intro` and coloured
+        // the crossref as a hashtag - the same shape tree-sitter-carve#245
+        // found, where a construct parsed as the wrong node made every editor
+        // colour a crossref as a web address. So it sits before 'tag'.
+        //
+        // The id charset is the spec's `crossref_id` - anything that is not
+        // `>`, whitespace or a newline - because an automatic heading id
+        // PRESERVES Unicode and case, so `</#Cafe-Notes>` must scope.
+        'cross-ref': {
+            pattern: /<\/#[^>\s]{1,512}>/,
+            greedy: true,
+            alias: 'url',
+            inside: {
+                'punctuation': /^<\/#|>$/,
+            },
         },
 
         // Inline links: [text](url "title") and reference [text][id]

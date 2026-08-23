@@ -73,14 +73,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "type": "tag",
-    "text": "#tbl-r"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "tbl-r"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]
