@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "outer\n\n  para\n\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n\n\n"
+  },
+  {
+    "type": "list",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  }
+]

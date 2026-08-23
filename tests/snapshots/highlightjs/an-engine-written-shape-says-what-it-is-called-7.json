@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "attr",
+    "text": "{ARIA-LABEL=\"Mine\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\nbody\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\nMath "
+  },
+  {
+    "scope": "string",
+    "text": "$`x`"
+  },
+  {
+    "scope": "attr",
+    "text": "{ROLE=\"img\"}"
+  },
+  {
+    "scope": null,
+    "text": " here.\n"
+  }
+]

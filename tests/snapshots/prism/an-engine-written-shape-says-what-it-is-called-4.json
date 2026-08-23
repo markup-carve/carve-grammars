@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "list>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list",
+    "text": " "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " quoted lead"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,7 +1,7 @@
 [
   {
     "scope": "string",
-    "text": "|{#x}< content |"
+    "text": "|{#x} < content |"
   },
   {
     "scope": null,

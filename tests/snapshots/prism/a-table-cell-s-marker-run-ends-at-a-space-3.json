@@ -1,0 +1,58 @@
+[
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".total"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " 99 "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>class-name",
+    "text": ".total"
+  },
+  {
+    "type": "table>attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": "99 "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "|{.total} 99 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "|{.total}99 |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

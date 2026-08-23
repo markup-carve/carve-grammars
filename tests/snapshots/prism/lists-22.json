@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "apples\n\n"
+  },
+  {
+    "type": "list",
+    "text": "2. "
+  },
+  {
+    "type": "text",
+    "text": "oranges\n"
+  }
+]
