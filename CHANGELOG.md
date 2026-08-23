@@ -14,6 +14,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- A bare `=` that begins or ends a smart-typography pattern opens no highlight in any of the three grammars. `Not an arrow: key => value stays literal, and p <= q is a comparison.` (corpus 386) scoped the whole sentence as one highlight: the `=` of `=>` opened and the `=` of `<=` closed it 48 characters later, where the engine renders no mark at all. `<=b c=`, `>=b c=` and `!=b c=` were the same defect on the comparisons (#325).
+- highlight.js no longer scopes an empty highlight over a doubled run. `==x==`, `==doubled==` and the `==` of the `==>` arrow each opened and closed on the two delimiters of a run the engine renders literally, so `==>` coloured as a highlight plus a stray `>` rather than as one arrow (#325).
 - highlight.js scopes a cross-reference with auto text (`</#id>`). It had no rule for one and the id was not left alone: the tag rule claimed `#id`, so every crossref scoped as a hashtag - the defect Prism carried until #308, one surface over (#317).
 - highlight.js scopes a reference image (`![alt][ref]`) and a collapsed one (`![alt][]`) as images. Both fell through to the reference-LINK rule, which matches from the `[` and left the `!` as prose (#317).
 - highlight.js scopes the combined bold-italic delimiter as one run. The emphasis rule already matched it, so it scoped italic and not bold (#317).

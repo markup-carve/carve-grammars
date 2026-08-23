@@ -380,7 +380,12 @@ const CASES = [
         // character, so it has to be spelled the way the grammar spells it.
         // eslint-disable-next-line no-useless-escape
         ['strong *', /(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{']],
-        ['highlight =', /(?<![=\w])=(?=\S)/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{']],
+        // Its OPENER carries carve-grammars#325's guard, so the reference
+        // pattern does too: `(?![>=])` is not part of the #300 bound and
+        // leaving it out here would report the guard as a language change
+        // this row is not about. The `=` half is exercised - a doubled run
+        // is in the alphabet, and it is the shape the guard refuses.
+        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{']],
         ['strikethrough ~', /(?<!\w)~(?=\S)/, /~(?!\w)/, null, ['~', 'a', ' ', '\n', '{']],
     ].map(([label, opener, closer, prefix, alphabet]) => ({
         name: `hljs ${label}`,

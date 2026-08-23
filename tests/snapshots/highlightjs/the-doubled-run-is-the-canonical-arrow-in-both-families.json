@@ -36,12 +36,12 @@
     "text": " "
   },
   {
-    "scope": "addition",
-    "text": "=="
+    "scope": "literal",
+    "text": "==>"
   },
   {
     "scope": null,
-    "text": "> "
+    "text": " "
   },
   {
     "scope": "literal",
@@ -73,11 +73,11 @@
   },
   {
     "scope": null,
-    "text": "\n\nNot an arrow: key "
+    "text": "\n\nNot an arrow: key => value stays literal, and p "
   },
   {
-    "scope": "addition",
-    "text": "=> value stays literal, and p <="
+    "scope": "literal",
+    "text": "<="
   },
   {
     "scope": null,

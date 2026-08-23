@@ -260,6 +260,36 @@
             alias: 'deleted',
         },
         'highlight': {
+            // A BARE `=` THAT BEGINS OR ENDS A SMART-TYPOGRAPHY PATTERN IS NOT
+            // AN OPENER (grammar.ebnf, Inline parsing precedence: "a delimiter
+            // that begins a multi-char smart-typography pattern: `=>` is the
+            // arrow, never a highlight opener - the pattern is consumed
+            // first"). Corpus 386's third paragraph is the shape it cost -
+            // `key => value stays literal, and p <= q is a comparison` renders
+            // with no mark, and the `=` of `=>` reached the `=` of `<=` and
+            // scoped the sentence (carve-grammars#325). The guard is one
+            // character on each side: not AFTER `<`, `>` or `!`, which is
+            // every character the language puts in front of a `=` to make a
+            // comparison (grammar.ebnf `comparison`) or an arrow tail (`<==`);
+            // and not BEFORE `>`, which is `=>` and the tail of `==>`.
+            //
+            // ALL FOUR ARE LOAD-BEARING HERE and only here, which is a fact
+            // about Prism rather than about the language: Prism applies TOKENS
+            // IN THE ORDER THEY ARE DECLARED, and 'highlight' is declared
+            // before 'typography', so this rule reaches a `<=` before the rule
+            // that owns it does. highlight.js and the TextMate family resolve
+            // by POSITION instead, so there the comparison starts one column
+            // earlier and wins on its own; each of those grammars carries only
+            // the characters that changed a measurement when reverted, which
+            // is why the three spellings are not identical.
+            //
+            // The closer is deliberately unguarded - once a highlight is open
+            // the closer wins over the pattern in the engine too, so
+            // `x =y z<= w` marks `y z<`.
+            // ONE SHAPE IT COSTS: `<https://e.example>=hi=`, where the `>`
+            // closes an autolink rather than opening a comparison; a
+            // fixed-width lookbehind cannot tell the two apart, and this takes
+            // the under-colouring side of that trade.
             // ONE TOKEN, TWO FORMS, so the bare `=x=` alternative shares a
             // line with the braced one. Its `[^=\n]+?` was never the defect
             // this rule was fixed for - the class already excludes its own
@@ -267,7 +297,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<![\w=])=(?=\S)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<![\w=<>!])=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
