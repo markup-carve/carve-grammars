@@ -1503,7 +1503,7 @@
       }
     },
     "smart_typography": {
-      "match": "(---|--|\\.\\.\\.|<->|->|<-|<=|>=)",
+      "match": "(<-->|<--|-->|<=>|<==|==>|---|--|\\.\\.\\.|<->|<-|->|<=|>=)",
       "name": "constant.other.smart_typography.carve"
     },
     "math_inline": {
