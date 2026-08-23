@@ -661,9 +661,23 @@ const SIGNATURE_OVERRIDES = {
         line_block: ['div'],
         local_hard_break_block: ['div'],
         collapsed_reference_link: ['metalinkreference'],
+        /*
+         * The braced highlight joined `forced-emphasis` in
+         * markup-carve/vscode-carve#151, so all five braced spellings are that
+         * one context and all five answer to its name. Without this the row
+         * seeds UNMEASURED off the bare `highlight`, which is a different rule.
+         */
         forced_strong: ['forcedemphasis'],
         forced_underline: ['forcedemphasis'],
         forced_strike: ['forcedemphasis'],
+        forced_highlight: ['forcedemphasis'],
+        /*
+         * `meta.image.reference.carve` closes on a starred bracket pair, so the
+         * collapsed image is that rule with an empty label - the same fold this
+         * table already records for the collapsed LINK one line up, and the one
+         * `textmate` and `prism` make under their own names.
+         */
+        collapsed_reference_image: ['metaimagereference'],
     },
     /*
      * highlight.js calls the block-attribute rule `ATTRIBUTE`, singular. The

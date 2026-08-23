@@ -653,9 +653,71 @@ had no rule at all on the other five, with nothing going red
 - **Two axes per construct.** Recognizing a construct and keeping its payload
   inert are different questions, and a surface can be right about the first and
   wrong about the second: on four editor surfaces `{% *not bold* %}` colored a
-  bold run inside a comment. Every entry declares which, and for Prism and
-  highlight.js the answer is measured on every run by tokenizing a sample with a
-  live marker inside the payload, so it cannot rot.
+  bold run inside a comment. Every entry declares which, and the answer is
+  measured on every run - by tokenizing a sample with a live marker inside the
+  payload - for Prism, highlight.js and every TextMate grammar whose checkout is
+  in front of the seeder, and by converting that sample through the bridge for
+  Tiptap. Those rows cannot rot. The rest are recorded, which is what
+  `payload: "unmeasured"` says out loud.
+
+  One sample per construct is a re-measurement, not a measurement.
+  `tests/opaque-payload-test.js` generates every payload up to three characters
+  over each construct's own delimiter alphabet - about ten thousand documents -
+  and it is what finds this class: of 1325 corpus documents exactly ONE exposed
+  the fenced-code leak in #309, and a comment leaking only when it spans a line
+  break is invisible to a single-line sample (#320).
+
+#### A red row is a question, not a defect
+
+Three surfaces have now been worked row by row, and the ratio is stable enough
+to plan against rather than be surprised by:
+
+| pass | rows | the instrument | genuinely absent |
+| --- | --- | --- | --- |
+| `tree-sitter-carve` (#245) | 14 | 9 | 3 |
+| `vim-carve` + `sublime-carve` (#318) | 20 | 11 | 6 |
+| `textmate`, `prism`, `tiptap`, `vscode-carve` (#307, #308, #310) | 47 | 31 | 9 |
+
+**Two rows in three are a name the probe cannot reach**, and the third pass also
+turned up six rows that read `IMPLEMENTED` and were not. So the first job on a
+per-surface ticket is deciding which rows are real, and the answer is expected
+to be "most of them are not". A GAP row means *the probe did not find a rule it
+recognizes*, which is a different claim from *this surface does not implement
+the construct*.
+
+A fold belongs in `SIGNATURE_OVERRIDES`, which the file calls a per-surface
+NAMING table - never in a rule renamed on a surface to satisfy the probe. Where
+a surface genuinely cannot express a construct, `UNSUPPORTED` **with a reason**
+is the entry; a wrong rule is worse than a missing one.
+
+#### The instrument can be wrong in the direction that looks green
+
+Five ways the probe has mis-read a surface, each found by opening the file:
+
+1. **It read too little.** `Object.keys(grammar.json.rules)` is 196 of
+   tree-sitter's 346 names; a `.sublime-syntax` scopes a capture as well as a
+   match (#315).
+2. **The signature list had holes** - `code_span` is `verbatim` on one surface
+   and `code_inline` on another (#315, #307).
+3. **One rule implements several constructs**, and one name cannot carry four
+   through a shared table (#318).
+4. **The evidence named a rule about a different construct.** `carveCommentInline`
+   is the braced comment and was cited for the trailing one (#318). The same
+   pair beat the word-boundary rank on the TextMate family, where both
+   candidates are whole-name hits and *length* picked the wrong one (#307).
+5. **The re-check read the file's prose as evidence.** `every IMPLEMENTED row
+   cites a name the shipped grammar really carries` asked whether the evidence
+   was a SUBSTRING of the source. `prism/carve.js` carries the comment "Prism
+   has no cross-reference token at all" beside the lookbehind that worked
+   around the absence - so a row citing `cross-ref` re-checked **green** for as
+   long as the rule was missing (#307). That is the trap the docblock at the
+   top of `scripts/surface-probe.mjs` describes, and that its extractors were
+   built to avoid, surviving in the check that verifies their output. It reads
+   `vocabulary()` now, so the seed and the re-check agree on what a name is.
+
+The lesson generalizes past this file: **a check that treats a file's prose as
+evidence that the file implements what the prose says it does NOT implement
+cannot fail.** Match against what a grammar DECLARES, never against its text.
 
 Re-measure after changing a grammar:
 
@@ -673,14 +735,26 @@ CARVE_SURFACE_EMACS_CARVE=../emacs-carve \
   node scripts/seed-construct-ledger.mjs
 ```
 
-Statuses are measured; reasons, notes and tickets are written by hand and
-carried across a re-measurement, so a re-run never drops a stated reason.
+Statuses are measured; reasons, per-construct notes, tickets and a surface's
+`note` are written by hand and carried across a re-measurement, so a re-run
+never drops a stated reason. A surface-level `note` is for what the rows cannot
+say - why a surface needed no work to reach zero, or what its measured payload
+column does NOT cover.
 
-One thing a re-run does NOT carry: the payload axis of a surface in another
-repository. It is hand-written, and it is only carried over when the recorded
-value is already `inert` or `leaks` - so a construct that moves from `GAP` to
-`IMPLEMENTED` in the same run arrives with `payload: "unmeasured"` and a ticket,
-even when the person doing the run has just measured it. That is deliberate: a
-seeder cannot tokenize a Vim syntax file, so the alternative is inventing an
+One thing a re-run does NOT carry: the payload axis of a surface the seeder
+cannot tokenize. It is only carried over when the recorded value is already
+`inert` or `leaks`, so a construct that moves from `GAP` to `IMPLEMENTED` in the
+same run arrives with `payload: "unmeasured"` and a ticket, even when the person
+doing the run has just measured it. That is deliberate: a seeder cannot tokenize
+a Vim syntax file or an emacs font-lock table, so the alternative is inventing an
 answer. Measure the payload as part of the same pass and write `inert` (or
 `leaks`, with a note) by hand on those rows.
+
+It applies to fewer surfaces than it used to. `vscode-carve` and
+`intellij-carve` are TextMate grammars, and the seeder loads any of those through
+Shiki, so naming their checkout measures both axes in the same run and nothing
+is hand-written:
+
+```bash
+CARVE_SURFACE_VSCODE_CARVE=../vscode-carve node scripts/seed-construct-ledger.mjs
+```
