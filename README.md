@@ -658,7 +658,8 @@ had no rule at all on the other five, with nothing going red
   payload - for Prism, highlight.js and every TextMate grammar whose checkout is
   in front of the seeder, and by converting that sample through the bridge for
   Tiptap. Those rows cannot rot. The rest are recorded, which is what
-  `payload: "unmeasured"` says out loud.
+  `payload: "unmeasured"` says out loud - a state no cell is in any more,
+  since intellij-carve's thirteen were the last of them (#329).
 
   One sample per construct is a re-measurement, not a measurement.
   `tests/opaque-payload-test.js` generates every payload up to three characters
@@ -752,24 +753,43 @@ answer. Measure the payload as part of the same pass and write `inert` (or
 
 It applies to fewer surfaces than it used to. `vscode-carve` and
 `intellij-carve` are TextMate grammars, and the seeder loads any of those through
-Shiki, so naming their checkout measures both axes in the same run and nothing
-is hand-written:
+Shiki, so naming their checkout measures the recognition axis and the payload
+sample in the same run:
 
 ```bash
 CARVE_SURFACE_VSCODE_CARVE=../vscode-carve node scripts/seed-construct-ledger.mjs
+CARVE_SURFACE_INTELLIJ_CARVE=../intellij-carve node scripts/seed-construct-ledger.mjs
 ```
+
+**A `leaks` cell is still hand-written on those surfaces, and the seeder carries
+it rather than overwriting it.** The seeder tokenizes ONE sample per construct
+and the sweep below generates hundreds, and on all three surfaces measured for
+the first time since #320 the sample said every row was inert while the sweep
+disagreed - five rows on intellij-carve alone (#329). So a run whose sample says
+`inert` leaves a recorded `leaks` alone. That cannot hide a fix: the sweep
+asserts every recorded leak STILL leaks, so a fix fails that file, its entry
+comes out, and the ledger's own orphan check then fails until the cell is
+corrected too.
 
 ### The payload sweep reaches nine of the ten surfaces
 
 `tests/opaque-payload-test.js` is the second axis measured over a GENERATED space
-rather than one sample per construct, and one sample is not enough: on
-tree-sitter every row is inert at one sample and three of them leak across the
-sweep. Name a checkout and the sweep drives it:
+rather than one sample per construct, and one sample is not enough. Every surface
+measured for the first time so far has had leaks the sample could not see:
+
+| surface | leaking rows | the sample found |
+| --- | --- | --- |
+| tree-sitter-carve (#328) | 3 | none of them |
+| emacs-carve (#328) | 2 | the `%%%` fence, not the verbatim run |
+| intellij-carve (#329) | 4 | none of them |
+
+Name a checkout and the sweep drives it:
 
 ```bash
 CARVE_SURFACE_TREE_SITTER_CARVE=../tree-sitter-carve \
 CARVE_SURFACE_EMACS_CARVE=../emacs-carve \
 CARVE_SURFACE_VSCODE_CARVE=../vscode-carve \
+CARVE_SURFACE_INTELLIJ_CARVE=../intellij-carve \
   node tests/opaque-payload-test.js
 ```
 

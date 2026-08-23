@@ -196,9 +196,30 @@ for (const [id, surface] of Object.entries(SURFACES)) {
             entry.payload = 'parsed';
         } else if (measured[id]) {
             entry.payload = measured[id][name];
+            /*
+             * A RECORDED LEAK SURVIVES AN `inert` SAMPLE, because the sample is
+             * a FLOOR and not the measurement. `VERBATIM_SAMPLES` is one
+             * document per construct; `tests/opaque-payload-test.js` generates
+             * hundreds and finds leaks the sample cannot - on both surfaces
+             * measured for the first time in carve-grammars#320 the sample said
+             * every row was inert and the sweep disagreed on five, and
+             * intellij-carve made it three surfaces out of three
+             * (carve-grammars#329). Overwriting `leaks` here would have
+             * re-seeded those rows back to `inert` and quietly dropped the
+             * claim.
+             *
+             * A FIX STILL CLEARS THE ROW, and does not need this branch to do
+             * it: the sweep asserts every `KNOWN_LEAKS` entry STILL leaks, so a
+             * fix fails that file, the entry comes out, and the ledger's own
+             * orphan check then fails until the cell is corrected too. That is
+             * the forcing function, rather than a seeder that cannot tell one
+             * sample from the whole space.
+             */
+            if (entry.payload === 'inert' && old.payload === 'leaks') entry.payload = 'leaks';
             if (entry.payload === 'leaks') {
                 entry.payloadNote = old.payloadNote
                     || 'an emphasis run inside the payload is scoped as markup';
+                if (old.ticket) entry.ticket = old.ticket;
             }
         } else {
             entry.payload = old.payload === 'inert' || old.payload === 'leaks' ? old.payload : 'unmeasured';

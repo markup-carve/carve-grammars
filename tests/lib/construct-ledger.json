@@ -2236,8 +2236,9 @@
     "intellij-carve": {
       "repo": "markup-carve/intellij-carve",
       "commit": "bdfbfd8",
-      "measured": "2026-08-21",
+      "measured": "2026-08-23",
       "gapTicket": "markup-carve/intellij-carve#97",
+      "note": "The payload column was measured for the first time on 2026-08-23 (carve-grammars#329): carve-grammars#320 built the harness that reaches this surface, but the sweep was never run with a checkout named, so all 13 rows stayed \"unmeasured\" through carve-grammars#328. ONE SAMPLE PER CONSTRUCT SAYS EVERY ROW IS INERT AND THE GENERATED SWEEP DISAGREES ON FOUR - 353 of 3503 generated documents leak across five rows - so the four \"leaks\" cells here are the sweep's answer and not the sample's; tests/opaque-payload-test.js is what asserts each of them, and a fix there is what takes the cell out. The 8 GAP and 5 UNMEASURED rows on the first axis are carve-grammars#320's own finding and are unchanged. `paragraph` moved to UNSUPPORTED in this run for the reason every other TextMate surface did in carve-grammars#323: a paragraph is the ABSENCE of a block marker, the probe cannot see an absence, and this surface's copy of the row survived only because its checkout was not named when the others were re-seeded.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -2252,7 +2253,8 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code-blocks",
-          "payload": "unmeasured",
+          "payload": "leaks",
+          "payloadNote": "an INDENTED delimiter-shaped line inside the body ends the block early - a fence at two columns in - so everything after it is live. 10 of 74 generated fence shapes; the 90 opener shapes are inert",
           "ticket": "markup-carve/intellij-carve#97"
         },
         "blockquote": {
@@ -2308,20 +2310,17 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "comment.line.percent.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
           "evidence": "markup.raw.block.fenced.code.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -2339,9 +2338,9 @@
           "payload": "parsed"
         },
         "paragraph": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.underline.text.carve",
-          "payload": "parsed"
+          "status": "UNSUPPORTED",
+          "reason": "a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather than their absence - prose that matches no rule is already the default",
+          "payload": "none"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -2361,26 +2360,24 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "raw-inline",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "inline-literal",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "inline-code",
-          "payload": "unmeasured",
+          "payload": "leaks",
+          "payloadNote": "an UNPARTNERED run leaves the rest of the line live where the engine reads a code span to the end of the paragraph, at one backtick and at two. 112 of 184 generated documents",
           "ticket": "markup-carve/intellij-carve#97"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "autolink",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "auto_text_link": {
           "status": "IMPLEMENTED",
@@ -2425,14 +2422,12 @@
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "markup.other.math.inline.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "markup.other.math.display.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -2532,7 +2527,8 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.critic.carve",
-          "payload": "unmeasured",
+          "payload": "leaks",
+          "payloadNote": "a `{# ... #}` written across a line break is not one comment, so the markup inside it is scoped. 87 of 286 generated documents",
           "ticket": "markup-carve/intellij-carve#97"
         },
         "mention": {
@@ -2593,13 +2589,13 @@
         "inline_comment": {
           "status": "IMPLEMENTED",
           "evidence": "inline-comment",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.inline.carve",
-          "payload": "unmeasured",
+          "payload": "leaks",
+          "payloadNote": "a `{% ... %}` written across a line break is not one comment, so the markup inside it is scoped. 144 of 469 generated documents",
           "ticket": "markup-carve/intellij-carve#97"
         },
         "hard_break": {
