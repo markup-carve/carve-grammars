@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> ![a](i.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> ^ cap"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> plain"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

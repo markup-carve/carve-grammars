@@ -1,0 +1,30 @@
+[
+  {
+    "type": "title>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title",
+    "text": "  Sec"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "Sec"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

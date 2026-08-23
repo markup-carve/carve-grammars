@@ -389,10 +389,39 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * "a marker run ends at a space" forced - were re-measured directly and need no
  * envelope, which is the count they already had; the new categories account for
  * exactly 4 and the total moved by exactly 4.
+ *
+ * 341 -> 342 with the spec bump to carve d0b6c92, attributed the same way
+ * before it was raised. The enveloped list was dumped under both pins
+ * (e88d6e3 and d0b6c92) and diffed by name: exactly ONE name is added and NONE
+ * is removed, so the pre-existing corpus still contributes exactly 341,
+ * document for document.
+ *
+ * The one addition is `403-an-idle-escape-does-not-spread-from-the-occurrence-
+ * that-needed-one`, and it is the projection being RIGHT rather than worse.
+ * The document is two lines indented by one space:
+ *
+ *      {.note}
+ *      This paragraph.
+ *
+ * At that indent `{.note}` is paragraph TEXT, and the engine renders
+ * `<p>{.note}` accordingly. The projection holds a paragraph and nothing else,
+ * so writing it back puts both lines at column 0 - where `{.note}` IS an
+ * attribute block and the document parses to something else entirely. Measured
+ * rather than reasoned: the projection alone writes `{.note}\nThis paragraph.`,
+ * whose AST differs from the source's. So the loader keeps the source, and the
+ * envelope is the only thing standing between this document and a silent
+ * reinterpretation. An enveloped document is still stored losslessly; this one
+ * is enveloped because the indent is load-bearing and the projection has no
+ * slot for it.
+ *
+ * The other six categories the bump added need no envelope: 12 files across 7
+ * categories were run one at a time through the source-aware loader, all 12
+ * convert without the whole-document fallback atom and all 12 reparse to the
+ * same AST.
  */
 assert.strictEqual(
-    envelopedFiles.length, 341,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 341`,
+    envelopedFiles.length, 342,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 342`,
 );
 
 assert.strictEqual(
