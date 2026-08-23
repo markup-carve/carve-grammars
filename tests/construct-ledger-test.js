@@ -330,22 +330,73 @@ ok('each tokenizer reproduces its input, so a measurement is about the payload',
     }
 });
 
+/**
+ * What is wrong with a recorded payload cell, given what the SAMPLE measures.
+ *
+ * THE SAMPLE IS A FLOOR, NOT THE MEASUREMENT, so this compares in one direction
+ * and names which. `VERBATIM_SAMPLES` is ONE document per construct;
+ * `tests/opaque-payload-test.js` generates hundreds and finds leaks the sample
+ * cannot - on every surface measured for the first time since
+ * carve-grammars#320 (tree-sitter, emacs-carve, and now intellij-carve,
+ * carve-grammars#329) the sample called every row inert and the generated sweep
+ * disagreed on several. A cell recording `leaks` where the sample is inert is
+ * therefore the two instruments AGREEING, and an equality check here would have
+ * left the ledger unable to record a leak only the sweep can see.
+ *
+ * The direction that keeps its teeth is the other one: a sample that LEAKS
+ * against a cell that does not is a regression, and this is where it shows.
+ *
+ * NOTHING GOES UNGUARDED BY THE WEAKENING. A `leaks` cell is not free - the
+ * sweep refuses one with no `KNOWN_LEAKS` row asserting it, and that row
+ * asserts the leak is STILL there, so a fix fails the sweep, the row comes out,
+ * and the cell has to be corrected with it.
+ *
+ * @param {'inert'|'leaks'} measured - what the construct's own sample does.
+ * @param {string} recorded - what the ledger cell says.
+ * @returns {string|null} the complaint, or null when the cell is allowed.
+ */
+function payloadCellProblem(measured, recorded) {
+    if (measured === recorded) return null;
+    if (measured === 'inert' && recorded === 'leaks') return null;
+
+    return `the ledger says "${recorded}" and the sample says "${measured}"`;
+}
+
 for (const [id, tokenize] of tokenizers) {
     ok(`${id}: the recorded payload behavior is what the engine actually does`, () => {
         for (const [name, sample] of Object.entries(VERBATIM_SAMPLES)) {
             const entry = ledger.surfaces[id].constructs[name];
             if (entry.status !== 'IMPLEMENTED') continue;
+            const problem = payloadCellProblem(measure(tokenize, sample), entry.payload);
             assert.strictEqual(
-                measure(tokenize, sample),
-                entry.payload,
-                `${id}/${name}: the ledger says "${entry.payload}" and tokenizing `
-                    + `${JSON.stringify(sample)} says otherwise. A construct whose payload is not Carve `
-                    + 'must keep the markers inside it inert; when it stops doing so, this is where it '
-                    + 'shows.',
+                problem,
+                null,
+                `${id}/${name}: ${problem} for ${JSON.stringify(sample)}. A construct whose payload is `
+                    + 'not Carve must keep the markers inside it inert; when it stops doing so, this is '
+                    + 'where it shows. (A cell recording "leaks" against an inert SAMPLE is allowed - '
+                    + 'the generated sweep sees more documents than one - but nothing else is.)',
             );
         }
     });
 }
+
+/*
+ * AND THE ALLOWANCE ABOVE HAS TO BE SEEN NOT SWALLOWING THE OTHER DIRECTION.
+ *
+ * A one-directional check is one edit away from no check at all, so the rule is
+ * a function and the four combinations are put through it here. Without this,
+ * a `return null` at the top would pass every row above.
+ */
+ok('a payload cell is refused in every direction but the one the sweep needs', () => {
+    assert.strictEqual(payloadCellProblem('inert', 'inert'), null);
+    assert.strictEqual(payloadCellProblem('leaks', 'leaks'), null);
+    // The allowance: the sweep found what the sample could not.
+    assert.strictEqual(payloadCellProblem('inert', 'leaks'), null);
+    // The regression this row exists to keep catchable.
+    assert.match(payloadCellProblem('leaks', 'inert') ?? '', /says "inert" and the sample says "leaks"/);
+    // And a cell that never got measured is not quietly accepted either.
+    assert.match(payloadCellProblem('inert', 'unmeasured') ?? '', /says "unmeasured"/);
+});
 
 ok('tiptap: the recorded payload behavior is what the bridge actually does', () => {
     /*

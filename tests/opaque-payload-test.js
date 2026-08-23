@@ -405,6 +405,45 @@ const KNOWN_LEAKS = {
         'a delimiter-shaped payload line does not end the block early':
             { construct: 'code_block', ticket: 'markup-carve/tree-sitter-carve#248' },
     },
+    /*
+     * MEASURED FOR THE FIRST TIME IN carve-grammars#329. Its 13 payload rows
+     * were the last `unmeasured` cells on the ledger: carve-grammars#320 built
+     * the harness that reaches this surface, but the sweep was never run with
+     * `CARVE_SURFACE_INTELLIJ_CARVE` pointed at a checkout, so #328 shipped
+     * without it.
+     *
+     * ONE SAMPLE PER CONSTRUCT SAID EVERY ROW WAS INERT, and the generated
+     * sweep disagreed on five. That is now three surfaces out of three where
+     * the sample and the sweep part company, which is the whole argument for
+     * this file existing beside the ledger.
+     */
+    'intellij-carve': {
+        /*
+         * A `{% ... %}` and a `{# ... #}` written across a line break are not
+         * one comment, so the markup inside colours. The single-line guard
+         * Prism and highlight.js carried until carve-grammars#312 and this
+         * repository's own TextMate grammar until carve-grammars#307 - the
+         * intellij port is a separate lineage and never took that fix.
+         */
+        braced_comment: { construct: 'braced_comment', ticket: 'markup-carve/intellij-carve#97' },
+        editorial_comment: { construct: 'editorial_comment', ticket: 'markup-carve/intellij-carve#97' },
+        /*
+         * An UNPARTNERED verbatim run is a code span to the end of its
+         * paragraph in the engine and in three grammars here; this one leaves
+         * the rest of the line live markup instead, at one backtick and at two.
+         */
+        'code_span with no closing run': { construct: 'code_span', ticket: 'markup-carve/intellij-carve#97' },
+        'code_span with no closing run, on a wide run':
+            { construct: 'code_span', ticket: 'markup-carve/intellij-carve#97' },
+        /*
+         * An INDENTED delimiter-shaped line inside the body ends the block
+         * early, so everything after it is live - the sample-text case, and the
+         * same shape tree-sitter carries. The 90 OPENER shapes are inert here,
+         * which is where this surface differs from that one.
+         */
+        'a delimiter-shaped payload line does not end the block early':
+            { construct: 'code_block', ticket: 'markup-carve/intellij-carve#97' },
+    },
     'emacs-carve': {
         /*
          * The `%%%` fence scopes its two DELIMITER LINES and nothing between
@@ -855,10 +894,11 @@ const RESIDUALS = [
          */
         what: 'an unclosed verbatim run of three or more backticks leaks its paragraph',
         source: 'a ```x *b* y\n',
-        // emacs-carve leaks the ONE- and TWO-backtick widths as well, which
-        // the generated rows above record on markup-carve/emacs-carve#21; this
+        // emacs-carve and intellij-carve leak the ONE- and TWO-backtick widths
+        // as well, which the generated rows above record on
+        // markup-carve/emacs-carve#21 and markup-carve/intellij-carve#97; this
         // is the width where no grammar here reads a span.
-        engines: ['prism', 'emacs-carve'],
+        engines: ['prism', 'emacs-carve', 'intellij-carve'],
         ticket: 'the same trade as the row above, one construct over',
     },
     {
@@ -876,15 +916,17 @@ const RESIDUALS = [
         what: 'a comment whose continuation line opens a block is broken by the block rule',
         source: 'a {# *b*\n* #} z\n',
         /*
-         * tree-sitter and emacs-carve leak this too, for a different reason
-         * each: the tree-sitter grammar does not read a `{# ... #}` across a
-         * line break at all, and the emacs rule's body is `not-newline`. Both
-         * are the single-line guard carve-grammars#312 removed here, so both
-         * are on their own surface's ticket rather than on this trade.
+         * tree-sitter, emacs-carve and intellij-carve leak this too, for a
+         * different reason each: the tree-sitter grammar does not read a
+         * `{# ... #}` across a line break at all, the emacs rule's body is
+         * `not-newline`, and the intellij port's is a single-line `match`.
+         * All three are the single-line guard carve-grammars#312 removed here,
+         * so each is on its own surface's ticket rather than on this trade.
          */
-        engines: ['prism', 'tree-sitter-carve', 'emacs-carve'],
+        engines: ['prism', 'tree-sitter-carve', 'emacs-carve', 'intellij-carve'],
         ticket: 'needs a container model, carve-grammars#312; and the single-line '
-            + 'guards on markup-carve/tree-sitter-carve#248 and markup-carve/emacs-carve#21',
+            + 'guards on markup-carve/tree-sitter-carve#248, markup-carve/emacs-carve#21 '
+            + 'and markup-carve/intellij-carve#97',
     },
 ];
 

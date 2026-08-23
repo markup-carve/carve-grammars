@@ -219,6 +219,47 @@ const CONTEXTS = [
 const UNREACHED = {
     highlightjs: ['heading', 'blockquote', 'table cell'],
     textmate: ['heading', 'blockquote'],
+    /*
+     * Measured when the intellij checkout was first named here
+     * (carve-grammars#329). It is a separate lineage from this repository's
+     * TextMate grammar and reaches the same two contexts, which is what the
+     * exact assertion is for: a surface whose checkout appears with a different
+     * answer fails this row rather than being quietly absent from the table.
+     */
+    'intellij-carve': ['heading', 'blockquote'],
+};
+
+/*
+ * WHAT A SURFACE IN ANOTHER REPOSITORY STILL READS DIFFERENTLY, one container
+ * down.
+ *
+ * Six of the ten grammar surfaces are not editable here, so a defect found on
+ * one is something this suite can MEASURE and not fix - the case a plain red
+ * row handles badly, since a check that stays red for something nobody can fix
+ * here gets muted. Each entry is asserted to STILL disagree, so it cannot
+ * outlive its defect: a fix on that surface fails this file and the entry comes
+ * out with it. That is the arrangement `KNOWN_LEAKS` in
+ * `tests/opaque-payload-test.js` uses for the same reason.
+ *
+ * A surface in THIS repository is deliberately absent: a disagreement here is
+ * fixable here, so it stays red.
+ *
+ * Measured 2026-08-23 on intellij-carve bdfbfd8.
+ */
+const IN_A_CONTAINER = {
+    /*
+     * carve-grammars#325's own defect, on the intellij port - a separate
+     * lineage that never took the guard - and only inside a TABLE CELL. Its
+     * cell rule reaches the highlight rule without the typography rule in front
+     * of it, so a `<=`, `>=` or `!=` comparison spends its `=` on a highlight
+     * the engine does not render. Tracked on markup-carve/intellij-carve#97,
+     * the surface's open ledger ticket.
+     */
+    'intellij-carve': [
+        'table cell: a <=b c= d',
+        'table cell: a >=b c= d',
+        'table cell: a !=b c= d',
+    ],
 };
 
 console.log('\nthe same shapes, one container down:');
@@ -243,17 +284,18 @@ for (const [surface, tokenize] of ENGINES) {
         const wrong = [];
         for (const [context, wrap] of CONTEXTS) {
             if (recorded.includes(context)) continue;
-            for (const [line, why] of SHAPES) {
+            for (const [line] of SHAPES) {
                 const document = wrap(line);
-                const engine = enginePutsAMark(document);
-                const grammar = scopesHighlight(surface, tokenize, document);
-                if (engine === grammar) continue;
-                wrong.push(`${context}, ${JSON.stringify(line)}: ${why} - the engine `
-                    + `${engine ? 'marks' : 'does not mark'} and ${surface} `
-                    + `${grammar ? 'scopes a highlight' : 'scopes none'}`);
+                if (enginePutsAMark(document) === scopesHighlight(surface, tokenize, document)) continue;
+                wrong.push(`${context}: ${line}`);
             }
         }
-        assert.deepEqual(wrong, [], `${surface}: ${wrong.join('; ')}`);
+        assert.deepEqual(
+            wrong, IN_A_CONTAINER[surface] ?? [],
+            `${surface}: these flanking shapes read differently one container down than the engine `
+                + `renders them - ${wrong.join('; ')}. A shape that stopped disagreeing is a fix on `
+                + 'that surface; take it out of IN_A_CONTAINER with the fix.',
+        );
     });
 }
 
@@ -318,6 +360,9 @@ const RESIDUALS = {
      */
     prism: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
     textmate: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
+    // The intellij port reads the bare rule the same way, measured when its
+    // checkout was first named here (carve-grammars#329).
+    'intellij-carve': ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
     /*
      * A CLOSER PRECEDED BY WHITESPACE. `bare_closer` requires a non-space
      * before the delimiter (grammar.ebnf), so `=a =` is literal - and the other
