@@ -1494,7 +1494,7 @@
       "commit": "863abfa",
       "measured": "2026-08-21",
       "gapTicket": "markup-carve/tree-sitter-carve#245",
-      "note": "THE PAYLOAD COLUMN WAS MEASURED AT 3d12600, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. One sample per construct says every row is inert; the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what found the three leaks, which are on markup-carve/tree-sitter-carve#248 - and that gap is why the single-sample column alone is not the answer here.",
+      "note": "THE PAYLOAD COLUMN WAS RE-MEASURED AT d61ab29 on 2026-08-23, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. The three leaks this column carried at 3d12600 are all closed: markup-carve/tree-sitter-carve#249 and #251 took the two `code_block` shapes and the braced comment, #254 the editorial comment across a line break. Every generated document of all three rows now measures inert - 0 of 164 fence shapes, 0 of 469 and 0 of 286. The single-sample column said inert while they leaked, which is why the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what this column is read from.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -1509,9 +1509,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code_block",
-          "payload": "leaks",
-          "ticket": "markup-carve/tree-sitter-carve#248",
-          "payloadNote": "a fence opener whose info string ends in whitespace (a language followed by a space or a tab) opens no block, so the body is live prose; and an INDENTED delimiter-shaped line inside the body ends the block early, so everything after it is live. 12 of 164 generated fence shapes"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -1781,9 +1779,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "editorial_comment",
-          "payload": "leaks",
-          "ticket": "markup-carve/tree-sitter-carve#248",
-          "payloadNote": "a `{# ... #}` written across a line break is not one comment, so the markup inside it is scoped. 180 of 286 generated documents"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -1848,9 +1844,7 @@
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "braced_comment",
-          "payload": "leaks",
-          "ticket": "markup-carve/tree-sitter-carve#248",
-          "payloadNote": "a `{% ... %}` written across a line break is not one comment, so the markup inside it is scoped. 185 of 469 generated documents"
+          "payload": "inert"
         },
         "hard_break": {
           "status": "IMPLEMENTED",
