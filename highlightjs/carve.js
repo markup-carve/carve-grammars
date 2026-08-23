@@ -322,10 +322,48 @@
         contains: [EMPHASIS, UNDERLINE],
     };
 
-    // Highlight (Carve): =text= (single-char; intraword as {=text=})
+    /*
+     * Highlight (Carve): =text= (single-char; intraword as {=text=})
+     *
+     * A BARE `=` THAT BEGINS OR ENDS A SMART-TYPOGRAPHY PATTERN IS NOT AN
+     * OPENER (grammar.ebnf, Inline parsing precedence: "a delimiter that
+     * begins a multi-char smart-typography pattern: `=>` is the arrow, never a
+     * highlight opener - the pattern is consumed first"). Corpus 386's third
+     * paragraph is the shape it cost - `key => value stays literal, and p <= q
+     * is a comparison` renders with no mark, and the `=` of `=>` reached the
+     * `=` of `<=` and scoped the sentence (carve-grammars#325). The guard is
+     * a LOOKAHEAD ONLY: not BEFORE `>`, which is `=>` and the tail of `==>`.
+     *
+     * NOTHING IS ADDED TO THE LOOKBEHIND, and that was measured rather than
+     * assumed. `<`, `>` and `!` were each put there and reverted: highlight.js
+     * resolves its compiled alternation by POSITION, and TYPOGRAPHY carries
+     * `<=`, `>=` and `!=`, so on `a !=b c= d` the comparison starts one column
+     * before this rule's `=` and takes it. No context reached from this
+     * grammar changed its answer, in a container or out of one, so those three
+     * characters would be guard nobody can see working. The Prism grammar does
+     * need them: Prism applies TOKENS IN ORDER rather than by position, and
+     * 'highlight' is declared before 'typography' there.
+     *
+     * `=` IS IN THE OPENER'S OWN LOOKAHEAD HERE and not in the other two
+     * grammars, because those spell the body as `[^=\n]+?` and get the same
+     * refusal from the content class. `paired` derives its guard from the
+     * CLOSER, so nothing here requires the body to be non-empty: `x == y`
+     * opened and closed on the two `=` of a doubled run and scoped an empty
+     * highlight over a line the engine renders literally.
+     *
+     * THE CLOSER IS DELIBERATELY NOT GUARDED, and the asymmetry is the
+     * engine's: once a highlight is open the closer wins over the pattern, so
+     * `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`.
+     *
+     * ONE SHAPE IT COSTS: `<https://e.example>=hi=`, where the `>` closes an
+     * autolink rather than opening a comparison. A fixed-width lookbehind
+     * cannot tell the two apart, and this takes the under-colouring side of
+     * that trade - the ticket's own reasoning, since a false highlight claims
+     * the document holds a construct it does not.
+     */
     const HIGHLIGHT = {
         className: 'addition',
-        ...paired(/(?<![=\w])=(?=\S)/, /=(?![=\w])/),
+        ...paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/),
         relevance: 3,
     };
 

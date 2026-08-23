@@ -73,11 +73,11 @@
   },
   {
     "type": "text",
-    "text": "\n\nNot an arrow: key "
+    "text": "\n\nNot an arrow: key => value stays literal, and p "
   },
   {
-    "type": "highlight",
-    "text": "=> value stays literal, and p <="
+    "type": "typography",
+    "text": "<="
   },
   {
     "type": "text",

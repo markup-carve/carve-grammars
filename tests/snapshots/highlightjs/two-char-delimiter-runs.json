@@ -1,11 +1,7 @@
 [
   {
-    "scope": "addition",
-    "text": "==x=="
-  },
-  {
     "scope": null,
-    "text": " "
+    "text": "==x== "
   },
   {
     "scope": "deletion",

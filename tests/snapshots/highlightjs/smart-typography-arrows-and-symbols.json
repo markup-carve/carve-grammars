@@ -28,12 +28,12 @@
     "text": " d "
   },
   {
-    "scope": "addition",
-    "text": "=="
+    "scope": "literal",
+    "text": "==>"
   },
   {
     "scope": null,
-    "text": "> e; x "
+    "text": " e; x "
   },
   {
     "scope": "literal",

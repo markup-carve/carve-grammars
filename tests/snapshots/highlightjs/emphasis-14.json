@@ -5,14 +5,6 @@
   },
   {
     "scope": null,
-    "text": " here, but "
-  },
-  {
-    "scope": "addition",
-    "text": "==doubled=="
-  },
-  {
-    "scope": null,
-    "text": " is literal.\n"
+    "text": " here, but ==doubled== is literal.\n"
   }
 ]
