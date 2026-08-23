@@ -37,7 +37,7 @@ import { tmpdir } from 'node:os';
 
 import { specConstructs } from '../scripts/spec-constructs.mjs';
 import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, vocabulary } from '../scripts/surface-probe.mjs';
-import { UNSUPPORTED_ON } from '../scripts/seed-construct-ledger.mjs';
+import { UNSUPPORTED_ON } from '../scripts/unsupported-on.mjs';
 import { validate } from './lib/construct-ledger.js';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
@@ -139,8 +139,10 @@ ok('every UNSUPPORTED row is one the re-measurement would write again', () => {
      * THE LEDGER AND THE SEED'S PERMISSION TABLE ARE TWO RECORDS OF ONE RULE.
      *
      * `UNSUPPORTED` is the only status written by hand, so
-     * `scripts/seed-construct-ledger.mjs` keeps a list of which surface may
-     * claim it for which construct. A row the ledger records and that table
+     * `scripts/unsupported-on.mjs` keeps a list of which surface may claim it
+     * for which construct, and the seeder reads that list rather than owning
+     * it - a table a test has to read cannot live inside a script that
+     * rewrites the ledger when imported. A row the ledger records and that table
      * does not permit is not a harmless disagreement: the next re-measurement
      * of that surface rewrites the row to GAP and DELETES the stated reason,
      * which is precisely what the seed's own docblock promises never happens.
@@ -167,7 +169,7 @@ ok('every UNSUPPORTED row is one the re-measurement would write again', () => {
     }
     assert.deepStrictEqual(
         unwritable, [],
-        `these rows are UNSUPPORTED on the ledger and UNSUPPORTED_ON in scripts/seed-construct-ledger.mjs `
+        `these rows are UNSUPPORTED on the ledger and UNSUPPORTED_ON in scripts/unsupported-on.mjs `
             + `does not permit them: ${unwritable.join(', ')}. Re-seeding that surface would rewrite each `
             + 'one to GAP and drop its stated reason. Add the surface to that table, with the reason the '
             + 'ruling gives, rather than leaving the two records disagreeing.',
