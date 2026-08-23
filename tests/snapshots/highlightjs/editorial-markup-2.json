@@ -5,14 +5,14 @@
   },
   {
     "scope": null,
-    "text": " and {"
+    "text": " and "
   },
   {
     "scope": "addition",
-    "text": "=y="
+    "text": "{=y=}"
   },
   {
     "scope": null,
-    "text": "} both mark.\n"
+    "text": " both mark.\n"
   }
 ]

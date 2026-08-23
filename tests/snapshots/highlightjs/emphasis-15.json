@@ -17,14 +17,14 @@
   },
   {
     "scope": null,
-    "text": ", and {"
+    "text": ", and "
   },
   {
     "scope": "addition",
-    "text": "=mark="
+    "text": "{=mark=}"
   },
   {
     "scope": null,
-    "text": "} it.\n"
+    "text": " it.\n"
   }
 ]

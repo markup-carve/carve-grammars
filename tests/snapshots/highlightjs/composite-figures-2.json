@@ -101,18 +101,22 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee "
   },
   {
-    "scope": "emphasis",
-    "text": "/#fig-x> and </"
-  },
-  {
-    "scope": "symbol",
-    "text": "#fig-x-a"
+    "scope": "link",
+    "text": "</#fig-x>"
   },
   {
     "scope": null,
-    "text": ">.\n"
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "</#fig-x-a>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

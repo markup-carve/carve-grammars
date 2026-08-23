@@ -756,7 +756,7 @@
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
       "measured": "2026-08-23",
-      "gapTicket": "#309",
+      "gapTicket": "#317",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -800,13 +800,13 @@
         },
         "line_block": {
           "status": "IMPLEMENTED",
-          "evidence": "LINE_BLOCK",
+          "evidence": "DIV_BLOCK",
           "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "DIV_BLOCK",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -814,9 +814,9 @@
           "payload": "parsed"
         },
         "admonition": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "DIV_BLOCK",
+          "payload": "parsed"
         },
         "div": {
           "status": "IMPLEMENTED",
@@ -874,9 +874,9 @@
           "payload": "parsed"
         },
         "raw_inline": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "RAW_FORMAT",
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
@@ -894,9 +894,9 @@
           "payload": "inert"
         },
         "auto_text_link": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "CROSS_REF",
+          "payload": "parsed"
         },
         "inline_link": {
           "status": "IMPLEMENTED",
@@ -909,9 +909,9 @@
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "REFERENCE_LINK",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -924,14 +924,14 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "REFERENCE_IMAGE",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "REFERENCE_IMAGE",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
@@ -954,9 +954,9 @@
           "payload": "parsed"
         },
         "bold_italic": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "BOLD_ITALIC",
+          "payload": "parsed"
         },
         "underline": {
           "status": "IMPLEMENTED",
@@ -1004,9 +1004,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "FORCED_HIGHLIGHT",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -1099,9 +1099,9 @@
           "payload": "parsed"
         },
         "inline_comment": {
-          "status": "GAP",
-          "ticket": "#309",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "LINE_COMMENT",
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",

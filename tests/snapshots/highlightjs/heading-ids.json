@@ -53,30 +53,38 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee <"
+    "text": "\n\nSee "
   },
   {
-    "scope": "emphasis",
-    "text": "/#cafe-notes>, </"
-  },
-  {
-    "scope": "symbol",
-    "text": "#section-2024-recap"
+    "scope": "link",
+    "text": "</#cafe-notes>"
   },
   {
     "scope": null,
-    "text": ">, <"
+    "text": ", "
   },
   {
-    "scope": "emphasis",
-    "text": "/#setup-2>, and </"
-  },
-  {
-    "scope": "symbol",
-    "text": "#api-v2"
+    "scope": "link",
+    "text": "</#section-2024-recap>"
   },
   {
     "scope": null,
-    "text": ">.\n"
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#setup-2>"
+  },
+  {
+    "scope": null,
+    "text": ", and "
+  },
+  {
+    "scope": "link",
+    "text": "</#api-v2>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

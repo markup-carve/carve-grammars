@@ -209,6 +209,26 @@
         relevance: 5,
     };
 
+    /*
+     * The FIFTH braced spelling, `{=x=}` (grammar.ebnf `forced_highlight`).
+     *
+     * Its four siblings above each have a mode; this one did not, and the row
+     * read UNMEASURED because a name cannot tell `{=x=}` from `=x=` and the
+     * only name in the vocabulary was HIGHLIGHT's. Reading the opener answers
+     * it: HIGHLIGHT is `(?<![=\w])=(?=\S)`, the BARE rule, with no braced
+     * alternative - it claims the inner `=` of `{=x=}` as a side effect and
+     * leaves the braces unscoped, which is not the construct being recognized.
+     *
+     * `paired()` is what keeps this off a raw-inline format marker: `{=html}`
+     * has no `=}` ahead of it, so the guard fails and the mode does not open,
+     * leaving RAW_FORMAT the `{=[a-zA-Z]+\}` it already matches.
+     *
+     * The empty pair `{==}` still opens here, as `{**}` does on FORCED_STRONG
+     * and `{//}` on FORCED_EMPHASIS - carve#1447 makes it literal text, and
+     * this mode matches its siblings rather than fixing that on one of five.
+     */
+    const FORCED_HIGHLIGHT = { className: 'addition', ...paired(/\{=(?=\S)/, /=\}/), relevance: 5 };
+
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
         // Valid only glued to a preceding `]` (`[x]{}`); a bare `{}` is literal.
@@ -266,6 +286,31 @@
         className: 'emphasis',
         ...paired(/(?<!\w)_(?!\s)/, /_(?!\w)/),
         relevance: 0,
+    };
+
+    /*
+     * The COMBINED two-character opener `/` + `*` (grammar.ebnf
+     * `bold_italic`): the boundary guards apply to the outer slash, and the
+     * inner star is part of the token rather than separately guarded.
+     *
+     * EMPHASIS below already matched the run - its opener is `/` followed by a
+     * non-space, and a star is a non-space - so a bold-italic run was scoped
+     * `emphasis` - italic and not bold - by the rule for the other construct.
+     * That is the shape the ledger calls a row seen wrong rather than a row
+     * not covered, and it is why this mode is listed BEFORE both EMPHASIS and
+     * STRONG: the two openers begin at the SAME offset, so mode order is what
+     * decides.
+     *
+     * ONE className, because highlight.js has a fixed palette of about twenty
+     * theme words and no combined bold-italic among them. `strong` is the half
+     * chosen, and it is the half that was missing: the accidental reading was
+     * already italic. Prism spells the same compromise `alias: 'important'` and
+     * the TextMate family spells it `markup.bold.italic.carve`, one scope each.
+     */
+    const BOLD_ITALIC = {
+        className: 'strong',
+        begin: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}\*\//,
+        relevance: 5,
     };
 
     // Strong: *text* - not in the middle of words, can contain emphasis.
@@ -444,6 +489,30 @@
     const IMAGE = {
         className: 'link',
         begin: new RegExp('!\\[' + BRACKET_TEXT + '\\]\\([^)]*\\)(\\{[^}]+\\})?'),
+        relevance: 5,
+    };
+
+    /*
+     * Reference and COLLAPSED reference images: `![alt][ref]` and `![alt][]`.
+     *
+     * IMAGE above closes on `](`, so neither spelling matched it, and the row
+     * they read against was REFERENCE_LINK - whose bracket pair DOES match
+     * `[alt][ref]`, leaving the leading `!` unscoped and calling an image a
+     * link. Prism carried the same defect on both image rows until
+     * carve-grammars#307, under the same cause: a fold was recorded onto a rule
+     * that cannot fire for the construct.
+     *
+     * ONE MODE FOR BOTH FORMS. The reference label is `[^\]\n]{0,512}`, and
+     * the `{0,512}` accepts the EMPTY label, so the collapsed spelling is this
+     * rule with nothing between its second pair of brackets - the fold
+     * carve-grammars#318 recorded for vim-carve and sublime-carve, and the one
+     * REFERENCE_LINK below already makes for the collapsed reference LINK. The
+     * alt text may be empty as well (`![][r]` is an image, where `[][r]` is not
+     * a link), so it takes BRACKET_TEXT rather than the non-empty body.
+     */
+    const REFERENCE_IMAGE = {
+        className: 'link',
+        begin: new RegExp('!\\[' + BRACKET_TEXT + '\\]\\[[^\\]\\n]{0,512}\\](\\{[^}]+\\})?'),
         relevance: 5,
     };
 
@@ -1252,15 +1321,39 @@
         begin: /(?<![\w@])@[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
         relevance: 5,
     };
+    /*
+     * Cross-reference with auto text: `</#id>` (grammar.ebnf
+     * `auto_text_link = "</#", crossref_id, '>'`).
+     *
+     * This grammar had no rule for it and the run was not left alone: the id
+     * begins with `#`, so TAG below claimed it and coloured a cross-reference
+     * as a hashtag. Prism had the identical defect, fixed in
+     * carve-grammars#307, and tree-sitter-carve#245 found the same shape a
+     * layer down - a construct read as the wrong thing is worse than one read
+     * as nothing.
+     *
+     * It sits BEFORE TAG so the intent is on the page, though position already
+     * decides it: the `<` is earlier in the line than the `#`, and
+     * highlight.js takes the leftmost match.
+     *
+     * The id charset is the spec's `crossref_id` - any character that is not
+     * `>`, whitespace or a newline - because an automatic heading id PRESERVES
+     * Unicode and case, so `</#Cafe-Notes>` has to scope.
+     */
+    const CROSS_REF = {
+        className: 'link',
+        begin: /<\/#[^>\s]{1,512}>/,
+        relevance: 5,
+    };
     const TAG = {
         className: 'symbol',
         begin: /(?<![\w#])#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
         relevance: 5,
     };
     // Used only inside HEADING (carve-grammars#125), not TAG itself: a
-    // heading's own `contains` does not carry a cross-reference mode (this
-    // grammar has none at all), so without the extra exclusion this would
-    // wrongly claim the `#a` inside a heading cross-reference `</#a>`
+    // heading's own `contains` does not carry CROSS_REF, so without the extra
+    // exclusion this would wrongly claim the `#a` inside a heading
+    // cross-reference `</#a>`
     // (grammar.ebnf `auto_text_link = "</#", crossref_id, '>'`) and break
     // corpus 118 (`# A </#a>`), which pins the whole thing staying unscoped.
     const HEADING_TAG = {
@@ -1276,8 +1369,25 @@
         relevance: 5,
     };
 
-    // Line blocks: | text (for poetry) - must precede TABLE_ROW
-    const LINE_BLOCK = {
+    /*
+     * A PIPE-LED LINE THAT IS NOT A TABLE ROW, which is what this mode has
+     * always matched and not what it was called.
+     *
+     * It was named LINE_BLOCK, and the ledger cited it as the rule for
+     * `line_block`. It is not: a line block opens on a COLON FENCE
+     * (grammar.ebnf `line_block_open = colon_fence, space, "|"`), so `::: |` is
+     * the construct and DIV_BLOCK is the mode that scopes it. A bare `| verse`
+     * line at document level is neither - the engine renders it as a paragraph.
+     *
+     * The mode still earns its place, for the reason its old comment gave:
+     * TABLE_ROW closes on a line-final `|`, so on a single-pipe line it would
+     * open and run until some later line happened to end in one. This claims
+     * the line first and ends it at the newline. The rename is what stops the
+     * ledger reading a guard against that runaway as a construct's rule -
+     * evidence names a rule the vocabulary declares, and nothing checks that
+     * the named rule is about the construct.
+     */
+    const PIPE_LED_LINE = {
         className: 'string',
         begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\| /,
         end: /$/,
@@ -1365,7 +1475,7 @@
         HORIZONTAL_RULE,
         TABLE_SEPARATOR,
         TABLE_CONTINUATION,  // `+` rows - before TABLE_ROW, which needs a leading `|`
-        LINE_BLOCK,        // Must be before TABLE_ROW (both start with |)
+        PIPE_LED_LINE,     // Must be before TABLE_ROW (both start with |)
         TABLE_ROW,
         BLOCKQUOTE,
         CAPTION,
@@ -1381,6 +1491,7 @@
         INLINE_FOOTNOTE,   // ^[content] - before FOOTNOTE_REF ([^label])
         FOOTNOTE_REF,
         IMAGE,             // Must be before LINK (starts with !)
+        REFERENCE_IMAGE,   // ![alt][ref] and ![alt][] - before REFERENCE_LINK
         SPAN,              // Must be before LINK ([text]{attr} vs [text](url))
         REFERENCE_LINK,    // Must be before LINK ([text][ref] vs [text](url))
         CITATION,          // Must be after SPAN/REF_LINK (no (url)/[ref]/{attr} tail)
@@ -1401,10 +1512,12 @@
         CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
         MENTION,
+        CROSS_REF,         // </#id> - before TAG, which claims the `#id`
         TAG,
         HIGHLIGHT,         // =text=
         SUBSCRIPT,         // ,text,
         SUPERSCRIPT,       // ^text^
+        BOLD_ITALIC,       // the combined opener - before STRONG and EMPHASIS
         STRONG,
         EMPHASIS,          // /text/
         UNDERLINE,         // _text_
@@ -1417,6 +1530,7 @@
         FORCED_EMPHASIS,
         FORCED_UNDERLINE,
         FORCED_STRIKE,
+        FORCED_HIGHLIGHT,
         ATTRIBUTE_EMPTY,
         ATTRIBUTE,
         ESCAPE,

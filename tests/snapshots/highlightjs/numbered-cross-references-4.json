@@ -29,14 +29,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "scope": "symbol",
-    "text": "#tbl-r"
+    "scope": "link",
+    "text": "</#tbl-r>"
   },
   {
     "scope": null,
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]

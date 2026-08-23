@@ -1,11 +1,7 @@
 [
   {
-    "scope": null,
-    "text": "!"
-  },
-  {
     "scope": "link",
-    "text": "[moon][gone]"
+    "text": "![moon][gone]"
   },
   {
     "scope": null,

@@ -21,14 +21,14 @@
   },
   {
     "scope": null,
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "scope": "symbol",
-    "text": "#eq-emc"
+    "scope": "link",
+    "text": "</#eq-emc>"
   },
   {
     "scope": null,
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]
