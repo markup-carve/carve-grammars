@@ -214,6 +214,21 @@ for (const [id, surface] of Object.entries(SURFACES)) {
         commit: surface.local ? 'this repository' : commitOf(root),
         measured: new Date().toISOString().slice(0, 10),
         gapTicket: was.gapTicket || '',
+        /*
+         * A SENTENCE ABOUT THE WHOLE SURFACE, hand-written and carried over the
+         * way a reason and a ticket are.
+         *
+         * The rows say what each construct is; they cannot say why a surface
+         * needed no work to reach zero, or what a measured column does NOT
+         * cover. Both readings are ones a later reader gets wrong from the
+         * numbers alone - "0 GAP" reads as "somebody implemented nine things"
+         * when it can mean "the probe could not see nine folds", and a column
+         * of `inert` reads as "no payload leaks here" when the sweep that
+         * measures more than one sample per construct may say otherwise.
+         * Emitted only where one is written, so it is not an empty field on
+         * every surface.
+         */
+        ...(was.note ? { note: was.note } : {}),
         constructs: entries,
     };
 }

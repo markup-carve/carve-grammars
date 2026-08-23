@@ -1125,6 +1125,7 @@
       "commit": "this repository",
       "measured": "2026-08-23",
       "gapTicket": "#310",
+      "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -1871,9 +1872,10 @@
     },
     "vscode-carve": {
       "repo": "markup-carve/vscode-carve",
-      "commit": "203d5ef",
-      "measured": "2026-08-21",
+      "commit": "96cc9ea",
+      "measured": "2026-08-23",
       "gapTicket": "markup-carve/vscode-carve#150",
+      "note": "WHAT THE PAYLOAD COLUMN DOES NOT COVER. Every row here is measured, one sample per construct, the same instrument Prism and highlight.js are held to. The GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_VSCODE_CARVE) agrees on all eighteen payload rows and still reports one thing this column cannot: a code fence closes on a delimiter line of the OTHER fence character, so a tilde block holding a backtick line ends early and the rest of its body goes back to the mode list - 10 of 74 fence shapes, markup-carve/vscode-carve#152. The construct is recognized and the payloads it recognizes are inert; where the block ENDS is a different question, and the row cannot say it.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -1888,8 +1890,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code-blocks",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -1917,14 +1918,14 @@
           "payload": "parsed"
         },
         "line_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -1932,9 +1933,9 @@
           "payload": "parsed"
         },
         "admonition": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "div": {
           "status": "IMPLEMENTED",
@@ -1944,20 +1945,17 @@
         "comment_block": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
           "evidence": "comment.line.percent.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "raw_block": {
           "status": "IMPLEMENTED",
           "evidence": "markup.raw.block.fenced.code.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -1965,9 +1963,9 @@
           "payload": "parsed"
         },
         "footnote_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.footnote.definition.carve",
+          "payload": "parsed"
         },
         "abbreviation_definition": {
           "status": "IMPLEMENTED",
@@ -1975,9 +1973,9 @@
           "payload": "parsed"
         },
         "paragraph": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.underline.text.carve",
-          "payload": "parsed"
+          "status": "UNSUPPORTED",
+          "reason": "a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather than their absence - prose that matches no rule is already the default",
+          "payload": "none"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -1997,31 +1995,27 @@
         "raw_inline": {
           "status": "IMPLEMENTED",
           "evidence": "raw-inline",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "literal_inline": {
           "status": "IMPLEMENTED",
           "evidence": "inline-literal",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "inline-code",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
           "evidence": "autolink",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "auto_text_link": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.link.cross-reference.carve",
+          "payload": "parsed"
         },
         "inline_link": {
           "status": "IMPLEMENTED",
@@ -2034,9 +2028,9 @@
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.link.reference.carve",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -2049,26 +2043,24 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.image.reference.carve",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.image.reference.carve",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
           "evidence": "markup.other.math.inline.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "math_display": {
           "status": "IMPLEMENTED",
           "evidence": "markup.other.math.display.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -2106,19 +2098,19 @@
           "payload": "parsed"
         },
         "forced_strong": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "forced-emphasis",
+          "payload": "parsed"
         },
         "forced_underline": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "forced-emphasis",
+          "payload": "parsed"
         },
         "forced_strike": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "forced-emphasis",
+          "payload": "parsed"
         },
         "forced_super": {
           "status": "IMPLEMENTED",
@@ -2131,9 +2123,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "forced-emphasis",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -2168,8 +2160,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.critic.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -2228,15 +2219,13 @@
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "inline-comment",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "evidence": "trailing-comment",
+          "payload": "inert"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "comment.block.inline.carve",
-          "payload": "unmeasured",
-          "ticket": "markup-carve/vscode-carve#150"
+          "evidence": "braced-comment",
+          "payload": "inert"
         },
         "hard_break": {
           "status": "IMPLEMENTED",
