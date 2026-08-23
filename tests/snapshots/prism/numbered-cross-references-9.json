@@ -33,14 +33,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "type": "tag",
-    "text": "#eq-emc"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "eq-emc"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]

@@ -14,6 +14,9 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- TextMate and Prism scope a reference image (`![alt][ref]`) and a collapsed one (`![alt][]`) as images. Both fell through to the reference-LINK rule, which matched from the `[` and left the `!` as prose, so the alt text carried a link's scope (#307, #308).
+- Prism scopes a cross-reference with auto text (`</#id>`). It had no rule for one, and the id was not left alone: the tag rule claimed `#id`, so every crossref coloured as a hashtag, and a line carrying two of them coloured the run between them as emphasis (#308).
+- TextMate scopes `{=text=}` as a highlight. A rule for a CriticMarkup highlight, which Carve does not have, sat in front of the real one and claimed it under `markup.highlight.critic.carve` (#307).
 - Prism closes a fenced code block the way PART 9 §2 states it - the same fence character at a length at least the opener's, at the opener's own column. `~~~` closed by `~~~~` was no block at all, and a run indented past the opener ended one early, so in both cases the payload's markers coloured as markup (#312).
 - An unpartnered verbatim run is a code span to the end of its paragraph in Prism, as it is in the engine, instead of leaving the rest of the paragraph live markup. A closing run must also be the WHOLE run, so a span no longer ends on half of a wider one (#312).
 - A `{% ... %}` comment spanning a line break is one comment in Prism, and a `{# ... #}` one is in highlight.js. Both guards were line-bounded, so a comment written across a break coloured the markup inside it (#312).

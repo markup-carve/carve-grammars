@@ -205,18 +205,38 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee <"
+    "text": "\n\nSee "
   },
   {
-    "type": "italic",
-    "text": "/#fig-x> and </"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
   },
   {
-    "type": "tag",
-    "text": "#fig-x-a"
+    "type": "cross-ref",
+    "text": "fig-x"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": " and "
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "fig-x-a"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
   }
 ]

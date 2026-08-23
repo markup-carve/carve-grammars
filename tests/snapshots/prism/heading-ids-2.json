@@ -9,14 +9,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nJump to </"
+    "text": "\n\nJump to "
   },
   {
-    "type": "tag",
-    "text": "#getting-started"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "getting-started"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]

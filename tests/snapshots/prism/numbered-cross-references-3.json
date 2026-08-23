@@ -49,14 +49,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "type": "tag",
-    "text": "#fig-sun"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "fig-sun"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": "> for the colors.\n"
+    "text": " for the colors.\n"
   }
 ]

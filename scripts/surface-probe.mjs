@@ -393,6 +393,14 @@ export const SIGNATURES = {
     reference_definition: ['referencedefinition', 'linkreferencedefinition', 'refdef', 'referencedef'],
     footnote_definition: ['footnotedefinition', 'footdef', 'footnotedef', 'footnotecontent'],
     abbreviation_definition: ['abbreviation', 'abbr'],
+    /*
+     * `textcarve` is in WHOLE_NAME_ONLY below. Sublime names the default scope
+     * `text.carve` and that IS this construct's only name there; on the three
+     * TextMate surfaces the same letters are the TAIL of
+     * `markup.underline.text.carve`, the UNDERLINE rule, and they align to a
+     * word there - so the word-boundary rank cannot separate them and all
+     * three cited the underline rule as the evidence for a paragraph.
+     */
     paragraph: ['paragraph', 'textcarve'],
     block_attributes: ['blockattr', 'blockattribute', 'metaattributes', 'attributes'],
     blank_line: ['blankline', 'emptyline'],
@@ -401,7 +409,16 @@ export const SIGNATURES = {
     escaped_char: ['escape', 'backslashescape'],
     raw_inline: ['rawinline'],
     literal_inline: ['inlineliteral', 'literalinline', 'markuprawinlineliteral'],
-    code_span: ['codespan', 'inlinecode', 'markuprawcode', 'carvecode', 'codecarve', 'verbatim'],
+    /*
+     * `codeinline` is the TextMate family's own key for the INLINE rule, and it
+     * was missing: the only signature that reached that surface was
+     * `markuprawcode`, which is `markup.raw.code.carve` - the fenced code
+     * BLOCK's `contentName`. So this row cited the block's payload scope as the
+     * rule for the inline span, one construct over, while `code_inline` sat in
+     * the vocabulary unread. `markuprawcode` stays because a surface may really
+     * name its inline rule that way, but it now loses to the exact name.
+     */
+    code_span: ['codespan', 'inlinecode', 'codeinline', 'markuprawcode', 'carvecode', 'codecarve', 'verbatim'],
     autolink: ['autolink'],
     auto_text_link: ['autotextlink', 'crossref', 'crossreference'],
     inline_link: ['inlinelink', 'linkinline', 'carvelink', 'markupunderlinelinkcarve', 'link'],
@@ -409,7 +426,9 @@ export const SIGNATURES = {
     collapsed_reference_link: ['collapsedreferencelink', 'collapsedlink'],
     inline_span: ['span'],
     inline_image: ['inlineimage', 'image'],
-    reference_image: ['referenceimage', 'fullreferenceimage'],
+    // `imageref` is the TextMate family's spelling, the way `linkref` is on
+    // `reference_link` above.
+    reference_image: ['referenceimage', 'fullreferenceimage', 'imageref'],
     collapsed_reference_image: ['collapsedreferenceimage', 'collapsedimage'],
     math_inline: ['mathinline', 'inlinemath'],
     math_display: ['mathdisplay', 'blockmath', 'mathblock', 'displaymath'],
@@ -486,6 +505,24 @@ export const SIGNATURES = {
 };
 
 /*
+ * SIGNATURES THAT ONLY COUNT AS THE WHOLE NAME.
+ *
+ * A TextMate scope is a dotted PATH, and every scope in the Carve grammars ends
+ * in `.carve`. A signature that ends in `carve` therefore matches the TAIL of
+ * any scope whose second-to-last segment happens to be its first - and the tail
+ * of a path says nothing about what the whole path names. `textcarve` matched
+ * `markup.underline.text.carve` that way, at a word boundary, so the ranking
+ * added in carve-grammars#315 could not see it: three surfaces cited the
+ * UNDERLINE rule as the evidence that they scope a paragraph.
+ *
+ * A signature listed here is a hit only when it IS the whole name, which is the
+ * one reading that cannot be about a longer name's tail. It is deliberately a
+ * short list: the general case is that a compound scope really does name the
+ * construct one of its segments names.
+ */
+const WHOLE_NAME_ONLY = new Set(['textcarve']);
+
+/*
  * WHERE ONE SURFACE CALLS A FAMILY BY ONE NAME.
  *
  * Prism's grammar is a flat map of token names and it is deliberately coarser
@@ -505,6 +542,34 @@ const SIGNATURE_OVERRIDES = {
         heading: ['title'],
         unordered_list: ['list'],
         ordered_list: ['list'],
+        /*
+         * ONE `div` RULE FOR EVERY `:::` CONTAINER. Read off `prism/carve.js`:
+         * the opener is `(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*...)`,
+         * so the admonition's kind word and the two layout tokens are branches
+         * of one alternation, and `div-delimiter`'s `class-name` scopes all
+         * three the same way. `figure-group` is the one container this file
+         * splits out, because the clause makes a bare `::: figure` a different
+         * production.
+         */
+        admonition: ['div'],
+        line_block: ['div'],
+        local_hard_break_block: ['div'],
+        /*
+         * A RAW BLOCK IS A CODE FENCE WITH AN `=FORMAT` INFO STRING, and this
+         * grammar's `code-block` opener takes the info string as `[^\n]{0,512}`
+         * - so ```` ```=html ```` opens the same block ```` ```js ```` does,
+         * with the same inert body. highlight.js gave the raw block a rule of
+         * its own in carve-grammars#313; here it is the code fence's own
+         * shape and there is nothing separate to name.
+         */
+        raw_block: ['codeblock'],
+        /*
+         * ONE DEFINITION RULE for both definition shapes: the pattern is
+         * `\[[^\]]+\]: +\S+`, and a footnote label is `^a` - a bracketed run
+         * like any other - so `[^a]: note` is the same match as `[r]: /url`.
+         * The same fold this file makes for the four comment shapes.
+         */
+        footnote_definition: ['referencedefinition'],
         comment_block: ['comment'],
         comment_line: ['comment'],
         inline_comment: ['comment'],
@@ -516,11 +581,89 @@ const SIGNATURE_OVERRIDES = {
         autolink: ['url'],
         inline_link: ['url'],
         reference_link: ['url'],
-        reference_image: ['image'],
-        collapsed_reference_image: ['image'],
+        /*
+         * The `url` rule's reference alternative reads
+         * `\[text\]\[[^\]]{0,512}\]`, and the `{0,512}` accepts the EMPTY
+         * label - the same fold vim-carve and sublime-carve make, recorded in
+         * carve-grammars#318.
+         */
+        collapsed_reference_link: ['url'],
+        /*
+         * ... and the same fold one construct over: `reference-image` closes on
+         * `[^\]]{0,512}`, so the collapsed image is that rule with an empty
+         * label. Until carve-grammars#307 both image rows claimed a fold onto
+         * `image`, which needs a `](` and matches neither - two rows reading
+         * IMPLEMENTED on a rule that cannot fire for them.
+         */
+        collapsed_reference_image: ['referenceimage'],
         reference_footnote: ['footnote'],
         forced_highlight: ['highlight'],
         tag: ['tag'],
+    },
+    /*
+     * The TextMate grammar in this repository folds four `:::` containers into
+     * one `admonition` rule and both maths into one `math_inline` rule, and
+     * takes the empty reference label the way vim-carve and sublime-carve do
+     * (carve-grammars#318). Read off `textmate/carve.tmLanguage.json` rather
+     * than guessed:
+     *
+     *   `admonition` opens on a colon run followed by EITHER a layout token
+     *   (`|` or a backslash) OR a kind word, and both land in capture groups
+     *   named `entity.name.tag.admonition.carve` - so `::: |`, the local
+     *   hard-break block, `::: note` and a bare `:::` are branches of one
+     *   alternation.
+     *
+     *   `fenced_code` takes its info string as an optional `=` and then a word;
+     *   the optional `=` is there for the raw block and nothing else.
+     *
+     *   `math_inline` opens on one or two dollar signs, so the display form is
+     *   the same rule.
+     *
+     *   `link_ref` closes on a bracket pair whose body is starred, and the star
+     *   accepts the empty label.
+     *
+     *   `highlight` is two match rules in one repository entry, the first of
+     *   them the braced spelling.
+     */
+    textmate: {
+        div: ['admonition'],
+        line_block: ['admonition'],
+        local_hard_break_block: ['admonition'],
+        raw_block: ['fencedcode'],
+        math_display: ['mathinline'],
+        collapsed_reference_link: ['linkref'],
+        /* `image_ref` closes on the same starred bracket pair `link_ref` does. */
+        collapsed_reference_image: ['imageref'],
+        forced_highlight: ['highlight'],
+    },
+    /*
+     * The VS Code grammar makes the same three folds its sibling in this
+     * repository does, under its own spellings, and puts all four braced
+     * emphasis shapes in one `forced-emphasis` context the way sublime-carve
+     * does. Read off `syntaxes/carve.tmLanguage.json`:
+     *
+     *   the generic `divs` pattern takes the kind word as a run of
+     *   non-space, non-brace, non-bracket, non-quote characters, which is the
+     *   `|` and the layout backslash as readily as `note` - all three come back
+     *   `entity.name.type.div.carve`;
+     *
+     *   `meta.link.reference.carve` closes on a bracket pair whose body is
+     *   starred, the empty-label fold carve-grammars#318 recorded for
+     *   sublime-carve under this very scope name;
+     *
+     *   `forced-emphasis` holds the braced strong, emphasis, underline and
+     *   strike rules, whose SCOPES are the bare spellings' so a colour scheme
+     *   lights them up - which leaves the context name as their only
+     *   vocabulary.
+     */
+    'vscode-carve': {
+        admonition: ['div'],
+        line_block: ['div'],
+        local_hard_break_block: ['div'],
+        collapsed_reference_link: ['metalinkreference'],
+        forced_strong: ['forcedemphasis'],
+        forced_underline: ['forcedemphasis'],
+        forced_strike: ['forcedemphasis'],
     },
     /*
      * highlight.js calls the block-attribute rule `ATTRIBUTE`, singular. The
@@ -546,6 +689,50 @@ const SIGNATURE_OVERRIDES = {
         math_display: ['math'],
         comment_line: ['carvecomment'],
         comment_block: ['carvecomment'],
+        /*
+         * The fourth comment shape rides the same node: the braced comment
+         * parses to a `comment` whose `delimited` attr is what tells it from
+         * the other three, exactly as `block` tells the line comment from the
+         * fence. The map says so in its own note on the entry.
+         */
+        braced_comment: ['carvecomment'],
+        /*
+         * The local hard-break block is a `div` carrying `class="hardbreaks"`
+         * in the engine's own AST - it has no type of its own, unlike the line
+         * block, which does. So the bridge models it as the div it is.
+         */
+        local_hard_break_block: ['div'],
+        /*
+         * The combined bold-italic spelling is not a type either: the engine
+         * emits an `emphasis` mark INSIDE a `strong` mark, and the map carries
+         * both. The row cites the outer one, the way `math_inline` and
+         * `math_display` both cite `math`.
+         */
+        bold_italic: ['strong'],
+        /*
+         * A REFERENCE IS RESOLVED BEFORE THE BRIDGE SEES IT. All three link
+         * spellings arrive as a `link` and all three image spellings as an
+         * `image` - an unresolved one keeps `carveRef` / `carveRawRef` on the
+         * same node - so the reference forms have no separate type to name.
+         * `carveLinkRefDef` is the DEFINITION line, a different construct, and
+         * it was this row's evidence until now.
+         */
+        reference_link: ['link'],
+        collapsed_reference_link: ['link'],
+        reference_image: ['image'],
+        collapsed_reference_image: ['image'],
+        /*
+         * The braced emphasis spellings are the bare ones' marks: the braced
+         * and bare strong are both a `strong`, so one mark implements both
+         * constructs - the fold `INDISTINGUISHABLE` below cannot decide from a
+         * name, and tree-sitter-carve records the same thing for the same
+         * reason.
+         */
+        forced_emphasis: ['emphasis'],
+        forced_strong: ['strong'],
+        forced_underline: ['underline'],
+        forced_strike: ['strike'],
+        forced_highlight: ['highlight'],
     },
     /*
      * The Vim syntax names five constructs in its own spelling, and folds two
@@ -694,7 +881,9 @@ export function probe(id, root = undefined) {
         if (entry.norm === normalize(construct)) return 0;
         if (signatures.includes(entry.norm)) return 1;
 
-        return signatures.some((signature) => alignedHit(entry, signature)) ? 2 : 3;
+        return signatures.some((signature) => !WHOLE_NAME_ONLY.has(signature) && alignedHit(entry, signature))
+            ? 2
+            : 3;
     };
 
     /*
@@ -745,7 +934,9 @@ export function probe(id, root = undefined) {
          * that exact string.
          */
         const hit = vocab
-            .filter((entry) => signatures.some((signature) => entry.norm.includes(signature)))
+            .filter((entry) => signatures.some((signature) => (WHOLE_NAME_ONLY.has(signature)
+                ? entry.norm === signature
+                : entry.norm.includes(signature))))
             .sort((a, b) => rank(a, construct, signatures) - rank(b, construct, signatures)
                 || hidden(a) - hidden(b)
                 || a.raw.length - b.raw.length

@@ -41,14 +41,22 @@
   },
   {
     "type": "text",
-    "text": "\n\nSee </"
+    "text": "\n\nSee "
   },
   {
-    "type": "tag",
-    "text": "#lst-greet"
+    "type": "cross-ref>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref",
+    "text": "lst-greet"
+  },
+  {
+    "type": "cross-ref>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
-    "text": ">.\n"
+    "text": ".\n"
   }
 ]

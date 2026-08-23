@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-22",
+      "measured": "2026-08-23",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -64,14 +64,14 @@
           "payload": "parsed"
         },
         "line_block": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "admonition",
+          "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "admonition",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -84,9 +84,9 @@
           "payload": "parsed"
         },
         "div": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "admonition",
+          "payload": "parsed"
         },
         "comment_block": {
           "status": "IMPLEMENTED",
@@ -101,9 +101,10 @@
           "ticket": "#307"
         },
         "raw_block": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "fenced_code",
+          "payload": "unmeasured",
+          "ticket": "#307"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -121,9 +122,9 @@
           "payload": "parsed"
         },
         "paragraph": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.underline.text.carve",
-          "payload": "parsed"
+          "status": "UNSUPPORTED",
+          "reason": "a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather than their absence - prose that matches no rule is already the default",
+          "payload": "none"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -154,7 +155,7 @@
         },
         "code_span": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.raw.code.carve",
+          "evidence": "code_inline",
           "payload": "unmeasured",
           "ticket": "#307"
         },
@@ -180,9 +181,9 @@
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "link_ref",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -195,14 +196,14 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "image_ref",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "image_ref",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
@@ -211,9 +212,10 @@
           "ticket": "#307"
         },
         "math_display": {
-          "status": "GAP",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "math_inline",
+          "payload": "unmeasured",
+          "ticket": "#307"
         },
         "emphasis": {
           "status": "IMPLEMENTED",
@@ -276,9 +278,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "#307",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "highlight",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -373,13 +375,13 @@
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "inline_comment",
+          "evidence": "trailing_comment",
           "payload": "unmeasured",
           "ticket": "#307"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "comment.block.inline.carve",
+          "evidence": "braced_comment",
           "payload": "unmeasured",
           "ticket": "#307"
         },
@@ -398,7 +400,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-22",
+      "measured": "2026-08-23",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -442,14 +444,14 @@
           "payload": "parsed"
         },
         "line_block": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "div",
+          "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "div",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -457,9 +459,9 @@
           "payload": "parsed"
         },
         "admonition": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "div",
+          "payload": "parsed"
         },
         "div": {
           "status": "IMPLEMENTED",
@@ -477,9 +479,9 @@
           "payload": "inert"
         },
         "raw_block": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "code-block",
+          "payload": "inert"
         },
         "reference_definition": {
           "status": "IMPLEMENTED",
@@ -487,9 +489,9 @@
           "payload": "parsed"
         },
         "footnote_definition": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "reference-definition",
+          "payload": "parsed"
         },
         "abbreviation_definition": {
           "status": "IMPLEMENTED",
@@ -537,9 +539,9 @@
           "payload": "inert"
         },
         "auto_text_link": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "cross-ref",
+          "payload": "parsed"
         },
         "inline_link": {
           "status": "IMPLEMENTED",
@@ -552,9 +554,9 @@
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "#308",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "url",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -568,12 +570,12 @@
         },
         "reference_image": {
           "status": "IMPLEMENTED",
-          "evidence": "image",
+          "evidence": "reference-image",
           "payload": "parsed"
         },
         "collapsed_reference_image": {
           "status": "IMPLEMENTED",
-          "evidence": "image",
+          "evidence": "reference-image",
           "payload": "parsed"
         },
         "math_inline": {
@@ -766,7 +768,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-22",
+      "measured": "2026-08-23",
       "gapTicket": "#309",
       "constructs": {
         "heading": {
@@ -1134,7 +1136,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-22",
+      "measured": "2026-08-23",
       "gapTicket": "#310",
       "constructs": {
         "heading": {
@@ -1184,9 +1186,9 @@
           "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "div",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -1292,13 +1294,13 @@
         },
         "reference_link": {
           "status": "IMPLEMENTED",
-          "evidence": "carveLinkRefDef",
+          "evidence": "link",
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "link",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -1311,14 +1313,14 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "image",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "image",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
@@ -1343,9 +1345,9 @@
           "payload": "parsed"
         },
         "bold_italic": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "strong",
+          "payload": "parsed"
         },
         "underline": {
           "status": "IMPLEMENTED",
@@ -1363,24 +1365,24 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "UNMEASURED",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "forced_strong": {
-          "status": "UNMEASURED",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "strong",
+          "payload": "parsed"
         },
         "forced_underline": {
-          "status": "UNMEASURED",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "underline",
+          "payload": "parsed"
         },
         "forced_strike": {
-          "status": "UNMEASURED",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "strike",
+          "payload": "parsed"
         },
         "forced_super": {
           "status": "IMPLEMENTED",
@@ -1393,9 +1395,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "highlight",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -1449,43 +1451,43 @@
           "payload": "parsed"
         },
         "em_dash": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "en_dash": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "braced_en_dash": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "ellipsis": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "smart_quote": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "arrow": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "comparison": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "typographic_symbol": {
-          "status": "GAP",
-          "ticket": "#310",
+          "status": "UNSUPPORTED",
+          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
           "payload": "none"
         },
         "inline_comment": {
@@ -1495,9 +1497,10 @@
           "ticket": "#310"
         },
         "braced_comment": {
-          "status": "GAP",
-          "ticket": "#310",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carveComment",
+          "payload": "unmeasured",
+          "ticket": "#310"
         },
         "hard_break": {
           "status": "IMPLEMENTED",

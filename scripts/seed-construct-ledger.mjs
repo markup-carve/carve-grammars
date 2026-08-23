@@ -46,14 +46,45 @@ const UNSUPPORTED = {
         + 'line ending is where the next inline run continues',
     paragraph: 'a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather '
         + 'than their absence - prose that matches no rule is already the default',
+    /*
+     * The eight smart-typography constructs on the Tiptap bridge. The schema
+     * map's own `unmapped` section carries this sentence, and the reason is a
+     * property of the bridge rather than of the grammar: the engine RESOLVES
+     * `--` to an en dash before the bridge sees it, so a node modelling the
+     * result would reparse as the resolved character and lose the source
+     * spelling. Nothing is dropped - the character is text in the editor - but
+     * there is no type for the row to name.
+     */
+    smart_typography: 'smart-typography output is lossy on reparse, so the bridge does not model it '
+        + '(tiptap/schema-map.json, "unmapped"): the engine resolves the source spelling to the '
+        + 'resolved character, which the editor holds as text',
 };
+
+/** The eight constructs `smart_typography` above is the reason for. */
+const SMART_TYPOGRAPHY = [
+    'em_dash', 'en_dash', 'braced_en_dash', 'ellipsis', 'smart_quote', 'arrow', 'comparison',
+    'typographic_symbol',
+];
 
 /** Which surfaces may claim `UNSUPPORTED` for a construct, when the probe finds no name for it. */
 const UNSUPPORTED_ON = {
     blank_line: Object.keys(SURFACES),
     soft_break: Object.keys(SURFACES),
-    paragraph: ['prism', 'highlightjs', 'vim-carve'],
+    /*
+     * The three TextMate surfaces joined this list in carve-grammars#307. They
+     * had read IMPLEMENTED on the strength of `markup.underline.text.carve` -
+     * the UNDERLINE rule, whose scope path merely ENDS in the letters the
+     * `textcarve` signature is - so a construct none of them scopes was green
+     * on all three. The reason above is the one Prism and highlight.js already
+     * carry, and it is the same reason: these grammars scope markers.
+     */
+    paragraph: ['prism', 'highlightjs', 'vim-carve', 'textmate', 'vscode-carve', 'intellij-carve'],
+    ...Object.fromEntries(SMART_TYPOGRAPHY.map((name) => [name, ['tiptap']])),
 };
+
+/** The stated reason a construct may be UNSUPPORTED, by construct name. */
+const reasonFor = (name) => UNSUPPORTED[name]
+    || (SMART_TYPOGRAPHY.includes(name) ? UNSUPPORTED.smart_typography : undefined);
 
 /** The head of the surface's checkout, so a recorded row says what it was read from. */
 function commitOf(root) {
@@ -117,9 +148,9 @@ for (const [id, surface] of Object.entries(SURFACES)) {
              */
             entry.status = 'UNMEASURED';
             entry.ticket = old.ticket || was.gapTicket || '';
-        } else if (UNSUPPORTED[name] && (UNSUPPORTED_ON[name] || []).includes(id)) {
+        } else if (reasonFor(name) && (UNSUPPORTED_ON[name] || []).includes(id)) {
             entry.status = 'UNSUPPORTED';
-            entry.reason = old.reason || UNSUPPORTED[name];
+            entry.reason = old.reason || reasonFor(name);
         } else {
             entry.status = 'GAP';
             entry.ticket = old.ticket || was.gapTicket || '';

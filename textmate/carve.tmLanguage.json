@@ -197,7 +197,7 @@
       "end": "^\\s*\\1(?!%)[^\\n]*$",
       "name": "comment.block.carve"
     },
-    "inline_comment": {
+    "braced_comment": {
       "match": "\\{%[^\\n]*?%\\}",
       "name": "comment.block.inline.carve"
     },
@@ -865,13 +865,16 @@
           "include": "#code_inline"
         },
         {
-          "include": "#inline_comment"
+          "include": "#braced_comment"
         },
         {
           "include": "#trailing_comment"
         },
         {
           "include": "#image"
+        },
+        {
+          "include": "#image_ref"
         },
         {
           "include": "#citation"
@@ -899,9 +902,6 @@
         },
         {
           "include": "#critic_sub"
-        },
-        {
-          "include": "#critic_highlight"
         },
         {
           "include": "#critic_comment"
@@ -1066,6 +1066,30 @@
         }
       }
     },
+    "image_ref": {
+      "comment": "THE OTHER TWO IMAGE SPELLINGS. The spec gives an image the same three forms a link has (grammar.ebnf `reference_image`, `collapsed_reference_image`) and says only the leading `!` and the `<img src>` output differ. This file had a rule for the inline form alone, so `![alt][ref]` and `![alt][]` fell through to `#link_ref`, which matched from the `[` and scoped them as a reference LINK with the `!` left as prose - the alt text carrying `string.other.link.title.carve`. That is worse than leaving them unscoped: a reader is told the document holds a link where it holds an image. Tried BEFORE `#link_ref` for that reason. The label body is the same four-level unroll `#link_ref` and `#image` carry, and the second bracket's star is what makes the collapsed form the same rule as the full one - the fold vim-carve and sublime-carve make for the link (carve-grammars#318). The alt text may be EMPTY, so it has no `(?!\\])` guard: `![][r]` is an image with no alt text, where `[][r]` is not a link.",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.image.carve"
+        },
+        "2": {
+          "name": "string.other.image.alt.carve"
+        },
+        "3": {
+          "name": "punctuation.definition.image.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.link.carve"
+        },
+        "5": {
+          "name": "constant.other.reference.link.carve"
+        },
+        "6": {
+          "name": "punctuation.definition.link.carve"
+        }
+      }
+    },
     "link_ref": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
       "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
@@ -1139,10 +1163,6 @@
       "match": "\\{~[^}]*~>[^}]*~\\}",
       "name": "markup.changed.carve",
       "comment": "Editorial substitution requires the `~>` arrow; a `{~x~}` with no arrow is forced strikethrough (PART 9 S22)."
-    },
-    "critic_highlight": {
-      "match": "\\{=[^}]*=\\}",
-      "name": "markup.highlight.critic.carve"
     },
     "critic_comment": {
       "match": "\\{#[^}]*#\\}",
