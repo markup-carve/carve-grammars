@@ -39,7 +39,7 @@ const LEDGER = resolve(here, '..', 'tests', 'lib', 'construct-ledger.json');
  * a highlighting grammar has nothing to scope, and a structural grammar would be
  * adding a node every consumer then has to skip.
  */
-const UNSUPPORTED = {
+export const UNSUPPORTED = {
     blank_line: 'a blank line carries no marker of its own, so there is nothing for this surface to '
         + 'name; it separates blocks and is consumed by the rules around it',
     soft_break: 'a newline inside a paragraph carries no marker, so there is nothing to scope; the '
@@ -61,13 +61,13 @@ const UNSUPPORTED = {
 };
 
 /** The eight constructs `smart_typography` above is the reason for. */
-const SMART_TYPOGRAPHY = [
+export const SMART_TYPOGRAPHY = [
     'em_dash', 'en_dash', 'braced_en_dash', 'ellipsis', 'smart_quote', 'arrow', 'comparison',
     'typographic_symbol',
 ];
 
 /** Which surfaces may claim `UNSUPPORTED` for a construct, when the probe finds no name for it. */
-const UNSUPPORTED_ON = {
+export const UNSUPPORTED_ON = {
     blank_line: Object.keys(SURFACES),
     soft_break: Object.keys(SURFACES),
     /*
@@ -80,6 +80,24 @@ const UNSUPPORTED_ON = {
      */
     paragraph: ['prism', 'highlightjs', 'vim-carve', 'textmate', 'vscode-carve', 'intellij-carve'],
     ...Object.fromEntries(SMART_TYPOGRAPHY.map((name) => [name, ['tiptap']])),
+    /*
+     * emacs-carve joined the smart-quote row in carve-grammars#330, and it is
+     * NOT the bridge's reason: markup-carve/emacs-carve#23 ruled that the
+     * construct is every straight quote and apostrophe in prose, so a rule
+     * would paint the apostrophe of every contraction and cannot tell the quote
+     * an author means from the one inside a word.
+     *
+     * IT IS SPELLED OUT HERE BECAUSE THE LEDGER ALONE COULD NOT HOLD IT. This
+     * table is the seed's permission list, and a surface missing from it has
+     * its UNSUPPORTED row rewritten to GAP on the next re-measurement - reason
+     * and all - which is exactly what this file's own docblock promises never
+     * happens. Measured on carve-grammars#332: re-seeding emacs-carve reverted
+     * that ruling silently, and it would have shipped in the same commit that
+     * re-measured the surface. `tests/construct-ledger-test.js` now refuses a
+     * committed UNSUPPORTED row this table does not permit, so the two records
+     * cannot drift apart again.
+     */
+    smart_quote: ['tiptap', 'emacs-carve'],
 };
 
 /** The stated reason a construct may be UNSUPPORTED, by construct name. */

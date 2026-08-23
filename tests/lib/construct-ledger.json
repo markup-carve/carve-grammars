@@ -403,7 +403,8 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code-block",
-          "payload": "inert"
+          "payload": "leaks",
+          "payloadNote": "an UNTERMINATED fence runs its mode to end of document, so the body of a code block with no closer is live markup - 246 of 312 generated documents. Every CLOSED shape is inert. The trade is written up on `fencedVerbatim` in highlightjs/carve.js: a mode that opened on a fence with no closer ahead would, inside a container, swallow the container's own closer and every block after it, which the spec says explicitly does not happen."
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -771,7 +772,8 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "CODE_BLOCK",
-          "payload": "inert"
+          "payload": "leaks",
+          "payloadNote": "an UNTERMINATED fence runs its mode to end of document, so the body of a code block with no closer is live markup - 257 of 312 generated documents. Every CLOSED shape is inert. The trade is written up on `fencedVerbatim` in highlightjs/carve.js: a mode that opened on a fence with no closer ahead would, inside a container, swallow the container's own closer and every block after it, which the spec says explicitly does not happen."
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -3342,10 +3344,10 @@
     },
     "emacs-carve": {
       "repo": "markup-carve/emacs-carve",
-      "commit": "6b5c224",
-      "measured": "2026-08-21",
+      "commit": "db1796b",
+      "measured": "2026-08-23",
       "gapTicket": "markup-carve/emacs-carve#19",
-      "note": "THE PAYLOAD COLUMN WAS MEASURED AT b89ef5d, which is later than the `commit` above - that field is the reading of the recognition axis (carve-grammars#320). Measured by fontifying a buffer in batch Emacs and reading back the `face` text property. TWO ROWS THIS COLUMN CANNOT CARRY: the sweep reports `{% ... %}` leaking 147 of 469 generated documents and `{# ... #}` 87 of 286, and both are recorded GAP on the recognition axis - the rules exist (measured: the runs take font-lock-comment-face and carve-critic-face), and the row that should name the braced comment cites the delimited comment's own header while `inline_comment` cites it too. That is the recognition axis reading a rule under another construct's name, on markup-carve/emacs-carve#19; the leaks themselves are on markup-carve/emacs-carve#21 and are asserted in KNOWN_LEAKS whatever the recognition row says.",
+      "note": "BOTH AXES ARE NOW READ AT THE SAME COMMIT, db1796b, and the reading before this one described a checkout five merges old (carve-grammars#332). What moved, and why the old note is gone rather than amended: markup-carve/emacs-carve#24 named 28 constructs that had no row and fixed the ATTRIBUTION defect the old note was mostly about - the row for the braced comment cited the delimited comment's own header, so a rule that existed read as a gap under another construct's name. Both `braced_comment` and `editorial_comment` now read IMPLEMENTED, each citing its own rule, and the surface has no GAP rows left. The payload column is measured by fontifying a buffer in batch Emacs and reading back the `face` text property, through the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_EMACS_CARVE) rather than through one sample per construct - which is the distinction that mattered here, since the single-sample column called every row inert while six leaked. All six recorded leaks are closed: markup-carve/emacs-carve#28 bounded a verbatim payload by its paragraph rather than by its line, taking the two comment rows and the three code-span rows, and `comment_block` had already been inert since #24. markup-carve/emacs-carve#29 additionally closed the UNTERMINATED fence, which was a residual rather than a ledger row. ONE SHAPE STILL LEAKS AND IS NOT A LEDGER CELL: a comment whose continuation line opens a block is broken by the block rule, pinned in the RESIDUALS table of that file alongside prism and intellij-carve, because it needs a container model rather than a wider rule.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -3359,7 +3361,7 @@
         },
         "code_block": {
           "status": "IMPLEMENTED",
-          "evidence": "Skip headings inside fenced code by checking the code face.",
+          "evidence": "Code block, raw block, math block.",
           "payload": "inert"
         },
         "blockquote": {
@@ -3384,18 +3386,18 @@
         },
         "table": {
           "status": "IMPLEMENTED",
-          "evidence": "Syntax table",
+          "evidence": "Table.",
           "payload": "parsed"
         },
         "line_block": {
           "status": "IMPLEMENTED",
-          "evidence": "The payload excludes the newline in both branches.  An INLINE block may",
+          "evidence": "Line block: `::: |', the verse container that keeps its line structure.",
           "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Local hard-break block: `::: \\', a RECOGNIZED `:::' type whose body",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -3414,25 +3416,23 @@
         },
         "comment_block": {
           "status": "IMPLEMENTED",
-          "evidence": "Block comment fences %%% ... %%% and line comments %%.",
-          "payload": "leaks",
-          "ticket": "markup-carve/emacs-carve#21",
-          "payloadNote": "the `%%%` fence paints its two DELIMITER LINES and nothing between them, so the body is ordinary live markup. 223 of 312 generated documents"
+          "evidence": "Comment block: a `%%%' fence and everything between it and its closer.",
+          "payload": "inert"
         },
         "comment_line": {
           "status": "IMPLEMENTED",
-          "evidence": "Block comment fences %%% ... %%% and line comments %%.",
+          "evidence": "Comment line.",
           "payload": "inert"
         },
         "raw_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Code block, raw block, math block.",
+          "payload": "inert"
         },
         "reference_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Reference definition: [label]: url",
+          "payload": "parsed"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -3440,14 +3440,14 @@
           "payload": "parsed"
         },
         "abbreviation_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Abbreviation definition: *[TERM]: expansion",
+          "payload": "parsed"
         },
         "paragraph": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "AN UNTERMINATED FENCE REACHES THE END OF THE DOCUMENT, and a paragraph",
+          "payload": "parsed"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -3460,9 +3460,9 @@
           "payload": "none"
         },
         "escaped_char": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Escaped char: a backslash before an ASCII punctuation character.",
+          "payload": "parsed"
         },
         "raw_inline": {
           "status": "IMPLEMENTED",
@@ -3476,10 +3476,8 @@
         },
         "code_span": {
           "status": "IMPLEMENTED",
-          "evidence": "carve-code-face",
-          "payload": "leaks",
-          "ticket": "markup-carve/emacs-carve#21",
-          "payloadNote": "a run of two backticks is paired one character in, so a body reaching the seam is scoped; and an unpartnered run leaves the rest of the line live where the engine reads a span to the end of the paragraph. 47 of 234 generated documents"
+          "evidence": "Code span.",
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
@@ -3493,22 +3491,22 @@
         },
         "inline_link": {
           "status": "IMPLEMENTED",
-          "evidence": "carve-link-text-face",
+          "evidence": "Inline link.",
           "payload": "parsed"
         },
         "reference_link": {
           "status": "IMPLEMENTED",
-          "evidence": "Reference / link definition: [label]: url",
+          "evidence": "Reference link and collapsed reference link.",
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Reference link and collapsed reference link.",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
-          "evidence": "Inline code span: `code`",
+          "evidence": "Inline span.",
           "payload": "parsed"
         },
         "inline_image": {
@@ -3517,14 +3515,14 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Reference image and collapsed reference image.",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Reference image and collapsed reference image.",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
@@ -3547,9 +3545,9 @@
           "payload": "parsed"
         },
         "bold_italic": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carve-bold-italic-face",
+          "payload": "parsed"
         },
         "underline": {
           "status": "IMPLEMENTED",
@@ -3567,74 +3565,74 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Forced emphasis: {/.../}",
+          "payload": "parsed"
         },
         "forced_strong": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Forced strong: {*...*}",
+          "payload": "parsed"
         },
         "forced_underline": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Forced underline: {_..._}",
+          "payload": "parsed"
         },
         "forced_strike": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Forced strike: {~...~}",
+          "payload": "parsed"
         },
         "forced_super": {
           "status": "IMPLEMENTED",
-          "evidence": "Brace emphasis, superscript, and subscript: {^...^} {,...,} {*...*}",
+          "evidence": "Superscript: {^...^}",
           "payload": "parsed"
         },
         "forced_sub": {
           "status": "IMPLEMENTED",
-          "evidence": "Brace emphasis, superscript, and subscript: {^...^} {,...,} {*...*}",
+          "evidence": "Subscript: {,...,}",
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Forced highlight: {=...=}",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
-          "evidence": "Inline footnote reference: [^id]",
+          "evidence": "Footnote reference.",
           "payload": "parsed"
         },
         "inline_footnote": {
           "status": "IMPLEMENTED",
-          "evidence": "Inline footnote reference: [^id]",
+          "evidence": "Inline footnote.",
           "payload": "parsed"
         },
         "extension_inline": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Extension inline: :name[content]",
+          "payload": "parsed"
         },
         "addition": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Addition: {+ins+}",
+          "payload": "parsed"
         },
         "deletion": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Deletion: {-del-}",
+          "payload": "parsed"
         },
         "substitution": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Substitution: {~old~>new~}",
+          "payload": "parsed"
         },
         "editorial_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Editorial comment: {# comment #}",
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -3652,24 +3650,24 @@
           "payload": "parsed"
         },
         "em_dash": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Em dash, en dash.",
+          "payload": "parsed"
         },
         "en_dash": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Em dash, en dash.",
+          "payload": "parsed"
         },
         "braced_en_dash": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Braced en dash `{--}'.",
+          "payload": "parsed"
         },
         "ellipsis": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Ellipsis: ...",
+          "payload": "parsed"
         },
         "smart_quote": {
           "status": "UNSUPPORTED",
@@ -3677,34 +3675,34 @@
           "payload": "none"
         },
         "arrow": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Smart arrows: <--> <-- --> <=> <== ==>, and the deprecated <-> <- ->",
+          "payload": "parsed"
         },
         "comparison": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Comparison: != <= >=",
+          "payload": "parsed"
         },
         "typographic_symbol": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Typographic symbols: (c) (r) (tm) +-",
+          "payload": "parsed"
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
-          "evidence": "A DELIMITED INLINE COMMENT, `{% ... %}' (PART 9 S21a,",
+          "evidence": "Inline comment.",
           "payload": "inert"
         },
         "braced_comment": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Braced comment.",
+          "payload": "inert"
         },
         "hard_break": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Hard break: a backslash at the end of a line.",
+          "payload": "parsed"
         },
         "soft_break": {
           "status": "UNSUPPORTED",

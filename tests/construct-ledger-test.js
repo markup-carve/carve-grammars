@@ -37,6 +37,7 @@ import { tmpdir } from 'node:os';
 
 import { specConstructs } from '../scripts/spec-constructs.mjs';
 import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, vocabulary } from '../scripts/surface-probe.mjs';
+import { UNSUPPORTED_ON } from '../scripts/seed-construct-ledger.mjs';
 import { validate } from './lib/construct-ledger.js';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from './lib/payload-inertness.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
@@ -131,6 +132,46 @@ ok('every construct the probe cannot decide names a real sibling', () => {
         assert.ok(names.includes(construct), `INDISTINGUISHABLE names ${construct}, not a construct`);
         assert.ok(names.includes(sibling), `${construct}'s sibling ${sibling} is not a construct`);
     }
+});
+
+ok('every UNSUPPORTED row is one the re-measurement would write again', () => {
+    /*
+     * THE LEDGER AND THE SEED'S PERMISSION TABLE ARE TWO RECORDS OF ONE RULE.
+     *
+     * `UNSUPPORTED` is the only status written by hand, so
+     * `scripts/seed-construct-ledger.mjs` keeps a list of which surface may
+     * claim it for which construct. A row the ledger records and that table
+     * does not permit is not a harmless disagreement: the next re-measurement
+     * of that surface rewrites the row to GAP and DELETES the stated reason,
+     * which is precisely what the seed's own docblock promises never happens.
+     *
+     * It happened. carve-grammars#330 recorded emacs-carve/smart_quote
+     * UNSUPPORTED from the ruling in markup-carve/emacs-carve#23, and the
+     * permission table still said only the Tiptap bridge could claim any
+     * smart-typography construct. Re-seeding that surface in carve-grammars#332
+     * reverted the ruling silently, inside a commit whose whole purpose was to
+     * re-measure it - and nothing here could see it, because the ledger it
+     * produced was perfectly sound on its own terms.
+     *
+     * Written as "the table permits every committed row" rather than as an
+     * equality: a surface listed in the table with no such row yet is a
+     * decision waiting to be measured, not a defect.
+     */
+    const unwritable = [];
+    for (const [id, record] of Object.entries(ledger.surfaces)) {
+        for (const [name, entry] of Object.entries(record.constructs || {})) {
+            if (entry.status !== 'UNSUPPORTED') continue;
+            if ((UNSUPPORTED_ON[name] || []).includes(id)) continue;
+            unwritable.push(`${id}/${name}`);
+        }
+    }
+    assert.deepStrictEqual(
+        unwritable, [],
+        `these rows are UNSUPPORTED on the ledger and UNSUPPORTED_ON in scripts/seed-construct-ledger.mjs `
+            + `does not permit them: ${unwritable.join(', ')}. Re-seeding that surface would rewrite each `
+            + 'one to GAP and drop its stated reason. Add the surface to that table, with the reason the '
+            + 'ruling gives, rather than leaving the two records disagreeing.',
+    );
 });
 
 ok('an UNMEASURED row is a blind spot, not a gap wearing a hat', () => {
