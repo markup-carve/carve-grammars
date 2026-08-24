@@ -366,4 +366,70 @@ ok('every mark the loader can put on a carrier has a spelling to write back', ()
     }
 });
 
+/*
+ * A VALUE-LESS ATTRIBUTE IS A NAME, AND `{loose}` IS THE ONE THAT CARRIES
+ * MEANING (markup-carve/carve-grammars#344).
+ *
+ * `serializeAttributes` skipped every attribute whose value was `''`, which is
+ * how a boolean attribute reaches the wire. The run therefore came back `{}` or
+ * vanished, and for `{loose}` the document's LOOSENESS went with it - PART 9
+ * section 17 L7 exists because a definition list, and a one-item list, have no
+ * blank line that could spell it, so the boolean is the only spelling there is.
+ * A projection that drops it maps two different documents onto one tree.
+ *
+ * The definition list lost it one stage earlier as well: `convertDefinitionList`
+ * never read the node's own attribute run, and `definitionList` declared no
+ * slots to hold one, so the attrs were gone before a mount could drop them.
+ * Both paths below are therefore load-bearing rather than belt-and-braces.
+ *
+ * WHAT MAKES THIS ABLE TO FAIL, and why it is asserted on SOURCE. Each spelled
+ * case is paired with the same document UNSPELLED, and the pair is asserted to
+ * differ - so an implementation that wrote `{loose}` unconditionally, or that
+ * wrote it nowhere, fails on one half or the other. Reverting either half of
+ * the fix turns the spelled row into the unspelled one and the assertion reads
+ * `'- Note text.' != '{loose}\n- Note text.'`.
+ *
+ * An HTML comparison cannot stand in for this. tests/mounted-roundtrip-test.js
+ * compares rendered HTML with its attributes sorted, and what `{loose}` renders
+ * as depends entirely on which engine is pinned: the pinned build treats it as
+ * an ordinary attribute and emits `<ul loose="">`, while an engine that has
+ * consumed the boolean emits `<li><p>`. Asserting on the written source is the
+ * only form of this check that does not change meaning when the pin moves.
+ */
+ok('a value-less attribute comes back as its bare name, spelled or not', () => {
+    const SPELLED = [
+        ['{loose}\n- Note text.', '- Note text.'],
+        ['{loose}\n:: Term\n:  Definition.', ':: Term\n:  Definition.'],
+    ];
+    for (const [spelled, unspelled] of SPELLED) {
+        for (const [label, roundTrip] of [['plain', written], ['mounted', mounted]]) {
+            assert.strictEqual(
+                roundTrip(spelled), spelled,
+                `${label}: the spelled looseness was dropped, so the projection wrote a different document`,
+            );
+            assert.strictEqual(
+                roundTrip(unspelled), unspelled,
+                `${label}: an unspelled document gained a looseness its author never wrote`,
+            );
+            assert.notStrictEqual(
+                roundTrip(spelled), roundTrip(unspelled),
+                `${label}: the two documents came back identical, so the projection cannot tell them apart`,
+            );
+        }
+    }
+
+    // The same defect, on the family it also hit: the SEMANTIC ELEMENT NAME is
+    // authored value-less, so `[Ctrl+C]{kbd}` came back `[Ctrl+C]{}` and the
+    // element degraded to a plain span.
+    for (const source of ['[Ctrl+C]{kbd}', '{#i .c kbd k="v"}\n- a']) {
+        assert.strictEqual(written(source), source, 'the bare name was dropped from the run');
+        assert.strictEqual(mounted(source), source, 'the bare name was dropped while mounted');
+    }
+
+    // ONE NAME IS NOT WRITTEN BARE. A value-less `lang` is the padded language
+    // sigil, `{:}`, and writing it as `{lang}` would respell the document.
+    assert.strictEqual(written('{:}\n- a'), '{:}\n- a');
+    assert.strictEqual(mounted('{:}\n- a'), '{:}\n- a');
+});
+
 console.log(`\n${passed} passed`);

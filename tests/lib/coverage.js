@@ -35,6 +35,13 @@ const TIPTAP_COVERED = [
     'an-all-blank-raw-payload-still-emits-its-line',
     'an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open',
     'table-columns-carry-alignment-vertical-alignment-and-widths',
+    // A boolean attribute is written as its bare name again, so `{kbd}` and
+    // every other value-less attribute in this category survives the round
+    // trip. It was a FALLBACK on the ground that they are "not modeled";
+    // they were modeled all along and the SERIALIZER dropped them, which is
+    // the same line that took a list's `{loose}` with it
+    // (markup-carve/carve-grammars#344).
+    '95-boolean-attributes',
     '103-marker-line-nested-lists',
     '114-fence-opener-with-a-nested-list-body-inside-a-list-item',
     '168-headings-inside-containers-are-not-wrapped',
@@ -591,7 +598,6 @@ const TIPTAP_SKIP = new Map([
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
     ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
     ['92-strong-emphasis-starting-with-a-link', 'a link-in-emphasis edge case is lossy on reparse'],
-    ['95-boolean-attributes', 'boolean key/value attributes on spans are not modeled'],
     ['96-table-span-marker-in-first-column', 'rowspan/colspan filler cells are not reconstructed'],
     ['101-heading-marker-column-zero', 'an indented (literal) # is re-emitted column-0 as a heading on reparse'],
     ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],

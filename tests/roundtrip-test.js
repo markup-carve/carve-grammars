@@ -468,10 +468,36 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * along and the first edit is what starts writing the projection. The eight
  * that need no envelope are the variants whose blank run falls outside an item
  * or is not load-bearing.
+ *
+ * 348 -> 331 when a VALUE-LESS attribute started coming back as its bare name
+ * (markup-carve/carve-grammars#344). Attributed before it was lowered, and the
+ * direction matters: the enveloped list was dumped under both trees and diffed
+ * by name, and SEVENTEEN names left while ZERO entered. Every one of the
+ * seventeen is a document whose attribute run holds a name with no value, which
+ * is the one thing the fix changed:
+ *
+ * - the boolean-attribute categories themselves - `97-boolean-attributes` and
+ *   `-2`, `389-a-boolean-attribute-does-not-start-with-an-underscore` and `-3`
+ *   / `-4`, and `292-a-boolean-and-a-key-value-of-the-same-name-are-one-
+ *   attribute`;
+ * - the SEMANTIC ELEMENT NAME, which is authored value-less, so `[Ctrl+C]{kbd}`
+ *   came back `[Ctrl+C]{}` and the element degraded to a plain span:
+ *   `45-inline-extensions-2` / `-8` / `-9` / `-10`, `71-attribute-edge-cases-11`,
+ *   `293-a-semantic-name-renames-the-span-...-3` / `-4` and `299-...-3`;
+ * - `297-the-language-sigil-takes-no-padding`, where `[x]{: fr}` leaves a
+ *   boolean behind;
+ * - `407-one-consumed-boolean-spells-the-looseness-no-blank-line-can` and `-2`,
+ *   the category this fix exists for: `{loose}` is the only spelling PART 9
+ *   section 17 L7 leaves where no blank line can carry the looseness.
+ *
+ * The first two groups were already named as known losses in
+ * tests/mounted-roundtrip-test.js, one release before the ticket that made
+ * fixing them urgent - `{loose}` is the same defect on a construct where
+ * losing it changes what the document MEANS rather than how it is styled.
  */
 assert.strictEqual(
-    envelopedFiles.length, 348,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 348`,
+    envelopedFiles.length, 331,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 331`,
 );
 
 assert.strictEqual(

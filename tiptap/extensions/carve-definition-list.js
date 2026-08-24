@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /**
  * Carve Definition List extension for Tiptap
@@ -48,6 +49,13 @@ export const CarveDefinitionList = Node.create({
 
     // Allow multiple terms followed by multiple descriptions, repeating
     content: '(definitionTerm+ definitionDescription+)+',
+
+    // Tiptap keeps only attributes a node DECLARES, so without these the run
+    // the converter now carries is dropped again on the way through a mount
+    // (markup-carve/carve-grammars#344).
+    addAttributes() {
+        return attributeSlots();
+    },
 
     parseHTML() {
         return [{ tag: 'dl', priority: 51 }];
