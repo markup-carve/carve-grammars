@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![Apollo][nope]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

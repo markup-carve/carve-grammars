@@ -1,0 +1,26 @@
+[
+  {
+    "type": "reference-image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "reference-image",
+    "text": "Apollo"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>constant",
+    "text": "nope"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

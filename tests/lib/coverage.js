@@ -533,6 +533,15 @@ const TIPTAP_COVERED = [
     // The reference-image variant needs no envelope: its leading space is dropped
     // and the document reparses to the same tree.
     '411-a-lone-indented-image-is-a-paragraph-and-its-html-cannot-say-so',
+    // 412 is covered, and none of its four documents rides the source envelope.
+    // Every spelling is authored at column 0, so the paragraph projection has no
+    // leading space to lose and each document is written back byte-identical
+    // (modulo the trailing newline the writer always drops). The three resolved
+    // spellings - full `![Apollo][moon]`, collapsed `![Apollo][]` and inline
+    // `![Apollo](a.jpg)` - project to a paragraph plus, where one exists, a
+    // `carveLinkRefDef`; the unresolved `![Apollo][nope]` has no destination and
+    // projects to a paragraph of literal text. All four reparse to the same AST.
+    '412-a-lone-reference-image-at-column-0-in-every-spelling',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

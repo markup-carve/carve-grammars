@@ -510,6 +510,20 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * nowhere to keep the leading space, so the writer respells the line at column 0
  * and the source rides along. The reference-image variant `-2` needs no
  * envelope: its leading space is dropped and it reparses to the same AST.
+ *
+ * 332 HOLDS across the spec bump to carve 4bbc348. That bump adds four corpus
+ * documents - the whole of `412-a-lone-reference-image-at-column-0-in-every-
+ * spelling` - and NONE of them needs an envelope, so the number does not move.
+ * Measured the same way: the enveloped list was dumped under both pins and
+ * diffed by name, and it is identical, so the pre-existing corpus still
+ * contributes exactly 332 document for document.
+ *
+ * The reason is the one 411 exists to contrast with. 411's document carries ONE
+ * leading space that a paragraph has nowhere to keep; every 412 spelling is
+ * authored at column 0, so there is nothing for the projection to lose and each
+ * writes back byte-identical. That holds for the unresolved spelling too:
+ * `![Apollo][nope]` has no destination, stays literal text inside its
+ * paragraph, and the writer respells it exactly.
  */
 assert.strictEqual(
     envelopedFiles.length, 332,

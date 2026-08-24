@@ -1,0 +1,34 @@
+[
+  {
+    "type": "reference-image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "reference-image",
+    "text": "Apollo"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[Apollo]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " a.jpg"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
