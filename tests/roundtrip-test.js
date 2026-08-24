@@ -524,10 +524,39 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * writes back byte-identical. That holds for the unresolved spelling too:
  * `![Apollo][nope]` has no destination, stays literal text inside its
  * paragraph, and the writer respells it exactly.
+ *
+ * 332 -> 334 with the spec bump to carve 0dfcb85, attributed the same way
+ * before it was raised. That bump is purely additive - four corpus documents,
+ * `411-3` through `411-6`, and no pre-existing corpus file modified or deleted.
+ * The enveloped list was dumped under both pins and diffed by name: exactly TWO
+ * names are added and NONE is removed, so the 1394 documents that were already
+ * here still contribute exactly 332, document for document.
+ *
+ * The two additions are `411-3` and `411-5`, and they are 411's own shape moved
+ * inside a container - a lone image line indented PAST the content column its
+ * container establishes:
+ *
+ *     >   ![Apollo](a.jpg)
+ *
+ *     - t
+ *
+ *        ![Apollo](a.jpg)
+ *
+ * `411-3` sits two spaces past the quote's content column; `411-5` sits one
+ * space past the item's. The projection is right in both - a paragraph holding
+ * an image - but a paragraph has nowhere to keep the extra leading space, so
+ * the writer respells the line at the content column and the source rides
+ * along.
+ *
+ * The other two need no envelope, and they are the contrast the category is
+ * built on: `411-4` (`> ![Apollo](a.jpg)`) and `411-6` (the image at the item's
+ * two-space content column) are authored exactly AT their container's content
+ * column, so there is nothing for the projection to lose and each writes back
+ * byte-identical.
  */
 assert.strictEqual(
-    envelopedFiles.length, 332,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 332`,
+    envelopedFiles.length, 334,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 334`,
 );
 
 assert.strictEqual(

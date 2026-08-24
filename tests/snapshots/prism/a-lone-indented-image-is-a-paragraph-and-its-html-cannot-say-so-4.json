@@ -1,0 +1,14 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " ![Apollo](a.jpg)"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
