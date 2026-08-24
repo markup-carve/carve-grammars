@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "z\n"
+  }
+]

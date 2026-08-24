@@ -497,6 +497,28 @@ const TIPTAP_COVERED = [
     '404-a-caption-s-marker-separator-is-a-run-and-none-of-it-is-content',
     '405-a-quote-holding-a-captioned-block-indents-it-like-any-other-nested-block',
     '406-a-heading-s-marker-separator-is-a-run-and-none-of-it-is-content',
+
+    // Arrived with the bump to f7cf0b3 (carve 0.1.3-160). Measured the same
+    // way, one file at a time through the source-aware loader: all 11 files
+    // across these 4 categories convert to rich ProseMirror nodes - not one
+    // falls back to a whole-document `carveUnsupported` atom - and every one
+    // reparses to the same AST. `covered` is the only classification the
+    // round-trip test would accept for `408` in any case, because a `fallback`
+    // entry has to genuinely fail for at least one file and every file of
+    // `408` is written back faithfully.
+    //
+    // Five of the eleven ride the SOURCE ENVELOPE - both files of `407`, the
+    // second and third of `409`, and the fourth of `410`. That is a write-
+    // identity note rather than a coverage one, which is why they belong here
+    // and not in `fallback`. The shape is the one the four categories exist to
+    // pin: which blank line inside an item is CONSUMED by a construct and which
+    // one loosens the list. The projection keeps no record of who consumed a
+    // blank run, so writing the item back respells the run and the source rides
+    // along.
+    '407-one-consumed-boolean-spells-the-looseness-no-blank-line-can',
+    '408-the-writer-spells-looseness-only-where-a-blank-line-cannot',
+    '409-a-blank-line-loosens-an-item-only-when-a-paragraph-follows-it',
+    '410-a-footnote-continuation-survives-a-blank-run',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason

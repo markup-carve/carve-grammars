@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n  a\n\n  b\n"
+  }
+]

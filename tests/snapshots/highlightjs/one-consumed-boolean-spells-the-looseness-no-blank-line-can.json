@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{loose}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " Note text.\n"
+  }
+]

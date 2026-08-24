@@ -1,0 +1,50 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "div",
+    "text": "\n  a\n\n  b\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "z\n"
+  }
+]
