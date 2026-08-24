@@ -77,6 +77,18 @@ const fixed = [
     '03-links-8',
     '13-attributes-2',
     '307-an-empty-inline-note-is-literal-3',
+    // The value-less attribute (markup-carve/carve-grammars#344). Protected for
+    // the same reason as the three above: nothing fell back visibly, the run
+    // simply came back `{}` or gone. `407` is the sharpest of them - `{loose}`
+    // is the ONLY spelling PART 9 section 17 L7 leaves where no blank line can
+    // carry the looseness, so dropping it changes what the document MEANS
+    // rather than how it is styled.
+    '407-one-consumed-boolean-spells-the-looseness-no-blank-line-can',
+    '407-one-consumed-boolean-spells-the-looseness-no-blank-line-can-2',
+    '97-boolean-attributes',
+    '97-boolean-attributes-2',
+    '292-a-boolean-and-a-key-value-of-the-same-name-are-one-attribute',
+    '389-a-boolean-attribute-does-not-start-with-an-underscore',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
 // 177 -> 173 when the `@markup-carve/carve` pin moved onto the withdrawal of
@@ -370,5 +382,32 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // that pins where a blank line CANNOT spell looseness, and the remaining `409`,
 // `410` and `362` variants put their blank run outside an item or somewhere it
 // is not load-bearing.
-assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 240 -> 223 when a VALUE-LESS attribute started coming back as its bare name
+// (markup-carve/carve-grammars#344). Attributed before it was lowered, by the
+// same method: the changed list was dumped under both trees and diffed by name,
+// and SEVENTEEN names left while ZERO entered. The seventeen are exactly the
+// seventeen that leave the envelope ratchet in tests/roundtrip-test.js, and
+// every one of them is a document whose attribute run holds a name with no
+// value - the one thing the fix changed. The three groups are the boolean
+// categories themselves (`97` x2, `389` and `-3` / `-4`, `292`), the SEMANTIC
+// ELEMENT NAME (`45-inline-extensions-2` / `-8` / `-9` / `-10`,
+// `71-attribute-edge-cases-11`, `293-...-3` / `-4`, `299-...-3`) and the
+// padded language sigil's leftover (`297`), plus `407` and `-2`.
+//
+// TWO OF THOSE GROUPS WERE ALREADY NAMED HERE as known losses, one release
+// before the ticket that made fixing them urgent - see the `184 -> 198` note's
+// "Five are the semantic element name, which is authored as a value-less
+// attribute and dropped". `{loose}` is the same defect landing on a construct
+// where losing it changes what the document MEANS, which is what turned a
+// styling nuisance into a content loss. All of them are protected in the
+// `fixed` list above now, so the fix cannot silently come undone.
+//
+// It also settles the reading in the `407` entry above: the projection was said
+// to have "no slot for a boolean attribute on a list". Measured, the slot is
+// there and survives a mount - `bulletList` declares `carveKeyValues` and
+// `carveAttrOrder` - and it was the SERIALIZER that dropped it. The definition
+// list was the one with no slot, and it lost the run one stage earlier still,
+// in the converter.
+assert.strictEqual(changed.length, 223, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

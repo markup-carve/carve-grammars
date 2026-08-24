@@ -705,6 +705,10 @@ function convertAdmonition(node, ctx) {
 
 function convertDefinitionList(node, ctx) {
     const content = [];
+    // The list's OWN attribute run. Nothing read it, so `{loose}` above a
+    // definition list was gone before the projection was even mounted - the
+    // node arrived with no attrs at all (markup-carve/carve-grammars#344).
+    const attrs = convertAttrs(node.attrs);
     for (const item of node.items || []) {
         for (const term of item.terms || []) {
             content.push({ type: 'definitionTerm', content: convertInline(term, ctx) });
@@ -713,7 +717,7 @@ function convertDefinitionList(node, ctx) {
             content.push({ type: 'definitionDescription', content: convertBlocks(definition, ctx) });
         }
     }
-    return { type: 'definitionList', content };
+    return { type: 'definitionList', ...(attrs ? { attrs } : {}), content };
 }
 
 function inlinePlainText(nodes) {

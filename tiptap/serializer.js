@@ -666,6 +666,12 @@ export function serializeToCarve(doc) {
 
     function serializeDefinitionList(dl) {
         const children = dl.content || [];
+        // The list's own attribute run, on its own line above the first term.
+        // `{loose}` is the only spelling PART 9 section 17 L7 leaves for a
+        // definition list, since there is no blank line that could carry it
+        // (markup-carve/carve-grammars#344).
+        const dlAttrs = serializeAttributes(dl.attrs);
+        if (dlAttrs) output += dlAttrs + '\n';
         let afterDescription = false;
         children.forEach(child => {
             if (child.type === 'definitionTerm') {
@@ -1571,20 +1577,30 @@ function serializeAttributes(attrs, skip = [], placeholderClass = false) {
             ? ':' + value
             : pair('lang', value);
     };
+    // A VALUE-LESS attribute is written as its bare NAME. `{loose}` and `{kbd}`
+    // reach here as `''`, which used to be indistinguishable from "nothing to
+    // write" and was skipped - so the run came back `{}` or vanished entirely,
+    // and for `{loose}` the document's looseness went with it
+    // (markup-carve/carve-grammars#344). The engine's own writer agrees on the
+    // spelling: `carveToCarve('{k=""}')` is `{k}`, so bare is canonical rather
+    // than merely shorter.
     for (const [k, v] of Object.entries(attrs)) {
         if (ignore.has(k) || v == null || v === false) continue;
         if (k === 'lang') parts.push([k, language(v)]);
-        else if (v !== '') parts.push([k, pair(k, v)]);
+        else parts.push([k, v === '' ? k : pair(k, v)]);
     }
     // A node that keeps authored key/values in one declared attribute - Tiptap
     // needs every attribute declared, and `data-k=v` cannot be known upfront.
     if (attrs.carveKeyValues && typeof attrs.carveKeyValues === 'object') {
         for (const [k, v] of Object.entries(attrs.carveKeyValues)) {
-            if (v == null || v === false || (v === '' && k !== 'lang')) continue;
+            if (v == null || v === false) continue;
             if (k === 'lang') {
+                // A value-less `lang` is the PADDED SIGIL, `{:}`, which
+                // `language('')` already spells. It is the one name whose empty
+                // value is not written as the bare name.
                 if (attrs.lang == null) parts.push([k, language(v)]);
             } else {
-                parts.push([k, pair(k, v)]);
+                parts.push([k, v === '' ? k : pair(k, v)]);
             }
         }
     }

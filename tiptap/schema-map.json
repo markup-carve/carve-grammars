@@ -187,7 +187,12 @@
     },
     "definition_list": {
       "kind": "node",
-      "pm": "definitionList"
+      "pm": "definitionList",
+      "attrs": {
+        "carveKeyValues": "authored key/values, which is where `{loose}` lives: PART 9 section 17 L7 leaves no blank line that could spell a definition list's looseness, so the boolean is the only spelling",
+        "class": "authored classes",
+        "id": "authored id"
+      }
     },
     "definition_term": {
       "kind": "node",
