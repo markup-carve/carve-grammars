@@ -332,5 +332,43 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // other six categories the bump added move nothing here - they are block
 // EXTENT rulings or marker-separator rulings, and a separator run the parser
 // already consumed does not disturb the projection.
-assert.strictEqual(changed.length, 234, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// The bump to f7cf0b3 takes it to 240, measured the same way: the changed list
+// was dumped under both pins (ca9da8a and f7cf0b3) and diffed by name. SIX
+// names are added and NONE is removed, so the pre-existing population is still
+// exactly 234, document for document. The bump is purely additive - fourteen
+// documents, no corpus file modified or deleted - and the six are the same six
+// that move the envelope ratchet in tests/roundtrip-test.js.
+//
+//     407 one-consumed-boolean-spells-the-looseness     2
+//     409 a-blank-line-loosens-an-item-only-when-a-...  2  (-2, -3)
+//     410 a-footnote-continuation-survives-a-blank-run  1  (-4)
+//     362 an-unterminated-container-does-not-extend-... 1  (-5)
+//
+// They are one family, and it is a FIFTH one: ITEM LOOSENESS, and which blank
+// line spells it. Each was re-rendered under the stripped projection rather
+// than reasoned about:
+//
+//   - `407` is the boolean `{loose}` itself. The projection has no slot for a
+//     boolean attribute on a list, so it is dropped and the looseness goes with
+//     it: `<li><p>Note text.</p></li>` comes back `<li>Note text.</li>`, and
+//     the definition-list variant loses its `loose=""` outright.
+//
+//   - `409-2`, `409-3` and `362-5` move the other way. The projection stores an
+//     item's BLOCKS, not the record of which construct consumed a blank run, so
+//     writing the item back respells the run and a tight item comes back loose:
+//     `<li>x <blockquote>...` becomes `<li><p>x</p> <blockquote>...`.
+//
+//   - `410-4` is the largest, and it is a modeling gap rather than a spelling
+//     one: a footnote definition whose body opens a LIST on the marker line has
+//     no projection at all, so `[^1]: - a` is written back as paragraph text
+//     and the whole endnote section disappears. Same shape as the marker-line
+//     comment fence already named above, and the envelope is what keeps the
+//     document from being silently reinterpreted.
+//
+// The other eight documents the bump adds move nothing here: `408` is the pair
+// that pins where a blank line CANNOT spell looseness, and the remaining `409`,
+// `410` and `362` variants put their blank run outside an item or somewhere it
+// is not load-bearing.
+assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

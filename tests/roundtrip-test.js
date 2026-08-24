@@ -442,10 +442,36 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * to whatever the run reports: the count is a claim about which documents the
  * projection can carry losslessly, and a count that follows the engine asserts
  * nothing at all.
+ *
+ * 342 -> 348 with the spec bump to carve f7cf0b3, attributed the same way
+ * before it was raised. The enveloped list was dumped under BOTH pins and
+ * diffed by name: six names are added, NONE is removed, and no pre-existing
+ * document changed its round-trip verdict either - so the 1370 documents that
+ * were already here still contribute exactly 342, document for document.
+ *
+ * That bump is purely additive: fourteen documents, no corpus file modified or
+ * deleted. Eleven of the fourteen are the four new categories `407` through
+ * `410`, and three extend the existing `362`. Six of the fourteen need the
+ * envelope: both files of `407`, `409-2`, `409-3`, `410-4`, and `362-5`.
+ *
+ * All six are the same shape, which is the shape the new categories exist to
+ * pin - WHICH blank line inside an item a construct consumed, and therefore
+ * whether the list is loose:
+ *
+ *     - a
+ *
+ *       b
+ *
+ * The projection stores the item's blocks, not the record of who consumed a
+ * blank run, so writing the item back respells the run and the distinction the
+ * document exists to record is not write-identical. The source therefore rides
+ * along and the first edit is what starts writing the projection. The eight
+ * that need no envelope are the variants whose blank run falls outside an item
+ * or is not load-bearing.
  */
 assert.strictEqual(
-    envelopedFiles.length, 342,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 342`,
+    envelopedFiles.length, 348,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 348`,
 );
 
 assert.strictEqual(

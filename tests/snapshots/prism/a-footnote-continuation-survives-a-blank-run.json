@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "See"
+  },
+  {
+    "type": "footnote",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[^1]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " a"
+  },
+  {
+    "type": "text",
+    "text": "\n\n\n    b\n"
+  }
+]
