@@ -494,10 +494,26 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * tests/mounted-roundtrip-test.js, one release before the ticket that made
  * fixing them urgent - `{loose}` is the same defect on a construct where
  * losing it changes what the document MEANS rather than how it is styled.
+ *
+ * 331 -> 332 with the spec bump to carve be6e7cc, attributed the same way
+ * before it was raised. The enveloped list was dumped under both pins and
+ * diffed by name: exactly ONE name is added and NONE is removed, so the
+ * pre-existing corpus still contributes exactly 331, document for document.
+ *
+ * The one addition is `411-a-lone-indented-image-is-a-paragraph-and-its-html-
+ * cannot-say-so`, the first of the two documents markup-carve/carve#1663 added.
+ * Its source is one line carrying ONE leading space:
+ *
+ *      ![Apollo](a.jpg)
+ *
+ * The projection is right - a paragraph holding an image - but a paragraph has
+ * nowhere to keep the leading space, so the writer respells the line at column 0
+ * and the source rides along. The reference-image variant `-2` needs no
+ * envelope: its leading space is dropped and it reparses to the same AST.
  */
 assert.strictEqual(
-    envelopedFiles.length, 331,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 331`,
+    envelopedFiles.length, 332,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 332`,
 );
 
 assert.strictEqual(
