@@ -526,6 +526,13 @@ const TIPTAP_COVERED = [
     '408-the-writer-spells-looseness-only-where-a-blank-line-cannot',
     '409-a-blank-line-loosens-an-item-only-when-a-paragraph-follows-it',
     '410-a-footnote-continuation-survives-a-blank-run',
+    // 411 is covered, and one of its two documents rides the source envelope.
+    // The structured projection is right - a paragraph holding an image - but the
+    // authored line carries ONE leading space, and a paragraph has nowhere to keep
+    // it, so the writer respells the line at column 0 and the source rides along.
+    // The reference-image variant needs no envelope: its leading space is dropped
+    // and the document reparses to the same tree.
+    '411-a-lone-indented-image-is-a-paragraph-and-its-html-cannot-say-so',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason
