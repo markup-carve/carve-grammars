@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": " item\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  :::note"
-  },
-  {
-    "scope": null,
-    "text": "\n  body\n"
+    "text": " item\n  :::note\n  body\n"
   },
   {
     "scope": "keyword",

@@ -793,7 +793,7 @@
         // inside a div body (headings - corpus 170, nested lists, blockquotes)
         // while suppressing only the one construct this fix targets.
         'div': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
@@ -811,12 +811,12 @@
                 // as a table row. Leaving nothing ungrabbed on a delimiter
                 // line closes that gap.
                 'div-delimiter': {
-                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/m,
+                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/m,
                     inside: {
                         'punctuation': /:{3,}/,
                         'string': /"[^"\n]*"/,
                         'symbol': /\[[^\]\n]*\]/,
-                        'class-name': /[a-zA-Z_][\w-]*|\||\\/,
+                        'class-name': /[a-zA-Z_][\w-]*|\||\\|>/,
                     },
                 },
             },
