@@ -1069,8 +1069,11 @@
         relevance: 10,
     };
 
-    // Div block: ::: with optional type, "title", [label], or the | / \
-    // layout tokens, through its matching closer. Strict opener shapes only -
+    // Div block: ::: with optional type, "title", [label], or the | / \ / >
+    // sigil tokens, through its matching closer. `::: >` is the fenced block
+    // quote (markup-carve/carve#1718), the third member of that family: like
+    // `::: |` it takes no identifier, so it reaches no `::: name` rule and was
+    // scoped as nothing at all before it was listed here. Strict opener shapes only -
     // unquoted or curly-quoted trailing text is a paragraph, not a fence, and
     // must not highlight.
     //
@@ -1092,7 +1095,7 @@
     // suppressed.
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])?[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -1185,7 +1188,7 @@
     // trades away.
     const DIV_BLOCK_IN_GROUP = {
         ...DIV_BLOCK,
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?:[ \t]*(?:\||\\)|[ \t]*[a-zA-Z_][\w-]*(?:[ \t]+"[^"\n]*")?(?:[ \t]+\[[^\]\n]*\])?|[ \t]*\[[^\]\n]*\])[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])[ \t]*$/,
         'on:begin': pushFence('_groupDivFences'),
         'on:end': popFence('_groupDivFences'),
     };

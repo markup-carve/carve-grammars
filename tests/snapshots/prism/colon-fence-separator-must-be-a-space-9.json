@@ -1,18 +1,14 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
+    "type": "text",
+    "text": "::: \t"
   },
   {
-    "type": "div>div-delimiter",
-    "text": " \t"
-  },
-  {
-    "type": "div>div-delimiter>class-name",
+    "type": "hard-break",
     "text": "\\"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\nx\n"
   },
   {

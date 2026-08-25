@@ -1,11 +1,7 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: \t|"
-  },
-  {
     "scope": null,
-    "text": "\nx\n"
+    "text": "::: \t|\nx\n"
   },
   {
     "scope": "keyword",

@@ -1,11 +1,7 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: note\t\"Title\""
-  },
-  {
     "scope": null,
-    "text": "\nx\n"
+    "text": "::: note\t\"Title\"\nx\n"
   },
   {
     "scope": "keyword",

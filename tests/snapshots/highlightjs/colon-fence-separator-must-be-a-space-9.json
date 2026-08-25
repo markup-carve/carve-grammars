@@ -1,7 +1,11 @@
 [
   {
-    "scope": "keyword",
-    "text": "::: \t\\"
+    "scope": null,
+    "text": "::: \t"
+  },
+  {
+    "scope": "meta",
+    "text": "\\"
   },
   {
     "scope": null,

@@ -1,18 +1,6 @@
 [
   {
     "type": "text",
-    "text": "text\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "div>div-delimiter>class-name",
-    "text": "note"
-  },
-  {
-    "type": "text",
-    "text": "\nbody\n"
+    "text": "text\n:::note\nbody\n"
   }
 ]

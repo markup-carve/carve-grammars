@@ -1,19 +1,7 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "div>div-delimiter",
-    "text": " \t"
-  },
-  {
-    "type": "div>div-delimiter>symbol",
-    "text": "[First]"
-  },
-  {
-    "type": "div",
-    "text": "\nx\n"
+    "type": "text",
+    "text": "::: \t[First]\nx\n"
   },
   {
     "type": "div>div-delimiter>punctuation",

@@ -1,11 +1,7 @@
 [
   {
-    "scope": "keyword",
-    "text": ":::\t[First]"
-  },
-  {
     "scope": null,
-    "text": "\nx\n"
+    "text": ":::\t[First]\nx\n"
   },
   {
     "scope": "keyword",

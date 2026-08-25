@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "text\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::note"
-  },
-  {
-    "scope": null,
-    "text": "\nbody\n"
+    "text": "text\n:::note\nbody\n"
   }
 ]
