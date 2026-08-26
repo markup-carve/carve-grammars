@@ -122,7 +122,6 @@ const TIPTAP_COVERED = [
     '247-a-continuation-marker-after-a-blank-line-in-the-item',
     '226-a-definition-attached-by-a-continuation-marker-is-collected-and-the-item-keeps-no-trace',
     '224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do',
-    '220-a-definition-past-a-footnote-body-s-column-is-the-body-s-own-text',
     '221-a-heading-reference-folds-unicode-normalization-but-not-compatibility',
     // Promoted by carrying the LIST MARKER's own metadata in this change: the
     // marker attribute (`-{.c} item`), the marker style (`a.`, `iv)`, bare `.`)
@@ -146,7 +145,6 @@ const TIPTAP_COVERED = [
     // Promoted by carve-grammars#121: `carveFootnoteDefinition` now serializes
     // every content block (not just a lead paragraph), reusing the same
     // `serializeListItem` pattern of a standalone, indented block per line.
-    '218-a-footnote-body-s-own-column-is-two-and-a-third-column-is-its-text',
     '203-a-footnote-body-holds-blocks-and-they-render-where-they-were-written',
     '204-a-heading-in-a-footnote-body-takes-an-id-but-no-section-wrapper',
     '205-an-attribute-line-inside-a-footnote-body-attaches-inside-it',
@@ -542,6 +540,28 @@ const TIPTAP_COVERED = [
     // `carveLinkRefDef`; the unresolved `![Apollo][nope]` has no destination and
     // projects to a paragraph of literal text. All four reparse to the same AST.
     '412-a-lone-reference-image-at-column-0-in-every-spelling',
+
+    // Carve main through 1774be2. Initially classified as structured and then
+    // measured by the round-trip gate; any category that needs the whole-source
+    // envelope is moved to TIPTAP_SKIP below with the observed reason.
+    'a-definition-body-opener-at-or-past-its-column-stays-structural',
+    'a-definition-body-s-separator-width-sets-its-content-column',
+    'a-definition-list-inside-a-footnote-body-carries-its-authored-base',
+    'a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base',
+    'a-fenced-block-quote-is-the-block-quote-written-another-way',
+    'a-floating-attribute-does-not-widen-a-list-item-s-content-column',
+    'a-footnote-body-s-authored-base-can-open-a-table-past-column-two',
+    'a-recognized-opener-in-a-body-needs-no-blank-line-above-it',
+    'a-sigil-fence-takes-its-attribute-line',
+    'an-authored-base-carries-opaque-payload-captions-and-nested-metadata',
+    'an-invisible-fenced-block-is-not-a-list-paragraph',
+    'an-item-s-attribute-block-moves-its-content-column-its-checkbox-does-not',
+    'an-ordered-item-s-separator-width-sets-its-content-column',
+    'an-unclosed-bare-colon-fence-opens-a-div',
+    'below-a-definition-body-s-column-the-body-ends',
+    'one-authored-base-rule-reaches-a-definition-nested-in-a-list-item',
+    'text-block-alignment-renders-the-css-declaration',
+    'the-continuation-marker-attaches-one-block-in-every-container',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason
@@ -552,7 +572,6 @@ const TIPTAP_SKIP = new Map([
     ['374-a-collected-definition-closes-the-item-paragraph', 'collected definitions are not represented in the structured editor tree, so all four forms require the source envelope'],
     ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
     ['268-trailing-whitespace-on-a-content-line-is-dropped', 'some whitespace-sensitive forms reparse differently and others contain unsupported literal-inline or line-block nodes'],
-    ['269-a-definition-body-continuation-indented-past-its-column-is-lazy-text', 'the definition continuation indentation is normalized and reparses to a different AST'],
     ['272-an-autolink-body-admits-non-ascii-and-excludes-format-characters', 'one variant produces unsupported smart punctuation and another reparses differently'],
     ['273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not', 'the whitespace-sensitive attribute form is normalized and reparses to a different AST'],
     ['274-a-quoted-attribute-value-stops-at-the-newline', 'the unterminated quoted attribute forms are respelled and reparse to a different AST'],

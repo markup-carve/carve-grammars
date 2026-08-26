@@ -399,7 +399,7 @@ ok('every mark the loader can put on a carrier has a spelling to write back', ()
 ok('a value-less attribute comes back as its bare name, spelled or not', () => {
     const SPELLED = [
         ['{loose}\n- Note text.', '- Note text.'],
-        ['{loose}\n:: Term\n:  Definition.', ':: Term\n:  Definition.'],
+        ['{loose}\n:: Term\n: Definition.', ':: Term\n: Definition.'],
     ];
     for (const [spelled, unspelled] of SPELLED) {
         for (const [label, roundTrip] of [['plain', written], ['mounted', mounted]]) {

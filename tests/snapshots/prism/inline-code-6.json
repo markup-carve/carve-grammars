@@ -1,11 +1,7 @@
 [
   {
-    "type": "text",
-    "text": "*a "
-  },
-  {
-    "type": "code",
-    "text": "` b*"
+    "type": "bold",
+    "text": "*a ` b*"
   },
   {
     "type": "text",

@@ -5,11 +5,27 @@
   },
   {
     "type": "text",
-    "text": "{.123} and "
+    "text": "{.123} "
   },
   {
     "type": "span",
     "text": "[y]"
+  },
+  {
+    "type": "text",
+    "text": "{"
+  },
+  {
+    "type": "tag",
+    "text": "#7-x"
+  },
+  {
+    "type": "text",
+    "text": "} and "
+  },
+  {
+    "type": "span",
+    "text": "[z]"
   },
   {
     "type": "text",

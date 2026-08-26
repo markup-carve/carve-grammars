@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{align=right style=\"color: red\"}"
+  },
+  {
+    "scope": null,
+    "text": "\nAligned text.\n"
+  }
+]

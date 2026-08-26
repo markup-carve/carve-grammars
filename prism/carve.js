@@ -193,6 +193,8 @@
         },
     };
 
+    var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
+
     // Shared inline emphasis/markup, referenced from block tokens that contain
     // running text (headings, list items, table cells, quotes).
     var inline = {
@@ -310,6 +312,21 @@
             alias: 'important',
         },
     };
+
+    // A delimited comment is an inline leaf, so it does not split the strong
+    // or emphasis span that contains it. `greedy` lets the outer token reclaim
+    // a comment Prism found first; the nested rule then restores the comment
+    // scope without interpreting its hidden payload.
+    for (var emphasisName of [
+        'bold-italic', 'forced-bold', 'forced-italic', 'forced-underline',
+        'forced-strike', 'bold', 'italic', 'underline', 'strike', 'highlight',
+        'superscript', 'subscript',
+    ]) {
+        inline[emphasisName].greedy = true;
+        inline[emphasisName].inside = {
+            'comment': { pattern: bracedCommentPattern, greedy: true },
+        };
+    }
 
     // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
     // Reused as a nested rule inside 'definition-list' below - not registered
@@ -492,7 +509,7 @@
                 // `\n(?![ \t]*\n)` are disjoint, so each character is still
                 // matched by exactly one branch and an unclosed `{%` still
                 // gives up at the next `%` rather than scanning ahead.
-                pattern: /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/,
+                pattern: bracedCommentPattern,
                 greedy: true,
             },
             {

@@ -1,14 +1,18 @@
 [
   {
-    "type": "text",
+    "type": "bold",
     "text": "*bo"
   },
   {
-    "type": "comment",
+    "type": "bold>comment",
     "text": "{% c %}"
   },
   {
+    "type": "bold",
+    "text": "ld*"
+  },
+  {
     "type": "text",
-    "text": "ld* text\n"
+    "text": " text\n"
   }
 ]

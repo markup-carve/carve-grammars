@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^outer]: intro"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "     [^inner]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n\n     see"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^inner]"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^outer]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

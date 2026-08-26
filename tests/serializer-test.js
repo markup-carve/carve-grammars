@@ -388,15 +388,15 @@ check('table cell escapes a literal pipe',
     ] }),
     '|= a \\| b |= c |\n| 1 | 2 |');
 
-// Definition list: `:: term` then `:  def` on the next line (no blank between).
-check('definition list uses :: term / :  def',
+// Definition list: `:: term` then canonical `: def` on the next line.
+check('definition list uses :: term / : def',
     doc({ type: 'definitionList', content: [
         { type: 'definitionTerm', content: [text('Term A')] },
         { type: 'definitionDescription', content: [para(text('Def A.'))] },
         { type: 'definitionTerm', content: [text('Term B')] },
         { type: 'definitionDescription', content: [para(text('Def B.'))] },
     ] }),
-    ':: Term A\n:  Def A.\n\n:: Term B\n:  Def B.');
+    ':: Term A\n: Def A.\n\n:: Term B\n: Def B.');
 
 // Bare == and ,, are literal in Carve (highlight is {= =}, sub {, ,}); do not escape.
 check('literal == and ,, are not escaped',

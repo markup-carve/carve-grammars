@@ -1,30 +1,14 @@
 [
   {
     "type": "text",
-    "text": "See *"
+    "text": "See "
   },
   {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url",
-    "text": "the docs"
-  },
-  {
-    "type": "url>punctuation",
-    "text": "]("
-  },
-  {
-    "type": "url",
-    "text": "url"
-  },
-  {
-    "type": "url>punctuation",
-    "text": ")"
+    "type": "bold",
+    "text": "*[the docs](url) for more*"
   },
   {
     "type": "text",
-    "text": " for more* info.\n"
+    "text": " info.\n"
   }
 ]

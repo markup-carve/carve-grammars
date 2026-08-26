@@ -1202,6 +1202,15 @@
         end: /%\}/,
         relevance: 5,
     };
+    // Comments are inline leaves. Keep the containing emphasis mode open and
+    // scope the hidden run as a comment inside it.
+    for (const mode of [
+        BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, STRIKETHROUGH,
+        HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, FORCED_STRONG, FORCED_EMPHASIS,
+        FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT,
+    ]) {
+        mode.contains = [DELIMITED_COMMENT, ...(mode.contains || [])];
+    }
     const LINE_COMMENT = {
         className: 'comment',
         begin: /(?:^|(?<=\s))%%(?!%)/,

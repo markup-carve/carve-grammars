@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "before\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

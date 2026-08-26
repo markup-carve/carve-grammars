@@ -1314,18 +1314,24 @@
       }
     },
     "strong": {
-      "match": "(?<![\\w*])(\\*)(?=\\S)([^*\\n]+?)(?<=\\S)(\\*)(?![\\w*])",
-      "captures": {
+      "begin": "(?<![\\w*])(\\*)(?=\\S)",
+      "end": "(?<=\\S)(\\*)(?![\\w*])",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.bold.carve"
-        },
-        "2": {
-          "name": "markup.bold.carve"
-        },
-        "3": {
+        }
+      },
+      "endCaptures": {
+        "1": {
           "name": "punctuation.definition.bold.carve"
         }
-      }
+      },
+      "contentName": "markup.bold.carve",
+      "patterns": [
+        {
+          "include": "#braced_comment"
+        }
+      ]
     },
     "italic": {
       "match": "(?<![\\w/])(/)(?=\\S)([^/\\n]+?)(?<=\\S)(/)(?![\\w/])",

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list",
+    "text": "-"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-name",
+    "text": "title"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>string",
+    "text": "\"😀\""
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " [x] a\n"
+  },
+  {
+    "type": "title",
+    "text": "  # h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

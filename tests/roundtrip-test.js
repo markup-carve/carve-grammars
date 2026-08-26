@@ -553,10 +553,25 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * two-space content column) are authored exactly AT their container's content
  * column, so there is nothing for the projection to lose and each writes back
  * byte-identical.
+ *
+ * 334 -> 361 with the spec bump through carve 1774be2. The 18 new categories
+ * add 81 documents. Dumping the source-envelope status for every new document
+ * found exactly 27 additions and no whole-document fallback: the remaining 54
+ * are written directly from their rich projection. The covered/fallback
+ * classification therefore keeps all 18 in `covered`; an envelope is a
+ * write-identity note, while `fallback` is reserved for a document represented
+ * as one opaque `carveUnsupported` atom.
+ *
+ * 361 -> 387 when the editor writer adopted the canonical one-space
+ * definition-description separator from carve#1757. The released 0.1.4 engine
+ * this package tests against still reads the former two-space spelling, so 26
+ * rich definition-list projections temporarily retain their source envelope.
+ * The next engine patch will remove those envelopes and make this ratchet fail
+ * downward, prompting the count to be reduced again.
  */
 assert.strictEqual(
-    envelopedFiles.length, 334,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 334`,
+    envelopedFiles.length, 387,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 387`,
 );
 
 assert.strictEqual(

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^outer]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " intro"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "     [^inner]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " note"
+  },
+  {
+    "type": "text",
+    "text": "\n\n     see"
+  },
+  {
+    "type": "footnote",
+    "text": "[^inner]"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^outer]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

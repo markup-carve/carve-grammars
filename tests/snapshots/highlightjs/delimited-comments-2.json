@@ -1,7 +1,15 @@
 [
   {
     "scope": "strong",
-    "text": "*bo{% c %}ld*"
+    "text": "*bo"
+  },
+  {
+    "scope": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "scope": "strong",
+    "text": "ld*"
   },
   {
     "scope": null,

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{align=justify}"
+  },
+  {
+    "scope": null,
+    "text": "\nAligned text.\n"
+  }
+]
