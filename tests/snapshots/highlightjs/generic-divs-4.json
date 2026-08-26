@@ -1,7 +1,7 @@
 [
   {
     "scope": null,
-    "text": "::: 123\nnot a div\n"
+    "text": "::: 123\ncontent\n"
   },
   {
     "scope": "keyword",

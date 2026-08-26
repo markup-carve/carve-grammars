@@ -1,0 +1,54 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^n]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " intro"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "   ::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "   :  "
+  },
+  {
+    "type": "definition-list",
+    "text": "definition\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "      >"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,14 +1,10 @@
 [
   {
-    "type": "text",
-    "text": "*a "
-  },
-  {
-    "type": "code",
-    "text": "`x`"
+    "type": "bold",
+    "text": "*a `x` b*"
   },
   {
     "type": "text",
-    "text": " b*\n"
+    "text": "\n"
   }
 ]

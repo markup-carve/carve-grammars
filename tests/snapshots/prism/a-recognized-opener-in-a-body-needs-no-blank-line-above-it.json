@@ -1,0 +1,42 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^n]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " intro"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title",
+    "text": "  # heading"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

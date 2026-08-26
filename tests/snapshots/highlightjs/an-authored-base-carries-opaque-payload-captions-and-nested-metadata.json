@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]: intro"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ~~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n    ```\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ~~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

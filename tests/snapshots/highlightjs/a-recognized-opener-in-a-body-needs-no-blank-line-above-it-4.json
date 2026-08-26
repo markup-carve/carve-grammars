@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]: intro"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > quote"
+  },
+  {
+    "scope": null,
+    "text": "\n    ordinary line\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

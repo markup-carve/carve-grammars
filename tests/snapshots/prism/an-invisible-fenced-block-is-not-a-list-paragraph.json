@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "intro\n\n"
+  },
+  {
+    "type": "comment",
+    "text": "   %%%\n   hidden\n   %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

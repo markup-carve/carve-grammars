@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "bullet",
+    "text": "111."
+  },
+  {
+    "scope": null,
+    "text": "  first\n\n     second\n"
+  }
+]

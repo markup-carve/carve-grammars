@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " intro\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > quote"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": ">"
+  },
+  {
+    "type": "div",
+    "text": "\nNotes:\n\n"
+  },
+  {
+    "type": "div>list",
+    "text": "- "
+  },
+  {
+    "type": "div",
+    "text": "ship the parser\n"
+  },
+  {
+    "type": "div>list",
+    "text": "- "
+  },
+  {
+    "type": "div",
+    "text": "then the renderer\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

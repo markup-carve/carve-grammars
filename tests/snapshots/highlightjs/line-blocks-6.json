@@ -1,11 +1,15 @@
 [
   {
-    "scope": null,
-    "text": "::: "
-  },
-  {
     "scope": "attr",
     "text": "{.line-block}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
   },
   {
     "scope": null,

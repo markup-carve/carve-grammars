@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{#k}"
+  },
+  {
+    "scope": null,
+    "text": " [x] bare\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # inside"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

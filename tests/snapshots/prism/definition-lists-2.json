@@ -13,10 +13,10 @@
   },
   {
     "type": "definition-list>punctuation",
-    "text": ":  "
+    "text": ": "
   },
   {
     "type": "definition-list",
-    "text": "A definition can now hold\n\n   more than one paragraph.\n"
+    "text": "A definition can now hold\n\n  more than one paragraph.\n"
   }
 ]

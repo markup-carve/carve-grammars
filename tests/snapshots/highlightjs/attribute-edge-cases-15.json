@@ -5,11 +5,27 @@
   },
   {
     "scope": null,
-    "text": "{.123} and "
+    "text": "{.123} "
   },
   {
     "scope": "string",
     "text": "[y]"
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "symbol",
+    "text": "#7-x"
+  },
+  {
+    "scope": null,
+    "text": "} and "
+  },
+  {
+    "scope": "string",
+    "text": "[z]"
   },
   {
     "scope": null,

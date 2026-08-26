@@ -679,19 +679,19 @@ export function serializeToCarve(doc) {
                 if (afterDescription) {
                     output += '\n';
                 }
-                // Carve term marker is `:: `; the description is `:  ` on the very
+                // Carve term marker is `:: `; the canonical description is `: ` on the very
                 // next line (a blank line between them would end the list).
                 output += ':: ' + serializeInline(child.content) + '\n';
                 afterDescription = false;
             } else if (child.type === 'definitionDescription') {
                 (child.content || []).forEach(block => {
                     if (block.type === 'paragraph') {
-                        output += ':  ' + serializeInline(block.content) + '\n';
+                        output += ': ' + serializeInline(block.content) + '\n';
                     } else {
                         // For other block types, serialize with indentation.
                         const blockText = serializeNodeToString(block);
                         blockText.split('\n').filter(l => l).forEach(line => {
-                            output += ':  ' + line + '\n';
+                            output += ': ' + line + '\n';
                         });
                     }
                 });

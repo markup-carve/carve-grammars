@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{.outer}"
+  },
+  {
+    "scope": null,
+    "text": " parent\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " child\n"
+  }
+]

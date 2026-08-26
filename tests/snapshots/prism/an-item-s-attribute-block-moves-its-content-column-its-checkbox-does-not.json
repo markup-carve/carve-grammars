@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "-"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>id",
+    "text": "#k"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " [x] bare\n"
+  },
+  {
+    "type": "title",
+    "text": "  # inside"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

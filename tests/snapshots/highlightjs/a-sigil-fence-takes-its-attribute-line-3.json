@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#addr .contact}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: \\"
+  },
+  {
+    "scope": null,
+    "text": "\none\ntwo\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

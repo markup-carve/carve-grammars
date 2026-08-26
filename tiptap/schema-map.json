@@ -505,6 +505,7 @@
   "unmapped": {
     "abbreviation_def": "abbreviation definitions ride on the doc node's attrs",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
+    "citation": "a citation is one item in citation_group and rides in carveCitation's items attribute rather than becoming its own ProseMirror node",
     "raw_text": "raw text is the payload of a raw block, not a node an editor holds",
     "escaped_text": "escaping is a source-level concern; the editor holds the escaped character as text",
     "smart_punctuation": "smart-typography output is lossy on reparse, so it is not modeled",
