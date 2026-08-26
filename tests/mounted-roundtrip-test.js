@@ -405,11 +405,11 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // list was the one with no slot, and it lost the run one stage earlier still,
 // in the converter.
 //
-// 223 -> 281 at the carve 1774be2 corpus pin. The bump adds 81 documents and
+// 223 -> 276 at the carve e3b0333 corpus pin. The bump adds 84 documents and
 // the writer simultaneously moves definition descriptions from `:  ` to the
 // canonical `: `. The released 0.1.4 engine used by this package has not yet
 // learned that spelling, so its mounted comparison temporarily counts those
 // projections as changed. A later engine patch must make this ratchet fall and
 // force the number back down; it is not a permanent allowance.
-assert.strictEqual(changed.length, 281, `mounted rich projection changed for ${changed.length} corpus documents`);
+assert.strictEqual(changed.length, 276, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

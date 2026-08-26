@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " {.a\n  .b}\ntail\n"
+  }
+]

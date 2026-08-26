@@ -562,16 +562,16 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * write-identity note, while `fallback` is reserved for a document represented
  * as one opaque `carveUnsupported` atom.
  *
- * 361 -> 387 when the editor writer adopted the canonical one-space
+ * 361 -> 382 when the editor writer adopted the canonical one-space
  * definition-description separator from carve#1757. The released 0.1.4 engine
- * this package tests against still reads the former two-space spelling, so 26
+ * this package tests against still reads the former two-space spelling, so 21
  * rich definition-list projections temporarily retain their source envelope.
  * The next engine patch will remove those envelopes and make this ratchet fail
  * downward, prompting the count to be reduced again.
  */
 assert.strictEqual(
-    envelopedFiles.length, 387,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 387`,
+    envelopedFiles.length, 382,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 382`,
 );
 
 assert.strictEqual(

@@ -28,6 +28,7 @@ const emptySkip = () => new Map();
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
     'a-heading-at-an-item-s-content-column-leaves-no-paragraph-open',
+    'a-wrapped-attribute-line-leaves-no-paragraph-open',
     'a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one',
     'a-raw-block-keeps-the-blank-line-at-the-end-of-its-payload-too',
     'a-table-alignment-run-carries-two-independent-axes',
@@ -58,6 +59,7 @@ const TIPTAP_COVERED = [
     '07-blockquote-with-attribution',
     '19-smart-typography-dashes-and-quotes',
     '20-smart-typography-arrows-and-symbols',
+    '25-definition-lists',
     '27-raw-blocks',
     '29-non-breaking-space',
     '30-raw-inline',
@@ -608,7 +610,6 @@ const TIPTAP_SKIP = new Map([
     ['05-lists', 'figure (image-with-caption) blocks inside list items are not modeled'],
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
-    ['25-definition-lists', 'definition lists are not modeled'],
     ['223-an-abbreviation-term-is-one-ascii-alphanumeric-word', 'abbreviation definitions are not modeled, the same gap as 43-abbreviations - both files reparse to a different AST'],
     ['225-a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink', 'the `-5` file ends its body with a raw block, which is not modeled - the same gap as 27-raw-blocks. The other four files in the category do round-trip'],
     ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
