@@ -28,6 +28,7 @@
  * ProseMirror silently drops any attribute a node or mark does not declare, so a
  * wire attribute nothing declares is lost the moment a real editor holds it.
  */
+import { carveToHtml } from '@markup-carve/carve';
 import assert from 'node:assert';
 import { Window } from 'happy-dom';
 
@@ -293,8 +294,14 @@ ok('an empty-label link inside another mark keeps the mark', () => {
     assert.strictEqual(mounted('*[](https://example.com)*'), '*[](https://example.com)*');
 });
 
-// The same defect wearing three other faces: every one of these parses to a
-// mark-producing node with no children, so all four vanished identically.
+// The same defect wearing two other faces: each of these parses to a
+// mark-producing node with no children, so all of them vanished identically.
+//
+// The empty editorial marks used to be here as well. carve-js 0.1.5 stopped
+// treating `{++}` and `{--}` as constructs at all - an empty brace pair is
+// text, and `{--}` reaches smart typography and comes back an en dash - so
+// they are no longer mark-producing nodes and belong in EMPTY_BRACE_TEXT
+// below instead.
 const EMPTY_MARKS = [
     ['an empty span', 'a []{.x} b', 'a []{.x} b'],
     // Values come back QUOTED, which is the canonical spelling everywhere in
@@ -303,13 +310,34 @@ const EMPTY_MARKS = [
     // be written. That is a real limit of the AST, not of the wire - unlike the
     // ORDER, which the AST does record and the bridge used to drop.
     ['an empty span with a full run', 'a []{k=1 .x #i} b', 'a []{k="1" .x #i} b'],
-    ['an empty editorial insertion', 'a {++} b', 'a {++} b'],
-    ['an empty editorial deletion', 'a {--} b', 'a {--} b'],
 ];
 for (const [name, source, expected] of EMPTY_MARKS) {
     ok(`${name} survives too`, () => {
         assert.strictEqual(written(source), expected);
         assert.strictEqual(mounted(source), expected);
+    });
+}
+
+// An empty brace pair is text since carve-js 0.1.5, so the bridge carries these
+// as characters rather than as a construct, and the writer leaves the brace
+// UNESCAPED. Escaping it was the behavior until the serializer learned that an
+// empty pair opens nothing: `\{--}` is the literal characters, while `{--}`
+// reaches smart typography, so the escape silently changed the document.
+//
+// Rendering is asserted alongside the spelling because the spelling alone
+// cannot see that half - a round trip that preserved the characters and lost
+// the dash would pass a text-only check.
+const EMPTY_BRACE_TEXT = [
+    ['an empty editorial insertion is text', 'a {++} b', 'a {++} b', '<p>a {++} b</p>'],
+    ['an empty editorial deletion is an en dash', 'a {--} b', 'a {--} b', '<p>a \u2013 b</p>'],
+    ['an empty comment is still a construct', 'a {%%} b', 'a {%%} b', '<p>a  b</p>'],
+];
+for (const [name, source, expected, html] of EMPTY_BRACE_TEXT) {
+    ok(name, () => {
+        assert.strictEqual(written(source), expected);
+        assert.strictEqual(mounted(source), expected);
+        assert.strictEqual(carveToHtml(source).trim(), html);
+        assert.strictEqual(carveToHtml(written(source)).trim(), html);
     });
 }
 
@@ -348,12 +376,14 @@ ok('every mark the loader can put on a carrier has a spelling to write back', ()
      * that the atom the loader built writes back something, not that it writes
      * back a particular string (the round trips above pin that).
      */
+    // `{++}` and `{--}` were here until carve-js 0.1.5 stopped reading an empty
+    // brace pair as a construct. They produce no mark to carry now, so they are
+    // covered by EMPTY_BRACE_TEXT above as text instead - listing them here
+    // would assert a carrier for something that is no longer a construct.
     const EVERY_EMPTY = [
         '[](https://example.com)',
         '[]{.x}',
         '[]{abbr="expansion"}',
-        '{++}',
-        '{--}',
     ];
     for (const source of EVERY_EMPTY) {
         const doc = carveToProseMirror(source, { unsupported: 'throw' });

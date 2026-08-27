@@ -27,14 +27,18 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    'a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink',
     'a-heading-at-an-item-s-content-column-leaves-no-paragraph-open',
+    'a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it',
     'a-wrapped-attribute-line-leaves-no-paragraph-open',
     'a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one',
     'a-raw-block-keeps-the-blank-line-at-the-end-of-its-payload-too',
     'a-table-alignment-run-carries-two-independent-axes',
     'a-vertical-table-marker-needs-a-horizontal-partner',
     'an-all-blank-raw-payload-still-emits-its-line',
+    'an-autolink-body-admits-non-ascii-and-excludes-format-characters',
     'an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open',
+    'outer-item-with-an-internal-blank-before-an-attached-block-is-loose',
     'table-columns-carry-alignment-vertical-alignment-and-widths',
     // A boolean attribute is written as its bare name again, so `{kbd}` and
     // every other value-less attribute in this category survives the round
@@ -574,7 +578,6 @@ const TIPTAP_SKIP = new Map([
     ['374-a-collected-definition-closes-the-item-paragraph', 'collected definitions are not represented in the structured editor tree, so all four forms require the source envelope'],
     ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
     ['268-trailing-whitespace-on-a-content-line-is-dropped', 'some whitespace-sensitive forms reparse differently and others contain unsupported literal-inline or line-block nodes'],
-    ['272-an-autolink-body-admits-non-ascii-and-excludes-format-characters', 'one variant produces unsupported smart punctuation and another reparses differently'],
     ['273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not', 'the whitespace-sensitive attribute form is normalized and reparses to a different AST'],
     ['274-a-quoted-attribute-value-stops-at-the-newline', 'the unterminated quoted attribute forms are respelled and reparse to a different AST'],
     ['275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text', 'collapsed heading references are not preserved faithfully and reparse to a different AST'],
@@ -584,7 +587,6 @@ const TIPTAP_SKIP = new Map([
     ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
     ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
     ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
-    ['241-a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it', 'the converter has no node type for a raw block, so it throws'],
     ['181-a-div-does-not-define-an-abbreviation-either', 'the serializer escapes the `[` in the abbreviation-shaped line, so the div body reparses with a literal backslash'],
     ['208-a-combined-bold-italic-span-may-cross-a-line', 'the combined `/*...*/` span is re-spelled per line, so a multi-line span becomes two single-line ones'],
     ['214-a-comment-fence-at-column-0-ends-the-item-a-line-does-not', 'the converter has no node type for `comment`, so it throws'],
@@ -611,7 +613,6 @@ const TIPTAP_SKIP = new Map([
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
     ['223-an-abbreviation-term-is-one-ascii-alphanumeric-word', 'abbreviation definitions are not modeled, the same gap as 43-abbreviations - both files reparse to a different AST'],
-    ['225-a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink', 'the `-5` file ends its body with a raw block, which is not modeled - the same gap as 27-raw-blocks. The other four files in the category do round-trip'],
     ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
     ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
     ['229-an-empty-abbreviation-term-is-not-a-definition', 'reparses to a different AST: the line is prose because the term is empty, and the abbreviation-definition gap of 43-abbreviations reaches the literal form too'],
@@ -660,7 +661,6 @@ const TIPTAP_SKIP = new Map([
     ['157-indented-reference-and-footnote-definitions-stay-literal', 'the converter does not model the `smart_punctuation` node'],
     ['158-indented-colon-fence-blocks-stay-literal', 'the converter does not model the `soft_break` node'],
     ['159-below-content-column-div-body-in-a-list-item-stays-literal', 'the converter does not model the `soft_break` node'],
-    ['160-outer-item-with-an-internal-blank-before-an-attached-block-is-loose', 'round-trips to a different AST'],
     ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
 ]);

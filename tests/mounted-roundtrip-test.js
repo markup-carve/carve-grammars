@@ -405,11 +405,26 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // list was the one with no slot, and it lost the run one stage earlier still,
 // in the converter.
 //
-// 223 -> 276 at the carve e3b0333 corpus pin. The bump adds 84 documents and
-// the writer simultaneously moves definition descriptions from `:  ` to the
-// canonical `: `. The released 0.1.4 engine used by this package has not yet
-// learned that spelling, so its mounted comparison temporarily counts those
-// projections as changed. A later engine patch must make this ratchet fall and
-// force the number back down; it is not a permanent allowance.
-assert.strictEqual(changed.length, 276, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 223 -> 276 at the carve e3b0333 corpus pin. The bump added 84 documents and
+// the writer simultaneously moved definition descriptions from `:  ` to the
+// canonical `: `, which the 0.1.4 engine had not learned, so its mounted
+// comparison counted those projections as changed. That entry said the number
+// was temporary and that a later engine had to force it down.
+//
+// 276 -> 232 on carve-js 0.1.5, which is that engine. The 44 recovered are the
+// definition spelling; nothing in this package changed to earn them. What
+// remains is not one backlog: 108 turn on source position (content columns,
+// lazy continuation, flush-left folding), 21 on constructs spanning a line or
+// verse boundary, and 11 are deliberately malformed documents that must stay
+// literal. An editable projection has no slot for "this line sits at column 3
+// and therefore folds", so those are the warning gate's job rather than this
+// ratchet's. The rest are ordinary serializer defects and are worth fixing.
+//
+// 232 -> 230 with two of those defects fixed. A LOOSE list of one item had
+// nowhere to put the blank lines that normally spell looseness, so it read
+// back tight; it writes `{loose}` now. And a definition list's looseness moved
+// out of the attribute run into the node's own flag, where the converter was
+// not looking - it is folded back into the run, which is the shape the rest of
+// the pipeline already writes.
+assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

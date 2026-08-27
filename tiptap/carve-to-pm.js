@@ -708,7 +708,23 @@ function convertDefinitionList(node, ctx) {
     // The list's OWN attribute run. Nothing read it, so `{loose}` above a
     // definition list was gone before the projection was even mounted - the
     // node arrived with no attrs at all (markup-carve/carve-grammars#344).
-    const attrs = convertAttrs(node.attrs);
+    // Looseness is CONTENT here - a loose description renders its body in a
+    // `<p>`, a tight one bare - and PART 9 section 17 L7 leaves `{loose}` as
+    // its only spelling, since no blank line can carry it.
+    //
+    // The engine used to leave it in the attribute run and now reads it into
+    // the node's own `loose` flag, so reading `attrs` alone dropped it. Folding
+    // it back into the run rather than inventing a second slot means the
+    // existing value-less-attribute path writes it, and a mount keeps it in
+    // `carveKeyValues`, which is already declared.
+    const runAttrs = node.loose === true
+        ? {
+            ...(node.attrs || {}),
+            keyValues: { loose: '', ...(node.attrs?.keyValues || {}) },
+            order: ['loose', ...((node.attrs?.order || []).filter((k) => k !== 'loose'))],
+        }
+        : node.attrs;
+    const attrs = convertAttrs(runAttrs);
     for (const item of node.items || []) {
         for (const term of item.terms || []) {
             content.push({ type: 'definitionTerm', content: convertInline(term, ctx) });
@@ -903,6 +919,24 @@ function convertInlineNode(node, marks, ctx) {
                 record(ctx, 'degraded', 'escaped_text',
                     'the escape is a source spelling; the character survives as text');
             }
+
+            return node.value
+                ? [{ type: 'text', text: node.value, ...(marks.length ? { marks } : {}) }]
+                : [];
+
+        // Smart punctuation is a TYPOGRAPHIC reading of characters the author
+        // typed, so the characters are what the editor carries: `node.value`
+        // is the authored spelling (`--`, `...`, `"`) and `node.glyph` the
+        // rendered one. Writing the glyph would bake the engine's reading into
+        // the source and change the document; writing the value re-parses to
+        // the same node, so the round trip is byte-identical.
+        //
+        // Left unmapped, the converter THREW on ordinary prose - an em dash, an
+        // ellipsis or a typographic quote was enough - so any such document
+        // took the whole-document fallback instead of being editable.
+        case 'smart_punctuation':
+            record(ctx, 'degraded', 'smart_punctuation',
+                'the typographic reading is re-derived on parse; the authored characters survive as text');
 
             return node.value
                 ? [{ type: 'text', text: node.value, ...(marks.length ? { marks } : {}) }]
