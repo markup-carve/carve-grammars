@@ -241,12 +241,26 @@ export function serializeToCarve(doc) {
                 // is present: a list whose items hold one paragraph each is
                 // loose or tight purely by the blank lines between them, which
                 // no amount of looking at the items can recover.
-                const isLoose = node.attrs?.carveTight === false || (node.content || []).some((item) => {
+                const multiBlockItem = (node.content || []).some((item) => {
                     const blocks = (item.content || []).filter(
                         (b) => !['bulletList', 'orderedList', 'taskList'].includes(b.type),
                     );
                     return blocks.length > 1;
                 });
+                const isLoose = node.attrs?.carveTight === false || multiBlockItem;
+                // Blank lines between items are how looseness is normally
+                // spelled, and they need two items to sit between. A loose list
+                // of ONE item whose item holds one block has nowhere to put
+                // them, so it reads back tight and the round trip changes the
+                // document - which is why the attribute is written instead.
+                //
+                // This only became reachable when the engine consumed `{loose}`
+                // into the list's own `tight`. While it stayed an ordinary
+                // attribute, serializeAttributes wrote it and nothing was lost.
+                if (node.attrs?.carveTight === false && !multiBlockItem
+                    && (node.content || []).length < 2) {
+                    output += indent + '{loose}\n';
+                }
                 let num = node.attrs?.start || 1;
                 // `carveOlType` carries the style from the Carve AST; `type` is what Tiptap's own
                 // OrderedList records when the editor is seeded from rendered
@@ -1384,7 +1398,16 @@ function escapeStructural(text, trailingSafe = false) {
         .replace(/`/g, '\\`')
         .replace(/\[(?=\^)/g, '\\[')
         .replace(/\[(?=[^\]\n]*\][([{:])/g, '\\[')
-        .replace(/\{(?=[+\-~#=%])/g, '\\{')
+        // An EMPTY doubled pair is text since carve-js 0.1.5, so escaping the
+        // brace there does not protect a construct - it creates a difference.
+        // `{--}` reaches smart typography and renders an en dash; `\{--}` is
+        // the literal characters, so the escape changed the document. Skip it
+        // for the five markers whose empty pair is text, the same way the
+        // `:name:` rule below only escapes where a symbol would form.
+        //
+        // `%` is NOT among them: `{%%}` is an empty COMMENT and renders to
+        // nothing, so its brace still has a construct to protect.
+        .replace(/\{(?!([+\-~#=])\1\})(?=[+\-~#=%])/g, '\\{')
         .replace(/(^|[^\w.])@(?=[A-Za-z0-9_])/g, '$1\\@')
         .replace(/(^|[^\w])#(?=[A-Za-z0-9_])/g, '$1\\#')
         // A `:name:` symbol only opens at a word boundary, and its name starts

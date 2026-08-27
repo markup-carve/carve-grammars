@@ -564,14 +564,29 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *
  * 361 -> 382 when the editor writer adopted the canonical one-space
  * definition-description separator from carve#1757. The released 0.1.4 engine
- * this package tests against still reads the former two-space spelling, so 21
- * rich definition-list projections temporarily retain their source envelope.
- * The next engine patch will remove those envelopes and make this ratchet fail
- * downward, prompting the count to be reduced again.
+ * this package tested against still read the former two-space spelling, so 21
+ * rich definition-list projections retained their source envelope. That entry
+ * said the next engine would remove them and make this ratchet fail downward.
+ *
+ * 382 -> 347 on carve-js 0.1.5, which is that engine. It is the 21 definition
+ * projections plus 14 more from the three categories the same bump promoted
+ * out of fallback, and none of them needed a code change here.
+ *
+ * 347 -> 342 when the bridge learned `smart_punctuation`. It was left unmapped
+ * on the reading that smart typography is lossy on reparse, which is true of
+ * the RESOLVED character and not of the authored one: the node carries both,
+ * and writing `value` back reparses to the same node. Until then an em dash,
+ * an ellipsis or a typographic quote was enough to send a document to the
+ * whole-document fallback, which is ordinary prose rather than an edge case.
+ *
+ * 342 -> 340 when the definition list learned its own looseness. The engine
+ * moved `{loose}` out of the attribute run and into the node's `loose` flag,
+ * so a converter reading only `attrs` dropped it - and PART 9 section 17 L7
+ * leaves no other spelling, no blank line being able to carry it there.
  */
 assert.strictEqual(
-    envelopedFiles.length, 382,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 382`,
+    envelopedFiles.length, 340,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 340`,
 );
 
 assert.strictEqual(
@@ -656,14 +671,25 @@ assert.strictEqual(
 }
 
 {
-    // Unsupported inline content is isolated to its own source atom; its
-    // containing heading and sibling blocks remain editable.
+    // This document used to be the isolation example: `--` had no mapping, so
+    // the heading held a `carveUnsupportedInline` atom beside editable
+    // siblings. The bridge models `smart_punctuation` now, so there is no atom
+    // to isolate - the heading is text throughout and the whole document is
+    // editable. Asserted from the other side for that reason: no atom anywhere,
+    // and the round trip still holds.
+    //
+    // Isolation itself is still exercised - 33 corpus documents produce an
+    // inline atom - so what is gone is this example, not the behavior.
     const source = '# Editable\n\n## Smart -- heading\n\nStill editable\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.deepStrictEqual(pm.content.map((node) => node.type), [
         'heading', 'heading', 'paragraph',
     ]);
-    assert.strictEqual(pm.content[1].content[1].type, 'carveUnsupportedInline');
+    assert.deepStrictEqual(
+        pm.content[1].content,
+        [{ type: 'text', text: 'Smart -- heading' }],
+        'the em dash is text now, and coalesces with the text either side of it',
+    );
     assert.deepStrictEqual(
         normalizeAst(parse(serializeToCarve(pm))),
         normalizeAst(parse(source)),

@@ -31,13 +31,20 @@ ok('a fully editable document reports nothing', () => {
 });
 
 ok('a preserved construct names its own type', () => {
-    const { doc, preserved } = carveToProseMirrorWithReport('It is "smart" here.\n', { unsupported: 'preserve' });
-    assert.ok('smart_punctuation' in preserved, JSON.stringify(preserved));
+    // Was `smart_punctuation`, which the bridge models now - a typographic
+    // quote is text and reports as degraded rather than preserved. An
+    // abbreviation span is still carried whole, so it is the example here.
+    const source = '*[HTML]: Hyper Text Markup Language\n\nA [HTML]{abbr="Custom"} span.\n';
+    const { doc, preserved } = carveToProseMirrorWithReport(source, { unsupported: 'preserve' });
+    assert.ok('abbreviation' in preserved, JSON.stringify(preserved));
 
     // And the atom itself carries the type, not only the source: a caller
     // walking the document can point at the construct that is not editable.
-    const atom = doc.content[0].content.find((node) => node.type === 'carveUnsupportedInline');
-    assert.strictEqual(atom.attrs.carveType, 'smart_punctuation');
+    const find = (node) => (node.type === 'carveUnsupportedInline'
+        ? node
+        : (node.content || []).map(find).find(Boolean));
+    const atom = doc.content.map(find).find(Boolean);
+    assert.strictEqual(atom.attrs.carveType, 'abbreviation');
     assert.ok(atom.attrs.carveSource);
 });
 

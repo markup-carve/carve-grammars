@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -387,7 +387,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -756,7 +756,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#317",
       "constructs": {
         "heading": {
@@ -1125,7 +1125,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#310",
       "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
@@ -1430,44 +1430,44 @@
           "payload": "parsed"
         },
         "em_dash": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "en_dash": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "braced_en_dash": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "ellipsis": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "smart_quote": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "arrow": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "comparison": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "typographic_symbol": {
-          "status": "UNSUPPORTED",
-          "reason": "smart-typography output is lossy on reparse, so the bridge does not model it (tiptap/schema-map.json, \"unmapped\"): the engine resolves the source spelling to the resolved character, which the editor holds as text",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_punctuation",
+          "payload": "parsed"
         },
         "inline_comment": {
           "status": "IMPLEMENTED",
