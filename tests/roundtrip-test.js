@@ -583,10 +583,17 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * moved `{loose}` out of the attribute run and into the node's `loose` flag,
  * so a converter reading only `attrs` dropped it - and PART 9 section 17 L7
  * leaves no other spelling, no blank line being able to carry it there.
+ *
+ * 340 -> 314 on two serializer fixes, and the size of that step is the point:
+ * both were single defects reached by a great many documents. The continuation
+ * escaper knew two of the nine shapes that open a block at column 0, so a lazy
+ * line holding any of the other seven became that block when written back. And
+ * a description with more than one block got a `: ` marker per block, which
+ * spells a new description each time.
  */
 assert.strictEqual(
-    envelopedFiles.length, 340,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 340`,
+    envelopedFiles.length, 314,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 314`,
 );
 
 assert.strictEqual(

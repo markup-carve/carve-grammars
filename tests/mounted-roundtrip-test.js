@@ -426,5 +426,18 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // out of the attribute run into the node's own flag, where the converter was
 // not looking - it is folded back into the run, which is the shape the rest of
 // the pipeline already writes.
-assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 230 -> 201 on two more, and the size of that step is the point: both were
+// single defects reached by a great many documents.
+//
+// The continuation escaper knew `>` and `#` and none of the other seven shapes
+// that open a block at column 0, so a lazy line holding a list marker, a
+// thematic break, a colon fence, a definition term or a table row became that
+// block when written back - `1. outer` with a lazy `  1. inner` under it came
+// back as two items where the source had one.
+//
+// And a description holding more than one block got a `: ` marker per block,
+// which spells a NEW description each time: a two-paragraph definition came
+// back as two definitions of the same term.
+assert.strictEqual(changed.length, 201, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
