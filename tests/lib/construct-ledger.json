@@ -1221,7 +1221,7 @@
         },
         "abbreviation_definition": {
           "status": "IMPLEMENTED",
-          "evidence": "abbreviation",
+          "evidence": "abbr",
           "payload": "parsed"
         },
         "paragraph": {

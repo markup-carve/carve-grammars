@@ -47,6 +47,8 @@ export { CarveCriticComment } from './extensions/carve-critic-comment.js';
 export { CarveDiv } from './extensions/carve-div.js';
 export { CarveMath } from './extensions/carve-math.js';
 export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
+export { CarveAbbreviation } from './extensions/carve-abbreviation.js';
+export { CarveAbbreviationDefinition } from './extensions/carve-abbreviation-definition.js';
 export { CarveKeymap } from './extensions/carve-keymap.js';
 export { CarveMention, CarveTag } from './extensions/carve-mention.js';
 export { CarveInlineExtension } from './extensions/carve-inline-extension.js';

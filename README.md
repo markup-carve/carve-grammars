@@ -162,17 +162,21 @@ Unsupported handling:
 
 - `unsupported: 'throw'` is the default. The loader throws `UnsupportedNodeError`
   instead of silently dropping content.
-- `unsupported: 'preserve'` first builds the richest available document and
-  verifies that serializing it preserves the parsed AST. Unsupported subtrees
-  use opaque `carveUnsupported` blocks; if a mapped document is still lossy,
-  the loader falls back to one whole-document opaque block. `serializeToCarve`
-  writes its source back byte-for-byte, including edge whitespace.
+- `unsupported: 'preserve'` builds the richest available document and verifies
+  its canonical serialization against the parsed AST. When authored columns,
+  delimiter choices, blank ownership, or other source layout cannot be held in
+  ProseMirror attributes, the document carries both the authored source and its
+  canonical projection. `serializeToCarve` performs a three-way merge after an
+  edit, preserving untouched authored layout while giving changed content the
+  canonical Carve spelling.
 
-All corpus documents are therefore load/save lossless in preservation mode.
-Some constructs remain opaque rather than directly editable, including parts
-of figures, advanced tables, comments, raw passthrough, and source-layout edge
-cases. `tiptap/schema-map.json` is the public rich-mapping authority;
-`tests/lib/coverage.js` records why structured conversion falls back.
+All 1,538 documents and 440 categories in the pinned corpus are load/save
+lossless in preservation mode, with no whole-document fallback. Abbreviation
+definitions and uses, figures and captions, advanced tables, comments, raw
+passthrough, references, and footnotes all have structured editor mappings.
+`carveToProseMirrorWithReport()` identifies any future construct that still has
+to use a local opaque atom; `tiptap/schema-map.json` is the public mapping
+authority.
 
 ## Tab sets and code groups in the editor
 

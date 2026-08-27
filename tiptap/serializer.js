@@ -23,6 +23,7 @@
  *   space (e.g. literal `**` immediately followed by bold text) - the run
  *   merges into a longer literal delimiter run on reparse.
  */
+import { diff3Merge } from 'node-diff3';
 
 /**
  * Serialize a Tiptap/ProseMirror JSON document to Carve markup
@@ -167,6 +168,17 @@ export function serializeToCarve(doc) {
         const clean = { ...doc };
         delete clean.attrs;
         if (pmFingerprint(clean) === preservedFingerprint) return preservedSource;
+        const projectedSource = doc?.attrs?.carveProjectedSource;
+        if (typeof projectedSource === 'string') {
+            // The authored source and the editable projection are two branches
+            // from the same canonical baseline. Merge the editor's changes
+            // into the authored branch so untouched columns, blank ownership,
+            // delimiter choices and marker placement survive. Where both sides
+            // changed the same characters, the editor wins: the user changed
+            // that construct and canonical Carve is safer than stale source.
+            const currentProjection = serializeToCarve(clean);
+            return mergeAuthoredSource(preservedSource, projectedSource, currentProjection);
+        }
     }
     // A whole-document fallback is already exact Carve source. Sending it
     // through the normal block joiner and edge trimmer would corrupt precisely
@@ -571,6 +583,10 @@ export function serializeToCarve(doc) {
                 referenceDefs.set(label, null);
                 break;
             }
+
+            case 'carveAbbreviationDefinition':
+                output += `*[${node.attrs?.abbr || ''}]: ${node.attrs?.expansion || ''}\n`;
+                break;
 
             case 'carveCitationDefinition': {
                 // `[@key]: {metadata} entry`. The metadata block LEADS the
@@ -1394,7 +1410,12 @@ export function serializeToCarve(doc) {
                 // syntax: with that extension enabled the `abbr` attribute is
                 // promoted to a real `<abbr title="…">`; without it, it stays a
                 // `<span abbr="…">`. (Title escaped like a link title.)
-                if (abbr) t = '[' + t + ']{abbr="' + escapeTitle(abbr.attrs?.title || '') + '"}';
+                if (abbr && !abbr.attrs?.resolved) {
+                    const attrs = { ...abbr.attrs };
+                    attrs.carveKeyValues = { ...(attrs.carveKeyValues || {}), abbr: attrs.title || '' };
+                    attrs.carveAttrOrder ||= ['abbr'];
+                    t = '[' + t + ']' + serializeAttributes(attrs, ['title', 'resolved'], true);
+                }
 
                 result += t;
             } else if (node.type === 'hardBreak') {
@@ -1461,6 +1482,33 @@ export function serializeToCarve(doc) {
         result += '\n\n' + defs.join('\n');
     }
     return result;
+}
+
+function mergeAuthoredSource(authored, baseline, edited) {
+    // Appending and prepending blocks are the most common editor operations.
+    // Handle them without diff alignment: repeated punctuation can otherwise
+    // make a character diff align an untouched delimiter with the new text and
+    // needlessly replace the author's spelling in the original document.
+    const appended = edited.startsWith(baseline) ? edited.slice(baseline.length) : null;
+    const baselineClose = baseline.match(/(?:^|\n)([ \t]*(?:`{3,}|~{3,}|:{3,}))$/)?.[1];
+    const authoredHasClose = !baselineClose || authored.trimEnd().endsWith(baselineClose);
+    if (appended?.startsWith('\n\n') && authoredHasClose) return authored.trimEnd() + appended;
+    if (edited.endsWith(baseline)) return edited.slice(0, -baseline.length) + authored;
+
+    const characters = Math.max(authored.length, baseline.length, edited.length) <= 20_000;
+    const tokens = characters
+        ? (source) => [...source]
+        : (source) => source.match(/[^\n]*\n|[^\n]+$/g) || [];
+    const regions = diff3Merge(tokens(authored), tokens(baseline), tokens(edited), {
+        excludeFalseConflicts: true,
+    });
+    let merged = regions.flatMap((region) => region.ok || region.conflict?.b || []).join('');
+    // Canonical projections omit structural edge whitespace. It is outside the
+    // editable tree, so a content edit must not silently remove the author's
+    // terminal line ending.
+    const ending = authored.match(/\r\n$|[\r\n]$/)?.[0];
+    if (ending && !/[\r\n]$/.test(merged)) merged += ending;
+    return merged;
 }
 
 /**

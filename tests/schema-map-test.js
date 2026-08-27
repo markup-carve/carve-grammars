@@ -182,11 +182,7 @@ ok('every unmapped entry carries a reason', () => {
 // Marks the map declares that the converter cannot yet PRODUCE, with the reason.
 // Same promotion gate as the coverage skips: the test below fails once a mark
 // here becomes reachable, so the list cannot rot into a list of excuses.
-const UNREACHABLE_MARKS = new Map([
-  ['abbreviation', 'an `abbreviation` inline needs the `abbreviation_def` BLOCK too - '
-    + 'the definition is what carries the expansion, and the converter has no case for it, '
-    + 'so a document using one throws before the mark is reached'],
-]);
+const UNREACHABLE_MARKS = new Map();
 
 /*
  * NODES the map declares that the converter cannot yet PRODUCE, with the reason.

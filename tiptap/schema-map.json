@@ -500,10 +500,17 @@
         "id": "authored id",
         "key": "the citation key as written, without the `@`; the same string `citation.key` carries at the use site"
       }
+    },
+    "abbreviation_def": {
+      "kind": "node",
+      "pm": "carveAbbreviationDefinition",
+      "attrs": {
+        "abbr": "the defined term",
+        "expansion": "the authored expansion"
+      }
     }
   },
   "unmapped": {
-    "abbreviation_def": "abbreviation definitions ride on the doc node's attrs",
     "caption_number": "numbered captions are a resolution artifact, not editor content",
     "citation": "a citation is one item in citation_group and rides in carveCitation's items attribute rather than becoming its own ProseMirror node",
     "raw_text": "raw text is the payload of a raw block, not a node an editor holds",

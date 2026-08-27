@@ -32,6 +32,7 @@ import { CarveMath } from './extensions/carve-math.js';
 import { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
 import { CarveEmbed } from './extensions/carve-embed.js';
 import { CarveAbbreviation } from './extensions/carve-abbreviation.js';
+import { CarveAbbreviationDefinition } from './extensions/carve-abbreviation-definition.js';
 import { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './extensions/carve-definition-list.js';
 import { CarveUnsupported } from './extensions/carve-unsupported.js';
 import { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
@@ -677,6 +678,9 @@ export const CarveKit = Extension.create({
         // Abbreviation mark (maps to [ABBR]{abbr="expansion"})
         if (this.options.carveAbbreviation !== false) {
             extensions.push(CarveAbbreviation.configure(this.options.carveAbbreviation ?? {}));
+        }
+        if (this.options.carveAbbreviationDefinition !== false) {
+            extensions.push(CarveAbbreviationDefinition.configure(this.options.carveAbbreviationDefinition ?? {}));
         }
 
         // Definition list nodes (maps to : term with definition)
