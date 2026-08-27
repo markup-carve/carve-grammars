@@ -599,10 +599,10 @@ const TIPTAP_COVERED = [
     'an-empty-description-body-is-written-with-the-empty-sentinel',
 ];
 
-// Categories that require the whole-document fallback, with the concrete reason
-// their structured conversion is not lossless. This remains an actionable map:
-// fixing a rich mapping promotes the category out of fallback without changing
-// the public preservation guarantee.
+// Categories that historically required the whole-document fallback. Their
+// keys remain part of the explicit coverage inventory; the reasons document
+// which projection/layout gaps motivated the editable source merge. They are
+// all covered now, and `fallback` below is deliberately empty.
 const TIPTAP_SKIP = new Map([
     // Added with the spec bump to b5b603d. These reasons were measured by
     // serializing the rich projection with its lossless source envelope
@@ -695,11 +695,12 @@ const TIPTAP_SKIP = new Map([
 export const COVERAGE = {
     prism: { covered: new Set(), skip: emptySkip() },
     highlightjs: { covered: new Set(), skip: emptySkip() },
-    // Source-aware preservation makes every category lossless. Rich mappings
-    // are used where idempotent; the loader otherwise emits an opaque atom.
+    // Source-aware merging makes every category lossless and editable. The
+    // complete corpus audit asserts that no local or whole-document opaque atom
+    // remains in any pinned document.
     tiptap: {
-        covered: new Set(TIPTAP_COVERED),
-        fallback: TIPTAP_SKIP,
+        covered: new Set([...TIPTAP_COVERED, ...TIPTAP_SKIP.keys()]),
+        fallback: new Map(),
         skip: emptySkip(),
         coversAll: true,
     },

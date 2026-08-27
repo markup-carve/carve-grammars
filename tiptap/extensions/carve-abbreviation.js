@@ -1,4 +1,5 @@
 import { Mark, mergeAttributes } from '@tiptap/core';
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /**
  * Carve Abbreviation extension for Tiptap
@@ -32,6 +33,8 @@ export const CarveAbbreviation = Mark.create({
                     return { title: attributes.title };
                 },
             },
+            resolved: { default: false, rendered: false },
+            ...attributeSlots(['title', 'data-carve-abbreviation']),
         };
     },
 

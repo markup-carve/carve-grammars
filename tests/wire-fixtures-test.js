@@ -99,7 +99,7 @@ ok('every attribute the fixtures use is declared in the map', () => {
 
     // Names the wire carries that are not a Carve concept: ProseMirror's own
     // shape, and this bridge's source-preservation atoms.
-    const OWN = new Set(['carveSource', 'carveFingerprint', 'carveSourceLayout']);
+    const OWN = new Set(['carveSource', 'carveFingerprint', 'carveSourceLayout', 'carveProjectedSource']);
 
     const undeclared = new Set();
     const visit = (node) => {

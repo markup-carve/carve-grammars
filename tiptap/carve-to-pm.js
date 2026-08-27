@@ -129,20 +129,22 @@ function opaqueDocument(source, ctx = null) {
 
 function sourceEnvelope(doc, sourceLayout, ctx = null) {
     // The rich projection is kept, but writing it back would not reproduce the
-    // document, so the source rides along and the serializer replays it while
-    // the document is untouched. The FIRST EDIT invalidates the fingerprint and
-    // the projection becomes what is written - which is why this is reported.
+    // document, so the source and canonical projection ride along as the two
+    // merge bases. Edits are applied to the authored branch, preserving layout
+    // outside the changed region.
     record(ctx, 'preserved', 'document',
-        'the rich projection is not write-identical; the source envelope carries the document until it is edited');
+        'the rich projection is not write-identical; edits are merged into its authored source envelope');
 
     const clean = { ...doc };
     delete clean.attrs;
+    const projectedSource = serializeToCarve(clean);
     return {
         ...clean,
         attrs: {
             carveSource: sourceLayout.source,
             carveFingerprint: pmFingerprint(clean),
             carveSourceLayout: JSON.stringify(sourceLayout),
+            carveProjectedSource: projectedSource,
         },
     };
 }
@@ -545,7 +547,10 @@ function convertBlock(node, ctx) {
         // does not faithfully represent. Throwing routes the category to SKIP.
         case 'abbreviation-def':
         case 'abbreviation_def':
-            return unsupported('abbreviation-def', node, ctx);
+            return {
+                type: 'carveAbbreviationDefinition',
+                attrs: { abbr: node.abbr || '', expansion: node.expansion || '' },
+            };
         case 'raw-block':
         case 'raw_block':
             return {
@@ -1154,6 +1159,24 @@ function convertInlineNode(node, marks, ctx) {
                 attrs: { content: node.content || '', delimited: Boolean(node.delimited) },
             }];
 
+        case 'abbreviation':
+            // A definition-resolved abbreviation is still editable text. The
+            // mark carries its expansion for `<abbr title>`, while `resolved`
+            // tells the writer the author used the bare term rather than an
+            // explicit semantic span.
+            if (marks.some((mark) => mark.type === 'carveAbbreviation')) {
+                return [{ type: 'text', text: node.abbr || '', ...(marks.length ? { marks } : {}) }];
+            }
+            return [{ type: 'text', text: node.abbr || '', marks: [...marks, {
+                type: 'carveAbbreviation',
+                attrs: { title: node.expansion || '', resolved: true },
+            }] }];
+
+        case 'caption_number':
+            // `#` is the authored placeholder. Its rendered number is a
+            // resolution artifact and therefore does not belong on the wire.
+            return [{ type: 'text', text: '#', ...(marks.length ? { marks } : {}) }];
+
         default: {
             const markType = INLINE_MARKS[node.type];
             if (markType) {
@@ -1198,8 +1221,15 @@ function convertSpan(node, marks, ctx) {
         // Only a lone abbr attribute round-trips through carveAbbreviation; any
         // companion id/class/other key would be dropped.
         const extraKeys = Object.keys(a.keyValues).filter((k) => k !== 'abbr');
-        if (extraKeys.length || a.id || (a.classes && a.classes.length)) throw new UnsupportedNodeError('span-abbr-plus-attrs', node);
-        return descend(node, [...marks, { type: 'carveAbbreviation', attrs: { title: a.keyValues.abbr } }], ctx);
+        const hasCompanions = extraKeys.length || a.id || (a.classes && a.classes.length);
+        const abbrMark = {
+            type: 'carveAbbreviation',
+            attrs: {
+                title: a.keyValues.abbr,
+                ...(hasCompanions ? { resolved: false, ...(convertAttrs(a) || {}) } : {}),
+            },
+        };
+        return descend(node, [...marks, abbrMark], ctx);
     }
     const attrs = convertAttrs(a) || {};
     return descend(node, [...marks, { type: 'carveSpan', attrs }], ctx);

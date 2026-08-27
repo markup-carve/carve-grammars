@@ -6,6 +6,9 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Editing a source-sensitive Tiptap document no longer discards its authored columns, blank-line ownership, delimiter choices, escapes, or marker placement. The loader now records the canonical projection as a merge base and the serializer applies structured edits to the authored source with editor-wins conflict handling. Unchanged documents remain byte-identical, and the full 1,538-document corpus is covered without a whole-document opaque fallback.
+- Abbreviation definitions and definition-resolved abbreviation uses are native Tiptap nodes and marks instead of opaque source atoms. An abbreviation semantic span can also keep companion ids, classes, and key/value attributes in its one authored attribute run.
+- Numbered figure-caption placeholders (`#`) are editable caption text rather than opaque inline atoms; the rendered number remains correctly treated as a resolution artifact.
 - The Tiptap serializer keeps a shared outer emphasis delimiter open across nested marks, so `*bold with /italic/ inside*`, `/italic with *bold* inside/` and `_underline with *bold*_` remain balanced instead of duplicating the outer delimiter around each ProseMirror text node (#362).
 - Empty definition descriptions serialize as the canonical `: {empty}` form and stay glued to a following term, preserving the description boundary through an editable round trip.
 

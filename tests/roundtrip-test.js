@@ -54,9 +54,8 @@ function roundTrip(file) {
         wholeDocumentFallback = pm.content?.length === 1
             && pm.content[0]?.type === 'carveUnsupported'
             && pm.content[0]?.attrs?.carveSource === file.source;
-        // Whether the loader had to wrap the document in a SOURCE ENVELOPE: the
-        // rich projection is kept but is not write-identical, so the source
-        // rides along and the first edit is what starts writing the projection.
+        // Whether the loader added an authored-source MERGE BASE: the rich
+        // projection remains editable and changes are merged into its source.
         if (pm.attrs?.carveSource) envelopedFiles.push(file.name);
         carve2 = serializeToCarve(pm);
     } catch (e) {
@@ -677,11 +676,12 @@ assert.strictEqual(
     });
     assert.strictEqual(serializeToCarve(pm), source);
 
-    // Editing the structured tree invalidates the fingerprint, so stale source
-    // is never allowed to overwrite the user's change.
+    // Editing merges the structured change into the authored source: stale
+    // content never overwrites the user's change, while unrelated layout such
+    // as the terminal newline remains intact.
     pm.content[0].content[0].text = 'edited heading';
     assert.notStrictEqual(serializeToCarve(pm), source);
-    assert.strictEqual(serializeToCarve(pm), 'edited heading');
+    assert.strictEqual(serializeToCarve(pm), 'edited heading\n');
 }
 
 {

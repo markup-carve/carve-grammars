@@ -25,6 +25,8 @@ export const CarveCriticComment: Mark;
 export const CarveDiv: Node;
 export const CarveMath: Node;
 export const CarveFootnoteDefinition: Node;
+export const CarveAbbreviation: Mark;
+export const CarveAbbreviationDefinition: Node;
 export const CarveMention: Node;
 export const CarveTag: Node;
 export const CarveUnsupported: Node;

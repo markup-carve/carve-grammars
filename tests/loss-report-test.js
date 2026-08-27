@@ -30,22 +30,13 @@ ok('a fully editable document reports nothing', () => {
     assert.deepStrictEqual(degraded, {});
 });
 
-ok('a preserved construct names its own type', () => {
-    // Was `smart_punctuation`, which the bridge models now - a typographic
-    // quote is text and reports as degraded rather than preserved. An
-    // abbreviation span is still carried whole, so it is the example here.
+ok('abbreviations and their definitions are fully editable', () => {
     const source = '*[HTML]: Hyper Text Markup Language\n\nA [HTML]{abbr="Custom"} span.\n';
     const { doc, preserved } = carveToProseMirrorWithReport(source, { unsupported: 'preserve' });
-    assert.ok('abbreviation' in preserved, JSON.stringify(preserved));
-
-    // And the atom itself carries the type, not only the source: a caller
-    // walking the document can point at the construct that is not editable.
-    const find = (node) => (node.type === 'carveUnsupportedInline'
-        ? node
-        : (node.content || []).map(find).find(Boolean));
-    const atom = doc.content.map(find).find(Boolean);
-    assert.strictEqual(atom.attrs.carveType, 'abbreviation');
-    assert.ok(atom.attrs.carveSource);
+    assert.deepStrictEqual(preserved, {});
+    assert.strictEqual(doc.content[0].type, 'carveAbbreviationDefinition');
+    assert.ok(doc.content[1].content.some((node) =>
+        node.marks?.some((mark) => mark.type === 'carveAbbreviation')));
 });
 
 ok('a degraded construct is reported apart from a preserved one', () => {
@@ -59,11 +50,9 @@ ok('an escape is degraded, not silently normal text', () => {
     assert.ok('escaped_text' in degraded, JSON.stringify(degraded));
 });
 
-ok('the whole-document envelope is reported', () => {
-    // The rich projection is kept but is not write-identical, so the source
-    // rides along and the FIRST EDIT is what starts writing the projection.
-    // Silent, that is the worst case in the file: the document looks editable
-    // and changes the moment it is edited.
+ok('a merge-backed source envelope is reported', () => {
+    // The rich projection stays editable while its authored spelling is used
+    // as the merge branch for later serialization.
     const { preserved } = carveToProseMirrorWithReport('a \\* b\n', { unsupported: 'preserve' });
     assert.ok('document' in preserved, JSON.stringify(preserved));
 });

@@ -1,6 +1,6 @@
 import { Extension } from '@tiptap/core';
 
-/** Lossless source envelope for a structured document that has not been edited. */
+/** Merge base for preserving authored source layout around structured edits. */
 export const CarveSourcePreservation = Extension.create({
     name: 'carveSourcePreservation',
     addGlobalAttributes() {
@@ -8,9 +8,10 @@ export const CarveSourcePreservation = Extension.create({
             {
                 types: ['doc'],
                 attributes: {
-                carveSource: { default: null, rendered: false },
-                carveFingerprint: { default: null, rendered: false },
-                carveSourceLayout: { default: null, rendered: false },
+                    carveSource: { default: null, rendered: false },
+                    carveFingerprint: { default: null, rendered: false },
+                    carveSourceLayout: { default: null, rendered: false },
+                    carveProjectedSource: { default: null, rendered: false },
                 },
             },
             {

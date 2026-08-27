@@ -13,6 +13,7 @@ export { CarveFootnoteDefinition } from './carve-footnote-definition.js';
 export { CarveMath } from './carve-math.js';
 export { CarveEmbed } from './carve-embed.js';
 export { CarveAbbreviation } from './carve-abbreviation.js';
+export { CarveAbbreviationDefinition } from './carve-abbreviation-definition.js';
 export { CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription } from './carve-definition-list.js';
 export { CarveUnsupported } from './carve-unsupported.js';
 export { CarveUnsupportedInline } from './carve-unsupported-inline.js';

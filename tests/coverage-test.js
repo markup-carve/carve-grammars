@@ -45,7 +45,7 @@ ok('tiptap: every skip has a non-empty reason', () => {
     }
 });
 
-ok('tiptap: the covered/fallback lists classify every live category, and only live ones', () => {
+ok('tiptap: the covered list classifies every live category, and only live ones', () => {
     /*
      * The partition check above cannot say anything about tiptap. `coversAll`
      * makes its covered set the whole category list and its skip map empty, so
@@ -87,7 +87,8 @@ ok('tiptap: the covered/fallback lists classify every live category, and only li
     assert.deepStrictEqual(both, [], `categories in BOTH tiptap lists: ${both.join(', ')}`);
 });
 
-ok('tiptap: every fallback entry carries a non-empty reason', () => {
+ok('tiptap: no opaque fallback category remains', () => {
+    assert.strictEqual(COVERAGE.tiptap.fallback.size, 0);
     for (const [cat, reason] of COVERAGE.tiptap.fallback) {
         assert.ok(reason && reason.trim().length > 0, `tiptap fallback "${cat}" needs a reason`);
     }
