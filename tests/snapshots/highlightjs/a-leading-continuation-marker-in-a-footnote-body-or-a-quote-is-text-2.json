@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]: +"
+  },
+  {
+    "scope": null,
+    "text": "\n flush\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -4,6 +4,15 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- The Tiptap serializer keeps a shared outer emphasis delimiter open across nested marks, so `*bold with /italic/ inside*`, `/italic with *bold* inside/` and `_underline with *bold*_` remain balanced instead of duplicating the outer delimiter around each ProseMirror text node (#362).
+- Empty definition descriptions serialize as the canonical `: {empty}` form and stay glued to a following term, preserving the description boundary through an editable round trip.
+
+### Changed
+
+- The pinned Carve spec corpus advances from `e3b0333` to `b5b603d`, adding 60 documents across 12 recent definition-body, continuation-marker, invisible-line and unresolved-image categories. Prism and highlight.js carry reviewed goldens for every new document, and the Tiptap coverage ledger records which projections remain source-position dependent.
+
 ## [0.1.5] - 2026-08-27
 
 ### Added

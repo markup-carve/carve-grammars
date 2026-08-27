@@ -439,5 +439,19 @@ for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed 
 // And a description holding more than one block got a `: ` marker per block,
 // which spells a NEW description each time: a two-paragraph definition came
 // back as two definitions of the same term.
-assert.strictEqual(changed.length, 201, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 201 -> 200 when adjacent text nodes sharing an outer delimiter were grouped
+// before serialization (carve-grammars#362). The recovered corpus document is
+// the nested-emphasis family; the direct serializer tests pin bold/italic and
+// underline/bold independently so this count cannot hide delimiter imbalance.
+//
+// 200 -> 213 with the spec bump from e3b0333 to b5b603d. The bump adds 60
+// documents in 12 categories; the 1,478 documents shared by both pins keep
+// exactly the same verdict, and 13 of the new projections render differently
+// after an edit while the other 47 remain render-equivalent.
+//
+// 213 -> 204 when empty definition descriptions began writing `: {empty}`.
+// Nine projections that previously dropped the description boundary now keep
+// the same rendered document after an edit.
+assert.strictEqual(changed.length, 204, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

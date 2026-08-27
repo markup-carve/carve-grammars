@@ -710,6 +710,17 @@ export function serializeToCarve(doc) {
                 // `: ` separator puts at 2 (PART 9 section 17: the separator's
                 // width sets the column).
                 const blocks = child.content || [];
+                // A bare `:` is not an empty description: it is prose, and
+                // omitting the line removes the description altogether. Carve
+                // gives empty bodies an explicit canonical spelling so their
+                // boundary survives a rich-editor round trip.
+                if (blocks.length === 0) {
+                    output += ': {empty}\n';
+                    // Unlike a body-bearing pair, the canonical empty form is
+                    // glued to the next term; a blank would end the list.
+                    afterDescription = false;
+                    return;
+                }
                 blocks.forEach((block, i) => {
                     const text = block.type === 'paragraph'
                         ? serializeInline(block.content)
@@ -986,7 +997,7 @@ export function serializeToCarve(doc) {
         // each such atom on its own (no marks, so this recursion terminates) and
         // hand the result to the text path as a verbatim run that still carries
         // the marks.
-        const content = (rawContent || []).map((node) => (
+        const normalized = (rawContent || []).map((node) => (
             node && node.type !== 'text' && (node.marks || []).length
                 ? {
                     type: 'text',
@@ -996,6 +1007,48 @@ export function serializeToCarve(doc) {
                 }
                 : node
         ));
+        // ProseMirror splits one marked range whenever a nested mark begins or
+        // ends.  Serializing each resulting text node independently repeats the
+        // outer delimiter (`*a *` + `*/b/*` + `* c*`) instead of keeping it open
+        // across the inner span.  Collapse runs that share their outermost mark
+        // into one verbatim text node, then recurse over their contents after
+        // removing that mark.  Recursion handles arbitrary nesting depth while
+        // leaving the escaping and bare/autolink choices in the existing text
+        // path below.
+        const sameOuterMark = (left, right) => Boolean(left && right
+            && left.type === right.type
+            && pmFingerprint(left.attrs || {}) === pmFingerprint(right.attrs || {}));
+        const groupableDelimitedMarks = new Set([
+            'bold', 'italic', 'underline', 'strike', 'highlight',
+            'superscript', 'subscript', 'carveInsert', 'carveDelete',
+        ]);
+        const content = [];
+        for (let index = 0; index < normalized.length;) {
+            const node = normalized[index];
+            const candidateOuter = node?.type === 'text' ? node.marks?.[0] : null;
+            const outer = groupableDelimitedMarks.has(candidateOuter?.type) ? candidateOuter : null;
+            let end = index + 1;
+            while (outer && end < normalized.length) {
+                const candidate = normalized[end];
+                if (candidate?.type !== 'text' || !sameOuterMark(outer, candidate.marks?.[0])) break;
+                end++;
+            }
+            if (outer && end - index > 1) {
+                const inner = normalized.slice(index, end).map((part) => ({
+                    ...part,
+                    marks: (part.marks || []).slice(1),
+                }));
+                content.push({
+                    type: 'text',
+                    text: serializeInline(inner),
+                    marks: [outer],
+                    carveVerbatim: true,
+                });
+            } else {
+                content.push(node);
+            }
+            index = end;
+        }
         if (!content) return '';
         let result = '';
         let resumeDelimitedBold = false;

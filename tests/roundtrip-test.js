@@ -590,10 +590,27 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * line holding any of the other seven became that block when written back. And
  * a description with more than one block got a `: ` marker per block, which
  * spells a new description each time.
+ *
+ * 314 -> 311 when #362 began keeping one shared outer mark open across the
+ * text nodes an inner mark splits. Three documents no longer need their source
+ * envelope: the nested emphasis edge case and the two link-at-the-start forms.
+ *
+ * 311 -> 328 with the spec bump from e3b0333 to b5b603d. The bump adds 60
+ * documents in 12 categories; measured under both pins, the old 1,478
+ * documents still contribute exactly 311 and 17 of the new documents need an
+ * envelope. The other 43 write directly from their rich projection.
+ *
+ * 328 -> 321 when the writer learned the canonical `: {empty}` description.
+ * Three new empty-description sentinel documents and both older collected-
+ * definition documents now write faithfully from the editable projection.
+ *
+ * 321 -> 319 after the sentinel was kept glued to a following term, as the
+ * canonical writer requires. That recovers the remaining two new documents
+ * and promotes the complete empty-description category out of fallback.
  */
 assert.strictEqual(
-    envelopedFiles.length, 314,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 314`,
+    envelopedFiles.length, 319,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 319`,
 );
 
 assert.strictEqual(

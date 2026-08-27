@@ -1,0 +1,50 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "reference-image",
+    "text": "a"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>constant",
+    "text": "r"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption",
+    "text": "  ^ cap"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

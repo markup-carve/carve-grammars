@@ -1,0 +1,38 @@
+[
+  {
+    "type": "reference-image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "reference-image",
+    "text": "a"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>constant",
+    "text": "r"
+  },
+  {
+    "type": "reference-image>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption",
+    "text": " cap one"
+  },
+  {
+    "type": "text",
+    "text": "\ncontinued\n"
+  }
+]
