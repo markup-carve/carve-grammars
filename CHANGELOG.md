@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-08-27
+
 ### Added
 
 - **Tab sets and code groups are editable as widgets.** Both render an interactive bar: click a label to switch, double-click to rename, `+` to add, `×` to remove (refused on the last panel), `‹`/`›` to reorder. A code group had no bar at all before this, so its per-block `[label]`s were invisible and it rendered as a plain stack of code blocks; a tab set had one that could only switch. Switching still dispatches nothing - it sets `data-active` and the stylesheet does the rest - so moving between panels never marks the document dirty. The other four are ordinary undoable edits.
