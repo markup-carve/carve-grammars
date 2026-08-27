@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t1"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ": {empty}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":: t2"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ": {empty}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

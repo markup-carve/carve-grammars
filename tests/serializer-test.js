@@ -47,6 +47,29 @@ check('inline marks map to Carve tokens',
     )),
     '*a* /b/ `c` =d= ~e~ {,f,} {^g^} _h_');
 
+check('nested marks keep their shared outer delimiter open',
+    doc(para(
+        text('bold with ', 'bold'),
+        text('italic', 'bold', 'italic'),
+        text(' inside', 'bold'),
+    )),
+    '*bold with /italic/ inside*');
+
+check('italic can stay open around a nested bold span',
+    doc(para(
+        text('italic with ', 'italic'),
+        text('bold', 'italic', 'bold'),
+        text(' inside', 'italic'),
+    )),
+    '/italic with *bold* inside/');
+
+check('underline remains balanced around a nested bold span',
+    doc(para(
+        text('underline with ', 'underline'),
+        text('bold', 'underline', 'bold'),
+    )),
+    '_underline with *bold*_');
+
 // Sup/sub have no bare form: braced everywhere, including at a word boundary.
 check('subscript and superscript are always braced',
     doc(para(text('x', 'subscript'), text(' '), text('y', 'superscript'))),
@@ -397,6 +420,15 @@ check('definition list uses :: term / : def',
         { type: 'definitionDescription', content: [para(text('Def B.'))] },
     ] }),
     ':: Term A\n: Def A.\n\n:: Term B\n: Def B.');
+
+check('an empty definition description writes the canonical sentinel',
+    doc({ type: 'definitionList', content: [
+        { type: 'definitionTerm', content: [text('first')] },
+        { type: 'definitionDescription', content: [] },
+        { type: 'definitionTerm', content: [text('second')] },
+        { type: 'definitionDescription', content: [para(text('body'))] },
+    ] }),
+    ':: first\n: {empty}\n:: second\n: body');
 
 // Bare == and ,, are literal in Carve (highlight is {= =}, sub {, ,}); do not escape.
 check('literal == and ,, are not escaped',

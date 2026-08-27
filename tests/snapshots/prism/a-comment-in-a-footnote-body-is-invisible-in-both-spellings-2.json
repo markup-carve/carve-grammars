@@ -1,0 +1,30 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " intro"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%\n  c\n  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n  more\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

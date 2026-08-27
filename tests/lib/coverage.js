@@ -575,6 +575,28 @@ const TIPTAP_COVERED = [
     'one-authored-base-rule-reaches-a-definition-nested-in-a-list-item',
     'text-block-alignment-renders-the-css-declaration',
     'the-continuation-marker-attaches-one-block-in-every-container',
+
+    // Carve main through b5b603d (the 0.1.4 spec line). Measured through the
+    // source-aware loader and again with its source envelope removed: every
+    // file in these categories reparses to the same AST from the rich editor
+    // projection, so none needs a fallback explanation.
+    'an-invisible-line-before-the-blank-does-not-cancel-the-separation',
+    'a-floating-attribute-under-a-definition-attaches-at-column-zero',
+    'a-comment-in-a-footnote-body-is-invisible-in-both-spellings',
+    'the-continuation-marker-s-column-gate-reaches-every-container',
+    'a-colon-followed-by-only-whitespace-is-not-a-description',
+    'an-empty-description-body-claims-no-line-below-column',
+
+    // #362 keeps one outer delimiter open across nested inline marks. Besides
+    // the direct nested-emphasis case, that makes the link-at-the-start form
+    // faithful again after the editor splits its marked range into text nodes.
+    '72-emphasis-edge-cases',
+    '92-strong-emphasis-starting-with-a-link',
+
+    // Empty descriptions now have the canonical `: {empty}` spelling, so the
+    // older collected-definition category no longer needs its source envelope.
+    '227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace',
+    'an-empty-description-body-is-written-with-the-empty-sentinel',
 ];
 
 // Categories that require the whole-document fallback, with the concrete reason
@@ -582,6 +604,14 @@ const TIPTAP_COVERED = [
 // fixing a rich mapping promotes the category out of fallback without changing
 // the public preservation guarantee.
 const TIPTAP_SKIP = new Map([
+    // Added with the spec bump to b5b603d. These reasons were measured by
+    // serializing the rich projection with its lossless source envelope
+    // removed; at least one file in every category reparses to a different AST.
+    ['below-a-definition-body-s-column-an-invisible-line-folds-as-text', 'the projection loses the authored column of folded definitions, attributes, and abbreviation-shaped text inside a definition body'],
+    ['an-abbreviation-definition-outside-document-level-is-not-an-invisible-line', 'abbreviation-shaped lines outside document level are normalized and reparse to a different AST'],
+    ['an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth', 'the unresolved image nested in a list loses the source relationship that gives its caption slot back'],
+    ['an-empty-description-body-claims-no-line-below-column-0', 'empty definition descriptions are omitted, allowing following flush-left content to bind differently'],
+    ['a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text', 'the footnote form loses that its leading plus was text and serializes it at the definition marker column'],
     ['374-a-collected-definition-closes-the-item-paragraph', 'collected definitions are not represented in the structured editor tree, so all four forms require the source envelope'],
     ['267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run', 'abbreviation definitions are unsupported, and one remaining definition form reparses differently'],
     ['268-trailing-whitespace-on-a-content-line-is-dropped', 'some whitespace-sensitive forms reparse differently and others contain unsupported literal-inline or line-block nodes'],
@@ -618,7 +648,6 @@ const TIPTAP_SKIP = new Map([
     ['16-reference-link', 'reference-link definitions are not represented in the ProseMirror model'],
     ['22-footnotes', 'footnote definition blocks are not faithfully reconstructed'],
     ['223-an-abbreviation-term-is-one-ascii-alphanumeric-word', 'abbreviation definitions are not modeled, the same gap as 43-abbreviations - both files reparse to a different AST'],
-    ['227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace', 'both files reparse to a different AST: the entry is an EMPTY `dd`, and an empty description has no source spelling that reads back - the serializer writes a bare `:` and it rejoins the term (markup-carve/carve#805)'],
     ['228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block', 'reparses to a different AST: the collected definition still decides the item looseness, so the round trip changes tight to loose (carve-js#732)'],
     ['229-an-empty-abbreviation-term-is-not-a-definition', 'reparses to a different AST: the line is prose because the term is empty, and the abbreviation-definition gap of 43-abbreviations reaches the literal form too'],
     ['37-escapes', 'the converter does not model the `escaped_text` node'],
@@ -630,7 +659,6 @@ const TIPTAP_SKIP = new Map([
     ['62-smart-typography-escapes-and-code', 'smart-typography output is lossy on reparse'],
     ['69-attribute-edge-cases', 'key/value spans, div/heading attributes and extensions are not modeled'],
     ['70-escape-coverage', 'a variant is lossy through the serializer'],
-    ['72-emphasis-edge-cases', 'an emphasis edge case is lossy through the serializer'],
     ['73-list-nesting-and-looseness', 'nested-list looseness differs on reparse'],
     ['75-nested-brackets-in-link-text', 'nested brackets in link text are lossy through the serializer'],
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
@@ -638,7 +666,6 @@ const TIPTAP_SKIP = new Map([
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
     ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
-    ['92-strong-emphasis-starting-with-a-link', 'a link-in-emphasis edge case is lossy on reparse'],
     ['96-table-span-marker-in-first-column', 'rowspan/colspan filler cells are not reconstructed'],
     ['101-heading-marker-column-zero', 'an indented (literal) # is re-emitted column-0 as a heading on reparse'],
     ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],

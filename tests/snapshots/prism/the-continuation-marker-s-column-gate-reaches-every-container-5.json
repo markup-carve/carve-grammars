@@ -1,0 +1,30 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " intro"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nmore\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

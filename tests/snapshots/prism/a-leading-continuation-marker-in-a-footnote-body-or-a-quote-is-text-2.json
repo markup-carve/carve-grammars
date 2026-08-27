@@ -1,0 +1,22 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^a]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " +"
+  },
+  {
+    "type": "text",
+    "text": "\n flush\n\nsee"
+  },
+  {
+    "type": "footnote",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
