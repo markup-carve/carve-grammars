@@ -680,6 +680,28 @@ const SIGNATURE_OVERRIDES = {
         collapsed_reference_image: ['metaimagereference'],
     },
     /*
+     * IntelliJ consumes a TextMate grammar whose repository is deliberately
+     * grouped by highlighting family. One `divs` entry recognizes all three
+     * colon-fence container spellings; links and images each use one reference
+     * rule whose empty label is the collapsed form; and all five braced
+     * emphasis spellings live beside their bare twins in `emphasis`.
+     */
+    'intellij-carve': {
+        admonition: ['div'],
+        line_block: ['div'],
+        local_hard_break_block: ['div'],
+        footnote_definition: ['metafootnotedefinition'],
+        collapsed_reference_link: ['metalinkreference'],
+        reference_image: ['metaimagereference'],
+        collapsed_reference_image: ['metaimagereference'],
+        symbol: ['constantcharactersymbol', 'constantlanguagesymbol'],
+        forced_emphasis: ['emphasis'],
+        forced_strong: ['emphasis'],
+        forced_underline: ['emphasis'],
+        forced_strike: ['emphasis'],
+        forced_highlight: ['emphasis'],
+    },
+    /*
      * highlight.js calls the block-attribute rule `ATTRIBUTE`, singular. The
      * shared table has `attributes` and cannot reach it, and the singular does
      * not belong in the shared table: on Tiptap it lands on `attributeNaming`,

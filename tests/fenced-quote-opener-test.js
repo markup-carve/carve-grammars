@@ -63,7 +63,11 @@ assert.ok(
  * predicate answers true for every input and the negative rows below would
  * pass on a grammar that opens a container for `:::>`.
  */
-const OPENER_SCOPE = { prism: /div-delimiter/, highlightjs: /keyword/ };
+const OPENER_SCOPE = {
+    prism: /div-delimiter/,
+    highlightjs: /keyword/,
+    'intellij-carve': /keyword\.control\.div|entity\.name\.type\.div/,
+};
 const openerScopeOf = (surface) =>
     OPENER_SCOPE[surface] ?? /punctuation\.definition\.admonition|entity\.name\.tag/;
 
