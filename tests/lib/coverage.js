@@ -27,6 +27,7 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    'a-boundary-line-inside-an-open-fence-does-not-end-the-container',
     'a-footnote-body-s-last-block-when-it-is-not-a-paragraph-gets-a-synthesized-paragraph-for-the-backlink',
     'a-heading-at-an-item-s-content-column-leaves-no-paragraph-open',
     'a-multi-line-raw-block-is-placed-at-its-opening-and-verbatim-after-it',
@@ -38,7 +39,13 @@ const TIPTAP_COVERED = [
     'an-all-blank-raw-payload-still-emits-its-line',
     'an-autolink-body-admits-non-ascii-and-excludes-format-characters',
     'an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open',
+    'below-content-column-div-body-in-a-list-item-stays-literal',
+    'blocks-that-render-to-nothing',
+    'colon-fence-as-a-block-opener-in-a-list-item',
+    'indented-ordered-marker-content-column-includes-the-marker-indent',
+    'list-lazy-continuation',
     'outer-item-with-an-internal-blank-before-an-attached-block-is-loose',
+    'table-as-a-block-opener-in-a-list-item',
     'table-columns-carry-alignment-vertical-alignment-and-widths',
     // A boolean attribute is written as its bare name again, so `{kbd}` and
     // every other value-less attribute in this category survives the round
@@ -583,7 +590,6 @@ const TIPTAP_SKIP = new Map([
     ['275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text', 'collapsed heading references are not preserved faithfully and reparse to a different AST'],
     ['276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column', 'list/fence indentation is normalized and all variants reparse to a different AST'],
     ['277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open', 'comments are unsupported, and the non-comment variant reparses differently'],
-    ['279-a-boundary-line-inside-an-open-fence-does-not-end-the-container', 'comment variants are unsupported and the remaining container-boundary forms reparse differently'],
     ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
     ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
     ['249-trailing-whitespace-after-a-block-marker', 'trailing whitespace after a marker is what the sixth example pins, and the serializer normalizes it away, so the reparse loses the distinction the document exists to record'],
@@ -594,7 +600,6 @@ const TIPTAP_SKIP = new Map([
 
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
-    ['70-blocks-that-render-to-nothing', 'same `comment` gap, plus `abbreviation-def`, which the converter also does not model'],
     ['178-a-flush-left-line-needs-an-open-paragraph-to-fold-into', 'an empty block quote in a list item is not reconstructed and the paragraph after it folds onto the marker line, so `. >` + `X` comes back as `. > X`'],
     ['179-an-abbreviation-definition-is-recognized-only-at-document-level', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 177-two-abbreviation-definitions'],
     ['180-a-list-item-does-not-define-an-abbreviation-either', 'same `abbreviation-def` gap - the definition that does NOT define is still an `abbreviation-def` node in the tree, so the converter throws before the case can be exercised'],
@@ -630,7 +635,6 @@ const TIPTAP_SKIP = new Map([
     ['75-nested-brackets-in-link-text', 'nested brackets in link text are lossy through the serializer'],
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
     ['80-blockquote-lazy-continuation', 'blockquote lazy continuation differs on reparse'],
-    ['84-list-lazy-continuation', 'list lazy continuation and admonitions are not modeled'],
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
     ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
@@ -651,16 +655,12 @@ const TIPTAP_SKIP = new Map([
     ['137-inline-literal', 'the converter does not model the `literal_inline` node'],
     ['141-post-blank-list-continuation-content-column-model', 'round-trips to a different AST'],
     ['143-definition-list-as-a-first-class-block-opener', 'the converter does not model the `definition_list` node'],
-    ['144-table-as-a-block-opener-in-a-list-item', 'the converter does not model the `soft_break` node'],
     ['145-adjacent-slash-and-underscore-emphasis-nest', 'the converter does not model the `emphasis` node'],
-    ['146-colon-fence-as-a-block-opener-in-a-list-item', 'the converter does not model the `soft_break` node'],
-    ['149-indented-ordered-marker-content-column-includes-the-marker-indent', 'the converter does not model the `soft_break` node'],
     ['152-under-indented-definition-attaches-over-indented-definition-folds', 'the converter does not model the `definition_list` node'],
     ['155-indented-attribute-line-stays-literal', 'the converter does not model the `soft_break` node'],
     ['156-indented-image-and-caption-stay-literal', 'the converter does not model the `soft_break` node'],
     ['157-indented-reference-and-footnote-definitions-stay-literal', 'the converter does not model the `smart_punctuation` node'],
     ['158-indented-colon-fence-blocks-stay-literal', 'the converter does not model the `soft_break` node'],
-    ['159-below-content-column-div-body-in-a-list-item-stays-literal', 'the converter does not model the `soft_break` node'],
     ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
 ]);

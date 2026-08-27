@@ -678,6 +678,10 @@ export function serializeToCarve(doc) {
         }
     }
 
+    // The column a description's continuation blocks sit at, set by the width
+    // of the canonical `: ` separator this serializer writes.
+    const DEFINITION_CONTENT_INDENT = '  ';
+
     function serializeDefinitionList(dl) {
         const children = dl.content || [];
         // The list's own attribute run, on its own line above the first term.
@@ -698,16 +702,34 @@ export function serializeToCarve(doc) {
                 output += ':: ' + serializeInline(child.content) + '\n';
                 afterDescription = false;
             } else if (child.type === 'definitionDescription') {
-                (child.content || []).forEach(block => {
-                    if (block.type === 'paragraph') {
-                        output += ': ' + serializeInline(block.content) + '\n';
-                    } else {
-                        // For other block types, serialize with indentation.
-                        const blockText = serializeNodeToString(block);
-                        blockText.split('\n').filter(l => l).forEach(line => {
-                            output += ': ' + line + '\n';
+                // ONE description, however many blocks it holds. Every block
+                // used to get its own `: ` marker, which spells a NEW
+                // description each time - a two-paragraph definition came back
+                // as two definitions of the same term. A continuation belongs
+                // at the description's content column, which the canonical
+                // `: ` separator puts at 2 (PART 9 section 17: the separator's
+                // width sets the column).
+                const blocks = child.content || [];
+                blocks.forEach((block, i) => {
+                    const text = block.type === 'paragraph'
+                        ? serializeInline(block.content)
+                        : serializeNodeToString(block).replace(/\n+$/, '');
+                    const lines = text.split('\n');
+                    if (i === 0) {
+                        // The first line rides the marker; the rest are already
+                        // below it and only need the column.
+                        output += ': ' + lines[0] + '\n';
+                        lines.slice(1).forEach(line => {
+                            output += (line ? DEFINITION_CONTENT_INDENT + line : '') + '\n';
                         });
+
+                        return;
                     }
+                    // A blank line, or the block would join the one above it.
+                    output += '\n';
+                    lines.forEach(line => {
+                        output += (line ? DEFINITION_CONTENT_INDENT + line : '') + '\n';
+                    });
                 });
                 afterDescription = true;
             }
@@ -918,7 +940,16 @@ export function serializeToCarve(doc) {
     //
     // Widening this set is a measurement, not a judgement: add a case that
     // loses its paragraph without the escape, then add the character.
-    const CONTINUATION_BLOCK_OPENER = /\n([>#])/g;
+    // Every shape that OPENS a block at column 0, so a soft-break line holding
+    // one stops being text when it is written back there.
+    //
+    // Was `>` and `#` only, which left seven others leaking. `1. outer` with a
+    // lazy `  1. inner` under it came back as `1. outer` / `1. inner` - two
+    // items where the source had one, measured against the engine rather than
+    // reasoned about. A lookahead rather than a capture, because the fix is to
+    // insert a space and never to rewrite the opener.
+    const CONTINUATION_BLOCK_OPENER =
+        /\n(?=[>#|]|[-*][ \t]|-{3,}|:{2,}|(?:[0-9]{1,9}|[A-Za-z])[.)][ \t])/g;
 
     function escapeContinuationOpeners(text) {
         // A single SPACE, not a backslash. Both keep the line as text - the
@@ -932,7 +963,7 @@ export function serializeToCarve(doc) {
         // One space is below every item's content column (the shallowest is 2,
         // for `- `), so the line stays a lazy continuation rather than becoming
         // the block it would be at that column.
-        return text.replace(CONTINUATION_BLOCK_OPENER, (match, opener) => '\n ' + opener);
+        return text.replace(CONTINUATION_BLOCK_OPENER, '\n ');
     }
 
     function serializeParagraphText(content) {

@@ -364,6 +364,58 @@ ok('none of the three needs the whole-document source envelope any more', () => 
     }
 });
 
+// Nine shapes open a block at column 0, and a soft-break line holding one used
+// to become that block when written back. Each pair here is the same document
+// spelled two ways: the lazy line as authored, and what the serializer writes.
+// Asserted on the RENDER, because the spellings legitimately differ - the
+// escaper inserts one space, which is below every content column - and only the
+// rendered result can say the document survived.
+const LAZY_CONTINUATION_OPENERS = [
+    ['bullet', '- inner'],
+    ['star bullet', '* inner'],
+    ['ordered', '1. inner'],
+    ['ordered paren', '1) inner'],
+    ['alphabetic', 'a. inner'],
+    ['thematic break', '--- '],
+    ['colon fence', '::: note'],
+    ['definition term', ':: term'],
+    ['table row', '| a |'],
+    ['quote', '> inner'],
+    ['heading', '# inner'],
+];
+for (const [name, opener] of LAZY_CONTINUATION_OPENERS) {
+    ok(`a lazy ${name} stays a continuation`, () => {
+        const source = `1. outer\n  ${opener}`;
+        assert.strictEqual(carveToHtml(written(source)).trim(), carveToHtml(source).trim());
+        assert.strictEqual(carveToHtml(mounted(source)).trim(), carveToHtml(source).trim());
+    });
+}
+
+// Text that merely LOOKS like it might open something must not be touched: the
+// escaper inserting a space there would change the text, not protect it.
+for (const [name, line] of [['plain text', 'inner'], ['emphasis', '*emph* inner'], ['plus', '+ inner']]) {
+    ok(`a lazy ${name} line is written unchanged`, () => {
+        const source = `1. outer\n  ${line}`;
+        assert.strictEqual(carveToHtml(written(source)).trim(), carveToHtml(source).trim());
+    });
+}
+
+ok('a description with more than one block stays ONE description', () => {
+    // A `: ` marker per block spells a new description each time, so a
+    // two-paragraph definition came back as two definitions of one term.
+    const source = ':: term\n: A definition can now hold\n\n  more than one paragraph.';
+
+    assert.strictEqual(written(source), source);
+    assert.strictEqual(mounted(source), source);
+});
+
+ok('a description can hold a block that is not a paragraph', () => {
+    const source = ':: term\n: lead\n\n  - a\n  - b';
+
+    assert.strictEqual(written(source), source);
+    assert.strictEqual(mounted(source), source);
+});
+
 ok('every mark the loader can put on a carrier has a spelling to write back', () => {
     /*
      * The carrier is only a carry if the serializer knows the construct. A
