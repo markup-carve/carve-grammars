@@ -1,6 +1,6 @@
 {
   "name": "@markup-carve/carve-grammars",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Grammars for the Carve markup language: Tiptap editor kit + serializer, plus Prism, highlight.js and TextMate syntax-highlighting grammars",
   "type": "module",
   "main": "tiptap/index.js",
