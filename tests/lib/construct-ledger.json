@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -387,7 +387,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -756,7 +756,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#317",
       "constructs": {
         "heading": {
@@ -1125,7 +1125,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-08-23",
+      "measured": "2026-08-27",
       "gapTicket": "#310",
       "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
@@ -2231,10 +2231,10 @@
     },
     "intellij-carve": {
       "repo": "markup-carve/intellij-carve",
-      "commit": "bdfbfd8",
-      "measured": "2026-08-23",
+      "commit": "b909d07",
+      "measured": "2026-08-27",
       "gapTicket": "markup-carve/intellij-carve#97",
-      "note": "The payload column was measured for the first time on 2026-08-23 (carve-grammars#329): carve-grammars#320 built the harness that reaches this surface, but the sweep was never run with a checkout named, so all 13 rows stayed \"unmeasured\" through carve-grammars#328. ONE SAMPLE PER CONSTRUCT SAYS EVERY ROW IS INERT AND THE GENERATED SWEEP DISAGREES ON FOUR - 353 of 3503 generated documents leak across five rows - so the four \"leaks\" cells here are the sweep's answer and not the sample's; tests/opaque-payload-test.js is what asserts each of them, and a fix there is what takes the cell out. The 8 GAP and 5 UNMEASURED rows on the first axis are carve-grammars#320's own finding and are unchanged. `paragraph` moved to UNSUPPORTED in this run for the reason every other TextMate surface did in carve-grammars#323: a paragraph is the ABSENCE of a block marker, the probe cannot see an absence, and this surface's copy of the row survived only because its checkout was not named when the others were re-seeded.",
+      "note": "Both axes were re-measured against the IntelliJ fix for markup-carve/intellij-carve#97. The per-surface naming table now records the grammar's intentional folds, closing the former 8 GAP and 5 UNMEASURED recognition rows without inventing rules. Reference images and footnote definitions were real attribution gaps and were fixed on the surface. The generated payload sweep now reports every IntelliJ verbatim construct inert: the four former leak rows (353 generated documents across code blocks, code spans, editorial comments and braced comments) are closed rather than inferred from one sample. `paragraph` remains UNSUPPORTED for the reason shared by every TextMate surface: it is the absence of a block marker, so there is nothing to scope.",
       "constructs": {
         "heading": {
           "status": "IMPLEMENTED",
@@ -2249,9 +2249,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code-blocks",
-          "payload": "leaks",
-          "payloadNote": "an INDENTED delimiter-shaped line inside the body ends the block early - a fence at two columns in - so everything after it is live. 10 of 74 generated fence shapes; the 90 opener shapes are inert",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -2279,14 +2277,14 @@
           "payload": "parsed"
         },
         "line_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "local_hard_break_block": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "figure_group": {
           "status": "IMPLEMENTED",
@@ -2294,9 +2292,9 @@
           "payload": "parsed"
         },
         "admonition": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "div": {
           "status": "IMPLEMENTED",
@@ -2324,9 +2322,9 @@
           "payload": "parsed"
         },
         "footnote_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.footnote.definition.carve",
+          "payload": "parsed"
         },
         "abbreviation_definition": {
           "status": "IMPLEMENTED",
@@ -2366,9 +2364,7 @@
         "code_span": {
           "status": "IMPLEMENTED",
           "evidence": "inline-code",
-          "payload": "leaks",
-          "payloadNote": "an UNPARTNERED run leaves the rest of the line live where the engine reads a code span to the end of the paragraph, at one backtick and at two. 112 of 184 generated documents",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "autolink": {
           "status": "IMPLEMENTED",
@@ -2391,9 +2387,9 @@
           "payload": "parsed"
         },
         "collapsed_reference_link": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.link.reference.carve",
+          "payload": "parsed"
         },
         "inline_span": {
           "status": "IMPLEMENTED",
@@ -2406,14 +2402,14 @@
           "payload": "parsed"
         },
         "reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.image.reference.carve",
+          "payload": "parsed"
         },
         "collapsed_reference_image": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.image.reference.carve",
+          "payload": "parsed"
         },
         "math_inline": {
           "status": "IMPLEMENTED",
@@ -2456,24 +2452,24 @@
           "payload": "parsed"
         },
         "forced_emphasis": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "forced_strong": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "forced_underline": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "forced_strike": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "forced_super": {
           "status": "IMPLEMENTED",
@@ -2486,9 +2482,9 @@
           "payload": "parsed"
         },
         "forced_highlight": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "emphasis",
+          "payload": "parsed"
         },
         "reference_footnote": {
           "status": "IMPLEMENTED",
@@ -2523,9 +2519,7 @@
         "editorial_comment": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.critic.carve",
-          "payload": "leaks",
-          "payloadNote": "a `{# ... #}` written across a line break is not one comment, so the markup inside it is scoped. 87 of 286 generated documents",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "mention": {
           "status": "IMPLEMENTED",
@@ -2538,9 +2532,9 @@
           "payload": "parsed"
         },
         "symbol": {
-          "status": "GAP",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "constant.language.symbol.carve",
+          "payload": "parsed"
         },
         "em_dash": {
           "status": "IMPLEMENTED",
@@ -2590,9 +2584,7 @@
         "braced_comment": {
           "status": "IMPLEMENTED",
           "evidence": "comment.block.inline.carve",
-          "payload": "leaks",
-          "payloadNote": "a `{% ... %}` written across a line break is not one comment, so the markup inside it is scoped. 144 of 469 generated documents",
-          "ticket": "markup-carve/intellij-carve#97"
+          "payload": "inert"
         },
         "hard_break": {
           "status": "IMPLEMENTED",

@@ -222,11 +222,12 @@ const UNREACHED = {
     /*
      * Measured when the intellij checkout was first named here
      * (carve-grammars#329). It is a separate lineage from this repository's
-     * TextMate grammar and reaches the same two contexts, which is what the
+     * TextMate grammar. Block quotes began reaching the inline family in
+     * markup-carve/intellij-carve#98; headings remain the one unreached context.
      * exact assertion is for: a surface whose checkout appears with a different
      * answer fails this row rather than being quietly absent from the table.
      */
-    'intellij-carve': ['heading', 'blockquote'],
+    'intellij-carve': ['heading'],
 };
 
 /*
@@ -246,21 +247,7 @@ const UNREACHED = {
  *
  * Measured 2026-08-23 on intellij-carve bdfbfd8.
  */
-const IN_A_CONTAINER = {
-    /*
-     * carve-grammars#325's own defect, on the intellij port - a separate
-     * lineage that never took the guard - and only inside a TABLE CELL. Its
-     * cell rule reaches the highlight rule without the typography rule in front
-     * of it, so a `<=`, `>=` or `!=` comparison spends its `=` on a highlight
-     * the engine does not render. Tracked on markup-carve/intellij-carve#97,
-     * the surface's open ledger ticket.
-     */
-    'intellij-carve': [
-        'table cell: a <=b c= d',
-        'table cell: a >=b c= d',
-        'table cell: a !=b c= d',
-    ],
-};
+const IN_A_CONTAINER = {};
 
 console.log('\nthe same shapes, one container down:');
 
