@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-08-28
+
 ### Fixed
 
 - Editing a source-sensitive Tiptap document no longer discards its authored columns, blank-line ownership, delimiter choices, escapes, or marker placement. The loader now records the canonical projection as a merge base and the serializer applies structured edits to the authored source with editor-wins conflict handling. Unchanged documents remain byte-identical, and the full 1,538-document corpus is covered without a whole-document opaque fallback.
