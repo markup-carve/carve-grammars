@@ -26,7 +26,7 @@ for (const k of ['DOMParser', 'Node', 'Element', 'HTMLElement', 'navigator', 'ge
 }
 
 const { Editor } = await import('@tiptap/core');
-const { CarveKit, serializeToCarve } = await import('../tiptap/index.js');
+const { CarveKit, carveToProseMirror, serializeToCarve } = await import('../tiptap/index.js');
 const { carveToHtml, parse } = await import('@markup-carve/carve');
 
 console.log('carve-grammars tab-set round-trip:');
@@ -53,6 +53,22 @@ function assertRoundTrips(name, carve) {
 
 assertRoundTrips('labelled tabs with a selected flag (canonical [label] openers)',
     '::: tabs\n:::: tab [First]\nAlpha\n::::\n\n{selected}\n:::: tab [Second]\nBeta\n::::\n:::');
+
+// wp-carve and carve-wysiwyg load through the Carve AST rather than rendered
+// HTML. A bare attribute has the value "", so this path must test whether the
+// key exists instead of treating its value as a boolean.
+{
+    const carve = '::: tabs\n:::: tab [First]\nAlpha\n::::\n\n{selected}\n:::: tab [Second]\nBeta\n::::\n:::';
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    const editor = new Editor({ element: el, extensions: [CarveKit], content: carveToProseMirror(carve) });
+    const out = serializeToCarve(editor.getJSON());
+    editor.destroy();
+    el.remove();
+    assert.deepStrictEqual(parse(out), parse(carve), `AST-loaded selected tab\n--- in ---\n${carve}\n--- out ---\n${out}`);
+    passed++;
+    console.log('  ✓ AST-loaded selected tab keeps its bare attribute');
+}
 
 // Legacy attribute-form input normalizes to the canonical [label] opener.
 {

@@ -689,7 +689,9 @@ function convertAdmonition(node, ctx) {
             type: 'carveTab',
             attrs: {
                 label: node.label ?? inlinePlainText(node.title || []),
-                selected: !!node.attrs?.keyValues?.selected,
+                // Bare attributes are represented with an empty-string value,
+                // so truthiness would turn `{selected}` back off.
+                selected: Object.hasOwn(node.attrs?.keyValues ?? {}, 'selected'),
             },
             content: convertBlocks(node.children || [], ctx),
         };
