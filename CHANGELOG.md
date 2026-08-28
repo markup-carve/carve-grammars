@@ -9,15 +9,10 @@ All notable changes to `carve-grammars` are documented here.
 ### Fixed
 
 - A tab marked with bare `{selected}` now remains selected when wp-carve, carve-wysiwyg, or another consumer loads through the Carve AST. Bare attributes carry an empty-string value, so the bridge now checks for the key instead of treating its value as a boolean (#366).
-- The shared engine sweep once again exercises highlight.js reference and collapsed-reference images. Their grammar support shipped in 0.1.5, but two obsolete skip declarations left those cases untested by the cross-engine sweep.
-
-### Tests
-
-- Added 162 wp-carve-shaped visual tab cases across one to six panels, every selectable opening position, and six rich-content families. Each case mounts the public AST-to-Tiptap path, verifies the authored tab opens, clicks through every panel, and proves that view-only switching changes no serialized source.
 
 ### Changed
 
-- Advanced the pinned Carve specification corpus from `b5b603d` to `9e40f98`, bringing the grammar and visual-editor gates onto the latest source-position and definition-body cases.
+- Advanced the pinned Carve specification corpus from `b5b603d` to `9e40f98`, bringing the grammar and visual-editor gates onto the latest source-position and definition-body cases (#367).
 
 ## [0.1.6] - 2026-08-28
 
