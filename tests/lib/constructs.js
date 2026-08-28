@@ -246,12 +246,10 @@ export const CONSTRUCTS = [
     {
         name: "reference image", sample: "a ![alt][r] b", payload: "alt",
         textmate: "string.other.image.alt",
-        skip: { highlightjs: "no reference-image rule: the reference-link mode claims the brackets and leaves the `!` as prose - markup-carve/carve-grammars#317" },
     },
     {
         name: "collapsed reference image", sample: "a ![alt][] b", payload: "alt",
         textmate: "string.other.image.alt",
-        skip: { highlightjs: "no reference-image rule: the reference-link mode claims the brackets and leaves the `!` as prose - markup-carve/carve-grammars#317" },
     },
     { name: "citation integral", sample: "see [+@smith2020] here", payload: "+", textmate: "keyword.operator.citation.integral" },
     { name: "citation punct", sample: "see [@smith2020] here", payload: "[", textmate: "punctuation.definition.citation" },
