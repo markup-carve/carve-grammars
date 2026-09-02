@@ -597,6 +597,14 @@ const TIPTAP_COVERED = [
     // older collected-definition category no longer needs its source envelope.
     '227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace',
     'an-empty-description-body-is-written-with-the-empty-sentinel',
+
+    // Carve main through 1c6e36d. Both categories were run one file at a time
+    // through the source-aware loader before being classified: each converts to
+    // rich nodes (`carveRawBlock`; `bulletList` + `carveLinkRefDef`) with no
+    // whole-document fallback atom and no source envelope, and each reparses to
+    // the same AST.
+    'a-raw-block-passes-its-attributes-through-untouched',
+    'a-definition-between-two-open-content-columns-reaches-the-outer-one',
 ];
 
 // Categories that historically required the whole-document fallback. Their
