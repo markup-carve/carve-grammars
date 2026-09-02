@@ -15,6 +15,13 @@
  *   2. NOT-ATTRS -- it is not scoped as an attribute block, unless it IS one.
  *                   This is the failure mode the `{...}` family keeps hitting:
  *                   the attribute rule opens on any brace and steals the span.
+ *   3. WHOLE     -- opt-in, for constructs whose defect is a PARTIAL match.
+ *                   COVERED is satisfied by any overlapping scoped token, so a
+ *                   rule that reads `<-->` as `<--` plus a text `>` passes it:
+ *                   measured, deleting the `<-->` alternative from both engines
+ *                   left this sweep green. A `whole: true` entry requires one
+ *                   token spelling the payload exactly, which is the same
+ *                   reason tests/smart-typography-test.js asserts whole runs.
  *
  * Deliberately NOT asserting exact scope names: Prism and highlight.js use
  * different vocabularies, and pinning those is what the snapshots are for. The
@@ -47,6 +54,9 @@ function check(engineName, tokenize) {
         if (!covered) problem = 'NOT SCOPED (no rule matches it)';
         else if (!attr && attrScoped) problem = `scoped as an ATTRIBUTE block (${carrying.find((t) => ATTR_SCOPE.test(t.scope)).scope})`;
         else if (attr && !attrScoped) problem = 'attribute construct is NOT scoped as attributes';
+        else if (construct.whole && !carrying.some((t) => t.text === payload)) {
+            problem = `scoped in PIECES - no single token spells ${JSON.stringify(payload)}`;
+        }
 
         if (problem) {
             const dump = tokens.map((t) => `${JSON.stringify(t.text)}:${t.scope ?? '-'}`).join(' | ');
