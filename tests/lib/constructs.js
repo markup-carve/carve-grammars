@@ -49,6 +49,9 @@
  * @module tests/lib/constructs
  */
 
+/** The gap this file records for the mirrored bold-italic nesting. */
+const SKIP_375 = 'the mirrored nesting scopes as bold alone, with no italic anywhere - carve-grammars#375';
+
 /** The gap this file records for the five runs only the engines carry. */
 const SKIP_374 = 'the TextMate typography rule carries fourteen alternatives, not nineteen - carve-grammars#374';
 
@@ -64,15 +67,16 @@ export const CONSTRUCTS = [
     { name: "bold", sample: "some *bold* text", payload: "bold", textmate: "markup.bold" },
     { name: "bold-italic", sample: "some /*both*/ text", payload: "both", textmate: "markup.bold.italic" },
     // The mirrored nesting. `bold-italic` above pins one order only, so the
-    // other was untested on every surface, and adding it found the TextMate
-    // grammar reading `*/both/*` as a bold run containing literal slashes -
-    // `/both/` carries `markup.bold` and nothing carries `markup.bold.italic`.
-    // The engine renders the two spellings identically. Skipped rather than
-    // pinned to the wrong scope, so removing the skip is how #375 closes.
+    // other was untested on every surface - and adding it found two of the three
+    // grammars reading it as bold alone. The engine renders the two spellings
+    // identically; TextMate gives `/both/` `markup.bold` and Prism gives the
+    // whole run `bold`, so neither says italic anywhere. Only highlight.js
+    // carries both marks. Skipped for the two rather than pinned to the wrong
+    // reading, so removing a skip is how carve-grammars#375 closes.
     {
         name: "bold-italic mirrored", sample: "some */both/* text", payload: "both",
         textmate: "markup.bold.italic",
-        skip: { textmate: "the mirrored nesting scopes as bold, not bold-italic - carve-grammars#375" },
+        skip: { textmate: SKIP_375, prism: SKIP_375 },
     },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },
@@ -955,11 +959,11 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // Six constructs are skipped for TextMate and three each for Prism and
+    // Six constructs are skipped for TextMate, four for Prism and three for
     // highlight.js; each says why in its own `skip` entry, and every skip is
     // subtracted here.
     textmate: 188,
-    prism: 191,
+    prism: 190,
     highlightjs: 191,
 };
 
