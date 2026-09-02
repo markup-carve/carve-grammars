@@ -116,6 +116,11 @@ export function validate(constructs, ledger) {
                 continue;
             }
 
+            // SHAPE ONLY. That the cited rule actually colours the construct is
+            // measured in `tests/construct-ledger-test.js` against
+            // `tests/lib/rule-scopes.js`, on every surface this repo can
+            // tokenize - this file has no grammar in front of it, and a
+            // non-empty string was the whole test until carve-grammars#376.
             if (entry.status === 'IMPLEMENTED' && !nonEmpty(entry.evidence)) {
                 findings.push(`${at}: IMPLEMENTED needs evidence - the name the surface gives the construct`);
             }

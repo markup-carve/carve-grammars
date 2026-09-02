@@ -27,6 +27,7 @@ import { specConstructs } from './spec-constructs.mjs';
 import { INDISTINGUISHABLE, SURFACES, probe, rootVariable } from './surface-probe.mjs';
 import { UNSUPPORTED_ON, reasonFor } from './unsupported-on.mjs';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from '../tests/lib/payload-inertness.js';
+import { refusal, scopeReader } from '../tests/lib/rule-scopes.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const LEDGER = resolve(here, '..', 'tests', 'lib', 'construct-ledger.json');
@@ -57,6 +58,23 @@ const constructs = specConstructs();
  * which is what the `unmeasured` state is for.
  */
 const measured = {};
+
+/*
+ * AND THE FIRST AXIS, MEASURED TOO, WHEREVER A GRAMMAR CAN BE TOKENIZED HERE.
+ *
+ * A probe HIT is a name, and a name is not a colour: `smart_typography` names
+ * eight constructs on all three local grammars and covers five of them, so five
+ * rows seeded IMPLEMENTED off a rule that never matches them
+ * (carve-grammars#376). Where the construct's own sample says the cited rule
+ * does not scope it, the hit is refused here and the row falls through to the
+ * same UNSUPPORTED / GAP branches an absent name reaches.
+ *
+ * `unresolved` - a cited name this reader cannot resolve to a rule - is NOT a
+ * refusal. That is the instrument failing, not the grammar, and demoting a row
+ * on it would turn a broken reader into a page of fresh gaps;
+ * `tests/construct-ledger-test.js` fails loudly on it instead.
+ */
+const refuses = {};
 {
     const { prismTokens, hljsTokens } = await import('../tests/lib/engines.js');
     const { textmateEngines } = await import('../tests/lib/surface-engines.js');
@@ -65,6 +83,11 @@ const measured = {};
         measured[id] = Object.fromEntries(
             Object.entries(VERBATIM_SAMPLES).map(([name, sample]) => [name, measure(tokenize, sample)]),
         );
+
+        const root = SURFACES[id].local ? resolve(here, '..') : process.env[rootVariable(id)];
+        const reader = scopeReader(id, root);
+        if (!reader) continue;
+        refuses[id] = refusal(reader, tokenize);
     }
 
     const { measureModel } = await import('../tests/lib/tiptap-payload.js');
@@ -115,7 +138,7 @@ for (const [id, surface] of Object.entries(SURFACES)) {
         const old = was.constructs?.[name] ?? {};
         const entry = {};
 
-        if (hits.has(name)) {
+        if (hits.has(name) && !refuses[id]?.(name, hits.get(name))) {
             entry.status = 'IMPLEMENTED';
             entry.evidence = hits.get(name);
         } else if (INDISTINGUISHABLE[name] && hits.has(INDISTINGUISHABLE[name])) {
@@ -127,9 +150,9 @@ for (const [id, surface] of Object.entries(SURFACES)) {
              */
             entry.status = 'UNMEASURED';
             entry.ticket = old.ticket || was.gapTicket || '';
-        } else if (reasonFor(name) && (UNSUPPORTED_ON[name] || []).includes(id)) {
+        } else if (reasonFor(name, id) && (UNSUPPORTED_ON[name] || []).includes(id)) {
             entry.status = 'UNSUPPORTED';
-            entry.reason = old.reason || reasonFor(name);
+            entry.reason = old.reason || reasonFor(name, id);
         } else {
             entry.status = 'GAP';
             entry.ticket = old.ticket || was.gapTicket || '';

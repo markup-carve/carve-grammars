@@ -45,6 +45,21 @@ export const UNSUPPORTED = {
     smart_typography: 'smart-typography output is lossy on reparse, so the bridge does not model it '
         + '(tiptap/schema-map.json, "unmapped"): the engine resolves the source spelling to the '
         + 'resolved character, which the editor holds as text',
+    /*
+     * THE SAME CONSTRUCT, A DIFFERENT REASON, ON EVERY SURFACE THAT SCOPES
+     * MARKERS. markup-carve/emacs-carve#23 ruled it for that mode and the
+     * argument is a property of the construct, not of emacs: a smart quote is
+     * every straight quote and apostrophe in prose, so a rule would paint the
+     * apostrophe of every contraction and cannot tell the quote an author means
+     * from the one inside a word.
+     *
+     * The three grammars here were recorded IMPLEMENTED on the strength of the
+     * typography rule's NAME until carve-grammars#376 measured them; not one
+     * scopes a bare quote, and none should.
+     */
+    smart_quote: 'a smart quote is every straight quote and apostrophe in prose, so a rule would '
+        + 'paint the apostrophe of every contraction and cannot tell the quote an author means from '
+        + 'the one inside a word (markup-carve/emacs-carve#23)',
 };
 
 /** The eight constructs `smart_typography` above is the reason for. */
@@ -84,14 +99,21 @@ export const UNSUPPORTED_ON = {
      * committed UNSUPPORTED row this table does not permit, so the two records
      * cannot drift apart again.
      */
-    smart_quote: ['tiptap', 'emacs-carve'],
+    smart_quote: ['tiptap', 'emacs-carve', 'textmate', 'prism', 'highlightjs'],
 };
 
 /**
- * The stated reason a construct may be UNSUPPORTED, by construct name.
+ * The stated reason a construct may be UNSUPPORTED, by construct and surface.
  *
  * @param {string} name - the construct.
+ * @param {string} [id] - the surface, for the constructs whose reason differs by surface.
  * @returns {string|undefined} the reason, or undefined when there is none.
  */
-export const reasonFor = (name) => UNSUPPORTED[name]
-    || (SMART_TYPOGRAPHY.includes(name) ? UNSUPPORTED.smart_typography : undefined);
+export const reasonFor = (name, id) => {
+    // `smart_quote` carries TWO reasons, and which one applies is a property of
+    // the surface: the Tiptap bridge does not model smart typography at all,
+    // and a highlighting grammar could but must not.
+    if (name === 'smart_quote' && id !== 'tiptap') return UNSUPPORTED.smart_quote;
+
+    return UNSUPPORTED[name] || (SMART_TYPOGRAPHY.includes(name) ? UNSUPPORTED.smart_typography : undefined);
+};
