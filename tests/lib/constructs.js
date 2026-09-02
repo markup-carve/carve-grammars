@@ -39,6 +39,10 @@
  *               attributes is correct rather than the failure mode.
  *   skip      - `{ <grammar>: 'reason' }` for a grammar that deliberately does
  *               not cover this construct. Written down, never silent.
+ *   engineScopes - `{ <engine>: ['scope', ...] }`, scopes the sample must carry
+ *               in that engine. The only typed assertion the engine sweep
+ *               makes; use it where being read as the WRONG construct is the
+ *               realistic defect, since "carries a scope" cannot see that.
  *   whole     - the payload must come back as ONE token in Prism and
  *               highlight.js. The engine sweep otherwise accepts any
  *               overlapping scoped token, which a rule that matches half a run
@@ -55,7 +59,7 @@ const SKIP_375 = 'the mirrored nesting scopes as bold alone, with no italic anyw
 /** The gap this file records for the five runs only the engines carry. */
 const SKIP_374 = 'the TextMate typography rule carries fourteen alternatives, not nineteen - carve-grammars#374';
 
-/** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), attr?: boolean, skip?: object, whole?: boolean}>} */
+/** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), attr?: boolean, skip?: object, whole?: boolean, engineScopes?: object}>} */
 export const CONSTRUCTS = [
     // The other half of #164, and the reason the fix cannot just narrow the shared
     // separator: a standalone attribute LINE DOES span lines, and must keep doing so.
@@ -77,6 +81,11 @@ export const CONSTRUCTS = [
         name: "bold-italic mirrored", sample: "some */both/* text", payload: "both",
         textmate: "markup.bold.italic",
         skip: { textmate: SKIP_375, prism: SKIP_375 },
+        // highlight.js is the one grammar that reads this, and it reads it by
+        // splitting the run rather than through the combined rule. Both scopes
+        // are named because "carries a scope" is satisfied by the bold-only
+        // reading the other two have.
+        engineScopes: { highlightjs: ['strong', 'emphasis'] },
     },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },

@@ -15,7 +15,17 @@
  *   2. NOT-ATTRS -- it is not scoped as an attribute block, unless it IS one.
  *                   This is the failure mode the `{...}` family keeps hitting:
  *                   the attribute rule opens on any brace and steals the span.
- *   3. WHOLE     -- opt-in, for constructs whose defect is a PARTIAL match.
+ *   3. SCOPES    -- opt-in, and the only place this sweep names a scope. A
+ *                   construct whose defect is being read as the WRONG
+ *                   construct is invisible to COVERED, which any scope
+ *                   satisfies: highlight.js reads the mirrored bold-italic
+ *                   nesting as strong around emphasis, and would go on passing
+ *                   if it collapsed to strong alone - the reading TextMate and
+ *                   Prism already have. (Spelled out rather than quoted: the
+ *                   run itself would close this comment.) Named
+ *                   per engine, because the two vocabularies genuinely differ -
+ *                   that is why the sweep does not name scopes by default.
+ *   4. WHOLE     -- opt-in, for constructs whose defect is a PARTIAL match.
  *                   COVERED is satisfied by any overlapping scoped token, so a
  *                   rule that reads `<-->` as `<--` plus a text `>` passes it:
  *                   measured, deleting the `<-->` alternative from both engines
@@ -56,6 +66,11 @@ function check(engineName, tokenize) {
         else if (attr && !attrScoped) problem = 'attribute construct is NOT scoped as attributes';
         else if (construct.whole && !carrying.some((t) => t.text === payload)) {
             problem = `scoped in PIECES - no single token spells ${JSON.stringify(payload)}`;
+        } else {
+            const expected = construct.engineScopes?.[engineName] ?? [];
+            const seen = tokens.filter((t) => t.scope).map((t) => t.scope);
+            const missing = expected.filter((scope) => !seen.some((s) => s.includes(scope)));
+            if (missing.length) problem = `no token carries ${missing.map((s) => JSON.stringify(s)).join(' or ')}`;
         }
 
         if (problem) {
