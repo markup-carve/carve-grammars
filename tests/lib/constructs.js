@@ -54,6 +54,17 @@ export const CONSTRUCTS = [
     { name: "italic", sample: "some /italic/ text", payload: "italic", textmate: "markup.italic" },
     { name: "bold", sample: "some *bold* text", payload: "bold", textmate: "markup.bold" },
     { name: "bold-italic", sample: "some /*both*/ text", payload: "both", textmate: "markup.bold.italic" },
+    // The mirrored nesting. `bold-italic` above pins one order only, so the
+    // other was untested on every surface, and adding it found the TextMate
+    // grammar reading `*/both/*` as a bold run containing literal slashes -
+    // `/both/` carries `markup.bold` and nothing carries `markup.bold.italic`.
+    // The engine renders the two spellings identically. Skipped rather than
+    // pinned to the wrong scope, so removing the skip is how #375 closes.
+    {
+        name: "bold-italic mirrored", sample: "some */both/* text", payload: "both",
+        textmate: "markup.bold.italic",
+        skip: { textmate: "the mirrored nesting scopes as bold, not bold-italic - carve-grammars#375" },
+    },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },
     { name: "highlight bare", sample: "a =mark= b", payload: "mark", textmate: "markup.highlight" },
@@ -192,7 +203,44 @@ export const CONSTRUCTS = [
     { name: "citation", sample: "see [@smith2020] here", payload: "smith2020", textmate: "variable.other.citation.key" },
     { name: "code callout", sample: "<1> explains the line", payload: "1", textmate: "constant.numeric.callout" },
     { name: "inline footnote", sample: "a ^[inline note] b", payload: "inline note", textmate: "string.other.footnote.inline" },
-    { name: "smart typography", sample: "a -- b", payload: "--", textmate: "typography" },
+    /*
+     * ONE ROW PER ALTERNATIVE, because one row reports one pass.
+     *
+     * `smart typography` used to be a single entry sampling `a -- b`, and the
+     * rule it names is an alternation of fourteen runs the three grammars all
+     * carry. Measured at fa6bac9 by deleting one alternative at a time: for
+     * Prism and highlight.js the sweep stayed green for seventeen of the
+     * eighteen alternatives in their pattern, and on the TextMate grammar
+     * `---` and `...` could be deleted with the WHOLE suite green. The arrows
+     * were held only by tests/smart-typography-test.js, which reads the
+     * TextMate family alone, and the engines only by the golden token
+     * snapshots - a status-quo pin that `npm run snapshots:update` rewrites
+     * without comment.
+     *
+     * Splitting rather than widening the sample: a single entry carrying
+     * several runs still reports one pass or one failure and cannot say which
+     * run regressed.
+     *
+     * The five alternatives Prism and highlight.js carry that the TextMate
+     * grammar does not - `!=`, `+-`, `(c)`, `(r)`, `(tm)`, which the spec
+     * grammar names as `comparison` and `typographic_symbol` - have no row
+     * here yet, because a row is asserted on ALL THREE and TextMate scopes
+     * none of them. That gap is carve-grammars#374.
+     */
+    { name: "typography arrow reversed", sample: "a <-- b", payload: "<--", textmate: "typography" },
+    { name: "typography arrow forward", sample: "a --> b", payload: "-->", textmate: "typography" },
+    { name: "typography arrow bidirectional", sample: "a <--> b", payload: "<-->", textmate: "typography" },
+    { name: "typography arrow double reversed", sample: "a <== b", payload: "<==", textmate: "typography" },
+    { name: "typography arrow double forward", sample: "a ==> b", payload: "==>", textmate: "typography" },
+    { name: "typography arrow double bidirectional", sample: "a <=> b", payload: "<=>", textmate: "typography" },
+    { name: "typography arrow deprecated reversed", sample: "a <- b", payload: "<-", textmate: "typography" },
+    { name: "typography arrow deprecated forward", sample: "a -> b", payload: "->", textmate: "typography" },
+    { name: "typography arrow deprecated bidirectional", sample: "a <-> b", payload: "<->", textmate: "typography" },
+    { name: "typography en dash", sample: "a -- b", payload: "--", textmate: "typography" },
+    { name: "typography em dash", sample: "a --- b", payload: "---", textmate: "typography" },
+    { name: "typography ellipsis", sample: "a ... b", payload: "...", textmate: "typography" },
+    { name: "typography comparison at most", sample: "a <= b", payload: "<=", textmate: "typography" },
+    { name: "typography comparison at least", sample: "a >= b", payload: ">=", textmate: "typography" },
     { name: "hard break", sample: "line\\\n next", payload: "\\", textmate: "hard-break" },
     { name: "ordered marker bare dot", sample: ". first", payload: ".", textmate: "punctuation.definition.list.numbered" },
     { name: "task state deferred", sample: "- [>] deferred", payload: ">", textmate: "constant.language.checkbox" },
@@ -862,7 +910,7 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 173
+export const MIN_CONSTRUCTS = 189
 export const MIN_LITERALS = 30
 
 /*
@@ -882,12 +930,12 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // Two constructs are skipped for Prism and four for
+    // One construct is skipped for TextMate and three each for Prism and
     // highlight.js; each says why in its own `skip` entry, and every skip is
     // subtracted here.
-    textmate: 173,
-    prism: 171,
-    highlightjs: 169,
+    textmate: 188,
+    prism: 186,
+    highlightjs: 186,
 };
 
 /**
