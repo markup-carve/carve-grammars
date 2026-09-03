@@ -36,10 +36,11 @@ import { mkdtempSync, writeFileSync as write } from 'node:fs';
 import { tmpdir } from 'node:os';
 
 import { specConstructs } from '../scripts/spec-constructs.mjs';
-import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, vocabulary } from '../scripts/surface-probe.mjs';
+import { INDISTINGUISHABLE, SIGNATURES, SURFACES, probe, rootVariable, vocabulary } from '../scripts/surface-probe.mjs';
 import { UNSUPPORTED_ON } from '../scripts/unsupported-on.mjs';
 import { validate } from './lib/construct-ledger.js';
 import { VERBATIM, VERBATIM_SAMPLES, measure } from './lib/payload-inertness.js';
+import { MIN_ATTRIBUTED, SCOPE_SAMPLES, attribute, refusal, scopeReader } from './lib/rule-scopes.js';
 import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
 import { unfaithful } from './lib/textmate-engine.js';
@@ -267,6 +268,24 @@ ok('the Tiptap read skips the section that says what is NOT modeled', () => {
     assert.ok(found.has('code_block'), 'the Tiptap read lost the types section');
 });
 
+/*
+ * THE TOKENIZERS AND THE RULE-SCOPE READERS, BUILT BEFORE THE FIRST CHECK THAT
+ * NEEDS THEM.
+ *
+ * The re-probe below asks whether a NAME the grammar carries is recorded as
+ * missing, and the answer depends on whether that name actually scopes the
+ * construct - carve-grammars#376. So the readers cannot be built after it.
+ */
+const tokenizers = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
+
+/** `id -> (construct, rule) => the grammar refuses that claim`, where it can be read. */
+const refuses = new Map();
+for (const [id, tokenize] of tokenizers) {
+    const root = SURFACES[id].local ? repoRoot : process.env[rootVariable(id)];
+    const reader = root ? scopeReader(id, root) : null;
+    if (reader) refuses.set(id, { reader, tokenize, refused: refusal(reader, tokenize) });
+}
+
 console.log('\nthe four surfaces in this repository, re-probed:');
 
 for (const [id, surface] of Object.entries(SURFACES)) {
@@ -305,11 +324,22 @@ for (const [id, surface] of Object.entries(SURFACES)) {
     });
 
     ok(`${id}: a rule the grammar has is not recorded as missing`, () => {
-        // One direction only, deliberately. A probe HIT means the surface names
-        // the construct, so calling it a gap is stale. A probe MISS is not
-        // evidence of absence: a surface may fold a family under one name, and
-        // the ledger records that name as the evidence.
-        const stale = [...found.keys()].filter((name) => entries[name].status !== 'IMPLEMENTED');
+        /*
+         * One direction only, deliberately. A probe HIT means the surface names
+         * the construct, so calling it a gap is stale. A probe MISS is not
+         * evidence of absence: a surface may fold a family under one name, and
+         * the ledger records that name as the evidence.
+         *
+         * UNLESS THE GRAMMAR REFUSES THE HIT. The probe reads names, and one
+         * name covers a family: `smart_typography` is attributed to all eight
+         * smart-typography constructs on all three grammars here and matches
+         * five of them. A hit the construct's own sample refutes is not a
+         * recognition, so recording it as a gap is the accurate row rather than
+         * a stale one (carve-grammars#376).
+         */
+        const refused = refuses.get(id)?.refused;
+        const stale = [...found.keys()].filter((name) => entries[name].status !== 'IMPLEMENTED'
+            && !refused?.(name, found.get(name)));
         assert.deepStrictEqual(
             stale, [],
             `${id}: the grammar names these constructs but the ledger does not call them implemented - `
@@ -354,9 +384,127 @@ for (const [id, surface] of Object.entries(SURFACES)) {
     });
 }
 
-console.log('\nthe second axis, measured:');
+console.log('\nthe first axis, measured - does the cited rule actually colour the construct?');
 
-const tokenizers = [['prism', prismTokens], ['highlightjs', hljsTokens], ...await textmateEngines()];
+/*
+ * `IMPLEMENTED` USED TO BE A SPELLING (carve-grammars#376).
+ *
+ * The three checks in the loop above all ask about NAMES: that the cited name
+ * is declared, that the probe attributes it to this construct, that a name the
+ * grammar has is not recorded as missing. None of them asks the grammar to
+ * colour anything, and `evidence` is satisfied by any non-empty string, so a
+ * rule whose name plausibly covers a family recorded every member of that
+ * family as implemented. `smart_typography` names eight constructs on all three
+ * grammars here and matches five.
+ *
+ * So the row is now measured against the construct's own sample, and the
+ * question is not "is the payload scoped" but "is it scoped by the rule this
+ * row cites". The weaker question passes `braced_en_dash` on every surface: the
+ * run IS coloured, by the CriticMarkup deletion rule reading `{--}` as an empty
+ * `{-...-}`, which is a colour that says the wrong thing
+ * (carve-grammars#378).
+ */
+
+ok('every derived construct has a sample, or a written reason it cannot be scoped', () => {
+    // TOTAL over the derived list, the way SIGNATURES is: a spec clause that
+    // adds a construct then forces the decision here too, instead of arriving
+    // as a row nothing can measure.
+    const unsampled = names.filter((name) => !SCOPE_SAMPLES[name]);
+    assert.deepStrictEqual(
+        unsampled, [],
+        `constructs with no entry in SCOPE_SAMPLES (tests/lib/rule-scopes.js): ${unsampled.join(', ')}. `
+            + 'Give each a sample and the run whose scope answers the question, or say why it carries no '
+            + 'marker of its own.',
+    );
+    const dead = Object.keys(SCOPE_SAMPLES).filter((name) => !names.includes(name));
+    assert.deepStrictEqual(dead, [], `SCOPE_SAMPLES names constructs the grammar no longer has: ${dead.join(', ')}`);
+});
+
+ok('a construct with no marker of its own is not IMPLEMENTED on a grammar that scopes markers', () => {
+    /*
+     * The `unscopable` spelling is the alternative to a sample, and this is
+     * what stops it being an exemption. A row skipped for want of a sample
+     * would be exactly the hole this file is closing, one level down.
+     */
+    const claimed = [];
+    for (const [id] of tokenizers) {
+        for (const [name, sample] of Object.entries(SCOPE_SAMPLES)) {
+            if (!sample.unscopable) continue;
+            if (ledger.surfaces[id].constructs[name].status === 'IMPLEMENTED') claimed.push(`${id}/${name}`);
+        }
+    }
+    assert.deepStrictEqual(
+        claimed, [],
+        `these rows are IMPLEMENTED for a construct SCOPE_SAMPLES says carries no marker of its own: `
+            + `${claimed.join(', ')}. Either the construct is scopable after all - give it a sample - or `
+            + 'the row is a claim nothing can support.',
+    );
+});
+
+for (const [id, tokenize] of tokenizers) {
+    if (!refuses.has(id)) continue;
+    const { reader } = refuses.get(id);
+
+    ok(`${id}: every IMPLEMENTED row's evidence really scopes the construct`, () => {
+        const problems = [];
+        let attributed = 0;
+        for (const [name, entry] of Object.entries(ledger.surfaces[id].constructs)) {
+            if (entry.status !== 'IMPLEMENTED') continue;
+            const sample = SCOPE_SAMPLES[name];
+            if (!sample || sample.unscopable) continue;
+            const { verdict, got, allowed } = attribute(reader, tokenize, sample, entry.evidence);
+            if (verdict === 'attributed') {
+                attributed++;
+                continue;
+            }
+            const saw = got.length ? got.join(', ') : 'nothing at all';
+            problems.push(
+                `${name} [${verdict}]: cites ${JSON.stringify(entry.evidence)}, which can scope `
+                    + `${allowed.join(', ') || '(no scope this reader can find)'}; `
+                    + `${JSON.stringify(sample.payload)} in ${JSON.stringify(sample.sample)} carries ${saw}`,
+            );
+        }
+        assert.deepStrictEqual(
+            problems, [],
+            `${id}: these rows cite a rule that does not colour the construct:\n`
+                + `${problems.map((problem) => `    - ${problem}`).join('\n')}\n`
+                + '  An `unresolved` verdict is the READER failing, not the grammar - the cited name is '
+                + 'not one it can resolve to a rule, so nothing was measured. Anything else is the row: '
+                + 'record UNSUPPORTED with a reason, or GAP with a ticket, rather than IMPLEMENTED with '
+                + `prose. ${RESEED}`,
+        );
+
+        /*
+         * AND A FLOOR, for the reason `MIN_ASSERTABLE` exists one file over:
+         * this check runs over the IMPLEMENTED rows, so a ledger that stopped
+         * calling anything implemented would leave it asserting nothing and
+         * printing a tick.
+         */
+        const floor = MIN_ATTRIBUTED[id];
+        if (SURFACES[id].local) {
+            assert.ok(
+                floor !== undefined,
+                `no MIN_ATTRIBUTED entry for "${id}", so how much this check measures is unchecked`,
+            );
+        }
+        // AND A FLOOR EVERY SURFACE HAS, including the ones reached through a
+        // `CARVE_SURFACE_*` checkout, which carry no number here. Guarding only
+        // the three local ones would let a grammar this run measured NOTHING
+        // on print a tick beside zero rows.
+        assert.ok(
+            attributed > 0,
+            `${id}: this check measured no row at all - every IMPLEMENTED row is missing a sample, `
+                + 'or the ledger stopped calling anything implemented',
+        );
+        assert.ok(
+            floor === undefined || attributed >= floor,
+            `${id}: only ${attributed} row(s) were measured against the grammar, expected at least `
+                + `${floor} - the rest are UNSUPPORTED, GAP, or carry no sample`,
+        );
+    });
+}
+
+console.log('\nthe second axis, measured:');
 
 ok('each tokenizer reproduces its input, so a measurement is about the payload', () => {
     /*
@@ -549,6 +697,117 @@ for (const [what, build] of BROKEN) {
         );
     });
 }
+
+/*
+ * THE EVIDENCE CHECK, SEEN REFUSING - THE SAME DISCIPLINE, ONE AXIS OVER.
+ *
+ * `attribute` returns a verdict rather than throwing so the four answers can be
+ * driven over synthetic tokenizers here. Without this, a version that returned
+ * `attributed` unconditionally would pass every row above and read as a clean
+ * sweep of 200 measurements.
+ */
+const FAKE_READER = {
+    separator: ' ',
+    scopesOf: (rule) => ({ known: new Set(['scope.known']), other: new Set(['scope.other']) })[rule] ?? null,
+};
+const wholeAs = (scope) => (source) => [{ scope, text: source }];
+const FAKE_SAMPLE = { sample: 'a X b', payload: 'X' };
+const verdictOf = (scope, rule = 'known') => attribute(FAKE_READER, wholeAs(scope), FAKE_SAMPLE, rule).verdict;
+
+ok('accepts a payload the cited rule really scopes', () => {
+    assert.strictEqual(verdictOf('scope.known'), 'attributed');
+});
+
+ok('refuses a payload nothing scopes', () => {
+    assert.strictEqual(verdictOf(null), 'unscoped');
+});
+
+ok('refuses a payload scoped by a DIFFERENT rule', () => {
+    // The braced-en-dash shape: coloured, and by the wrong rule. "Carries a
+    // scope" cannot see this, which is why the check asks the sharper question.
+    assert.strictEqual(verdictOf('scope.other'), 'other-rule');
+});
+
+ok('the TextMate root scope is not a rule any grammar earns', () => {
+    // Every TextMate token carries `source.carve`, so counting it would make
+    // the check pass for every construct on all three TextMate surfaces.
+    assert.strictEqual(verdictOf('source.carve'), 'unscoped');
+});
+
+ok('a leaf that only touches the payload\'s edge is not the payload', () => {
+    /*
+     * `attribute` locates the payload by counting characters, and the overlap
+     * is half-open on both sides. The fixtures above hand it ONE leaf covering
+     * the whole document, which exercises neither boundary; these hand it three,
+     * so a `<=` slipping to `<` on either end is a failure here rather than a
+     * silently wider measurement.
+     */
+    const split = (before, payload, after) => () => [
+        { scope: 'scope.known', text: before },
+        { scope: payload, text: 'X' },
+        { scope: 'scope.known', text: after },
+    ];
+    // The neighbours carry the cited rule's scope and the payload carries
+    // nothing: touching is not overlapping.
+    assert.strictEqual(attribute(FAKE_READER, split('a ', null, ' b'), FAKE_SAMPLE, 'known').verdict, 'unscoped');
+    // ... and the payload's own leaf is read.
+    assert.strictEqual(
+        attribute(FAKE_READER, split('a ', 'scope.known', ' b'), FAKE_SAMPLE, 'known').verdict,
+        'attributed',
+    );
+});
+
+ok('a cited name the reader cannot resolve is reported, never passed', () => {
+    assert.strictEqual(verdictOf('scope.known', 'no-such-rule'), 'unresolved');
+});
+
+ok('the refusal predicate refuses the two verdicts that are measurements, and no others', () => {
+    // A refusal demotes a row in the seeder, so which verdicts refuse is worth
+    // pinning: an `unresolved` reader must not rewrite the ledger into gaps.
+    const refused = refusal(FAKE_READER, wholeAs('scope.other'));
+    assert.strictEqual(refused('em_dash', 'known'), true, 'a rule that does not match must refuse');
+    assert.strictEqual(refused('em_dash', 'other'), false, 'the rule that matches must not refuse');
+    assert.strictEqual(refused('em_dash', 'no-such-rule'), false, 'an unresolvable name measures nothing');
+    assert.strictEqual(refusal(FAKE_READER, wholeAs(null))('paragraph', 'known'), false,
+        'a construct with no marker of its own is never refused');
+});
+
+ok('the real grammars refuse a row that cites a real but wrong rule', () => {
+    /*
+     * The fixtures above drive a tokenizer written to answer them. This drives
+     * the SHIPPED grammars: every surface scopes `em_dash` and `code_span`, and
+     * neither rule is the other, so citing the code-span rule for the dash has
+     * to be refused on all three. A reader that resolved every name to every
+     * scope would pass the committed ledger and fail here.
+     */
+    for (const [id, tokenize] of tokenizers) {
+        if (!refuses.has(id)) continue;
+        const { reader } = refuses.get(id);
+        const wrong = ledger.surfaces[id].constructs.code_span.evidence;
+        const { verdict } = attribute(reader, tokenize, SCOPE_SAMPLES.em_dash, wrong);
+        assert.strictEqual(
+            verdict, 'other-rule',
+            `${id}: citing ${JSON.stringify(wrong)} for em_dash was not refused - the reader is not `
+                + 'separating one rule from another',
+        );
+
+        /*
+         * AND THE NEIGHBOUR CASE, which the pair above cannot see. A rule
+         * nests the rules that may open inside it, and reading those as scopes
+         * the OUTER rule emits made highlight.js's `STRONG` resolve to
+         * `strong, emphasis` - so citing the bold rule for the italic
+         * construct came back attributed. Found in review; this is the
+         * regression test, driven over the shipped grammars because the hole
+         * was in how one is read rather than in the arithmetic.
+         */
+        const sibling = ledger.surfaces[id].constructs.strong.evidence;
+        assert.strictEqual(
+            attribute(reader, tokenize, SCOPE_SAMPLES.emphasis, sibling).verdict, 'other-rule',
+            `${id}: citing ${JSON.stringify(sibling)} - the rule for "strong" - for the emphasis `
+                + 'construct was not refused; the reader is crediting a rule with its children\'s scopes',
+        );
+    }
+});
 
 ok('the measurement reports a payload that really does leak', () => {
     // The measured half needs its own demonstration: "every engine is inert"
