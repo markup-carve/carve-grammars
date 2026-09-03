@@ -278,10 +278,21 @@ export function scopeReader(id, root) {
         return { separator, scopesOf: (rule) => new Set([rule]) };
     }
 
-    // highlight.js modes are `const` objects with no name of their own, so the
-    // scopes one can emit are read from its declaration. A mode built by a
-    // helper (`const CODE_BLOCK = fencedVerbatim(...)`) names no scope in its
-    // own initializer, so identifiers the initializer mentions are followed.
+    /*
+     * highlight.js modes are `const` objects with no name of their own, so the
+     * scopes one can emit are read from its declaration.
+     *
+     * ITS OWN SCOPE, NOT ITS CHILDREN'S. A mode's `contains` names the modes
+     * that may open INSIDE it, and unioning their scopes in was measured to
+     * hand `STRONG` the set `strong, emphasis` - so citing the bold rule for
+     * the italic construct came back attributed, which is the whole thing this
+     * file exists to refuse.
+     *
+     * References are followed only when the initializer declares NO scope of
+     * its own, which is the one shape that needs it: a mode built by a helper
+     * (`const CODE_BLOCK = fencedVerbatim(...)`) carries its scopes in the
+     * helper.
+     */
     const scopesOf = (rule, seen = new Set()) => {
         if (seen.has(rule)) return new Set();
         seen.add(rule);
@@ -289,7 +300,10 @@ export function scopeReader(id, root) {
         const match = declaration.exec(text);
         if (!match) return null;
         const body = statementFrom(text, declaration.lastIndex);
-        const out = new Set([...body.matchAll(HLJS_SCOPE_KEY)].map((hit) => hit[1]));
+        const own = new Set([...body.matchAll(HLJS_SCOPE_KEY)].map((hit) => hit[1]));
+        if (own.size) return own;
+
+        const out = new Set();
         for (const reference of new Set([...body.matchAll(/\b([A-Za-z_]\w*)\b/g)].map((hit) => hit[1]))) {
             if (seen.has(reference)) continue;
             const nested = scopesOf(reference, seen);

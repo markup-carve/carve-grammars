@@ -487,6 +487,15 @@ for (const [id, tokenize] of tokenizers) {
                 `no MIN_ATTRIBUTED entry for "${id}", so how much this check measures is unchecked`,
             );
         }
+        // AND A FLOOR EVERY SURFACE HAS, including the ones reached through a
+        // `CARVE_SURFACE_*` checkout, which carry no number here. Guarding only
+        // the three local ones would let a grammar this run measured NOTHING
+        // on print a tick beside zero rows.
+        assert.ok(
+            attributed > 0,
+            `${id}: this check measured no row at all - every IMPLEMENTED row is missing a sample, `
+                + 'or the ledger stopped calling anything implemented',
+        );
         assert.ok(
             floor === undefined || attributed >= floor,
             `${id}: only ${attributed} row(s) were measured against the grammar, expected at least `
@@ -725,6 +734,29 @@ ok('the TextMate root scope is not a rule any grammar earns', () => {
     assert.strictEqual(verdictOf('source.carve'), 'unscoped');
 });
 
+ok('a leaf that only touches the payload\'s edge is not the payload', () => {
+    /*
+     * `attribute` locates the payload by counting characters, and the overlap
+     * is half-open on both sides. The fixtures above hand it ONE leaf covering
+     * the whole document, which exercises neither boundary; these hand it three,
+     * so a `<=` slipping to `<` on either end is a failure here rather than a
+     * silently wider measurement.
+     */
+    const split = (before, payload, after) => () => [
+        { scope: 'scope.known', text: before },
+        { scope: payload, text: 'X' },
+        { scope: 'scope.known', text: after },
+    ];
+    // The neighbours carry the cited rule's scope and the payload carries
+    // nothing: touching is not overlapping.
+    assert.strictEqual(attribute(FAKE_READER, split('a ', null, ' b'), FAKE_SAMPLE, 'known').verdict, 'unscoped');
+    // ... and the payload's own leaf is read.
+    assert.strictEqual(
+        attribute(FAKE_READER, split('a ', 'scope.known', ' b'), FAKE_SAMPLE, 'known').verdict,
+        'attributed',
+    );
+});
+
 ok('a cited name the reader cannot resolve is reported, never passed', () => {
     assert.strictEqual(verdictOf('scope.known', 'no-such-rule'), 'unresolved');
 });
@@ -757,6 +789,22 @@ ok('the real grammars refuse a row that cites a real but wrong rule', () => {
             verdict, 'other-rule',
             `${id}: citing ${JSON.stringify(wrong)} for em_dash was not refused - the reader is not `
                 + 'separating one rule from another',
+        );
+
+        /*
+         * AND THE NEIGHBOUR CASE, which the pair above cannot see. A rule
+         * nests the rules that may open inside it, and reading those as scopes
+         * the OUTER rule emits made highlight.js's `STRONG` resolve to
+         * `strong, emphasis` - so citing the bold rule for the italic
+         * construct came back attributed. Found in review; this is the
+         * regression test, driven over the shipped grammars because the hole
+         * was in how one is read rather than in the arithmetic.
+         */
+        const sibling = ledger.surfaces[id].constructs.strong.evidence;
+        assert.strictEqual(
+            attribute(reader, tokenize, SCOPE_SAMPLES.emphasis, sibling).verdict, 'other-rule',
+            `${id}: citing ${JSON.stringify(sibling)} - the rule for "strong" - for the emphasis `
+                + 'construct was not refused; the reader is crediting a rule with its children\'s scopes',
         );
     }
 });
