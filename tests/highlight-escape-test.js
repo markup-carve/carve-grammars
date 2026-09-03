@@ -220,12 +220,12 @@ const RESIDUALS = [
 ];
 
 /*
- * A SECOND KNOWN-WRONG ROW, and NOT this ticket's. highlight.js's closer carries
- * no "not preceded by whitespace" guard, so `x =a = y` marks in it and not in
- * the engine - with no escape anywhere. `x =\ = y` above is one instance of
- * that, so it is pinned here rather than counted as an escape defect.
+ * `x =\ = y` USED TO BE PINNED HERE as a known-wrong row that was not this
+ * ticket's: highlight.js's closer carried no "not preceded by whitespace"
+ * guard, so it marked where the engine does not, with no escape involved.
+ * carve-grammars#392 fixed that, the pin went red the way it was written to,
+ * and the row is now an ordinary expectation in ROWS above.
  */
-const RIGHT_FLANK_GAP = { 'x =\\ = y': '\\ ', 'x =a = y': 'a ' };
 
 console.log('every escape shape, against the engine:');
 
@@ -233,9 +233,7 @@ for (const [name, read] of GRAMMARS) {
     ok(`${name}: colours the run the engine marks`, () => {
         const wrong = [];
         for (const [source, why] of ROWS) {
-            const expected = Object.hasOwn(RIGHT_FLANK_GAP, source) && name === 'highlightjs'
-                ? RIGHT_FLANK_GAP[source]
-                : engineMark(source);
+            const expected = engineMark(source);
             const got = reading(read, source);
             if (got === expected) continue;
             wrong.push(`${JSON.stringify(source)} (${why}): engine marks ${JSON.stringify(expected)},`
@@ -269,13 +267,5 @@ for (const [name, read] of GRAMMARS) {
         }
     });
 }
-
-ok('highlight.js still lacks the closer\'s right-flank guard', () => {
-    for (const [source, expected] of Object.entries(RIGHT_FLANK_GAP)) {
-        assert.equal(engineMark(source), null, `${JSON.stringify(source)} started marking in the engine`);
-        assert.equal(reading(hljsBody, source), expected,
-            `${JSON.stringify(source)}: the gap moved - if highlight.js now declines it, this pin comes out`);
-    }
-});
 
 console.log(`\n${passed} checks passed`);

@@ -494,15 +494,15 @@ const RESIDUALS = {
         'x =\\=! y\n', 'x =\\=  y\n', 'x =\\=\\ y\n', 'x  =\\= y\n',
     ],
     /*
-     * A CLOSER PRECEDED BY WHITESPACE. `bare_closer` requires a non-space
-     * before the delimiter (grammar.ebnf), so `=a =` is literal - and the other
-     * two grammars spell that `(?<=\S)=`. highlight.js cannot: `paired` derives
-     * its opener guard from the CLOSER's own source by splitting off the first
-     * character, so a lookbehind in front of the delimiter would be read as the
-     * delimiter. Every one of the thirteen `paired` modes has the same shape,
-     * so this is a fix to that helper and not to this rule.
+     * highlight.js HELD FOUR ROWS HERE, all "a closer preceded by whitespace":
+     * `bare_closer` requires a non-space before the delimiter (grammar.ebnf),
+     * so `=a =` is literal, and this grammar marked it. The note said it was a
+     * fix to `paired` rather than to this rule, and that is what
+     * carve-grammars#392 turned out to be - one gap with five spellings, since
+     * every bare delimiter shares the helper. The rows are gone rather than
+     * moved, and the empty entry stays so a regression names the surface.
      */
-    highlightjs: ['x =< = y\n', 'x =! = y\n', 'x =a = y\n', 'x =\\ = y\n'],
+    highlightjs: [],
 };
 
 console.log('\nevery generated run of arrow and comparison characters:');

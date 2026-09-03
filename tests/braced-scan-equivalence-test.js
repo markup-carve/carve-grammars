@@ -191,6 +191,27 @@ const hljsBegin = (prefix, closer) => {
 const pairedBefore = (opener, closer) =>
     new RegExp(`${opener.source}(?=(?:[^\\n]|\\n(?!\\s*\\n))*?${closer.source})`);
 
+/**
+ * The shipped pattern with its BOUNDS taken off, and nothing else changed.
+ *
+ * The five BARE delimiters cannot be compared against `pairedBefore` any more.
+ * That reference is the true pre-carve-grammars#300 shape, and it has no
+ * flanking rule, because highlight.js had none until carve-grammars#392 - so it
+ * reports a deliberate fix as a bound regression. Modelling the flank by hand
+ * would mean re-implementing `paired()` inside its own test, which is circular
+ * in the one dimension this file exists for.
+ *
+ * Stripping the bounds is not circular in that dimension: the question here is
+ * whether `{0,4096}` and `{0,32}` changed the language, and this is the same
+ * pattern with those two quantifiers made unbounded. It cannot drift from the
+ * rule, and it still fails if a bound starts refusing something.
+ *
+ * @param {RegExp} pattern - the shipped `begin`.
+ * @returns {RegExp} the same pattern, unbounded.
+ */
+const withoutBounds = (pattern) =>
+    new RegExp(pattern.source.replaceAll('{0,4096}', '*').replaceAll('{0,32}', '*'));
+
 /* ------------------------------------------------------------------ *
  * The comparison.
  * ------------------------------------------------------------------ */
@@ -389,13 +410,13 @@ const CASES = [
         ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
         ['subscript {,', /\{,(?=\S)/, /,\}/, null, ['{', '}', ',', 'a', '\n']],
         ['superscript {^', /\{\^(?=\S)/, /\^\}/, null, ['{', '}', '^', 'a', '\n']],
-        ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/, null, ['/', 'a', ' ', '\n', '{']],
-        ['underline _', /(?<!\w)_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{']],
+        ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/, null, ['/', 'a', ' ', '\n', '{'], true],
+        ['underline _', /(?<!\w)_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{'], true],
         // The `\[` escape is redundant inside a class and kept anyway: the
         // opener is matched against the SHIPPED source text character for
         // character, so it has to be spelled the way the grammar spells it.
         // eslint-disable-next-line no-useless-escape
-        ['strong *', /(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{']],
+        ['strong *', /(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{'], true],
         // Its OPENER carries carve-grammars#325's guard, so the reference
         // pattern does too: `(?![>=])` is not part of the #300 bound and
         // leaving it out here would report the guard as a language change this
@@ -406,11 +427,13 @@ const CASES = [
         // the opener guard refuses; the backslash is not, because the escape
         // family has its own generated space in tests/highlight-opener-test.js
         // and this row's question is the bound.
-        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{']],
-        ['strikethrough ~', /(?<!\w)~(?=\S)/, /~(?!\w)/, null, ['~', 'a', ' ', '\n', '{']],
-    ].map(([label, opener, closer, prefix, alphabet]) => ({
+        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{'], true],
+        ['strikethrough ~', /(?<!\w)~(?=\S)/, /~(?!\w)/, null, ['~', 'a', ' ', '\n', '{'], true],
+    ].map(([label, opener, closer, prefix, alphabet, flanked = false]) => ({
         name: `hljs ${label}`,
-        before: pairedBefore(opener, closer),
+        before: () => (flanked
+            ? withoutBounds(hljsBegin(prefix || opener.source, closer))
+            : pairedBefore(opener, closer)),
         after: () => hljsBegin(prefix || opener.source, closer),
         alphabet,
         maxLength: alphabet.length > 5 ? 7 : 8,
@@ -431,7 +454,8 @@ console.log('language equivalence, pre-fix pattern against the pattern that ship
 let compared = 0;
 for (const c of CASES) {
     ok(`${c.name} is unchanged as a language`, () => {
-        compared += agree(c.name, c.before, c.after(), c.alphabet, c.maxLength);
+        const before = typeof c.before === 'function' ? c.before() : c.before;
+        compared += agree(c.name, before, c.after(), c.alphabet, c.maxLength);
     });
 }
 console.log(`  (${compared.toLocaleString('en-US')} strings compared)`);
