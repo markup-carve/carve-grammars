@@ -184,37 +184,54 @@
         const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
         const run = `(?:[^${inClass}\\n]|\\n(?!\\s*\\n)){0,4096}`;
         /*
-         * `escapeAware` opts a mode into "an ESCAPED delimiter is not a
+         * `escapeAware` opts a mode's GUARD into "an escaped delimiter is not a
          * delimiter" (carve-grammars#385). Only the bare highlight asks for it,
          * because it is the only closer here that a document can put a
          * backslash in front of and mean it: `x =\= y` renders `x == y` with no
-         * mark, and this mode closed on the escaped `=` and coloured a run the
-         * engine does not.
+         * mark, and this mode opened a run the engine does not.
          *
-         * BACKSLASHES NEST, so both halves count them rather than looking at
-         * one character - `\\=` is a literal backslash and a real closer. EVEN
-         * says the delimiter stands on its own, ODD says it is escaped, and the
-         * guard has to know BOTH: the closer it proves exists needs EVEN, and
-         * the delimiter it steps over on the way needs ODD as well as the
-         * ordinary "not a closer" case. Bounded at the same 32 as the pair
-         * repetition below, and for the same reason as the Prism opener's -
-         * unbounded inside a lookbehind it backtracks superlinearly on a long
-         * backslash run.
+         * THE RUN CONSUMES AN ESCAPE AS A PAIR and refuses a bare backslash,
+         * rather than counting the backslash run in a lookbehind. Counting is
+         * what #385 shipped and what carve-grammars#390 replaces: a lookbehind
+         * that repeats a group has to be BOUNDED or it backtracks superlinearly
+         * (carve-grammars#380), and every bound is reachable - at `{0,32}` the
+         * guard stopped seeing the run at 66 backslashes and this mode refused a
+         * highlight the engine marks. A pair has no bound to reach.
+         *
+         * ONLY HALF THE FIX IS HERE. The guard proves a closer EXISTS; the span
+         * comes from `end`, which highlight.js applies on its own and which
+         * would still stop at an escaped `=`. What stops it is HIGHLIGHT listing
+         * ESCAPE in `contains` - that submode begins at the backslash, one
+         * column before the delimiter, so it wins by position and eats the pair.
+         * Neither half works alone: without this one the mode never opens,
+         * without the other it closes on the escaped delimiter.
+         *
+         * THE BOUND COUNTS ATOMS, and an escape pair is two characters, so the
+         * worst case is 8192 rather than 4096. Still a constant per position,
+         * which is all the bound is for; halving it would halve every ordinary
+         * body too.
          *
          * The default path is byte-identical to before, so the twelve other
          * modes are untouched.
          */
-        const EVEN = '(?<=(?:^|[^\\\\])(?:\\\\\\\\){0,32})';
-        const ODD = '(?<=(?:^|[^\\\\])(?:\\\\\\\\){0,32}\\\\)';
-        const end = escapeAware ? new RegExp(`${EVEN}${closer.source}`) : closer;
-        const notCloser = escapeAware
-            ? `(?:${ODD}${lead}|${lead}(?!${rest}))`
-            : `${lead}(?!${rest})`;
-        const guard = `${run}(?:${notCloser}${run}){0,32}${end.source}`;
+        const escapedRun = `(?:\\\\[^\\n]|[^${inClass}\\n\\\\]|\\n(?!\\s*\\n)){0,4096}`;
+        const body = escapeAware ? escapedRun : run;
+        const guard = `${body}(?:${lead}(?!${rest})${body}){0,32}${closer.source}`;
         return {
             begin: new RegExp(`${opener.source}(?=${guard})`),
-            end,
+            end: closer,
         };
+    };
+
+    // Escaped characters: \* \[ etc
+    //
+    // DEFINED HERE, above the modes rather than beside HARD_BREAK where it used
+    // to sit, because HIGHLIGHT now `contains` it (carve-grammars#390) and a
+    // `const` cannot be read before its own declaration.
+    const ESCAPE = {
+        className: 'symbol',
+        begin: /\\[!"#$%&'()*+,.\/:;<=>?@\[\\\]^_`{|}~-]/,
+        relevance: 0,
     };
 
     // Forced intraword family (PART 9 S22). Content may contain the delimiter
@@ -402,6 +419,10 @@
     const HIGHLIGHT = {
         className: 'addition',
         ...paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, true),
+        // The other half of carve-grammars#390's escape fix - see `paired`.
+        // `end` would close on an escaped `=`; this submode begins one column
+        // earlier, at the backslash, and highlight.js resolves by position.
+        contains: [ESCAPE],
         relevance: 3,
     };
 
@@ -1508,13 +1529,6 @@
         className: 'meta',
         begin: /\{=[a-zA-Z]+\}/,
         relevance: 5,
-    };
-
-    // Escaped characters: \* \[ etc
-    const ESCAPE = {
-        className: 'symbol',
-        begin: /\\[!"#$%&'()*+,.\/:;<=>?@\[\\\]^_`{|}~-]/,
-        relevance: 0,
     };
 
     // Hard line break: \ at end of line

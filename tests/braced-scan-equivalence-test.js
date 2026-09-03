@@ -396,21 +396,17 @@ const CASES = [
         // character, so it has to be spelled the way the grammar spells it.
         // eslint-disable-next-line no-useless-escape
         ['strong *', /(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{']],
-        // Its OPENER carries carve-grammars#325's guard and its CLOSER carries
-        // carve-grammars#385's, so the reference pattern carries both: neither
-        // is part of the #300 bound, and leaving either out here would report a
-        // guard as a language change this row is not about. The `=` half is
-        // exercised - a doubled run is in the alphabet, and it is the shape the
-        // opener guard refuses; the backslash is not, because the closer guard
-        // has its own generated space in tests/highlight-opener-test.js and
-        // this row's question is the bound.
-        [
-            'highlight =',
-            /(?<![=\w])=(?=\S)(?![>=])/,
-            /(?<=(?:^|[^\\])(?:\\\\){0,32})=(?![=\w])/,
-            null,
-            ['=', 'a', ' ', '\n', '{'],
-        ],
+        // Its OPENER carries carve-grammars#325's guard, so the reference
+        // pattern does too: `(?![>=])` is not part of the #300 bound and
+        // leaving it out here would report the guard as a language change this
+        // row is not about. Its CLOSER carries none - carve-grammars#385 put
+        // an escape guard there and carve-grammars#390 took it off again, since
+        // the escape is now consumed by the guard's RUN instead. The `=` half
+        // is exercised - a doubled run is in the alphabet, and it is the shape
+        // the opener guard refuses; the backslash is not, because the escape
+        // family has its own generated space in tests/highlight-opener-test.js
+        // and this row's question is the bound.
+        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{']],
         ['strikethrough ~', /(?<!\w)~(?=\S)/, /~(?!\w)/, null, ['~', 'a', ' ', '\n', '{']],
     ].map(([label, opener, closer, prefix, alphabet]) => ({
         name: `hljs ${label}`,
