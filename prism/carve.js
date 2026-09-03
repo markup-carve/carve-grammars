@@ -391,6 +391,12 @@
             // closes an autolink rather than opening a comparison; a
             // fixed-width lookbehind cannot tell the two apart, and this takes
             // the under-colouring side of that trade.
+            // THE BOUND COUNTS ATOMS, and an escape pair is two characters, so
+            // the worst case is 8192 characters rather than 4096. That is still
+            // a constant per position, which is all the bound is for; measured,
+            // an all-escape body costs what a plain body of the same LENGTH
+            // costs. Halving it to keep the character count would halve every
+            // ordinary body too.
             // ONE TOKEN, TWO FORMS, so the bare `=x=` alternative shares a
             // line with the braced one. Its `[^=\n]+?` was never the defect
             // this rule was fixed for - the class already excludes its own

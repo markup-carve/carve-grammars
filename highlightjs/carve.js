@@ -206,6 +206,11 @@
          * Neither half works alone: without this one the mode never opens,
          * without the other it closes on the escaped delimiter.
          *
+         * THE BOUND COUNTS ATOMS, and an escape pair is two characters, so the
+         * worst case is 8192 rather than 4096. Still a constant per position,
+         * which is all the bound is for; halving it would halve every ordinary
+         * body too.
+         *
          * The default path is byte-identical to before, so the twelve other
          * modes are untouched.
          */
