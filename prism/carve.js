@@ -308,6 +308,36 @@
             // the characters that changed a measurement when reverted, which
             // is why the three spellings are not identical.
             //
+            // AND AN ESCAPED FLANK IS NOT A FLANK (carve-grammars#380). A
+            // lookbehind sees a character, not whether it was escaped, so
+            // `a \!=b c= d` - where the `!` is literal and the `=` after it is
+            // an ordinary opener the engine marks - was refused, and
+            // `a \=b c= d`, whose `=` cannot open at all, was taken.
+            //
+            // BACKSLASHES NEST, so both halves count them rather than looking
+            // at one character: the opener needs an EVEN run behind it (`\\=`
+            // is a literal backslash and an ordinary opener) and the admission
+            // needs an ODD one in front of the flank (`\\!=` is a literal
+            // backslash and a comparison, which the engine leaves alone). A
+            // first draft looked one character back and got both of those
+            // backwards.
+            //
+            // THE PAIR REPETITION IS BOUNDED, like every other scan in this
+            // file. Written as an unbounded repetition inside a lookbehind it
+            // backtracks superlinearly over a long backslash run - measured at
+            // 7 / 30 / 91 / 346 ms for 4K / 8K / 16K / 32K backslashes, four
+            // times per doubling, and 4 / 3 / 8 / 7 ms bounded. 64 backslashes
+            // in front of a highlight opener is not a document; past the bound
+            // the run does not open, which is the safe direction.
+            //
+            // A LOOKBEHIND IS WHAT THIS RULE HAS TO USE. Moving the `escape`
+            // token in front of this one does not help: the rule is `greedy`,
+            // so Prism runs it against the ORIGINAL text from the current
+            // offset and the lookbehind still sees the flank an earlier token
+            // consumed. Measured - with `escape` moved ahead of the inline
+            // family, `a \!=b c= d` still scoped nothing. The other two
+            // grammars need none of this, because their escape rule really
+            // does consume the flank before the highlight rule is asked.
             // The closer is deliberately unguarded - once a highlight is open
             // the closer wins over the pattern in the engine too, so
             // `x =y z<= w` marks `y z<`.
@@ -322,7 +352,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<![\w=<>!])=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).

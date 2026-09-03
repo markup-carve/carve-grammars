@@ -154,6 +154,41 @@ for (const [file, rules] of Object.entries(BOUNDED)) {
 }
 
 /*
+ * AND A SECOND SHAPE THE ORACLE ABOVE CANNOT SEE: an unbounded repetition
+ * INSIDE A LOOKBEHIND.
+ *
+ * `UNBOUNDED` looks for a negated CLASS with a star behind it, which is the
+ * shape every rule in this file has been bounded for. A lookbehind that repeats
+ * a GROUP is invisible to it, and it backtracks the same way: the parity guard
+ * on Prism's bare-highlight opener (carve-grammars#380) was first written
+ * `(?:\\\\)*` and cost 7 / 30 / 91 / 346 ms over 4K / 8K / 16K / 32K
+ * backslashes, four times per doubling. Bounded to `{0,32}` it is flat - 4 / 3
+ * / 8 / 7 ms on the same four documents.
+ *
+ * Narrow on purpose. It asks about the ONE line the parity guard lives on
+ * rather than every lookbehind in the file: `prism/carve.js` carries one other
+ * repetition inside a lookbehind, on the block-attribute rule, and a 32K-space
+ * document is slow to tokenize with that rule and without it alike - so this
+ * cannot honestly call it the cause, and a blanket rule would need an
+ * exceptions table built on a measurement nobody has taken.
+ */
+ok('prism/carve.js: the highlight parity guard repeats nothing unbounded', () => {
+    const line = readFileSync(resolve(here, '..', 'prism/carve.js'), 'utf8')
+        .split('\n')
+        .find((l) => l.includes('(?<![\\w=<>!])'));
+    assert.ok(line, 'no line carries the bare-highlight opener guard - did the rule move?');
+    const lookbehinds = line.match(/\(\?<[=!](?:[^()\\]|\\.|\([^()]*\))*\)/g) || [];
+    assert.ok(lookbehinds.length >= 2, `expected the parity guard's lookbehinds, found ${lookbehinds.length}`);
+    const unbounded = lookbehinds.filter((look) => /[)\]][*+](?!\{)/.test(look));
+    assert.deepStrictEqual(
+        unbounded,
+        [],
+        `unbounded repetition inside a lookbehind: ${unbounded.join(', ')} - bound it with {0,N}, `
+            + 'the way the scans on this line are bounded; a lookbehind backtracks too',
+    );
+});
+
+/*
  * THE ORACLE HAS TO BE SEEN REJECTING SOMETHING.
  *
  * Everything above asserts that lines in the shipped grammars are clean, so it

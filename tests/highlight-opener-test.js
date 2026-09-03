@@ -161,7 +161,50 @@ const SHAPES = [
     ['a =b c= d', 'a plain bare highlight still opens'],
     ['x =y z<= w', 'an OPEN highlight is closed by the = of a <='],
     ['x =y z=> w', 'an OPEN highlight is closed by the = of a =>'],
+    /*
+     * AND THE SAME CHARACTERS ESCAPED (carve-grammars#380). An escape makes the
+     * flanking character literal, so the `=` after it is an ordinary opener and
+     * the engine marks - and an escaped `=` is not an opener at all. A
+     * lookbehind cannot ask whether the character it sees was escaped unless it
+     * is told to look one further, which is what Prism's opener now does; the
+     * other two reach the same answer because their escape rule sits in front
+     * of the highlight rule.
+     */
+    ['a \\!=b c= d', 'an escaped ! leaves an ordinary opener behind'],
+    ['a \\<=b c= d', 'an escaped < leaves an ordinary opener behind'],
+    ['a \\>=b c= d', 'an escaped > leaves an ordinary opener behind'],
+    ['a \\=b c= d', 'an escaped = is not an opener'],
+    /*
+     * AND THE TWO THAT SAY THE ADMISSION IS NARROW. `<`, `>` and `!` are the
+     * three characters the opener's own lookbehind refuses, so they are the
+     * three an escape has to undo; admitting any escaped character instead
+     * would take these two, which the engine leaves alone. Written from a
+     * mutation that survived the list above: widening `\\[<>!]` to `\\.` was
+     * caught by nothing until these arrived.
+     */
+    ['a \\==b c= d', 'an escape one character further back does not open the = after it'],
+    ['a \\a=b c= d', 'a backslash before a word character escapes nothing, and opens nothing'],
+    /*
+     * AND BACKSLASHES NEST. An even run leaves the character after it
+     * unescaped and an odd run escapes it, so a guard that looks at ONE
+     * character gets both of these backwards - which is what the first draft of
+     * carve-grammars#380 did. Found in review.
+     */
+    ['a \\\\=b c= d', 'an escaped backslash leaves an ordinary opener behind'],
+    ['a \\\\!=b c= d', 'an escaped backslash leaves the comparison, which opens nothing'],
 ];
+
+/*
+ * A FLOOR ON THE LIST, for the reason `MIN_ASSERTABLE` exists in
+ * tests/lib/constructs.js: every row above is the only thing that measures its
+ * shape - the generated sweep below draws from an alphabet with no backslash in
+ * it - so a row that quietly disappears takes its shape with it. Deleting the
+ * four escaped rows was caught by nothing until this line.
+ */
+assert.ok(
+    SHAPES.length >= 17,
+    `SHAPES holds ${SHAPES.length}, expected at least 17 - a shape removed here is measured nowhere else`,
+);
 
 console.log('\nevery flanking shape, against the engine:');
 
@@ -248,6 +291,71 @@ const UNREACHED = {
  * Measured 2026-08-23 on intellij-carve bdfbfd8.
  */
 const IN_A_CONTAINER = {};
+
+/*
+ * THE HOSTS HAVE TO BE SEEN OPENING.
+ *
+ * Every row below is "the grammar agrees with the engine INSIDE a container",
+ * and a wrapper that does not actually open its container makes that sentence
+ * true by measuring the top level twice. The `UNREACHED` table one screen down
+ * cannot see it either: a line that never entered a container still reaches the
+ * inline rules, so the context reads as reachable.
+ *
+ * So each wrapper is asked the ENGINE what it built. The check is on the host
+ * element rather than on a scope, because the question is about the document
+ * the wrapper produces and not about any one grammar's vocabulary. Driven over
+ * a wrapper spelled `:::<TAB>note`, which opens no container: the probe reports
+ * it, which is what says the probe can fail at all.
+ */
+const HOSTS = {
+    'top level': /^<p>/,
+    heading: /<h1>/,
+    blockquote: /<blockquote>/,
+    'list item': /<li>/,
+    'indented in an item': /<li><p>/,
+    div: /<aside class="admonition note"/,
+    'indented in a div': /<aside class="admonition note"/,
+    'table cell': /<td>/,
+};
+
+/**
+ * The contexts whose wrapper does not build the container it names.
+ *
+ * @param {Array<[string, (line: string) => string]>} contexts - the table to check.
+ * @returns {string[]} one complaint per dead host, empty when every wrapper opens.
+ */
+function deadHosts(contexts) {
+    const dead = [];
+    for (const [context, wrap] of contexts) {
+        const host = HOSTS[context];
+        if (!host) {
+            dead.push(`${context}: no host element recorded, so nothing says this wrapper opens anything`);
+            continue;
+        }
+        const html = carveToHtml(wrap('a =b c= d'));
+        if (!host.test(html)) dead.push(`${context}: ${host} is not in ${JSON.stringify(html)}`);
+    }
+
+    return dead;
+}
+
+ok('every context really opens the container it names', () => {
+    const dead = deadHosts(CONTEXTS);
+    assert.deepEqual(
+        dead, [],
+        'these wrappers do not build the container they name, so the rows below measure the wrong '
+            + `document: ${dead.join('; ')}`,
+    );
+});
+
+ok('the host probe reports a wrapper that opens nothing', () => {
+    // A tab does not separate a colon fence from its type word (corpus 254), so
+    // this wrapper renders one paragraph and the line never enters a container.
+    const dead = deadHosts([['div', (line) => `:::\tnote\n${line}\n:::\n`]]);
+    assert.equal(dead.length, 1, `a wrapper that opens nothing was not reported: ${JSON.stringify(dead)}`);
+    // ... and a context with no recorded host is reported too, rather than skipped.
+    assert.match(deadHosts([['nowhere', (line) => `${line}\n`]])[0] ?? '', /no host element recorded/);
+});
 
 console.log('\nthe same shapes, one container down:');
 
