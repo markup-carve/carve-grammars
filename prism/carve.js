@@ -308,6 +308,17 @@
             // the characters that changed a measurement when reverted, which
             // is why the three spellings are not identical.
             //
+            // AND AN ESCAPED FLANK IS NOT A FLANK (carve-grammars#380). A
+            // lookbehind sees a character, not whether it was escaped, so
+            // `a \\!=b c= d` - where the `!` is literal and the `=` after it
+            // is an ordinary opener the engine marks - was refused, and
+            // `a \\=b c= d`, whose `=` cannot open at all, was taken. The
+            // opener now refuses a `=` that follows a backslash and admits
+            // one that follows an ESCAPED `<`, `>` or `!`. The other two
+            // grammars need none of this: their escape rule is in front of
+            // their highlight rule, so the flank is gone before it is asked
+            // about, and Prism applies tokens IN ORDER with 'escape' behind
+            // 'highlight'.
             // The closer is deliberately unguarded - once a highlight is open
             // the closer wins over the pattern in the engine too, so
             // `x =y z<= w` marks `y z<`.
@@ -322,7 +333,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<![\w=<>!])=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?<!\\)(?:(?<![\w=<>!])|(?<=\\[<>!]))=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
