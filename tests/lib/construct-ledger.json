@@ -333,9 +333,9 @@
           "payload": "parsed"
         },
         "braced_en_dash": {
-          "status": "GAP",
-          "ticket": "#378",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "smart_typography",
+          "payload": "parsed"
         },
         "ellipsis": {
           "status": "IMPLEMENTED",
@@ -702,9 +702,9 @@
           "payload": "parsed"
         },
         "braced_en_dash": {
-          "status": "GAP",
-          "ticket": "#378",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "typography",
+          "payload": "parsed"
         },
         "ellipsis": {
           "status": "IMPLEMENTED",
@@ -1071,9 +1071,9 @@
           "payload": "parsed"
         },
         "braced_en_dash": {
-          "status": "GAP",
-          "ticket": "#378",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "TYPOGRAPHY",
+          "payload": "parsed"
         },
         "ellipsis": {
           "status": "IMPLEMENTED",

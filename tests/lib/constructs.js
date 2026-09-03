@@ -266,6 +266,27 @@ export const CONSTRUCTS = [
     { name: "typography en dash", sample: "a -- b", payload: "--", textmate: "typography", whole: true },
     { name: "typography em dash", sample: "a --- b", payload: "---", textmate: "typography", whole: true },
     { name: "typography ellipsis", sample: "a ... b", payload: "...", textmate: "typography", whole: true },
+    /*
+     * THE BRACED EN DASH, which is the one alternative that is not a run of
+     * punctuation the other rules ignore. `{--}` reaches the CriticMarkup
+     * deletion rule as `{-` plus an empty body plus `-}`, and all three grammars
+     * coloured it `deleted` while the engine renders an en dash
+     * (carve-grammars#378).
+     *
+     * `engineScopes` on both engines, because that is the whole failure: the run
+     * WAS scoped, by the wrong rule, and "carries a scope" cannot see it. The
+     * TextMate selector says `typography` for the same reason.
+     */
+    {
+        name: "typography braced en dash", sample: "a {--} b", payload: "{--}",
+        textmate: "typography", whole: true,
+        engineScopes: { prism: ['typography'], highlightjs: ['literal'] },
+    },
+    // AND THE DELETIONS THE GUARD MUST NOT REFUSE. One body character is enough,
+    // and the engine renders each of these as a deletion: a space, a hyphen, and
+    // an en dash resolved inside the deletion.
+    { name: "critic delete of a space", sample: "a {- -} b", payload: "{- -}", textmate: "markup.deleted" },
+    { name: "critic delete of a hyphen", sample: "a {---} b", payload: "{---}", textmate: "markup.deleted" },
     { name: "typography comparison at most", sample: "a <= b", payload: "<=", textmate: "typography", whole: true },
     { name: "typography comparison at least", sample: "a >= b", payload: ">=", textmate: "typography", whole: true },
     /*
@@ -593,6 +614,20 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    {
+        /*
+         * THE BRACED EN DASH IS NOT AN EMPTY DELETION (carve-grammars#378).
+         * `braced_en_dash = "{--}"` is normative (markup-carve/carve#1447) and
+         * carve 0.1.5 renders `a {--} b` as an en dash. The positive row in
+         * CONSTRUCTS says it carries the typography scope; this says it does not
+         * carry the deletion one, because a rule that colours it BOTH ways would
+         * satisfy the positive alone.
+         */
+        name: 'a braced en dash is not an empty deletion',
+        sample: 'a {--} b\n',
+        payload: '{--}',
+        scopes: { prism: 'deleted', highlightjs: 'deletion', textmate: 'markup.deleted' },
+    },
     /*
      * A BOLD-ITALIC BODY IS NON-SPACE AT BOTH ENDS, in either nesting order.
      *
@@ -1040,8 +1075,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 194
-export const MIN_LITERALS = 36
+export const MIN_CONSTRUCTS = 197
+export const MIN_LITERALS = 37
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -1065,9 +1100,9 @@ export const MIN_ASSERTABLE = {
     // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
     // that grammar the five typography runs the other two already carried, and
     // carve-grammars#375 took the last one.
-    textmate: 194,
-    prism: 191,
-    highlightjs: 191,
+    textmate: 197,
+    prism: 194,
+    highlightjs: 194,
 };
 
 /**

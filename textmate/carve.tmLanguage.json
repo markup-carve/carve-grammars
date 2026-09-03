@@ -1173,7 +1173,8 @@
       "name": "markup.inserted.carve"
     },
     "critic_del": {
-      "match": "\\{-[^}]*-\\}",
+      "comment": "THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty deletion - grammar.ebnf gives `braced_en_dash = \"{--}\"` and the clause is normative (markup-carve/carve#1447); carve 0.1.5 renders `a {--} b` as `a \u2013 b`. This rule read it as `{-` plus nothing plus `-}` and coloured it a deletion, which is a colour that says the document holds something it does not, and no sweep could see it because the run WAS coloured (carve-grammars#378). One character of body is enough: `{- -}` deletes a space, `{---}` deletes a hyphen and `{----}` deletes an en dash, all measured against the engine.",
+      "match": "\\{-(?!-\\})[^}]*-\\}",
       "name": "markup.deleted.carve"
     },
     "critic_sub": {
@@ -1529,7 +1530,7 @@
       }
     },
     "smart_typography": {
-      "match": "(<-->|<--|-->|<=>|<==|==>|---|--|\\.\\.\\.|<->|<-|->|<=|>=|!=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\))",
+      "match": "(\\{--\\}|<-->|<--|-->|<=>|<==|==>|---|--|\\.\\.\\.|<->|<-|->|<=|>=|!=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\))",
       "name": "constant.other.smart_typography.carve"
     },
     "math_inline": {

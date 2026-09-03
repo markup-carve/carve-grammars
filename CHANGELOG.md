@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- The braced en dash `{--}` is scoped as smart typography in all three grammars, not as a CriticMarkup deletion. It reached the deletion rule as `{-` plus an empty body, so the run was coloured and said the document held a deletion where the engine renders an en dash. A deletion now needs one body character; `{- -}`, `{---}` and `{----}` are unchanged (#378).
 - The mirrored bold-italic nesting `*/x/*` reads as bold-italic in the TextMate and Prism grammars. The engine renders it exactly as `/*x*/`; only the canonical order had a rule, so the mirrored one came back a bold run holding two literal slashes (#375).
 - A bold-italic body must be non-space at both ends in all three grammars. `a /*b */ c` is an italic run holding literal asterisks, and each grammar read it as one combined run (#375).
 - The TextMate grammar scopes `!=`, `+-`, `(c)`, `(r)` and `(tm)`. Its smart-typography rule carried fourteen alternatives where the Prism and highlight.js grammars carried nineteen, so five runs the engine renders were left uncoloured (#374).

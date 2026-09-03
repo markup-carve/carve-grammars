@@ -73,7 +73,11 @@ const BOUNDED = {
         ['superscript', '/\\{\\^(?=\\S)[^', 3],
         ['subscript', '/\\{,(?=\\S)[^', 3],
         ['critic inserted', '/\\{\\+[^', 3],
-        ['critic deleted', '/\\{-[^', 3],
+        // The opener carries `(?!-\\})` since carve-grammars#378 - `{--}` is a
+        // braced en dash, not an empty deletion - and the marker carries it too,
+        // so a revert to the unguarded opener fails the "is still there" check
+        // rather than passing a rule this file no longer describes.
+        ['critic deleted', '/\\{-(?!-\\})[^', 3],
         ['critic changed', '/\\{~[^', 2],
     ],
     'highlightjs/carve.js': [

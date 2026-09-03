@@ -12,7 +12,7 @@
     "text": "(p) b.\n\nThe braced form converts wherever it stands: a "
   },
   {
-    "scope": "deletion",
+    "scope": "literal",
     "text": "{--}"
   },
   {
@@ -20,7 +20,7 @@
     "text": "(p) b, x"
   },
   {
-    "scope": "deletion",
+    "scope": "literal",
     "text": "{--}"
   },
   {
@@ -28,7 +28,7 @@
     "text": "y, "
   },
   {
-    "scope": "deletion",
+    "scope": "literal",
     "text": "{--}"
   },
   {

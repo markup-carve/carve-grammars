@@ -380,9 +380,14 @@
     };
 
     // Delete: {-text-}
+    //
+    // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty deletion -
+    // the engine renders `a {--} b` as `a \u2013 b` - and this mode read it as
+    // `{-` plus nothing plus `-}` (carve-grammars#378). One character is enough:
+    // `{- -}`, `{---}` and `{----}` are all deletions.
     const DELETE = {
         className: 'deletion',
-        ...paired(/\{-/, /-\}/),
+        ...paired(/\{-(?!-\})/, /-\}/),
         relevance: 5,
     };
 
@@ -647,7 +652,7 @@
     // dash alternatives: preceded by a non-space, or not followed by a word.
     const TYPOGRAPHY = {
         className: 'literal',
-        begin: /\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+        begin: /\{--\}|\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
         relevance: 0,
     };
 
