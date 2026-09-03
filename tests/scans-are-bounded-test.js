@@ -96,7 +96,14 @@ const BOUNDED = {
         // the guard repeats, and the repetition count that stops an unclosed
         // opener from scanning to the end of the paragraph.
         ['paired() guard run', 'const run = `(?:[^', 1],
-        ['paired() guard repetition', 'const guard = `${run}', 1],
+        // carve-grammars#390. The bare highlight's guard steps over an ESCAPED
+        // delimiter by consuming the pair rather than counting the backslash
+        // run in a lookbehind, so the escape-aware run is a second line that
+        // scans, and it is bounded the same way. Matched on the assignment, so
+        // a rewrite that drops the bound fails the bounds check rather than the
+        // "is still there" one.
+        ['paired() escape-aware run', 'const escapedRun = `(?:', 1],
+        ['paired() guard repetition', 'const guard = `${body}', 1],
         // The two `~` line scans that kept `{~` superlinear after the guard
         // above was bounded.
         ['critic substitution arrow', 'begin: /\\{~(?=[^', 2],

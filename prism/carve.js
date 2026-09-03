@@ -368,14 +368,25 @@
             // engine too, so `x =y z<= w` marks `y z<`. AN ESCAPE IS A
             // DIFFERENT QUESTION (carve-grammars#385): an escaped `=` is not a
             // delimiter at all, so `x =\= y` renders `x == y` with no mark and
-            // this rule closed on it. The closer now needs the same EVEN
-            // backslash run the opener does, and the BODY needs the ODD one:
-            // without it the run stops at the escaped `=` and can never reach
-            // the real closer past it, so `a =b c\= d= e` - which the engine
-            // marks - would have gone from wrongly-coloured to uncoloured.
-            // Both halves were measured over the same generated space with a
-            // backslash added to its alphabet: 2,801 documents, 108 of which
-            // this grammar read differently from the engine and now does not.
+            // this rule closed on it. THE BODY CONSUMES AN ESCAPE AS A PAIR and
+            // refuses a bare backslash, which settles both directions at once -
+            // the escaped `=` is eaten before the closer can see it, and a body
+            // that could not hold one would stop there and never reach the real
+            // closer past it, so `a =b c\= d= e`, which the engine marks, would
+            // have gone from wrongly-coloured to uncoloured. The closer needs no
+            // guard of its own as a CONSEQUENCE, not a simplification: the body
+            // can only get past a backslash by taking the pair, so the position
+            // immediately before an escaped `=` is never a body end.
+            // #385 COUNTED THE RUN IN A LOOKBEHIND on the closer and its odd
+            // twin on the body, and carve-grammars#390 replaced both. Every
+            // bound is reachable: at `{0,32}` the guard stopped seeing the run
+            // at 66 backslashes and this rule refused a highlight the engine
+            // marks. A pair has no bound - and the same spelling is what the
+            // TextMate family had to use, since one TextMate engine refuses a
+            // variable-length lookbehind outright. The OPENER's two lookbehinds
+            // stay: they are the escaped-FLANK guard from carve-grammars#380,
+            // which is a different question and which this rule cannot avoid
+            // for the `greedy` reason above.
             // ONE SHAPE IT COSTS: `<https://e.example>=hi=`, where the `>`
             // closes an autolink rather than opening a comparison; a
             // fixed-width lookbehind cannot tell the two apart, and this takes
@@ -387,7 +398,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)(?:[^=\n]|(?<=(?:^|[^\\])(?:\\\\){0,32}\\)=){1,4096}?(?<=\S)(?<=(?:^|[^\\])(?:\\\\){0,32})=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)(?:\\.|[^=\n\\]){1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
