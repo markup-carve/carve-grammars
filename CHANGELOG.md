@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- The TextMate grammar scopes `!=`, `+-`, `(c)`, `(r)` and `(tm)`. Its smart-typography rule carried fourteen alternatives where the Prism and highlight.js grammars carried nineteen, so five runs the engine renders were left uncoloured (#374).
+
 ## [0.1.7] - 2026-08-28
 
 ### Fixed

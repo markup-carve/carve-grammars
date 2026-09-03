@@ -1376,7 +1376,7 @@
       }
     },
     "highlight": {
-      "comment": "A BARE `=` THAT BEGINS OR ENDS A SMART-TYPOGRAPHY PATTERN IS NOT A HIGHLIGHT OPENER (grammar.ebnf, Inline parsing precedence: \"a delimiter that begins a multi-char smart-typography pattern: `=>` is the arrow, never a highlight opener - the pattern is consumed first\"). Corpus 386's third paragraph is the shape it costs: `Not an arrow: key => value stays literal, and p <= q is a comparison.` renders with NO mark, and the opener `=` of `=>` reaching the closer `=` of `<=` scoped the whole 68-character sentence as a highlight (carve-grammars#325). That is worse than leaving a run uncoloured, because the output then claims the document holds a construct it does not - the same reason carve-grammars#324 gave for the arrows. THE GUARD IS ONLY WHAT THIS GRAMMAR MEASURABLY NEEDS. The opener may not be FOLLOWED by `>`, which is `=>` and the tail of `==>`; and it may not FOLLOW `!`, which is the `!=` comparison. It needs no guard against `<` or `>` behind it, and carried one until each character was reverted and measured: vscode-textmate resolves by POSITION, so on `a <=b c= d` the typography rule's `<=` starts one column before the highlight rule's `=` and takes it. `!=` is the comparison that rule does NOT carry (its alternation is arrows, dashes and `<=`/`>=`), which is why `!` is the one character here that changes a measurement. A leading `=` needs no guard either - the content class already refuses one. THE CLOSER IS DELIBERATELY NOT GUARDED, and the asymmetry is the engine's: once a highlight is OPEN the closer wins over the pattern, so `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`. Measured against the pinned engine, both. ONE SHAPE IT COSTS: an autolink or a cross-reference glued straight to a highlight (`<https://e.example>=hi=`) really does mark, because there the `>` closes the link rather than opening a comparison - a flat token map cannot tell the two apart within a fixed-width lookbehind, and this takes the under-colouring side of that trade on the ticket's own reasoning.",
+      "comment": "A BARE `=` THAT BEGINS OR ENDS A SMART-TYPOGRAPHY PATTERN IS NOT A HIGHLIGHT OPENER (grammar.ebnf, Inline parsing precedence: \"a delimiter that begins a multi-char smart-typography pattern: `=>` is the arrow, never a highlight opener - the pattern is consumed first\"). Corpus 386's third paragraph is the shape it costs: `Not an arrow: key => value stays literal, and p <= q is a comparison.` renders with NO mark, and the opener `=` of `=>` reaching the closer `=` of `<=` scoped the whole 68-character sentence as a highlight (carve-grammars#325). That is worse than leaving a run uncoloured, because the output then claims the document holds a construct it does not - the same reason carve-grammars#324 gave for the arrows. THE GUARD IS ONLY WHAT THIS GRAMMAR MEASURABLY NEEDS. The opener may not be FOLLOWED by `>`, which is `=>` and the tail of `==>`. It needs no guard against `<`, `>` or `!` behind it, and carried one for each until it was reverted and measured: vscode-textmate resolves by POSITION, so on `a <=b c= d` the typography rule's `<=` starts one column before the highlight rule's `=` and takes it. `!` was the last of the three to go, and it went in carve-grammars#374 rather than with the other two: while the typography alternation carried no `!=`, nothing reached `a !=b c= d` before this rule and removing the guard scoped `b c` as a highlight. The alternation carries `!=` now, so the comparison starts one column early like the other two and the guard stops changing any answer. What holds the shape is the pair that measures it - the `!=` row in tests/lib/constructs.js and `a !=b c= d` in tests/highlight-opener-test.js - rather than a lookbehind nobody can see working. A leading `=` needs no guard either - the content class already refuses one. THE CLOSER IS DELIBERATELY NOT GUARDED, and the asymmetry is the engine's: once a highlight is OPEN the closer wins over the pattern, so `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`. Measured against the pinned engine, both. ONE SHAPE IT COSTS: an autolink or a cross-reference glued straight to a highlight (`<https://e.example>=hi=`) really does mark, because there the `>` closes the link rather than opening a comparison - a flat token map cannot tell the two apart within a fixed-width lookbehind, and this takes the under-colouring side of that trade on the ticket's own reasoning.",
       "patterns": [
         {
           "match": "(\\{=)(?=\\S)([^\\n]*?)(=\\})",
@@ -1393,7 +1393,7 @@
           }
         },
         {
-          "match": "(?<![=!\\w])(=)(?=\\S)(?!>)([^=\\n]+?)(?<=\\S)(=)(?![=\\w])",
+          "match": "(?<![=\\w])(=)(?=\\S)(?!>)([^=\\n]+?)(?<=\\S)(=)(?![=\\w])",
           "captures": {
             "1": {
               "name": "punctuation.definition.highlight.carve"
@@ -1510,7 +1510,7 @@
       }
     },
     "smart_typography": {
-      "match": "(<-->|<--|-->|<=>|<==|==>|---|--|\\.\\.\\.|<->|<-|->|<=|>=)",
+      "match": "(<-->|<--|-->|<=>|<==|==>|---|--|\\.\\.\\.|<->|<-|->|<=|>=|!=|\\+-|\\(c\\)|\\(r\\)|\\(tm\\))",
       "name": "constant.other.smart_typography.carve"
     },
     "math_inline": {
