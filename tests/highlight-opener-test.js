@@ -184,6 +184,14 @@ const SHAPES = [
      */
     ['a \\==b c= d', 'an escape one character further back does not open the = after it'],
     ['a \\a=b c= d', 'a backslash before a word character escapes nothing, and opens nothing'],
+    /*
+     * AND BACKSLASHES NEST. An even run leaves the character after it
+     * unescaped and an odd run escapes it, so a guard that looks at ONE
+     * character gets both of these backwards - which is what the first draft of
+     * carve-grammars#380 did. Found in review.
+     */
+    ['a \\\\=b c= d', 'an escaped backslash leaves an ordinary opener behind'],
+    ['a \\\\!=b c= d', 'an escaped backslash leaves the comparison, which opens nothing'],
 ];
 
 /*
@@ -194,8 +202,8 @@ const SHAPES = [
  * four escaped rows was caught by nothing until this line.
  */
 assert.ok(
-    SHAPES.length >= 15,
-    `SHAPES holds ${SHAPES.length}, expected at least 15 - a shape removed here is measured nowhere else`,
+    SHAPES.length >= 17,
+    `SHAPES holds ${SHAPES.length}, expected at least 17 - a shape removed here is measured nowhere else`,
 );
 
 console.log('\nevery flanking shape, against the engine:');
