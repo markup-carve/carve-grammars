@@ -644,6 +644,16 @@ export const LITERALS = [
         payload: 'b',
         scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
     },
+    {
+        // A slash before the mirrored opener makes the pair ambiguous with a
+        // canonical opener, and the engine reads the canonical one:
+        // `a /*/a/* b` is `a <em>*/a</em>* b`. Without the guard both grammars
+        // started the mirrored run one character in and stole the italic.
+        name: 'a slash before the mirrored bold-italic opener opens nothing',
+        sample: 'a /*/x/* b\n',
+        payload: 'x',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
     // AND THE MIRRORED ORDER'S OWN GUARDS: its opener leads with an asterisk, so
     // glued to a word it opens nothing, where the canonical order glued to a
     // word IS a combined run. That asymmetry is the engine's, and it is the one
@@ -1031,7 +1041,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 194
-export const MIN_LITERALS = 35
+export const MIN_LITERALS = 36
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

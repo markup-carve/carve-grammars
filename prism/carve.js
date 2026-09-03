@@ -204,10 +204,17 @@
         // 'bold' and came back a bold run holding two literal slashes
         // (carve-grammars#375).
         //
-        // The mirrored branch carries a leading guard and the canonical one
-        // does not, which is the engine's own asymmetry: `x/*b*/y` IS
-        // bold-italic and `x*/b/*y` is `x*<em>b</em>*y`, because the mirrored
-        // opener leads with `*` and a `*` glued to a word opens nothing.
+        // The mirrored branch carries guards the canonical one must not have,
+        // and each is the engine's own asymmetry:
+        //
+        //   - `x/*b*/y` IS bold-italic and `x*/b/*y` is `x*<em>b</em>*y`,
+        //     because the mirrored opener leads with `*` and a `*` glued to a
+        //     word opens nothing.
+        //   - a `/` before the opener makes the pair ambiguous with a canonical
+        //     opener: `a /*/a/* b` is `a <em>*/a</em>* b`.
+        //   - the closer may not follow a `*`: `a */b*/* c` is
+        //     `a <strong>/b</strong>/* c`, while `a */*b/* c` IS combined - so
+        //     it is the character before the closer that decides.
         //
         // Both bodies are non-space at each end, and both may cross a line
         // without crossing a blank one - corpus 208 is a combined run spanning
@@ -215,7 +222,7 @@
         // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
         // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)(?:[^*\n]|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<=\S)\/\*(?!\w)/,
+            pattern: /\/\*(?=\S)(?:[^*\n]|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
             alias: 'important',
         },
         // The "no leading/trailing space" rule is expressed without JS

@@ -151,6 +151,13 @@ const NEGATIVE = [
   // The shape the mirrored OPENER guard refuses on its own: a space after it
   // and none before the closer, so the closer guard cannot also block it.
   ['a space after the mirrored opener, none before its closer', 'a */ b/* c\n', 'markup.bold.italic'],
+  // AN ASTERISK BEFORE THE MIRRORED CLOSER. `a */b*/* c` is
+  // `a <strong>/b</strong>/* c` and `a */*a*/* b` is `a <strong>/*a</strong>/* b`,
+  // both bold runs - while `a */*b/* c` IS combined, so it is the character
+  // BEFORE the closer that decides. Here rather than in LITERALS because the
+  // engine leaves a bold run behind, which highlight.js spells `strong` too.
+  ['an asterisk before the mirrored bold-italic closer', 'a */b*/* c\n', 'markup.bold.italic'],
+  ['an asterisk-slash run before the mirrored closer', 'a */*a*/* b\n', 'markup.bold.italic'],
   ['a space before the mirrored bold-italic closer', 'a */b /* c\n', 'markup.bold.italic'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],
