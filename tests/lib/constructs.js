@@ -56,9 +56,6 @@
 /** The gap this file records for the mirrored bold-italic nesting. */
 const SKIP_375 = 'the mirrored nesting scopes as bold alone, with no italic anywhere - carve-grammars#375';
 
-/** The gap this file records for the five runs only the engines carry. */
-const SKIP_374 = 'the TextMate typography rule carries fourteen alternatives, not nineteen - carve-grammars#374';
-
 /** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), attr?: boolean, skip?: object, whole?: boolean, engineScopes?: object}>} */
 export const CONSTRUCTS = [
     // The other half of #164, and the reason the fix cannot just narrow the shared
@@ -243,11 +240,10 @@ export const CONSTRUCTS = [
      * several runs still reports one pass or one failure and cannot say which
      * run regressed.
      *
-     * The five alternatives Prism and highlight.js carry that the TextMate
-     * grammar does not - `!=`, `+-`, `(c)`, `(r)`, `(tm)`, which the spec
-     * grammar names as `comparison` and `typographic_symbol` - have no row
-     * here yet, because a row is asserted on ALL THREE and TextMate scopes
-     * none of them. That gap is carve-grammars#374.
+     * The five the TextMate grammar was missing - `!=`, `+-`, `(c)`, `(r)`,
+     * `(tm)`, which the spec grammar names as `comparison` and
+     * `typographic_symbol` - are below, with the note about what adding them
+     * cost the highlight-opener guard (carve-grammars#374).
      */
     { name: "typography arrow reversed", sample: "a <-- b", payload: "<--", textmate: "typography", whole: true },
     { name: "typography arrow forward", sample: "a --> b", payload: "-->", textmate: "typography", whole: true },
@@ -264,21 +260,28 @@ export const CONSTRUCTS = [
     { name: "typography comparison at most", sample: "a <= b", payload: "<=", textmate: "typography", whole: true },
     { name: "typography comparison at least", sample: "a >= b", payload: ">=", textmate: "typography", whole: true },
     /*
-     * AND THE FIVE PRISM AND HIGHLIGHT.JS CARRY THAT TEXTMATE DOES NOT.
+     * AND THE FIVE THAT WERE PRISM AND HIGHLIGHT.JS ONLY UNTIL carve-grammars#374.
      *
      * The spec grammar names them `comparison` (`!=`) and `typographic_symbol`
      * (`(c)`, `(r)`, `(tm)`, `+-`), and the engine renders every one - `a != b`
-     * is `a &#8800; b`, `a (c) b` is `a &#169; b`. Both TextMate surfaces scope
-     * none of them (carve-grammars#374). A row asserted on all three would be a
-     * standing failure, so each carries the skip the file's own discipline asks
-     * for: the absence is written down with a reason, and removing the skip is
-     * how #374 closes.
+     * is `a &#8800; b`, `a (c) b` is `a &#169; b`. The TextMate alternation
+     * carried fourteen runs where the other two carried nineteen, so these five
+     * held a `skip` for that grammar; it now carries all nineteen and they are
+     * asserted on all three like every other row.
+     *
+     * `!=` PAYS FOR THE HIGHLIGHT-OPENER GUARD, and that is why its row matters
+     * beyond the colour. The bare-highlight rule's lookbehind refused an opener
+     * after `!` for one reason: nothing else reached `a !=b c= d` before it, so
+     * the `=` opened and `b c` came back marked. Now the comparison starts one
+     * column earlier and takes the run, the guard is gone, and this row is half
+     * of what keeps it unnecessary - the other half is `a !=b c= d` in
+     * tests/highlight-opener-test.js.
      */
-    { name: "typography comparison unequal", sample: "a != b", payload: "!=", textmate: "typography", whole: true, skip: { textmate: SKIP_374 } },
-    { name: "typography symbol copyright", sample: "a (c) b", payload: "(c)", textmate: "typography", whole: true, skip: { textmate: SKIP_374 } },
-    { name: "typography symbol registered", sample: "a (r) b", payload: "(r)", textmate: "typography", whole: true, skip: { textmate: SKIP_374 } },
-    { name: "typography symbol trademark", sample: "a (tm) b", payload: "(tm)", textmate: "typography", whole: true, skip: { textmate: SKIP_374 } },
-    { name: "typography symbol plus-minus", sample: "a +-1 b", payload: "+-", textmate: "typography", whole: true, skip: { textmate: SKIP_374 } },
+    { name: "typography comparison unequal", sample: "a != b", payload: "!=", textmate: "typography", whole: true },
+    { name: "typography symbol copyright", sample: "a (c) b", payload: "(c)", textmate: "typography", whole: true },
+    { name: "typography symbol registered", sample: "a (r) b", payload: "(r)", textmate: "typography", whole: true },
+    { name: "typography symbol trademark", sample: "a (tm) b", payload: "(tm)", textmate: "typography", whole: true },
+    { name: "typography symbol plus-minus", sample: "a +-1 b", payload: "+-", textmate: "typography", whole: true },
     { name: "hard break", sample: "line\\\n next", payload: "\\", textmate: "hard-break" },
     { name: "ordered marker bare dot", sample: ". first", payload: ".", textmate: "punctuation.definition.list.numbered" },
     { name: "task state deferred", sample: "- [>] deferred", payload: ">", textmate: "constant.language.checkbox" },
@@ -968,10 +971,11 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // Six constructs are skipped for TextMate, four for Prism and three for
+    // One construct is skipped for TextMate, four for Prism and three for
     // highlight.js; each says why in its own `skip` entry, and every skip is
-    // subtracted here.
-    textmate: 188,
+    // subtracted here. TextMate's was six until carve-grammars#374 gave that
+    // grammar the five typography runs the other two already carried.
+    textmate: 193,
     prism: 190,
     highlightjs: 191,
 };

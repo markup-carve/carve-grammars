@@ -138,7 +138,9 @@ export const SCOPE_SAMPLES = {
  * Today's counts, and lowering one is a decision made in a diff.
  */
 export const MIN_ATTRIBUTED = {
-    textmate: 65,
+    // TextMate's was 65 until carve-grammars#374 gave that grammar the five
+    // typography runs the other two already carried.
+    textmate: 67,
     prism: 67,
     highlightjs: 67,
 };
