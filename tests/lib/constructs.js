@@ -93,6 +93,48 @@ export const CONSTRUCTS = [
         textmate: "markup.bold.italic",
         engineScopes: { prism: ['bold-italic'], highlightjs: ['strong', 'emphasis'] },
     },
+    // A CANONICAL BODY MAY HOLD AN ASTERISK (carve-grammars#382). The engine
+    // reads the sample below as a combined run, and the body was a run of
+    // "anything but the closer's own first character", so it was declined and
+    // fell through to the plain bold rule. It is TEMPERED now - an asterisk is
+    // admitted when it does not start the closer - which is the spelling the
+    // highlight.js rule already used, and why that grammar read it correctly
+    // all along.
+    //
+    // The MIRRORED body is deliberately left strict, and the measurement is at
+    // the rule in both grammars: the same temper there reads nearly twice as
+    // many documents wrongly, because a body opening with a slash is ambiguous
+    // with a canonical opener. `a */b/c/* d` stays under-coloured, on the same
+    // ticket.
+    {
+        name: "bold-italic holding an asterisk", sample: "a /*b*c*/ d", payload: "b*c",
+        textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'] },
+    },
+    // AND THE TEMPER MUST NOT REACH PAST ITS OWN CLOSER, which is the other
+    // direction and the one a widened body gets wrong: two runs on one line
+    // have to stay two. `whole` is what says so - the engine sweep otherwise
+    // accepts any overlapping scoped token, and a body that swallowed the gap
+    // between the two runs satisfies "carries a scope" perfectly.
+    //
+    // `enginePayload` because the two sides tokenize it differently: TextMate
+    // scopes the BODY and keeps the delimiters in their own captures, so the
+    // whole run is never one token there.
+    {
+        name: "bold-italic does not cross its own closer", sample: "a /*b*/ c /*d*/ e", payload: "b",
+        enginePayload: "/*b*/", whole: true, textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'] },
+    },
+    {
+        // The mirrored twin, with highlight.js skipped: it reads the mirrored
+        // order by SPLITTING into strong, emphasis, strong, so no single token
+        // ever spells the run and `whole` is a question that grammar cannot
+        // answer. The canonical row above carries the same guarantee there.
+        name: "bold-italic mirrored does not cross its own closer", sample: "a */b/* c */d/* e",
+        payload: "b", enginePayload: "*/b/*", whole: true, textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'] },
+        skip: { highlightjs: 'the mirrored order is read by splitting the run, so no single token spells it' },
+    },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },
     { name: "highlight bare", sample: "a =mark= b", payload: "mark", textmate: "markup.highlight" },
@@ -1075,7 +1117,7 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 197
+export const MIN_CONSTRUCTS = 200
 export const MIN_LITERALS = 37
 
 /*
@@ -1096,13 +1138,13 @@ export const MIN_LITERALS = 37
  */
 export const MIN_ASSERTABLE = {
     // No construct is skipped for TextMate any more, three are for Prism and
-    // three for highlight.js; each says why in its own `skip` entry, and every
+    // four for highlight.js; each says why in its own `skip` entry, and every
     // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
     // that grammar the five typography runs the other two already carried, and
     // carve-grammars#375 took the last one.
-    textmate: 197,
-    prism: 194,
-    highlightjs: 194,
+    textmate: 200,
+    prism: 197,
+    highlightjs: 196,
 };
 
 /**

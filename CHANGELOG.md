@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- A canonical bold-italic body may hold an asterisk in the TextMate and Prism grammars. The engine reads `a /*b*c*/ d` as a combined run; the body was a run of anything but the closer's own first character, so it was declined and came back plain bold. The mirrored order keeps the strict body, and the reason is measured at the rule (#382).
 - The Prism grammar reads an escaped flank the way the engine does. `a \!=b c= d` marks `b c` - the escape makes the `!` literal, so the `=` after it is an ordinary opener - and `a \=b c= d` marks nothing, because the `=` itself is escaped. The bare-highlight opener's lookbehind saw the character and not the escape, so it refused the first three and took the fourth (#380).
 - The braced en dash `{--}` is scoped as smart typography in all three grammars, not as a CriticMarkup deletion. It reached the deletion rule as `{-` plus an empty body, so the run was coloured and said the document held a deletion where the engine renders an en dash. A deletion now needs one body character; `{- -}`, `{---}` and `{----}` are unchanged (#378).
 - The mirrored bold-italic nesting `*/x/*` reads as bold-italic in the TextMate and Prism grammars. The engine renders it exactly as `/*x*/`; only the canonical order had a rule, so the mirrored one came back a bold run holding two literal slashes (#375).

@@ -216,13 +216,25 @@
         //     `a <strong>/b</strong>/* c`, while `a */*b/* c` IS combined - so
         //     it is the character before the closer that decides.
         //
+        // THE CANONICAL BODY IS TEMPERED AND THE MIRRORED ONE IS NOT
+        // (carve-grammars#382), and the asymmetry was measured rather than
+        // chosen. A tempered body admits the closer's own first character when
+        // it does not start the closer, which is what lets `a /*b*c*/ d` read
+        // as the combined run the engine renders. Over all 21,844 documents
+        // `x OPEN body CLOSE y` for every body of up to seven characters drawn
+        // from `* / space a`: the canonical body goes from 311 over-coloured
+        // and 9,591 missed to 608 and 1,804. The same change to the mirrored
+        // body goes from 628 and 3,040 to 5,354 and 1,289 - nearly twice as
+        // many wrong readings, because a body opening with `/` is ambiguous
+        // with a canonical opener. So the mirrored body keeps the strict class.
+        //
         // Both bodies are non-space at each end, and both may cross a line
         // without crossing a blank one - corpus 208 is a combined run spanning
         // two lines, and the highlight.js rule spells the same body. `a /*b */ c`
         // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
         // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)(?:[^*\n]|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
+            pattern: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
             alias: 'important',
         },
         // The "no leading/trailing space" rule is expressed without JS

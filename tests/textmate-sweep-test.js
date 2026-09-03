@@ -158,6 +158,15 @@ const NEGATIVE = [
   // engine leaves a bold run behind, which highlight.js spells `strong` too.
   ['an asterisk before the mirrored bold-italic closer', 'a */b*/* c\n', 'markup.bold.italic'],
   ['an asterisk-slash run before the mirrored closer', 'a */*a*/* b\n', 'markup.bold.italic'],
+  // THE BODIES' OWN LIMITS (carve-grammars#382). The canonical body admits an
+  // asterisk that does not start the closer, and must not admit one that
+  // does: `x /* /**/*/ y` is `x <em>* /**</em>*/ y`, an italic run. The
+  // mirrored body is not tempered at all, and these say what that buys:
+  // `x *///* y` is `x <strong>///</strong> y`, which a tempered mirrored body
+  // reads as a combined run.
+  ['a canonical body may not hold its own closer', 'x /* /**/*/ y\n', 'markup.bold.italic'],
+  ['a mirrored body holding only slashes is bold', 'x *///* y\n', 'markup.bold.italic'],
+  ['a mirrored body opening with a slash is bold', 'x */*//* y\n', 'markup.bold.italic'],
   ['a space before the mirrored bold-italic closer', 'a */b /* c\n', 'markup.bold.italic'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],
