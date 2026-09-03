@@ -322,6 +322,14 @@
             // first draft looked one character back and got both of those
             // backwards.
             //
+            // THE PAIR REPETITION IS BOUNDED, like every other scan in this
+            // file. Written as an unbounded repetition inside a lookbehind it
+            // backtracks superlinearly over a long backslash run - measured at
+            // 7 / 30 / 91 / 346 ms for 4K / 8K / 16K / 32K backslashes, four
+            // times per doubling, and 4 / 3 / 8 / 7 ms bounded. 64 backslashes
+            // in front of a highlight opener is not a document; past the bound
+            // the run does not open, which is the safe direction.
+            //
             // A LOOKBEHIND IS WHAT THIS RULE HAS TO USE. Moving the `escape`
             // token in front of this one does not help: the rule is `greedy`,
             // so Prism runs it against the ORIGINAL text from the current
@@ -344,7 +352,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\)*)(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\)*\\[<>!]))=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
