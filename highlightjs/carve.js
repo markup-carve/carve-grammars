@@ -309,7 +309,12 @@
      */
     const BOLD_ITALIC = {
         className: 'strong',
-        begin: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}\*\//,
+        // The body is non-space at BOTH ends. It was guarded only at the
+        // opener, so `a /*b */ c` came back one combined run where the engine
+        // renders `<em>*b *</em>` - an italic run holding literal asterisks
+        // (carve-grammars#375). A fixed-width lookbehind, so the bounded
+        // repetition that keeps this rule linear is untouched.
+        begin: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}(?<=\S)\*\//,
         relevance: 5,
     };
 

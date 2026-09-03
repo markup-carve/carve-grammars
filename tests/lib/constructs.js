@@ -53,9 +53,6 @@
  * @module tests/lib/constructs
  */
 
-/** The gap this file records for the mirrored bold-italic nesting. */
-const SKIP_375 = 'the mirrored nesting scopes as bold alone, with no italic anywhere - carve-grammars#375';
-
 /** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), attr?: boolean, skip?: object, whole?: boolean, engineScopes?: object}>} */
 export const CONSTRUCTS = [
     // The other half of #164, and the reason the fix cannot just narrow the shared
@@ -66,23 +63,35 @@ export const CONSTRUCTS = [
     },
     { name: "italic", sample: "some /italic/ text", payload: "italic", textmate: "markup.italic" },
     { name: "bold", sample: "some *bold* text", payload: "bold", textmate: "markup.bold" },
-    { name: "bold-italic", sample: "some /*both*/ text", payload: "both", textmate: "markup.bold.italic" },
-    // The mirrored nesting. `bold-italic` above pins one order only, so the
-    // other was untested on every surface - and adding it found two of the three
-    // grammars reading it as bold alone. The engine renders the two spellings
-    // identically; TextMate gives `/both/` `markup.bold` and Prism gives the
-    // whole run `bold`, so neither says italic anywhere. Only highlight.js
-    // carries both marks. Skipped for the two rather than pinned to the wrong
-    // reading, so removing a skip is how carve-grammars#375 closes.
+    {
+        name: "bold-italic", sample: "some /*both*/ text", payload: "both",
+        textmate: "markup.bold.italic",
+        // The scope NAME on Prism, not just "carries a scope": the failure this
+        // pair is about is being read as the WRONG construct, and a bold-only
+        // reading carries a scope too.
+        engineScopes: { prism: ['bold-italic'] },
+    },
+    /*
+     * THE MIRRORED NESTING - the sample below - which the engine renders
+     * exactly as the canonical order above: both are
+     * `<strong><em>both</em></strong>` at carve 0.1.5.
+     *
+     * The row above pinned one order only, so the other was untested on every
+     * surface, and adding it found two of the three grammars reading it as bold
+     * alone: TextMate gave `/both/` `markup.bold` and Prism gave the whole run
+     * `bold`, so neither said italic anywhere (carve-grammars#375). Both now
+     * have a mirrored branch beside the canonical one.
+     *
+     * highlight.js reads it a third way and is left alone: it splits the run
+     * into `strong`, `emphasis`, `strong`, which is the structure the engine
+     * renders and says MORE than the single combined scope its canonical rule
+     * gives. Both names are asserted, because "carries a scope" is satisfied by
+     * the bold-only reading this row exists to refuse.
+     */
     {
         name: "bold-italic mirrored", sample: "some */both/* text", payload: "both",
         textmate: "markup.bold.italic",
-        skip: { textmate: SKIP_375, prism: SKIP_375 },
-        // highlight.js is the one grammar that reads this, and it reads it by
-        // splitting the run rather than through the combined rule. Both scopes
-        // are named because "carries a scope" is satisfied by the bold-only
-        // reading the other two have.
-        engineScopes: { highlightjs: ['strong', 'emphasis'] },
+        engineScopes: { prism: ['bold-italic'], highlightjs: ['strong', 'emphasis'] },
     },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },
@@ -584,6 +593,48 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    /*
+     * A BOLD-ITALIC BODY IS NON-SPACE AT BOTH ENDS, in either nesting order.
+     *
+     * `a /* b *\u002f c` is `<em>* b *</em>` and `a /*b *\u002f c` is
+     * `<em>*b *</em>` - italic runs holding literal asterisks, not a combined
+     * run - and all three grammars read them as one bold-italic until
+     * carve-grammars#375. The mirrored order got its guards when its branch was
+     * written; these two are the canonical order's, and they are here rather
+     * than in a positive row because the defect is a rule matching MORE than
+     * the language does.
+     */
+    {
+        name: 'a space after the bold-italic opener is not a combined run',
+        sample: 'a /* b */ c\n',
+        payload: '* b *',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
+    {
+        name: 'a space before the bold-italic closer is not a combined run',
+        sample: 'a /*b */ c\n',
+        payload: '*b *',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
+    /*
+     * AND THE MIRRORED ORDER'S OWN GUARD: the opener leads with `*`, so glued to
+     * a word it opens nothing - `a x*\u002fb/* c` is `a x*<em>b</em>* c`, where
+     * the canonical `x/*b*\u002fy` IS a combined run. That asymmetry is the
+     * engine's, and it is the one shape a mirrored branch written as a plain
+     * mirror of the canonical would get wrong.
+     *
+     * The space guards are pinned on the canonical order alone: in the mirrored
+     * order the engine renders `a *\u002f b /* c` as a BOLD run holding literal
+     * slashes, and highlight.js spells its combined rule `strong` too, so there
+     * is no selector on that grammar that separates the right reading from the
+     * wrong one. The mirrored positives above and this row carry it instead.
+     */
+    {
+        name: 'a mirrored bold-italic opener glued to a word opens nothing',
+        sample: 'a x*/b/* c\n',
+        payload: 'b',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
     {
         name: 'a lone vertical table marker is content, not alignment',
         sample: '|^ value |\n',
@@ -952,7 +1003,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 194
-export const MIN_LITERALS = 30
+export const MIN_LITERALS = 33
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -971,12 +1022,13 @@ export const MIN_LITERALS = 30
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // One construct is skipped for TextMate, four for Prism and three for
-    // highlight.js; each says why in its own `skip` entry, and every skip is
-    // subtracted here. TextMate's was six until carve-grammars#374 gave that
-    // grammar the five typography runs the other two already carried.
-    textmate: 193,
-    prism: 190,
+    // No construct is skipped for TextMate any more, three are for Prism and
+    // three for highlight.js; each says why in its own `skip` entry, and every
+    // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
+    // that grammar the five typography runs the other two already carried, and
+    // carve-grammars#375 took the last one.
+    textmate: 194,
+    prism: 191,
     highlightjs: 191,
 };
 

@@ -198,8 +198,24 @@
     // Shared inline emphasis/markup, referenced from block tokens that contain
     // running text (headings, list items, table cells, quotes).
     var inline = {
+        // BOTH NESTING ORDERS. The engine renders `/*both*/` and `*/both/*`
+        // identically - each is <strong><em>both</em></strong> - and only the
+        // canonical order had a branch, so the mirrored one fell through to
+        // 'bold' and came back a bold run holding two literal slashes
+        // (carve-grammars#375).
+        //
+        // The mirrored branch carries a leading guard and the canonical one
+        // does not, which is the engine's own asymmetry: `x/*b*/y` IS
+        // bold-italic and `x*/b/*y` is `x*<em>b</em>*y`, because the mirrored
+        // opener leads with `*` and a `*` glued to a word opens nothing.
+        //
+        // Both bodies are non-space at each end, and both may cross a line
+        // without crossing a blank one - corpus 208 is a combined run spanning
+        // two lines, and the highlight.js rule spells the same body. `a /*b */ c`
+        // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
+        // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)[^*]+\*\//,
+            pattern: /\/\*(?=\S)(?:[^*\n]|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<=\S)\/\*(?!\w)/,
             alias: 'important',
         },
         // The "no leading/trailing space" rule is expressed without JS
