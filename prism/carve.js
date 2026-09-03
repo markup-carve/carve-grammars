@@ -1389,8 +1389,12 @@
             pattern: /\{\+[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
             alias: 'inserted',
         },
+        // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
+        // deletion - the engine renders `a {--} b` as `a \u2013 b` - and this rule
+        // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
+        // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
         'deleted': {
-            pattern: /\{-[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
+            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
             alias: 'deleted',
         },
         // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
@@ -1475,7 +1479,7 @@
         // around the dash alternatives: preceded by a non-space, or not
         // followed by a word character.
         'typography': {
-            pattern: /\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+            pattern: /\{--\}|\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
             alias: 'constant',
         },
     };

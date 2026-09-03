@@ -139,10 +139,12 @@ export const SCOPE_SAMPLES = {
  */
 export const MIN_ATTRIBUTED = {
     // TextMate's was 65 until carve-grammars#374 gave that grammar the five
-    // typography runs the other two already carried.
-    textmate: 67,
-    prism: 67,
-    highlightjs: 67,
+    // typography runs the other two already carried, and all three were 67
+    // until carve-grammars#378 stopped the braced en dash being coloured by the
+    // CriticMarkup deletion rule.
+    textmate: 68,
+    prism: 68,
+    highlightjs: 68,
 };
 
 /** The separator between the names in one leaf's scope, per formalism. */

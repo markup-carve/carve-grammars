@@ -339,8 +339,21 @@ const CASES = [
         maxLength: 8,
     },
     {
+        /*
+         * THE BASELINE CARRIES `(?!-\})` TOO, and that is a deliberate language
+         * change rather than a copy of the shipped rule. carve-grammars#378
+         * ruled `{--}` a braced EN DASH rather than an empty deletion - the
+         * spec's own clause, and what the engine renders - so the rule was
+         * narrowed on purpose. Comparing against the un-narrowed baseline would
+         * report the ruling as a regression on every run.
+         *
+         * Everything the unrolling is about is still compared: the guard is one
+         * lookahead on the OPENER and the body scan either side of it is
+         * untouched, so a rewrite of the body still has to agree with
+         * `[^}]*` here.
+         */
         name: 'prism deleted {-',
-        before: /\{-[^}]*-\}/,
+        before: /\{-(?!-\})[^}]*-\}/,
         after: () => prismRule('deleted', '\\{-'),
         alphabet: ['{', '}', '-', 'a', '\n'],
         maxLength: 8,
@@ -370,7 +383,10 @@ const CASES = [
         // the arrow lookahead were rewritten in the same commit.
         ['forced-strike {~', /\{~(?=\S)(?!.*~>)/, /~\}/, '\\{~(?=\\S)', ['{', '}', '~', '>', 'a', '\n']],
         ['inserted {+', /\{\+/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
-        ['deleted {-', /\{-/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
+        // Its OPENER changed in carve-grammars#378 - `{--}` is a braced en dash,
+        // not an empty deletion - so the baseline carries the guard, the same way
+        // `forced-strike` above carries the half of its opener that did not change.
+        ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
         ['subscript {,', /\{,(?=\S)/, /,\}/, null, ['{', '}', ',', 'a', '\n']],
         ['superscript {^', /\{\^(?=\S)/, /\^\}/, null, ['{', '}', '^', 'a', '\n']],
         ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/, null, ['/', 'a', ' ', '\n', '{']],
