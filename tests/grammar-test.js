@@ -412,6 +412,21 @@ if (realPrism) {
                 `${JSON.stringify(source)} must not tokenize as a combined run: ${types.join(',')}`,
             );
         }
+
+        // THE BODIES' OWN LIMITS (carve-grammars#382). The canonical body admits
+        // an asterisk that does not start the closer and must not admit one that
+        // does - `x /* /**/*/ y` is an italic run in the engine. The mirrored
+        // body is not tempered at all, and the two slash-only runs say what that
+        // buys: a tempered mirrored body reads them as combined runs where the
+        // engine renders bold. Only the ABSENCE is asserted here, because the
+        // reading each one falls back to differs.
+        for (const source of ['x /* /**/*/ y', 'x *///* y', 'x */*//* y']) {
+            const types = typesOf(source);
+            assert.ok(
+                !types.includes('bold-italic'),
+                `${JSON.stringify(source)} must not tokenize as a combined run: ${types.join(',')}`,
+            );
+        }
     });
 
     ok('prism: citation [@key] is a citation token', () => {
