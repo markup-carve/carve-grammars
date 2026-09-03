@@ -604,31 +604,46 @@ export const LITERALS = [
      * than in a positive row because the defect is a rule matching MORE than
      * the language does.
      */
+    /*
+     * THE PAYLOAD IS THE BODY, NOT THE WHOLE RUN. Spelled `* b *` these could
+     * not fail: the delimiters live in the punctuation captures on TextMate, so
+     * no single token ever holds that string and the check was green whatever
+     * the rule did. Found by deleting the guards one at a time - the pair
+     * stayed green through both.
+     */
     {
         name: 'a space after the bold-italic opener is not a combined run',
         sample: 'a /* b */ c\n',
-        payload: '* b *',
+        payload: 'b',
         scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
     },
     {
         name: 'a space before the bold-italic closer is not a combined run',
         sample: 'a /*b */ c\n',
-        payload: '*b *',
+        payload: 'b',
         scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
     },
-    /*
-     * AND THE MIRRORED ORDER'S OWN GUARD: the opener leads with `*`, so glued to
-     * a word it opens nothing - `a x*\u002fb/* c` is `a x*<em>b</em>* c`, where
-     * the canonical `x/*b*\u002fy` IS a combined run. That asymmetry is the
-     * engine's, and it is the one shape a mirrored branch written as a plain
-     * mirror of the canonical would get wrong.
-     *
-     * The space guards are pinned on the canonical order alone: in the mirrored
-     * order the engine renders `a *\u002f b /* c` as a BOLD run holding literal
-     * slashes, and highlight.js spells its combined rule `strong` too, so there
-     * is no selector on that grammar that separates the right reading from the
-     * wrong one. The mirrored positives above and this row carry it instead.
-     */
+    {
+        // The mirrored closer's trailing guard: `a */b/*y c` is
+        // `a *<em>b</em>*y c`, with no bold anywhere.
+        name: 'a mirrored bold-italic closer glued to a word closes nothing',
+        sample: 'a */b/*y c\n',
+        payload: 'b',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
+    // AND THE MIRRORED ORDER'S OWN GUARDS: its opener leads with an asterisk, so
+    // glued to a word it opens nothing, where the canonical order glued to a
+    // word IS a combined run. That asymmetry is the engine's, and it is the one
+    // shape a mirrored branch written as a plain mirror of the canonical gets
+    // wrong.
+    //
+    // The mirrored order's SPACE guards are not here. The engine reads a spaced
+    // mirrored run as a bold run holding literal slashes, and highlight.js
+    // spells its combined rule `strong` too, so on that grammar no selector
+    // separates the right reading from the wrong one - and a row here has to
+    // hold on all three. They are pinned per grammar instead: in the NEGATIVE
+    // list of tests/textmate-sweep-test.js and in tests/grammar-test.js for
+    // Prism.
     {
         name: 'a mirrored bold-italic opener glued to a word opens nothing',
         sample: 'a x*/b/* c\n',
@@ -1003,7 +1018,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 194
-export const MIN_LITERALS = 33
+export const MIN_LITERALS = 34
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

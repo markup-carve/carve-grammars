@@ -141,6 +141,14 @@ const NEGATIVE = [
   // and swallowing the link.
   ['link with @ is not a citation', '[contact @team](https://x.de)', 'citation'],
   ['@-only link is not a citation', '[@smith](https://x.de)', 'citation'],
+  // THE MIRRORED BOLD-ITALIC'S SPACE GUARDS (carve-grammars#375). The engine
+  // renders `a */ b /* c` and `a */b /* c` as BOLD runs holding literal
+  // slashes, not combined runs. They are here rather than in LITERALS because
+  // highlight.js spells its combined rule `strong` too, so on that grammar no
+  // selector separates the right reading from the wrong one - and a shared
+  // negative has to hold on all three.
+  ['a space after the mirrored bold-italic opener', 'a */ b /* c\n', 'markup.bold.italic'],
+  ['a space before the mirrored bold-italic closer', 'a */b /* c\n', 'markup.bold.italic'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],
   ['intraword super literal', 'foo^2^bar stays', 'markup.superscript'],
