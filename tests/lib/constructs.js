@@ -101,15 +101,24 @@ export const CONSTRUCTS = [
     // highlight.js rule already used, and why that grammar read it correctly
     // all along.
     //
-    // The MIRRORED body is deliberately left strict, and the measurement is at
-    // the rule in both grammars: the same temper there reads nearly twice as
-    // many documents wrongly, because a body opening with a slash is ambiguous
-    // with a canonical opener. `a */b/c/* d` stays under-coloured, on the same
-    // ticket.
+    // The MIRRORED body is tempered too, but only for a slash between two word
+    // characters - see the row below.
     {
         name: "bold-italic holding an asterisk", sample: "a /*b*c*/ d", payload: "b*c",
         textmate: "markup.bold.italic",
         engineScopes: { prism: ['bold-italic'] },
+    },
+    // AND THE MIRRORED BODY MAY HOLD A SLASH BETWEEN TWO WORD CHARACTERS
+    // (carve-grammars#382). `a */b/c/* d` is a combined run in the engine and
+    // was declined by a body spelled "anything but the closer's own first
+    // character". The temper here is NARROWER than the canonical one, and the
+    // narrowing is what makes it pay: admitting any slash that does not start
+    // the closer reads five times as many documents wrongly. The numbers, and
+    // the guard that pays for this one, are at the rule in both grammars.
+    {
+        name: "bold-italic mirrored holding a slash", sample: "a */b/c/* d", payload: "b/c",
+        textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'], highlightjs: ['strong', 'emphasis'] },
     },
     // AND THE TEMPER MUST NOT REACH PAST ITS OWN CLOSER, which is the other
     // direction and the one a widened body gets wrong: two runs on one line
@@ -1117,7 +1126,7 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 200
+export const MIN_CONSTRUCTS = 201
 export const MIN_LITERALS = 37
 
 /*
@@ -1142,9 +1151,9 @@ export const MIN_ASSERTABLE = {
     // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
     // that grammar the five typography runs the other two already carried, and
     // carve-grammars#375 took the last one.
-    textmate: 200,
-    prism: 197,
-    highlightjs: 196,
+    textmate: 201,
+    prism: 198,
+    highlightjs: 197,
 };
 
 /**
