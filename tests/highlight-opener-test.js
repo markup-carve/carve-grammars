@@ -174,7 +174,29 @@ const SHAPES = [
     ['a \\<=b c= d', 'an escaped < leaves an ordinary opener behind'],
     ['a \\>=b c= d', 'an escaped > leaves an ordinary opener behind'],
     ['a \\=b c= d', 'an escaped = is not an opener'],
+    /*
+     * AND THE TWO THAT SAY THE ADMISSION IS NARROW. `<`, `>` and `!` are the
+     * three characters the opener's own lookbehind refuses, so they are the
+     * three an escape has to undo; admitting any escaped character instead
+     * would take these two, which the engine leaves alone. Written from a
+     * mutation that survived the list above: widening `\\[<>!]` to `\\.` was
+     * caught by nothing until these arrived.
+     */
+    ['a \\==b c= d', 'an escape one character further back does not open the = after it'],
+    ['a \\a=b c= d', 'a backslash before a word character escapes nothing, and opens nothing'],
 ];
+
+/*
+ * A FLOOR ON THE LIST, for the reason `MIN_ASSERTABLE` exists in
+ * tests/lib/constructs.js: every row above is the only thing that measures its
+ * shape - the generated sweep below draws from an alphabet with no backslash in
+ * it - so a row that quietly disappears takes its shape with it. Deleting the
+ * four escaped rows was caught by nothing until this line.
+ */
+assert.ok(
+    SHAPES.length >= 15,
+    `SHAPES holds ${SHAPES.length}, expected at least 15 - a shape removed here is measured nowhere else`,
+);
 
 console.log('\nevery flanking shape, against the engine:');
 
