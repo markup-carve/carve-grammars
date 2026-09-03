@@ -192,6 +192,24 @@ const SHAPES = [
      */
     ['a \\\\=b c= d', 'an escaped backslash leaves an ordinary opener behind'],
     ['a \\\\!=b c= d', 'an escaped backslash leaves the comparison, which opens nothing'],
+    /*
+     * AND THE CLOSER, WHICH WAS UNGUARDED (carve-grammars#385). The rows above
+     * are all about the OPENER; an escaped `=` cannot close a highlight either,
+     * and every grammar closed on one. The asymmetry the closer DOES have -
+     * once a run is open, a `<=` or `=>` closes it (carve-grammars#325, the
+     * three rows further up) - is about smart typography, and an escape is a
+     * different question: the character is not a delimiter at all.
+     *
+     * The body has to step over one as well, or the run can never reach the
+     * real closer beyond it. That half is invisible to a sweep over short
+     * bodies, which is why it is written out here.
+     */
+    ['x =\\= y', 'an escaped = does not close, and nothing else can'],
+    ['a =b c\\= d= e', 'the body steps over an escaped = and closes on the real one'],
+    ['x =\\== y', 'an escaped = inside the body, then the closer'],
+    ['x =\\\\= y', 'an escaped backslash leaves an ordinary closer behind'],
+    ['x =\\\\\\= y', 'three backslashes escape the closer, so nothing closes'],
+    ['x =a= \\=b= y', 'a run closes before an escaped opener further along the line'],
 ];
 
 /*
@@ -202,8 +220,8 @@ const SHAPES = [
  * four escaped rows was caught by nothing until this line.
  */
 assert.ok(
-    SHAPES.length >= 17,
-    `SHAPES holds ${SHAPES.length}, expected at least 17 - a shape removed here is measured nowhere else`,
+    SHAPES.length >= 23,
+    `SHAPES holds ${SHAPES.length}, expected at least 23 - a shape removed here is measured nowhere else`,
 );
 
 console.log('\nevery flanking shape, against the engine:');
@@ -406,8 +424,15 @@ for (const [surface, tokenize] of ENGINES) {
  * `a` is in the alphabet so a body can be ordinary text; the space is what lets
  * a delimiter be unflanked. The padding keeps every run off both ends of the
  * line, the two positions where an anchored rule behaves differently.
+ *
+ * THE BACKSLASH ARRIVED WITH carve-grammars#385, and the whole escape family
+ * was outside the generated space until it did: 2,801 documents rather than
+ * 1,555, and eleven rows per grammar went from silently absent to measured.
+ * Widening an alphabet is how a sweep stops flattering the rule it watches, and
+ * it has to land WITH the fix - the day it is added is the day those rows go
+ * red.
  */
-const ALPHABET = ['=', '<', '>', '!', ' ', 'a'];
+const ALPHABET = ['=', '<', '>', '!', ' ', 'a', '\\'];
 const BODY_LENGTH = 4;
 
 /**
@@ -455,9 +480,19 @@ const RESIDUALS = {
      */
     prism: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
     textmate: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
-    // The intellij port reads the bare rule the same way, measured when its
-    // checkout was first named here (carve-grammars#329).
-    'intellij-carve': ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
+    /*
+     * THE INTELLIJ PORT HAS NOT TAKEN carve-grammars#385, so with its checkout
+     * named this sweep sees the whole pre-fix set: the three rows above plus
+     * the eleven the backslash brought into the alphabet. Measured against that
+     * checkout at 4cd4499 rather than assumed - the row was a copy of the two
+     * above until then, and a copy is what goes stale when one side moves.
+     * Tracked at markup-carve/intellij-carve.
+     */
+    'intellij-carve': [
+        'x =\\= y\n', 'x =<== y\n', 'x =<\\= y\n', 'x =!== y\n', 'x =!\\= y\n',
+        'x =a== y\n', 'x =a\\= y\n', 'x =\\== y\n', 'x =\\=< y\n', 'x =\\=> y\n',
+        'x =\\=! y\n', 'x =\\=  y\n', 'x =\\=\\ y\n', 'x  =\\= y\n',
+    ],
     /*
      * A CLOSER PRECEDED BY WHITESPACE. `bare_closer` requires a non-space
      * before the delimiter (grammar.ebnf), so `=a =` is literal - and the other
@@ -467,7 +502,7 @@ const RESIDUALS = {
      * delimiter. Every one of the thirteen `paired` modes has the same shape,
      * so this is a fix to that helper and not to this rule.
      */
-    highlightjs: ['x =< = y\n', 'x =! = y\n', 'x =a = y\n'],
+    highlightjs: ['x =< = y\n', 'x =! = y\n', 'x =a = y\n', 'x =\\ = y\n'],
 };
 
 console.log('\nevery generated run of arrow and comparison characters:');

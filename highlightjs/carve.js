@@ -152,7 +152,7 @@
      * @returns {object} the mode's `begin`/`end` pair, so the closer used by
      *   the guard and the closer used by the mode cannot drift apart.
      */
-    const paired = (opener, closer) => {
+    const paired = (opener, closer, escapeAware = false) => {
         // The guard used to be written `(?:[^\n]|\n(?!\s*\n))*?` - unbounded,
         // lazy, and free to cross newlines. Proving there is NO closer therefore
         // cost a whole paragraph from every position, and a document made of
@@ -183,10 +183,37 @@
         const literal = lead.length === 2 ? lead[1] : lead;
         const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
         const run = `(?:[^${inClass}\\n]|\\n(?!\\s*\\n)){0,4096}`;
-        const guard = `${run}(?:${lead}(?!${rest})${run}){0,32}${closer.source}`;
+        /*
+         * `escapeAware` opts a mode into "an ESCAPED delimiter is not a
+         * delimiter" (carve-grammars#385). Only the bare highlight asks for it,
+         * because it is the only closer here that a document can put a
+         * backslash in front of and mean it: `x =\= y` renders `x == y` with no
+         * mark, and this mode closed on the escaped `=` and coloured a run the
+         * engine does not.
+         *
+         * BACKSLASHES NEST, so both halves count them rather than looking at
+         * one character - `\\=` is a literal backslash and a real closer. EVEN
+         * says the delimiter stands on its own, ODD says it is escaped, and the
+         * guard has to know BOTH: the closer it proves exists needs EVEN, and
+         * the delimiter it steps over on the way needs ODD as well as the
+         * ordinary "not a closer" case. Bounded at the same 32 as the pair
+         * repetition below, and for the same reason as the Prism opener's -
+         * unbounded inside a lookbehind it backtracks superlinearly on a long
+         * backslash run.
+         *
+         * The default path is byte-identical to before, so the twelve other
+         * modes are untouched.
+         */
+        const EVEN = '(?<=(?:^|[^\\\\])(?:\\\\\\\\){0,32})';
+        const ODD = '(?<=(?:^|[^\\\\])(?:\\\\\\\\){0,32}\\\\)';
+        const end = escapeAware ? new RegExp(`${EVEN}${closer.source}`) : closer;
+        const notCloser = escapeAware
+            ? `(?:${ODD}${lead}|${lead}(?!${rest}))`
+            : `${lead}(?!${rest})`;
+        const guard = `${run}(?:${notCloser}${run}){0,32}${end.source}`;
         return {
             begin: new RegExp(`${opener.source}(?=${guard})`),
-            end: closer,
+            end,
         };
     };
 
@@ -356,9 +383,15 @@
      * opened and closed on the two `=` of a doubled run and scoped an empty
      * highlight over a line the engine renders literally.
      *
-     * THE CLOSER IS DELIBERATELY NOT GUARDED, and the asymmetry is the
-     * engine's: once a highlight is open the closer wins over the pattern, so
-     * `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`.
+     * THE CLOSER IS DELIBERATELY NOT GUARDED AGAINST SMART TYPOGRAPHY, and the
+     * asymmetry is the engine's: once a highlight is open the closer wins over
+     * the pattern, so `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`.
+     *
+     * AN ESCAPE IS A DIFFERENT QUESTION (carve-grammars#385). An escaped `=` is
+     * not a delimiter at all - `x =\= y` renders `x == y` with no mark - and
+     * this mode closed on one. `paired`'s third argument is what says so; it is
+     * the only mode here that asks for it, because it is the only closer a
+     * document can put a backslash in front of and mean it.
      *
      * ONE SHAPE IT COSTS: `<https://e.example>=hi=`, where the `>` closes an
      * autolink rather than opening a comparison. A fixed-width lookbehind
@@ -368,7 +401,7 @@
      */
     const HIGHLIGHT = {
         className: 'addition',
-        ...paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/),
+        ...paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, true),
         relevance: 3,
     };
 

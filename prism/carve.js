@@ -363,9 +363,19 @@
             // family, `a \!=b c= d` still scoped nothing. The other two
             // grammars need none of this, because their escape rule really
             // does consume the flank before the highlight rule is asked.
-            // The closer is deliberately unguarded - once a highlight is open
-            // the closer wins over the pattern in the engine too, so
-            // `x =y z<= w` marks `y z<`.
+            // THE CLOSER IS UNGUARDED AGAINST SMART TYPOGRAPHY, deliberately -
+            // once a highlight is open the closer wins over the pattern in the
+            // engine too, so `x =y z<= w` marks `y z<`. AN ESCAPE IS A
+            // DIFFERENT QUESTION (carve-grammars#385): an escaped `=` is not a
+            // delimiter at all, so `x =\= y` renders `x == y` with no mark and
+            // this rule closed on it. The closer now needs the same EVEN
+            // backslash run the opener does, and the BODY needs the ODD one:
+            // without it the run stops at the escaped `=` and can never reach
+            // the real closer past it, so `a =b c\= d= e` - which the engine
+            // marks - would have gone from wrongly-coloured to uncoloured.
+            // Both halves were measured over the same generated space with a
+            // backslash added to its alphabet: 2,801 documents, 108 of which
+            // this grammar read differently from the engine and now does not.
             // ONE SHAPE IT COSTS: `<https://e.example>=hi=`, where the `>`
             // closes an autolink rather than opening a comparison; a
             // fixed-width lookbehind cannot tell the two apart, and this takes
@@ -377,7 +387,7 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)[^=\n]{1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)(?:[^=\n]|(?<=(?:^|[^\\])(?:\\\\){0,32}\\)=){1,4096}?(?<=\S)(?<=(?:^|[^\\])(?:\\\\){0,32})=(?![\w=])/,
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
