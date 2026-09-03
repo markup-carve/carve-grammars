@@ -167,6 +167,25 @@ const NEGATIVE = [
   ['a canonical body may not hold its own closer', 'x /* /**/*/ y\n', 'markup.bold.italic'],
   ['a mirrored body holding only slashes is bold', 'x *///* y\n', 'markup.bold.italic'],
   ['a mirrored body opening with a slash is bold', 'x */*//* y\n', 'markup.bold.italic'],
+  // WHAT THE MIRRORED TEMPER MUST NOT REACH (carve-grammars#382). Its slash is
+  // admitted only between two word characters, and these are the three shapes
+  // that says no to. A slash that ends the body is not between two of them:
+  // `a */b//* c` is `a <strong><em>b</em>/</strong> c`, so the trailing slash
+  // is bold and not part of the combined run, and claiming the whole body
+  // would colour it as though it were. The other two are why the opener also
+  // refuses a star followed by a star or a space - without that guard the
+  // temper claims both, and the engine reads neither as a combined run:
+  // `a */* a/a/* d` is `a <strong>/</strong> a/a/* d` and `a */**a/a/* d` is
+  // `a <strong>/</strong>*a/a/* d`.
+  ['a mirrored body ending in a slash', 'a */b//* c\n', 'markup.bold.italic'],
+  ['a star and a space after the mirrored opener', 'a */* a/a/* d\n', 'markup.bold.italic'],
+  ['a doubled star after the mirrored opener', 'a */**a/a/* d\n', 'markup.bold.italic'],
+  // BOTH HALVES OF THE FLANK, not just one. A slash admitted on the character
+  // AFTER it alone claims `a */*/a/* d`, which the engine reads as
+  // `a <strong>/</strong><em>a</em>* d` - a bold run and an italic one, not a
+  // combined run. The trailing-slash row above is the mirror of this, and
+  // refuses the half that looks only at the character before.
+  ['a slash straight after the mirrored opener star', 'a */*/a/* d\n', 'markup.bold.italic'],
   ['a space before the mirrored bold-italic closer', 'a */b /* c\n', 'markup.bold.italic'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],
