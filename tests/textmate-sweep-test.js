@@ -148,6 +148,9 @@ const NEGATIVE = [
   // selector separates the right reading from the wrong one - and a shared
   // negative has to hold on all three.
   ['a space after the mirrored bold-italic opener', 'a */ b /* c\n', 'markup.bold.italic'],
+  // The shape the mirrored OPENER guard refuses on its own: a space after it
+  // and none before the closer, so the closer guard cannot also block it.
+  ['a space after the mirrored opener, none before its closer', 'a */ b/* c\n', 'markup.bold.italic'],
   ['a space before the mirrored bold-italic closer', 'a */b /* c\n', 'markup.bold.italic'],
   ['intraword bold literal', 'foo*bar*baz stays', 'markup.bold'],
   ['intraword strike literal', 'a~b~c stays', 'markup.strikethrough'],

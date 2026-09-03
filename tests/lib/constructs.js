@@ -624,6 +624,19 @@ export const LITERALS = [
         scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
     },
     {
+        /*
+         * ONE GUARD AT A TIME. The two rows above are blocked by EITHER guard,
+         * so deleting one of the pair left them green - measured, by deleting
+         * each. This sample is the one the opener guard alone refuses: a space
+         * after the opener and none before the closer, which the engine renders
+         * `<em>* b*</em>`.
+         */
+        name: 'a space after the bold-italic opener is refused by that guard alone',
+        sample: 'a /* b*/ c\n',
+        payload: 'b',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
+    },
+    {
         // The mirrored closer's trailing guard: `a */b/*y c` is
         // `a *<em>b</em>*y c`, with no bold anywhere.
         name: 'a mirrored bold-italic closer glued to a word closes nothing',
@@ -1018,7 +1031,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 194
-export const MIN_LITERALS = 34
+export const MIN_LITERALS = 35
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

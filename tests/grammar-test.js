@@ -404,7 +404,7 @@ if (realPrism) {
         // The token TYPE, not "carries a scope": a combined run and a bold run
         // are both scoped, and `'bold-italic'.includes('bold')` is true, so
         // anything looser than an exact type cannot tell them apart.
-        for (const source of ['a */ b /* c', 'a */b /* c']) {
+        for (const source of ['a */ b /* c', 'a */b /* c', 'a */ b/* c']) {
             const types = typesOf(source);
             assert.ok(types.includes('bold'), `expected a bold token in ${JSON.stringify(source)}, got: ${types.join(',')}`);
             assert.ok(
