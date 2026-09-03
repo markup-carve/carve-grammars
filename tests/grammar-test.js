@@ -394,6 +394,26 @@ if (realPrism) {
         assert.ok(!types.includes('literal'), `![…] must not tokenize as a literal: ${types.join(',')}`);
     });
 
+    ok('prism: a spaced mirrored bold-italic run is bold, not a combined run', () => {
+        // carve-grammars#375. The engine renders both sources below as BOLD
+        // runs holding literal slashes, so the mirrored branch's body is
+        // non-space at both ends. The counter-example lives here rather than in
+        // LITERALS because highlight.js spells its combined rule `strong` too,
+        // and a shared negative has to hold on all three grammars.
+        //
+        // The token TYPE, not "carries a scope": a combined run and a bold run
+        // are both scoped, and `'bold-italic'.includes('bold')` is true, so
+        // anything looser than an exact type cannot tell them apart.
+        for (const source of ['a */ b /* c', 'a */b /* c', 'a */ b/* c', 'a */b*/* c', 'a */*a*/* b']) {
+            const types = typesOf(source);
+            assert.ok(types.includes('bold'), `expected a bold token in ${JSON.stringify(source)}, got: ${types.join(',')}`);
+            assert.ok(
+                !types.includes('bold-italic'),
+                `${JSON.stringify(source)} must not tokenize as a combined run: ${types.join(',')}`,
+            );
+        }
+    });
+
     ok('prism: citation [@key] is a citation token', () => {
         const types = typesOf('See [@smith2020] for details.');
         assert.ok(types.includes('citation'), `expected citation token, got: ${types.join(',')}`);
