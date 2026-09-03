@@ -222,7 +222,7 @@
         // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
         // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)(?:[^*\n]|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?:[^/\n]|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
+            pattern: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?:[^/\n]|\/(?!\*)|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
             alias: 'important',
         },
         // The "no leading/trailing space" rule is expressed without JS

@@ -1304,7 +1304,7 @@
       "comment": "BOTH NESTING ORDERS, because the engine renders them identically: `some /*both*/ text` and `some */both/* text` are each `<strong><em>both</em></strong>` (carve 0.1.5). Only the canonical order had a rule, so the mirrored one fell through to #strong and came back a bold run containing two literal slashes - a reading that says the document holds something it does not, and one no sweep could see because the row sampled the order this rule got right (carve-grammars#375). THE MIRRORED OPENER NEEDS A FLANKING GUARD AND THE CANONICAL ONE DOES NOT, and that asymmetry is the engine's: `x/*b*/y` IS bold-italic and `x*/b/*y` is `x*<em>b</em>*y`, because the mirrored opener leads with `*` and a `*` glued to a word opens nothing. Same at the other end: `x/*b*/y` closes into a word and `a */b/*y c` does not. CONTENT IS NON-SPACE AT BOTH ENDS in both orders. `a /* b */ c` is `<em>* b *</em>` and `a /*b */ c` is `<em>*b *</em>` - italic runs holding literal asterisks, not combined runs - and this rule read both as one combined run until the two guards arrived with the mirrored order. WHAT NEITHER ORDER COVERS: a body holding the OTHER order's delimiter. The engine reads `a /*b*c*/ d` and `a */b/c/* d` as combined runs and both branches decline them, which is the under-colouring side of the trade and the same limit the rule has always had on the canonical side - carve-grammars#382. TWO MORE GUARDS THE MIRRORED BRANCH NEEDS AND THE CANONICAL ONE DOES NOT, both found by probing the shapes where one order's delimiters sit inside the other's. A `/` before the opener makes the pair ambiguous with a canonical opener - `a /*/a/* b` is `a <em>*/a</em>* b`, an italic run - so the left guard refuses it as well as a word character and a `*`. And the closer may not follow a `*`: `a */b*/* c` is `a <strong>/b</strong>/* c` and `a */*a*/* b` is `a <strong>/*a</strong>/* b`, both bold runs, while `a */*b/* c` IS combined - so it is the character before the closer that decides, not the one after the opener.",
       "patterns": [
         {
-          "match": "(/\\*)(?=\\S)([^*\\n]+)(?<=\\S)(\\*/)",
+          "match": "(/\\*)(?=\\S)((?:[^*\\n]|\\*(?!/)){1,4096})(?<=\\S)(\\*/)",
           "captures": {
           "1": {
             "name": "punctuation.definition.bold-italic.carve"
@@ -1318,7 +1318,7 @@
         }
         },
         {
-          "match": "(?<![\\w*/])(\\*/)(?=\\S)([^/\\n]+)(?<![\\s*])(/\\*)(?!\\w)",
+          "match": "(?<![\\w*/])(\\*/)(?=\\S)((?:[^/\\n]|/(?!\\*)){1,4096})(?<![\\s*])(/\\*)(?!\\w)",
           "captures": {
           "1": {
             "name": "punctuation.definition.bold-italic.carve"
