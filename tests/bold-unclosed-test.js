@@ -135,6 +135,14 @@ const BOUNDED = [
     ['a *b c\n\nnext paragraph\n\n# a heading', 'b c', 'and does not reach a later heading'],
     ['a *b c\n\nx *y* z', 'b cy', 'and a later run in another paragraph still scopes on its own'],
     ['a *b c\n\nsecond\n\nthird', 'b c', 'and two paragraphs later is untouched'],
+    /*
+     * A SEPARATOR LINE IS NOT ALWAYS EMPTY. The engine ends a paragraph on a
+     * line of spaces or tabs too, so the terminator is `^[ \t]*$` and not `^$`.
+     * Written from a mutation that survived: narrowing it to `^$` was caught by
+     * nothing until these two rows arrived.
+     */
+    ['a *b c\n   \nnext paragraph', 'b c', 'a spaces-only line separates too'],
+    ['a *b c\n\t\nnext paragraph', 'b c', 'and a tab-only line'],
 ];
 
 console.log('\nthe blank line is doing the bounding:');
