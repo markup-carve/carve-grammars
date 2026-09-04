@@ -25,18 +25,31 @@
  */
 import { readFileSync } from 'node:fs';
 import { createHighlighter } from 'shiki';
+import { textmateLineTokenizer } from './textmate-lines.js';
+
+function hasBlankLine(source) {
+    if (source === '') return false;
+    const lines = source.split('\n');
+    // A final split sentinel represents a line ending, not a blank line.
+    if (source.endsWith('\n')) lines.pop();
+    return lines.some((line) => /^[ \t]*$/.test(line));
+}
 
 /**
  * A `{scope, text}` tokenizer for one TextMate grammar.
  *
- * The leaves reconstruct the source exactly - Shiki tokenizes line by line and
- * drops the line ending, so the newline is put back between lines. That is not
- * cosmetic: `measure` in `payload-inertness.js` locates the payload by counting
- * characters, so a tokenizer that loses one reports about the wrong region.
+ * The leaves reconstruct the source exactly. That is not cosmetic: `measure`
+ * in `payload-inertness.js` locates the payload by counting characters, so a
+ * tokenizer that loses one reports about the wrong region.
  *
  * The scope is the whole SCOPE STACK joined, not the innermost name. A leak is
  * a markup scope OPEN over the payload, and on a begin/end grammar that scope
  * is usually an ancestor of the token rather than the token's own name.
+ *
+ * Shiki preserves the established per-line scope answers. For a document with
+ * an actual blank line, the helper switches to the line-faithful
+ * `vscode-textmate` driver: Shiki drops blank lines before they reach the state
+ * machine, so it cannot answer whether a begin/end rule terminates there.
  *
  * @param {string} path - Path to a `.tmLanguage.json` grammar.
  * @returns {Promise<(source: string) => Array<{scope: (string|null), text: string}>>} the tokenizer.
@@ -47,8 +60,13 @@ export async function textmateTokenizer(path) {
         themes: ['github-light'],
         langs: [{ ...grammar, name: 'carve' }],
     });
+    const tokenizeLines = await textmateLineTokenizer(path);
 
     return (source) => {
+        if (hasBlankLine(source)) {
+            return tokenizeLines(source);
+        }
+
         const { tokens } = highlighter.codeToTokens(source, {
             lang: 'carve',
             theme: 'github-light',
@@ -83,9 +101,7 @@ export async function textmateTokenizer(path) {
 export function unfaithful(tokenize, source) {
     const joined = tokenize(source).map((leaf) => leaf.text).join('');
     if (joined === source) return null;
-    // Shiki drops a trailing newline, which costs the measurement nothing: the
-    // payload never sits after the last line ending.
-    if (`${joined}\n` === source) return null;
-
+    // Shiki drops a trailing newline; the line-faithful blank-line path may not.
+    if (!hasBlankLine(source) && `${joined}\n` === source) return null;
     return `the tokenizer returned ${JSON.stringify(joined)} for ${JSON.stringify(source)}`;
 }
