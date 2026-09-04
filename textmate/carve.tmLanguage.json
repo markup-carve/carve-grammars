@@ -1335,7 +1335,7 @@
     },
     "strong": {
       "begin": "(?<![\\w*])(\\*)(?=\\S)",
-      "end": "(?<=\\S)(\\*)(?![\\w*])",
+      "end": "(?<=\\S)(\\*)(?![\\w*])|^[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.bold.carve"
@@ -1346,7 +1346,7 @@
           "name": "punctuation.definition.bold.carve"
         }
       },
-      "contentName": "markup.bold.carve",
+      "comment": "A BLANK LINE ENDS THE RUN, because an opener with no closer must not colour the rest of the file (carve-grammars#393). This is the ONLY bare inline rule spelled begin/end rather than as one `match`, and it has to be: a TextMate `match` cannot cross a line break at all - measured on a two-rule grammar - while the engine does read `a *b` over `c* d` as one bold run, which this rule gets right and its four `match` siblings get wrong. So the two properties trade off, and the trade is what the blank line bounds: without it `a *b c` scoped the next paragraph and the heading after it, and now it stops at the paragraph. WHAT IT DOES NOT FIX: a genuinely unclosed opener still colours to the end of its own paragraph, because `begin` cannot see whether a closer exists on a later line and TextMate offers no way to ask. Pinned in tests/bold-unclosed-test.js rather than left silent. MEASURE THIS RULE WITH THE RAW TOKENIZER: Shiki reports the fix as having no effect at all (carve-grammars#395), so a test written against it would call a correct grammar broken.", "contentName": "markup.bold.carve",
       "patterns": [
         {
           "include": "#braced_comment"
