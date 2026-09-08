@@ -587,6 +587,19 @@ export const CarveKit = Extension.create({
                                 'data-checked': attributes.checked,
                             }),
                         },
+                        // The four non-space task states (`-` `_` `>` `?`)
+                        // the engine emits as `data-task-state`. Null for a
+                        // plain `[ ]`/`[x]` item, whose state `checked` holds.
+                        // Without this, a load/save cycle collapsed every such
+                        // item back to `[ ]` (markup-carve/carve-grammars#371).
+                        carveTaskState: {
+                            default: null,
+                            keepOnSplit: false,
+                            parseHTML: element => element.getAttribute('data-task-state') || null,
+                            renderHTML: attributes => (
+                                attributes.carveTaskState ? { 'data-task-state': attributes.carveTaskState } : {}
+                            ),
+                        },
                         // A task item takes a marker attribute the same way a
                         // plain item does: `-{.c} [ ] text`.
                         id: { default: null },

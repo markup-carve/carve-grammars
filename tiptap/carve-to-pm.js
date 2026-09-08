@@ -452,7 +452,14 @@ function convertBlock(node, ctx) {
                     ...(typeof node.tight === 'boolean' ? { attrs: { carveTight: node.tight } } : {}),
                     content: (node.items || []).map((it) => ({
                         type: 'taskItem',
-                        attrs: { checked: !!it.checked, ...(convertAttrs(it.attrs) || {}) },
+                        attrs: {
+                            checked: !!it.checked,
+                            // The engine carries the four non-space task states
+                            // (`-` `_` `>` `?`) in `taskState`; absent for the
+                            // plain `[ ]`/`[x]`, whose state `checked` already holds.
+                            ...(it.taskState != null ? { carveTaskState: it.taskState } : {}),
+                            ...(convertAttrs(it.attrs) || {}),
+                        },
                         content: convertBlocks(it.children || [], ctx),
                     })),
                 };
