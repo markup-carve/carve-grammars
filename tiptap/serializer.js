@@ -293,7 +293,13 @@ export function serializeToCarve(doc) {
                         num++;
                     } else if (node.type === 'taskList') {
                         marker = '-';
-                        taskBox = '[' + (item.attrs?.checked ? 'x' : ' ') + '] ';
+                        // `checked` wins: toggling the stock TaskItem checkbox
+                        // updates only `checked` and leaves `carveTaskState`
+                        // intact, so a user who checks a `[-]` item means `[x]`.
+                        // An unchecked item keeps its non-space state, or a
+                        // plain space when it has none.
+                        const taskState = item.attrs?.checked ? 'x' : (item.attrs?.carveTaskState || ' ');
+                        taskBox = '[' + taskState + '] ';
                     } else {
                         marker = '-';
                     }
@@ -301,7 +307,7 @@ export function serializeToCarve(doc) {
                     // (`- {.c} item`) is a different document: the brace is then
                     // content, either literal text or a block-attribute line for
                     // what follows (corpus 90-list-item-attributes-7, 172).
-                    const markerAttrs = serializeAttributes(item.attrs, ['checked']);
+                    const markerAttrs = serializeAttributes(item.attrs, ['checked', 'carveTaskState']);
                     const prefix = marker + markerAttrs + ' ';
                     output += indent + prefix + taskBox;
                     // The content column is measured from the prefix ACTUALLY

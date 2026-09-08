@@ -92,6 +92,7 @@
         "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored marker key=values",
         "checked": "task item state, taskItem only",
+        "carveTaskState": "non-space task marker (`-` `_` `>` `?`), taskItem only; null for a plain `[ ]`/`[x]` item",
         "class": "authored marker classes",
         "id": "authored marker id"
       }
