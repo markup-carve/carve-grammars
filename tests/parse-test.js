@@ -177,6 +177,10 @@ check('a roman ordered list keeps its style through the editor',
     '<ol type="i"><li>x</li><li>y</li></ol>',
     'i. x\nii. y');
 
+check('an imported HTML decimal list remains explicitly numbered',
+    '<ol><li>x</li><li>y</li></ol>',
+    '1. x\n2. y');
+
 // Presentation classes in task-list HTML are not authored Carve attributes.
 check('a structural task-list class does not become a marker attribute',
     '<ul><li class="task-list-item"><input type="checkbox" disabled> x</li></ul>',

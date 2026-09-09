@@ -86,6 +86,22 @@ const fixed = [
     '389-a-boolean-attribute-does-not-start-with-an-underscore',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
+
+// A list created by the editor has no authored marker to preserve. The command
+// chooses the compact automatic form, while imported explicit numbering stays
+// explicit through the converter's `false` override.
+const created = new Editor({ extensions: [CarveKit], content: '<p>one</p><p>two</p>' });
+created.commands.selectAll();
+created.commands.toggleOrderedList();
+assert.strictEqual(serializeToCarve(created.getJSON()), '. one\n. two');
+created.destroy();
+
+const imported = new Editor({
+    extensions: [CarveKit],
+    content: carveToProseMirror('1. one\n2. two', { unsupported: 'throw' }),
+});
+assert.strictEqual(serializeToCarve({ ...imported.getJSON(), attrs: undefined }), '1. one\n2. two');
+imported.destroy();
 // 177 -> 173 when the `@markup-carve/carve` pin moved onto the withdrawal of
 // PART 9 section 4a (markup-carve/carve#1213). Every mover was read:
 //

@@ -281,6 +281,11 @@ export function serializeToCarve(doc) {
                 const htmlType = /^[aAiI]$/.test(String(node.attrs?.type ?? '')) ? node.attrs.type : null;
                 const olType = node.attrs?.carveOlType || htmlType;
                 const delim = node.attrs?.carveDelim === ')' ? ')' : '.';
+                // A bare dot can represent only decimal-dot numbering from 1.
+                // Ignore a stale/incompatible flag instead of silently losing
+                // an explicit start, alpha/roman dialect or `)` delimiter.
+                const useBareMarker = node.attrs?.carveBareMarker === true
+                    && num === 1 && !olType && delim === '.';
                 (node.content || []).forEach((item, i) => {
                     // The marker splits in two around the attribute slot: a
                     // marker attribute goes directly after the marker CHARACTER
@@ -289,7 +294,7 @@ export function serializeToCarve(doc) {
                     // makes the brace run an inline span on the item's text.
                     let marker, taskBox = '';
                     if (node.type === 'orderedList') {
-                        marker = (node.attrs?.carveBareMarker ? '' : orderedToken(num, olType, (node.content || []).length)) + delim;
+                        marker = (useBareMarker ? '' : orderedToken(num, olType, (node.content || []).length)) + delim;
                         num++;
                     } else if (node.type === 'taskList') {
                         marker = '-';
