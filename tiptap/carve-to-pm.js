@@ -493,7 +493,10 @@ function convertBlock(node, ctx) {
                 // Dropping it rewrote every alpha and roman list as `1.`.
                 if (node.olType) listNode.attrs.carveOlType = node.olType;
                 if (node.delim) listNode.attrs.carveDelim = node.delim;
-                if (node.bareMarker) listNode.attrs.carveBareMarker = true;
+                // Spell this out in both directions. The schema default is
+                // `true` for newly authored Tiptap lists, while an imported
+                // explicit `1.` list must override that default with `false`.
+                listNode.attrs.carveBareMarker = node.bareMarker === true;
             }
             return listNode;
         }

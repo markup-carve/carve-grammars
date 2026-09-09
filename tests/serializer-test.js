@@ -687,6 +687,12 @@ check('a bare-dot marker keeps its bare form',
     ] }),
     '. x');
 
+check('a stale bare-dot flag cannot discard an explicit start',
+    doc({ type: 'orderedList', attrs: { start: 3, carveBareMarker: true }, content: [
+        listItem(null, para(text('x'))),
+    ] }),
+    '3. x');
+
 // --- link metadata -----------------------------------------------------------
 
 const linked = (t, attrs) => ({ type: 'text', text: t, marks: [{ type: 'link', attrs }] });

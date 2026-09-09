@@ -396,6 +396,25 @@ export const CarveKit = Extension.create({
                         carveBareMarker: { default: null },
                     };
                 },
+                addCommands() {
+                    return {
+                        ...this.parent?.(),
+                        // A list CREATED in Tiptap has no authored marker to
+                        // preserve. Prefer Carve's constant-width automatic
+                        // marker without changing the schema default: keeping
+                        // that nullable preserves older persisted PM JSON.
+                        toggleOrderedList: () => ({ chain, editor }) => {
+                            const wasActive = editor.isActive(this.name);
+                            const command = chain().toggleList(
+                                this.name, this.options.itemTypeName, this.options.keepMarks,
+                            );
+                            if (wasActive) return command.run();
+                            return command.updateAttributes(this.name, {
+                                carveBareMarker: true, carveDelim: '.',
+                            }).run();
+                        },
+                    };
+                },
             });
             extensions.push(CustomOrderedList.configure(this.options.orderedList ?? {}));
         }

@@ -204,7 +204,8 @@
               "carveTight": true,
               "start": 1,
               "carveOlType": "a",
-              "carveDelim": ")"
+              "carveDelim": ")",
+              "carveBareMarker": false
             }
           }
         ]
