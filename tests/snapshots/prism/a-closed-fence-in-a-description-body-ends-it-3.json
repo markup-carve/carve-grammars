@@ -1,0 +1,26 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list",
+    "text": "definition"
+  },
+  {
+    "type": "text",
+    "text": "\n   ```\n   c\ntail\n"
+  }
+]

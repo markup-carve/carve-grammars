@@ -606,10 +606,16 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 321 -> 319 after the sentinel was kept glued to a following term, as the
  * canonical writer requires. That recovers the remaining two new documents
  * and promotes the complete empty-description category out of fallback.
+ *
+ * 319 -> 356 with the spec bump to carve 95a72c8. The bump adds 135 documents
+ * in 19 categories; measured under both pins, the old documents still
+ * contribute exactly 319 and 37 of the new ones need an envelope. The other 98
+ * write directly from their rich projection, and none of the 135 needs the
+ * whole-document fallback atom - the ratchet below is still zero.
  */
 assert.strictEqual(
-    envelopedFiles.length, 319,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 319`,
+    envelopedFiles.length, 356,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 356`,
 );
 
 assert.strictEqual(

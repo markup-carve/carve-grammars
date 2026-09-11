@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  definition"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n   :::\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   :::"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
+  }
+]

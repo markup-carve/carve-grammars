@@ -1,0 +1,42 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list",
+    "text": "definition\n"
+  },
+  {
+    "type": "table",
+    "text": "    "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>punctuation",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> > q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > {.k"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > #x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > after"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

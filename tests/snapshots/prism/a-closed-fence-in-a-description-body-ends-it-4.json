@@ -1,0 +1,66 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list",
+    "text": "definition\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "   "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block",
+    "text": "   ```\n   :::\n   "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "   "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

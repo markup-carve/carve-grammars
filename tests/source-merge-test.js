@@ -34,8 +34,12 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-assert.strictEqual(envelopes, 319, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 315, 'an append normalized authored layout in additional documents');
+// The three move together with the CORPUS, not with the projection: this bump
+// adds 37 documents that carry a source envelope, and all 37 append with
+// authored layout. The conflict set is the number to watch - a projection
+// change shows up there, and it has not moved (319/315/4 over the previous pin).
+assert.strictEqual(envelopes, 356, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 352, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });
