@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " x\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^g]: b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [^n]: note text"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

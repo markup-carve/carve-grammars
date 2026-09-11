@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]: outer"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^g]: mid"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [^h]: inner"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [r]: /url"
+  },
+  {
+    "scope": null,
+    "text": "\n   TAILWORD\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^h]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "link",
+    "text": "[t][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

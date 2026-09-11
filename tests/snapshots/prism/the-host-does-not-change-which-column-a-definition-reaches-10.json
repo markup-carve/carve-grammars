@@ -1,0 +1,62 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [^g]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "   [r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /url"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "footnote",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]

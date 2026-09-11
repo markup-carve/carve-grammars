@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": "   lead\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "    -"
+  },
+  {
+    "scope": null,
+    "text": " [t]: /t\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[t][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

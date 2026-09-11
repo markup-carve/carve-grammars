@@ -469,5 +469,11 @@ imported.destroy();
 // 213 -> 204 when empty definition descriptions began writing `: {empty}`.
 // Nine projections that previously dropped the description boundary now keep
 // the same rendered document after an edit.
-assert.strictEqual(changed.length, 204, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 204 -> 231 with the spec bump to carve 95a72c8. The bump adds 135 documents
+// in 19 categories; the documents shared by both pins keep exactly the same
+// verdict - the 204 is unchanged, measured by partitioning the list - and 27
+// of the new projections render differently after an edit while the other 108
+// remain render-equivalent.
+assert.strictEqual(changed.length, 231, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

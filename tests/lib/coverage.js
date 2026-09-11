@@ -411,6 +411,37 @@ const TIPTAP_COVERED = [
     '363-a-task-item-s-checkbox-is-not-decided-by-its-first-block',
     '364-only-lazy-folding-demotes-a-marker-line-colon-opener',
     '365-a-blank-line-before-a-sibling-marker-separates-the-items-whatever-consumed-it',
+
+    // Classified with the spec bump to carve 95a72c8, which appends nineteen
+    // categories and 135 documents. Measured one document at a time rather than
+    // inferred from the names: none of the 135 needs the whole-document fallback
+    // atom and all 135 reparse to the same AST, so every one of the nineteen is
+    // covered and none needed a protected fallback entry.
+    //
+    // 37 of them reach the rich projection only under a SOURCE ENVELOPE, which
+    // is still covered and is what the two ratchets in tests/source-merge-test.js
+    // report. They cluster in the marker-fold and degraded-comment-fence
+    // families, where the authored column of a line is what the ruling turns on
+    // and the serializer writes it back at the column the projection implies.
+    '442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column',
+    '443-an-unterminated-comment-fence-in-a-list-item-is-the-line-form',
+    '444-an-opener-at-or-past-a-description-body-s-column-closes-its-paragraph',
+    '445-a-degraded-comment-fence-at-a-container-s-column-0-keeps-the-follower-in-the-item',
+    '446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does',
+    '447-the-host-does-not-change-which-column-a-definition-reaches',
+    '448-a-marker-folds-into-a-quote-below-it',
+    '449-a-comment-below-a-description-body-s-column-ends-the-body',
+    '450-a-closed-fence-in-a-description-body-ends-it',
+    '451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column',
+    '452-an-empty-unterminated-container-ends-at-a-flush-left-line',
+    '453-a-row-whose-every-cell-is-blank-is-not-a-table',
+    '454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item',
+    '455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body',
+    '456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves',
+    '457-a-container-closer-closes-its-container-in-a-footnote-body-too',
+    '458-a-wrapped-attribute-block-ends-at-its-quote-and-reaches-no-line-below-it',
+    '459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach',
+    '460-a-nested-note-s-floor-is-two-columns-past-its-own-marker',
     // Promoted out of `fallback` when the reverse check in
     // tests/roundtrip-test.js was added: every file in each of these is written
     // back faithfully, so the recorded reason had nothing left to explain.

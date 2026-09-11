@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "body\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [^g]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " n"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list",
+    "text": "   - "
+  },
+  {
+    "type": "text",
+    "text": "item\n\nafter\n"
+  }
+]

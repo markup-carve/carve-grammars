@@ -1,0 +1,86 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list",
+    "text": "a\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "   "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>reference-definition>constant",
+    "text": "    [r]:"
+  },
+  {
+    "type": "div>reference-definition",
+    "text": " /url"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "   "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

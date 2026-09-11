@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " body\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^g]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "   > z"
+  },
+  {
+    "scope": null,
+    "text": "\n\nafter\n"
+  }
+]

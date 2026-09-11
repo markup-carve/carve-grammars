@@ -1,0 +1,98 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " outer"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "   [^g]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " mid"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "    [^h]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " inner"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [r]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " /url"
+  },
+  {
+    "type": "text",
+    "text": "\n  TAILWORD\n\nx"
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote",
+    "text": "[^h]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "t"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

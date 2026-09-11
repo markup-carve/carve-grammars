@@ -1,0 +1,62 @@
+[
+  {
+    "type": "reference-definition>constant",
+    "text": "[^f]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "  [^g]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " c"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>constant",
+    "text": "   [^n]:"
+  },
+  {
+    "type": "reference-definition",
+    "text": " note text"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "footnote",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "footnote",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "footnote",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]
