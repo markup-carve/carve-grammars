@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { createRawSourceView } from './editable-atom-view.js';
 
 /** Exact source for an inline construct that has no faithful editor model yet. */
 export const CarveUnsupportedInline = Node.create({
@@ -35,6 +36,8 @@ export const CarveUnsupportedInline = Node.create({
             node.attrs.carveSource || '',
         ];
     },
+
+    addNodeView() { return createRawSourceView({ inline: true }); },
 });
 
 export default CarveUnsupportedInline;

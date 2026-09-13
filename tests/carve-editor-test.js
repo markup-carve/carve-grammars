@@ -43,6 +43,56 @@ assert.match(detail?.value ?? '', /edited/, 'emits an input event with Carve sou
 element.setAttribute('readonly', '');
 assert.strictEqual(element._editor.isEditable, false, 'readonly disables editing');
 element.removeAttribute('readonly');
+
+element._editor.commands.setContent({
+    type: 'doc',
+    content: [
+        { type: 'heading', attrs: { level: 1, id: 'target' }, content: [{ type: 'text', text: 'Target' }] },
+        { type: 'paragraph', content: [
+            { type: 'carveFootnote', attrs: { label: 'old' } },
+            { type: 'text', text: ' ' },
+            { type: 'carveCrossref', attrs: { target: 'old-target' } },
+            { type: 'text', text: ' ' },
+            { type: 'carveCitation', attrs: { raw: '[@old]' } },
+        ] },
+        { type: 'carveFootnoteDefinition', attrs: { label: 'note' }, content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Note.' }] }] },
+        { type: 'carveCitationDefinition', attrs: { key: 'doe' }, content: [{ type: 'text', text: 'Doe.' }] },
+        { type: 'carveAbbreviationDefinition', attrs: { abbr: 'HTML', expansion: 'Old' } },
+        { type: 'carveLinkRefDef', attrs: { label: 'home', href: '/old', title: null } },
+        { type: 'carveUnsupported', attrs: { carveType: 'future-block', carveSource: '::: future\nOld\n:::\n' } },
+    ],
+});
+const footnotePicker = element.shadowRoot.querySelector('.carve-footnote-picker');
+footnotePicker.querySelector('.carve-inline-control-trigger').click();
+const footnoteInput = footnotePicker.querySelector('input');
+assert.deepStrictEqual([...footnotePicker.querySelectorAll('option')].map(option => option.value), ['note'], 'footnote picker lists document definitions');
+footnoteInput.value = 'note';
+footnotePicker.querySelector('button:last-child').previousElementSibling.click();
+assert.match(element.value, /\[\^note\]/, 'footnote picker changes its target');
+
+const crossrefPicker = element.shadowRoot.querySelector('.carve-crossref-picker');
+crossrefPicker.querySelector('.carve-inline-control-trigger').click();
+assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 'target'), 'cross-reference picker lists heading ids');
+const citationPicker = element.shadowRoot.querySelector('.carve-citation-picker');
+citationPicker.querySelector('.carve-inline-control-trigger').click();
+assert.deepStrictEqual([...citationPicker.querySelectorAll('option')].map(option => option.value), ['[@doe]'], 'citation picker lists bibliography keys');
+
+const abbreviation = element.shadowRoot.querySelector('.carve-abbreviation-definition-card');
+abbreviation.querySelector('.carve-definition-summary').click();
+abbreviation.querySelector('[name="expansion"]').value = 'HyperText Markup Language';
+abbreviation.querySelector('.carve-definition-save').click();
+assert.match(element.value, /\*\[HTML\]: HyperText Markup Language/, 'abbreviation definition card applies edits');
+const linkDefinition = element.shadowRoot.querySelector('.carve-link-definition-card');
+linkDefinition.querySelector('.carve-definition-summary').click();
+linkDefinition.querySelector('[name="href"]').value = 'https://example.com';
+linkDefinition.querySelector('.carve-definition-save').click();
+assert.match(element.value, /\[home\]: https:\/\/example\.com/, 'link definition card applies edits');
+
+const unsupported = element.shadowRoot.querySelector('.carve-raw-atom:not(.carve-raw-atom-inline)');
+unsupported.querySelector('.carve-raw-atom-summary').click();
+unsupported.querySelector('textarea').value = '::: future\nEdited\n:::\n';
+unsupported.querySelector('button:last-child').click();
+assert.match(element.value, /future\nEdited/, 'unsupported block exposes exact source editing');
 assert.strictEqual(element._editor.isEditable, true, 'removing readonly enables editing');
 
 element.value = '---\ntitle: Original\nlang: en\nunknown: kept\n---\n\nBody.\n';
@@ -102,4 +152,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 27 passed');
+console.log('carve-editor custom element: 36 passed');

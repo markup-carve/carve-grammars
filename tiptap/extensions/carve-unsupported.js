@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { createRawSourceView } from './editable-atom-view.js';
 
 /**
  * Opaque Carve source that the ProseMirror model cannot edit faithfully yet.
@@ -42,6 +43,8 @@ export const CarveUnsupported = Node.create({
             node.attrs.carveSource || '',
         ];
     },
+
+    addNodeView() { return createRawSourceView(); },
 });
 
 export default CarveUnsupported;

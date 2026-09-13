@@ -200,7 +200,10 @@ export function createPanelBarView(spec) {
                 const label = labelOf(child, index) || fallbackLabel(index);
                 const button = makeButton(label, `${className}-tab`, null);
                 button.setAttribute('role', 'tab');
-                button.addEventListener('mousedown', () => setActive(index));
+                // `click` is the semantic activation event: it covers mouse,
+                // touch, keyboard Enter/Space and assistive technology. The
+                // mousedown handler above only protects the editor selection.
+                button.addEventListener('click', () => setActive(index));
                 if (setLabel && positioned()) {
                     button.title = `Double-click to rename this ${noun}`;
                     button.addEventListener('dblclick', event => {

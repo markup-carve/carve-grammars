@@ -263,6 +263,11 @@ Document front matter appears as a collapsed **Document metadata** card. Expand
 it to edit the common `title`, `lang`, `author`, and `description` fields, or use
 the raw YAML/TOML field for custom metadata. Both paths update the document
 through the editor, so they participate in undo/redo and preserve unknown keys.
+Unsupported-source atoms use the same compact/editable pattern for their exact
+Carve payload. Inline footnotes, cross-references, and citations open target
+pickers, while abbreviation and link-reference definitions use collapsible
+forms. Import `@markup-carve/carve-grammars/tiptap/editor.css` when mounting
+`CarveKit` directly to receive the associated editor chrome and table styling.
 
 ## Syntax highlighting
 

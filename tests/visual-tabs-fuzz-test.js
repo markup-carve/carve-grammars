@@ -85,6 +85,7 @@ for (let count = 1; count <= 6; count += 1) {
             const buttons = [...element.querySelectorAll('.carve-tabset-bar .carve-tabset-tab')];
             buttons.forEach((button, index) => {
                 button.dispatchEvent(new win.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                button.dispatchEvent(new win.MouseEvent('click', { bubbles: true, cancelable: true }));
                 assert.strictEqual(wrapper.getAttribute('data-active'), String(index));
                 assert.strictEqual(serializeToCarve(editor.getJSON()), before);
             });

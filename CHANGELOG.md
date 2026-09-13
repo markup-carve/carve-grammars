@@ -7,8 +7,12 @@ All notable changes to `carve-grammars` are documented here.
 ### Added
 
 - Front matter now renders in Tiptap as a collapsible **Document metadata** card. Authors can edit common `title`, `lang`, `author`, and `description` fields or open the raw YAML/TOML payload for uncommon keys; updates are ordinary undoable editor transactions and preserve metadata the form does not know about.
+- Preserved unsupported block and inline atoms expose their exact Carve source; footnotes, cross-references, and citations expose target pickers populated from the current document; abbreviation and link-reference definitions render as editable collapsible cards.
+- Editor tables have explicit cell borders, header treatment, row striping, and selected-cell highlighting, while links use the theme's accessible accent states.
 
 ### Fixed
+
+- Visual/Source tab buttons activate through semantic `click` events, so keyboard, touch, assistive-technology, and programmatic activation work alongside mouse input.
 
 - A non-space task state (`-`, `_`, `>`, `?`) survives a Tiptap load/save cycle instead of collapsing to `[ ]`. The bridge kept only `checked`; it now carries the engine's `list_item.taskState` onto the `taskItem` node and writes it back verbatim (#371).
 - A blank line ends an unclosed bold run in the TextMate grammar. `repository.strong` is the only bare inline rule spelled `begin`/`end`, so an opener with no closer stayed open and `a *b c` coloured the next paragraph, the heading after it and the rest of the file. It stays `begin`/`end` deliberately - a TextMate `match` cannot cross a line break, and this is the one bare rule that reads `a *b` over `c* d` as one run the way the engine does. An opener with no closer in its own paragraph still colours to that paragraph's end (#393).

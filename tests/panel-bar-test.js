@@ -82,6 +82,7 @@ function countTabs(source) {
 function press(node) {
     assert.ok(node, 'expected the control to exist');
     node.dispatchEvent(new win.MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+    node.dispatchEvent(new win.MouseEvent('click', { bubbles: true, cancelable: true }));
 }
 
 const TABS = [

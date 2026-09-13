@@ -282,7 +282,7 @@ function unsupported(type, node, ctx) {
     if (ctx?.unsupported === 'preserve') {
         const carveSource = sourceFor(node, ctx);
         if (carveSource) {
-            record(ctx, 'preserved', type, 'kept as exact source in a carveUnsupported atom; not editable');
+            record(ctx, 'preserved', type, 'kept as exact source in an editable carveUnsupported atom');
 
             // The TYPE the atom stands in for, not only its source. Without it
             // a caller can see that something was preserved and never learn
@@ -843,7 +843,7 @@ function convertInline(nodes, ctx) {
                 const carveSource = sourceFor(node, ctx);
                 if (carveSource) {
                     record(ctx, 'preserved', error.nodeType || node.type,
-                        'kept as exact source in a carveUnsupportedInline atom; not editable');
+                        'kept as exact source in an editable carveUnsupportedInline atom');
                     out.push(unsupportedInlineSource(carveSource, error.nodeType || node.type));
                     continue;
                 }

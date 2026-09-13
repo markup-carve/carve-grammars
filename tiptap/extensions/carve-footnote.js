@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { createInlinePickerView, documentValues } from './editable-atom-view.js';
 
 /**
  * Carve Footnote node extension for Tiptap
@@ -63,6 +64,16 @@ export const CarveFootnote = Node.create({
             'data-footnote-label': label,
             contenteditable: 'false',
         }), `[^${label}]`];
+    },
+
+    addNodeView() {
+        return createInlinePickerView({
+            className: 'carve-footnote-picker',
+            label: 'Footnote target',
+            attribute: 'label',
+            value: node => `[^${node.attrs.label || 'note'}]`,
+            choices: editor => documentValues(editor, 'carveFootnoteDefinition', 'label'),
+        });
     },
 
     addCommands() {

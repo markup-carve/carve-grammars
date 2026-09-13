@@ -42,6 +42,19 @@ export class CarveEditorElement extends HTMLElementBase {
                 .carve-frontmatter-card input, .carve-frontmatter-card textarea { box-sizing: border-box; width: 100%; border: 1px solid #b9c0ca; border-radius: 3px; font: inherit; padding: .5rem; }
                 .carve-frontmatter-raw { margin-block-start: .75rem; }
                 .carve-frontmatter-raw textarea { min-height: 7rem; font-family: monospace; font-weight: 400; }
+                .ProseMirror table { width: 100%; border-collapse: collapse; outline: 1px solid #d5d9df; }
+                .ProseMirror th, .ProseMirror td { border: 1px solid #d5d9df; padding: .5rem; vertical-align: top; }
+                .ProseMirror th { background: #f4f5f7; font-weight: 700; }
+                .ProseMirror a { color: #1769c2; text-underline-offset: .14em; }
+                .carve-inline-control, .carve-raw-atom-inline { position: relative; display: inline-flex; }
+                .carve-inline-control-trigger, .carve-raw-atom-summary { border: 1px solid #c8ced7; border-radius: 999px; background: #f4f5f7; color: inherit; cursor: pointer; font: inherit; padding: .1em .45em; }
+                .carve-inline-control-editor, .carve-raw-atom-inline .carve-raw-atom-editor { position: absolute; z-index: 20; inset-block-start: 100%; inset-inline-start: 0; display: flex; gap: .35rem; min-width: min(22rem, 80vw); padding: .5rem; border: 1px solid #c8ced7; background: white; }
+                .carve-inline-control-editor[hidden], .carve-raw-atom-editor[hidden] { display: none; }
+                .carve-definition-card, .carve-raw-atom:not(.carve-raw-atom-inline) { border: 1px solid #d5d9df; border-radius: 4px; margin-block: .75rem; }
+                .carve-definition-summary, .carve-raw-atom:not(.carve-raw-atom-inline) > .carve-raw-atom-summary { display: block; width: 100%; border: 0; border-radius: 0; text-align: start; font-weight: 600; padding: .6rem .75rem; }
+                .carve-definition-body, .carve-raw-atom:not(.carve-raw-atom-inline) > .carve-raw-atom-editor { padding: .75rem; }
+                .carve-definition-body label { display: grid; gap: .25rem; margin-block-end: .6rem; }
+                .carve-definition-body input, .carve-definition-body textarea, .carve-raw-atom-editor textarea { box-sizing: border-box; width: 100%; padding: .5rem; }
             </style>
             <div part="editor"></div>
         `;
@@ -72,7 +85,7 @@ export class CarveEditorElement extends HTMLElementBase {
     attributeChangedCallback(name) {
         if (name === 'readonly' && this._editor) {
             this._editor.setEditable(!this.hasAttribute('readonly'));
-            for (const control of this.shadowRoot.querySelectorAll('.carve-frontmatter-card input, .carve-frontmatter-card textarea')) {
+            for (const control of this.shadowRoot.querySelectorAll('.carve-frontmatter-card input, .carve-frontmatter-card textarea, [data-carve-edit-control]')) {
                 control.disabled = this.hasAttribute('readonly');
             }
         }
