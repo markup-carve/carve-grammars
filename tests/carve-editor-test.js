@@ -48,6 +48,8 @@ element._editor.commands.setContent({
     type: 'doc',
     content: [
         { type: 'heading', attrs: { level: 1, id: 'target' }, content: [{ type: 'text', text: 'Target' }] },
+        { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: '2026 Review' }] },
+        { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Target' }] },
         { type: 'paragraph', content: [
             { type: 'carveFootnote', attrs: { label: 'old' } },
             { type: 'text', text: ' ' },
@@ -73,6 +75,8 @@ assert.match(element.value, /\[\^note\]/, 'footnote picker changes its target');
 const crossrefPicker = element.shadowRoot.querySelector('.carve-crossref-picker');
 crossrefPicker.querySelector('.carve-inline-control-trigger').click();
 assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 'target'), 'cross-reference picker lists heading ids');
+assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 's-2026-Review'), 'cross-reference picker derives digit-leading heading ids');
+assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 'Target'), 'cross-reference picker derives automatic heading ids');
 const citationPicker = element.shadowRoot.querySelector('.carve-citation-picker');
 citationPicker.querySelector('.carve-inline-control-trigger').click();
 assert.deepStrictEqual([...citationPicker.querySelectorAll('option')].map(option => option.value), ['[@doe]'], 'citation picker lists bibliography keys');
@@ -152,4 +156,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 36 passed');
+console.log('carve-editor custom element: 38 passed');

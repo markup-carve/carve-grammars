@@ -14,6 +14,8 @@ All notable changes to `carve-grammars` are documented here.
 
 - Visual/Source tab buttons activate through semantic `click` events, so keyboard, touch, assistive-technology, and programmatic activation work alongside mouse input.
 - Expanded definition and preserved-source editors use the host's raised/surface tokens instead of falling back to a white panel inside dark themes.
+- Cross-reference pickers include generated heading IDs, picker actions have a clear primary/secondary hierarchy, and inline editors dock within small viewports.
+- Tab bars expose their selected tab, use a single tab stop, and support Left/Right/Home/End navigation; inline editors identify themselves as labelled dialogs.
 
 - A non-space task state (`-`, `_`, `>`, `?`) survives a Tiptap load/save cycle instead of collapsing to `[ ]`. The bridge kept only `checked`; it now carries the engine's `list_item.taskState` onto the `taskItem` node and writes it back verbatim (#371).
 - A blank line ends an unclosed bold run in the TextMate grammar. `repository.strong` is the only bare inline rule spelled `begin`/`end`, so an opener with no closer stayed open and `a *b c` coloured the next paragraph, the heading after it and the rest of the file. It stays `begin`/`end` deliberately - a TextMate `match` cannot cross a line break, and this is the one bare rule that reads `a *b` over `c* d` as one run the way the engine does. An opener with no closer in its own paragraph still colours to that paragraph's end (#393).

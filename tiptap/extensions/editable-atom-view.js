@@ -16,6 +16,21 @@ export function documentValues(editor, type, attr) {
     return [...values].sort((a, b) => a.localeCompare(b));
 }
 
+export function documentHeadingValues(editor) {
+    const values = [];
+    const counts = new Map();
+    editor.state.doc.descendants(node => {
+        if (node.type.name !== 'heading') return;
+        let value = String(node.attrs?.id || node.textContent || '').trim().replace(/\s+/g, '-');
+        if (!value) return;
+        if (/^\d/.test(value)) value = `s-${value}`;
+        const count = (counts.get(value) || 0) + 1;
+        counts.set(value, count);
+        values.push(count === 1 ? value : `${value}-${count}`);
+    });
+    return values;
+}
+
 export function createInlinePickerView({ className, label, value, attribute, choices }) {
     return ({ node, editor, getPos }) => {
         let current = node;
@@ -31,6 +46,9 @@ export function createInlinePickerView({ className, label, value, attribute, cho
         editorBox.id = `carve-inline-editor-${++nextEditorId}`;
         button.setAttribute('aria-controls', editorBox.id);
         button.setAttribute('aria-expanded', 'false');
+        button.setAttribute('aria-haspopup', 'dialog');
+        editorBox.setAttribute('role', 'dialog');
+        editorBox.setAttribute('aria-label', label);
         const input = document.createElement('input');
         input.dataset.carveEditControl = '';
         input.setAttribute('aria-label', label);
@@ -40,9 +58,11 @@ export function createInlinePickerView({ className, label, value, attribute, cho
         const save = document.createElement('button');
         save.dataset.carveEditControl = '';
         save.type = 'button';
+        save.className = 'carve-control-primary';
         save.textContent = 'Apply';
         const cancel = document.createElement('button');
         cancel.type = 'button';
+        cancel.className = 'carve-control-secondary';
         cancel.textContent = 'Cancel';
         editorBox.append(input, list, save, cancel);
         dom.append(button, editorBox);
@@ -122,7 +142,7 @@ export function createDefinitionCardView({ className, title, fields }) {
         const save = document.createElement('button');
         save.dataset.carveEditControl = '';
         save.type = 'button';
-        save.className = 'carve-definition-save';
+        save.className = 'carve-definition-save carve-control-primary';
         save.textContent = 'Apply';
         body.append(save);
         dom.append(summary, body);
@@ -175,7 +195,7 @@ export function createRawSourceView({ inline = false } = {}) {
         input.setAttribute('aria-label', 'Exact Carve source');
         const save = document.createElement('button');
         save.dataset.carveEditControl = '';
-        save.type = 'button'; save.textContent = 'Apply source';
+        save.type = 'button'; save.className = 'carve-control-primary'; save.textContent = 'Apply source';
         box.append(input, save); dom.append(summary, box);
         const render = () => { input.value = current.attrs.carveSource || ''; input.disabled = !editor.isEditable; save.disabled = !editor.isEditable; };
         summary.addEventListener('click', () => {

@@ -248,6 +248,25 @@
 .carve-definition-body button:disabled,
 .carve-inline-control-editor button:disabled,
 .carve-raw-atom-editor button:disabled { cursor: not-allowed; opacity: .55; }
+.carve-definition-body .carve-control-secondary,
+.carve-inline-control-editor .carve-control-secondary,
+.carve-raw-atom-editor .carve-control-secondary {
+  border-color: var(--carve-border, #c8ced7);
+  background: var(--carve-surface, #fff);
+  color: var(--carve-ink, #16191d);
+}
+@media (max-width: 600px) {
+  .carve-inline-control-editor,
+  .carve-raw-atom-inline .carve-raw-atom-editor {
+    position: fixed;
+    inset: auto 1rem 1rem;
+    width: auto;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  .carve-inline-control-editor input,
+  .carve-raw-atom-inline .carve-raw-atom-editor input { flex-basis: 100%; }
+}
 .carve-raw-atom-editor textarea { min-height: 8rem; font-family: var(--carve-font-mono, monospace); }
 
 /* The active label. Written after the panel rules so specificity is not the

@@ -162,6 +162,11 @@ check('switching a tab changes only the view, never the document', () => {
     assert.strictEqual(wrapper.getAttribute('data-active'), '0');
     press(doc.element.querySelectorAll('.carve-tabset-tab')[1]);
     assert.strictEqual(wrapper.getAttribute('data-active'), '1');
+    const tabs = doc.element.querySelectorAll('.carve-tabset-tab');
+    assert.strictEqual(tabs[1].getAttribute('aria-selected'), 'true');
+    tabs[1].dispatchEvent(new win.KeyboardEvent('keydown', { key: 'Home', bubbles: true, cancelable: true }));
+    assert.strictEqual(wrapper.getAttribute('data-active'), '0', 'Home activates the first tab');
+    assert.strictEqual(tabs[0].tabIndex, 0, 'the active tab is the single tab stop');
     assert.strictEqual(doc.carve(), before, 'switching a tab edited the document');
     doc.destroy();
 });
