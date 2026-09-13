@@ -174,6 +174,29 @@ mentionEditor.querySelector('input[name="id"]').value = 'grace';
 mentionEditor.querySelector('.carve-control-primary').click();
 assert.match(element.value, /@grace/, 'inline field editors apply attribute changes');
 
+element._editor.commands.setContent({ type: 'doc', content: [{
+    type: 'paragraph', content: [
+        { type: 'carveCommentInline', attrs: { content: 'legacy comment', delimited: true } },
+        { type: 'text', text: ' ' },
+        { type: 'carveLiteral', attrs: { content: 'legacy literal' } },
+        { type: 'text', text: ' ' },
+        { type: 'carveRawInline', attrs: { content: '<i>', format: 'html' } },
+    ],
+}] });
+const migratedLegacyNodes = [];
+element._editor.state.doc.descendants(node => {
+    if (['carveCommentInline', 'carveLiteral', 'carveRawInline'].includes(node.type.name)) {
+        migratedLegacyNodes.push(node);
+    }
+});
+assert.deepStrictEqual(
+    migratedLegacyNodes.map(node => node.textContent),
+    ['legacy comment', 'legacy literal', '<i>'],
+    'legacy attribute payloads migrate to directly editable child text',
+);
+assert.ok(migratedLegacyNodes.every(node => node.attrs.content === null), 'legacy payload migration clears the compatibility attribute');
+assert.match(element.value, /legacy comment.*legacy literal.*<i>/, 'migrated legacy JSON keeps its serialized source');
+
 element.value = '---\ntitle: Original\nlang: en\nunknown: kept\n---\n\nBody.\n';
 const metadata = element.shadowRoot.querySelector('.carve-frontmatter-card');
 assert.ok(metadata, 'frontmatter renders as a metadata card');
@@ -231,4 +254,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 47 passed');
+console.log('carve-editor custom element: 50 passed');

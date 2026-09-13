@@ -148,11 +148,63 @@ function authoredClasses(element) {
     return kept.length ? kept.join(' ') : null;
 }
 
+const LEGACY_INLINE_CONTENT_NODES = new Set([
+    'carveCommentInline',
+    'carveLiteral',
+    'carveRawInline',
+]);
+
+// These nodes used to store their editable payload in attrs.content. Keep old
+// persisted ProseMirror JSON usable by promoting that attribute to child text
+// as soon as it enters an editor. Applying replacements from right to left
+// keeps every collected position valid as leaf nodes grow children.
+function migrateLegacyInlineContent(editor) {
+    const replacements = [];
+    editor.state.doc.descendants((node, pos) => {
+        const legacyContent = node.attrs?.content;
+        if (LEGACY_INLINE_CONTENT_NODES.has(node.type.name)
+            && node.childCount === 0
+            && typeof legacyContent === 'string'
+            && legacyContent.length > 0) {
+            replacements.push({ node, pos, legacyContent });
+        }
+    });
+    if (replacements.length === 0) return;
+
+    const transaction = editor.state.tr;
+    for (const { node, pos, legacyContent } of replacements.reverse()) {
+        transaction.replaceWith(
+            pos,
+            pos + node.nodeSize,
+            node.type.create(
+                { ...node.attrs, content: null },
+                editor.schema.text(legacyContent),
+                node.marks,
+            ),
+        );
+    }
+    transaction.setMeta('addToHistory', false);
+    transaction.setMeta('carveLegacyInlineContentMigration', true);
+    editor.view.dispatch(transaction);
+}
+
 export const CarveKit = Extension.create({
     name: 'carveKit',
 
     addExtensions() {
         const extensions = [];
+
+        extensions.push(Extension.create({
+            name: 'carveLegacyInlineContentMigration',
+            onCreate() {
+                migrateLegacyInlineContent(this.editor);
+            },
+            onUpdate({ transaction }) {
+                if (!transaction.getMeta('carveLegacyInlineContentMigration')) {
+                    migrateLegacyInlineContent(this.editor);
+                }
+            },
+        }));
 
         // Attributes on ordinary block nodes are part of the Carve document,
         // but the stock Tiptap schema does not declare them. ProseMirror drops
