@@ -116,7 +116,12 @@ export function createPanelBarView(spec) {
 
         const setActive = index => {
             const max = Math.max(0, current.childCount - 1);
-            dom.setAttribute('data-active', String(Math.min(Math.max(index, 0), max)));
+            const active = Math.min(Math.max(index, 0), max);
+            dom.setAttribute('data-active', String(active));
+            [...bar.querySelectorAll('[role="tab"]')].forEach((tab, tabIndex) => {
+                tab.setAttribute('aria-selected', String(tabIndex === active));
+                tab.tabIndex = tabIndex === active ? 0 : -1;
+            });
         };
 
         /** Absolute document position of the child at `index`. */
@@ -204,6 +209,16 @@ export function createPanelBarView(spec) {
                 // touch, keyboard Enter/Space and assistive technology. The
                 // mousedown handler above only protects the editor selection.
                 button.addEventListener('click', () => setActive(index));
+                button.addEventListener('keydown', event => {
+                    const last = current.childCount - 1;
+                    const next = event.key === 'ArrowRight' ? Math.min(index + 1, last)
+                        : event.key === 'ArrowLeft' ? Math.max(index - 1, 0)
+                            : event.key === 'Home' ? 0 : event.key === 'End' ? last : null;
+                    if (next == null) return;
+                    event.preventDefault();
+                    setActive(next);
+                    bar.querySelectorAll('[role="tab"]')[next]?.focus();
+                });
                 if (setLabel && positioned()) {
                     button.title = `Double-click to rename this ${noun}`;
                     button.addEventListener('dblclick', event => {
