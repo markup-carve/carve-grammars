@@ -1343,9 +1343,45 @@
          * otherwise claim parts of it.
          */
         'include-directive': {
-            pattern: /\{\{[^{}\n]*\}\}/,
+            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
             greedy: true,
             alias: 'important',
+            // BY PART. The outer pattern is what keeps the tag and mention
+            // rules out of the directive, so painting the whole run one colour
+            // buys nothing a reader wants - and a path should look like a path.
+            inside: {
+                // FIRST, and anchored on the opening braces through a
+                // lookbehind: `inside` tokenizes what earlier rules left, so a
+                // path rule running after `punctuation` no longer sees the
+                // `{{` it needs to anchor on, and a rule loose enough to match
+                // without it would claim any leftover run.
+                'include-path': {
+                    pattern: /(\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+                    lookbehind: true,
+                    alias: 'url',
+                },
+                'punctuation': /^\{\{|\}\}$/,
+                'include-section': {
+                    pattern: /(\s)#[A-Za-z_][\w-]*/,
+                    lookbehind: true,
+                    alias: 'symbol',
+                },
+                'include-option': {
+                    pattern: /(\s)@[A-Za-z_][\w-]*:[^\s}]+/,
+                    lookbehind: true,
+                    inside: {
+                        'include-option-name': {
+                            pattern: /^@[A-Za-z_][\w-]*/,
+                            alias: 'attr-name',
+                        },
+                        'punctuation': /:/,
+                        'include-option-value': {
+                            pattern: /[^\s}]+$/,
+                            alias: 'attr-value',
+                        },
+                    },
+                },
+            },
         },
 
         // Images: ![alt](src "title"); the title may contain

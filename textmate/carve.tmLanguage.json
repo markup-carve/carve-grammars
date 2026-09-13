@@ -1572,9 +1572,42 @@
       }
     },
     "include_directive": {
-      "comment": "Reserved processor syntax `{{ path #section @key:value }}` (PART 9 section 19, grammar.ebnf `include_directive`). The core leaves it literal and a processor expands it only when a host supplies a resolver, but a grammar that does not know the shape does not leave it alone: its own selector is spelled with other constructs, so `#section` was claimed by `#tag` and an option slot by `#mention`, colouring part of a directive as a hashtag. Scoped as ONE token, after the code rules so a directive inside a code span stays verbatim and before `#attributes`, `#mention` and `#tag`.",
-      "match": "\\{\\{[^{}\\n]*\\}\\}",
-      "name": "meta.directive.include.carve"
+      "comment": "Reserved processor syntax `{{ path #section @key:value }}` (PART 9 section 19, grammar.ebnf `include_directive`). The core leaves it literal and a processor expands it only when a host supplies a resolver, but a grammar that does not know the shape does not leave it alone: its own selector is spelled with other constructs, so `#section` was claimed by `#tag` and an option slot by `#mention`. Scoped BY PART rather than as one run - the enclosing match is what keeps the tag and mention rules out, so there is nothing to gain by painting the whole thing one colour, and a reader wants the path to look like a path. The padding is a RUN of whitespace (one character required on each side), and a part that is neither a section nor an option is left unscoped rather than refused, matching the processor, which leaves a malformed directive as text.",
+      "match": "(\\{\\{)[ \\t]+((?:\"(?:\\\\.|[^\"\\\\])*\"|[^#@}\\s\"][^#@}\\s]*))((?:[ \\t]+(?:#[A-Za-z_][A-Za-z0-9_-]*|@[A-Za-z_][A-Za-z0-9_-]*:[^\\s}]+|[^\\s}]+))*)[ \\t]+(\\}\\})",
+      "name": "meta.directive.include.carve",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.directive.begin.carve"
+        },
+        "2": {
+          "name": "string.other.link.include.carve"
+        },
+        "3": {
+          "patterns": [
+            {
+              "match": "#[A-Za-z_][A-Za-z0-9_-]*",
+              "name": "entity.name.section.include.carve"
+            },
+            {
+              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(:)([^\\s}]+)",
+              "captures": {
+                "1": {
+                  "name": "variable.parameter.include.carve"
+                },
+                "2": {
+                  "name": "punctuation.separator.include.carve"
+                },
+                "3": {
+                  "name": "constant.other.include.carve"
+                }
+              }
+            }
+          ]
+        },
+        "4": {
+          "name": "punctuation.definition.directive.end.carve"
+        }
+      }
     },
     "tag": {
       "match": "(?<![\\w])(#)([a-zA-Z][\\w-]*)",

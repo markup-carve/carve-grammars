@@ -1614,8 +1614,42 @@
      */
     const INCLUDE_DIRECTIVE = {
         className: 'meta',
-        begin: /\{\{[^{}\n]*\}\}/,
+        // THE LOOKAHEAD IS THE CLOSER. A mode that opens on `{{` alone and ends
+        // at `}}` never ends when the closer is missing, and hljs then paints
+        // the rest of the DOCUMENT as directive - `illegal` does not abort it.
+        // Requiring the closer on the same line up front means an unterminated
+        // `{{` simply never opens the mode, which is what the processor does
+        // with it too: leave it as text.
+        begin: /\{\{(?=[ \t]+[^\n]*?\}\})/,
+        end: /\}\}/,
         relevance: 10,
+        // BY PART. The mode's own boundaries are what keep TAG and MENTION out
+        // of the directive, so painting the run one colour buys nothing - and a
+        // reader wants the path to look like a path. `end` closes the mode, so
+        // an unterminated `{{` reverts to ordinary text at the line end rather
+        // than swallowing the rest of the document.
+        contains: [
+            {
+                className: 'string',
+                begin: /(?<=\{\{[ \t]{1,64})(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+            },
+            {
+                className: 'symbol',
+                begin: /(?<=\s)#[A-Za-z_][\w-]*/,
+            },
+            {
+                // NOT `attr`: that class is this grammar's attribute BLOCK
+                // (`{#id .cls}`), and the engine sweep reads any `attr`-ish
+                // scope on a non-attribute construct as a misreading. An option
+                // name is a reserved word in a slot, which is what `keyword` is.
+                className: 'keyword',
+                begin: /(?<=\s)@[A-Za-z_][\w-]*/,
+            },
+            {
+                className: 'string',
+                begin: /(?<=:)[^\s}]+/,
+            },
+        ],
     };
 
     // Raw format marker: {=html} or {=latex}
