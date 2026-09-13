@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Front matter now renders in Tiptap as a collapsible **Document metadata** card. Authors can edit common `title`, `lang`, `author`, and `description` fields or open the raw YAML/TOML payload for uncommon keys; updates are ordinary undoable editor transactions and preserve metadata the form does not know about.
+
 ### Fixed
 
 - A non-space task state (`-`, `_`, `>`, `?`) survives a Tiptap load/save cycle instead of collapsing to `[ ]`. The bridge kept only `checked`; it now carries the engine's `list_item.taskState` onto the `taskItem` node and writes it back verbatim (#371).

@@ -32,6 +32,16 @@ export class CarveEditorElement extends HTMLElementBase {
                 [part="editor"] { min-height: 8rem; }
                 .ProseMirror { min-height: inherit; outline: none; }
                 .ProseMirror:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+                .carve-frontmatter-card { border: 1px solid #d5d9df; border-radius: 4px; margin-block-end: 1rem; }
+                .carve-frontmatter-summary { width: 100%; border: 0; background: #f4f5f7; color: inherit; cursor: pointer; font: inherit; font-weight: 600; padding: .65rem .8rem; text-align: start; }
+                .carve-frontmatter-summary::before { content: '▸'; display: inline-block; margin-inline-end: .5rem; }
+                .carve-frontmatter-summary[aria-expanded="true"]::before { transform: rotate(90deg); }
+                .carve-frontmatter-body { padding: .8rem; }
+                .carve-frontmatter-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: .75rem; }
+                .carve-frontmatter-card label { display: grid; gap: .25rem; font-size: .875rem; font-weight: 600; }
+                .carve-frontmatter-card input, .carve-frontmatter-card textarea { box-sizing: border-box; width: 100%; border: 1px solid #b9c0ca; border-radius: 3px; font: inherit; padding: .5rem; }
+                .carve-frontmatter-raw { margin-block-start: .75rem; }
+                .carve-frontmatter-raw textarea { min-height: 7rem; font-family: monospace; font-weight: 400; }
             </style>
             <div part="editor"></div>
         `;
@@ -62,6 +72,9 @@ export class CarveEditorElement extends HTMLElementBase {
     attributeChangedCallback(name) {
         if (name === 'readonly' && this._editor) {
             this._editor.setEditable(!this.hasAttribute('readonly'));
+            for (const control of this.shadowRoot.querySelectorAll('.carve-frontmatter-card input, .carve-frontmatter-card textarea')) {
+                control.disabled = this.hasAttribute('readonly');
+            }
         }
     }
 

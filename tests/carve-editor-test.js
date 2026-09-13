@@ -45,6 +45,48 @@ assert.strictEqual(element._editor.isEditable, false, 'readonly disables editing
 element.removeAttribute('readonly');
 assert.strictEqual(element._editor.isEditable, true, 'removing readonly enables editing');
 
+element.value = '---\ntitle: Original\nlang: en\nunknown: kept\n---\n\nBody.\n';
+const metadata = element.shadowRoot.querySelector('.carve-frontmatter-card');
+assert.ok(metadata, 'frontmatter renders as a metadata card');
+const summary = metadata.querySelector('.carve-frontmatter-summary');
+assert.match(summary.textContent, /Original.*en/, 'collapsed summary exposes title and language');
+assert.strictEqual(summary.getAttribute('aria-controls'), metadata.querySelector('.carve-frontmatter-body').id, 'summary controls the metadata body');
+summary.click();
+assert.strictEqual(summary.getAttribute('aria-expanded'), 'true', 'summary expands accessibly');
+const title = metadata.querySelector('input[name="title"]');
+title.value = 'Edited';
+title.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.match(element.value, /title: "Edited"/, 'field edit updates frontmatter through a transaction');
+assert.match(element.value, /unknown: kept/, 'field edit preserves unknown metadata');
+summary.click();
+assert.strictEqual(summary.getAttribute('aria-expanded'), 'false', 'summary collapses again');
+
+element.value = '---\nbook:\n  title: Nested\n---\n\nBody.\n';
+const nestedTitle = element.shadowRoot.querySelector('input[name="title"]');
+assert.strictEqual(nestedTitle.value, '', 'nested metadata is not mistaken for a common top-level field');
+nestedTitle.value = 'Top level';
+nestedTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.match(element.value, /book:\n  title: Nested\ntitle: "Top level"/, 'adding a top-level field preserves a nested field');
+
+element.value = '---toml\n[book]\nisbn = "1"\n---\n\nBody.\n';
+const tomlTitle = element.shadowRoot.querySelector('input[name="title"]');
+tomlTitle.value = 'Top level';
+tomlTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.match(element.value, /title = "Top level"\n\[book\]/, 'new TOML fields are inserted before tables');
+
+const raw = element.shadowRoot.querySelector('.carve-frontmatter-raw textarea');
+const beforeInvalidRaw = element.value;
+raw.value = 'title = "Unsafe"\n---\n# body';
+raw.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.strictEqual(element.value, beforeInvalidRaw, 'raw metadata rejects an embedded closing fence');
+
+element.setAttribute('readonly', '');
+assert.strictEqual(tomlTitle.disabled, true, 'readonly disables metadata controls');
+tomlTitle.value = 'Bypass';
+tomlTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.doesNotMatch(element.value, /Bypass/, 'readonly metadata cannot dispatch edits');
+element.removeAttribute('readonly');
+
 let focusOptions = null;
 const mountedEditor = element._editor;
 element._editor = {
@@ -60,4 +102,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 13 passed');
+console.log('carve-editor custom element: 27 passed');

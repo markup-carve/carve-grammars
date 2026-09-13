@@ -259,6 +259,11 @@ available as the `editor` CSS part (`carve-editor::part(editor)`). Tiptap stays
 an implementation detail of the element, although its peer packages must be
 installed with `carve-grammars`.
 
+Document front matter appears as a collapsed **Document metadata** card. Expand
+it to edit the common `title`, `lang`, `author`, and `description` fields, or use
+the raw YAML/TOML field for custom metadata. Both paths update the document
+through the editor, so they participate in undo/redo and preserve unknown keys.
+
 ## Syntax highlighting
 
 Render Carve source as highlighted HTML on the web. Both grammars cover the full
