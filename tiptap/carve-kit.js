@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core';
+import { Plugin } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlock from '@tiptap/extension-code-block';
 import Highlight from '@tiptap/extension-highlight';
@@ -158,9 +159,9 @@ const LEGACY_INLINE_CONTENT_NODES = new Set([
 // persisted ProseMirror JSON usable by promoting that attribute to child text
 // as soon as it enters an editor. Applying replacements from right to left
 // keeps every collected position valid as leaf nodes grow children.
-function migrateLegacyInlineContent(editor) {
+function legacyInlineContentTransaction(state) {
     const replacements = [];
-    editor.state.doc.descendants((node, pos) => {
+    state.doc.descendants((node, pos) => {
         const legacyContent = node.attrs?.content;
         if (LEGACY_INLINE_CONTENT_NODES.has(node.type.name)
             && node.childCount === 0
@@ -169,23 +170,23 @@ function migrateLegacyInlineContent(editor) {
             replacements.push({ node, pos, legacyContent });
         }
     });
-    if (replacements.length === 0) return;
+    if (replacements.length === 0) return null;
 
-    const transaction = editor.state.tr;
+    const transaction = state.tr;
     for (const { node, pos, legacyContent } of replacements.reverse()) {
         transaction.replaceWith(
             pos,
             pos + node.nodeSize,
             node.type.create(
                 { ...node.attrs, content: null },
-                editor.schema.text(legacyContent),
+                state.schema.text(legacyContent),
                 node.marks,
             ),
         );
     }
     transaction.setMeta('addToHistory', false);
     transaction.setMeta('carveLegacyInlineContentMigration', true);
-    editor.view.dispatch(transaction);
+    return transaction;
 }
 
 export const CarveKit = Extension.create({
@@ -197,12 +198,16 @@ export const CarveKit = Extension.create({
         extensions.push(Extension.create({
             name: 'carveLegacyInlineContentMigration',
             onCreate() {
-                migrateLegacyInlineContent(this.editor);
+                const transaction = legacyInlineContentTransaction(this.editor.state);
+                if (transaction) this.editor.view.dispatch(transaction);
             },
-            onUpdate({ transaction }) {
-                if (!transaction.getMeta('carveLegacyInlineContentMigration')) {
-                    migrateLegacyInlineContent(this.editor);
-                }
+            addProseMirrorPlugins() {
+                return [new Plugin({
+                    appendTransaction(transactions, _oldState, newState) {
+                        if (transactions.some(transaction => transaction.getMeta('carveLegacyInlineContentMigration'))) return null;
+                        return legacyInlineContentTransaction(newState);
+                    },
+                })];
             },
         }));
 
