@@ -4,11 +4,16 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-09-13
+
 ### Added
 
 - Front matter now renders in Tiptap as a collapsible **Document metadata** card. Authors can edit common `title`, `lang`, `author`, and `description` fields or open the raw YAML/TOML payload for uncommon keys; updates are ordinary undoable editor transactions and preserve metadata the form does not know about.
 - Preserved unsupported block and inline atoms expose their exact Carve source; footnotes, cross-references, and citations expose target pickers populated from the current document; abbreviation and link-reference definitions render as editable collapsible cards.
 - Editor tables have explicit cell borders, header treatment, row striping, and selected-cell highlighting, while links use the theme's accessible accent states.
+- Inline comments, literal inline content, and raw inline content are directly caret-editable in Tiptap: their payload now lives as child text instead of in `attrs.content`, and legacy stored ProseMirror JSON migrates on load without adding an undo-history entry (#404).
+- Focused inline editing controls for mentions, tags, symbols, substitutions, math, citations, references, footnotes, and embeds (#404).
+- Target navigation and clearer editor labels for definitions, captions, inline extensions, and empty marks (#404).
 
 ### Fixed
 
