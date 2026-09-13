@@ -1,5 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { attributeSlots } from './carve-attribute-slots.js';
+import { createInlineFieldsView } from './editable-atom-view.js';
 
 /** An authored CriticMarkup substitution. */
 export const CarveSubstitution = Node.create({
@@ -14,6 +15,16 @@ export const CarveSubstitution = Node.create({
     renderHTML({ HTMLAttributes, node }) {
         return ['span', mergeAttributes(HTMLAttributes, { 'data-carve-substitution': 'true' }),
             ['del', node.attrs.oldText], ' → ', ['ins', node.attrs.newText]];
+    },
+    addNodeView() {
+        return createInlineFieldsView({
+            className: 'carve-substitution-editor', label: 'Suggested replacement',
+            display: node => `${node.attrs.oldText || '∅'} → ${node.attrs.newText || '∅'}`,
+            fields: [
+                { name: 'oldText', label: 'Original text', multiline: true },
+                { name: 'newText', label: 'Replacement text', multiline: true },
+            ],
+        });
     },
 });
 

@@ -1106,7 +1106,8 @@ function convertInlineNode(node, marks, ctx) {
         case 'literal_inline':
             return [{
                 type: 'carveLiteral',
-                attrs: { content: node.content || '', ...(convertAttrs(node.attrs) || {}) },
+                ...(convertAttrs(node.attrs) ? { attrs: convertAttrs(node.attrs) } : {}),
+                content: node.content ? [{ type: 'text', text: node.content }] : [],
                 ...(marks.length ? { marks } : {}),
             }];
 
@@ -1126,9 +1127,9 @@ function convertInlineNode(node, marks, ctx) {
                 type: 'carveRawInline',
                 attrs: {
                     format: node.format || '',
-                    content: node.content || '',
                     ...(convertAttrs(node.attrs) || {}),
                 },
+                content: node.content ? [{ type: 'text', text: node.content }] : [],
                 ...(marks.length ? { marks } : {}),
             }];
 
@@ -1174,7 +1175,8 @@ function convertInlineNode(node, marks, ctx) {
         case 'comment':
             return [{
                 type: 'carveCommentInline',
-                attrs: { content: node.content || '', delimited: Boolean(node.delimited) },
+                attrs: { delimited: Boolean(node.delimited) },
+                content: node.content ? [{ type: 'text', text: node.content }] : [],
             }];
 
         case 'abbreviation':

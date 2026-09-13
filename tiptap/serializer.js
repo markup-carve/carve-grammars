@@ -1111,7 +1111,7 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveRawInline') {
-                const raw = node.attrs?.content || '';
+                const raw = (node.content || []).map(child => child.text || '').join('') || node.attrs?.content || '';
                 const longest = (raw.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
                 const fence = '`'.repeat(longest + 1);
                 result += `${fence}${raw}${fence}{=${node.attrs?.format || ''}}`
@@ -1119,7 +1119,7 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveLiteral') {
-                const literal = node.attrs?.content || '';
+                const literal = (node.content || []).map(child => child.text || '').join('') || node.attrs?.content || '';
                 const longest = (literal.match(/`+/g) || []).reduce((m, run) => Math.max(m, run.length), 0);
                 const fence = '`'.repeat(longest + 1);
                 result += `!${fence}${literal}${fence}` + serializeAttributes(node.attrs, ['content']);
@@ -1149,6 +1149,8 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveCommentInline') {
+                const comment = (node.content || []).map(child => child.text || '').join('')
+                    || node.attrs?.content || '';
                 if (node.attrs?.delimited) {
                     const previous = content[idx - 1];
                     const next = content[idx + 1];
@@ -1160,14 +1162,14 @@ export function serializeToCarve(doc) {
                         result = result.slice(0, -1);
                         resumeDelimitedBold = true;
                     }
-                    result += `{%${node.attrs?.content ? ` ${node.attrs.content} ` : ''}%}`;
+                    result += `{%${comment ? ` ${comment} ` : ''}%}`;
                     return;
                 }
                 // Inline comments require a separating space. Without it,
                 // mounting `text %% note` and serializing produced
                 // `text%% note`, which reparses as visible paragraph text.
                 if (result && !/\s$/.test(result)) result += ' ';
-                result += `%%${node.attrs?.content ? ` ${node.attrs.content}` : ''}`;
+                result += `%%${comment ? ` ${comment}` : ''}`;
                 return;
             }
             if (node.type === 'carveUnsupportedInline') {

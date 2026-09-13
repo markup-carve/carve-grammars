@@ -788,9 +788,12 @@
               },
               {
                 "type": "carveLiteral",
-                "attrs": {
-                  "content": "/kaet/"
-                }
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "/kaet/"
+                  }
+                ]
               },
               {
                 "type": "text",
@@ -846,9 +849,14 @@
               {
                 "type": "carveRawInline",
                 "attrs": {
-                  "format": "html",
-                  "content": "<br>"
-                }
+                  "format": "html"
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "<br>"
+                  }
+                ]
               },
               {
                 "type": "text",

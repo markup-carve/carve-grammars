@@ -6,11 +6,12 @@ export const CarveLiteral = Node.create({
     name: 'carveLiteral',
     group: 'inline',
     inline: true,
-    atom: true,
-    addAttributes() { return { content: { default: '' }, ...attributeSlots(['data-carve-literal']) }; },
+    content: 'text*',
+    marks: '',
+    addAttributes() { return { content: { default: null }, ...attributeSlots(['data-carve-literal']) }; },
     parseHTML() { return [{ tag: 'code[data-carve-literal]' }]; },
     renderHTML({ HTMLAttributes, node }) {
-        return ['code', mergeAttributes(HTMLAttributes, { 'data-carve-literal': 'true' }), node.attrs.content];
+        return ['code', mergeAttributes(HTMLAttributes, { 'data-carve-literal': 'true' }), 0];
     },
 });
 

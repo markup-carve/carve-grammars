@@ -18,6 +18,11 @@ export const CarveCrossref = Node.create({
             className: 'carve-crossref-picker', label: 'Cross-reference target', attribute: 'target',
             value: node => `</#${node.attrs.target || ''}>`,
             choices: documentHeadingValues,
+            navigate: Object.assign((node, editor) => {
+                const target = [...editor.options.element.querySelectorAll('h1,h2,h3,h4,h5,h6')]
+                    .find(element => element.id === node.attrs.target || element.textContent.trim().replace(/\s+/g, '-') === node.attrs.target);
+                target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, { label: 'Open heading' }),
         });
     },
 });
