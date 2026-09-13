@@ -73,6 +73,13 @@ export const CarveFootnote = Node.create({
             attribute: 'label',
             value: node => `[^${node.attrs.label || 'note'}]`,
             choices: editor => documentValues(editor, 'carveFootnoteDefinition', 'label'),
+            navigate: Object.assign((node, editor) => {
+                const target = [...editor.options.element.querySelectorAll('[data-footnote-label]')]
+                    .find(element => element.getAttribute('data-footnote-label') === node.attrs.label
+                        && element.classList.contains('carve-footnote-definition'));
+                target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                target?.focus?.();
+            }, { label: 'Open definition' }),
         });
     },
 

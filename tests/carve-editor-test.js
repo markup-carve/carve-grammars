@@ -132,14 +132,70 @@ assert.strictEqual(element.shadowRoot.querySelectorAll('ul[data-type="taskList"]
 element._editor.commands.setContent({ type: 'doc', content: [
     { type: 'carveComment', attrs: { block: true }, content: [{ type: 'text', text: 'Block note' }] },
     { type: 'paragraph', content: [
+        { type: 'carveLiteral', content: [{ type: 'text', text: 'literal' }] },
+        { type: 'text', text: ' ' },
+        { type: 'carveRawInline', attrs: { format: 'html' }, content: [{ type: 'text', text: '<b>' }] },
+        { type: 'text', text: ' ' },
+        { type: 'carveMention', attrs: { id: 'ada' } },
+        { type: 'text', text: ' ' },
+        { type: 'carveTag', attrs: { id: 'review' } },
+        { type: 'text', text: ' ' },
+        { type: 'carveSymbol', attrs: { name: 'rocket' } },
+        { type: 'text', text: ' ' },
+        { type: 'carveMath', attrs: { src: 'x^2', display: false } },
+        { type: 'text', text: ' ' },
+        { type: 'carveSubstitution', attrs: { oldText: 'old', newText: 'new' } },
+    ] },
+    { type: 'paragraph', content: [
         { type: 'text', text: 'Text ' },
-        { type: 'carveCommentInline', attrs: { content: 'inline note' } },
+        { type: 'carveCommentInline', content: [{ type: 'text', text: 'inline note' }] },
         { type: 'text', text: ' editorial', marks: [{ type: 'carveCriticComment' }] },
     ] },
 ] });
 assert.ok(element.shadowRoot.querySelector('pre[data-carve-comment]'), 'block comments expose their annotation styling hook');
-assert.ok(element.shadowRoot.querySelector('span[data-carve-comment-inline]'), 'inline comments expose their compact annotation styling hook');
+const inlineComment = element.shadowRoot.querySelector('span[data-carve-comment-inline]');
+assert.ok(inlineComment, 'inline comments expose their compact annotation styling hook');
+assert.strictEqual(inlineComment.textContent, 'inline note', 'inline comment text renders as directly editable content');
+let inlineCommentPos = null;
+element._editor.state.doc.descendants((node, pos) => {
+    if (node.type.name === 'carveCommentInline') inlineCommentPos = pos;
+});
+element._editor.commands.insertContentAt(inlineCommentPos + 1 + 'inline note'.length, ' revised');
+assert.match(element.value, /%% inline note revised/, 'typing inside an inline comment updates its source');
 assert.ok(element.shadowRoot.querySelector('.critic-comment'), 'editorial comments expose their review styling hook');
+assert.strictEqual(element.shadowRoot.querySelector('code[data-carve-literal]').textContent, 'literal', 'literal payload is directly editable text');
+assert.strictEqual(element.shadowRoot.querySelector('code[data-carve-raw-inline]').textContent, '<b>', 'raw-inline payload is directly editable text');
+for (const className of ['carve-mention-editor', 'carve-tag-editor', 'carve-symbol-editor', 'carve-math-editor', 'carve-substitution-editor']) {
+    assert.ok(element.shadowRoot.querySelector(`.${className} .carve-inline-control-trigger`), `${className} exposes a focused inline editor`);
+}
+const mentionEditor = element.shadowRoot.querySelector('.carve-mention-editor');
+mentionEditor.querySelector('.carve-inline-control-trigger').click();
+mentionEditor.querySelector('input[name="id"]').value = 'grace';
+mentionEditor.querySelector('.carve-control-primary').click();
+assert.match(element.value, /@grace/, 'inline field editors apply attribute changes');
+
+element._editor.commands.setContent({ type: 'doc', content: [{
+    type: 'paragraph', content: [
+        { type: 'carveCommentInline', attrs: { content: 'legacy comment', delimited: true } },
+        { type: 'text', text: ' ' },
+        { type: 'carveLiteral', attrs: { content: 'legacy literal' } },
+        { type: 'text', text: ' ' },
+        { type: 'carveRawInline', attrs: { content: '<i>', format: 'html' } },
+    ],
+}] });
+const migratedLegacyNodes = [];
+element._editor.state.doc.descendants(node => {
+    if (['carveCommentInline', 'carveLiteral', 'carveRawInline'].includes(node.type.name)) {
+        migratedLegacyNodes.push(node);
+    }
+});
+assert.deepStrictEqual(
+    migratedLegacyNodes.map(node => node.textContent),
+    ['legacy comment', 'legacy literal', '<i>'],
+    'legacy attribute payloads migrate to directly editable child text',
+);
+assert.ok(migratedLegacyNodes.every(node => node.attrs.content === null), 'legacy payload migration clears the compatibility attribute');
+assert.match(element.value, /legacy comment.*legacy literal.*<i>/, 'migrated legacy JSON keeps its serialized source');
 
 element.value = '---\ntitle: Original\nlang: en\nunknown: kept\n---\n\nBody.\n';
 const metadata = element.shadowRoot.querySelector('.carve-frontmatter-card');
@@ -198,4 +254,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 47 passed');
+console.log('carve-editor custom element: 50 passed');

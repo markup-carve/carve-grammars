@@ -251,7 +251,7 @@
       "notes": "block attr distinguishes %% line comments from fenced comments",
       "attrs": {
         "block": "true for a fenced comment, false for a %% line",
-        "content": "the comment text, carveCommentInline only",
+        "content": "legacy stored-JSON compatibility only; new carveCommentInline nodes keep editable comment text as child content",
         "delimited": "true for the `%%{ ... }%%` form (PART 9 section 21a)"
       }
     },
@@ -321,12 +321,12 @@
     "raw_inline": {
       "kind": "node",
       "pm": "carveRawInline",
-      "notes": "inline atom; content and format attrs",
+      "notes": "directly editable text content with a format attr",
       "attrs": {
         "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
-        "content": "the raw payload",
+        "content": "legacy stored-JSON compatibility only; new nodes keep the raw payload as child text",
         "format": "the target format",
         "id": "authored id"
       }
@@ -334,12 +334,12 @@
     "literal_inline": {
       "kind": "node",
       "pm": "carveLiteral",
-      "notes": "inline atom; content attr",
+      "notes": "directly editable literal text content",
       "attrs": {
         "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
-        "content": "the literal payload",
+        "content": "legacy stored-JSON compatibility only; new nodes keep the literal payload as child text",
         "id": "authored id"
       }
     },

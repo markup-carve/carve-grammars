@@ -1,5 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { attributeOrderSlot } from './carve-attribute-slots.js';
+import { createInlineFieldsView } from './editable-atom-view.js';
 
 /**
  * Carve Math node extension for Tiptap.
@@ -114,6 +115,17 @@ export const CarveMath = Node.create({
             class: 'carve-math',
             'data-carve-math': node.attrs.src,
         }), node.attrs.src];
+    },
+
+    addNodeView() {
+        return createInlineFieldsView({
+            className: 'carve-math-editor', label: 'Math expression',
+            display: node => `${node.attrs.display ? '∑' : 'ƒ'} ${node.attrs.src || 'empty math'}`,
+            fields: [
+                { name: 'src', label: 'TeX source', multiline: true },
+                { name: 'display', label: 'Display math', type: 'checkbox' },
+            ],
+        });
     },
 
     addCommands() {

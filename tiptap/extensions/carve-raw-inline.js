@@ -6,13 +6,14 @@ export const CarveRawInline = Node.create({
     name: 'carveRawInline',
     group: 'inline',
     inline: true,
-    atom: true,
+    content: 'text*',
+    marks: '',
     addAttributes() {
-        return { content: { default: '' }, format: { default: '' }, ...attributeSlots(['data-carve-raw-inline']) };
+        return { content: { default: null }, format: { default: '' }, ...attributeSlots(['data-carve-raw-inline']) };
     },
     parseHTML() { return [{ tag: 'code[data-carve-raw-inline]' }]; },
     renderHTML({ HTMLAttributes, node }) {
-        return ['code', mergeAttributes(HTMLAttributes, { 'data-carve-raw-inline': 'true' }), node.attrs.content];
+        return ['code', mergeAttributes(HTMLAttributes, { 'data-carve-raw-inline': 'true' }), 0];
     },
 });
 

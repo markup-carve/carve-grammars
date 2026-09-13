@@ -1,4 +1,5 @@
 import { Extension } from '@tiptap/core';
+import { Plugin } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
 import CodeBlock from '@tiptap/extension-code-block';
 import Highlight from '@tiptap/extension-highlight';
@@ -148,11 +149,67 @@ function authoredClasses(element) {
     return kept.length ? kept.join(' ') : null;
 }
 
+const LEGACY_INLINE_CONTENT_NODES = new Set([
+    'carveCommentInline',
+    'carveLiteral',
+    'carveRawInline',
+]);
+
+// These nodes used to store their editable payload in attrs.content. Keep old
+// persisted ProseMirror JSON usable by promoting that attribute to child text
+// as soon as it enters an editor. Applying replacements from right to left
+// keeps every collected position valid as leaf nodes grow children.
+function legacyInlineContentTransaction(state) {
+    const replacements = [];
+    state.doc.descendants((node, pos) => {
+        const legacyContent = node.attrs?.content;
+        if (LEGACY_INLINE_CONTENT_NODES.has(node.type.name)
+            && node.childCount === 0
+            && typeof legacyContent === 'string'
+            && legacyContent.length > 0) {
+            replacements.push({ node, pos, legacyContent });
+        }
+    });
+    if (replacements.length === 0) return null;
+
+    const transaction = state.tr;
+    for (const { node, pos, legacyContent } of replacements.reverse()) {
+        transaction.replaceWith(
+            pos,
+            pos + node.nodeSize,
+            node.type.create(
+                { ...node.attrs, content: null },
+                state.schema.text(legacyContent),
+                node.marks,
+            ),
+        );
+    }
+    transaction.setMeta('addToHistory', false);
+    transaction.setMeta('carveLegacyInlineContentMigration', true);
+    return transaction;
+}
+
 export const CarveKit = Extension.create({
     name: 'carveKit',
 
     addExtensions() {
         const extensions = [];
+
+        extensions.push(Extension.create({
+            name: 'carveLegacyInlineContentMigration',
+            onCreate() {
+                const transaction = legacyInlineContentTransaction(this.editor.state);
+                if (transaction) this.editor.view.dispatch(transaction);
+            },
+            addProseMirrorPlugins() {
+                return [new Plugin({
+                    appendTransaction(transactions, _oldState, newState) {
+                        if (transactions.some(transaction => transaction.getMeta('carveLegacyInlineContentMigration'))) return null;
+                        return legacyInlineContentTransaction(newState);
+                    },
+                })];
+            },
+        }));
 
         // Attributes on ordinary block nodes are part of the Carve document,
         // but the stock Tiptap schema does not declare them. ProseMirror drops

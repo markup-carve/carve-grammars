@@ -190,6 +190,52 @@
   font-size: .78em;
   font-weight: 700;
 }
+
+/* Editable-content nodes still need their structural role exposed. Generated
+ * labels do not enter the document model, so caret editing and serialization
+ * remain untouched while the author can tell what the content belongs to. */
+.ProseMirror [data-carve-extension],
+.ProseMirror [data-carve-empty-mark-node] {
+  border-radius: var(--carve-radius, 3px);
+  background: color-mix(in srgb, var(--carve-sunk, #f4f5f7) 72%, transparent);
+  padding: .05em .3em;
+}
+.ProseMirror [data-carve-extension]::before {
+  content: ':' attr(data-carve-extension) '[';
+  color: var(--carve-accent-ink, #0e4459);
+  font: 600 .78em/1 var(--carve-font-mono, monospace);
+  margin-inline-end: .2em;
+}
+.ProseMirror [data-carve-extension]::after {
+  content: ']';
+  color: var(--carve-accent-ink, #0e4459);
+  font: 600 .78em/1 var(--carve-font-mono, monospace);
+  margin-inline-start: .2em;
+}
+.ProseMirror [data-carve-empty-mark-node]::before {
+  content: 'Empty ' attr(data-carve-empty-mark);
+  color: var(--carve-ink-soft, #5a626d);
+  font: 600 .78em/1 var(--carve-font-sans, system-ui, sans-serif);
+}
+.ProseMirror [data-carve-citation-definition],
+.ProseMirror .carve-footnote-definition,
+.ProseMirror figcaption[data-carve-caption] {
+  position: relative;
+  border-inline-start: 3px solid var(--carve-border, #c8ced7);
+  padding-inline-start: .75rem;
+}
+.ProseMirror [data-carve-citation-definition]::before,
+.ProseMirror .carve-footnote-definition::before,
+.ProseMirror figcaption[data-carve-caption]::before {
+  display: block;
+  color: var(--carve-ink-soft, #5a626d);
+  font: 700 .68rem/1.3 var(--carve-font-sans, system-ui, sans-serif);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.ProseMirror [data-carve-citation-definition]::before { content: 'Citation · ' attr(key); }
+.ProseMirror .carve-footnote-definition::before { content: 'Footnote · ' attr(data-footnote-label); }
+.ProseMirror figcaption[data-carve-caption]::before { content: 'Caption'; }
 .ProseMirror .critic-comment {
   background: var(--carve-warn-wash, #fff6dc);
   text-decoration: underline dotted var(--carve-warn, #9a6700);
@@ -255,6 +301,29 @@
 }
 .carve-inline-control-editor > input { grid-column: 1 / -1; }
 .carve-inline-control-editor > .carve-control-primary { justify-self: end; }
+.carve-inline-fields-editor > label {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .2rem;
+  color: var(--carve-ink-soft, #5a626d);
+  font-size: .8rem;
+}
+.carve-inline-fields-editor textarea { min-height: 4.5rem; resize: vertical; }
+.carve-inline-fields-editor input,
+.carve-inline-fields-editor textarea { width: 100%; min-width: 0; font: inherit; }
+.carve-inline-fields-editor input[type="checkbox"] { width: auto; justify-self: start; }
+.carve-inline-field-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: .4rem; }
+.carve-embed-editor {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: .4rem;
+  padding: .6rem;
+  border-block-start: 1px solid var(--carve-rule, #c8ced7);
+  background: var(--carve-raised, var(--carve-surface, #fff));
+}
+.carve-embed-editor[hidden] { display: none; }
+.carve-embed-editor label { grid-column: 1 / -1; display: grid; gap: .25rem; }
+.carve-embed-editor input { width: 100%; min-width: 0; font: inherit; }
 .carve-inline-choices {
   grid-column: 1 / -1;
   display: grid;

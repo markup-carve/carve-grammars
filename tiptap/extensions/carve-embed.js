@@ -159,12 +159,37 @@ export const CarveEmbed = Node.create({
             editBtn.contentEditable = 'false';
             editBtn.setAttribute('aria-label', 'Edit media URL');
             editBtn.addEventListener('mousedown', e => e.stopPropagation());
+            const editorBox = document.createElement('div');
+            editorBox.className = 'carve-embed-editor';
+            editorBox.hidden = true;
+            const label = document.createElement('label');
+            label.textContent = 'Media URL, directive, or video ID';
+            const sourceInput = document.createElement('input');
+            sourceInput.type = 'text';
+            sourceInput.dataset.carveEditControl = '';
+            label.append(sourceInput);
+            const apply = document.createElement('button');
+            apply.type = 'button';
+            apply.className = 'carve-control-primary';
+            apply.textContent = 'Apply';
+            const cancel = document.createElement('button');
+            cancel.type = 'button';
+            cancel.className = 'carve-control-secondary';
+            cancel.textContent = 'Cancel';
+            editorBox.append(label, apply, cancel);
+            const closeEditor = () => { editorBox.hidden = true; editBtn.focus(); };
             editBtn.addEventListener('click', () => {
+                editorBox.hidden = !editorBox.hidden;
+                if (!editorBox.hidden) {
+                    sourceInput.value = current.attrs.carveSource || current.attrs.src || '';
+                    sourceInput.focus();
+                    sourceInput.select();
+                }
+            });
+            cancel.addEventListener('click', closeEditor);
+            apply.addEventListener('click', () => {
                 if (typeof getPos !== 'function') return;
-                const shown = current.attrs.carveSource || current.attrs.src || '';
-                const val = window.prompt('Media URL or video id', shown);
-                if (val === null) return;
-                const input = val.trim();
+                const input = sourceInput.value.trim();
                 if (!input) return;
                 // A `:name[...]` directive is kept as-is; a URL/id becomes one
                 // (a bare id is assumed to be YouTube).
@@ -180,6 +205,11 @@ export const CarveEmbed = Node.create({
                     });
                     return true;
                 }).run();
+                closeEditor();
+            });
+            editorBox.addEventListener('keydown', event => {
+                if (event.key === 'Escape') { event.preventDefault(); closeEditor(); }
+                if (event.key === 'Enter') { event.preventDefault(); apply.click(); }
             });
 
             const paint = (n) => {
@@ -215,6 +245,7 @@ export const CarveEmbed = Node.create({
 
             dom.appendChild(media);
             dom.appendChild(editBtn);
+            dom.appendChild(editorBox);
             paint(node);
 
             return {

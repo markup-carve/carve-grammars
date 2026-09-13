@@ -20,6 +20,12 @@ export const CarveCitation = Node.create({
             className: 'carve-citation-picker', label: 'Citation source', attribute: 'raw',
             value: node => node.attrs.raw || '[@citation]',
             choices: editor => documentValues(editor, 'carveCitationDefinition', 'key').map(key => `[@${key}]`),
+            navigate: Object.assign((node, editor) => {
+                const key = String(node.attrs.raw || '').match(/@([\w:.+-]+)/)?.[1];
+                const target = [...editor.options.element.querySelectorAll('[data-carve-citation-definition]')]
+                    .find(element => element.getAttribute('key') === key);
+                target?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, { label: 'Open definition' }),
         });
     },
 });

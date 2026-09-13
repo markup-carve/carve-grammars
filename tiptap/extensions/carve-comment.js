@@ -22,12 +22,16 @@ export const CarveCommentInline = Node.create({
     name: 'carveCommentInline',
     group: 'inline',
     inline: true,
-    atom: true,
+    content: 'text*',
+    marks: '',
     addAttributes() {
-        return { content: { default: '' }, delimited: { default: false } };
+        // `content` remains readable for older stored JSON documents. New
+        // documents keep comment text in child text nodes so the caret can edit
+        // it directly like any other inline content.
+        return { content: { default: null }, delimited: { default: false } };
     },
     parseHTML() { return [{ tag: 'span[data-carve-comment-inline]' }]; },
     renderHTML({ HTMLAttributes, node }) {
-        return ['span', mergeAttributes(HTMLAttributes, { 'data-carve-comment-inline': 'true' }), node.attrs.content];
+        return ['span', mergeAttributes(HTMLAttributes, { 'data-carve-comment-inline': 'true' }), 0];
     },
 });

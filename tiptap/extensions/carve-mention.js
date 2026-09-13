@@ -1,4 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
+import { createInlineFieldsView } from './editable-atom-view.js';
 
 /**
  * Carve mention / tag inline nodes.
@@ -34,6 +35,14 @@ function mentionNode(name, cssClass, sigil) {
 
         renderHTML({ HTMLAttributes, node }) {
             return ['span', mergeAttributes(HTMLAttributes, { class: cssClass }), sigil + node.attrs.id];
+        },
+        addNodeView() {
+            return createInlineFieldsView({
+                className: `carve-${cssClass}-editor`,
+                label: cssClass === 'mention' ? 'Mention' : 'Tag',
+                display: node => sigil + (node.attrs.id || ''),
+                fields: [{ name: 'id', label: cssClass === 'mention' ? 'Account' : 'Tag' }],
+            });
         },
     });
 }

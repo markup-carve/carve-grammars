@@ -60,6 +60,15 @@ export class CarveEditorElement extends HTMLElementBase {
                 .ProseMirror pre[data-carve-comment]::before { content: "Comment"; display: block; margin-block-end: .35rem; color: #0e4459; font: 700 .7rem/1.2 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
                 .ProseMirror span[data-carve-comment-inline] { border: 1px dashed #7a828c; border-radius: 4px; background: #e6f0f4; color: #5a626d; padding: .05em .3em; }
                 .ProseMirror span[data-carve-comment-inline]::before { content: "Comment: "; color: #0e4459; font-size: .78em; font-weight: 700; }
+                .ProseMirror [data-carve-extension], .ProseMirror [data-carve-empty-mark-node] { border-radius: 3px; background: #f4f5f7; padding: .05em .3em; }
+                .ProseMirror [data-carve-extension]::before { content: ':' attr(data-carve-extension) '['; color: #0e4459; font: 600 .78em/1 monospace; margin-inline-end: .2em; }
+                .ProseMirror [data-carve-extension]::after { content: ']'; color: #0e4459; font: 600 .78em/1 monospace; margin-inline-start: .2em; }
+                .ProseMirror [data-carve-empty-mark-node]::before { content: 'Empty ' attr(data-carve-empty-mark); color: #5a626d; font: 600 .78em/1 system-ui, sans-serif; }
+                .ProseMirror [data-carve-citation-definition], .ProseMirror .carve-footnote-definition, .ProseMirror figcaption[data-carve-caption] { border-inline-start: 3px solid #c8ced7; padding-inline-start: .75rem; }
+                .ProseMirror [data-carve-citation-definition]::before, .ProseMirror .carve-footnote-definition::before, .ProseMirror figcaption[data-carve-caption]::before { display: block; color: #5a626d; font: 700 .68rem/1.3 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+                .ProseMirror [data-carve-citation-definition]::before { content: 'Citation · ' attr(key); }
+                .ProseMirror .carve-footnote-definition::before { content: 'Footnote · ' attr(data-footnote-label); }
+                .ProseMirror figcaption[data-carve-caption]::before { content: 'Caption'; }
                 .ProseMirror .critic-comment { background: #fff6dc; text-decoration: underline dotted #9a6700; text-underline-offset: .2em; }
                 .carve-code-block { position: relative; margin-block: .75rem; border: 1px solid #d5d9df; border-radius: 4px; overflow: hidden; }
                 .carve-code-block-chrome { display: flex; align-items: center; justify-content: flex-end; padding: .375rem .5rem; border-block-start: 1px solid #d5d9df; background: white; }
@@ -72,6 +81,15 @@ export class CarveEditorElement extends HTMLElementBase {
                 .carve-inline-control-editor[hidden], .carve-raw-atom-editor[hidden] { display: none; }
                 .carve-inline-control-editor > input, .carve-inline-choices { grid-column: 1 / -1; }
                 .carve-inline-control-editor > .carve-control-primary { justify-self: end; }
+                .carve-inline-fields-editor > label { grid-column: 1 / -1; display: grid; gap: .2rem; color: #5a626d; font-size: .8rem; }
+                .carve-inline-fields-editor textarea { min-height: 4.5rem; resize: vertical; }
+                .carve-inline-fields-editor input, .carve-inline-fields-editor textarea { width: 100%; min-width: 0; font: inherit; }
+                .carve-inline-fields-editor input[type="checkbox"] { width: auto; justify-self: start; }
+                .carve-inline-field-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: .4rem; }
+                .carve-embed-editor { display: grid; grid-template-columns: 1fr auto auto; gap: .4rem; padding: .6rem; border-block-start: 1px solid #c8ced7; background: white; }
+                .carve-embed-editor[hidden] { display: none; }
+                .carve-embed-editor label { grid-column: 1 / -1; display: grid; gap: .25rem; }
+                .carve-embed-editor input { width: 100%; min-width: 0; font: inherit; }
                 .carve-inline-choices { display: grid; max-height: 11rem; overflow-y: auto; border: 1px solid #d5d9df; border-radius: 3px; padding: .2rem; }
                 .carve-inline-choices[hidden] { display: none; }
                 .carve-inline-choice { width: 100%; border: 0; background: transparent; color: inherit; padding: .4rem .5rem; text-align: start; }

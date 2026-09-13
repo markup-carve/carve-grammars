@@ -67,7 +67,7 @@ ok('symbol -> carveSymbol', () => {
 
 ok('literal_inline -> carveLiteral', () => {
     const node = producesAndRoundTrips('Say !`/kaet/` now.\n', 'carveLiteral');
-    assert.strictEqual(node.attrs.content, '/kaet/');
+    assert.deepStrictEqual(node.content, [{ type: 'text', text: '/kaet/' }]);
 });
 
 ok('substitution -> carveSubstitution', () => {
@@ -78,7 +78,8 @@ ok('substitution -> carveSubstitution', () => {
 
 ok('raw_inline -> carveRawInline', () => {
     const node = producesAndRoundTrips('A `<br>`{=html} break.\n', 'carveRawInline');
-    assert.deepStrictEqual([node.attrs.format, node.attrs.content], ['html', '<br>']);
+    assert.strictEqual(node.attrs.format, 'html');
+    assert.deepStrictEqual(node.content, [{ type: 'text', text: '<br>' }]);
 });
 
 ok('inline_extension -> carveInlineExtension', () => {

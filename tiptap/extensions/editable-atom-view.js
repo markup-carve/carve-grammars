@@ -31,7 +31,7 @@ export function documentHeadingValues(editor) {
     return values;
 }
 
-export function createInlinePickerView({ className, label, value, attribute, choices }) {
+export function createInlinePickerView({ className, label, value, attribute, choices, navigate }) {
     return ({ node, editor, getPos }) => {
         let current = node;
         const dom = document.createElement('span');
@@ -69,7 +69,15 @@ export function createInlinePickerView({ className, label, value, attribute, cho
         cancel.type = 'button';
         cancel.className = 'carve-control-secondary';
         cancel.textContent = 'Cancel';
-        editorBox.append(input, list, save, cancel);
+        let openTarget = null;
+        if (navigate) {
+            openTarget = document.createElement('button');
+            openTarget.type = 'button';
+            openTarget.className = 'carve-control-secondary carve-open-target';
+            openTarget.textContent = navigate.label || 'Open target';
+            openTarget.addEventListener('click', () => navigate(current, editor));
+        }
+        editorBox.append(input, list, save, ...(openTarget ? [openTarget] : []), cancel);
         dom.append(button, editorBox);
 
         const close = () => {
@@ -208,6 +216,95 @@ export function createDefinitionCardView({ className, title, fields }) {
         });
         save.addEventListener('click', () => {
             transact(editor, getPos, current, Object.fromEntries([...inputs].map(([key, input]) => [key, input.value.trim() || null])));
+        });
+        render();
+        return {
+            dom,
+            update(updated) { if (updated.type !== current.type) return false; current = updated; render(); return true; },
+            stopEvent: event => dom.contains(event.target),
+            ignoreMutation: mutation => dom.contains(mutation.target),
+        };
+    };
+}
+
+/** Compact multi-field editor for an inline atom whose visible values are attrs. */
+export function createInlineFieldsView({ className, label, display, fields }) {
+    return ({ node, editor, getPos }) => {
+        let current = node;
+        const dom = document.createElement('span');
+        dom.className = `carve-inline-control ${className}`;
+        dom.contentEditable = 'false';
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'carve-inline-control-trigger';
+        const box = document.createElement('span');
+        box.className = 'carve-inline-control-editor carve-inline-fields-editor';
+        box.hidden = true;
+        box.id = `carve-inline-fields-${++nextEditorId}`;
+        box.setAttribute('role', 'dialog');
+        box.setAttribute('aria-label', label);
+        trigger.setAttribute('aria-controls', box.id);
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-haspopup', 'dialog');
+        const inputs = new Map();
+        for (const field of fields) {
+            const fieldLabel = document.createElement('label');
+            fieldLabel.textContent = field.label;
+            const input = field.multiline ? document.createElement('textarea') : document.createElement('input');
+            if (!field.multiline) input.type = field.type || 'text';
+            input.name = field.name;
+            input.dataset.carveEditControl = '';
+            fieldLabel.append(input);
+            box.append(fieldLabel);
+            inputs.set(field.name, input);
+        }
+        const actions = document.createElement('span');
+        actions.className = 'carve-inline-field-actions';
+        const apply = document.createElement('button');
+        apply.type = 'button';
+        apply.className = 'carve-control-primary';
+        apply.textContent = 'Apply';
+        const cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'carve-control-secondary';
+        cancel.textContent = 'Cancel';
+        actions.append(apply, cancel);
+        box.append(actions);
+        dom.append(trigger, box);
+        const close = () => {
+            box.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
+            trigger.focus();
+        };
+        const render = () => {
+            trigger.textContent = display(current);
+            trigger.setAttribute('aria-label', `${label}: ${display(current)}. Activate to edit.`);
+            for (const field of fields) {
+                const input = inputs.get(field.name);
+                if (field.type === 'checkbox') input.checked = Boolean(current.attrs?.[field.name]);
+                else input.value = current.attrs?.[field.name] ?? '';
+                input.disabled = !editor.isEditable;
+            }
+            apply.disabled = !editor.isEditable;
+        };
+        trigger.addEventListener('click', () => {
+            box.hidden = !box.hidden;
+            trigger.setAttribute('aria-expanded', String(!box.hidden));
+            if (!box.hidden) { render(); inputs.values().next().value?.focus(); }
+        });
+        cancel.addEventListener('click', close);
+        apply.addEventListener('click', () => {
+            transact(editor, getPos, current, Object.fromEntries(fields.map(field => {
+                const input = inputs.get(field.name);
+                return [field.name, field.type === 'checkbox' ? input.checked : input.value.trim()];
+            })));
+            close();
+        });
+        box.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { event.preventDefault(); close(); }
+            if (event.key === 'Enter' && !event.shiftKey && event.target.tagName !== 'TEXTAREA') {
+                event.preventDefault(); apply.click();
+            }
         });
         render();
         return {
