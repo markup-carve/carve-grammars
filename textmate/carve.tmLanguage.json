@@ -966,6 +966,9 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#include_directive"
+        },
+        {
           "include": "#image"
         },
         {
@@ -1567,6 +1570,11 @@
           "name": "variable.other.mention.carve"
         }
       }
+    },
+    "include_directive": {
+      "comment": "Reserved processor syntax `{{ path #section @key:value }}` (PART 9 section 19, grammar.ebnf `include_directive`). The core leaves it literal and a processor expands it only when a host supplies a resolver, but a grammar that does not know the shape does not leave it alone: its own selector is spelled with other constructs, so `#section` was claimed by `#tag` and an option slot by `#mention`, colouring part of a directive as a hashtag. Scoped as ONE token, after the code rules so a directive inside a code span stays verbatim and before `#attributes`, `#mention` and `#tag`.",
+      "match": "\\{\\{[^{}\\n]*\\}\\}",
+      "name": "meta.directive.include.carve"
     },
     "tag": {
       "match": "(?<![\\w])(#)([a-zA-Z][\\w-]*)",

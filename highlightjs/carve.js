@@ -1601,6 +1601,23 @@
         relevance: 5,
     };
 
+    /*
+     * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
+     * section 19, grammar.ebnf `include_directive`). The core leaves it
+     * literal; a processor expands it only when a host supplies a resolver.
+     *
+     * Painted as ONE token because its own selector is spelled with other
+     * constructs: `#section` is TAG syntax and an option slot is MENTION
+     * syntax, so without this rule `{{ ch.crv #intro }}` coloured `#intro` as
+     * a hashtag - the same defect class as the cross-reference one CROSS_REF
+     * exists for (carve-grammars#307).
+     */
+    const INCLUDE_DIRECTIVE = {
+        className: 'meta',
+        begin: /\{\{[^{}\n]*\}\}/,
+        relevance: 10,
+    };
+
     // Raw format marker: {=html} or {=latex}
     const RAW_FORMAT = {
         className: 'meta',
@@ -1685,6 +1702,7 @@
         LINK,
         AUTOLINK,
         EMAIL_AUTOLINK,
+        INCLUDE_DIRECTIVE, // {{ path }} - before MENTION/TAG, which claim its selector
         RAW_FORMAT,        // {=html} - must be before INSERT/DELETE braces
         INSERT,            // {+text+}
         DELETE,            // {-text-}

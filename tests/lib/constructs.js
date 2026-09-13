@@ -272,6 +272,19 @@ export const CONSTRUCTS = [
     { name: "footnote ref", sample: "text[^1] end", payload: "1", textmate: "constant.other.footnote" },
     { name: "mention", sample: "hi @user here", payload: "@user", textmate: "mention" },
     { name: "tag", sample: "a #tagname here", payload: "#tagname", textmate: "tag" },
+    /*
+     * Reserved processor syntax (PART 9 section 19): the whole directive is one
+     * token on every surface. The payload is deliberately the WHOLE of it,
+     * selector included - the defect this pins is `#intro` being read as the
+     * `tag` entry above, which is what `#word` genuinely is everywhere else.
+     */
+    {
+        name: "include directive",
+        sample: "See {{ chapters/intro.crv #intro }} here",
+        payload: "{{ chapters/intro.crv #intro }}",
+        textmate: "meta.directive.include",
+        engineScopes: { prism: ['include-directive'], highlightjs: ['meta'] },
+    },
     { name: "inline math", sample: "a $`e=mc^2` b", payload: "e=mc^2", textmate: "markup.math" },
     { name: "inline literal", sample: "a !`/kaet/` b", payload: "/kaet/", textmate: "markup.raw.inline.content" },
     { name: "inline literal multi", sample: "a !``x ` y`` b", payload: "x ` y", textmate: "markup.raw.inline.content" },

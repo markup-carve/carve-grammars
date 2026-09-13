@@ -8,6 +8,11 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- The reserved include directive `{{ path #section @key:value }}` (PART 9
+  section 19, markup-carve/carve#291) scopes as one token in the TextMate
+  grammar (`meta.directive.include.carve`), Prism (`include-directive`) and
+  highlight.js (`meta`). It used to shred into the constructs its own selector
+  is spelled with, so `{{ ch.crv #intro }}` colored `#intro` as a hashtag.
 - Front matter now renders in Tiptap as a collapsible **Document metadata** card. Authors can edit common `title`, `lang`, `author`, and `description` fields or open the raw YAML/TOML payload for uncommon keys; updates are ordinary undoable editor transactions and preserve metadata the form does not know about.
 - Preserved unsupported block and inline atoms expose their exact Carve source; footnotes, cross-references, and citations expose target pickers populated from the current document; abbreviation and link-reference definitions render as editable collapsible cards.
 - Editor tables have explicit cell borders, header treatment, row striping, and selected-cell highlighting, while links use the theme's accessible accent states.
