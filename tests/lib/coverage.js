@@ -442,6 +442,11 @@ const TIPTAP_COVERED = [
     '458-a-wrapped-attribute-block-ends-at-its-quote-and-reaches-no-line-below-it',
     '459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach',
     '460-a-nested-note-s-floor-is-two-columns-past-its-own-marker',
+    // Spec section 461 adds four placement variants. All remain rich editor
+    // structures; three use the source envelope to preserve authored layout
+    // and the body-column variant projects directly. The round-trip suite
+    // verifies all four against the new corpus goldens.
+    'a-column-0-line-after-a-description-hosted-note-is-a-document-sibling',
     // Promoted out of `fallback` when the reverse check in
     // tests/roundtrip-test.js was added: every file in each of these is written
     // back faithfully, so the recorded reason had nothing left to explain.

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  [^f]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "    -"
+  },
+  {
+    "scope": null,
+    "text": " nested\ntail\n"
+  }
+]
