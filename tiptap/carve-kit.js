@@ -67,6 +67,7 @@ import { CarveMention, CarveTag } from './extensions/carve-mention.js';
 // shown even if it is not in this list.
 const CODE_LANGS = [
     { value: '', label: 'Plain text' },
+    { value: 'carve', label: 'Carve' },
     { value: 'php', label: 'PHP' },
     { value: 'javascript', label: 'JavaScript' },
     { value: 'typescript', label: 'TypeScript' },
@@ -262,9 +263,11 @@ export const CarveKit = Extension.create({
                     };
                 },
 
-                // Floating language picker: a <select> in the corner of every
-                // code block that shows the current language and edits it in
-                // place (the toolbar can't show a per-block value). Disable with
+                // Language toolbar below every code block. Keeping the control
+                // outside <pre>/<code> means it never consumes the first line's
+                // horizontal space or becomes part of the editable content,
+                // while placing it after the source keeps metadata secondary.
+                // Disable with
                 // CarveKit.configure({ codeBlock: { languagePicker: false } }).
                 addNodeView() {
                     if (this.options.languagePicker === false) {
@@ -272,6 +275,8 @@ export const CarveKit = Extension.create({
                     }
                     return ({ node, editor, getPos }) => {
                         let current = node;
+                        const dom = document.createElement('div');
+                        dom.className = 'carve-code-block';
                         const pre = document.createElement('pre');
                         if (node.attrs.carveLanguageRaw) {
                             pre.setAttribute('data-language-raw', node.attrs.carveLanguageRaw);
@@ -281,6 +286,11 @@ export const CarveKit = Extension.create({
                         select.className = 'carve-code-lang';
                         select.contentEditable = 'false';
                         select.setAttribute('aria-label', 'Code language');
+                        const chrome = document.createElement('div');
+                        chrome.className = 'carve-code-block-chrome';
+                        chrome.contentEditable = 'false';
+                        const label = document.createElement('span');
+                        label.textContent = 'Language';
                         const fill = (lang) => {
                             select.innerHTML = '';
                             const opts = CODE_LANGS.slice();
@@ -318,11 +328,12 @@ export const CarveKit = Extension.create({
                             code.className = lang ? `language-${lang}` : '';
                         };
                         applyLangClass(node.attrs.language || '');
-                        pre.appendChild(select);
                         pre.appendChild(code);
+                        chrome.append(label, select);
+                        dom.append(pre, chrome);
 
                         return {
-                            dom: pre,
+                            dom,
                             contentDOM: code,
                             update: (updated) => {
                                 if (updated.type !== current.type) {
@@ -336,8 +347,8 @@ export const CarveKit = Extension.create({
                                 return true;
                             },
                             // The <select> is chrome, not editable content.
-                            ignoreMutation: (m) => select.contains(m.target),
-                            stopEvent: (e) => select.contains(e.target),
+                            ignoreMutation: (m) => chrome.contains(m.target),
+                            stopEvent: (e) => chrome.contains(e.target),
                         };
                     };
                 },
@@ -551,9 +562,26 @@ export const CarveKit = Extension.create({
                 resizable: true,
                 ...this.options.table,
             }));
+            const tableAlign = {
+                default: null,
+                parseHTML: element => !element.hasAttribute('data-carve-inherited-align')
+                    && ['left', 'center', 'right'].includes(element.style.textAlign)
+                    ? element.style.textAlign : null,
+                renderHTML: attrs => ['left', 'center', 'right'].includes(attrs.textAlign)
+                    ? { style: `text-align: ${attrs.textAlign}` } : {},
+            };
+            const inheritedTableAlign = {
+                default: null,
+                parseHTML: () => null,
+                renderHTML: attrs => !attrs.textAlign && ['left', 'center', 'right'].includes(attrs.carveInheritedTextAlign)
+                    ? {
+                        style: `text-align: ${attrs.carveInheritedTextAlign}`,
+                        'data-carve-inherited-align': attrs.carveInheritedTextAlign,
+                    } : {},
+            };
             const tableAttrs = {
                 id: { default: null }, class: { default: null }, carveKeyValues: { default: null },
-                ...attributeOrderSlot(), textAlign: { default: null },
+                ...attributeOrderSlot(), textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
             };
             const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
             const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });

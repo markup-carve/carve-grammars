@@ -16,6 +16,11 @@ All notable changes to `carve-grammars` are documented here.
 - Expanded definition and preserved-source editors use the host's raised/surface tokens instead of falling back to a white panel inside dark themes.
 - Cross-reference pickers include generated heading IDs, picker actions have a clear primary/secondary hierarchy, and inline editors dock within small viewports.
 - Tab bars expose their selected tab, use a single tab stop, and support Left/Right/Home/End navigation; inline editors identify themselves as labelled dialogs.
+- Reference suggestions now render as a themeable searchable list instead of a browser-native datalist popup, with selected styling and Up/Down keyboard navigation.
+- Code blocks place language selection in a compact, right-aligned footer after the editable code, without changing its width; Carve is included among the suggested languages.
+- Table cells display inherited column alignment, including GFM delimiter-row alignment, while keeping inherited presentation separate from authored cell overrides.
+- Editor blockquotes match the reader treatment, and task lists suppress redundant bullets while aligning checkboxes with their first content line.
+- Block, inline, and editorial comments have distinct annotation styling so non-published author notes are clear in the editor.
 
 - A non-space task state (`-`, `_`, `>`, `?`) survives a Tiptap load/save cycle instead of collapsing to `[ ]`. The bridge kept only `checked`; it now carries the engine's `list_item.taskState` onto the `taskItem` node and writes it back verbatim (#371).
 - A blank line ends an unclosed bold run in the TextMate grammar. `repository.strong` is the only bare inline rule spelled `begin`/`end`, so an opener with no closer stayed open and `a *b c` coloured the next paragraph, the heading after it and the rest of the file. It stays `begin`/`end` deliberately - a TextMate `match` cannot cross a line break, and this is the one bare rule that reads `a *b` over `c* d` as one run the way the engine does. An opener with no closer in its own paragraph still colours to that paragraph's end (#393).

@@ -777,6 +777,11 @@ function convertTable(node, ctx) {
 
 function convertTableCore(node, ctx) {
     let previousGrid = [];
+    const inheritedColumnAligns = (node.columns || []).map(column => column?.align || null);
+    const headingRow = (node.rows || []).find(row => (row.cells || []).some(cell => cell.header));
+    (headingRow?.cells || []).forEach((cell, col) => {
+        if (cell.header && cell.align) inheritedColumnAligns[col] = cell.align;
+    });
     const rows = (node.rows || []).map((row) => {
         const cells = [];
         const grid = [];
@@ -808,6 +813,7 @@ function convertTableCore(node, ctx) {
             }
             const attrs = { ...(convertAttrs(cell.attrs) || {}) };
             if (cell.align) attrs.textAlign = cell.align;
+            else if (inheritedColumnAligns[col]) attrs.carveInheritedTextAlign = inheritedColumnAligns[col];
             const converted = {
                 type: cell.header ? 'tableHeader' : 'tableCell',
                 attrs,

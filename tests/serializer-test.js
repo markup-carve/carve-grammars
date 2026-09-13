@@ -411,6 +411,34 @@ check('table cell escapes a literal pipe',
     ] }),
     '|= a \\| b |= c |\n| 1 | 2 |');
 
+{
+    const source = '{aligns="right,,center"}\n| A | B | C |\n| D | E | F |\n';
+    const projected = carveToProseMirror(source, { unsupported: 'throw' });
+    const rows = projected.content[0].content;
+    assert.deepStrictEqual(
+        rows.map(rowNode => rowNode.content.map(cellNode => cellNode.attrs.carveInheritedTextAlign ?? null)),
+        [['right', null, 'center'], ['right', null, 'center']],
+        'column alignment is inherited by every editor cell',
+    );
+    passed++;
+    console.log('  ✓ column alignment is inherited by every editor cell');
+    check('inherited editor alignment does not become explicit cell markers',
+        { ...projected, attrs: undefined }, '| A | B | C |\n| D | E | F |');
+}
+
+{
+    const source = '| Name | Value |\n| :--- | ----: |\n| First | 1 |\n';
+    const projected = carveToProseMirror(source, { unsupported: 'throw' });
+    const body = projected.content[0].content[1].content;
+    assert.deepStrictEqual(
+        body.map(cellNode => cellNode.attrs.carveInheritedTextAlign),
+        ['left', 'right'],
+        'GFM delimiter alignment becomes the body column default in the editor',
+    );
+    passed++;
+    console.log('  ✓ GFM delimiter alignment is inherited by editor body cells');
+}
+
 // Definition list: `:: term` then canonical `: def` on the next line.
 check('definition list uses :: term / : def',
     doc({ type: 'definitionList', content: [

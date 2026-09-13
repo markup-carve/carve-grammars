@@ -125,6 +125,76 @@
 .ProseMirror tr:nth-child(even) td {
   background: color-mix(in srgb, var(--carve-sunk, #f4f5f7) 45%, transparent);
 }
+
+/* Match the reader surface while keeping the editable boundary legible. */
+.ProseMirror blockquote {
+  margin: 0 0 var(--carve-space-4, 1rem);
+  padding-inline-start: var(--carve-space-4, 1rem);
+  border-inline-start: var(--carve-accent-width, 3px) solid var(--carve-border, #cfd4da);
+  color: var(--carve-ink-soft, #5a626d);
+}
+.ProseMirror blockquote:focus-within {
+  border-inline-start-color: var(--carve-accent, #14607f);
+}
+.ProseMirror blockquote > :first-child { margin-block-start: 0; }
+.ProseMirror blockquote > :last-child { margin-block-end: 0; }
+
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-inline-start: 0;
+}
+.ProseMirror ul[data-type="taskList"] ul[data-type="taskList"] {
+  padding-inline-start: 1.5rem;
+}
+.ProseMirror ul[data-type="taskList"] > li[data-checked] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: .5rem;
+}
+.ProseMirror ul[data-type="taskList"] > li[data-checked] > label {
+  margin-block-start: .2em;
+  line-height: inherit;
+}
+.ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :first-child { margin-block-start: 0; }
+.ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :last-child { margin-block-end: 0; }
+
+.ProseMirror pre[data-carve-comment] {
+  margin-block: var(--carve-space-3, .75rem);
+  border: 1px dashed var(--carve-ink-soft, #7a828c);
+  border-radius: var(--carve-radius, 3px);
+  background: color-mix(in srgb, var(--carve-sunk, #f4f5f7) 65%, transparent);
+  color: var(--carve-ink-soft, #5a626d);
+  padding: .55rem .75rem .65rem;
+  white-space: pre-wrap;
+}
+.ProseMirror pre[data-carve-comment]::before {
+  content: "Comment";
+  display: block;
+  margin-block-end: .35rem;
+  color: var(--carve-accent-ink, #0e4459);
+  font: 700 .7rem/1.2 var(--carve-font-sans, system-ui, sans-serif);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ProseMirror span[data-carve-comment-inline] {
+  border: 1px dashed var(--carve-ink-soft, #7a828c);
+  border-radius: var(--carve-radius, 3px);
+  background: var(--carve-accent-soft, #e6f0f4);
+  color: var(--carve-ink-soft, #5a626d);
+  padding: .05em .3em;
+}
+.ProseMirror span[data-carve-comment-inline]::before {
+  content: "Comment: ";
+  color: var(--carve-accent-ink, #0e4459);
+  font-size: .78em;
+  font-weight: 700;
+}
+.ProseMirror .critic-comment {
+  background: var(--carve-warn-wash, #fff6dc);
+  text-decoration: underline dotted var(--carve-warn, #9a6700);
+  text-underline-offset: .2em;
+}
 .ProseMirror .selectedCell::after {
   position: absolute;
   inset: 0;
@@ -172,8 +242,9 @@
   z-index: 20;
   inset-block-start: calc(100% + .25rem);
   inset-inline-start: 0;
-  display: flex;
-  gap: .35rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .4rem;
   min-width: min(22rem, 80vw);
   padding: .5rem;
   border: 1px solid var(--carve-rule, #c8ced7);
@@ -182,6 +253,19 @@
   color: var(--carve-ink, #16191d);
   box-shadow: 0 .4rem 1.2rem rgb(0 0 0 / 18%);
 }
+.carve-inline-control-editor > input { grid-column: 1 / -1; }
+.carve-inline-control-editor > .carve-control-primary { justify-self: end; }
+.carve-inline-choices {
+  grid-column: 1 / -1;
+  display: grid;
+  max-height: 11rem;
+  overflow-y: auto;
+  border: 1px solid var(--carve-rule, #d5d9df);
+  border-radius: var(--carve-radius, 3px);
+  padding: .2rem;
+  background: var(--carve-surface, #fff);
+}
+.carve-inline-choices[hidden] { display: none; }
 .carve-inline-control-editor[hidden],
 .carve-raw-atom-editor[hidden] { display: none; }
 .carve-inline-control-editor input,
@@ -255,6 +339,22 @@
   background: var(--carve-surface, #fff);
   color: var(--carve-ink, #16191d);
 }
+.carve-inline-control-editor .carve-inline-choice {
+  width: 100%;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--carve-ink, #16191d);
+  font-family: var(--carve-font-mono, monospace);
+  padding: .4rem .5rem;
+  text-align: start;
+}
+.carve-inline-control-editor .carve-inline-choice:hover,
+.carve-inline-control-editor .carve-inline-choice:focus-visible,
+.carve-inline-control-editor .carve-inline-choice[aria-selected="true"] {
+  background: var(--carve-accent-soft, #e6f0f4);
+  color: var(--carve-accent-ink, #0e4459);
+}
 @media (max-width: 600px) {
   .carve-inline-control-editor,
   .carve-raw-atom-inline .carve-raw-atom-editor {
@@ -262,10 +362,11 @@
     inset: auto 1rem 1rem;
     width: auto;
     min-width: 0;
-    flex-wrap: wrap;
+    grid-template-columns: 1fr 1fr;
   }
   .carve-inline-control-editor input,
-  .carve-raw-atom-inline .carve-raw-atom-editor input { flex-basis: 100%; }
+  .carve-raw-atom-inline .carve-raw-atom-editor input,
+  .carve-raw-atom-inline .carve-raw-atom-editor textarea { grid-column: 1 / -1; }
 }
 .carve-raw-atom-editor textarea { min-height: 8rem; font-family: var(--carve-font-mono, monospace); }
 
@@ -358,8 +459,54 @@
 }
 
 /* A code group's panels are code blocks, which bring their own frame. */
-.carve-codegroup-panels > pre {
+.carve-codegroup-panels > pre,
+.carve-codegroup-panels > .carve-code-block > pre {
   margin: 0;
+}
+
+.carve-code-block {
+  position: relative;
+  margin-block: var(--carve-space-3, .75rem);
+  border: 1px solid var(--carve-border, #cfd4da);
+  border-radius: var(--carve-radius, 3px);
+  overflow: hidden;
+  background: var(--carve-sunk, #f4f5f7);
+}
+.carve-code-block-chrome {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--carve-space-2, .5rem);
+  padding: .375rem var(--carve-space-2, .5rem);
+  border-block-start: 1px solid var(--carve-border, #cfd4da);
+  background: var(--carve-surface, #fff);
+  color: var(--carve-ink-soft, #5a626d);
+  font-size: var(--carve-font-size-small, .875em);
+}
+.carve-code-block-chrome > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.carve-code-lang {
+  appearance: none;
+  max-width: 12rem;
+  border: 1px solid var(--carve-accent, #14607f);
+  border-radius: var(--carve-radius, 3px);
+  background-color: var(--carve-accent, #14607f);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - .8rem) 50%, calc(100% - .55rem) 50%;
+  background-repeat: no-repeat;
+  background-size: .3rem .3rem, .3rem .3rem;
+  color: var(--carve-ink-inverse, #fff);
+  font: inherit;
+  font-weight: 600;
+  padding: .3rem 1.6rem .3rem .55rem;
+}
+.carve-code-lang:hover { filter: brightness(1.08); }
+.carve-code-lang:focus-visible { outline: 2px solid var(--carve-accent, #14607f); outline-offset: 2px; }
+.carve-code-lang option { background: var(--carve-surface, #fff); color: var(--carve-ink, #16191d); }
+.carve-code-block > pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: var(--carve-code-padding, var(--carve-space-3, .75rem));
 }
 
 /* Collapsible, source-preserving document metadata editor. */

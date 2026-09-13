@@ -52,9 +52,14 @@ export function createInlinePickerView({ className, label, value, attribute, cho
         const input = document.createElement('input');
         input.dataset.carveEditControl = '';
         input.setAttribute('aria-label', label);
-        const list = document.createElement('datalist');
+        input.setAttribute('role', 'combobox');
+        input.setAttribute('aria-autocomplete', 'list');
+        const list = document.createElement('span');
+        list.className = 'carve-inline-choices';
         list.id = `${editorBox.id}-choices`;
-        input.setAttribute('list', list.id);
+        list.setAttribute('role', 'listbox');
+        list.setAttribute('aria-label', `Available ${label.toLowerCase()}s`);
+        input.setAttribute('aria-controls', list.id);
         const save = document.createElement('button');
         save.dataset.carveEditControl = '';
         save.type = 'button';
@@ -72,6 +77,26 @@ export function createInlinePickerView({ className, label, value, attribute, cho
             button.setAttribute('aria-expanded', 'false');
             button.focus();
         };
+        const renderChoices = (filter = '') => {
+            const query = filter.toLocaleLowerCase();
+            const available = choices(editor).filter(choice => !query || choice.toLocaleLowerCase().includes(query));
+            list.replaceChildren(...available.map(choice => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'carve-inline-choice';
+                option.setAttribute('role', 'option');
+                option.setAttribute('aria-selected', String(choice === input.value));
+                option.textContent = choice;
+                option.addEventListener('click', () => {
+                    input.value = choice;
+                    renderChoices();
+                    input.focus();
+                });
+                return option;
+            }));
+            list.hidden = available.length === 0;
+            input.setAttribute('aria-expanded', String(available.length > 0));
+        };
         const render = () => {
             const shown = value(current);
             button.textContent = shown;
@@ -79,11 +104,7 @@ export function createInlinePickerView({ className, label, value, attribute, cho
             input.value = String(current.attrs?.[attribute] || '');
             input.disabled = !editor.isEditable;
             save.disabled = !editor.isEditable;
-            list.replaceChildren(...choices(editor).map(choice => {
-                const option = document.createElement('option');
-                option.value = choice;
-                return option;
-            }));
+            renderChoices();
         };
         button.addEventListener('click', () => {
             editorBox.hidden = !editorBox.hidden;
@@ -98,6 +119,30 @@ export function createInlinePickerView({ className, label, value, attribute, cho
         input.addEventListener('keydown', event => {
             if (event.key === 'Enter') { event.preventDefault(); save.click(); }
             if (event.key === 'Escape') { event.preventDefault(); close(); }
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                list.querySelector('.carve-inline-choice')?.focus();
+            }
+        });
+        input.addEventListener('input', () => renderChoices(input.value));
+        list.addEventListener('keydown', event => {
+            const options = [...list.querySelectorAll('.carve-inline-choice')];
+            const index = options.indexOf(event.target);
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                close();
+                return;
+            }
+            if (event.key === 'Home' || event.key === 'End') {
+                event.preventDefault();
+                options[event.key === 'Home' ? 0 : options.length - 1]?.focus();
+                return;
+            }
+            const next = event.key === 'ArrowDown' ? Math.min(index + 1, options.length - 1)
+                : event.key === 'ArrowUp' ? index - 1 : null;
+            if (next == null) return;
+            event.preventDefault();
+            if (next < 0) input.focus(); else options[next]?.focus();
         });
         render();
         return {

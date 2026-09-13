@@ -113,6 +113,7 @@
       ],
       "notes": "tableHeader for `|=` cells",
       "attrs": {
+        "carveInheritedTextAlign": "effective alignment inherited from table column metadata; editor presentation only and never serialized as a cell override",
         "carveSpanMarker": "the span marker as written, where a cell carries one",
         "colspan": "omitted when 1",
         "rowspan": "omitted when 1",

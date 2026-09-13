@@ -46,10 +46,36 @@ export class CarveEditorElement extends HTMLElementBase {
                 .ProseMirror th, .ProseMirror td { border: 1px solid #d5d9df; padding: .5rem; vertical-align: top; }
                 .ProseMirror th { background: #f4f5f7; font-weight: 700; }
                 .ProseMirror a { color: #1769c2; text-underline-offset: .14em; }
+                .ProseMirror blockquote { margin: 0 0 1rem; padding-inline-start: 1rem; border-inline-start: 3px solid #c8ced7; color: #5a626d; }
+                .ProseMirror blockquote:focus-within { border-inline-start-color: #1769c2; }
+                .ProseMirror blockquote > :first-child { margin-block-start: 0; }
+                .ProseMirror blockquote > :last-child { margin-block-end: 0; }
+                .ProseMirror ul[data-type="taskList"] { list-style: none; padding-inline-start: 0; }
+                .ProseMirror ul[data-type="taskList"] ul[data-type="taskList"] { padding-inline-start: 1.5rem; }
+                .ProseMirror ul[data-type="taskList"] > li[data-checked] { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; column-gap: .5rem; }
+                .ProseMirror ul[data-type="taskList"] > li[data-checked] > label { margin-block-start: .2em; line-height: inherit; }
+                .ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :first-child { margin-block-start: 0; }
+                .ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :last-child { margin-block-end: 0; }
+                .ProseMirror pre[data-carve-comment] { margin-block: .75rem; border: 1px dashed #7a828c; border-radius: 4px; background: #f4f5f7; color: #5a626d; padding: .55rem .75rem .65rem; white-space: pre-wrap; }
+                .ProseMirror pre[data-carve-comment]::before { content: "Comment"; display: block; margin-block-end: .35rem; color: #0e4459; font: 700 .7rem/1.2 system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+                .ProseMirror span[data-carve-comment-inline] { border: 1px dashed #7a828c; border-radius: 4px; background: #e6f0f4; color: #5a626d; padding: .05em .3em; }
+                .ProseMirror span[data-carve-comment-inline]::before { content: "Comment: "; color: #0e4459; font-size: .78em; font-weight: 700; }
+                .ProseMirror .critic-comment { background: #fff6dc; text-decoration: underline dotted #9a6700; text-underline-offset: .2em; }
+                .carve-code-block { position: relative; margin-block: .75rem; border: 1px solid #d5d9df; border-radius: 4px; overflow: hidden; }
+                .carve-code-block-chrome { display: flex; align-items: center; justify-content: flex-end; padding: .375rem .5rem; border-block-start: 1px solid #d5d9df; background: white; }
+                .carve-code-block-chrome > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+                .carve-code-lang { max-width: 12rem; border: 1px solid #1769c2; border-radius: 3px; background: #1769c2; color: white; font: inherit; font-weight: 600; padding: .3rem .55rem; }
+                .carve-code-block > pre { margin: 0; border: 0; border-radius: 0; padding: var(--carve-code-padding, .75rem); }
                 .carve-inline-control, .carve-raw-atom-inline { position: relative; display: inline-flex; }
                 .carve-inline-control-trigger, .carve-raw-atom-summary { border: 1px solid #c8ced7; border-radius: 999px; background: #f4f5f7; color: inherit; cursor: pointer; font: inherit; padding: .1em .45em; }
-                .carve-inline-control-editor, .carve-raw-atom-inline .carve-raw-atom-editor { position: absolute; z-index: 20; inset-block-start: 100%; inset-inline-start: 0; display: flex; gap: .35rem; min-width: min(22rem, 80vw); padding: .5rem; border: 1px solid #c8ced7; background: white; }
+                .carve-inline-control-editor, .carve-raw-atom-inline .carve-raw-atom-editor { position: absolute; z-index: 20; inset-block-start: 100%; inset-inline-start: 0; display: grid; grid-template-columns: 1fr auto; gap: .4rem; min-width: min(22rem, 80vw); padding: .5rem; border: 1px solid #c8ced7; background: white; }
                 .carve-inline-control-editor[hidden], .carve-raw-atom-editor[hidden] { display: none; }
+                .carve-inline-control-editor > input, .carve-inline-choices { grid-column: 1 / -1; }
+                .carve-inline-control-editor > .carve-control-primary { justify-self: end; }
+                .carve-inline-choices { display: grid; max-height: 11rem; overflow-y: auto; border: 1px solid #d5d9df; border-radius: 3px; padding: .2rem; }
+                .carve-inline-choices[hidden] { display: none; }
+                .carve-inline-choice { width: 100%; border: 0; background: transparent; color: inherit; padding: .4rem .5rem; text-align: start; }
+                .carve-inline-choice:hover, .carve-inline-choice:focus-visible, .carve-inline-choice[aria-selected="true"] { background: #e6f0f4; color: #0e4459; }
                 .carve-definition-card, .carve-raw-atom:not(.carve-raw-atom-inline) { border: 1px solid #d5d9df; border-radius: 4px; margin-block: .75rem; }
                 .carve-definition-summary, .carve-raw-atom:not(.carve-raw-atom-inline) > .carve-raw-atom-summary { display: block; width: 100%; border: 0; border-radius: 0; text-align: start; font-weight: 600; padding: .6rem .75rem; }
                 .carve-definition-body, .carve-raw-atom:not(.carve-raw-atom-inline) > .carve-raw-atom-editor { padding: .75rem; }

@@ -67,19 +67,27 @@ element._editor.commands.setContent({
 const footnotePicker = element.shadowRoot.querySelector('.carve-footnote-picker');
 footnotePicker.querySelector('.carve-inline-control-trigger').click();
 const footnoteInput = footnotePicker.querySelector('input');
-assert.deepStrictEqual([...footnotePicker.querySelectorAll('option')].map(option => option.value), ['note'], 'footnote picker lists document definitions');
+assert.deepStrictEqual([...footnotePicker.querySelectorAll('.carve-inline-choice')].map(option => option.textContent), ['note'], 'footnote picker lists document definitions');
 footnoteInput.value = 'note';
-footnotePicker.querySelector('button:last-child').previousElementSibling.click();
+footnotePicker.querySelector('.carve-control-primary').click();
 assert.match(element.value, /\[\^note\]/, 'footnote picker changes its target');
 
 const crossrefPicker = element.shadowRoot.querySelector('.carve-crossref-picker');
 crossrefPicker.querySelector('.carve-inline-control-trigger').click();
-assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 'target'), 'cross-reference picker lists heading ids');
-assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 's-2026-Review'), 'cross-reference picker derives digit-leading heading ids');
-assert.ok([...crossrefPicker.querySelectorAll('option')].some(option => option.value === 'Target'), 'cross-reference picker derives automatic heading ids');
+assert.ok([...crossrefPicker.querySelectorAll('.carve-inline-choice')].some(option => option.textContent === 'target'), 'cross-reference picker lists heading ids');
+assert.ok([...crossrefPicker.querySelectorAll('.carve-inline-choice')].some(option => option.textContent === 's-2026-Review'), 'cross-reference picker derives digit-leading heading ids');
+assert.ok([...crossrefPicker.querySelectorAll('.carve-inline-choice')].some(option => option.textContent === 'Target'), 'cross-reference picker derives automatic heading ids');
+const crossrefInput = crossrefPicker.querySelector('input');
+crossrefInput.value = '2026';
+crossrefInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+assert.deepStrictEqual([...crossrefPicker.querySelectorAll('.carve-inline-choice')].map(option => option.textContent), ['s-2026-Review'], 'reference choices filter as the user types');
+crossrefInput.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+assert.strictEqual(element.shadowRoot.activeElement?.textContent, 's-2026-Review', 'ArrowDown moves from the search field to its first result');
+element.shadowRoot.activeElement.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+assert.strictEqual(crossrefPicker.querySelector('.carve-inline-control-editor').hidden, true, 'Escape closes a picker while a result has focus');
 const citationPicker = element.shadowRoot.querySelector('.carve-citation-picker');
 citationPicker.querySelector('.carve-inline-control-trigger').click();
-assert.deepStrictEqual([...citationPicker.querySelectorAll('option')].map(option => option.value), ['[@doe]'], 'citation picker lists bibliography keys');
+assert.deepStrictEqual([...citationPicker.querySelectorAll('.carve-inline-choice')].map(option => option.textContent), ['[@doe]'], 'citation picker lists bibliography keys');
 
 const abbreviation = element.shadowRoot.querySelector('.carve-abbreviation-definition-card');
 abbreviation.querySelector('.carve-definition-summary').click();
@@ -97,7 +105,41 @@ unsupported.querySelector('.carve-raw-atom-summary').click();
 unsupported.querySelector('textarea').value = '::: future\nEdited\n:::\n';
 unsupported.querySelector('button:last-child').click();
 assert.match(element.value, /future\nEdited/, 'unsupported block exposes exact source editing');
+
+element._editor.commands.setContent({ type: 'doc', content: [{
+    type: 'codeBlock', attrs: { language: 'javascript' },
+    content: [{ type: 'text', text: 'const answer = 42;' }],
+}] });
+const codeBlock = element.shadowRoot.querySelector('.carve-code-block');
+assert.ok(codeBlock, 'code block renders dedicated editor chrome');
+assert.ok(codeBlock.querySelector('.carve-code-block-chrome'), 'language chrome stays outside the editable code content');
+assert.strictEqual(codeBlock.querySelector('.carve-code-block-chrome').contentEditable, 'false', 'language chrome cannot become editable document content');
+assert.strictEqual(codeBlock.querySelector('pre').textContent, 'const answer = 42;', 'code starts at the full-width first line');
 assert.strictEqual(element._editor.isEditable, true, 'removing readonly enables editing');
+
+element.value = '| Name | Value |\n| :--- | ----: |\n| First | 1 |\n';
+const alignedCells = [...element.shadowRoot.querySelectorAll('td')];
+assert.deepStrictEqual(
+    alignedCells.map(cell => cell.style.textAlign || null),
+    ['left', 'right'],
+    'GFM table body cells visibly inherit header column alignment',
+);
+
+element.value = '- [ ] first\n- [x] second\n';
+assert.strictEqual(element.shadowRoot.querySelector('ul[data-type="taskList"]').getAttribute('data-type'), 'taskList', 'task list exposes its structural styling hook');
+assert.strictEqual(element.shadowRoot.querySelectorAll('ul[data-type="taskList"] > li[data-checked]').length, 2, 'task items use the checkbox layout rather than ordinary bullets');
+
+element._editor.commands.setContent({ type: 'doc', content: [
+    { type: 'carveComment', attrs: { block: true }, content: [{ type: 'text', text: 'Block note' }] },
+    { type: 'paragraph', content: [
+        { type: 'text', text: 'Text ' },
+        { type: 'carveCommentInline', attrs: { content: 'inline note' } },
+        { type: 'text', text: ' editorial', marks: [{ type: 'carveCriticComment' }] },
+    ] },
+] });
+assert.ok(element.shadowRoot.querySelector('pre[data-carve-comment]'), 'block comments expose their annotation styling hook');
+assert.ok(element.shadowRoot.querySelector('span[data-carve-comment-inline]'), 'inline comments expose their compact annotation styling hook');
+assert.ok(element.shadowRoot.querySelector('.critic-comment'), 'editorial comments expose their review styling hook');
 
 element.value = '---\ntitle: Original\nlang: en\nunknown: kept\n---\n\nBody.\n';
 const metadata = element.shadowRoot.querySelector('.carve-frontmatter-card');
@@ -156,4 +198,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 38 passed');
+console.log('carve-editor custom element: 47 passed');

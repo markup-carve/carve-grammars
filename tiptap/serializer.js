@@ -839,7 +839,7 @@ export function serializeToCarve(doc) {
             let line = '';
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
-                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveSpanMarker']);
+                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker']);
                 // Cell attributes bind after the kind/alignment markers.
                 line += '|' + (c.header ? '=' : '') + align + cellAttrs + ' ' + c.content + ' ';
             }
