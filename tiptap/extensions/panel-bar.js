@@ -281,7 +281,10 @@ export function createPanelBarView(spec) {
             contentDOM: panels,
             // The bar is regenerated from the node, so a click inside it must
             // not be treated as an edit of the document.
-            ignoreMutation: mutation => bar.contains(mutation.target),
+            ignoreMutation: mutation => bar.contains(mutation.target)
+                || (mutation.type === 'attributes'
+                    && mutation.target === dom
+                    && mutation.attributeName === 'data-active'),
             stopEvent: event => bar.contains(event.target),
             update: updated => {
                 if (updated.type.name !== current.type.name) return false;
