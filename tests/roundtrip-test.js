@@ -612,10 +612,13 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * contribute exactly 319 and 37 of the new ones need an envelope. The other 98
  * write directly from their rich projection, and none of the 135 needs the
  * whole-document fallback atom - the ratchet below is still zero.
+ *
+ * 356 -> 359 with section 461. Three of its four placement variants need an
+ * envelope to retain authored columns; the body-column variant writes directly.
  */
 assert.strictEqual(
-    envelopedFiles.length, 356,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 356`,
+    envelopedFiles.length, 359,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 359`,
 );
 
 assert.strictEqual(

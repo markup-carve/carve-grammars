@@ -1,0 +1,30 @@
+[
+  {
+    "type": "definition-list>definition-term>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list",
+    "text": "[^f]: note\n"
+  },
+  {
+    "type": "list",
+    "text": "     - "
+  },
+  {
+    "type": "text",
+    "text": "nested\n   tail\n"
+  }
+]
