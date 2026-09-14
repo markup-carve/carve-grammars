@@ -481,7 +481,7 @@ Core HTML preserves both channels as
 and invoke the opt-in `diffCodeTransformer()` with the fence language:
 
 ```js
-import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki'
+import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki/diff'
 import '@markup-carve/carve-grammars/shiki/carve.css'
 
 const transformers = pre.classList.contains('diff')

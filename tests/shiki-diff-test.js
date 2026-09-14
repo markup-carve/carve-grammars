@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { createHighlighter } from 'shiki'
-import { diffCodeTransformer } from '../shiki/index.js'
+import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki/diff'
 
 const source = [
     '  let fileIcon = document.querySelector("li.file-entry > span.icon");',
