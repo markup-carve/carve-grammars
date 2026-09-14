@@ -23,6 +23,18 @@
  *   `quoted_value` [CARVE-P4-006]. Prism and highlight.js scan the whole
  *   document, so without it the opening quote of a path paired with a quote
  *   lines away and painted everything between as directive.
+ *
+ * A `}` INSIDE THE QUOTES IS THE VALUE'S (carve-grammars#412). `quoted_value`
+ * admits it, but the outer part run was `[^\s}]+` and stopped at it, so
+ * `{{ ch.crv @label:"a}b" }}` matched NOTHING on TextMate and Prism - not the
+ * value, the whole directive - while highlight.js, whose mode has no
+ * equivalent run, scoped it. The three surfaces disagreed on one character.
+ *
+ * AND THE `}}` PAIR IS NOT. The two pull in opposite directions and both are
+ * asserted below, because a fix for the first silently introduces the second:
+ * a quoted run that admits `}}` closes against a quote further along the line
+ * and the directive then ends on the SECOND closer, swallowing what is between
+ * (tree-sitter-carve#288). highlight.js did exactly that before #412.
  */
 import { createHighlighter } from 'shiki';
 import { readFileSync } from 'node:fs';
@@ -131,6 +143,29 @@ const CASES = [
         value: `"a\\"b"`,
     },
     {
+        why: 'a `}` inside a double-quoted value is the value\'s, not the closer\'s',
+        source: `See ${OPTION}"a}b" }} here`,
+        value: '"a}b"',
+    },
+    {
+        why: 'a `}` inside a single-quoted value is the value\'s, not the closer\'s',
+        source: `See ${OPTION}'a}b' }} here`,
+        value: "'a}b'",
+    },
+    {
+        // The directive must end at the FIRST `}}`. `spillAfterCloser` below is
+        // what asserts that half: it reads from the first closer on, so a
+        // directive that closed on the second one shows up as spill.
+        why: 'a `}}` inside a quoted value does NOT extend the directive to the second closer',
+        source: `See ${OPTION}"a }} more" }} end`,
+        value: '"a',
+    },
+    {
+        why: 'an unterminated quote does not pair with one in the prose after the closer',
+        source: `See ${OPTION}"a b }} tail "later"`,
+        value: '"a',
+    },
+    {
         why: 'an unterminated double quote falls back to the unquoted reading',
         source: `See ${OPTION}"two words }} here and more text`,
         value: '"two',
@@ -176,6 +211,67 @@ for (const g of GRAMMARS) {
             .map((t) => t.text);
         if (claimed.length === 0) pass++;
         else fails.push(`${g.name}: a scoped token runs across a newline: ${JSON.stringify(claimed[0])}`);
+    }
+}
+
+/*
+ * Shapes the three surfaces do NOT read alike, pinned PER SURFACE so the
+ * divergence is a recorded reading rather than a silence.
+ *
+ * Both are malformed. `unquoted_value` is `(letter | digit | '-' | '_' | '.' |
+ * ':')+`, so an unquoted `}` ends neither the value nor the directive and
+ * `{{ ch.crv @label:a}b }}` is not an `include_directive` at all. TextMate and
+ * Prism refuse the line outright, which is what the grammar says; highlight.js
+ * opens its mode on a `}}` lookahead that does not read what lies between, so
+ * it scopes the line and stops the value at the brace. Neither reading moved in
+ * carve-grammars#412 and neither is that ticket's to settle - they are pinned
+ * here so a later change to the part run has to say which way it moved them.
+ */
+const DIVERGENT = [
+    {
+        why: 'a `}` in an UNQUOTED value - the control, unmoved by #412',
+        source: `See ${OPTION}a}b }} here`,
+        value: { textmate: '', prism: '', 'highlight.js': 'a' },
+    },
+    {
+        why: 'an unterminated quote holding a `}` - also unmoved',
+        source: `See ${OPTION}"a}b }} here`,
+        value: { textmate: '', prism: '', 'highlight.js': '"a' },
+    },
+];
+
+for (const g of GRAMMARS) {
+    for (const { source, value, why } of DIVERGENT) {
+        const got = valueText(g, source);
+        if (got === value[g.name]) pass++;
+        else fails.push(`${g.name}: value is ${JSON.stringify(got)}, expected ${JSON.stringify(value[g.name])} - ${why}`);
+    }
+}
+
+/*
+ * AN UNTERMINATED OPENER OPENS NOTHING. Every grammar in this family has been
+ * bitten by one - highlight.js needs the closer in its opening lookahead or it
+ * paints the rest of the document (carve-grammars#403), and the same construct
+ * left a context open for the rest of the buffer in sublime-carve#42. The
+ * widening in #412 touches the run BETWEEN the braces, which is reached only
+ * after the opener matches, so the opener is asserted next to it rather than
+ * assumed to be out of reach.
+ */
+const NO_DIRECTIVE = [
+    'See {{ ch.crv @label:"a}b" and more text\n',
+    'See {{ ch.crv @label:"a}b" and more\nand a second line *bold* here\n',
+    // No `}}` ANYWHERE, which is what makes these unterminated. A line that
+    // carries one is a directive whose VALUE is unterminated, and that is a
+    // different shape - it is asserted in CASES above, reading `"a`.
+];
+
+for (const g of GRAMMARS) {
+    for (const source of NO_DIRECTIVE) {
+        const claimed = g.leaves(source)
+            .filter((t) => (t.scope ?? '').includes(g.directive))
+            .map((t) => t.text);
+        if (claimed.length === 0) pass++;
+        else fails.push(`${g.name}: an unterminated opener still scoped ${JSON.stringify(claimed.join(''))} as a directive - ${JSON.stringify(source)}`);
     }
 }
 

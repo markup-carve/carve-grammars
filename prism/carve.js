@@ -508,6 +508,48 @@
         return RegExp(notEscaped + sigil + run + unpartneredTail, 'm');
     }
 
+    /**
+     * One PART of an include directive - what sits between two spaces inside
+     * `{{ ... }}` - with a `}` admitted inside a quoted run.
+     *
+     * `quoted_value` is `character - '"' - '\' - newline`, so a brace between
+     * the quotes is the value's. A part run spelled `[^\s}]+` stopped at it and
+     * killed the WHOLE match: `{{ ch.crv @label:"a}b" }}` carried no scope
+     * anywhere on the line, and the `#section` of such a directive fell back to
+     * the tag rule - the defect the owning rule exists to prevent
+     * (carve-grammars#412).
+     *
+     * THE QUOTE DECIDES THE BRANCH. A quote's two alternatives carry lookaheads
+     * that negate each other, so exactly one is ever viable, and the ordinary
+     * class excludes both quote characters so nothing else can claim one. The
+     * alternation therefore offers the engine no second path to re-enter. That
+     * is what keeps the scan linear: as a plain alternation a `"` is both an
+     * opener and an ordinary character, and a directive with no closer on the
+     * line makes the engine try both at every quote
+     * (scripts/scan-superlinear.mjs, tests/scans-are-bounded-test.js).
+     *
+     * A QUOTED RUN STOPS AT THE `}}` PAIR, not only at the newline, and the
+     * exclusion is load-bearing in BOTH directions. Admitting the pair lets the
+     * value close against a quote further along the line, and the directive
+     * then ends on the SECOND closer - `{{ ch.crv @label:"a }} more" }} end`
+     * swallows `}} more` into itself (measured in tree-sitter-carve#288).
+     * Refusing it reads that value as the unterminated `"a` and ends the
+     * directive at the first `}}`, which is what leaves a malformed directive
+     * as text - the call the `}}` lookahead in the highlight.js mode makes
+     * (#403, #409).
+     *
+     * @param {string} quote - `"` or `'`.
+     * @returns {string} that quote's two alternatives, as regex source.
+     */
+    function includeQuotedPart(quote) {
+        var body = '(?:\\\\[^\\n]|\\}(?!\\})|[^' + quote + '\\\\}\\n])*';
+        return quote + '(?=' + body + quote + ')' + body + quote
+            + '|' + quote + '(?!' + body + quote + ')';
+    }
+
+    var includePart =
+        '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'])';
+
     // A definition-list entry: the opening term line plus every following
     // line that is not some OTHER block opener (see above).
     var definitionListPattern = RegExp(
@@ -1343,7 +1385,12 @@
          * otherwise claim parts of it.
          */
         'include-directive': {
-            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)(?:#[A-Za-z_][\w-]*)?(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
+            pattern: RegExp(
+                '\\{\\{[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)'
+                + '(?:#[A-Za-z_][\\w-]*)?'
+                + '(?:[ \\t]+' + includePart + '+)*'
+                + '[ \\t]+\\}\\}',
+            ),
             greedy: true,
             alias: 'important',
             // BY PART. The outer pattern is what keeps the tag and mention
