@@ -1572,7 +1572,7 @@
       }
     },
     "include_directive": {
-      "comment": "Reserved processor syntax `{{ path #section @key:value }}` (PART 9 section 19, grammar.ebnf `include_directive`). The core leaves it literal and a processor expands it only when a host supplies a resolver, but a grammar that does not know the shape does not leave it alone: its own selector is spelled with other constructs, so `#section` was claimed by `#tag` and an option slot by `#mention`. Scoped BY PART rather than as one run - the enclosing match is what keeps the tag and mention rules out, so there is nothing to gain by painting the whole thing one colour, and a reader wants the path to look like a path. The padding is a RUN of whitespace (one character required on each side), and a part that is neither a section nor an option is left unscoped rather than refused, matching the processor, which leaves a malformed directive as text.",
+      "comment": "Reserved processor syntax `{{ path #section @key:value }}` (PART 9 section 19, grammar.ebnf `include_directive`). The core leaves it literal and a processor expands it only when a host supplies a resolver, but a grammar that does not know the shape does not leave it alone: its own selector is spelled with other constructs, so `#section` was claimed by `#tag` and an option slot by `#mention`. Scoped BY PART rather than as one run - the enclosing match is what keeps the tag and mention rules out, so there is nothing to gain by painting the whole thing one colour, and a reader wants the path to look like a path. The padding is a RUN of whitespace (one character required on each side), and a part that is neither a section nor an option is left unscoped rather than refused, matching the processor, which leaves a malformed directive as text. An option value is an `attribute_value`, so it may be QUOTED (either quote, backslash escapes inside) and then carries spaces; an unterminated quote falls back to the unquoted run and stops at the space (carve-grammars#409).",
       "match": "(\\{\\{)[ \\t]+((?:\"(?:\\\\.|[^\"\\\\])*\"|[^#@}\\s\"][^#@}\\s]*))((?:#[A-Za-z_][A-Za-z0-9_-]*)?(?:[ \\t]+[^\\s}]+)*)[ \\t]+(\\}\\})",
       "name": "meta.directive.include.carve",
       "captures": {
@@ -1589,7 +1589,7 @@
               "name": "entity.name.section.include.carve"
             },
             {
-              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(:)([^\\s}]+)",
+              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(:)(\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^\\s}]+)",
               "captures": {
                 "1": {
                   "name": "variable.parameter.include.carve"
