@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "See "
+  },
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "string",
+    "text": "chapter-2.crv"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": null,
+    "text": " here.\n"
+  }
+]

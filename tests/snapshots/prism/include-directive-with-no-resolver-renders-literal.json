@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "include-directive>punctuation",
+    "text": "{{"
+  },
+  {
+    "type": "include-directive",
+    "text": " "
+  },
+  {
+    "type": "include-directive>include-path",
+    "text": "chapter-2.crv"
+  },
+  {
+    "type": "include-directive",
+    "text": " "
+  },
+  {
+    "type": "include-directive>punctuation",
+    "text": "}}"
+  },
+  {
+    "type": "text",
+    "text": " here.\n"
+  }
+]
