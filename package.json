@@ -77,6 +77,7 @@
     },
     "./highlightjs/*": "./highlightjs/*",
     "./shiki": "./shiki/index.js",
+    "./shiki/diff": "./shiki/diff.js",
     "./shiki/carve.css": "./shiki/carve.css",
     "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
     "./tiptap/schema-map.json": "./tiptap/schema-map.json",
