@@ -41,7 +41,10 @@ export class CarveEditorElement extends HTMLElementBase {
                 .carve-frontmatter-card label { display: grid; gap: .25rem; font-size: .875rem; font-weight: 600; }
                 .carve-frontmatter-card input, .carve-frontmatter-card textarea { box-sizing: border-box; width: 100%; border: 1px solid #b9c0ca; border-radius: 3px; font: inherit; padding: .5rem; }
                 .carve-frontmatter-raw { margin-block-start: .75rem; }
-                .carve-frontmatter-raw textarea { min-height: 7rem; font-family: monospace; font-weight: 400; }
+                .carve-frontmatter-raw-editor { position: relative; min-height: 7rem; }
+                .carve-frontmatter-raw-editor textarea, .carve-frontmatter-highlight { box-sizing: border-box; width: 100%; min-height: 7rem; margin: 0; padding: .5rem; overflow: auto; white-space: pre; font: 400 .875rem/1.5 monospace; tab-size: 2; }
+                .carve-frontmatter-highlight { position: absolute; inset: 0; pointer-events: none; }
+                .carve-frontmatter-raw-editor textarea { position: relative; background: transparent; color: transparent; caret-color: #20252b; resize: vertical; }
                 .ProseMirror table { width: 100%; border-collapse: collapse; outline: 1px solid #d5d9df; }
                 .ProseMirror th, .ProseMirror td { border: 1px solid #d5d9df; padding: .5rem; vertical-align: top; }
                 .ProseMirror th { background: #f4f5f7; font-weight: 700; }

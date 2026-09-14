@@ -227,6 +227,7 @@ tomlTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
 assert.match(element.value, /title = "Top level"\n\[book\]/, 'new TOML fields are inserted before tables');
 
 const raw = element.shadowRoot.querySelector('.carve-frontmatter-raw textarea');
+assert.ok(element.shadowRoot.querySelector('.carve-frontmatter-highlight code.language-toml'), 'raw metadata exposes its format to a syntax highlighter');
 const beforeInvalidRaw = element.value;
 raw.value = 'title = "Unsafe"\n---\n# body';
 raw.dispatchEvent(new win.Event('change', { bubbles: true }));

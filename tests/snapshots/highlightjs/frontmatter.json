@@ -4,7 +4,7 @@
     "text": "---\n"
   },
   {
-    "scope": "symbol",
+    "scope": "property",
     "text": "title"
   },
   {
@@ -12,7 +12,7 @@
     "text": ": My Document\n"
   },
   {
-    "scope": "symbol",
+    "scope": "property",
     "text": "author"
   },
   {
@@ -20,12 +20,28 @@
     "text": ": Jane Doe\n"
   },
   {
-    "scope": "symbol",
+    "scope": "property",
     "text": "date"
   },
   {
     "scope": "meta",
-    "text": ": 2026-03-15\n"
+    "text": ": "
+  },
+  {
+    "scope": "number",
+    "text": "2026"
+  },
+  {
+    "scope": "number",
+    "text": "-03"
+  },
+  {
+    "scope": "number",
+    "text": "-15"
+  },
+  {
+    "scope": "meta",
+    "text": "\n"
   },
   {
     "scope": "punctuation",

@@ -1,14 +1,74 @@
 [
   {
-    "type": "front-matter>punctuation",
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {
     "type": "front-matter",
-    "text": "\ntitle: My Document\nauthor: Jane Doe\ndate: 2026-03-15\n"
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "title"
   },
   {
     "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " My Document\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "author"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " Jane Doe\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "date"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " "
+  },
+  {
+    "type": "front-matter>number",
+    "text": "2026"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "front-matter>number",
+    "text": "03"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "front-matter>number",
+    "text": "15"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {

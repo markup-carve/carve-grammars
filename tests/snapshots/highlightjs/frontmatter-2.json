@@ -1,7 +1,35 @@
 [
   {
     "scope": "meta",
-    "text": "---json\n{\"title\": \"My Document\"}\n"
+    "text": "---json\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "{"
+  },
+  {
+    "scope": "property",
+    "text": "\"title\""
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "meta",
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "\"My Document\""
+  },
+  {
+    "scope": "punctuation",
+    "text": "}"
+  },
+  {
+    "scope": "meta",
+    "text": "\n"
   },
   {
     "scope": "punctuation",

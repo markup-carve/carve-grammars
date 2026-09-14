@@ -1,14 +1,38 @@
 [
   {
-    "type": "front-matter>punctuation",
-    "text": "---"
+    "type": "front-matter>frontmatter-delimiter",
+    "text": "--- toml"
   },
   {
     "type": "front-matter",
-    "text": " toml\ntitle = \"My Document\"\n"
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "title"
+  },
+  {
+    "type": "front-matter",
+    "text": " "
   },
   {
     "type": "front-matter>punctuation",
+    "text": "="
+  },
+  {
+    "type": "front-matter",
+    "text": " "
+  },
+  {
+    "type": "front-matter>string",
+    "text": "\"My Document\""
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {

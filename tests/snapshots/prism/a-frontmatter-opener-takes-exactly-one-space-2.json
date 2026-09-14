@@ -1,14 +1,26 @@
 [
   {
-    "type": "front-matter>punctuation",
-    "text": "---"
+    "type": "front-matter>frontmatter-delimiter",
+    "text": "--- yaml"
   },
   {
     "type": "front-matter",
-    "text": " yaml\ntitle: T\n"
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "title"
   },
   {
     "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " T\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {

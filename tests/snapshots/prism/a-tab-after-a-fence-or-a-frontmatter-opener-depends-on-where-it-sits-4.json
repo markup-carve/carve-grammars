@@ -1,14 +1,26 @@
 [
   {
-    "type": "front-matter>punctuation",
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {
     "type": "front-matter",
-    "text": "\t\ntitle: x\n"
+    "text": "\t\n"
+  },
+  {
+    "type": "front-matter>key",
+    "text": "title"
   },
   {
     "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " x\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {

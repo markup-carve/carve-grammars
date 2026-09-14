@@ -716,17 +716,63 @@
             },
         ],
 
-        // YAML/typed front matter delimited by --- at the very top of the file.
-        // `^` (no `m` flag) anchors to the start of the document; the close is
-        // matched at end-of-line so a document body may follow.
-        'front-matter': {
-            pattern: /^\uFEFF?---[ \t]*[A-Za-z0-9_-]*[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
-            alias: 'comment',
-            greedy: true,
-            inside: {
-                'punctuation': /---/,
+        // Typed front matter. Bare `---` is YAML; known payloads receive their
+        // native Prism grammar when the host registered it, with compact local
+        // fallbacks so the standalone Carve grammar still provides useful
+        // highlighting. Unknown format tokens remain opaque metadata.
+        'front-matter': [
+            {
+                pattern: /^\uFEFF?--- ?json[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                greedy: true,
+                inside: Object.assign({
+                    'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?json|^---[ \t]*$/m, alias: 'punctuation' },
+                }, Prism.languages.json || {
+                    property: { pattern: /(^|[^\\])"(?:\\.|[^"\\])*"(?=\s*:)/, lookbehind: true },
+                    string: { pattern: /(^|[^\\])"(?:\\.|[^"\\])*"/, lookbehind: true },
+                    comment: /\/\*[\s\S]*?\*\/|\/\/.*/,
+                    number: /\b-?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/,
+                    punctuation: /[{}[\],]/,
+                    operator: /:/,
+                    boolean: /\b(?:false|true)\b/,
+                    null: { pattern: /\bnull\b/, alias: 'keyword' },
+                }),
             },
-        },
+            {
+                pattern: /^\uFEFF?--- ?toml[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                greedy: true,
+                inside: Object.assign({
+                    'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?toml|^---[ \t]*$/m, alias: 'punctuation' },
+                }, Prism.languages.toml || {
+                    comment: /#.*/,
+                    table: { pattern: /^\s*\[\[?.*?\]\]?\s*$/m, alias: 'class-name' },
+                    key: { pattern: /^[ \t]*[A-Za-z0-9_-]+(?=\s*=)/m, alias: 'property' },
+                    string: /"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'[^']*'/,
+                    number: /\b[+-]?(?:0x[\dA-Fa-f_]+|0o[0-7_]+|0b[01_]+|\d[\d_]*(?:\.\d[\d_]*)?(?:[Ee][+-]?\d[\d_]*)?)\b/,
+                    boolean: /\b(?:false|true)\b/,
+                    punctuation: /[=[\]{},.]/,
+                }),
+            },
+            {
+                pattern: /^\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                greedy: true,
+                inside: Object.assign({
+                    'frontmatter-delimiter': { pattern: /^\uFEFF?---(?: ?(?:yaml|yml))?|^---[ \t]*$/m, alias: 'punctuation' },
+                }, Prism.languages.yaml || {
+                    comment: /#.*/,
+                    key: { pattern: /(^|\n)[ \t]*[\w.-]+(?=\s*:)/, lookbehind: true, alias: 'property' },
+                    string: /"(?:\\.|[^"\\])*"|'(?:''|[^'])*'/,
+                    number: /\b[+-]?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/,
+                    boolean: /\b(?:false|true|null)\b/,
+                    punctuation: /---|[[\]{},:>|-]/,
+                }),
+            },
+            {
+                pattern: /^\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                alias: 'comment',
+                greedy: true,
+                inside: { 'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?[A-Za-z0-9_-]+|^---[ \t]*$/m, alias: 'punctuation' } },
+            },
+        ],
 
         // Fenced code blocks: ``` lang ... ``` or ~~~ lang ... ~~~
         'code-block': {

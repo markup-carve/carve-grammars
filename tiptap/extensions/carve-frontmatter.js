@@ -33,6 +33,9 @@ export const CarveFrontmatter = Node.create({
     name: 'carveFrontmatter',
     group: 'block',
     atom: true,
+    addOptions() {
+        return { highlight: null };
+    },
     addAttributes() {
         return { content: { default: '' }, format: { default: 'yaml' } };
     },
@@ -76,9 +79,18 @@ export const CarveFrontmatter = Node.create({
             const rawLabel = document.createElement('label');
             rawLabel.className = 'carve-frontmatter-raw';
             rawLabel.textContent = 'Raw frontmatter';
+            const rawEditor = document.createElement('div');
+            rawEditor.className = 'carve-frontmatter-raw-editor';
+            const highlighted = document.createElement('pre');
+            highlighted.className = 'carve-frontmatter-highlight';
+            highlighted.setAttribute('aria-hidden', 'true');
+            const highlightedCode = document.createElement('code');
+            highlighted.appendChild(highlightedCode);
             const raw = document.createElement('textarea');
             raw.spellcheck = false;
-            rawLabel.appendChild(raw);
+            rawEditor.appendChild(highlighted);
+            rawEditor.appendChild(raw);
+            rawLabel.appendChild(rawEditor);
             body.appendChild(fields);
             body.appendChild(rawLabel);
             dom.appendChild(toggle);
@@ -99,6 +111,12 @@ export const CarveFrontmatter = Node.create({
                 dom.setAttribute('aria-label', 'Document metadata');
                 raw.value = current.attrs.content || '';
                 rawLabel.firstChild.textContent = `Raw ${format.toUpperCase()}`;
+                highlightedCode.className = `language-${format}`;
+                highlightedCode.textContent = raw.value;
+                if (typeof this.options.highlight === 'function') {
+                    const html = this.options.highlight(raw.value, format);
+                    if (typeof html === 'string') highlightedCode.innerHTML = html;
+                }
                 raw.disabled = !editor.isEditable;
                 for (const [key, input] of inputs) {
                     input.value = fieldValue(current.attrs.content || '', key, format);
@@ -118,6 +136,17 @@ export const CarveFrontmatter = Node.create({
                 raw.setCustomValidity(hasFence ? 'Frontmatter content cannot contain its closing --- fence.' : '');
                 if (!hasFence) commit(raw.value);
                 else raw.reportValidity();
+            });
+            raw.addEventListener('input', () => {
+                highlightedCode.textContent = raw.value;
+                if (typeof this.options.highlight === 'function') {
+                    const html = this.options.highlight(raw.value, current.attrs.format || 'yaml');
+                    if (typeof html === 'string') highlightedCode.innerHTML = html;
+                }
+            });
+            raw.addEventListener('scroll', () => {
+                highlighted.scrollTop = raw.scrollTop;
+                highlighted.scrollLeft = raw.scrollLeft;
             });
             render();
 
