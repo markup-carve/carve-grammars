@@ -1343,15 +1343,21 @@
          * otherwise claim parts of it.
          */
         'include-directive': {
-            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)(?:#[A-Za-z_][\w-]*)?(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
+            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)(?:#[A-Za-z_][\w-]*)?(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
             greedy: true,
             alias: 'important',
             // BY PART. The outer pattern is what keeps the tag and mention
             // rules out of the directive, so painting the whole run one colour
             // buys nothing a reader wants - and a path should look like a path.
+            //
+            // A QUOTED RUN STOPS AT THE NEWLINE. `quoted_include_path` is
+            // `character - ('"' | newline)` and the same bound is normative for
+            // `quoted_value` [CARVE-P4-006]. Prism scans the whole document, so
+            // without it the opening quote paired with one lines away and
+            // painted everything between as directive (carve-grammars#409).
             inside: {
                 'include-section': {
-                    pattern: /((?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*))#[A-Za-z_][\w-]*/,
+                    pattern: /((?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*))#[A-Za-z_][\w-]*/,
                     lookbehind: true,
                     alias: 'symbol',
                 },
@@ -1361,22 +1367,25 @@
                 // `{{` it needs to anchor on, and a rule loose enough to match
                 // without it would claim any leftover run.
                 'include-path': {
-                    pattern: /(\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+                    pattern: /(\{\{[ \t]+)(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)/,
                     lookbehind: true,
                     alias: 'url',
                 },
                 'punctuation': /^\{\{|\}\}$/,
+                // The value is an `attribute_value`, so it may be quoted and
+                // then carries spaces. An unterminated quote falls back to the
+                // unquoted run rather than pairing with a later one.
                 'include-option': {
-                    pattern: /(\s)@[A-Za-z_][\w-]*:[^\s}]+/,
+                    pattern: /(\s)@[A-Za-z_][\w-]*:(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
                     lookbehind: true,
                     inside: {
                         'include-option-name': {
                             pattern: /^@[A-Za-z_][\w-]*/,
                             alias: 'keyword',
                         },
-                        'punctuation': /:/,
+                        'punctuation': /^:/,
                         'include-option-value': {
-                            pattern: /[^\s}]+$/,
+                            pattern: /(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)$/,
                             alias: 'string',
                         },
                     },

@@ -1631,7 +1631,7 @@
         contains: [
             {
                 className: 'string',
-                begin: /(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+                begin: /(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)/,
             },
             {
                 className: 'symbol',
@@ -1646,8 +1646,13 @@
                 begin: /(?<=\s)@[A-Za-z_][\w-]*/,
             },
             {
+                // An `attribute_value`, so it may be quoted and then carries
+                // spaces. The quoted alternatives exclude the newline, as
+                // `quoted_value` does [CARVE-P4-006]: one that did not paired
+                // with a quote lines away, ate the `}}` on the way, and left
+                // the mode painting the rest of the line (carve-grammars#409).
                 className: 'literal',
-                begin: /(?<=:)[^\s}]+/,
+                begin: /(?<=:)(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
             },
         ],
     };
