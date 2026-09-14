@@ -1,14 +1,18 @@
 [
   {
     "scope": "meta",
-    "text": "--- toml\n"
+    "text": "--- toml"
   },
   {
-    "scope": "property",
+    "scope": "language-ini",
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
     "text": "title"
   },
   {
-    "scope": "meta",
+    "scope": "language-ini",
     "text": " = "
   },
   {
@@ -16,15 +20,11 @@
     "text": "\"My Document\""
   },
   {
-    "scope": "meta",
-    "text": "\n"
+    "scope": "language-ini",
+    "text": "\n---"
   },
   {
-    "scope": "punctuation",
-    "text": "---"
-  },
-  {
-    "scope": "meta",
+    "scope": null,
     "text": "\n\nContent begins here.\n"
   }
 ]

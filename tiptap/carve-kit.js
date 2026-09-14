@@ -60,7 +60,7 @@ import { CarveLineBlock } from './extensions/carve-line-block.js';
 // exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
 // only had the default. This reads whichever the installed major provides; the
 // row/cell/header packages kept their defaults in both, so they import plainly.
-const Table = TableModule.default ?? TableModule.Table;
+const Table = TableModule.Table ?? Reflect.get(TableModule, 'default');
 import { CarveKeymap } from './extensions/carve-keymap.js';
 import { CarveMention, CarveTag } from './extensions/carve-mention.js';
 

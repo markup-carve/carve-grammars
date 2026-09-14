@@ -1,14 +1,18 @@
 [
   {
     "scope": "meta",
-    "text": "---json\n"
+    "text": "---json"
+  },
+  {
+    "scope": "language-json",
+    "text": "\n"
   },
   {
     "scope": "punctuation",
     "text": "{"
   },
   {
-    "scope": "property",
+    "scope": "attr",
     "text": "\"title\""
   },
   {
@@ -16,7 +20,7 @@
     "text": ":"
   },
   {
-    "scope": "meta",
+    "scope": "language-json",
     "text": " "
   },
   {
@@ -28,15 +32,11 @@
     "text": "}"
   },
   {
-    "scope": "meta",
-    "text": "\n"
+    "scope": "language-json",
+    "text": "\n---"
   },
   {
-    "scope": "punctuation",
-    "text": "---"
-  },
-  {
-    "scope": "meta",
+    "scope": null,
     "text": "\n\nContent begins here.\n"
   }
 ]
