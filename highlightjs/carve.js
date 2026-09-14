@@ -1651,8 +1651,17 @@
                 // `quoted_value` does [CARVE-P4-006]: one that did not paired
                 // with a quote lines away, ate the `}}` on the way, and left
                 // the mode painting the rest of the line (carve-grammars#409).
+                // They exclude the `}}` PAIR for the same reason. This mode has
+                // no outer bound, so a value holding one closed against a quote
+                // further along the line and the directive ended on the SECOND
+                // closer: `@label:"a }} more" }} end` read the value as
+                // `"a }} more"` and swallowed `}} more` into the directive,
+                // where the two other surfaces stopped at the first `}}`. A
+                // single `}` IS admitted - `quoted_value` admits it, and the
+                // other two surfaces now read it the same way
+                // (carve-grammars#412, tree-sitter-carve#288).
                 className: 'literal',
-                begin: /(?<=:)(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
+                begin: /(?<=:)(?:"(?:\\.|\}(?!\})|[^"\\}\n])*"|'(?:\\.|\}(?!\})|[^'\\}\n])*'|[^\s}]+)/,
             },
         ],
     };

@@ -234,5 +234,53 @@ for (const [label, gen] of lineShapes) {
     );
 }
 
+// SHAPES INSIDE ONE LONG LINE, WHICH A REPEATED OPENER CANNOT BUILD.
+//
+// Every family above repeats a UNIT or a LINE. Neither reaches a rule whose
+// cost lives inside a single long line, and the include directive is one: its
+// opener is `{{` followed by a RUN OF WHITESPACE, so `{{{{{{...` - the unit the
+// first family feeds it - fails at the second character and the rule is never
+// entered. The sweep therefore reported nothing about `include-directive` at
+// any size, on either side of the widening in carve-grammars#412.
+//
+// What the rule can be made to do instead is backtrack WITHIN one directive.
+// Its part run admits a quoted segment, so a `"` that could be both an opener
+// and an ordinary character gives the engine two paths at every quote, and a
+// directive with no closer on the line is what forces it to try both. These
+// shapes are that bait, repeated inside ONE line: the cost to look for is the
+// engine disproving a parse, not the document getting longer.
+const lineBaits = [
+    ['unterminated, quote baits', (n) => `{{ a.crv ${'@x:"y '.repeat(n)}\n`],
+    ['unterminated, brace baits', (n) => `{{ a.crv ${'@x:"a}b" '.repeat(n)}\n`],
+    ['closed, brace baits', (n) => `{{ a.crv ${'@x:"a}b" '.repeat(n)}}}\n`],
+    ['unterminated, closer baits', (n) => `{{ a.crv ${'@x:"a }} b" '.repeat(n)}\n`],
+];
+
+console.log('\nin-line shapes (cost inside ONE line, not per line or per position)');
+console.log(`shape                          bytes  prism      ratio    hljs       ratio`);
+for (const [label, gen] of lineBaits) {
+    // Sized so the larger rung clears FLOOR on the row that matches - a ladder
+    // whose absolute times sit under the floor cannot report anything, which is
+    // the failure mode `bracedOpeners` exists to stop elsewhere in this file.
+    const small = gen(16000);
+    const large = gen(32000);
+    // One warm run: the first tokenize of a shape pays for JIT and shows up as
+    // a ratio under 1 on the rung after it.
+    time(() => Prism.tokenize(small, Prism.languages.carve));
+    time(() => hljs.highlight(small, { language: 'carve' }));
+    const prism = [small, large].map((s) => time(() => Prism.tokenize(s, Prism.languages.carve)));
+    const hl = [small, large].map((s) => time(() => hljs.highlight(s, { language: 'carve' })));
+    const prismRatio = prism[1] / Math.max(prism[0], 0.01);
+    const hlRatio = hl[1] / Math.max(hl[0], 0.01);
+    const superlinear = (ms, ratio) => ms > FLOOR && ratio > SUSPECT;
+    const flag = superlinear(prism[1], prismRatio) || superlinear(hl[1], hlRatio)
+        ? '  <-- SUPERLINEAR' : '';
+    if (flag) suspects++;
+    console.log(
+        `${label.padEnd(26)} ${String(large.length).padStart(8)}  ${prism[1].toFixed(1).padStart(9)}  ${prismRatio.toFixed(2).padStart(5)}`
+        + `  ${hl[1].toFixed(1).padStart(9)}  ${hlRatio.toFixed(2).padStart(5)}${flag}`,
+    );
+}
+
 console.log(`\n${suspects} superlinear (ratio > ${SUSPECT} with a measurable absolute time)`);
 process.exit(suspects ? 1 : 0);
