@@ -44,3 +44,39 @@ html .vp-code span[data-carve-highlight] {
 html.dark .vp-code span[data-carve-highlight] {
   background: rgba(255, 213, 0, 0.18);
 }
+
+/* Opt-in `{.diff}` presentation for output from diffCodeTransformer().
+   Hosts may override these variables without depending on a site framework. */
+.shiki.has-diff {
+  --carve-diff-add-background: rgb(46 160 67 / 15%);
+  --carve-diff-add-marker: #1a7f37;
+  --carve-diff-remove-background: rgb(248 81 73 / 15%);
+  --carve-diff-remove-marker: #cf222e;
+}
+
+.shiki.has-diff .line {
+  display: inline-block;
+  width: 100%;
+}
+
+.shiki.has-diff .line.diff.add {
+  background: var(--carve-diff-add-background);
+}
+
+.shiki.has-diff .line.diff.remove {
+  background: var(--carve-diff-remove-background);
+}
+
+.shiki.has-diff .diff-marker {
+  display: inline-block;
+  width: 1ch;
+  font-weight: 700;
+}
+
+.shiki.has-diff .line.diff.add .diff-marker {
+  color: var(--carve-diff-add-marker);
+}
+
+.shiki.has-diff .line.diff.remove .diff-marker {
+  color: var(--carve-diff-remove-marker);
+}

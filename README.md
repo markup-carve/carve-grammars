@@ -462,6 +462,47 @@ Named exports for other setups: `carveGrammar`, `carveLightExtras` /
 `carveDarkExtras`, `carveLightTheme` / `carveDarkTheme`, `extendTheme`,
 `carveStylingTransformer`.
 
+#### Diff presentation with an underlying language
+
+Carve keeps a code block's presentation hooks separate from its language. The
+portable source convention for an instructional diff is a `.diff` block
+attribute above a language-tagged fence:
+
+````carve
+{.diff}
+```js
+- fileIcon.classList.add("icon-file-text");
++ fileIcon.classList.remove("icon-file-text");
+```
+````
+
+Core HTML preserves both channels as
+`<pre class="diff"><code class="language-js">`. A host can detect that shape
+and invoke the opt-in `diffCodeTransformer()` with the fence language:
+
+```js
+import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki'
+import '@markup-carve/carve-grammars/shiki/carve.css'
+
+const transformers = pre.classList.contains('diff')
+    ? [diffCodeTransformer()]
+    : []
+
+const highlighted = highlighter.codeToHtml(code.textContent, {
+    lang: 'javascript',
+    theme: 'github-light',
+    transformers,
+})
+```
+
+Create a fresh transformer for every code block. It treats `+`, `-`, and a
+space as structural first characters, removes that character while Shiki
+tokenizes the underlying language, then restores it and marks added/removed
+lines. This first version targets compact instructional changes, not complete
+patch files with `@@` hunks or `---` / `+++` file headers. It is deliberately
+not enabled by `carveMarkdown()`, because ordinary code blocks must not lose
+their first character.
+
 ## Diagram rendering
 
 Carve's `FencedRenderExtension` presets emit a `<pre class="LANG">source</pre>`
