@@ -1332,7 +1332,7 @@
          * literal; a processor expands it only when a host supplies a
          * resolver.
          *
-         * One token, because its own selector is spelled with other
+         * One owning token with semantic child tokens, because its selector is spelled with other
          * constructs: `#section` is 'tag' syntax and an option slot is
          * 'mention' syntax, so without this rule `{{ ch.crv #intro }}`
          * coloured `#intro` as a hashtag. Same defect class as the
