@@ -59,8 +59,8 @@ const unescapeHtml = (s) => s.replace(/&(?:lt|gt|amp|quot|#x27|#39);/g, (m) => E
 
 /**
  * @param {string} source - Carve source.
- * @returns {Array<{scope: (string|null), text: string}>} flattened highlight.js
- *   leaves, with the `hljs-` class prefix stripped from each scope.
+ * @returns {Array<{scope: (string|null), ancestors: string[], text: string}>}
+ *   flattened highlight.js leaves, with `hljs-` stripped from each scope.
  */
 export function hljsTokens(source) {
     const { value } = hljs.highlight(source, { language: 'carve' });
@@ -70,7 +70,11 @@ export function hljsTokens(source) {
     let m;
     while ((m = re.exec(value)) !== null) {
         if (m[1] !== undefined) stack.push(m[1].replace(/^hljs-/, ''));
-        else if (m[2] !== undefined) out.push({ scope: stack.at(-1) ?? null, text: unescapeHtml(m[2]) });
+        else if (m[2] !== undefined) out.push({
+            scope: stack.at(-1) ?? null,
+            ancestors: [...stack],
+            text: unescapeHtml(m[2]),
+        });
         else stack.pop();
     }
     return out;

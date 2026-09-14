@@ -519,14 +519,8 @@ export const CONSTRUCTS = [
     { name: "ref def url", sample: "[r]: https://ref.example", payload: "https://ref.example", textmate: "markup.underline.link" },
     { name: "ref def title", sample: "[r]: https://ref.example \"Site\"", payload: "Site", textmate: "string.quoted.link.title" },
     {
-        // highlight.js has no front-matter rule: a bare `^---$` begin would also
-        // match a `---` thematic break mid-document and swallow everything up to
-        // the next one, so the grammar leaves front matter alone. (A
-        // document-start assertion is expressible - `(?<![\s\S])`, which
-        // carve-grammars#154 uses for the byte order mark - but giving
-        // highlight.js a front-matter rule is its own change, not this one.) The
-        // grammar records the decision at its `contains` list; this records it
-        // where the coverage question is asked.
+        // Frontmatter is document-start-only. Its payload may carry scopes from
+        // the delegated YAML/TOML/JSON grammar rather than from Carve itself.
         name: "frontmatter", sample: "---\ntitle: Doc\n---\n\nText", payload: "title",
         textmate: "frontmatter",
     },
@@ -606,9 +600,7 @@ export const CONSTRUCTS = [
     { name: "byte order mark before a reference definition", sample: "\uFEFF[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
     { name: "byte order mark before a block comment", sample: "\uFEFF%%%\nhidden\n%%%", payload: "hidden", textmate: "comment" },
     {
-        // The one opener whose skip carries over: highlight.js has no front-matter
-        // rule at all (see the `frontmatter` entry above), so there is nothing for
-        // the allowance to land in there.
+        // The document-start assertion permits a leading byte order mark too.
         name: "byte order mark before front matter", sample: "\uFEFF---\ntitle: Doc\n---\n\nText",
         payload: "title", textmate: "frontmatter",
     },

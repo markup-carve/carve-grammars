@@ -58,7 +58,8 @@ function check(engineName, tokenize) {
         const hits = tokens.filter((t) => t.text.includes(payload) || payload.includes(t.text.trim()) && t.text.trim() !== '');
         const carrying = hits.filter((t) => t.scope);
         const covered = carrying.length > 0;
-        const attrScoped = carrying.some((t) => ATTR_SCOPE.test(t.scope));
+        const attrScoped = carrying.some((t) =>
+            ATTR_SCOPE.test(t.scope) && !t.ancestors?.some((scope) => scope.startsWith('language-')));
 
         let problem = null;
         if (!covered) problem = 'NOT SCOPED (no rule matches it)';

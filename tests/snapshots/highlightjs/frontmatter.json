@@ -1,54 +1,82 @@
 [
   {
     "scope": "meta",
-    "text": "---\n"
-  },
-  {
-    "scope": "property",
-    "text": "title"
-  },
-  {
-    "scope": "meta",
-    "text": ": My Document\n"
-  },
-  {
-    "scope": "property",
-    "text": "author"
-  },
-  {
-    "scope": "meta",
-    "text": ": Jane Doe\n"
-  },
-  {
-    "scope": "property",
-    "text": "date"
-  },
-  {
-    "scope": "meta",
-    "text": ": "
-  },
-  {
-    "scope": "number",
-    "text": "2026"
-  },
-  {
-    "scope": "number",
-    "text": "-03"
-  },
-  {
-    "scope": "number",
-    "text": "-15"
-  },
-  {
-    "scope": "meta",
-    "text": "\n"
-  },
-  {
-    "scope": "punctuation",
     "text": "---"
   },
   {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "title:"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "My"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "Document"
+  },
+  {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "author:"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "Jane"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "string",
+    "text": "Doe"
+  },
+  {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "date:"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "number",
+    "text": "2026-03-15"
+  },
+  {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
     "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": null,
     "text": "\n\nContent begins here.\n"
   }
 ]

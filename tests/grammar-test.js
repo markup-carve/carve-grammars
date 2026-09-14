@@ -566,8 +566,20 @@ if (realHljs) {
             '---json\n{"title": true}\n---\n',
         ]) {
             const { value } = realHljs.highlight(source, { language: 'carve' });
-            assert.ok(value.includes('hljs-property'), `expected a property scope in ${value}`);
+            assert.match(value, /hljs-(?:attr|property)/, `expected a property scope in ${value}`);
         }
+    });
+
+    ok('hljs: typed frontmatter delegates advanced payload syntax', () => {
+        const yaml = realHljs.highlight('---\ndescription: |\n  one\n  two\n---\n', { language: 'carve' }).value;
+        assert.match(yaml, /language-yaml/);
+        assert.match(yaml, /hljs-string[^>]*>\|\s+one\s+two/);
+        const toml = realHljs.highlight('---toml\n[[products]]\nwhen = 1979-05-27T07:32:00Z\n---\n', { language: 'carve' }).value;
+        assert.match(toml, /language-ini/);
+        assert.match(toml, /hljs-section[^>]*>\[\[products\]\]/);
+        const json = realHljs.highlight('---json\n{"nested":{"enabled":true}}\n---\n', { language: 'carve' }).value;
+        assert.match(json, /language-json/);
+        assert.match(json, /hljs-literal/);
     });
 
     for (const indent of ['', ' ', '  ', '\t']) {
