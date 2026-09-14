@@ -1343,13 +1343,18 @@
          * otherwise claim parts of it.
          */
         'include-directive': {
-            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
+            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)(?:#[A-Za-z_][\w-]*)?(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
             greedy: true,
             alias: 'important',
             // BY PART. The outer pattern is what keeps the tag and mention
             // rules out of the directive, so painting the whole run one colour
             // buys nothing a reader wants - and a path should look like a path.
             inside: {
+                'include-section': {
+                    pattern: /((?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*))#[A-Za-z_][\w-]*/,
+                    lookbehind: true,
+                    alias: 'symbol',
+                },
                 // FIRST, and anchored on the opening braces through a
                 // lookbehind: `inside` tokenizes what earlier rules left, so a
                 // path rule running after `punctuation` no longer sees the
@@ -1361,23 +1366,18 @@
                     alias: 'url',
                 },
                 'punctuation': /^\{\{|\}\}$/,
-                'include-section': {
-                    pattern: /(\s)#[A-Za-z_][\w-]*/,
-                    lookbehind: true,
-                    alias: 'symbol',
-                },
                 'include-option': {
                     pattern: /(\s)@[A-Za-z_][\w-]*:[^\s}]+/,
                     lookbehind: true,
                     inside: {
                         'include-option-name': {
                             pattern: /^@[A-Za-z_][\w-]*/,
-                            alias: 'attr-name',
+                            alias: 'keyword',
                         },
                         'punctuation': /:/,
                         'include-option-value': {
                             pattern: /[^\s}]+$/,
-                            alias: 'attr-value',
+                            alias: 'string',
                         },
                     },
                 },

@@ -1631,11 +1631,11 @@
         contains: [
             {
                 className: 'string',
-                begin: /(?<=\{\{[ \t]{1,64})(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+                begin: /(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
             },
             {
                 className: 'symbol',
-                begin: /(?<=\s)#[A-Za-z_][\w-]*/,
+                begin: /#[A-Za-z_][\w-]*/,
             },
             {
                 // NOT `attr`: that class is this grammar's attribute BLOCK
@@ -1646,7 +1646,7 @@
                 begin: /(?<=\s)@[A-Za-z_][\w-]*/,
             },
             {
-                className: 'string',
+                className: 'literal',
                 begin: /(?<=:)[^\s}]+/,
             },
         ],

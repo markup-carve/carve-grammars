@@ -282,14 +282,14 @@ export const CONSTRUCTS = [
      */
     {
         name: "include directive path",
-        sample: "See {{ chapters/intro.crv #intro }} here",
+        sample: "See {{ chapters/intro.crv#intro }} here",
         payload: "chapters/intro.crv",
         textmate: "string.other.link.include",
         engineScopes: { prism: ['include-path'], highlightjs: ['string'] },
     },
     {
         name: "include directive section selector",
-        sample: "See {{ chapters/intro.crv #intro }} here",
+        sample: "See {{ chapters/intro.crv#intro }} here",
         payload: "#intro",
         textmate: "entity.name.section.include",
         engineScopes: { prism: ['include-section'], highlightjs: ['symbol'] },
@@ -306,7 +306,7 @@ export const CONSTRUCTS = [
         sample: "See {{ ch.crv @shift:auto }} here",
         payload: "auto",
         textmate: "constant.other.include",
-        engineScopes: { prism: ['include-option-value'], highlightjs: ['string'] },
+        engineScopes: { prism: ['include-option-value'], highlightjs: ['literal'] },
     },
     { name: "inline math", sample: "a $`e=mc^2` b", payload: "e=mc^2", textmate: "markup.math" },
     { name: "inline literal", sample: "a !`/kaet/` b", payload: "/kaet/", textmate: "markup.raw.inline.content" },

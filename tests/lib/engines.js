@@ -31,7 +31,9 @@ function prismLeaves(tokens, parentPath = '') {
             out.push({ scope: parentPath || null, text: tok });
             continue;
         }
-        const path = parentPath ? `${parentPath}>${tok.type}` : tok.type;
+        const aliases = Array.isArray(tok.alias) ? tok.alias : tok.alias ? [tok.alias] : [];
+        const ownPath = [tok.type, ...aliases].join('>');
+        const path = parentPath ? `${parentPath}>${ownPath}` : ownPath;
         if (Array.isArray(tok.content)) {
             out.push(...prismLeaves(tok.content, path));
         } else if (tok.content && typeof tok.content === 'object') {
