@@ -641,6 +641,14 @@ const TIPTAP_COVERED = [
     // the same AST.
     'a-raw-block-passes-its-attributes-through-untouched',
     'a-definition-between-two-open-content-columns-reaches-the-outer-one',
+
+    // Carve main through c4012ca, the pin that added PART 9 section 19. With no
+    // resolver configured the directive is literal text, so the file was run
+    // through the source-aware loader and came back as one rich `paragraph`
+    // with no whole-document fallback atom and no source envelope, reparsing to
+    // the same AST. The braces survive because the serializer has nothing to
+    // respell: they are text on both sides of the trip.
+    'include-directive-with-no-resolver-renders-literal',
 ];
 
 // Categories that historically required the whole-document fallback. Their
