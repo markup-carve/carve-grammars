@@ -1601,6 +1601,57 @@
         relevance: 5,
     };
 
+    /*
+     * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
+     * section 19, grammar.ebnf `include_directive`). The core leaves it
+     * literal; a processor expands it only when a host supplies a resolver.
+     *
+     * Enclosed in one owning mode because its own selector is spelled with other
+     * constructs: `#section` is TAG syntax and an option slot is MENTION
+     * syntax, so without this rule `{{ ch.crv #intro }}` coloured `#intro` as
+     * a hashtag - the same defect class as the cross-reference one CROSS_REF
+     * exists for (carve-grammars#307).
+     */
+    const INCLUDE_DIRECTIVE = {
+        className: 'meta',
+        // THE LOOKAHEAD IS THE CLOSER. A mode that opens on `{{` alone and ends
+        // at `}}` never ends when the closer is missing, and hljs then paints
+        // the rest of the DOCUMENT as directive - `illegal` does not abort it.
+        // Requiring the closer on the same line up front means an unterminated
+        // `{{` simply never opens the mode, which is what the processor does
+        // with it too: leave it as text.
+        begin: /\{\{(?=[ \t]+[^\n]*?\}\})/,
+        end: /\}\}/,
+        relevance: 10,
+        // BY PART. The mode's own boundaries are what keep TAG and MENTION out
+        // of the directive, so painting the run one colour buys nothing - and a
+        // reader wants the path to look like a path. `end` closes the mode, so
+        // an unterminated `{{` reverts to ordinary text at the line end rather
+        // than swallowing the rest of the document.
+        contains: [
+            {
+                className: 'string',
+                begin: /(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+            },
+            {
+                className: 'symbol',
+                begin: /#[A-Za-z_][\w-]*/,
+            },
+            {
+                // NOT `attr`: that class is this grammar's attribute BLOCK
+                // (`{#id .cls}`), and the engine sweep reads any `attr`-ish
+                // scope on a non-attribute construct as a misreading. An option
+                // name is a reserved word in a slot, which is what `keyword` is.
+                className: 'keyword',
+                begin: /(?<=\s)@[A-Za-z_][\w-]*/,
+            },
+            {
+                className: 'literal',
+                begin: /(?<=:)[^\s}]+/,
+            },
+        ],
+    };
+
     // Raw format marker: {=html} or {=latex}
     const RAW_FORMAT = {
         className: 'meta',
@@ -1685,6 +1736,7 @@
         LINK,
         AUTOLINK,
         EMAIL_AUTOLINK,
+        INCLUDE_DIRECTIVE, // {{ path }} - before MENTION/TAG, which claim its selector
         RAW_FORMAT,        // {=html} - must be before INSERT/DELETE braces
         INSERT,            // {+text+}
         DELETE,            // {-text-}

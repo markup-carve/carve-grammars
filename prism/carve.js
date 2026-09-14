@@ -1326,6 +1326,64 @@
             },
         ],
 
+        /*
+         * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
+         * section 19, grammar.ebnf `include_directive`). The core leaves it
+         * literal; a processor expands it only when a host supplies a
+         * resolver.
+         *
+         * One owning token with semantic child tokens, because its selector is spelled with other
+         * constructs: `#section` is 'tag' syntax and an option slot is
+         * 'mention' syntax, so without this rule `{{ ch.crv #intro }}`
+         * coloured `#intro` as a hashtag. Same defect class as the
+         * cross-reference one 'cross-ref' exists for (#307).
+         *
+         * It sits AFTER 'code' so a directive inside a code span stays
+         * verbatim, and BEFORE 'attributes', 'mention' and 'tag', which would
+         * otherwise claim parts of it.
+         */
+        'include-directive': {
+            pattern: /\{\{[ \t]+(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)(?:#[A-Za-z_][\w-]*)?(?:[ \t]+[^\s}]+)*[ \t]+\}\}/,
+            greedy: true,
+            alias: 'important',
+            // BY PART. The outer pattern is what keeps the tag and mention
+            // rules out of the directive, so painting the whole run one colour
+            // buys nothing a reader wants - and a path should look like a path.
+            inside: {
+                'include-section': {
+                    pattern: /((?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*))#[A-Za-z_][\w-]*/,
+                    lookbehind: true,
+                    alias: 'symbol',
+                },
+                // FIRST, and anchored on the opening braces through a
+                // lookbehind: `inside` tokenizes what earlier rules left, so a
+                // path rule running after `punctuation` no longer sees the
+                // `{{` it needs to anchor on, and a rule loose enough to match
+                // without it would claim any leftover run.
+                'include-path': {
+                    pattern: /(\{\{[ \t]+)(?:"(?:\\.|[^"\\])*"|[^#@}\s"][^#@}\s]*)/,
+                    lookbehind: true,
+                    alias: 'url',
+                },
+                'punctuation': /^\{\{|\}\}$/,
+                'include-option': {
+                    pattern: /(\s)@[A-Za-z_][\w-]*:[^\s}]+/,
+                    lookbehind: true,
+                    inside: {
+                        'include-option-name': {
+                            pattern: /^@[A-Za-z_][\w-]*/,
+                            alias: 'keyword',
+                        },
+                        'punctuation': /:/,
+                        'include-option-value': {
+                            pattern: /[^\s}]+$/,
+                            alias: 'string',
+                        },
+                    },
+                },
+            },
+        },
+
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {

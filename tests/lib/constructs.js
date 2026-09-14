@@ -272,6 +272,42 @@ export const CONSTRUCTS = [
     { name: "footnote ref", sample: "text[^1] end", payload: "1", textmate: "constant.other.footnote" },
     { name: "mention", sample: "hi @user here", payload: "@user", textmate: "mention" },
     { name: "tag", sample: "a #tagname here", payload: "#tagname", textmate: "tag" },
+    /*
+     * Reserved processor syntax (PART 9 section 19), scoped BY PART.
+     *
+     * The defect these pin is `#intro` being read as the `tag` entry above,
+     * which is what `#word` genuinely is everywhere else - so the selector gets
+     * its own row, and so does the path, which a reader wants to look like a
+     * path rather than like prose.
+     */
+    {
+        name: "include directive path",
+        sample: "See {{ chapters/intro.crv#intro }} here",
+        payload: "chapters/intro.crv",
+        textmate: "string.other.link.include",
+        engineScopes: { prism: ['include-path'], highlightjs: ['string'] },
+    },
+    {
+        name: "include directive section selector",
+        sample: "See {{ chapters/intro.crv#intro }} here",
+        payload: "#intro",
+        textmate: "entity.name.section.include",
+        engineScopes: { prism: ['include-section'], highlightjs: ['symbol'] },
+    },
+    {
+        name: "include directive option name",
+        sample: "See {{ ch.crv @shift:auto }} here",
+        payload: "@shift",
+        textmate: "variable.parameter.include",
+        engineScopes: { prism: ['include-option-name'], highlightjs: ['keyword'] },
+    },
+    {
+        name: "include directive option value",
+        sample: "See {{ ch.crv @shift:auto }} here",
+        payload: "auto",
+        textmate: "constant.other.include",
+        engineScopes: { prism: ['include-option-value'], highlightjs: ['literal'] },
+    },
     { name: "inline math", sample: "a $`e=mc^2` b", payload: "e=mc^2", textmate: "markup.math" },
     { name: "inline literal", sample: "a !`/kaet/` b", payload: "/kaet/", textmate: "markup.raw.inline.content" },
     { name: "inline literal multi", sample: "a !``x ` y`` b", payload: "x ` y", textmate: "markup.raw.inline.content" },

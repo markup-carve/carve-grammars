@@ -69,7 +69,7 @@ function check(engineName, tokenize) {
             problem = `scoped in PIECES - no single token spells ${JSON.stringify(payload)}`;
         } else {
             const expected = construct.engineScopes?.[engineName] ?? [];
-            const seen = tokens.filter((t) => t.scope).map((t) => t.scope);
+            const seen = carrying.flatMap((t) => [t.scope, ...(t.ancestors ?? [])]);
             const missing = expected.filter((scope) => !seen.some((s) => s.includes(scope)));
             if (missing.length) problem = `no token carries ${missing.map((s) => JSON.stringify(s)).join(' or ')}`;
         }
