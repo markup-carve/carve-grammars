@@ -1,22 +1,18 @@
 [
   {
-    "type": "front-matter>punctuation",
+    "type": "typography",
     "text": "---"
-  },
-  {
-    "type": "front-matter",
-    "text": "\tyaml\ntitle: x\n"
-  },
-  {
-    "type": "front-matter>punctuation",
-    "text": "---"
-  },
-  {
-    "type": "front-matter",
-    "text": "\n"
   },
   {
     "type": "text",
-    "text": "\nbody\n"
+    "text": "\tyaml\ntitle: x\n"
+  },
+  {
+    "type": "thematic-break",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "\n\nbody\n"
   }
 ]

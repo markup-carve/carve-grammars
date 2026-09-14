@@ -349,16 +349,46 @@
     // Front matter is valid only at byte offset zero. Unlike the historical
     // `^---$` rule, the negative lookbehind below cannot match a thematic break
     // on a later line even though highlight.js compiles modes with `m`.
-    const FRONT_MATTER = {
+    const YAML_FRONTMATTER = [
+        { className: 'comment', begin: /#/, end: /$/ },
+        { className: 'property', begin: /^[ \t]*[A-Za-z_][\w.-]*(?=[ \t]*:)/ },
+        { className: 'string', begin: /"/, end: /"/, contains: [{ begin: /\\./ }] },
+        { className: 'string', begin: /'/, end: /'/ },
+        { className: 'literal', begin: /\b(?:false|null|true)\b/ },
+        { className: 'number', begin: /\b[+-]?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/ },
+    ];
+    const TOML_FRONTMATTER = [
+        { className: 'comment', begin: /#/, end: /$/ },
+        { className: 'section', begin: /^\s*\[\[?/, end: /\]\]?\s*$/ },
+        { className: 'property', begin: /^[ \t]*[A-Za-z_][\w.-]*(?=[ \t]*=)/ },
+        { className: 'string', begin: /"/, end: /"/, contains: [{ begin: /\\./ }] },
+        { className: 'string', begin: /'/, end: /'/ },
+        { className: 'literal', begin: /\b(?:false|true)\b/ },
+        { className: 'number', begin: /\b[+-]?(?:0x[\dA-Fa-f_]+|0o[0-7_]+|0b[01_]+|\d[\d_]*(?:\.\d[\d_]*)?(?:[Ee][+-]?\d[\d_]*)?)\b/ },
+    ];
+    const JSON_FRONTMATTER = [
+        { className: 'property', begin: /"(?:\\.|[^"\\])*"(?=\s*:)/ },
+        { className: 'string', begin: /"/, end: /"/, contains: [{ begin: /\\./ }] },
+        { className: 'literal', begin: /\b(?:false|null|true)\b/ },
+        { className: 'number', begin: /\b-?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/ },
+        { className: 'punctuation', begin: /[{}[\],:]/ },
+    ];
+    const frontMatter = (format, payloadModes = []) => ({
         className: 'meta',
-        begin: /^(?<![\s\S])\uFEFF?---(?:[A-Za-z0-9_-]+| [A-Za-z0-9_-]+)?[ \t]*$/,
+        begin: new RegExp('^(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$'),
         end: /^---[ \t]*$/,
         relevance: 10,
         contains: [
-            { className: 'symbol', begin: /^[A-Za-z_][\w-]*(?=[ \t]*:)/ },
             { className: 'punctuation', begin: /---/ },
+            ...payloadModes,
         ],
-    };
+    });
+    const FRONT_MATTER = [
+        frontMatter(' ?json', JSON_FRONTMATTER),
+        frontMatter(' ?toml', TOML_FRONTMATTER),
+        frontMatter('(?: ?(?:yaml|yml))?', YAML_FRONTMATTER),
+        frontMatter(' ?[A-Za-z0-9_-]+'),
+    ];
 
     // Headings: # to ######
     const HEADING = {
@@ -1633,7 +1663,7 @@
 
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)
-        FRONT_MATTER,
+        ...FRONT_MATTER,
         HEADING,
         CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
         RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string

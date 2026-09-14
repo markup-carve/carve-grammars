@@ -1,7 +1,23 @@
 [
   {
     "scope": "meta",
-    "text": "--- toml\ntitle = \"My Document\"\n"
+    "text": "--- toml\n"
+  },
+  {
+    "scope": "property",
+    "text": "title"
+  },
+  {
+    "scope": "meta",
+    "text": " = "
+  },
+  {
+    "scope": "string",
+    "text": "\"My Document\""
+  },
+  {
+    "scope": "meta",
+    "text": "\n"
   },
   {
     "scope": "punctuation",

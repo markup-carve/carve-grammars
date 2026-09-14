@@ -622,4 +622,25 @@
 }
 .carve-frontmatter-card textarea { resize: vertical; }
 .carve-frontmatter-raw { margin-block-start: var(--carve-space-3, 0.75rem); }
-.carve-frontmatter-raw textarea { min-height: 7rem; font-family: var(--carve-font-mono, monospace); }
+.carve-frontmatter-raw-editor { position: relative; min-height: 7rem; }
+.carve-frontmatter-raw-editor textarea,
+.carve-frontmatter-highlight {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 7rem;
+  margin: 0;
+  padding: 0.45rem 0.55rem;
+  overflow: auto;
+  white-space: pre;
+  font: 400 0.875rem/1.5 var(--carve-font-mono, monospace);
+  tab-size: 2;
+}
+.carve-frontmatter-highlight { position: absolute; inset: 0; pointer-events: none; }
+.carve-frontmatter-raw-editor textarea {
+  position: relative;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--carve-ink, #20252b);
+  resize: vertical;
+}
+.carve-frontmatter-raw-editor textarea::selection { background: color-mix(in srgb, var(--carve-accent, #14607f) 30%, transparent); }

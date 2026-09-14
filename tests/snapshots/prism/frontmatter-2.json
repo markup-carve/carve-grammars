@@ -1,14 +1,42 @@
 [
   {
-    "type": "front-matter>punctuation",
-    "text": "---"
+    "type": "front-matter>frontmatter-delimiter",
+    "text": "---json"
   },
   {
     "type": "front-matter",
-    "text": "json\n{\"title\": \"My Document\"}\n"
+    "text": "\n"
   },
   {
     "type": "front-matter>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "front-matter>property",
+    "text": "\"title\""
+  },
+  {
+    "type": "front-matter>operator",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " "
+  },
+  {
+    "type": "front-matter>string",
+    "text": "\"My Document\""
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter",
     "text": "---"
   },
   {

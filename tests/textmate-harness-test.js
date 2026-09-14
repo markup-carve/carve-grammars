@@ -22,4 +22,14 @@ assert.doesNotThrow(() => tokenize('a *b\nc* d'));
 assert.doesNotThrow(() => tokenize('a *b* c\n'));
 assert.deepEqual(tokenize(''), []);
 
+const grammar = JSON.parse(await import('node:fs').then(({ readFileSync }) =>
+    readFileSync(resolve(repoRoot, 'textmate/carve.tmLanguage.json'), 'utf8')));
+const frontmatter = grammar.repository.frontmatter.patterns;
+for (const name of ['json', 'toml', 'yaml']) {
+    const rule = frontmatter.find((candidate) => candidate.name === `meta.frontmatter.${name}.carve`);
+    assert.equal(rule?.contentName, `meta.embedded.block.${name}`);
+    assert.ok(rule?.patterns.length > 2, `${name} should carry standalone payload patterns`);
+}
+assert.ok(frontmatter.some((rule) => rule.name === 'meta.frontmatter.unknown.carve'));
+
 console.log('textmate harness: blank lines reach the TextMate state machine');

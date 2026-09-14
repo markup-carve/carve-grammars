@@ -151,6 +151,18 @@ if (realPrism) {
         assert.ok(types.includes('front-matter'), `expected front-matter token, got: ${types.join(',')}`);
     });
 
+    ok('prism: YAML, TOML, and JSON frontmatter use payload tokens', () => {
+        const samples = [
+            ['---\ntitle: Demo\n---\n', 'property'],
+            ['---toml\ntitle = "Demo"\n---\n', 'property'],
+            ['---json\n{"title": true}\n---\n', 'property'],
+        ];
+        for (const [source, token] of samples) {
+            const html = realPrism.highlight(source, carvePrism, 'carve');
+            assert.match(html, new RegExp(`class="[^"]*\\b${token}\\b`), `expected ${token} in ${html}`);
+        }
+    });
+
     // This test used to assert the opposite - that `%%% html` is a `raw-block`
     // token. There is no such construct: a raw passthrough block is a CODE
     // fence with an `=FORMAT` info string (```=html), and a `%%%` run is always
@@ -545,6 +557,17 @@ if (realHljs) {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });
         assert.ok(value.length > 0, 'expected highlighted output');
         assert.ok(value.includes('hljs-'), 'expected hljs token classes');
+    });
+
+    ok('hljs: YAML, TOML, and JSON frontmatter use payload scopes', () => {
+        for (const source of [
+            '---\ntitle: Demo\n---\n',
+            '---toml\ntitle = "Demo"\n---\n',
+            '---json\n{"title": true}\n---\n',
+        ]) {
+            const { value } = realHljs.highlight(source, { language: 'carve' });
+            assert.ok(value.includes('hljs-property'), `expected a property scope in ${value}`);
+        }
     });
 
     for (const indent of ['', ' ', '  ', '\t']) {
