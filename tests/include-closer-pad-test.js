@@ -1,6 +1,6 @@
 /**
- * The pad before an include directive's closer is required on every surface,
- * and the closer is the first `}}` outside a quoted run.
+ * An include directive needs a path and a padded closer on every surface, and
+ * the closer is the first `}}` outside a quoted run.
  */
 import { createHighlighter } from 'shiki';
 import { readFileSync } from 'node:fs';
@@ -77,6 +77,16 @@ const ROWS = [
         source: 'See {{ ch.crv @label:"a "}} end',
         directive: '',
     },
+
+    { why: 'no path, only the pad (#434)', source: 'See {{  }} end', directive: '' },
+    { why: 'a section with no path', source: 'See {{ #intro }} end', directive: '' },
+    { why: 'an option with no path', source: 'See {{ @shift:1 }} end', directive: '' },
+    { why: 'a lone `}` is no path', source: 'See {{ } }} end', directive: '' },
+    { why: 'a lone `}` after the path', source: 'See {{ a } }} end', directive: '' },
+    { why: 'a `}` in an unquoted option value', source: 'See {{ ch.crv @label:a}b }} end', directive: '' },
+    { why: 'a spaced section after a path', source: 'See {{ ch.crv #intro }} end', directive: '{{ ch.crv #intro }}' },
+    { why: 'a glued section after a path', source: 'See {{ ch.crv#intro }} end', directive: '{{ ch.crv#intro }}' },
+    { why: 'a quoted path holding a space', source: 'See {{ "a b" }} end', directive: '{{ "a b" }}' },
 ];
 
 let pass = 0;
