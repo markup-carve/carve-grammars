@@ -1618,9 +1618,11 @@
     };
 
     /* One unit of the opener's walk: a terminated run, a lone quote that opens
-     * none, or a single ordinary character that can be neither quote. */
+     * none, or a single ordinary character that can be neither quote. The
+     * ordinary character may not start a `}}`: that pair IS the closer, so a
+     * walk stepping over an unpadded one would find a padded pair later. */
     const INCLUDE_SCAN_UNIT =
-        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^"'\\n])`;
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|(?!\\}\\})[^"'\\n])`;
 
     /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
@@ -1658,7 +1660,10 @@
         // line bound: the opener's walk and the contained modes are separate
         // readings of the run, and nothing should paint past the line if they
         // ever disagree.
-        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?\\}\\})`),
+        //
+        // The pad before the closer is REQUIRED (`whitespace+, "}}"`), so
+        // `{{ a}}` is literal text, as on the other surfaces.
+        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?[ \\t]\\}\\})`),
         end: /\}\}|$/,
         relevance: 10,
         // BY PART. The mode's own boundaries are what keep TAG and MENTION out
