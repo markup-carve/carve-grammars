@@ -30,11 +30,20 @@
  * value, the whole directive - while highlight.js, whose mode has no
  * equivalent run, scoped it. The three surfaces disagreed on one character.
  *
- * AND THE `}}` PAIR IS NOT. The two pull in opposite directions and both are
- * asserted below, because a fix for the first silently introduces the second:
- * a quoted run that admits `}}` closes against a quote further along the line
- * and the directive then ends on the SECOND closer, swallowing what is between
- * (tree-sitter-carve#288). highlight.js did exactly that before #412.
+ * AND SO IS THE `}}` PAIR, since markup-carve/carve#2013: THE DIRECTIVE'S
+ * CLOSER IS THE FIRST `}}` OUTSIDE ANY QUOTED RUN. `quoted_value` and
+ * `quoted_include_path` exclude only their own quote, the backslash and the
+ * newline, so a run may hold the pair and the directive then ends at the pair
+ * that FOLLOWS the closing quote. This supersedes the `\}(?!\})` bound
+ * carve-grammars#413 gave all three surfaces, which excluded the pair from a
+ * run and so read `@label:"a }} more"` as the unterminated `"a`.
+ *
+ * AN UNTERMINATED QUOTE STILL OPENS NO RUN, which is what preserves the old
+ * reading for a malformed directive: with no closing quote on the line the
+ * value falls back to the unquoted reading and the closer is again the first
+ * `}}`. The two readings are asserted next to each other below, because it is
+ * the QUOTE'S TERMINATION, not the `}}`, that now decides where a directive
+ * ends.
  */
 import { createHighlighter } from 'shiki';
 import { readFileSync } from 'node:fs';
@@ -68,12 +77,14 @@ const GRAMMARS = [
         name: 'textmate',
         leaves: textmateLeaves,
         value: 'constant.other.include',
+        path: 'string.other.link.include',
         directive: 'meta.directive.include',
     },
     {
         name: 'prism',
         leaves: prismTokens,
         value: 'include-option-value',
+        path: 'include-path',
         directive: 'include-directive',
     },
     // highlight.js has no include-specific class names: the option value is
@@ -83,6 +94,7 @@ const GRAMMARS = [
         name: 'highlight.js',
         leaves: hljsTokens,
         value: 'literal',
+        path: 'string',
         directive: 'meta',
     },
 ];
@@ -95,9 +107,14 @@ function valueText(g, source) {
         .join('');
 }
 
-/** The text after `}}` that is still inside the directive, '' when none is. */
-function spillAfterCloser(g, source) {
-    const tail = source.indexOf('}}') + 2;
+/**
+ * The text after the directive's CLOSER that is still inside the directive,
+ * '' when none is. The closer is the first `}}` outside a quoted run, so a
+ * case whose value legitimately holds the pair says where its own closer is;
+ * everywhere else it is the first one in the source.
+ */
+function spillAfterCloser(g, source, closerAt) {
+    const tail = (closerAt ?? source.indexOf('}}')) + 2;
     let at = 0;
     const out = [];
     for (const t of g.leaves(source)) {
@@ -153,16 +170,28 @@ const CASES = [
         value: "'a}b'",
     },
     {
-        // The directive must end at the FIRST `}}`. `spillAfterCloser` below is
-        // what asserts that half: it reads from the first closer on, so a
-        // directive that closed on the second one shows up as spill.
-        why: 'a `}}` inside a quoted value does NOT extend the directive to the second closer',
+        // THE RULING (markup-carve/carve#2013). The pair is inside a terminated
+        // run, so it is the value's and the closer is the NEXT one. `closer`
+        // points `spillAfterCloser` at that second pair: without it the helper
+        // would read the value's own `}}` as the closer and call the rest of
+        // the directive spill.
+        why: 'a `}}` inside a quoted value is the value\'s, and the closer is the next pair',
         source: `See ${OPTION}"a }} more" }} end`,
-        value: '"a',
+        value: '"a }} more"',
+        closer: `See ${OPTION}"a }} more" `.length,
     },
     {
-        why: 'an unterminated quote does not pair with one in the prose after the closer',
-        source: `See ${OPTION}"a b }} tail "later"`,
+        why: 'the same in a single-quoted value',
+        source: `See ${OPTION}'a }} more' }} end`,
+        value: "'a }} more'",
+        closer: `See ${OPTION}'a }} more' `.length,
+    },
+    {
+        // The other half of the ruling, and the one the superseded bound was
+        // protecting: no closing quote on the line, so no run is open, so the
+        // value is the unquoted `"a` and the closer is the first pair.
+        why: 'an UNTERMINATED quote opens no run, so the closer is the first `}}`',
+        source: `See ${OPTION}"a }} more }} end`,
         value: '"a',
     },
     {
@@ -190,12 +219,12 @@ let pass = 0;
 const fails = [];
 
 for (const g of GRAMMARS) {
-    for (const { source, value, why } of CASES) {
+    for (const { source, value, why, closer } of CASES) {
         const got = valueText(g, source);
         if (got === value) pass++;
         else fails.push(`${g.name}: value is ${JSON.stringify(got)}, expected ${JSON.stringify(value)} - ${why}`);
 
-        const spill = spillAfterCloser(g, source);
+        const spill = spillAfterCloser(g, source, closer);
         if (spill === '') pass++;
         else fails.push(`${g.name}: directive spills past its closer onto ${JSON.stringify(spill)} - ${why}`);
     }
@@ -215,6 +244,38 @@ for (const g of GRAMMARS) {
 }
 
 /*
+ * THE PATH HALF of the same ruling. `quoted_include_path` has always excluded
+ * only the quote, the backslash and the newline, so every surface already
+ * admitted the pair here - which is precisely why the two halves could be read
+ * two different ways on one line. Asserted so the halves cannot drift apart
+ * again: the closer is the pair AFTER the closing quote, and what follows it is
+ * prose.
+ */
+const PATH_CASES = [
+    {
+        why: 'a `}}` inside a quoted PATH is the path\'s, and the closer is the next pair',
+        source: 'See {{ "a }} more" @k:v }} end',
+        path: '"a }} more"',
+        closer: 'See {{ "a }} more" @k:v '.length,
+    },
+];
+
+for (const g of GRAMMARS) {
+    for (const { source, path, why, closer } of PATH_CASES) {
+        const got = g.leaves(source)
+            .filter((t) => (t.scope ?? '').includes(g.path))
+            .map((t) => t.text)
+            .join('');
+        if (got === path) pass++;
+        else fails.push(`${g.name}: path is ${JSON.stringify(got)}, expected ${JSON.stringify(path)} - ${why}`);
+
+        const spill = spillAfterCloser(g, source, closer);
+        if (spill === '') pass++;
+        else fails.push(`${g.name}: directive spills past its closer onto ${JSON.stringify(spill)} - ${why}`);
+    }
+}
+
+/*
  * Shapes the three surfaces do NOT read alike, pinned PER SURFACE so the
  * divergence is a recorded reading rather than a silence.
  *
@@ -228,6 +289,31 @@ for (const g of GRAMMARS) {
  * here so a later change to the part run has to say which way it moved them.
  */
 const DIVERGENT = [
+    {
+        /*
+         * A TERMINATED run holding the ONLY pair on the line. Under
+         * markup-carve/carve#2013 there is then no `}}` outside a quoted run,
+         * so the line is not an `include_directive` at all and is ordinary
+         * text - which is what TextMate and Prism read, their outer pattern
+         * needing a closer it cannot find.
+         *
+         * highlight.js cannot reach that reading: its mode opens on a
+         * lookahead that only asks whether SOME `}}` is on the line, without
+         * reading what lies between, so it opens and then finds no closer
+         * outside the run. `end` carries `|$` so the mode dies at the line
+         * end rather than painting the rest of the document - the failure
+         * carve-grammars#403 is about. The line is scoped, the value reads as
+         * the run, and that is the residual.
+         *
+         * Before #2013 this row lived in CASES reading `"a` everywhere,
+         * because the superseded bound stopped the run at the pair and left
+         * the quote unterminated. The ruling moved it; it is recorded here
+         * rather than deleted so the move is visible.
+         */
+        why: 'a terminated quoted run holding the only `}}` leaves no closer outside it',
+        source: `See ${OPTION}"a b }} tail "later"`,
+        value: { textmate: '', prism: '', 'highlight.js': '"a b }} tail "' },
+    },
     {
         why: 'a `}` in an UNQUOTED value - the control, unmoved by #412',
         source: `See ${OPTION}a}b }} here`,
