@@ -290,10 +290,15 @@ fields at all:
 CarveKit.configure({ carveFrontmatter: { fields: [] } })
 ```
 
+A key may appear only once; a second descriptor for it is refused, because the
+controls are held by key and the earlier one would render blank and write
+nowhere.
+
 `inputAttributes` carries native validation and input hints: `required`,
 `autocomplete`, `inputmode`, `minlength`, `maxlength`, `pattern` and
-`aria-describedby`. Anything else is **refused with a `TypeError`** rather than
-ignored - the node view owns `name`, `type`, `value`, `disabled` and `readonly`,
+`aria-describedby`. These are enforced: a change that fails the control's own
+`checkValidity()` is reported to the author and never reaches the document.
+Anything else is **refused with a `TypeError`** rather than ignored - the node view owns `name`, `type`, `value`, `disabled` and `readonly`,
 and an event handler set here would bypass the format-aware update path. A
 constraint that is silently dropped reads like a working one that never fires,
 which is why the rejection is loud.

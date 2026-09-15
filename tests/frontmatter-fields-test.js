@@ -202,6 +202,29 @@ check('an attribute the component owns is refused', () => {
     );
 });
 
+check('the same key configured twice is refused', () => {
+    // The controls are held by key, so a second one would render blank and
+    // write nowhere - a field that looks live and is not.
+    assert.throws(
+        () => mount({ fields: [{ key: 'title' }, { key: 'title', label: 'Again' }] }),
+        /title is configured twice/,
+    );
+});
+
+check('a value violating a configured constraint does not reach the document', () => {
+    // Nothing submits these controls, so `required` and `pattern` only bind if
+    // the change handler asks. Without the check they are decoration.
+    const view = mount({ fields: [{ key: 'title', inputAttributes: { pattern: '[A-Z].*' } }] });
+    change(view.control('title'), 'lowercase');
+    assert.match(view.carve(), /title: Original/);
+});
+
+check('a value satisfying a configured constraint does reach the document', () => {
+    const view = mount({ fields: [{ key: 'title', inputAttributes: { pattern: '[A-Z].*' } }] });
+    change(view.control('title'), 'Uppercase');
+    assert.match(view.carve(), /title: "Uppercase"/);
+});
+
 check('a descriptor without a key is refused', () => {
     assert.throws(
         () => mount({ fields: [{ label: 'No key' }] }),

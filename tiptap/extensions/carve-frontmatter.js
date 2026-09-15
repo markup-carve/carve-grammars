@@ -17,10 +17,17 @@ const ALLOWED_INPUT_ATTRIBUTES = new Set([
 
 function normalizeFields(fields) {
     if (!Array.isArray(fields)) throw new TypeError('carveFrontmatter.fields must be an array of field descriptors.');
+    const seen = new Set();
     return fields.map(field => {
         if (!field || typeof field.key !== 'string' || !field.key) {
             throw new TypeError('carveFrontmatter.fields: every descriptor needs a non-empty string key.');
         }
+        // One control per key: a second one would render blank and write
+        // nowhere, because the controls are held by key.
+        if (seen.has(field.key)) {
+            throw new TypeError(`carveFrontmatter.fields: ${field.key} is configured twice.`);
+        }
+        seen.add(field.key);
         for (const name of Object.keys(field.inputAttributes ?? {})) {
             if (!ALLOWED_INPUT_ATTRIBUTES.has(name)) {
                 throw new TypeError(`carveFrontmatter.fields: ${field.key} may not set the "${name}" attribute.`);
@@ -199,7 +206,13 @@ export const CarveFrontmatter = Node.create({
                 if (!body.hidden) (inputs.values().next().value ?? raw).focus();
             });
             for (const [key, input] of inputs) {
-                input.addEventListener('change', () => commit(setField(current.attrs.content || '', key, input.value, current.attrs.format || 'yaml')));
+                input.addEventListener('change', () => {
+                    if (typeof input.checkValidity === 'function' && !input.checkValidity()) {
+                        input.reportValidity?.();
+                        return;
+                    }
+                    commit(setField(current.attrs.content || '', key, input.value, current.attrs.format || 'yaml'));
+                });
             }
             raw.addEventListener('change', () => {
                 const hasFence = /(^|\n)---(?:\s|$)/.test(raw.value);
