@@ -238,6 +238,7 @@ assert.deepStrictEqual(JSON.parse(jsonPayload), {
     tags: ['kept'],
     project: { code: 'PRJ-1' },
 }, 'editing JSON metadata preserves a valid JSON object and its unknown fields');
+assert.doesNotMatch(jsonPayload, /^title:\s/m, 'editing JSON metadata does not append an invalid YAML-style title line');
 
 element.value = '---json\n{"title":"Broken"\n---\n\nBody.\n';
 const invalidJsonTitle = element.shadowRoot.querySelector('input[name="title"]');
