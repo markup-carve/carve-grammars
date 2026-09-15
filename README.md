@@ -263,6 +263,44 @@ Document front matter appears as a collapsed **Document metadata** card. Expand
 it to edit the common `title`, `lang`, `author`, and `description` fields, or use
 the raw YAML/TOML field for custom metadata. Both paths update the document
 through the editor, so they participate in undo/redo and preserve unknown keys.
+
+### Quick fields
+
+The four quick fields are a default, not the contract. A product whose front
+matter means something else describes its own:
+
+```js
+CarveKit.configure({
+  carveFrontmatter: {
+    fields: [
+      { key: 'title', label: 'Note title', placeholder: 'Optional title', inputAttributes: { required: true, maxlength: 120 } },
+      { key: 'summary', label: 'Summary', multiline: true },
+    ],
+  },
+})
+```
+
+A descriptor needs a `key` - the front matter key it reads and writes. `label`
+defaults to the capitalized key, `placeholder` is optional, and `multiline`
+picks a `textarea` instead of an `input`. The list replaces the default one
+entirely, so an empty array renders the raw front matter editor with no quick
+fields at all:
+
+```js
+CarveKit.configure({ carveFrontmatter: { fields: [] } })
+```
+
+`inputAttributes` carries native validation and input hints: `required`,
+`autocomplete`, `inputmode`, `minlength`, `maxlength`, `pattern` and
+`aria-describedby`. Anything else is **refused with a `TypeError`** rather than
+ignored - the node view owns `name`, `type`, `value`, `disabled` and `readonly`,
+and an event handler set here would bypass the format-aware update path. A
+constraint that is silently dropped reads like a working one that never fires,
+which is why the rejection is loud.
+
+The collapsed summary still reads `title` and `lang` out of the document
+whatever the field list says, and writes still go through an editor transaction,
+so undo/redo and unknown-key preservation are unchanged.
 Unsupported-source atoms use the same compact/editable pattern for their exact
 Carve payload. Inline footnotes, cross-references, and citations open target
 pickers, while abbreviation and link-reference definitions use collapsible
