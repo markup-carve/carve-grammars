@@ -315,11 +315,11 @@ const CASES = [
     },
     {
         name: 'prism forced-strike {~',
-        before: /\{~(?=\S)(?:(?!~>)[^\n])*?~\}/,
+        before: /\{~(?!~\})(?:(?!~>)[^\n])+?~\}/,
         after: () => prismRule('forced-strike', '\\{~'),
         // `>` is in the alphabet because the old form barred `~>` from the body
         // and the new one spells that as part of the tempering.
-        alphabet: ['{', '}', '~', '>', 'a', '\n'],
+        alphabet: ['{', '}', '~', '>', 'a', ' ', '\n'],
         maxLength: 7,
     },
     {
@@ -402,7 +402,7 @@ const CASES = [
         // the line, so it is matched on the part that did not change. Both
         // halves of the begin are compared, which is the point - the guard and
         // the arrow lookahead were rewritten in the same commit.
-        ['forced-strike {~', /\{~(?=\S)(?!.*~>)/, /~\}/, '\\{~(?=\\S)', ['{', '}', '~', '>', 'a', '\n']],
+        ['forced-strike {~', /\{~(?!~\})(?!.*~>)/, /~\}/, '\\{~(?!~\\})', ['{', '}', '~', '>', 'a', ' ', '\n']],
         ['inserted {+', /\{\+/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
         // Its OPENER changed in carve-grammars#378 - `{--}` is a braced en dash,
         // not an empty deletion - so the baseline carries the guard, the same way
@@ -410,8 +410,8 @@ const CASES = [
         ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
         ['subscript {,', /\{,(?=\S)/, /,\}/, null, ['{', '}', ',', 'a', '\n']],
         ['superscript {^', /\{\^(?=\S)/, /\^\}/, null, ['{', '}', '^', 'a', '\n']],
-        ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/, null, ['/', 'a', ' ', '\n', '{'], true],
-        ['underline _', /(?<!\w)_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{'], true],
+        ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![A-Za-z0-9/])/, null, ['/', 'a', ' ', '\n', '{'], true],
+        ['underline _', /(?<![\w/])_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{'], true],
         // The `\[` escape is redundant inside a class and kept anyway: the
         // opener is matched against the SHIPPED source text character for
         // character, so it has to be spelled the way the grammar spells it.

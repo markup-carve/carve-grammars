@@ -69,7 +69,7 @@ const BOUNDED = {
         ['forced bold', '/\\{\\*(?=\\S)[^', 3],
         ['forced italic', '/\\{\\/(?=\\S)[^', 3],
         ['forced underline', '/\\{_(?=\\S)[^', 3],
-        ['forced strike', '/\\{~(?=\\S)[^', 3],
+        ['forced strike', '/\\{~(?!~\\})[^', 3],
         ['braced highlight', '/\\{=(?=\\S)[^', 3],
         ['superscript', '/\\{\\^(?=\\S)[^', 3],
         ['subscript', '/\\{,(?=\\S)[^', 3],
@@ -96,14 +96,14 @@ const BOUNDED = {
         // it is the single highest-value line in the file to pin: the run that
         // the guard repeats, and the repetition count that stops an unclosed
         // opener from scanning to the end of the paragraph.
-        ['paired() guard run', 'const run = `(?:[^', 1],
+        ['paired() guard run', 'const run = `${runAtom}', 1],
         // carve-grammars#390. The bare highlight's guard steps over an ESCAPED
         // delimiter by consuming the pair rather than counting the backslash
         // run in a lookbehind, so the escape-aware run is a second line that
         // scans, and it is bounded the same way. Matched on the assignment, so
         // a rewrite that drops the bound fails the bounds check rather than the
         // "is still there" one.
-        ['paired() escape-aware run', 'const escapedRun = `(?:', 1],
+        ['paired() escape-aware run', 'const escapedRun = opaqueBraces', 1],
         ['paired() guard repetition', 'const guard = `${body}', 1],
         // The two `~` line scans that kept `{~` superlinear after the guard
         // above was bounded.

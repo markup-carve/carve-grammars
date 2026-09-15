@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "a_/"
-  },
-  {
-    "type": "underline",
-    "text": "_a_"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "a_/_a_\n"
   }
 ]

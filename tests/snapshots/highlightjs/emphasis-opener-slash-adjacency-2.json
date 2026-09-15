@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "a/"
-  },
-  {
-    "scope": "emphasis",
-    "text": "_y_"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "a/_y_\n"
   }
 ]

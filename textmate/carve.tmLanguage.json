@@ -1327,8 +1327,8 @@
       }
     },
     "forced_strike": {
-      "comment": "Forced intraword strikethrough (PART 9 S22). Content may contain the delimiter; the span ends at the closing `~}`.",
-      "match": "(\\{~)(?=\\S)([^\\n]*?)(~\\})",
+      "comment": "Forced intraword strikethrough (PART 9 S22). Content may contain the delimiter or consist only of whitespace; the empty `{~~}` stays literal. The span ends at the closing `~}`.",
+      "match": "(\\{~)(?!~\\})([^\\n]+?)(~\\})",
       "captures": {
         "1": {
           "name": "punctuation.definition.strikethrough.carve"
@@ -1443,12 +1443,45 @@
       "patterns": [
         {
           "include": "#braced_comment"
+        },
+        {
+          "include": "#critic_add"
+        },
+        {
+          "include": "#critic_del"
+        },
+        {
+          "include": "#critic_sub"
+        },
+        {
+          "include": "#critic_comment"
+        },
+        {
+          "include": "#forced_strong"
+        },
+        {
+          "include": "#forced_italic"
+        },
+        {
+          "include": "#forced_underline"
+        },
+        {
+          "include": "#forced_strike"
+        },
+        {
+          "include": "#highlight"
+        },
+        {
+          "include": "#subscript"
+        },
+        {
+          "include": "#superscript"
         }
       ]
     },
     "italic": {
       "comment": "ONE `match` AND NOT `begin`/`end`, DELIBERATELY, and the trade was measured rather than assumed (carve-grammars#397). A TextMate `match` cannot cross a line break, so this rule does not see `a /b` over `c/ d` as one run the way the engine does, and it cannot hold a delimiter standing after a space either. `begin`/`end` buys both - and opens eagerly, because `begin` cannot see whether a closer exists on a later line, so an opener with no closer colours to the end of its paragraph the way `strong` still does. Converted and swept over the 1,545-document corpus, all four bare rules at once: documents holding a run this grammar MISSES fell from 13 to 9, and documents where it claims a run the document does NOT hold rose from 3 to 35. The whole corpus contains two runs that span a line break. A false run is the worse direction - carve-grammars#324 and #325 both turned on that - so the `match` spelling stays and the missed multi-line run is the price. Narrowing the openers first (`(?<![\\\\w:/])` for the URL, `(?!_)` for the dunder, `(?!>)` for the arrow) took the false count from 40 to 35 and no further.",
-      "match": "(?<![\\w/])(/)(?=\\S)([^/\\n]+?)(?<=\\S)(/)(?![\\w/])",
+      "match": "(?<![\\w/])(/)(?=\\S)((?:(?:\\{(?:\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*|/(?:[^/\\n]|/(?!\\})){1,4096}/|_(?:[^_\\n]|_(?!\\})){1,4096}_|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^|,(?:[^,\\n]|,(?!\\})){1,4096},|~(?:[^~\\n]|~(?!\\})){1,4096}~|=(?:[^=\\n]|=(?!\\})){1,4096}=|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+|-(?:[^-\\n]|-(?!\\})){1,4096}-|#(?:[^#\\n]|#(?!\\})){1,4096}#|%(?:[^%\\n]|%(?!\\})){1,4096}%)\\})|(?!\\{[*/_^,~+=#%+-])[^/\\n])+?)(?<=\\S)(/)(?![A-Za-z0-9/])",
       "captures": {
         "1": {
           "name": "punctuation.definition.italic.carve"
@@ -1463,7 +1496,7 @@
     },
     "underline": {
       "comment": "ONE `match` AND NOT `begin`/`end`, deliberately: converting all four bare rules took corpus documents carrying a FALSE run from 3 to 35 to recover 4 missed ones. The measurement and the reasoning are on `italic` (carve-grammars#397).",
-      "match": "(?<![\\w_])(_)(?=\\S)([^_\\n]+?)(?<=\\S)(_)(?![\\w_])",
+      "match": "(?<![\\w_/])(_)(?=\\S)((?:(?:\\{(?:\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*|/(?:[^/\\n]|/(?!\\})){1,4096}/|_(?:[^_\\n]|_(?!\\})){1,4096}_|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^|,(?:[^,\\n]|,(?!\\})){1,4096},|~(?:[^~\\n]|~(?!\\})){1,4096}~|=(?:[^=\\n]|=(?!\\})){1,4096}=|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+|-(?:[^-\\n]|-(?!\\})){1,4096}-|#(?:[^#\\n]|#(?!\\})){1,4096}#|%(?:[^%\\n]|%(?!\\})){1,4096}%)\\})|(?!\\{[*/_^,~+=#%+-])[^_\\n])+?)(?<=\\S)(_)(?![\\w_])",
       "captures": {
         "1": {
           "name": "punctuation.definition.underline.carve"
@@ -1478,7 +1511,7 @@
     },
     "strike": {
       "comment": "ONE `match` AND NOT `begin`/`end`, deliberately: converting all four bare rules took corpus documents carrying a FALSE run from 3 to 35 to recover 4 missed ones. The measurement and the reasoning are on `italic` (carve-grammars#397).",
-      "match": "(?<![\\w~])(~)(?=\\S)([^~\\n]+?)(?<=\\S)(~)(?![\\w~])",
+      "match": "(?<![\\w~])(~)(?=\\S)((?:(?:\\{(?:\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*|/(?:[^/\\n]|/(?!\\})){1,4096}/|_(?:[^_\\n]|_(?!\\})){1,4096}_|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^|,(?:[^,\\n]|,(?!\\})){1,4096},|~(?:[^~\\n]|~(?!\\})){1,4096}~|=(?:[^=\\n]|=(?!\\})){1,4096}=|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+|-(?:[^-\\n]|-(?!\\})){1,4096}-|#(?:[^#\\n]|#(?!\\})){1,4096}#|%(?:[^%\\n]|%(?!\\})){1,4096}%)\\})|(?!\\{[*/_^,~+=#%+-])[^~\\n])+?)(?<=\\S)(~)(?![\\w~])",
       "captures": {
         "1": {
           "name": "punctuation.definition.strike.carve"

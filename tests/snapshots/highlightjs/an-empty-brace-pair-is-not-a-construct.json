@@ -25,15 +25,7 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "deletion",
-    "text": "{~~}"
-  },
-  {
-    "scope": null,
-    "text": " "
+    "text": " {~~} "
   },
   {
     "scope": "built_in",

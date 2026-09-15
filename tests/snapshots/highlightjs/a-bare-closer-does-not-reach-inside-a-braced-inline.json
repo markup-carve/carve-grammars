@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "~"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/x/}"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/y~/}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

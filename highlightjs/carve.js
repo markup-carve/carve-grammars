@@ -134,6 +134,25 @@
     }
     // The same body, required to be non-empty, for the rules that reject `[]`.
     const BRACKET_TEXT_NONEMPTY = '(?!\\])' + BRACKET_TEXT;
+
+    const BRACED_START = '\\{[*/_^,~+=#%+-]';
+    const OPAQUE_BRACED_SOURCE = '\\{(?:'
+        + '\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*'
+        + '|/(?:[^/\\n]|/(?!\\})){1,4096}/'
+        + '|_(?:[^_\\n]|_(?!\\})){1,4096}_'
+        + '|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^'
+        + '|,(?:[^,\\n]|,(?!\\})){1,4096},'
+        + '|~(?:[^~\\n]|~(?!\\})){1,4096}~'
+        + '|=(?:[^=\\n]|=(?!\\})){1,4096}='
+        + '|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+'
+        + '|-(?:[^-\\n]|-(?!\\})){1,4096}-'
+        + '|#(?:[^#\\n]|#(?!\\})){1,4096}#'
+        + '|%(?:[^%\\n]|%(?!\\})){1,4096}%'
+        + ')\\}';
+    const OPAQUE_BRACED = {
+        begin: new RegExp(OPAQUE_BRACED_SOURCE),
+        relevance: 0,
+    };
     /**
      * A begin/end mode opens its span the moment `begin` matches, whether or
      * not the closer ever arrives - so an unpartnered delimiter colors every
@@ -152,7 +171,7 @@
      * @returns {object} the mode's `begin`/`end` pair, so the closer used by
      *   the guard and the closer used by the mode cannot drift apart.
      */
-    const paired = (opener, closer, { escapeAware = false, flanked = false } = {}) => {
+    const paired = (opener, closer, { escapeAware = false, flanked = false, opaqueBraces = false } = {}) => {
         // The guard used to be written `(?:[^\n]|\n(?!\s*\n))*?` - unbounded,
         // lazy, and free to cross newlines. Proving there is NO closer therefore
         // cost a whole paragraph from every position, and a document made of
@@ -182,7 +201,11 @@
         const [, lead, rest] = /^(\\[\s\S]|[\s\S])([\s\S]*)$/.exec(closer.source);
         const literal = lead.length === 2 ? lead[1] : lead;
         const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
-        const run = `(?:[^${inClass}\\n]|\\n(?!\\s*\\n)){0,4096}`;
+        const plainAtom = `[^${inClass}\\n]`;
+        const runAtom = opaqueBraces
+            ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${BRACED_START})${plainAtom}|\\n(?!\\s*\\n))`
+            : `(?:${plainAtom}|\\n(?!\\s*\\n))`;
+        const run = `${runAtom}{0,4096}`;
         /*
          * `escapeAware` opts a mode's GUARD into "an escaped delimiter is not a
          * delimiter" (carve-grammars#385). Only the bare highlight asks for it,
@@ -214,7 +237,8 @@
          * The default path is byte-identical to before, so the twelve other
          * modes are untouched.
          */
-        const escapedRun = `(?:\\\\[^\\n]|[^${inClass}\\n\\\\]|\\n(?!\\s*\\n)){0,4096}`;
+        const escapedAtom = `(?:\\\\[^\\n]|[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`;
+        const escapedRun = opaqueBraces ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${BRACED_START})${escapedAtom}){0,4096}` : `${escapedAtom}{0,4096}`;
         const body = escapeAware ? escapedRun : run;
         /*
          * `flanked` says a closer may not FOLLOW WHITESPACE, which is the
@@ -271,7 +295,9 @@
             begin: new RegExp(`${opener.source}(?=${guard})`),
             end: closer,
         };
-        if (flanked) mode.contains = [{ begin: new RegExp(`\\s${closer.source}`) }];
+        mode.contains = [];
+        if (opaqueBraces) mode.contains.push(OPAQUE_BRACED);
+        if (flanked) mode.contains.push({ begin: new RegExp(`\\s${closer.source}`) });
 
         return mode;
     };
@@ -302,7 +328,8 @@
     const NO_ARROW_AHEAD = '(?![^~\\n]{0,4096}(?:~(?!>)[^~\\n]{0,4096}){0,32}~>)';
     const FORCED_STRIKE = {
         className: 'deletion',
-        ...paired(new RegExp(`\\{~(?=\\S)${NO_ARROW_AHEAD}`), /~\}/),
+        // Forced content may be whitespace, but the empty `{~~}` is literal.
+        ...paired(new RegExp(`\\{~(?!~\\})${NO_ARROW_AHEAD}`), /~\}/),
         relevance: 5,
     };
 
@@ -390,14 +417,14 @@
     // (a/b, ://); the end is a closing slash not followed by word char/slash.
     const EMPHASIS = {
         className: 'emphasis',
-        ...paired(/(?<![\w:/])\/(?=\S)/, /\/(?![\w/])/, { flanked: true }),
+        ...paired(/(?<![\w:/])\/(?=\S)/, /\/(?![A-Za-z0-9/])/, { flanked: true, opaqueBraces: true }),
         relevance: 0,
     };
 
     // Underline (Carve): _text_ - not in the middle of words
     const UNDERLINE = {
         className: 'emphasis',
-        ...paired(/(?<!\w)_(?!\s)/, /_(?!\w)/, { flanked: true }),
+        ...paired(/(?<![\w/])_(?!\s)/, /_(?!\w)/, { flanked: true, opaqueBraces: true }),
         relevance: 0,
     };
 
@@ -433,7 +460,7 @@
 
     // Strong: *text* - not in the middle of words, can contain emphasis.
     // Excludes *[ which is abbreviation-definition syntax.
-    const STRONG_PAIR = paired(/(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, { flanked: true });
+    const STRONG_PAIR = paired(/(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, { flanked: true, opaqueBraces: true });
     const STRONG = {
         className: 'strong',
         ...STRONG_PAIR,
@@ -490,7 +517,7 @@
      * that trade - the ticket's own reasoning, since a false highlight claims
      * the document holds a construct it does not.
      */
-    const HIGHLIGHT_PAIR = paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, { escapeAware: true, flanked: true });
+    const HIGHLIGHT_PAIR = paired(/(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, { escapeAware: true, flanked: true, opaqueBraces: true });
     const HIGHLIGHT = {
         className: 'addition',
         ...HIGHLIGHT_PAIR,
@@ -525,7 +552,7 @@
     // Strikethrough (Carve): ~text~ (Djot uses ~ for subscript instead)
     const STRIKETHROUGH = {
         className: 'deletion',
-        ...paired(/(?<!\w)~(?=\S)/, /~(?!\w)/, { flanked: true }),
+        ...paired(/(?<!\w)~(?=\S)/, /~(?!\w)/, { flanked: true, opaqueBraces: true }),
         relevance: 2,
     };
 

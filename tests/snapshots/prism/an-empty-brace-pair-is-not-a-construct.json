@@ -25,15 +25,7 @@
   },
   {
     "type": "text",
-    "text": " "
-  },
-  {
-    "type": "forced-strike",
-    "text": "{~~}"
-  },
-  {
-    "type": "text",
-    "text": " "
+    "text": " {~~} "
   },
   {
     "type": "superscript",
