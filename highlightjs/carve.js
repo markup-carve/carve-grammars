@@ -340,7 +340,7 @@
         // engine renders prose (#164). The line-anchored branch is a lookbehind so
         // the match still starts at the `{`.
         begin: new RegExp(
-            '(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'
+            '(?=\\{)(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'
             + '|\\{[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}',
         ),
         relevance: 5,
@@ -849,6 +849,10 @@
         + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
         + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
+    // The lookbehinds built from this prefix are variable length. The modes
+    // below check their sentinel before reading the prefix, so irrelevant
+    // positions do not make a long indentation run quadratic (#440).
+
     // A comment fence may open on a BLOCK-QUOTE marker line (`> %%%`), and then
     // its body is hidden exactly as it is anywhere else - \u00A724 S2 and \u00A728 make a
     // comment's body verbatim and invisible WHEREVER the fence sits. Corpus 70
@@ -883,7 +887,7 @@
         // guard an opener with no closer runs to end of file, and on this shape
         // an unclosed opener is the common case.
         begin: RegExp(
-            '(?<=' + QUOTE_MARKER_BEFORE_FENCE + ')(%{3,})(?!%)[^\\n]*$'
+            '(?=%)(?<=' + QUOTE_MARKER_BEFORE_FENCE + ')(%{3,})(?!%)[^\\n]*$'
             + '(?=' + QUOTE_MARKED_LINE + '*?\\n[ \\t]*(?:> )+\\1(?!%)[^\\n]*$)',
         ),
         'on:begin': (m, resp) => {
@@ -910,8 +914,8 @@
         className: 'comment',
         begin: RegExp(
             '(?:^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-            + '|(?<=' + LIST_MARKER_BEFORE_BLOCK + ')'
-            + '|(?<=' + QUOTE_MARKER_BEFORE_FENCE + '))%{3,}',
+            + '|(?=%)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')'
+            + '|(?=%)(?<=' + QUOTE_MARKER_BEFORE_FENCE + '))%{3,}',
         ),
         end: /$/,
         relevance: 5,
@@ -933,7 +937,7 @@
         // rest of the line carried no scope at all, where carve-js nests it
         // (carve-grammars#259).
         begin: RegExp(
-            '(?:^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
+            '(?:^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?=>)(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
             + '>(?= |$)',
         ),
         end: /$/,
@@ -1454,7 +1458,7 @@
         // opener is the common case (a column-0 line ends the item), where the
         // right answer is a one-line comment, not a swallowed document.
         begin: RegExp(
-            '(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(%{3,})(?!%)[^\\n]*$'
+            '(?=%)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(%{3,})(?!%)[^\\n]*$'
             + '(?=' + BLANK_OR_INDENTED_LINE + '*?\\n[ \\t]+\\1(?!%)[^\\n]*$)',
         ),
         'on:begin': (m, resp) => {
@@ -1669,7 +1673,7 @@
         contains: [
             {
                 className: 'string',
-                begin: /(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)/,
+                begin: /(?=[^#@}\s])(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)/,
             },
             {
                 className: 'symbol',

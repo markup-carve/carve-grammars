@@ -27,6 +27,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { bracedDelimiters, spellings } from '../scripts/braced-openers.mjs';
+import carveHighlightJs from '../highlightjs/carve.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 let passed = 0;
@@ -258,6 +259,54 @@ ok('the lazy fixture is the one the narrow regex missed', () => {
         'the pre-#298 rule is no longer a demonstration of the blind spot - pick one that is',
     );
     assert.deepStrictEqual(lazy.match(UNBOUNDED), ['[^\\n]*?']);
+});
+
+/*
+ * A long run of horizontal whitespace is its own adversarial shape. The mode
+ * matcher retries at successive positions, so a variable-length lookbehind
+ * over the line's indentation can rescan the prefix at every space and make
+ * highlighting quadratic even when no Carve opener occurs (#440).
+ *
+ * Each affected mode has a one-character sentinel. Checking it before the
+ * lookbehind makes irrelevant positions fail without reading the prefix. Read
+ * the modes so patterns assembled from strings and nested modes are covered.
+ */
+const hasUnguardedIndentLookbehind = (pattern) => {
+    if (!(pattern instanceof RegExp) || !/\[ \\t\][*+]/.test(pattern.source)) return false;
+    return [...pattern.source.matchAll(/\(\?<=/g)].some((match) => {
+        const prefix = pattern.source.slice(0, match.index);
+        return !/(?:\(\?=\\?[{>%]\)|\(\?=\[\^#@}\\s\]\))$/.test(prefix);
+    });
+};
+
+ok('the indentation-lookbehind oracle rejects an unguarded pre-fix shape', () => {
+    assert.ok(hasUnguardedIndentLookbehind(/(?<=^[ \t]*)>/));
+    assert.ok(hasUnguardedIndentLookbehind(/(?<=\{\{[ \t]+)[^#@}\s"]/));
+    assert.ok(!hasUnguardedIndentLookbehind(/(?=>)(?<=^[ \t]*)>/));
+    assert.ok(!hasUnguardedIndentLookbehind(/(?=[^#@}\s])(?<=\{\{[ \t]+)[^#@}\s"]/));
+});
+
+ok('highlightjs/carve.js: indentation lookbehinds check their sentinel first', () => {
+    const seen = new Set();
+    const unguarded = [];
+    const visit = (mode) => {
+        if (!mode || typeof mode !== 'object' || seen.has(mode)) return;
+        seen.add(mode);
+        for (const field of ['begin', 'end', 'illegal']) {
+            const pattern = mode[field];
+            if (hasUnguardedIndentLookbehind(pattern)) {
+                unguarded.push(`${field}: /${pattern.source}/`);
+            }
+        }
+        for (const child of mode.contains || []) visit(child);
+        visit(mode.starts);
+    };
+    visit(carveHighlightJs());
+    assert.deepStrictEqual(
+        unguarded,
+        [],
+        `indentation lookbehinds without a leading sentinel:\n${unguarded.join('\n')}`,
+    );
 });
 
 /*
