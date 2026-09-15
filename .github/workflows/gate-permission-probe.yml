@@ -1,0 +1,97 @@
+name: Gate permission probe
+
+# TEMPORARY. Measures what the release-draft gate can see under `contents:
+# read` versus `contents: write`, against the draft release this repository
+# already has. Read-only: it lists releases and runs the gate logic, nothing
+# else. Not to be merged.
+#
+# TAG, not GITHUB_REF_NAME: the runner injects its own GITHUB_REF_NAME into
+# every step's environment and a step-level `env:` does not displace it, so the
+# first version of this probe compared every tag against "99/merge" and
+# reported "no release" from both jobs - a difference of zero, for a reason that
+# had nothing to do with permissions.
+
+on:
+  pull_request:
+
+jobs:
+  read-scope:
+    name: contents read
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: What this token can see
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s '[.[][] | {tag_name, draft}]' | tee list.json
+          echo "PROBE drafts_visible=$(jq '[.[]|select(.draft)]|length' list.json)"
+
+      - name: The gate logic against the draft tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v0.1.9
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$TAG\")] | first")"
+          if [ -z "$release" ]; then
+            echo "PROBE verdict=NO_RELEASE tag=$TAG"; exit 0
+          fi
+          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
+          [ -n "$body" ] || { echo "PROBE verdict=NO_NOTES tag=$TAG"; exit 0; }
+          echo "PROBE verdict=PASS tag=$TAG draft=$(printf '%s' "$release" | jq -r .draft)"
+
+  write-scope:
+    name: contents write
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: What this token can see
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s '[.[][] | {tag_name, draft}]' | tee list.json
+          echo "PROBE drafts_visible=$(jq '[.[]|select(.draft)]|length' list.json)"
+
+      - name: The gate logic against the draft tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v0.1.9
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$TAG\")] | first")"
+          if [ -z "$release" ]; then
+            echo "PROBE verdict=NO_RELEASE tag=$TAG"; exit 0
+          fi
+          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
+          [ -n "$body" ] || { echo "PROBE verdict=NO_NOTES tag=$TAG"; exit 0; }
+          echo "PROBE verdict=PASS tag=$TAG draft=$(printf '%s' "$release" | jq -r .draft)"
+
+      - name: It still refuses a tag with no release at all
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v99.99.99
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$TAG\")] | first")"
+          if [ -z "$release" ]; then
+            echo "PROBE verdict=NO_RELEASE tag=$TAG (correct refusal)"; exit 0
+          fi
+          echo "PROBE UNEXPECTED: a release was found for a tag that does not exist"
+          exit 1
+
+      - name: It still refuses a release whose notes are empty
+        run: |
+          # The notes branch, driven with a release object shaped like the API's
+          # but with a whitespace-only body. Nothing else in the gate can tell
+          # the two apart, so this is the branch, not a stand-in for it.
+          release='{"tag_name":"v0.1.9","draft":true,"body":"   \n  "}'
+          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
+          if [ -n "$body" ]; then
+            echo "PROBE UNEXPECTED: whitespace-only notes counted as notes"; exit 1
+          fi
+          echo "PROBE verdict=NO_NOTES (correct refusal)"
