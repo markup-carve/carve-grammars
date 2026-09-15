@@ -546,6 +546,29 @@ patch files with `@@` hunks or `---` / `+++` file headers. It is deliberately
 not enabled by `carveMarkdown()`, because ordinary code blocks must not lose
 their first character.
 
+A host that highlights with **highlight.js, Prism, or nothing** - where Shiki's
+per-line token model is not available - uses the highlighter-agnostic helper
+instead. It takes a per-line highlight callback (or defaults to HTML-escaping)
+and produces the same `line` / `diff add` / `diff remove` / `diff-marker`
+classes:
+
+```js
+import { applyLanguageDiff } from '@markup-carve/carve-grammars/diff'
+import '@markup-carve/carve-grammars/diff/carve-diff.css'
+
+document.querySelectorAll('pre.diff > code').forEach((code) => {
+    const language = [...code.classList]
+        .find((name) => name.startsWith('language-'))
+        ?.slice('language-'.length)
+    applyLanguageDiff(code, (body) => hljs.highlight(body, { language }).value)
+})
+```
+
+`renderLanguageDiff(code, highlightLine)` returns the HTML string if the host
+manages the DOM itself (a webview building a document string, a server writing
+markup). The marker is stripped before `highlightLine` runs, so the underlying
+language tokenizes the line body without its `+`/`-`/space.
+
 ## Diagram rendering
 
 Carve's `FencedRenderExtension` presets emit a `<pre class="LANG">source</pre>`
