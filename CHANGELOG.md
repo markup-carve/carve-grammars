@@ -6,6 +6,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Added
 
+- The reserved include directive `{{ path #section @key:value }}` (PART 9 section 19, markup-carve/carve#291) scopes BY PART on all three surfaces: the path as a link/url scope, the selector as a section entity, and each option as a parameter name plus value. It used to shred into the constructs its own selector is spelled with, so `{{ ch.crv #intro }}` colored `#intro` as a hashtag (#403).
 - Frontmatter quick fields are configurable. `CarveKit.configure({ carveFrontmatter: { fields: [...] } })` replaces the built-in `title` / `lang` / `author` / `description` list; a descriptor carries a `key` plus optional `label`, `placeholder`, `multiline` and a constrained `inputAttributes` allowlist, and an empty array renders the raw front matter editor alone. Omitting the option renders what it rendered before (#421).
 - A reusable Shiki language diff transformer (#414), and a browser-safe entry point for it (#415).
 - Typed front matter payloads are highlighted, with the typed grammar delegated rather than re-spelled (#407, #408).
@@ -19,14 +20,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [0.1.8] - 2026-09-13
 
+The include-directive scoping entry moved to the next release, because #403 merged after `v0.1.8` was tagged.
+
 ### Added
 
-- The reserved include directive `{{ path #section @key:value }}` (PART 9
-  section 19, markup-carve/carve#291) scopes BY PART on all three surfaces: the
-  path as a link/url scope, the selector as a section entity, and each option as
-  a parameter name plus value. It used to shred into the constructs its own
-  selector is spelled with, so `{{ ch.crv #intro }}` colored `#intro` as a
-  hashtag.
 - Front matter now renders in Tiptap as a collapsible **Document metadata** card. Authors can edit common `title`, `lang`, `author`, and `description` fields or open the raw YAML/TOML payload for uncommon keys; updates are ordinary undoable editor transactions and preserve metadata the form does not know about.
 - Preserved unsupported block and inline atoms expose their exact Carve source; footnotes, cross-references, and citations expose target pickers populated from the current document; abbreviation and link-reference definitions render as editable collapsible cards.
 - Editor tables have explicit cell borders, header treatment, row striping, and selected-cell highlighting, while links use the theme's accessible accent states.
