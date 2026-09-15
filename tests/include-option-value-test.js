@@ -216,6 +216,16 @@ const CASES = [
         value: '',
     },
     {
+        why: 'a `}` in an UNQUOTED value leaves no directive (#434)',
+        source: `See ${OPTION}a}b }} here`,
+        value: '',
+    },
+    {
+        why: 'an unterminated quote holding a `}` leaves no directive',
+        source: `See ${OPTION}"a}b }} here`,
+        value: '',
+    },
+    {
         why: 'an unterminated double quote falls back to the unquoted reading',
         source: `See ${OPTION}"two words }} here and more text`,
         value: '"two',
@@ -293,46 +303,6 @@ for (const g of GRAMMARS) {
         const spill = spillAfterCloser(g, source, closer);
         if (spill === '') pass++;
         else fails.push(`${g.name}: directive spills past its closer onto ${JSON.stringify(spill)} - ${why}`);
-    }
-}
-
-/*
- * Shapes the three surfaces do NOT read alike, pinned PER SURFACE so the
- * divergence is a recorded reading rather than a silence.
- *
- * Both are malformed, and both turn on the PART RUN rather than the opener.
- * `unquoted_value` is `(letter | digit | '-' | '_' | '.' | ':')+`, so an
- * unquoted `}` ends neither the value nor the directive and
- * `{{ ch.crv @label:a}b }}` is not an `include_directive` at all. TextMate and
- * Prism refuse the line outright, which is what the grammar says, because their
- * part class excludes `}`; highlight.js has no part run - its mode finds a
- * closer outside every quoted run (the pair after `a}b `) and opens, and the
- * value rule then stops at the brace. Neither reading moved in
- * carve-grammars#412 and neither is that ticket's to settle - they are pinned
- * here so a later change to the part run has to say which way it moved them.
- *
- * A THIRD ROW LEFT THIS LIST in carve-grammars#419 - a terminated run holding
- * the line's only pair - because that one WAS the opener, and closing the gap
- * gave the three surfaces one reading. It now sits in CASES above.
- */
-const DIVERGENT = [
-    {
-        why: 'a `}` in an UNQUOTED value - the control, unmoved by #412',
-        source: `See ${OPTION}a}b }} here`,
-        value: { textmate: '', prism: '', 'highlight.js': 'a' },
-    },
-    {
-        why: 'an unterminated quote holding a `}` - also unmoved',
-        source: `See ${OPTION}"a}b }} here`,
-        value: { textmate: '', prism: '', 'highlight.js': '"a' },
-    },
-];
-
-for (const g of GRAMMARS) {
-    for (const { source, value, why } of DIVERGENT) {
-        const got = valueText(g, source);
-        if (got === value[g.name]) pass++;
-        else fails.push(`${g.name}: value is ${JSON.stringify(got)}, expected ${JSON.stringify(value[g.name])} - ${why}`);
     }
 }
 

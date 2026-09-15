@@ -1617,11 +1617,10 @@
         return `${quote}(?=${body}${quote})${body}${quote}|${quote}(?!${body}${quote})`;
     };
 
-    /* One unit of the opener's walk: a terminated run, a lone quote that opens
-     * none, or one ordinary character that is neither quote nor the start of a
-     * `}}`, so the walk cannot step past an unpadded closer. */
-    const INCLUDE_SCAN_UNIT =
-        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|(?!\\}\\})[^"'\\n])`;
+    /* One unit of a part, as Prism's `includePart`: a terminated run, a lone
+     * quote that opens none, or an ordinary character other than space or `}`. */
+    const INCLUDE_PART_UNIT =
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^\\s}"'])`;
 
     /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
@@ -1654,12 +1653,12 @@
         // and this is what lets highlight.js reach the same reading
         // (sublime-carve#47, which closed the same gap on the same technique).
         //
-        // The tail is LAZY, so the closer is tried at each position and one
-        // unit is consumed only when it is not there. `end` keeps `|$` as the
-        // line bound: the opener's walk and the contained modes are separate
-        // readings of the run, and nothing should paint past the line if they
-        // ever disagree.
-        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?[ \\t]\\}\\})`),
+        // The lookahead is Prism's outer pattern, so a path is required and no
+        // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
+        begin: RegExp(
+            `\\{\\{(?=[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)`
+            + `(?:#[A-Za-z_][\\w-]*)?(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
+        ),
         end: /\}\}|$/,
         relevance: 10,
         // BY PART. The mode's own boundaries are what keep TAG and MENTION out
