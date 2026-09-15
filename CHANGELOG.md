@@ -4,6 +4,19 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Frontmatter quick fields are configurable. `CarveKit.configure({ carveFrontmatter: { fields: [...] } })` replaces the built-in `title` / `lang` / `author` / `description` list; a descriptor carries a `key` plus optional `label`, `placeholder`, `multiline` and a constrained `inputAttributes` allowlist, and an empty array renders the raw front matter editor alone. Omitting the option renders what it rendered before (#421).
+- A reusable Shiki language diff transformer (#414), and a browser-safe entry point for it (#415).
+- Typed front matter payloads are highlighted, with the typed grammar delegated rather than re-spelled (#407, #408).
+
+### Fixed
+
+- highlight.js reads the whole include-directive line for a closer OUTSIDE a quoted run instead of opening on any `}}` pair on it. A line whose only pair sits inside a terminated quoted run is no longer scoped as a directive, which is what TextMate and Prism already did (#419).
+- The include directive's closer is the first `}}` outside a quoted run, on every surface (#418).
+- A `}` inside a quoted include option value no longer ends the value (#413), and a quoted option value holding spaces is read as one value (#411).
+- JSON front matter survives an edit through the metadata fields instead of being corrupted (#420).
+
 ## [0.1.8] - 2026-09-13
 
 ### Added
