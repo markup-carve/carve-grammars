@@ -55,6 +55,7 @@ UNITS.push(...bracedOpeners().filter((u) => !UNITS.includes(u)));
 const SMALL = 12000;
 const LARGE = 24000;
 const SUSPECT = 3;
+const ROUNDS = 7;
 // Below this, a ratio is measurement noise rather than a finding.
 const FLOOR = 25;
 
@@ -65,10 +66,65 @@ const time = (fn) => {
     return Number(process.hrtime.bigint() - start) / 1e6;
 };
 
+// A shared runner can pause either side of a ratio. Measure adjacent, alternating
+// pairs and use the median ratio. The numerator stays beside the denominator
+// measured under the same load, while isolated stalls on either side fall away.
+const measurePair = (small, large) => {
+    const pairs = [];
+    small();
+    large();
+    for (let round = 0; round < ROUNDS; round++) {
+        const order = round % 2 ? [[1, large], [0, small]] : [[0, small], [1, large]];
+        const pair = [];
+        for (const [index, fn] of order) pair[index] = time(fn);
+        pairs.push(pair);
+    }
+    pairs.sort((a, b) => (a[1] / Math.max(a[0], 0.01)) - (b[1] / Math.max(b[0], 0.01)));
+    return pairs[Math.floor(pairs.length / 2)];
+};
+const isSuperlinear = (ms, ratio, floor = FLOOR, limit = SUSPECT) => ms > floor && ratio > limit;
+
+// Pin both verdicts with costs whose complexity is known. The quadratic regex
+// repeats a variable-length prefix check at every position, which is the class
+// of failure this script exists to find.
+let syntheticSink = 0;
+const linearWork = (n) => {
+    let value = syntheticSink;
+    for (let i = 0; i < n; i++) value = (value + i) | 0;
+    syntheticSink = value;
+};
+const syntheticInput = (n) => `${' '.repeat(n)}y`;
+const linear = measurePair(
+    () => linearWork(80000000),
+    () => linearWork(160000000),
+);
+const quadratic = measurePair(
+    () => /(?<=^ *)x/.test(syntheticInput(12000)),
+    () => /(?<=^ *)x/.test(syntheticInput(24000)),
+);
+const linearRatio = linear[1] / Math.max(linear[0], 0.01);
+const quadraticRatio = quadratic[1] / Math.max(quadratic[0], 0.01);
+if (linear[1] <= FLOOR) {
+    throw new Error('the linear measurement oracle did not reach the evidence floor');
+}
+if (isSuperlinear(linear[1], linearRatio)) {
+    throw new Error('the linear measurement oracle was reported as superlinear');
+}
+if (!isSuperlinear(quadratic[1], quadraticRatio)) {
+    throw new Error('the quadratic measurement oracle was not reported');
+}
+console.log(`measurement oracle: linear x${linearRatio.toFixed(2)}, quadratic x${quadraticRatio.toFixed(2)}`);
+
 const rows = [];
 for (const unit of UNITS) {
-    const prism = [SMALL, LARGE].map((n) => time(() => Prism.tokenize(mk(unit, n), Prism.languages.carve)));
-    const hl = [SMALL, LARGE].map((n) => time(() => hljs.highlight(mk(unit, n), { language: 'carve' })));
+    const prism = measurePair(
+        () => Prism.tokenize(mk(unit, SMALL), Prism.languages.carve),
+        () => Prism.tokenize(mk(unit, LARGE), Prism.languages.carve),
+    );
+    const hl = measurePair(
+        () => hljs.highlight(mk(unit, SMALL), { language: 'carve' }),
+        () => hljs.highlight(mk(unit, LARGE), { language: 'carve' }),
+    );
     rows.push({
         unit,
         prism: prism[1],
@@ -86,8 +142,7 @@ for (const r of rows) {
     // Pairing one engine's ratio with the other's absolute time reported the
     // backslash shape three runs out of four, and it is linear at every size
     // large enough to measure - 192 KB of it is 38ms.
-    const superlinear = (ms, ratio) => ms > FLOOR && ratio > SUSPECT;
-    const flag = superlinear(r.prism, r.prismRatio) || superlinear(r.hl, r.hlRatio)
+    const flag = isSuperlinear(r.prism, r.prismRatio) || isSuperlinear(r.hl, r.hlRatio)
         ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
     console.log(
@@ -122,8 +177,14 @@ for (const [label, gen] of [['increasing % widths', widths]]) {
     const small = gen(500);
     const large = gen(2000);
     const bytesRatio = large.length / small.length;
-    const prism = [small, large].map((src) => time(() => Prism.tokenize(src, Prism.languages.carve)));
-    const hl = [small, large].map((src) => time(() => hljs.highlight(src, { language: 'carve' })));
+    const prism = measurePair(
+        () => Prism.tokenize(small, Prism.languages.carve),
+        () => Prism.tokenize(large, Prism.languages.carve),
+    );
+    const hl = measurePair(
+        () => hljs.highlight(small, { language: 'carve' }),
+        () => hljs.highlight(large, { language: 'carve' }),
+    );
     // The input itself grows by `bytesRatio`, so LINEAR cost shows as that
     // ratio and not as 2 - the limit is the bytes ratio itself, not a multiple
     // of it. Measured at these two sizes, the bounded scan comes in at 4.4
@@ -135,8 +196,8 @@ for (const [label, gen] of [['increasing % widths', widths]]) {
     const limit = bytesRatio;
     const prismRatio = prism[1] / Math.max(prism[0], 0.01);
     const hlRatio = hl[1] / Math.max(hl[0], 0.01);
-    const superlinear = (ms, ratio) => ms > FLOOR && ratio > limit;
-    const flag = superlinear(prism[1], prismRatio) || superlinear(hl[1], hlRatio)
+    const flag = isSuperlinear(prism[1], prismRatio, FLOOR, limit)
+        || isSuperlinear(hl[1], hlRatio, FLOOR, limit)
         ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
     console.log(
@@ -178,9 +239,9 @@ for (const [label, gen] of [['increasing % widths', widths]]) {
 const LADDER = [16, 20, 24, 28, 32, 64, 128, 256, 512, 1024, 2048];
 const CEILING = 1000;
 const SUSPECT_MARGIN = 1.5;
-// Lower than `FLOOR`: these ratios are x4 per four lines rather than x4 per
-// doubling, so a few milliseconds against a few tenths is already a signal, and
-// waiting for 25 ms means waiting for the rung that costs two minutes.
+// Lower than `FLOOR`: an exponential can cross this floor at 32 lines and then
+// take minutes at the next rung. Paired sampling removes the scheduler noise
+// that made this floor unreliable on a loaded host (#423).
 const LINE_FLOOR = 5;
 
 const lineShapes = [
@@ -193,13 +254,6 @@ const lineShapes = [
 console.log('\nline shapes (cost per PARSE of the body, not per position)');
 console.log('shape                            lines  prism      ratio    hljs       ratio');
 for (const [label, gen] of lineShapes) {
-    // One warm run before the ladder: the first tokenize of a shape pays for
-    // JIT, and paying it inside the ladder shows up as a ratio under 1 on the
-    // second rung and hides the ones above it.
-    time(() => Prism.tokenize(gen(LADDER[0]), Prism.languages.carve));
-    time(() => hljs.highlight(gen(LADDER[0]), { language: 'carve' }));
-
-    let prev = null;
     let worstPrism = 0;
     let worstHl = 0;
     // A ratio is only evidence next to a measurable absolute time, the same rule
@@ -207,23 +261,28 @@ for (const [label, gen] of lineShapes) {
     // is growing fast while still cheap stays visible instead of reading as 0.
     let flagged = false;
     let last = { lines: 0, prism: 0, hl: 0 };
-    for (const lines of LADDER) {
-        const src = gen(lines);
-        const prism = time(() => Prism.tokenize(src, Prism.languages.carve));
-        const hl = time(() => hljs.highlight(src, { language: 'carve' }));
-        if (prev) {
-            const limit = (lines / prev.lines) * SUSPECT_MARGIN;
-            const pr = prism / Math.max(prev.prism, 0.01);
-            const hr = hl / Math.max(prev.hl, 0.01);
-            worstPrism = Math.max(worstPrism, pr);
-            worstHl = Math.max(worstHl, hr);
-            flagged = flagged
-                || (prism > LINE_FLOOR && pr > limit)
-                || (hl > LINE_FLOOR && hr > limit);
-        }
-        prev = { lines, prism, hl };
-        last = { lines, prism, hl };
-        if (flagged || prism > CEILING || hl > CEILING) break;
+    for (let rung = 1; rung < LADDER.length; rung++) {
+        const beforeLines = LADDER[rung - 1];
+        const lines = LADDER[rung];
+        const before = gen(beforeLines);
+        const after = gen(lines);
+        const prism = measurePair(
+            () => Prism.tokenize(before, Prism.languages.carve),
+            () => Prism.tokenize(after, Prism.languages.carve),
+        );
+        const hl = measurePair(
+            () => hljs.highlight(before, { language: 'carve' }),
+            () => hljs.highlight(after, { language: 'carve' }),
+        );
+        const limit = (lines / beforeLines) * SUSPECT_MARGIN;
+        const pr = prism[1] / Math.max(prism[0], 0.01);
+        const hr = hl[1] / Math.max(hl[0], 0.01);
+        worstPrism = Math.max(worstPrism, pr);
+        worstHl = Math.max(worstHl, hr);
+        flagged = isSuperlinear(prism[1], pr, LINE_FLOOR, limit)
+            || isSuperlinear(hl[1], hr, LINE_FLOOR, limit);
+        last = { lines, prism: prism[1], hl: hl[1] };
+        if (flagged || prism[1] > CEILING || hl[1] > CEILING) break;
     }
     const flag = flagged ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
@@ -264,16 +323,17 @@ for (const [label, gen] of lineBaits) {
     // the failure mode `bracedOpeners` exists to stop elsewhere in this file.
     const small = gen(16000);
     const large = gen(32000);
-    // One warm run: the first tokenize of a shape pays for JIT and shows up as
-    // a ratio under 1 on the rung after it.
-    time(() => Prism.tokenize(small, Prism.languages.carve));
-    time(() => hljs.highlight(small, { language: 'carve' }));
-    const prism = [small, large].map((s) => time(() => Prism.tokenize(s, Prism.languages.carve)));
-    const hl = [small, large].map((s) => time(() => hljs.highlight(s, { language: 'carve' })));
+    const prism = measurePair(
+        () => Prism.tokenize(small, Prism.languages.carve),
+        () => Prism.tokenize(large, Prism.languages.carve),
+    );
+    const hl = measurePair(
+        () => hljs.highlight(small, { language: 'carve' }),
+        () => hljs.highlight(large, { language: 'carve' }),
+    );
     const prismRatio = prism[1] / Math.max(prism[0], 0.01);
     const hlRatio = hl[1] / Math.max(hl[0], 0.01);
-    const superlinear = (ms, ratio) => ms > FLOOR && ratio > SUSPECT;
-    const flag = superlinear(prism[1], prismRatio) || superlinear(hl[1], hlRatio)
+    const flag = isSuperlinear(prism[1], prismRatio) || isSuperlinear(hl[1], hlRatio)
         ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
     console.log(
@@ -296,11 +356,12 @@ for (const [label, gen] of [
 ]) {
     const small = gen(16000);
     const large = gen(32000);
-    time(() => hljs.highlight(small, { language: 'carve' }));
-    const before = time(() => hljs.highlight(small, { language: 'carve' }));
-    const after = time(() => hljs.highlight(large, { language: 'carve' }));
+    const [before, after] = measurePair(
+        () => hljs.highlight(small, { language: 'carve' }),
+        () => hljs.highlight(large, { language: 'carve' }),
+    );
     const ratio = after / Math.max(before, 0.01);
-    const flag = after > FLOOR && ratio > SUSPECT ? '  <-- SUPERLINEAR' : '';
+    const flag = isSuperlinear(after, ratio) ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
     console.log(
         `${label.padEnd(26)} ${String(large.length).padStart(8)}`
