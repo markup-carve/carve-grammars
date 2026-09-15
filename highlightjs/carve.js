@@ -1602,6 +1602,27 @@
     };
 
     /*
+     * THE QUOTE DECIDES THE BRANCH, the technique Prism's `includeQuotedPart`
+     * already uses: a quote's two alternatives carry lookaheads that negate
+     * each other, so exactly one is ever viable at a given quote, and the
+     * ordinary class below excludes both quote characters so nothing else can
+     * claim one. The alternation therefore offers the engine no second path to
+     * re-enter - which is what keeps the scan linear, because as a plain
+     * alternation a `"` is both an opener and an ordinary character and a line
+     * with no closer makes the engine try both at every quote
+     * (scripts/scan-superlinear.mjs, the `unterminated, closer baits` row).
+     */
+    const includeQuotedPart = (quote) => {
+        const body = `(?:\\\\.|[^${quote}\\\\\\n])*`;
+        return `${quote}(?=${body}${quote})${body}${quote}|${quote}(?!${body}${quote})`;
+    };
+
+    /* One unit of the opener's walk: a terminated run, a lone quote that opens
+     * none, or a single ordinary character that can be neither quote. */
+    const INCLUDE_SCAN_UNIT =
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^"'\\n])`;
+
+    /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
      * section 19, grammar.ebnf `include_directive`). The core leaves it
      * literal; a processor expands it only when a host supplies a resolver.
@@ -1621,14 +1642,23 @@
         // `{{` simply never opens the mode, which is what the processor does
         // with it too: leave it as text.
         //
-        // `$` IS THE SECOND HALF OF THAT GUARANTEE. The lookahead only asks
-        // whether SOME `}}` is on the line, not whether one falls outside a
-        // quoted run, and since #2013 a run may hold the pair - so a line whose
-        // only pair is inside one (`@label:"a b }} tail "later"`) opens the mode
-        // and reaches no `}}`. Ending at the line instead keeps that residual to
-        // one line; TextMate and Prism read the same line as no directive at
-        // all, and the divergence is pinned in tests/include-option-value-test.js.
-        begin: /\{\{(?=[ \t]+[^\n]*?\}\})/,
+        // AND THE CLOSER IS THE FIRST `}}` OUTSIDE A QUOTED RUN
+        // (markup-carve/carve#2013), so the lookahead has to READ what lies
+        // between rather than ask whether SOME pair is on the line. Once a run
+        // may hold the pair, a line whose only pair sits inside a terminated
+        // one has no closer at all: `[^\n]*?\}\}` said yes there, the mode
+        // opened, `end` never fired, and `|$` was all that kept the damage to a
+        // single line (carve-grammars#418). TextMate and Prism read such a line
+        // as no directive, their outer pattern needing a closer it cannot find,
+        // and this is what lets highlight.js reach the same reading
+        // (sublime-carve#47, which closed the same gap on the same technique).
+        //
+        // The tail is LAZY, so the closer is tried at each position and one
+        // unit is consumed only when it is not there. `end` keeps `|$` as the
+        // line bound: the opener's walk and the contained modes are separate
+        // readings of the run, and nothing should paint past the line if they
+        // ever disagree.
+        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?\\}\\})`),
         end: /\}\}|$/,
         relevance: 10,
         // BY PART. The mode's own boundaries are what keep TAG and MENTION out
