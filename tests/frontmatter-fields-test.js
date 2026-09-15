@@ -174,6 +174,15 @@ check('a key carrying a regex metacharacter is matched literally', () => {
     assert.strictEqual(view.control('a.b').value, 'right');
 });
 
+check('a configured field round-trips a JSON frontmatter key', () => {
+    const view = mount({ fields: [{ key: 'summary' }] }, '{\n  "title": "Original",\n  "summary": "kept"\n}', 'json');
+    assert.strictEqual(view.control('summary').value, 'kept');
+    change(view.control('summary'), 'Edited');
+    const out = view.carve();
+    assert.match(out, /"summary": "Edited"/);
+    assert.match(out, /"title": "Original"/);
+});
+
 // --- input attributes -------------------------------------------------------
 
 check('an allowlisted input attribute reaches the control', () => {
