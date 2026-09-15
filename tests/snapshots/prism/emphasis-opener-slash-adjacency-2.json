@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "a/"
-  },
-  {
-    "type": "underline",
-    "text": "_y_"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "a/_y_\n"
   }
 ]

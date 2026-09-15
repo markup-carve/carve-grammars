@@ -176,8 +176,8 @@
         // hard-break rule - Prism applies a pattern to the remaining text chunk,
         // so `^` matches at a chunk boundary rather than a real line start.
         pattern: RegExp(
-            '(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'
-            + '|\\{[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}',
+            '(?<=(?:^|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'
+            + '|\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}',
         ),
         alias: 'attr-value',
         inside: {
@@ -194,6 +194,34 @@
     };
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
+
+    // A bare delimiter cannot close through a braced inline. Keep each member
+    // of the brace-pair family atomic while a surrounding bare span searches
+    // for its closer. The bodies use the same bounded, tempered shape as the
+    // individual forced/editorial rules below.
+    var opaqueBracedInline = '\\{(?:'
+        + '\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*'
+        + '|/(?:[^/\\n]|/(?!\\})){1,4096}/'
+        + '|_(?:[^_\\n]|_(?!\\})){1,4096}_'
+        + '|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^'
+        + '|,(?:[^,\\n]|,(?!\\})){1,4096},'
+        + '|~(?:[^~\\n]|~(?!\\})){1,4096}~'
+        + '|=(?:[^=\\n]|=(?!\\})){1,4096}='
+        + '|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+'
+        + '|-(?:[^-\\n]|-(?!\\})){1,4096}-'
+        + '|#(?:[^#\\n]|#(?!\\})){1,4096}#'
+        + '|%(?:[^%\\n]|%(?!\\})){1,4096}%'
+        + ')\\}';
+
+    // Keep a complete braced inline atomic while a bare span searches for its
+    // closer. An escape pair comes first so `\\{_..._}` is prose rather than
+    // a forced span. The fallback is barred only when the WHOLE braced form
+    // matches: an incomplete `{_` and literal pairs such as `{--}` must remain
+    // ordinary body text. Bound the atom count because Prism retries greedy
+    // tokens from many offsets.
+    function bareBody(delimiter, repetition = '{0,4096}') {
+        return '(?:\\\\[^\\n]|' + opaqueBracedInline + '|(?!' + opaqueBracedInline + ')[^' + delimiter + '\\\\\\n])' + repetition;
+    }
 
     // Shared inline emphasis/markup, referenced from block tokens that contain
     // running text (headings, list items, table cells, quotes).
@@ -250,9 +278,8 @@
             pattern: /\/\*(?=\S)(?:[^*\n]|\*(?!\/)|\n(?!\s*\n)){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?!\*[\s*])(?:[^/\n]|(?<=\w)\/(?=\w)|\n(?!\s*\n)){1,4096}(?<![\s*])\/\*(?!\w)/,
             alias: 'important',
         },
-        // The "no leading/trailing space" rule is expressed without JS
-        // lookbehind (unsupported on Safari < 16.4 and some engines): the first
-        // and last content chars are required to be non-space directly.
+        // Bare runs require non-space flanks. Forced runs do not: braces make
+        // `{~ ~}` unambiguous, and the body only has to be non-empty.
         // Forced intraword family (PART 9 S22): `{*x*}` `{/x/}` `{_x_}` `{~x~}`.
         // Content may contain the delimiter -- `{/a/b/}` is <em>a/b</em> -- so the
         // run ends at the closing `X}`. These MUST precede 'attributes', or
@@ -270,15 +297,15 @@
         // past them is simply not matched and the `{` stays plain text, which is
         // the safe direction.
         'forced-bold': {
-            pattern: /\{\*(?=\S)[^*\n]{0,4096}(?:\*(?!\})[^*\n]{0,4096}){0,32}\*\}/,
+            pattern: /\{\*(?!\*\})[^*\n]{0,4096}(?:\*(?!\})[^*\n]{0,4096}){0,32}\*\}/,
             alias: 'bold',
         },
         'forced-italic': {
-            pattern: /\{\/(?=\S)[^/\n]{0,4096}(?:\/(?!\})[^/\n]{0,4096}){0,32}\/\}/,
+            pattern: /\{\/(?!\/\})[^/\n]{0,4096}(?:\/(?!\})[^/\n]{0,4096}){0,32}\/\}/,
             alias: 'italic',
         },
         'forced-underline': {
-            pattern: /\{_(?=\S)[^_\n]{0,4096}(?:_(?!\})[^_\n]{0,4096}){0,32}_\}/,
+            pattern: /\{_(?!_\})[^_\n]{0,4096}(?:_(?!\})[^_\n]{0,4096}){0,32}_\}/,
             alias: 'underline',
         },
         'forced-strike': {
@@ -286,27 +313,29 @@
             // old form barred a substitution arrow from the body, and the lazy
             // scan stopped at the first `~}`, so a `~` inside the body is
             // neither.
-            pattern: /\{~(?=\S)[^~\n]{0,4096}(?:~(?![>}])[^~\n]{0,4096}){0,32}~\}/,
+            // `(?!~\})` rejects the empty `{~~}` while admitting whitespace
+            // as real content, including the corpus spelling `{~ ~}`.
+            pattern: /\{~(?!~\})[^~\n]{0,4096}(?:~(?![>}])[^~\n]{0,4096}){0,32}~\}/,
             alias: 'deleted',
         },
         'bold': {
-            pattern: /\*[^*\s\n](?:[^*\n]*?[^*\s\n])?\*/,
+            pattern: new RegExp('\\*(?![\\s*])' + bareBody('*') + '(?<=\\S)\\*'),
             alias: 'bold',
         },
         'italic': {
             // leading guard via Prism lookbehind (avoids URLs, paths); the
             // trailing `(?![\w/])` lookahead is fine (lookahead is universal).
-            pattern: /(^|[^\w/])\/[^/\s\n](?:[^/\n]*?[^/\s\n])?\/(?![\w/])/,
+            pattern: new RegExp('(^|[^\\w/])/(?![\\s/])' + bareBody('/') + '(?<=\\S)/(?![A-Za-z0-9/])'),
             lookbehind: true,
             alias: 'italic',
         },
         'underline': {
-            pattern: /(^|[^\w_])_[^_\s\n](?:[^_\n]*?[^_\s\n])?_(?![\w_])/,
+            pattern: new RegExp('(^|[^\\w_/])_(?![\\s_])' + bareBody('_') + '(?<=\\S)_(?![\\w_])'),
             lookbehind: true,
             alias: 'underline',
         },
         'strike': {
-            pattern: /~[^~\s\n](?:[^~\n]*?[^~\s\n])?~/,
+            pattern: new RegExp('~(?![\\s~])' + bareBody('~') + '(?<=\\S)~'),
             alias: 'deleted',
         },
         'highlight': {
@@ -404,16 +433,21 @@
             // the last unbounded quantifier on a line that spells a braced
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
-            pattern: /\{=(?=\S)[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)(?:\\.|[^=\n\\]){1,4096}?(?<=\S)=(?![\w=])/,
+            pattern: new RegExp(
+                /\{=(?!=\})[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|/.source
+                + /(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)/.source
+                + bareBody('=', '{1,4096}?')
+                + /(?<=\S)=(?![\w=])/.source,
+            ),
             alias: 'important',
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
         'superscript': {
-            pattern: /\{\^(?=\S)[^\^\n]{0,4096}(?:\^(?!\})[^\^\n]{0,4096}){0,32}\^\}/,
+            pattern: /\{\^(?!\^\})[^\^\n]{0,4096}(?:\^(?!\})[^\^\n]{0,4096}){0,32}\^\}/,
             alias: 'important',
         },
         'subscript': {
-            pattern: /\{,(?=\S)[^,\n]{0,4096}(?:,(?!\})[^,\n]{0,4096}){0,32},\}/,
+            pattern: /\{,(?!,\})[^,\n]{0,4096}(?:,(?!\})[^,\n]{0,4096}){0,32},\}/,
             alias: 'important',
         },
     };
@@ -1627,7 +1661,7 @@
         // instead of on `\n`, so the run still crosses lines the way `[^}]*`
         // did and a body may still hold a non-closing `+`.
         'inserted': {
-            pattern: /\{\+[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
+            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
             alias: 'inserted',
         },
         // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
@@ -1648,7 +1682,7 @@
             alias: 'important',
         },
         'critic-comment': {
-            pattern: /\{#[^}]{0,4096}#\}/,
+            pattern: /\{#(?!#\})[^}]{0,4096}#\}/,
             alias: 'comment',
         },
 

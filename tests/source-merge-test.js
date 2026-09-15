@@ -34,12 +34,11 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// The three move together with the CORPUS, not with the projection: this bump
-// The section 461 bump adds four documents. Three carry a source envelope and
-// all three append with authored layout; the body-column case projects without
-// one. The conflict set is the number to watch and remains unchanged.
-assert.strictEqual(envelopes, 359, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 355, 'an append normalized authored layout in additional documents');
+// The three move together with the corpus. Sections 463-466 add nine documents;
+// six carry a source envelope. The conflict set is the number to watch and
+// remains unchanged.
+assert.strictEqual(envelopes, 365, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 361, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });

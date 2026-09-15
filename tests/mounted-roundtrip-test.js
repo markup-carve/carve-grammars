@@ -479,5 +479,9 @@ imported.destroy();
 // 231 -> 234 with section 461. The three column-sensitive authored layouts
 // protected by source envelopes change when mounted through HTML; the fourth
 // variant remains render-equivalent.
-assert.strictEqual(changed.length, 234, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 234 -> 236 with sections 463-466. Two of the nine new documents have a
+// mounted projection whose edited rendering differs; the other seven remain
+// render-equivalent.
+assert.strictEqual(changed.length, 236, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

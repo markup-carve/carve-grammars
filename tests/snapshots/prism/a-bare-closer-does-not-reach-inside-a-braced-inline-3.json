@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold",
+    "text": "*a {_b* c_} d*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,19 +1,31 @@
 [
   {
-    "type": "text",
-    "text": "\\"
-  },
-  {
-    "type": "italic",
-    "text": "/literal\\/"
+    "type": "escape",
+    "text": "\\/"
   },
   {
     "type": "text",
-    "text": " and \\"
+    "text": "literal"
   },
   {
-    "type": "bold",
-    "text": "*not bold\\*"
+    "type": "escape",
+    "text": "\\/"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "escape",
+    "text": "\\*"
+  },
+  {
+    "type": "text",
+    "text": "not bold"
+  },
+  {
+    "type": "escape",
+    "text": "\\*"
   },
   {
     "type": "text",

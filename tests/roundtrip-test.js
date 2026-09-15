@@ -615,10 +615,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *
  * 356 -> 359 with section 461. Three of its four placement variants need an
  * envelope to retain authored columns; the body-column variant writes directly.
+ *
+ * 359 -> 365 with sections 463-466. Six of the nine new documents need an
+ * envelope to retain authored delimiter or container placement; all still use
+ * structured nodes and none needs the whole-document fallback atom.
  */
 assert.strictEqual(
-    envelopedFiles.length, 359,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 359`,
+    envelopedFiles.length, 365,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 365`,
 );
 
 assert.strictEqual(

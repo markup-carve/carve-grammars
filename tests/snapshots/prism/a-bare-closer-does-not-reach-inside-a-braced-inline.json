@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "~"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/x/}"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/y~/}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

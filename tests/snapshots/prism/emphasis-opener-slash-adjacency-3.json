@@ -1,14 +1,10 @@
 [
   {
-    "type": "text",
+    "type": "italic",
     "text": "/a/"
   },
   {
-    "type": "underline",
-    "text": "_b_"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "_b_\n"
   }
 ]

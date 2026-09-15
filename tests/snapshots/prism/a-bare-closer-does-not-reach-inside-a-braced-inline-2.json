@@ -1,0 +1,10 @@
+[
+  {
+    "type": "strike",
+    "text": "~a{+b~+} c~"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
