@@ -13,6 +13,7 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- The manual performance sweep uses the median of seven interleaved timing pairs instead of failing on one scheduler stall. Linear and quadratic oracle workloads check both verdicts without relaxing the 3x cutoff (#423).
 - A long run of spaces before plain text no longer takes quadratic time in highlight.js (#440).
 - highlight.js reads the whole include-directive line for a closer OUTSIDE a quoted run instead of opening on any `}}` pair on it. A line whose only pair sits inside a terminated quoted run is no longer scoped as a directive, which is what TextMate and Prism already did (#419).
 - The include directive's closer is the first `}}` outside a quoted run, on every surface (#418).
