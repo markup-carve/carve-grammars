@@ -4,6 +4,14 @@ const FIELDS = ['title', 'lang', 'author', 'description'];
 let nextBodyId = 0;
 
 function fieldValue(source, key, format) {
+    if (format === 'json') {
+        try {
+            const fields = JSON.parse(source);
+            return fields && !Array.isArray(fields) && typeof fields[key] === 'string' ? fields[key] : '';
+        } catch {
+            return '';
+        }
+    }
     const separator = format === 'toml' ? '=' : ':';
     const match = source.match(new RegExp(`^${key}\\s*${separator}\\s*(.*?)\\s*$`, 'm'));
     if (!match) return '';
@@ -16,6 +24,17 @@ function fieldValue(source, key, format) {
 }
 
 function setField(source, key, value, format) {
+    if (format === 'json') {
+        try {
+            const fields = JSON.parse(source);
+            if (!fields || Array.isArray(fields)) return source;
+            if (value) fields[key] = value;
+            else delete fields[key];
+            return JSON.stringify(fields, null, 2);
+        } catch {
+            return source;
+        }
+    }
     const separator = format === 'toml' ? '=' : ':';
     const line = format === 'toml' ? `${key} = ${JSON.stringify(value)}` : `${key}: ${JSON.stringify(value)}`;
     const pattern = new RegExp(`^${key}\\s*${separator}.*(?:\\n|$)`, 'm');
@@ -26,6 +45,16 @@ function setField(source, key, value, format) {
         if (table >= 0) return `${source.slice(0, table).replace(/\n*$/, '\n')}${line}\n${source.slice(table)}`;
     }
     return source ? `${source.replace(/\n+$/, '')}\n${line}` : line;
+}
+
+function fieldsAreEditable(source, format) {
+    if (format !== 'json') return true;
+    try {
+        const fields = JSON.parse(source);
+        return Boolean(fields) && !Array.isArray(fields);
+    } catch {
+        return false;
+    }
 }
 
 /** Authored document front matter carried as an opaque block. */
@@ -107,6 +136,7 @@ export const CarveFrontmatter = Node.create({
                 const format = current.attrs.format || 'yaml';
                 const title = fieldValue(current.attrs.content || '', 'title', format) || 'Untitled';
                 const lang = fieldValue(current.attrs.content || '', 'lang', format);
+                const fieldsEditable = editor.isEditable && fieldsAreEditable(current.attrs.content || '', format);
                 toggle.textContent = `Document metadata · ${title}${lang ? ` · ${lang}` : ''}`;
                 dom.setAttribute('aria-label', 'Document metadata');
                 raw.value = current.attrs.content || '';
@@ -120,7 +150,7 @@ export const CarveFrontmatter = Node.create({
                 raw.disabled = !editor.isEditable;
                 for (const [key, input] of inputs) {
                     input.value = fieldValue(current.attrs.content || '', key, format);
-                    input.disabled = !editor.isEditable;
+                    input.disabled = !fieldsEditable;
                 }
             };
             toggle.addEventListener('click', () => {
