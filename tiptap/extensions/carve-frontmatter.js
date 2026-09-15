@@ -1,7 +1,47 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 
-const FIELDS = ['title', 'lang', 'author', 'description'];
+const DEFAULT_FIELDS = [
+    { key: 'title' },
+    { key: 'lang' },
+    { key: 'author' },
+    { key: 'description', multiline: true },
+];
+
+// The component owns name, type, value, disabled and readonly, so a descriptor
+// may only add native validation and input hints. Anything else - an event
+// handler above all - is refused loudly rather than dropped, because a silently
+// ignored attribute reads as a working constraint that never fires.
+const ALLOWED_INPUT_ATTRIBUTES = new Set([
+    'required', 'autocomplete', 'inputmode', 'minlength', 'maxlength', 'pattern', 'aria-describedby',
+]);
+
+function normalizeFields(fields) {
+    if (!Array.isArray(fields)) throw new TypeError('carveFrontmatter.fields must be an array of field descriptors.');
+    const seen = new Set();
+    return fields.map(field => {
+        if (!field || typeof field.key !== 'string' || !field.key) {
+            throw new TypeError('carveFrontmatter.fields: every descriptor needs a non-empty string key.');
+        }
+        // One control per key: a second one would render blank and write
+        // nowhere, because the controls are held by key.
+        if (seen.has(field.key)) {
+            throw new TypeError(`carveFrontmatter.fields: ${field.key} is configured twice.`);
+        }
+        seen.add(field.key);
+        for (const name of Object.keys(field.inputAttributes ?? {})) {
+            if (!ALLOWED_INPUT_ATTRIBUTES.has(name)) {
+                throw new TypeError(`carveFrontmatter.fields: ${field.key} may not set the "${name}" attribute.`);
+            }
+        }
+        return field;
+    });
+}
+
 let nextBodyId = 0;
+
+// Keys are consumer-supplied once fields are configurable, so they reach a
+// RegExp as data, not as a pattern.
+const escapeKey = key => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 function fieldValue(source, key, format) {
     if (format === 'json') {
@@ -13,7 +53,7 @@ function fieldValue(source, key, format) {
         }
     }
     const separator = format === 'toml' ? '=' : ':';
-    const match = source.match(new RegExp(`^${key}\\s*${separator}\\s*(.*?)\\s*$`, 'm'));
+    const match = source.match(new RegExp(`^${escapeKey(key)}\\s*${separator}\\s*(.*?)\\s*$`, 'm'));
     if (!match) return '';
     const value = match[1];
     if (value.startsWith('"') && value.endsWith('"')) {
@@ -37,7 +77,7 @@ function setField(source, key, value, format) {
     }
     const separator = format === 'toml' ? '=' : ':';
     const line = format === 'toml' ? `${key} = ${JSON.stringify(value)}` : `${key}: ${JSON.stringify(value)}`;
-    const pattern = new RegExp(`^${key}\\s*${separator}.*(?:\\n|$)`, 'm');
+    const pattern = new RegExp(`^${escapeKey(key)}\\s*${separator}.*(?:\\n|$)`, 'm');
     if (pattern.test(source)) return source.replace(pattern, value ? `${line}\n` : '');
     if (!value) return source;
     if (format === 'toml') {
@@ -63,7 +103,7 @@ export const CarveFrontmatter = Node.create({
     group: 'block',
     atom: true,
     addOptions() {
-        return { highlight: null };
+        return { highlight: null, fields: DEFAULT_FIELDS };
     },
     addAttributes() {
         return { content: { default: '' }, format: { default: 'yaml' } };
@@ -91,15 +131,22 @@ export const CarveFrontmatter = Node.create({
             body.hidden = true;
             toggle.setAttribute('aria-controls', body.id);
 
+            const descriptors = normalizeFields(this.options.fields ?? DEFAULT_FIELDS);
             const fields = document.createElement('div');
             fields.className = 'carve-frontmatter-fields';
             const inputs = new Map();
-            for (const key of FIELDS) {
+            for (const descriptor of descriptors) {
+                const key = descriptor.key;
                 const label = document.createElement('label');
-                label.textContent = key[0].toUpperCase() + key.slice(1);
-                const input = key === 'description' ? document.createElement('textarea') : document.createElement('input');
+                label.textContent = descriptor.label ?? (key[0].toUpperCase() + key.slice(1));
+                const input = descriptor.multiline ? document.createElement('textarea') : document.createElement('input');
                 input.name = key;
                 input.autocomplete = 'off';
+                if (descriptor.placeholder) input.placeholder = descriptor.placeholder;
+                for (const [name, value] of Object.entries(descriptor.inputAttributes ?? {})) {
+                    if (value === false || value === null || value === undefined) continue;
+                    input.setAttribute(name, value === true ? '' : String(value));
+                }
                 label.appendChild(input);
                 fields.appendChild(label);
                 inputs.set(key, input);
@@ -120,7 +167,7 @@ export const CarveFrontmatter = Node.create({
             rawEditor.appendChild(highlighted);
             rawEditor.appendChild(raw);
             rawLabel.appendChild(rawEditor);
-            body.appendChild(fields);
+            if (descriptors.length) body.appendChild(fields);
             body.appendChild(rawLabel);
             dom.appendChild(toggle);
             dom.appendChild(body);
@@ -156,10 +203,16 @@ export const CarveFrontmatter = Node.create({
             toggle.addEventListener('click', () => {
                 body.hidden = !body.hidden;
                 toggle.setAttribute('aria-expanded', String(!body.hidden));
-                if (!body.hidden) inputs.get('title')?.focus();
+                if (!body.hidden) (inputs.values().next().value ?? raw).focus();
             });
             for (const [key, input] of inputs) {
-                input.addEventListener('change', () => commit(setField(current.attrs.content || '', key, input.value, current.attrs.format || 'yaml')));
+                input.addEventListener('change', () => {
+                    if (typeof input.checkValidity === 'function' && !input.checkValidity()) {
+                        input.reportValidity?.();
+                        return;
+                    }
+                    commit(setField(current.attrs.content || '', key, input.value, current.attrs.format || 'yaml'));
+                });
             }
             raw.addEventListener('change', () => {
                 const hasFence = /(^|\n)---(?:\s|$)/.test(raw.value);
