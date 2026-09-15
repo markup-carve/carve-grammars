@@ -1620,8 +1620,16 @@
         // Requiring the closer on the same line up front means an unterminated
         // `{{` simply never opens the mode, which is what the processor does
         // with it too: leave it as text.
+        //
+        // `$` IS THE SECOND HALF OF THAT GUARANTEE. The lookahead only asks
+        // whether SOME `}}` is on the line, not whether one falls outside a
+        // quoted run, and since #2013 a run may hold the pair - so a line whose
+        // only pair is inside one (`@label:"a b }} tail "later"`) opens the mode
+        // and reaches no `}}`. Ending at the line instead keeps that residual to
+        // one line; TextMate and Prism read the same line as no directive at
+        // all, and the divergence is pinned in tests/include-option-value-test.js.
         begin: /\{\{(?=[ \t]+[^\n]*?\}\})/,
-        end: /\}\}/,
+        end: /\}\}|$/,
         relevance: 10,
         // BY PART. The mode's own boundaries are what keep TAG and MENTION out
         // of the directive, so painting the run one colour buys nothing - and a
@@ -1651,17 +1659,15 @@
                 // `quoted_value` does [CARVE-P4-006]: one that did not paired
                 // with a quote lines away, ate the `}}` on the way, and left
                 // the mode painting the rest of the line (carve-grammars#409).
-                // They exclude the `}}` PAIR for the same reason. This mode has
-                // no outer bound, so a value holding one closed against a quote
-                // further along the line and the directive ended on the SECOND
-                // closer: `@label:"a }} more" }} end` read the value as
-                // `"a }} more"` and swallowed `}} more` into the directive,
-                // where the two other surfaces stopped at the first `}}`. A
-                // single `}` IS admitted - `quoted_value` admits it, and the
-                // other two surfaces now read it the same way
-                // (carve-grammars#412, tree-sitter-carve#288).
+                // They ADMIT the `}}` pair, which is what puts the closer
+                // outside the quoted run (markup-carve/carve#2013, superseding
+                // the `\}(?!\})` bound of carve-grammars#413): `end` is scanned
+                // alongside the contained modes and the earliest match wins, so
+                // consuming the run here is what stops `end` firing inside it.
+                // The unquoted alternative is LAST, so an unterminated quote
+                // falls back to it and the closer stays at the first pair.
                 className: 'literal',
-                begin: /(?<=:)(?:"(?:\\.|\}(?!\})|[^"\\}\n])*"|'(?:\\.|\}(?!\})|[^'\\}\n])*'|[^\s}]+)/,
+                begin: /(?<=:)(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
             },
         ],
     };

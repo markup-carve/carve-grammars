@@ -528,21 +528,20 @@
      * line makes the engine try both at every quote
      * (scripts/scan-superlinear.mjs, tests/scans-are-bounded-test.js).
      *
-     * A QUOTED RUN STOPS AT THE `}}` PAIR, not only at the newline, and the
-     * exclusion is load-bearing in BOTH directions. Admitting the pair lets the
-     * value close against a quote further along the line, and the directive
-     * then ends on the SECOND closer - `{{ ch.crv @label:"a }} more" }} end`
-     * swallows `}} more` into itself (measured in tree-sitter-carve#288).
-     * Refusing it reads that value as the unterminated `"a` and ends the
-     * directive at the first `}}`, which is what leaves a malformed directive
-     * as text - the call the `}}` lookahead in the highlight.js mode makes
-     * (#403, #409).
+     * A QUOTED RUN MAY HOLD THE `}}` PAIR, and the directive's closer is the
+     * first pair OUTSIDE one (markup-carve/carve#2013, superseding the
+     * `\}(?!\})` bound of #413). It is the QUOTE'S TERMINATION that decides,
+     * not the pair: `@label:"a }} more" }} end` closes at the second pair
+     * because the run is terminated, while an unterminated quote opens no run,
+     * falls to the negative branch above, and leaves the closer at the first
+     * pair - which is what still leaves a malformed directive as text (#403,
+     * #409).
      *
      * @param {string} quote - `"` or `'`.
      * @returns {string} that quote's two alternatives, as regex source.
      */
     function includeQuotedPart(quote) {
-        var body = '(?:\\\\[^\\n]|\\}(?!\\})|[^' + quote + '\\\\}\\n])*';
+        var body = '(?:\\\\[^\\n]|[^' + quote + '\\\\\\n])*';
         return quote + '(?=' + body + quote + ')' + body + quote
             + '|' + quote + '(?!' + body + quote + ')';
     }
