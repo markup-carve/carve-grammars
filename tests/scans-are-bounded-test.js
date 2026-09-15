@@ -270,13 +270,53 @@ ok('the lazy fixture is the one the narrow regex missed', () => {
  * Each affected mode has a one-character sentinel. Checking it before the
  * lookbehind makes irrelevant positions fail without reading the prefix. Read
  * the modes so patterns assembled from strings and nested modes are covered.
+ *
+ * Both halves are read structurally rather than by spelling. The first version
+ * of this check recognized the run only as `[ \t]*`, so `[\t ]*`, `[ ]*`,
+ * `\s*` and `[^\S\n]*` were the same defect wearing a spelling it did not
+ * know (#442), and the sentinel had to come from a list of four literals.
  */
-const hasUnguardedIndentLookbehind = (pattern) => {
-    if (!(pattern instanceof RegExp) || !/\[ \\t\][*+]/.test(pattern.source)) return false;
-    return [...pattern.source.matchAll(/\(\?<=/g)].some((match) => {
-        const prefix = pattern.source.slice(0, match.index);
-        return !/(?:\(\?=\\?[{>%]\)|\(\?=\[\^#@}\\s\]\))$/.test(prefix);
+const scanOutsideClasses = (source, visit) => {
+    let inClass = false;
+    for (let i = 0; i < source.length; i++) {
+        const c = source[i];
+        if (c === '\\') { i++; continue; }
+        if (inClass) { if (c === ']') inClass = false; continue; }
+        if (c === '[') { inClass = true; continue; }
+        if (visit(c, i)) return true;
+    }
+    return false;
+};
+
+// Costs more the longer the input it sits on: `*`, `+` or an open-ended `{n,}`.
+const isVariableLength = (source) => scanOutsideClasses(
+    source,
+    (c, i) => c === '*' || c === '+' || (c === '{' && /^\{\d*,\d*\}/.test(source.slice(i))),
+);
+
+const groupBody = (source, at) => {
+    let depth = 0;
+    let end = source.length;
+    scanOutsideClasses(source.slice(at), (c, i) => {
+        if (c === '(') depth++;
+        else if (c === ')' && --depth === 0) { end = at + i; return true; }
+        return false;
     });
+    return source.slice(at + 4, end);
+};
+
+// A fixed-cost lookahead immediately before the lookbehind is the sentinel.
+const hasSentinel = (prefix) => {
+    const match = /\(\?=((?:\\.|\[(?:\\.|[^\]])*\]|[^()])*)\)$/.exec(prefix);
+    return Boolean(match) && !isVariableLength(match[1]);
+};
+
+const hasUnguardedIndentLookbehind = (pattern) => {
+    if (!(pattern instanceof RegExp)) return false;
+    return [...pattern.source.matchAll(/\(\?<=/g)].some((match) => (
+        isVariableLength(groupBody(pattern.source, match.index))
+        && !hasSentinel(pattern.source.slice(0, match.index))
+    ));
 };
 
 ok('the indentation-lookbehind oracle rejects an unguarded pre-fix shape', () => {
@@ -284,6 +324,19 @@ ok('the indentation-lookbehind oracle rejects an unguarded pre-fix shape', () =>
     assert.ok(hasUnguardedIndentLookbehind(/(?<=\{\{[ \t]+)[^#@}\s"]/));
     assert.ok(!hasUnguardedIndentLookbehind(/(?=>)(?<=^[ \t]*)>/));
     assert.ok(!hasUnguardedIndentLookbehind(/(?=[^#@}\s])(?<=\{\{[ \t]+)[^#@}\s"]/));
+});
+
+ok('the oracle reads the run structurally, not by its spelling', () => {
+    for (const run of ['[\\t ]*', '[ ]*', '\\s*', '[^\\S\\n]*', '[ \\t]{2,}']) {
+        assert.ok(hasUnguardedIndentLookbehind(new RegExp(`(?<=^${run})>`)), run);
+        assert.ok(!hasUnguardedIndentLookbehind(new RegExp(`(?=>)(?<=^${run})>`)), run);
+    }
+});
+
+ok('the oracle passes a fixed-length lookbehind and any fixed-cost sentinel', () => {
+    assert.ok(!hasUnguardedIndentLookbehind(/(?<=\n> )x/));
+    assert.ok(!hasUnguardedIndentLookbehind(/(?=\|)(?<=^[ \t]*)\|/));
+    assert.ok(hasUnguardedIndentLookbehind(/(?=[ \t]*)(?<=^[ \t]*)>/));
 });
 
 ok('highlightjs/carve.js: indentation lookbehinds check their sentinel first', () => {
