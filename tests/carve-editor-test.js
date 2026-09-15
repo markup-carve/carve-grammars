@@ -226,17 +226,40 @@ tomlTitle.value = 'Top level';
 tomlTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
 assert.match(element.value, /title = "Top level"\n\[book\]/, 'new TOML fields are inserted before tables');
 
+element.value = '---json\n{"title":"Original","author":"Ada","tags":["kept"],"project":{"code":"PRJ-1"}}\n---\n\nBody.\n';
+const jsonTitle = element.shadowRoot.querySelector('input[name="title"]');
+assert.strictEqual(jsonTitle.value, 'Original', 'JSON metadata exposes a top-level title field');
+jsonTitle.value = 'Edited';
+jsonTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+const jsonPayload = element.value.match(/^---json\n([\s\S]*?)\n---/)[1];
+assert.deepStrictEqual(JSON.parse(jsonPayload), {
+    title: 'Edited',
+    author: 'Ada',
+    tags: ['kept'],
+    project: { code: 'PRJ-1' },
+}, 'editing JSON metadata preserves a valid JSON object and its unknown fields');
+
+element.value = '---json\n{"title":"Broken"\n---\n\nBody.\n';
+const invalidJsonTitle = element.shadowRoot.querySelector('input[name="title"]');
+assert.strictEqual(invalidJsonTitle.disabled, true, 'malformed JSON disables structured metadata fields');
+const invalidJsonBeforeEdit = element.value;
+invalidJsonTitle.value = 'Do not write';
+invalidJsonTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.strictEqual(element.value, invalidJsonBeforeEdit, 'structured edits cannot corrupt malformed JSON frontmatter');
+
+element.value = '---json\n{"title":"Raw source"}\n---\n\nBody.\n';
+const readonlyJsonTitle = element.shadowRoot.querySelector('input[name="title"]');
 const raw = element.shadowRoot.querySelector('.carve-frontmatter-raw textarea');
-assert.ok(element.shadowRoot.querySelector('.carve-frontmatter-highlight code.language-toml'), 'raw metadata exposes its format to a syntax highlighter');
+assert.ok(element.shadowRoot.querySelector('.carve-frontmatter-highlight code.language-json'), 'raw metadata exposes its format to a syntax highlighter');
 const beforeInvalidRaw = element.value;
 raw.value = 'title = "Unsafe"\n---\n# body';
 raw.dispatchEvent(new win.Event('change', { bubbles: true }));
 assert.strictEqual(element.value, beforeInvalidRaw, 'raw metadata rejects an embedded closing fence');
 
 element.setAttribute('readonly', '');
-assert.strictEqual(tomlTitle.disabled, true, 'readonly disables metadata controls');
-tomlTitle.value = 'Bypass';
-tomlTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
+assert.strictEqual(readonlyJsonTitle.disabled, true, 'readonly disables metadata controls');
+readonlyJsonTitle.value = 'Bypass';
+readonlyJsonTitle.dispatchEvent(new win.Event('change', { bubbles: true }));
 assert.doesNotMatch(element.value, /Bypass/, 'readonly metadata cannot dispatch edits');
 element.removeAttribute('readonly');
 
@@ -255,4 +278,4 @@ assert.strictEqual(element._editor, null, 'destroys its editor when disconnected
 document.body.appendChild(element);
 assert.ok(element.shadowRoot.querySelector('.ProseMirror'), 'recreates its editor when reconnected');
 assert.strictEqual(element.value, beforeReconnect, 'keeps source while reconnected');
-console.log('carve-editor custom element: 50 passed');
+console.log('carve-editor custom element: 54 passed');
