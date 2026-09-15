@@ -1618,9 +1618,10 @@
     };
 
     /* One unit of the opener's walk: a terminated run, a lone quote that opens
-     * none, or a single ordinary character that can be neither quote. */
+     * none, or one ordinary character that is neither quote nor the start of a
+     * `}}`, so the walk cannot step past an unpadded closer. */
     const INCLUDE_SCAN_UNIT =
-        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^"'\\n])`;
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|(?!\\}\\})[^"'\\n])`;
 
     /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
@@ -1658,7 +1659,7 @@
         // line bound: the opener's walk and the contained modes are separate
         // readings of the run, and nothing should paint past the line if they
         // ever disagree.
-        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?\\}\\})`),
+        begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?[ \\t]\\}\\})`),
         end: /\}\}|$/,
         relevance: 10,
         // BY PART. The mode's own boundaries are what keep TAG and MENTION out
