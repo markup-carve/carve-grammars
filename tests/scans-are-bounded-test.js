@@ -49,7 +49,7 @@ const BOUNDED = {
         ['footnote reference', '/\\[\\^[^\\]]', 1],
         ['inline footnote', '/\\^\\[[^\\]\\n]', 1],
         ['autolink', 'a-zA-Z0-9+.-]*:[^>', 3],
-        ['critic comment', '/\\{#[^}]', 1],
+        ['critic comment', '/\\{#(?!#\\})[^}]', 1],
         ['inline code', '(`{1,16})(?:[^`]|[^`][\\s\\S]', 2],
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],
@@ -66,14 +66,15 @@ const BOUNDED = {
         // carve-grammars#300 - the nine siblings of the rule above, each
         // matched on its opener plus the first character of its body class for
         // the same reason.
-        ['forced bold', '/\\{\\*(?=\\S)[^', 3],
-        ['forced italic', '/\\{\\/(?=\\S)[^', 3],
-        ['forced underline', '/\\{_(?=\\S)[^', 3],
+        ['forced bold', '/\\{\\*(?!\\*\\})[^', 3],
+        ['forced italic', '/\\{\\/(?!\\/\\})[^', 3],
+        ['forced underline', '/\\{_(?!_\\})[^', 3],
         ['forced strike', '/\\{~(?!~\\})[^', 3],
-        ['braced highlight', '/\\{=(?=\\S)[^', 3],
-        ['superscript', '/\\{\\^(?=\\S)[^', 3],
-        ['subscript', '/\\{,(?=\\S)[^', 3],
-        ['critic inserted', '/\\{\\+[^', 3],
+        ['braced highlight', '/\\{=(?!=\\})[^', 3],
+        ['superscript', '/\\{\\^(?!\\^\\})[^', 3],
+        ['subscript', '/\\{,(?!,\\})[^', 3],
+        ['bare emphasis bodies', "function bareBody(delimiter, repetition = '{0,4096}')", 1],
+        ['critic inserted', '/\\{\\+(?!\\+\\})[^', 3],
         // The opener carries `(?!-\\})` since carve-grammars#378 - `{--}` is a
         // braced en dash, not an empty deletion - and the marker carries it too,
         // so a revert to the unguarded opener fails the "is still there" check

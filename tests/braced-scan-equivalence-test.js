@@ -202,15 +202,18 @@ const pairedBefore = (opener, closer) =>
  * in the one dimension this file exists for.
  *
  * Stripping the bounds is not circular in that dimension: the question here is
- * whether `{0,4096}` and `{0,32}` changed the language, and this is the same
- * pattern with those two quantifiers made unbounded. It cannot drift from the
+ * whether `{0,4096}`, `{1,4096}` and `{0,32}` changed the language, and this is
+ * the same pattern with those quantifiers made unbounded. It cannot drift from the
  * rule, and it still fails if a bound starts refusing something.
  *
  * @param {RegExp} pattern - the shipped `begin`.
  * @returns {RegExp} the same pattern, unbounded.
  */
 const withoutBounds = (pattern) =>
-    new RegExp(pattern.source.replaceAll('{0,4096}', '*').replaceAll('{0,32}', '*'));
+    new RegExp(pattern.source
+        .replaceAll('{0,4096}', '*')
+        .replaceAll('{1,4096}', '+')
+        .replaceAll('{0,32}', '*'));
 
 /* ------------------------------------------------------------------ *
  * The comparison.
@@ -294,23 +297,23 @@ const CASES = [
     // ---- prism/carve.js, the seven line-scanning inline rules -------------
     {
         name: 'prism forced-bold {*',
-        before: /\{\*(?=\S)[^\n]*?\*\}/,
+        before: /\{\*(?!\*\})[^\n]*?\*\}/,
         after: () => prismRule('forced-bold', '\\{\\*'),
-        alphabet: ['{', '}', '*', 'a', '\n'],
+        alphabet: ['{', '}', '*', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism forced-italic {/',
-        before: /\{\/(?=\S)[^\n]*?\/\}/,
+        before: /\{\/(?!\/\})[^\n]*?\/\}/,
         after: () => prismRule('forced-italic', '\\{\\/'),
-        alphabet: ['{', '}', '/', 'a', '\n'],
+        alphabet: ['{', '}', '/', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism forced-underline {_',
-        before: /\{_(?=\S)[^\n]*?_\}/,
+        before: /\{_(?!_\})[^\n]*?_\}/,
         after: () => prismRule('forced-underline', '\\{_'),
-        alphabet: ['{', '}', '_', 'a', '\n'],
+        alphabet: ['{', '}', '_', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
@@ -323,30 +326,29 @@ const CASES = [
         maxLength: 7,
     },
     {
-        // ONE PATTERN, BOTH FORMS. `highlight` fuses the braced `{=x=}` and the
-        // bare `=x=` into one alternation, and #300 touched both halves - the
-        // braced body was unrolled, and the bare body's `[^=\n]+?` was given a
-        // bound so the whole line passes the derived family check in
-        // `scans-are-bounded-test.js`. Comparing the pattern rather than the
-        // alternative is therefore what proves the bare form survived too.
-        name: 'prism highlight {= and bare =',
-        before: /\{=(?=\S)[^\n]*?=\}|(?<![\w=])=(?=\S)[^=\n]+?(?<=\S)=(?![\w=])/,
+        // ONE PATTERN, BOTH FORMS. The bare body now treats complete braced
+        // inlines atomically, which is an intentional language change pinned
+        // across all three engines in latest-syntax-test.js. This row isolates
+        // the performance bounds: removing every bound from today's complete
+        // pattern must not change any short input.
+        name: 'prism highlight {= and bare = bounds',
+        before: () => withoutBounds(prismRule('highlight', '\\{=')),
         after: () => prismRule('highlight', '\\{='),
         alphabet: ['{', '}', '=', 'a', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism superscript {^',
-        before: /\{\^(?=\S)[^\n]*?\^\}/,
+        before: /\{\^(?!\^\})[^\n]*?\^\}/,
         after: () => prismRule('superscript', '\\{\\^'),
-        alphabet: ['{', '}', '^', 'a', '\n'],
+        alphabet: ['{', '}', '^', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism subscript {,',
-        before: /\{,(?=\S)[^\n]*?,\}/,
+        before: /\{,(?!,\})[^\n]*?,\}/,
         after: () => prismRule('subscript', '\\{,'),
-        alphabet: ['{', '}', ',', 'a', '\n'],
+        alphabet: ['{', '}', ',', 'a', ' ', '\n'],
         maxLength: 8,
     },
     // ---- prism/carve.js, the three CriticMarkup rules --------------------
@@ -354,7 +356,7 @@ const CASES = [
     // compared on multi-line input too.
     {
         name: 'prism inserted {+',
-        before: /\{\+[^}]*\+\}/,
+        before: /\{\+(?!\+\})[^}]*\+\}/,
         after: () => prismRule('inserted', '\\{\\+'),
         alphabet: ['{', '}', '+', 'a', '\n'],
         maxLength: 8,
@@ -395,21 +397,21 @@ const CASES = [
     // the opener's source everywhere except forced-strike, whose opener is part
     // of this fix - see the row's own note.
     ...[
-        ['forced-bold {*', /\{\*(?=\S)/, /\*\}/, null, ['{', '}', '*', 'a', '\n']],
-        ['forced-italic {/', /\{\/(?=\S)/, /\/\}/, null, ['{', '}', '/', 'a', '\n']],
-        ['forced-underline {_', /\{_(?=\S)/, /_\}/, null, ['{', '}', '_', 'a', '\n']],
+        ['forced-bold {*', /\{\*(?!\*\})/, /\*\}/, null, ['{', '}', '*', 'a', ' ', '\n']],
+        ['forced-italic {/', /\{\/(?!\/\})/, /\/\}/, null, ['{', '}', '/', 'a', ' ', '\n']],
+        ['forced-underline {_', /\{_(?!_\})/, /_\}/, null, ['{', '}', '_', 'a', ' ', '\n']],
         // Its OPENER changed too: `(?!.*~>)` was a greedy scan of the rest of
         // the line, so it is matched on the part that did not change. Both
         // halves of the begin are compared, which is the point - the guard and
         // the arrow lookahead were rewritten in the same commit.
         ['forced-strike {~', /\{~(?!~\})(?!.*~>)/, /~\}/, '\\{~(?!~\\})', ['{', '}', '~', '>', 'a', ' ', '\n']],
-        ['inserted {+', /\{\+/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
+        ['inserted {+', /\{\+(?!\+\})/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
         // Its OPENER changed in carve-grammars#378 - `{--}` is a braced en dash,
         // not an empty deletion - so the baseline carries the guard, the same way
         // `forced-strike` above carries the half of its opener that did not change.
         ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
-        ['subscript {,', /\{,(?=\S)/, /,\}/, null, ['{', '}', ',', 'a', '\n']],
-        ['superscript {^', /\{\^(?=\S)/, /\^\}/, null, ['{', '}', '^', 'a', '\n']],
+        ['subscript {,', /\{,(?!,\})/, /,\}/, null, ['{', '}', ',', 'a', ' ', '\n']],
+        ['superscript {^', /\{\^(?!\^\})/, /\^\}/, null, ['{', '}', '^', 'a', ' ', '\n']],
         ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![A-Za-z0-9/])/, null, ['/', 'a', ' ', '\n', '{'], true],
         ['underline _', /(?<![\w/])_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{'], true],
         // The `\[` escape is redundant inside a class and kept anyway: the

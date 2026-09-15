@@ -1,11 +1,15 @@
 [
   {
-    "type": "text",
-    "text": "\\"
+    "type": "escape",
+    "text": "\\*"
   },
   {
-    "type": "bold",
-    "text": "*lit\\*"
+    "type": "text",
+    "text": "lit"
+  },
+  {
+    "type": "escape",
+    "text": "\\*"
   },
   {
     "type": "text",

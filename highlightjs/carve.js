@@ -135,7 +135,6 @@
     // The same body, required to be non-empty, for the rules that reject `[]`.
     const BRACKET_TEXT_NONEMPTY = '(?!\\])' + BRACKET_TEXT;
 
-    const BRACED_START = '\\{[*/_^,~+=#%+-]';
     const OPAQUE_BRACED_SOURCE = '\\{(?:'
         + '\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*'
         + '|/(?:[^/\\n]|/(?!\\})){1,4096}/'
@@ -203,7 +202,7 @@
         const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
         const plainAtom = `[^${inClass}\\n]`;
         const runAtom = opaqueBraces
-            ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${BRACED_START})${plainAtom}|\\n(?!\\s*\\n))`
+            ? `(?:\\\\(?:[^\\n]|\\n(?!\\s*\\n))|${OPAQUE_BRACED_SOURCE}|(?!${OPAQUE_BRACED_SOURCE})[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`
             : `(?:${plainAtom}|\\n(?!\\s*\\n))`;
         const run = `${runAtom}{0,4096}`;
         /*
@@ -238,7 +237,7 @@
          * modes are untouched.
          */
         const escapedAtom = `(?:\\\\[^\\n]|[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`;
-        const escapedRun = opaqueBraces ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${BRACED_START})${escapedAtom}){0,4096}` : `${escapedAtom}{0,4096}`;
+        const escapedRun = opaqueBraces ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${OPAQUE_BRACED_SOURCE})${escapedAtom}){0,4096}` : `${escapedAtom}{0,4096}`;
         const body = escapeAware ? escapedRun : run;
         /*
          * `flanked` says a closer may not FOLLOW WHITESPACE, which is the
@@ -296,7 +295,7 @@
             end: closer,
         };
         mode.contains = [];
-        if (opaqueBraces) mode.contains.push(OPAQUE_BRACED);
+        if (opaqueBraces) mode.contains.push(ESCAPE, OPAQUE_BRACED);
         if (flanked) mode.contains.push({ begin: new RegExp(`\\s${closer.source}`) });
 
         return mode;
@@ -316,9 +315,9 @@
     // Forced intraword family (PART 9 S22). Content may contain the delimiter
     // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
     // must precede ATTRIBUTE, or `{_path_}` reads as a boolean attribute.
-    const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?=\S)/, /\*\}/), relevance: 5 };
-    const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?=\S)/, /\/\}/), relevance: 5 };
-    const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?=\S)/, /_\}/), relevance: 5 };
+    const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?!\*\})/, /\*\}/), relevance: 5 };
+    const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?!\/\})/, /\/\}/), relevance: 5 };
+    const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?!_\})/, /_\}/), relevance: 5 };
     // The `(?!...~>)` is what keeps a substitution (`{~old~>new~}`) out of the
     // strikethrough rule. It used to be spelled `(?!.*~>)`, a greedy scan of the
     // whole rest of the line that then backtracked over it looking for the
@@ -347,11 +346,10 @@
      * has no `=}` ahead of it, so the guard fails and the mode does not open,
      * leaving RAW_FORMAT the `{=[a-zA-Z]+\}` it already matches.
      *
-     * The empty pair `{==}` still opens here, as `{**}` does on FORCED_STRONG
-     * and `{//}` on FORCED_EMPHASIS - carve#1447 makes it literal text, and
-     * this mode matches its siblings rather than fixing that on one of five.
+     * Forced content may consist only of whitespace, but the empty `{==}` is
+     * literal, like every other empty pair in the family.
      */
-    const FORCED_HIGHLIGHT = { className: 'addition', ...paired(/\{=(?=\S)/, /=\}/), relevance: 5 };
+    const FORCED_HIGHLIGHT = { className: 'addition', ...paired(/\{=(?!=\})/, /=\}/), relevance: 5 };
 
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
@@ -367,8 +365,8 @@
         // engine renders prose (#164). The line-anchored branch is a lookbehind so
         // the match still starts at the `{`.
         begin: new RegExp(
-            '(?=\\{)(?<=(?:^|\\n)[ \\t]*)\\{\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'
-            + '|\\{[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}',
+            '(?=\\{)(?<=(?:^|\\n)[ \\t]*)\\{(?!__\\})\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}'
+            + '|\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}',
         ),
         relevance: 5,
     };
@@ -533,7 +531,7 @@
     // Insert: {+text+}
     const INSERT = {
         className: 'addition',
-        ...paired(/\{\+/, /\+\}/),
+        ...paired(/\{\+(?!\+\})/, /\+\}/),
         relevance: 5,
     };
 
@@ -559,14 +557,14 @@
     // Subscript (Carve): braced-only `{,text,}` - a bare `,` is literal text.
     const SUBSCRIPT = {
         className: 'built_in',
-        ...paired(/\{,(?=\S)/, /,\}/),
+        ...paired(/\{,(?!,\})/, /,\}/),
         relevance: 3,
     };
 
     // Superscript (Carve): braced-only `{^text^}` - a bare `^` is literal text.
     const SUPERSCRIPT = {
         className: 'built_in',
-        ...paired(/\{\^(?=\S)/, /\^\}/),
+        ...paired(/\{\^(?!\^\})/, /\^\}/),
         relevance: 3,
     };
 
@@ -1531,7 +1529,7 @@
         // The body still excludes `}` entirely, so the `#}` the guard finds is
         // the first one and `end` cannot overshoot it, and the scan stays
         // bounded at the 4096 carve-grammars#300 gave it.
-        begin: /\{#(?=(?:[^}\n]|\n(?![ \t\r]*\n)){0,4096}#\})/,
+        begin: /\{#(?!#\})(?=(?:[^}\n]|\n(?![ \t\r]*\n)){0,4096}#\})/,
         end: /#\}/,
         relevance: 5,
     };

@@ -29,11 +29,19 @@
   },
   {
     "type": "text",
-    "text": " and \\"
+    "text": " and "
   },
   {
-    "type": "bold",
-    "text": "*'q'\\*"
+    "type": "escape",
+    "text": "\\*"
+  },
+  {
+    "type": "text",
+    "text": "'q'"
+  },
+  {
+    "type": "escape",
+    "text": "\\*"
   },
   {
     "type": "text",
