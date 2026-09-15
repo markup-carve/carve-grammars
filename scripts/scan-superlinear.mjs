@@ -282,5 +282,31 @@ for (const [label, gen] of lineBaits) {
     );
 }
 
+// A plain line with a long indentation run reaches no opener at all. That is
+// precisely why the opener-based rows above missed #440: highlight.js paid for
+// variable-length indentation lookbehinds before checking whether the current
+// character was `>`, `%` or `{`. The include path mode has the same trap after
+// `{{`. Prism has different line-prefix machinery, so
+// this row measures only the grammar and engine named by the defect.
+console.log('\nhighlight.js plain-line whitespace');
+console.log('shape                          bytes  hljs       ratio');
+for (const [label, gen] of [
+    ['spaces before plain text', (n) => `${' '.repeat(n)}word\n`],
+    ['spaces before include path', (n) => `{{${' '.repeat(n)}a }}\n`],
+]) {
+    const small = gen(16000);
+    const large = gen(32000);
+    time(() => hljs.highlight(small, { language: 'carve' }));
+    const before = time(() => hljs.highlight(small, { language: 'carve' }));
+    const after = time(() => hljs.highlight(large, { language: 'carve' }));
+    const ratio = after / Math.max(before, 0.01);
+    const flag = after > FLOOR && ratio > SUSPECT ? '  <-- SUPERLINEAR' : '';
+    if (flag) suspects++;
+    console.log(
+        `${label.padEnd(26)} ${String(large.length).padStart(8)}`
+        + `  ${after.toFixed(1).padStart(9)}  ${ratio.toFixed(2).padStart(5)}${flag}`,
+    );
+}
+
 console.log(`\n${suspects} superlinear (ratio > ${SUSPECT} with a measurable absolute time)`);
 process.exit(suspects ? 1 : 0);
