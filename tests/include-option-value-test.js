@@ -195,6 +195,27 @@ const CASES = [
         value: '"a',
     },
     {
+        /*
+         * A TERMINATED RUN HOLDING THE LINE'S ONLY PAIR leaves no closer
+         * outside it, so the line is not an `include_directive` at all and is
+         * ordinary text. THIS ROW MOVED HERE FROM `DIVERGENT` deliberately
+         * (carve-grammars#419): TextMate and Prism always read it this way -
+         * their outer pattern needs a closer it cannot find - while
+         * highlight.js opened on a lookahead that asked only whether SOME pair
+         * was on the line, scoped it, and reached no `}}`. With that lookahead
+         * now walking the quoted runs, the three agree and the shape is one
+         * reading rather than three.
+         *
+         * `value: ''` alone would also be satisfied by a surface that scoped
+         * nothing anywhere, so the same source is asserted in `NO_DIRECTIVE`
+         * below, where the claim is that no token on the line carries the
+         * DIRECTIVE scope.
+         */
+        why: 'a terminated run holding the only `}}` leaves no closer, so there is no directive',
+        source: `See ${OPTION}"a b }} tail "later"`,
+        value: '',
+    },
+    {
         why: 'an unterminated double quote falls back to the unquoted reading',
         source: `See ${OPTION}"two words }} here and more text`,
         value: '"two',
@@ -279,41 +300,22 @@ for (const g of GRAMMARS) {
  * Shapes the three surfaces do NOT read alike, pinned PER SURFACE so the
  * divergence is a recorded reading rather than a silence.
  *
- * Both are malformed. `unquoted_value` is `(letter | digit | '-' | '_' | '.' |
- * ':')+`, so an unquoted `}` ends neither the value nor the directive and
+ * Both are malformed, and both turn on the PART RUN rather than the opener.
+ * `unquoted_value` is `(letter | digit | '-' | '_' | '.' | ':')+`, so an
+ * unquoted `}` ends neither the value nor the directive and
  * `{{ ch.crv @label:a}b }}` is not an `include_directive` at all. TextMate and
- * Prism refuse the line outright, which is what the grammar says; highlight.js
- * opens its mode on a `}}` lookahead that does not read what lies between, so
- * it scopes the line and stops the value at the brace. Neither reading moved in
+ * Prism refuse the line outright, which is what the grammar says, because their
+ * part class excludes `}`; highlight.js has no part run - its mode finds a
+ * closer outside every quoted run (the pair after `a}b `) and opens, and the
+ * value rule then stops at the brace. Neither reading moved in
  * carve-grammars#412 and neither is that ticket's to settle - they are pinned
  * here so a later change to the part run has to say which way it moved them.
+ *
+ * A THIRD ROW LEFT THIS LIST in carve-grammars#419 - a terminated run holding
+ * the line's only pair - because that one WAS the opener, and closing the gap
+ * gave the three surfaces one reading. It now sits in CASES above.
  */
 const DIVERGENT = [
-    {
-        /*
-         * A TERMINATED run holding the ONLY pair on the line. Under
-         * markup-carve/carve#2013 there is then no `}}` outside a quoted run,
-         * so the line is not an `include_directive` at all and is ordinary
-         * text - which is what TextMate and Prism read, their outer pattern
-         * needing a closer it cannot find.
-         *
-         * highlight.js cannot reach that reading: its mode opens on a
-         * lookahead that only asks whether SOME `}}` is on the line, without
-         * reading what lies between, so it opens and then finds no closer
-         * outside the run. `end` carries `|$` so the mode dies at the line
-         * end rather than painting the rest of the document - the failure
-         * carve-grammars#403 is about. The line is scoped, the value reads as
-         * the run, and that is the residual.
-         *
-         * Before #2013 this row lived in CASES reading `"a` everywhere,
-         * because the superseded bound stopped the run at the pair and left
-         * the quote unterminated. The ruling moved it; it is recorded here
-         * rather than deleted so the move is visible.
-         */
-        why: 'a terminated quoted run holding the only `}}` leaves no closer outside it',
-        source: `See ${OPTION}"a b }} tail "later"`,
-        value: { textmate: '', prism: '', 'highlight.js': '"a b }} tail "' },
-    },
     {
         why: 'a `}` in an UNQUOTED value - the control, unmoved by #412',
         source: `See ${OPTION}a}b }} here`,
@@ -349,6 +351,16 @@ const NO_DIRECTIVE = [
     // No `}}` ANYWHERE, which is what makes these unterminated. A line that
     // carries one is a directive whose VALUE is unterminated, and that is a
     // different shape - it is asserted in CASES above, reading `"a`.
+
+    // THIS ONE CARRIES A PAIR and is still no directive, which is the whole
+    // point of carve-grammars#419: the pair sits inside a TERMINATED run, so
+    // there is none outside one and the line has no closer. The CASES row for
+    // the same source asserts that no VALUE is scoped; this asserts the
+    // stronger claim, that no token on the line carries the directive scope at
+    // all - the half a `value: ''` row cannot distinguish from a surface that
+    // scoped nothing anywhere. Before the opener read the line, highlight.js
+    // scoped it here.
+    'See {{ ch.crv @label:"a b }} tail "later"\n',
 ];
 
 for (const g of GRAMMARS) {
