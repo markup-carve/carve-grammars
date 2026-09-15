@@ -1618,9 +1618,8 @@
     };
 
     /* One unit of the opener's walk: a terminated run, a lone quote that opens
-     * none, or a single ordinary character that can be neither quote. The
-     * ordinary character may not start a `}}`: that pair IS the closer, so a
-     * walk stepping over an unpadded one would find a padded pair later. */
+     * none, or one ordinary character that is neither quote nor the start of a
+     * `}}`, so the walk cannot step past an unpadded closer. */
     const INCLUDE_SCAN_UNIT =
         `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|(?!\\}\\})[^"'\\n])`;
 
@@ -1660,9 +1659,6 @@
         // line bound: the opener's walk and the contained modes are separate
         // readings of the run, and nothing should paint past the line if they
         // ever disagree.
-        //
-        // The pad before the closer is REQUIRED (`whitespace+, "}}"`), so
-        // `{{ a}}` is literal text, as on the other surfaces.
         begin: RegExp(`\\{\\{(?=[ \\t]+${INCLUDE_SCAN_UNIT}*?[ \\t]\\}\\})`),
         end: /\}\}|$/,
         relevance: 10,

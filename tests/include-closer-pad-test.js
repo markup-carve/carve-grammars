@@ -1,19 +1,6 @@
 /**
- * The pad before an include directive's closer is REQUIRED, on every surface.
- *
- *   include_directive = "{{", whitespace+, include_path, [include_section],
- *                       [include_options], whitespace+, "}}" ;
- *
- * so `{{ ch.crv}}` is literal text. highlight.js scoped it as a directive while
- * TextMate and Prism did not (carve-grammars#424).
- *
- * Each row's expectation is checked against the spec's own directive oracle
- * (spec/scripts/spec/include-directive.mjs) before any surface is, so a row
- * cannot pin a reading the grammar does not give.
- *
- * The closer is still the first `}}` OUTSIDE a quoted run (carve-grammars#419),
- * and the rows marked BOTH turn on the pad and on that walk at once: reverting
- * either one scopes them.
+ * The pad before an include directive's closer is required on every surface,
+ * and the closer is the first `}}` outside a quoted run.
  */
 import { createHighlighter } from 'shiki';
 import { readFileSync } from 'node:fs';
@@ -31,8 +18,7 @@ const hl = await createHighlighter({
     langs: [{ ...grammar, name: 'carve' }],
 });
 
-// Per explanation part, not per token: shiki merges adjacent same-colour
-// tokens, so a token can carry a closer and the prose after it together.
+// Per explanation part: a merged shiki token can hold the closer and the prose after it.
 function textmateLeaves(source) {
     return hl.codeToTokens(source, {
         lang: 'carve',
@@ -44,8 +30,7 @@ function textmateLeaves(source) {
     })));
 }
 
-// highlight.js puts `meta` on the directive's own span only; its parts are
-// children, so the directive is read from the ancestors.
+// `meta` sits on the directive's own span, not on its part children.
 const hljsLeaves = (source) => hljsTokens(source).map((t) => ({
     scope: t.ancestors.join(' '),
     text: t.text,
@@ -73,19 +58,17 @@ const ROWS = [
     { why: 'no pad after an option', source: 'See {{ ch.crv @shift:auto}} end', directive: '' },
     { why: 'no pad, then a third brace', source: 'See {{ ch.crv}}} end', directive: '' },
     {
-        // The unpadded pair IS the closer, so the walk may not step over it to
-        // borrow the pad of a later directive's closer.
         why: 'an unpadded closer before a later, padded directive',
         source: 'See {{ ch.crv}} and {{ later }} end',
         directive: '{{ later }}',
     },
     {
-        why: 'BOTH: a padded pair inside a terminated run, then an unpadded closer',
+        why: 'a padded pair inside a terminated run, then an unpadded closer',
         source: 'See {{ ch.crv @label:"a }}"}} end',
         directive: '',
     },
     {
-        why: 'BOTH: the padded twin of the row above is a directive',
+        why: 'the padded twin of the row above is a directive',
         source: 'See {{ ch.crv @label:"a }}" }} end',
         directive: '{{ ch.crv @label:"a }}" }}',
     },
