@@ -96,7 +96,7 @@ Without it, the attribute stays literal: `<span abbr="...">`. The mark's
 `parseHTML` reads back the `<abbr title>` form.
 
 The tokens target carve-php's **parser** (the contract: serialized Carve must parse
-back to the same elements). Carve's inline syntax differs notably from Djot's:
+back to the same elements). Carve's inline syntax differs from Djot's:
 emphasis is `/text/` (Djot uses `_`), `_text_` is underline, `~text~` is
 strikethrough, highlight is `=text=`, and subscript/superscript are the
 braced `{,text,}` / `{^text^}` only (a bare `,` or `^` is literal text since
@@ -106,7 +106,7 @@ Each single-char delimiter has two equivalent forms: a **bare** form
 (`=text=`) and a **forced brace** form (`{=text=}`) that also works intraword;
 both parse to the same element. The two columns above list bare / forced.
 `serializeToCarve` emits the bare form for `* / _ ~` and the forced `{…}` form
-for `= , ^` (round-trip-safe — those delimiters are likelier to be inert bare);
+for `= , ^` (round-trip-safe: those delimiters are likelier to be inert bare);
 `{+…+}` / `{-…-}` (insert / delete) have only the brace form, since `+` / `-`
 are not emphasis delimiters.
 
