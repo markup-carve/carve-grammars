@@ -46,8 +46,8 @@ function ok(name, fn) {
 const BOUNDED = {
     'prism/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
-        ['footnote reference', '/\\[\\^[^\\]]', 1],
-        ['inline footnote', '/\\^\\[[^\\]\\n]', 1],
+        ['footnote reference', "unescaped('\\\\[') + /\\^[^\\]]", 1],
+        ['inline footnote', "unescaped('\\\\^') + /\\[[^\\]\\n]", 1],
         ['autolink', 'a-zA-Z0-9+.-]*:[^>', 3],
         ['critic comment', '/\\{#(?!#\\})[^}]', 1],
         ['inline code', '(`{1,16})(?:[^`]|[^`][\\s\\S]', 2],
