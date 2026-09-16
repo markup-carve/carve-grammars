@@ -650,7 +650,7 @@ export function serializeToCarve(doc) {
                             if (inline.type === 'hardBreak') {
                                 line += '\n';
                             } else {
-                                line += serializeInline([inline]);
+                                line += serializeInline([inline], false);
                             }
                         }
                         output += line + '\n';
@@ -808,7 +808,7 @@ export function serializeToCarve(doc) {
                 const header = cell.type === 'tableHeader';
                 const content = (cell.content || [])
                     .map(p => (p.content || []).map(inline => {
-                        let rendered = serializeInline([inline]);
+                        let rendered = serializeInline([inline], false);
                         // Pipes inside code spans are literal already: escaping
                         // one there adds a real backslash to the code payload.
                         // Every other inline form still needs table-delimiter
@@ -1015,7 +1015,9 @@ export function serializeToCarve(doc) {
         return text;
     }
 
-    function serializeInline(rawContent) {
+    // `openRunEnds`: the caller's content ends where an unclosed backtick run
+    // may end, so a trailing empty code span can be written there.
+    function serializeInline(rawContent, openRunEnds = true) {
         // An inline ATOM inside a MARK - `[see </#H>](/u)`, `*:rocket:*` - carries
         // that mark like any other inline node, but only the text branch below
         // knows how to write a mark's delimiters. So the atom was written after
@@ -1024,16 +1026,24 @@ export function serializeToCarve(doc) {
         // each such atom on its own (no marks, so this recursion terminates) and
         // hand the result to the text path as a verbatim run that still carries
         // the marks.
-        const normalized = (rawContent || []).map((node) => (
-            node && node.type !== 'text' && (node.marks || []).length
-                ? {
-                    type: 'text',
-                    text: serializeInline([{ ...node, marks: [] }]),
-                    marks: node.marks,
-                    carveVerbatim: true,
-                }
-                : node
-        ));
+        const groupableDelimitedMarks = new Set([
+            'bold', 'italic', 'underline', 'strike', 'highlight',
+            'superscript', 'subscript', 'carveInsert', 'carveDelete',
+        ]);
+        const normalized = (rawContent || []).map((node) => {
+            if (!node || node.type === 'text' || !(node.marks || []).length) return node;
+            // An empty code span is an unclosed run: only a braced closer of an
+            // enclosing mark ends it, so without one it has no spelling.
+            const openRun = isEmptyCode(node);
+            const closable = node.marks.some((mark) => groupableDelimitedMarks.has(mark.type));
+            return {
+                type: 'text',
+                text: openRun && !closable ? '' : serializeInline([{ ...node, marks: [] }]),
+                marks: node.marks,
+                carveVerbatim: true,
+                ...(openRun && closable ? { carveOpenRun: true } : {}),
+            };
+        });
         // ProseMirror splits one marked range whenever a nested mark begins or
         // ends.  Serializing each resulting text node independently repeats the
         // outer delimiter (`*a *` + `*/b/*` + `* c*`) instead of keeping it open
@@ -1045,10 +1055,6 @@ export function serializeToCarve(doc) {
         const sameOuterMark = (left, right) => Boolean(left && right
             && left.type === right.type
             && pmFingerprint(left.attrs || {}) === pmFingerprint(right.attrs || {}));
-        const groupableDelimitedMarks = new Set([
-            'bold', 'italic', 'underline', 'strike', 'highlight',
-            'superscript', 'subscript', 'carveInsert', 'carveDelete',
-        ]);
         const content = [];
         for (let index = 0; index < normalized.length;) {
             const node = normalized[index];
@@ -1070,6 +1076,7 @@ export function serializeToCarve(doc) {
                     text: serializeInline(inner),
                     marks: [outer],
                     carveVerbatim: true,
+                    ...(inner[inner.length - 1].carveOpenRun ? { carveOpenRun: true } : {}),
                 });
             } else {
                 content.push(node);
@@ -1106,7 +1113,7 @@ export function serializeToCarve(doc) {
                 // `[^label]` inside the body is literal text there and the
                 // structural escaper's `\\[^` is not only unnecessary but
                 // wrong - it re-spells text the author wrote plain.
-                const body = serializeInline(node.content).replace(/\\\[(?=\^)/g, '[');
+                const body = serializeInline(node.content, false).replace(/\\\[(?=\^)/g, '[');
                 result += '^[' + body + ']' + serializeAttributes(node.attrs, []);
                 return;
             }
@@ -1131,7 +1138,7 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveInlineExtension') {
-                result += `:${node.attrs?.name || ''}[${serializeInline(node.content)}]`
+                result += `:${node.attrs?.name || ''}[${serializeInline(node.content, false)}]`
                     + serializeAttributes(node.attrs, ['name']);
                 return;
             }
@@ -1177,12 +1184,18 @@ export function serializeToCarve(doc) {
                 return;
             }
             if (node.type === 'carveEmptyMark') {
-                result += emptyMarkSource(node.attrs);
+                if (!isEmptyCode(node) || (openRunEnds && idx === content.length - 1)) {
+                    result += emptyMarkSource(node.attrs);
+                }
                 return;
             }
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
+                if (node.carveOpenRun && !marks.some((mark) => groupableDelimitedMarks.has(mark.type))
+                    && (marks.length || !openRunEnds || idx < content.length - 1)) {
+                    text = '';
+                }
 
                 // Check each mark type
                 const codeMark = marks.find(m => m.type === 'code');
@@ -1323,11 +1336,14 @@ export function serializeToCarve(doc) {
                 // cannot round-trip - a Carve limitation, not fixable here.
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
-                if (hasStrike && !hasDelete) t = '~' + t + '~';
-                if (hasHighlight) t = bareable('=') ? '=' + t + '=' : '{=' + t + '=}';
-                if (hasUnderline) t = '_' + t + '_';
-                if (hasItalic) t = '/' + t + '/';
-                if (hasBold) t = '*' + t + '*';
+                // A bare closer cannot end an unclosed run, at any nesting depth.
+                const openRun = !!node.carveOpenRun;
+                const wrap = (delim) => (openRun ? '{' + delim + t + delim + '}' : delim + t + delim);
+                if (hasStrike && !hasDelete) t = wrap('~');
+                if (hasHighlight) t = !openRun && bareable('=') ? '=' + t + '=' : '{=' + t + '=}';
+                if (hasUnderline) t = wrap('_');
+                if (hasItalic) t = wrap('/');
+                if (hasBold) t = wrap('*');
                 if (resumeDelimitedBold && hasBold && t.startsWith('*')) {
                     t = t.slice(1);
                     resumeDelimitedBold = false;
@@ -1696,9 +1712,17 @@ function emptyMarkSource(attrs) {
             return '{++}' + serializeAttributes(markAttrs);
         case 'carveDelete':
             return '{--}' + serializeAttributes(markAttrs);
+        case 'code':
+            // An attribute run after an unclosed run is code content, so the
+            // span's attributes have no spelling.
+            return '``';
         default:
             return '';
     }
+}
+
+function isEmptyCode(node) {
+    return node?.type === 'carveEmptyMark' && node.attrs?.markType === 'code';
 }
 
 /**
