@@ -1,0 +1,10 @@
+[
+  {
+    "type": "italic",
+    "text": "/see <http://a.b/c> now/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

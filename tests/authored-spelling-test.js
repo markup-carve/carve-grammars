@@ -436,6 +436,7 @@ ok('every mark the loader can put on a carrier has a spelling to write back', ()
         '[](https://example.com)',
         '[]{.x}',
         '[]{abbr="expansion"}',
+        '``',
     ];
     for (const source of EVERY_EMPTY) {
         const doc = carveToProseMirror(source, { unsupported: 'throw' });

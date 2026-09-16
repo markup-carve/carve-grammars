@@ -213,6 +213,15 @@
         + '|%(?:[^%\\n]|%(?!\\})){1,4096}%'
         + ')\\}';
 
+    // Link destinations and autolinks are opaque too (PART 9 section 9 E2a): the
+    // `/` in `/see [x](http://a.b/c) now/` does not close the italic. Escapes
+    // and two levels of balanced parentheses stay inside the destination.
+    var opaqueInline = '(?:' + opaqueBracedInline
+        + '|\\]\\((?:[^\\s()\\\\]|\\\\.|\\((?:[^\\s()\\\\]|\\\\.|\\((?:[^\\s()\\\\]|\\\\.){0,256}\\)){0,256}\\)){1,2048}'
+        + '(?:[ \\t]+"(?:[^"\\\\\\n]|\\\\.){0,512}")?\\)'
+        + '|<[a-zA-Z][a-zA-Z0-9+.-]{0,2047}:[^>\\s]{1,2048}>|<[^>\\s@]{1,2048}@[^>\\s]{1,2048}>'
+        + ')';
+
     // Keep a complete braced inline atomic while a bare span searches for its
     // closer. An escape pair comes first so `\\{_..._}` is prose rather than
     // a forced span. The fallback is barred only when the WHOLE braced form
@@ -220,7 +229,7 @@
     // ordinary body text. Bound the atom count because Prism retries greedy
     // tokens from many offsets.
     function bareBody(delimiter, repetition = '{0,4096}') {
-        return '(?:\\\\[^\\n]|' + opaqueBracedInline + '|(?!' + opaqueBracedInline + ')[^' + delimiter + '\\\\\\n])' + repetition;
+        return '(?:\\\\[^\\n]|' + opaqueInline + '|(?!' + opaqueInline + ')[^' + delimiter + '\\\\\\n])' + repetition;
     }
 
     // Shared inline emphasis/markup, referenced from block tokens that contain

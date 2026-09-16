@@ -113,6 +113,17 @@ for (const [name, tokenize, strongScope] of surfaces) {
     }
 }
 
+// A bare closer does not reach inside a link destination or an autolink
+// (corpus 467). TextMate does not honor this yet.
+for (const [name, tokenize, italicScope] of [['prism', prismTokens, 'italic'], ['highlightjs', hljsTokens, 'emphasis']]) {
+    for (const source of ['/see [x](http://a.b/c) now/', '/see <http://a.b/c> now/', '/see ![x](a.png "t/u") now/', '/see [x](foo(bar)/baz) now/', String.raw`/see [x](foo\)x/y) now/`, String.raw`/see [x](foo(bar(\x))/y) now/`, `/see <${'a'.repeat(40)}:x/y> now/`]) {
+        const tokens = await tokenize(source);
+        for (const word of ['see', ' now']) {
+            assert(tokens.some((token) => token.text.includes(word) && token.scope?.includes(italicScope)), `${name}: ${JSON.stringify(source)} lost the italic around ${JSON.stringify(word)}`);
+        }
+    }
+}
+
 const textmate = JSON.parse(readFileSync(new URL('../textmate/carve.tmLanguage.json', import.meta.url), 'utf8'));
 const italicMatch = textmate.repository.italic.match;
 const opaqueStart = italicMatch.indexOf('(?:\\{');

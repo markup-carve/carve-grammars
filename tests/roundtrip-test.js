@@ -619,10 +619,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 359 -> 365 with sections 463-466. Six of the nine new documents need an
  * envelope to retain authored delimiter or container placement; all still use
  * structured nodes and none needs the whole-document fallback atom.
+ *
+ * 365 -> 369 with the spec bump to carve 9c84524 (12-inline-code-7, both 467
+ * documents and 468), then 369 -> 362 when an empty code span got a carrier:
+ * 12-inline-code-7, the five 276 fence variants and 367-...-4 write directly.
  */
 assert.strictEqual(
-    envelopedFiles.length, 365,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 365`,
+    envelopedFiles.length, 362,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 362`,
 );
 
 assert.strictEqual(

@@ -991,13 +991,11 @@ function convertInlineNode(node, marks, ctx) {
             // caller was told the document round-tripped
             // (markup-carve/carve-grammars#240).
             const codeAttrs = convertAttrs(node.attrs);
+            const codeMark = { type: 'code', ...(codeAttrs ? { attrs: codeAttrs } : {}) };
+            // An empty span has no text for the mark, so it rides on the carrier.
             return node.value
-                ? [{
-                    type: 'text',
-                    text: node.value,
-                    marks: [...marks, { type: 'code', ...(codeAttrs ? { attrs: codeAttrs } : {}) }],
-                }]
-                : [];
+                ? [{ type: 'text', text: node.value, marks: [...marks, codeMark] }]
+                : descend({ children: [] }, [...marks, codeMark], ctx);
         }
 
         case 'image': {

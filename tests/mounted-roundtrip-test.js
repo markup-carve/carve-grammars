@@ -84,6 +84,9 @@ const fixed = [
     '97-boolean-attributes-2',
     '292-a-boolean-and-a-key-value-of-the-same-name-are-one-attribute',
     '389-a-boolean-attribute-does-not-start-with-an-underscore',
+    // An empty code span was dropped without a report.
+    '12-inline-code-7',
+    '276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
 
@@ -483,5 +486,9 @@ imported.destroy();
 // 234 -> 236 with sections 463-466. Two of the nine new documents have a
 // mounted projection whose edited rendering differs; the other seven remain
 // render-equivalent.
-assert.strictEqual(changed.length, 236, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 236 -> 237 with the spec bump to carve 9c84524 (12-inline-code-7), then
+// 237 -> 230 when an empty code span got a carrier instead of being dropped:
+// that document, the five 276 fence variants and 367-...-4 are equivalent now.
+assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

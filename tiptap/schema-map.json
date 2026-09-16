@@ -546,7 +546,7 @@
       "group": "inline",
       "attrs": {
         "markAttrs": "the mark's own attributes, as one map: a link's `href`/`title` and any authored run, a span's id/class/key-values. Absent where the mark had none",
-        "markType": "the ProseMirror mark this atom stands for: `link`, `carveSpan`, `carveAbbreviation`, `carveInsert` or `carveDelete`"
+        "markType": "the ProseMirror mark this atom stands for: `link`, `carveSpan`, `carveAbbreviation`, `carveInsert`, `carveDelete` or `code`"
       }
     }
   }
