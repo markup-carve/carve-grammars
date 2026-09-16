@@ -13,7 +13,7 @@
   },
   {
     "type": "url",
-    "text": "a(b(c"
+    "text": "a(b(c))d"
   },
   {
     "type": "url>punctuation",
@@ -21,7 +21,7 @@
   },
   {
     "type": "text",
-    "text": ")d) and "
+    "text": " and "
   },
   {
     "type": "url>punctuation",

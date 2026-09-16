@@ -4,12 +4,8 @@
     "text": "["
   },
   {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
     "type": "url",
-    "text": "x](y)"
+    "text": "x"
   },
   {
     "type": "url>punctuation",
@@ -17,7 +13,11 @@
   },
   {
     "type": "url",
-    "text": "z"
+    "text": "a\"b "
+  },
+  {
+    "type": "url>string",
+    "text": "\"t\""
   },
   {
     "type": "url>punctuation",

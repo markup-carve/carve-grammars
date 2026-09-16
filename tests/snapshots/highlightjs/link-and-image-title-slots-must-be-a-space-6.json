@@ -1,10 +1,6 @@
 [
   {
-    "scope": "link",
-    "text": "![a](/p.png\t \"T\")"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "![a](/p.png\t \"T\")\n"
   }
 ]

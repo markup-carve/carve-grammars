@@ -1,11 +1,7 @@
 [
   {
-    "scope": "link",
-    "text": "![a](/i\nq)"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "![a](/i\nq)\n"
   },
   {
     "scope": "title",

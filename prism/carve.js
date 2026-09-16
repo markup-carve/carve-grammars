@@ -243,6 +243,8 @@
     };
     var destChar = '\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]';
     var destination = '(?:' + destChar + '|\\((?:' + destChar + '|\\((?:' + destChar + '){0,256}\\)){0,256}\\)){0,2048}';
+    // A destination is never empty (carve#2070): `[x]()` and `[x]( "t")` are text.
+    var nonEmptyDestination = '(?![ \\t\\r\\n)])' + destination;
     var titled = function (quote) {
         return quote + '(?:\\\\' + quote + '|\\\\(?!' + quote + ')|[^' + quote + '\\\\\\r\\n]){0,512}' + quote;
     };
@@ -251,8 +253,11 @@
     var urlChar = '(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&\'()*+,;=%]'
         + '|(?!\\uD804[\\uDCBD\\uDCCD]|\\uD80D[\\uDC30-\\uDC3F]|\\uD82F[\\uDCA0-\\uDCA3]|\\uD834[\\uDD73-\\uDD7A]|\\uDB40[\\uDC01\\uDC20-\\uDC7F])'
         + '[^\\x00-\\xA0\\xAD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u1680\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u2064\\u2066-\\u206F\\u3000\\uFEFF\\uFFF9-\\uFFFB])';
+    var linkTail = '\\]\\(' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)';
+    // Only a title directly before the closing `)` is a string.
+    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$)/;
     var opaqueInline = '(?:' + opaqueBracedInline
-        + '|\\[' + opaqueLabel + '\\]\\(' + destination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)'
+        + '|\\[' + opaqueLabel + linkTail
         + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
         + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
         + ')';
@@ -1520,12 +1525,12 @@
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {
-            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + linkTail),
             greedy: true,
             alias: 'url',
             inside: {
-                'string': /"(?:[^"\\]|\\[\s\S])*"/,
-                'punctuation': /!\[|\]\(|\)/,
+                'string': linkTitle,
+                'punctuation': /^!\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
             },
         },
 
@@ -1643,11 +1648,11 @@
                 // The link text may be empty ([](url), spec corpus 03-links-8)
                 // and the title may contain backslash-escaped quotes:
                 // [t](/url "ti\"tle") (spec corpus 03-links-4).
-                pattern: new RegExp(unescaped('\\[') + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+                pattern: new RegExp(unescaped('\\[') + bracketText + linkTail),
                 greedy: true,
                 inside: {
-                    'string': /"(?:[^"\\]|\\[\s\S])*"/,
-                    'punctuation': /\[|\]\(|\)/,
+                    'string': linkTitle,
+                    'punctuation': /^\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
                 },
             },
             {

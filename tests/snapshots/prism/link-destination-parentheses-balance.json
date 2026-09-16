@@ -13,7 +13,7 @@
   },
   {
     "type": "url",
-    "text": "http://a/b(c"
+    "text": "http://a/b(c)"
   },
   {
     "type": "url>punctuation",
@@ -21,6 +21,6 @@
   },
   {
     "type": "text",
-    "text": ")\n"
+    "text": "\n"
   }
 ]
