@@ -96,6 +96,13 @@ ok('every mapped ProseMirror name is registered by CarveKit', () => {
   assert.deepStrictEqual(missing, [], `names absent from the CarveKit schema: ${missing.join(', ')}`);
 });
 
+ok('CarveKit retains source positions needed to restore collected definitions', () => {
+  for (const [name, type] of Object.entries(schema.nodes)) {
+    if (name === 'doc' || !type.isBlock) continue;
+    assert.ok(type.spec.attrs.carvePos, `${name} drops carvePos`);
+  }
+});
+
 ok('every node keyed by ProseMirror name is registered, with the kind it declares', () => {
   /*
    * `preservationNodes` and `markCarrierNodes` are keyed by ProseMirror name

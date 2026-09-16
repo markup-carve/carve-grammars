@@ -4,6 +4,12 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- CarveKit retains the non-rendered `carvePos` attribute on block nodes, and
+  the schema map documents it for bridges that restore collected definitions
+  to their authored position.
+
 ## [0.1.9] - 2026-09-16
 
 ### Added
