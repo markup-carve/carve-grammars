@@ -214,9 +214,11 @@
         + ')\\}';
 
     // Link destinations and autolinks are opaque too (PART 9 section 9 E2a): the
-    // `/` in `/see [x](http://a.b/c) now/` does not close the italic.
+    // `/` in `/see [x](http://a.b/c) now/` does not close the italic. Escapes
+    // and two levels of balanced parentheses stay inside the destination.
     var opaqueInline = '(?:' + opaqueBracedInline
-        + '|\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\\\n]|\\\\.){0,512}")?\\)'
+        + '|\\]\\((?:[^\\s()\\\\]|\\\\.|\\((?:[^\\s()\\\\]|\\\\.|\\([^\\s()\\\\]{0,256}\\)){0,256}\\)){1,2048}'
+        + '(?:[ \\t]+"(?:[^"\\\\\\n]|\\\\.){0,512}")?\\)'
         + '|<[a-zA-Z][a-zA-Z0-9+.-]{0,31}:[^>\\s]{1,2048}>|<[^>\\s@]{1,2048}@[^>\\s]{1,2048}>'
         + ')';
 
