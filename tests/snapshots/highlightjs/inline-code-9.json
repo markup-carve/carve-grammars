@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"`\"}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[n](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% a ` %}"
+  },
+  {
+    "scope": "link",
+    "text": "[n](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[m](u`)"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[m](`v)"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[n](w)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

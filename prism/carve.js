@@ -575,6 +575,10 @@
      * line it should not.
      */
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // A backtick a quoted attribute value used up opens no code span
+    // (carve#2074): `[a]{title="`"} and [n](u)` is a span, a text run and a
+    // link. The attribute rules run after 'code', so the guard is here.
+    var attrValueFree = '(?<!\\{[^{}\\n]{0,512}=["\'][^"\'\\n]{0,512})';
     var maximalRun = '(?<!`)`+(?!`)';
     var narrowRun = '(?<!`)`{1,2}(?!`)';
     var unpartneredTail =
@@ -1383,6 +1387,38 @@
         },
 
         // Inline code spans
+        // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
+        //
+        // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
+        // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
+        // own character NOR the newline, so an unclosed `{+` scanned to the end
+        // of the DOCUMENT rather than the end of the line (#300: 215 ms for `{+`
+        // and 211 ms for `{-` on 24 KB against 42-145 ms for the seven
+        // line-scanning rules). Unrolled the same way, tempered on `+`/`-`
+        // instead of on `\n`, so the run still crosses lines the way `[^}]*`
+        // did and a body may still hold a non-closing `+`.
+        'inserted': {
+            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
+            alias: 'inserted',
+        },
+        // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
+        // deletion - the engine renders `a {--} b` as `a \u2013 b` - and this rule
+        // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
+        // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
+        'deleted': {
+            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
+            alias: 'deleted',
+        },
+        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
+        // halves are each delimited by `~`, so the scan already stops at the
+        // next one. Bounded anyway: it is the last unbounded scan in the braced
+        // family, and the derived check below asserts the family as a whole
+        // rather than a list somebody has to remember to extend.
+        'changed': {
+            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
+            alias: 'important',
+        },
+
         'code': [
             {
                 /*
@@ -1396,7 +1432,14 @@
                  * the same statement about the opener - a run is entered at
                  * its own start, never one character in.
                  */
-                pattern: /(?<!`)(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1(?!`)/,
+                pattern: RegExp(attrValueFree + '(?<!`)(`{1,2})(?:[^`]|[^`](?:[^\\n]|\\n(?![ \\t\\r]*\\n)){0,4096}?[^`])\\1(?!`)'),
+                greedy: true,
+            },
+            {
+                // A run of three or more is a fence spelling, and a fence's
+                // payload may hold a blank line. A narrow run may not: a code
+                // span ends with its paragraph (carve#2074).
+                pattern: RegExp(attrValueFree + '(?<!`)(`{3,16})(?:[^`]|[^`][\\s\\S]{0,4096}?[^`])\\1(?!`)'),
                 greedy: true,
             },
             {
@@ -1445,7 +1488,7 @@
                  * is a residual this grammar keeps on purpose rather than
                  * guessing at (tests/opaque-payload-test.js).
                  */
-                pattern: unpartneredRun('', narrowRun),
+                pattern: RegExp(attrValueFree + unpartneredRun('', narrowRun).source, 'm'),
                 greedy: true,
             },
         ],
@@ -1699,37 +1742,7 @@
             alias: 'string',
         },
 
-        // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
-        //
-        // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
-        // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
-        // own character NOR the newline, so an unclosed `{+` scanned to the end
-        // of the DOCUMENT rather than the end of the line (#300: 215 ms for `{+`
-        // and 211 ms for `{-` on 24 KB against 42-145 ms for the seven
-        // line-scanning rules). Unrolled the same way, tempered on `+`/`-`
-        // instead of on `\n`, so the run still crosses lines the way `[^}]*`
-        // did and a body may still hold a non-closing `+`.
-        'inserted': {
-            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
-            alias: 'inserted',
-        },
-        // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
-        // deletion - the engine renders `a {--} b` as `a \u2013 b` - and this rule
-        // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
-        // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
-        'deleted': {
-            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
-            alias: 'deleted',
-        },
-        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
-        // halves are each delimited by `~`, so the scan already stops at the
-        // next one. Bounded anyway: it is the last unbounded scan in the braced
-        // family, and the derived check below asserts the family as a whole
-        // rather than a list somebody has to remember to extend.
-        'changed': {
-            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
-            alias: 'important',
-        },
+
         'critic-comment': {
             pattern: /\{#(?!#\})[^}]{0,4096}#\}/,
             alias: 'comment',

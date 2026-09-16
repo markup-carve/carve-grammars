@@ -626,10 +626,15 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *
  * 362 -> 365 with the spec bump to carve c091d01: the three 469 documents
  * (an empty destination is text) keep their authored spelling.
+ *
+ * 365 -> 367 with the bump to ac1af6a. Both 12-inline-code documents it adds
+ * need the envelope only because the PUBLISHED engine (0.1.6) still reads a
+ * used-up backtick as opening a code span; carve-js#1816 fixes it, so the two
+ * come back when this repo's dependency reaches 0.1.7.
  */
 assert.strictEqual(
-    envelopedFiles.length, 365,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 365`,
+    envelopedFiles.length, 367,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 367`,
 );
 
 assert.strictEqual(

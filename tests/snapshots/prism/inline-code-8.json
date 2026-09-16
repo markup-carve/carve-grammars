@@ -1,0 +1,118 @@
+[
+  {
+    "type": "text",
+    "text": "Run "
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*`make*}"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "the docs"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": ".\n\nA "
+  },
+  {
+    "type": "forced-underline",
+    "text": "{_``x_}"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image",
+    "text": "logo"
+  },
+  {
+    "type": "image>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image",
+    "text": "p.png"
+  },
+  {
+    "type": "image>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " here.\n\nA "
+  },
+  {
+    "type": "highlight",
+    "text": "{=`y=}"
+  },
+  {
+    "type": "span",
+    "text": "[note]"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "attributes>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " here.\n\n"
+  },
+  {
+    "type": "inserted",
+    "text": "{+`added+}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
