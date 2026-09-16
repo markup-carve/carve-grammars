@@ -4,11 +4,13 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-09-16
+
 ### Added
 
 - The reserved include directive `{{ path #section @key:value }}` (PART 9 section 19, markup-carve/carve#291) scopes BY PART on all three surfaces: the path as a link/url scope, the selector as a section entity, and each option as a parameter name plus value. It used to shred into the constructs its own selector is spelled with, so `{{ ch.crv #intro }}` colored `#intro` as a hashtag (#403).
 - Frontmatter quick fields are configurable. `CarveKit.configure({ carveFrontmatter: { fields: [...] } })` replaces the built-in `title` / `lang` / `author` / `description` list; a descriptor carries a `key` plus optional `label`, `placeholder`, `multiline` and a constrained `inputAttributes` allowlist, and an empty array renders the raw front matter editor alone. Omitting the option renders what it rendered before (#421).
-- A reusable Shiki language diff transformer (#414), and a browser-safe entry point for it (#415).
+- Reusable language-diff presentation helpers: a Shiki transformer (#414), its browser-safe entry point (#415), and a highlighter-agnostic DOM renderer (#431).
 - Typed front matter payloads are highlighted, with the typed grammar delegated rather than re-spelled (#407, #408).
 
 ### Fixed
