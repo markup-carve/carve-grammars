@@ -148,8 +148,15 @@
         + '|#(?:[^#\\n]|#(?!\\})){1,4096}#'
         + '|%(?:[^%\\n]|%(?!\\})){1,4096}%'
         + ')\\}';
-    const OPAQUE_BRACED = {
-        begin: new RegExp(OPAQUE_BRACED_SOURCE),
+    // Link destinations and autolinks are opaque too (PART 9 section 9 E2a), so
+    // `/see [x](http://a.b/c/) now/` does not close at the `/` before `)`.
+    // Escapes and two levels of balanced parentheses stay inside.
+    const OPAQUE_INLINE_SOURCE = '(?:' + OPAQUE_BRACED_SOURCE
+        + String.raw`|\]\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.){0,256}\)){0,256}\)){1,2048}(?:[ \t]+(?:"(?:[^"\\\n]|\\.){0,512}"|'(?:[^'\\\n]|\\.){0,512}'))?\)`
+        + String.raw`|<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:[^>\s]{1,2048}>|<[^>\s@]{1,2048}@[^>\s]{1,2048}>`
+        + ')';
+    const OPAQUE_INLINE = {
+        begin: new RegExp(OPAQUE_INLINE_SOURCE),
         relevance: 0,
     };
     /**
@@ -202,7 +209,7 @@
         const inClass = /[\\\]^-]/.test(literal) ? '\\' + literal : literal;
         const plainAtom = `[^${inClass}\\n]`;
         const runAtom = opaqueBraces
-            ? `(?:\\\\(?:[^\\n]|\\n(?!\\s*\\n))|${OPAQUE_BRACED_SOURCE}|(?!${OPAQUE_BRACED_SOURCE})[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`
+            ? `(?:\\\\(?:[^\\n]|\\n(?!\\s*\\n))|${OPAQUE_INLINE_SOURCE}|(?!${OPAQUE_INLINE_SOURCE})[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`
             : `(?:${plainAtom}|\\n(?!\\s*\\n))`;
         const run = `${runAtom}{0,4096}`;
         /*
@@ -237,7 +244,7 @@
          * modes are untouched.
          */
         const escapedAtom = `(?:\\\\[^\\n]|[^${inClass}\\n\\\\]|\\n(?!\\s*\\n))`;
-        const escapedRun = opaqueBraces ? `(?:${OPAQUE_BRACED_SOURCE}|(?!${OPAQUE_BRACED_SOURCE})${escapedAtom}){0,4096}` : `${escapedAtom}{0,4096}`;
+        const escapedRun = opaqueBraces ? `(?:${OPAQUE_INLINE_SOURCE}|(?!${OPAQUE_INLINE_SOURCE})${escapedAtom}){0,4096}` : `${escapedAtom}{0,4096}`;
         const body = escapeAware ? escapedRun : run;
         /*
          * `flanked` says a closer may not FOLLOW WHITESPACE, which is the
@@ -295,7 +302,7 @@
             end: closer,
         };
         mode.contains = [];
-        if (opaqueBraces) mode.contains.push(ESCAPE, OPAQUE_BRACED);
+        if (opaqueBraces) mode.contains.push(ESCAPE, OPAQUE_INLINE);
         if (flanked) mode.contains.push({ begin: new RegExp(`\\s${closer.source}`) });
 
         return mode;

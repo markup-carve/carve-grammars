@@ -114,12 +114,37 @@ for (const [name, tokenize, strongScope] of surfaces) {
 }
 
 // A bare closer does not reach inside a link destination or an autolink
-// (corpus 467). TextMate does not honor this yet.
-for (const [name, tokenize, italicScope] of [['prism', prismTokens, 'italic'], ['highlightjs', hljsTokens, 'emphasis']]) {
-    for (const source of ['/see [x](http://a.b/c) now/', '/see <http://a.b/c> now/', '/see ![x](a.png "t/u") now/', '/see [x](foo(bar)/baz) now/', String.raw`/see [x](foo\)x/y) now/`, String.raw`/see [x](foo(bar(\x))/y) now/`, `/see <${'a'.repeat(40)}:x/y> now/`]) {
+// (PART 9 section 9 E2a, corpus 467). Three levels of nested parentheses are
+// not recognized, by design.
+const destinationRuns = [
+    ['/', { prism: 'italic', highlightjs: 'emphasis', textmate: 'markup.italic' }],
+    ['_', { prism: 'underline', highlightjs: 'emphasis', textmate: 'markup.underline' }],
+    ['~', { prism: 'strike', highlightjs: 'deletion', textmate: 'markup.strikethrough' }],
+    ['=', { prism: 'highlight', highlightjs: 'addition', textmate: 'markup.highlight' }],
+    ['*', { prism: 'bold', highlightjs: 'strong', textmate: 'markup.bold' }],
+];
+const destinations = (d) => [
+    `[x](http://a.b/c${d})`,
+    `<http://a.b/c${d}>`,
+    `![x](a.png "t${d}u")`,
+    `![x](a.png 't${d}u')`,
+    `![x](a.png "t${d}")`,
+    `![x](a.png 't${d}')`,
+    `[x](foo(bar)${d}baz)`,
+    String.raw`[x](foo\)x` + d + 'y)',
+    String.raw`[x](foo(bar(\x))` + d + 'y)',
+    `<${'a'.repeat(40)}:x${d}y>`,
+];
+for (const [name, tokenize] of surfaces) {
+    const cases = destinationRuns.flatMap(([d, scopes]) => destinations(d).map((dest) => [`${d}see ${dest} now${d}`, scopes[name] ?? scopes.textmate]));
+    if (!['prism', 'highlightjs'].includes(name)) {
+        cases.push(['/*see [x](a*/b) now*/', 'markup.bold.italic']);
+        cases.push(['*/see [x](a/*b) now/*', 'markup.bold.italic']);
+    }
+    for (const [source, scope] of cases) {
         const tokens = await tokenize(source);
         for (const word of ['see', ' now']) {
-            assert(tokens.some((token) => token.text.includes(word) && token.scope?.includes(italicScope)), `${name}: ${JSON.stringify(source)} lost the italic around ${JSON.stringify(word)}`);
+            assert(tokens.some((token) => token.text.includes(word) && token.scope?.includes(scope)), `${name}: ${JSON.stringify(source)} lost ${scope} around ${JSON.stringify(word)}`);
         }
     }
 }
