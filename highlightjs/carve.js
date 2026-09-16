@@ -152,7 +152,7 @@
     // `/see [x](http://a.b/c/) now/` does not close at the `/` before `)`.
     // Escapes and two levels of balanced parentheses stay inside.
     const OPAQUE_INLINE_SOURCE = '(?:' + OPAQUE_BRACED_SOURCE
-        + String.raw`|\]\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.){0,256}\)){0,256}\)){1,2048}(?:[ \t]+"(?:[^"\\\n]|\\.){0,512}")?\)`
+        + String.raw`|\]\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.){0,256}\)){0,256}\)){1,2048}(?:[ \t]+(?:"(?:[^"\\\n]|\\.){0,512}"|'(?:[^'\\\n]|\\.){0,512}'))?\)`
         + String.raw`|<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:[^>\s]{1,2048}>|<[^>\s@]{1,2048}@[^>\s]{1,2048}>`
         + ')';
     const OPAQUE_INLINE = {
