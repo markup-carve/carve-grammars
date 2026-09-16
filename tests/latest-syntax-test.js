@@ -195,6 +195,13 @@ for (const [name, tokenize] of surfaces) {
         const escapedTokens = await tokenize(`${escaped}\n\n`);
         assert(!escapedTokens.some((token) => token.text.includes(' now') && token.scope?.includes(scope)), `${name}: ${JSON.stringify(escaped)} kept ${scope} past the closer`);
     }
+    if (!['prism', 'highlightjs'].includes(name)) {
+        for (const source of [String.raw`/*see \[x*/](a) now*/`, String.raw`*/see \[x/*](a) now/*`]) {
+            const tokens = await tokenize(`${source}\n\n`);
+            assert(tokens.some((token) => token.text.includes('see') && token.scope?.includes('markup.bold.italic')), `${name}: ${JSON.stringify(source)} did not open markup.bold.italic`);
+            assert(!tokens.some((token) => token.text.includes(' now') && token.scope?.includes('markup.bold.italic')), `${name}: ${JSON.stringify(source)} kept markup.bold.italic past the closer`);
+        }
+    }
 }
 
 const textmate = JSON.parse(readFileSync(new URL('../textmate/carve.tmLanguage.json', import.meta.url), 'utf8'));
