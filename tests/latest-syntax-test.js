@@ -114,8 +114,8 @@ for (const [name, tokenize, strongScope] of surfaces) {
 }
 
 // A bare closer does not reach inside a link destination or an autolink
-// (PART 9 section 9 E2a, corpus 467). Three levels of nested parentheses are
-// not recognized, by design.
+// (PART 9 section 9 E2a, corpus 467). Three levels of nested parentheses and
+// five levels of label brackets are not recognized, by design.
 const destinationRuns = [
     ['/', { prism: 'italic', highlightjs: 'emphasis', textmate: 'markup.italic' }],
     ['_', { prism: 'underline', highlightjs: 'emphasis', textmate: 'markup.underline' }],
@@ -134,6 +134,35 @@ const destinations = (d) => [
     String.raw`[x](foo\)x` + d + 'y)',
     String.raw`[x](foo(bar(\x))` + d + 'y)',
     `<${'a'.repeat(40)}:x${d}y>`,
+    `[](a${d})`,
+    String.raw`[x\]](a` + d + ')',
+    '[x `]` y](a' + d + ')',
+    `[x {# ] #} y](a${d})`,
+    `[a [b [c]]](a${d})`,
+    `[x]( "t${d}")`,
+    String.raw`[x](a "t\\"` + d + '")',
+    `[x](a${String.fromCharCode(0xa0)}b${d})`,
+    `<x:é${d}>`,
+    `<x:a${String.fromCodePoint(0x1f600)}${d}>`,
+];
+// Shapes the spec does not read as a destination or an autolink, so the run
+// closes inside them (carve-grammars#454): no label before `](`, an address
+// `email_autolink` rejects, a title gap other than one space, an escape the
+// destination does not have, and a character outside `url_char`.
+const closedDestinations = (d) => [
+    `](a${d})`,
+    String.raw`\[x](a` + d + ')',
+    `<a@b${d}>`,
+    `<a@b.c${d}>`,
+    `<x@a.b${d}>`,
+    `[x](a  "t${d}")`,
+    `[x](a  't${d}')`,
+    `[x](a\t"t${d}")`,
+    String.raw`[x](a\ b` + d + ')',
+    `<x:a"${d}>`,
+    `<x:a|${d}>`,
+    `<x:a${String.fromCharCode(0x200b)}${d}>`,
+    `<x:a${String.fromCodePoint(0x110bd)}${d}>`,
 ];
 for (const [name, tokenize] of surfaces) {
     const cases = destinationRuns.flatMap(([d, scopes]) => destinations(d).map((dest) => [`${d}see ${dest} now${d}`, scopes[name] ?? scopes.textmate]));
@@ -141,11 +170,30 @@ for (const [name, tokenize] of surfaces) {
         cases.push(['/*see [x](a*/b) now*/', 'markup.bold.italic']);
         cases.push(['*/see [x](a/*b) now/*', 'markup.bold.italic']);
     }
+    for (const address of ['<a_@b.cd>', '<ä_@b.cd>', '<a@b_c.de>']) {
+        cases.push([`_see ${address} now_`, name === 'prism' ? 'underline' : name === 'highlightjs' ? 'emphasis' : 'markup.underline']);
+    }
     for (const [source, scope] of cases) {
         const tokens = await tokenize(source);
         for (const word of ['see', ' now']) {
             assert(tokens.some((token) => token.text.includes(word) && token.scope?.includes(scope)), `${name}: ${JSON.stringify(source)} lost ${scope} around ${JSON.stringify(word)}`);
         }
+    }
+    // A trailing blank line selects the line-faithful TextMate driver, so a
+    // Shiki colour merge cannot carry the scope past the closer.
+    for (const [d, scopes] of destinationRuns) {
+        const scope = scopes[name] ?? scopes.textmate;
+        for (const dest of closedDestinations(d)) {
+            const source = `${d}see ${dest} now${d}`;
+            const tokens = await tokenize(`${source}\n\n`);
+            assert(tokens.some((token) => token.text.includes('see') && token.scope?.includes(scope)), `${name}: ${JSON.stringify(source)} did not open ${scope}`);
+            assert(!tokens.some((token) => token.text.includes(' now') && token.scope?.includes(scope)), `${name}: ${JSON.stringify(source)} kept ${scope} past the closer`);
+        }
+        // The run cannot hold the inner delimiter on every surface, so only the
+        // far side is asserted: an escaped `[` opens no label.
+        const escaped = String.raw`${d}see \[x ${d}y](a${d}) now${d}`;
+        const escapedTokens = await tokenize(`${escaped}\n\n`);
+        assert(!escapedTokens.some((token) => token.text.includes(' now') && token.scope?.includes(scope)), `${name}: ${JSON.stringify(escaped)} kept ${scope} past the closer`);
     }
 }
 

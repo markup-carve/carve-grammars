@@ -214,12 +214,42 @@
         + ')\\}';
 
     // Link destinations and autolinks are opaque too (PART 9 section 9 E2a): the
-    // `/` in `/see [x](http://a.b/c) now/` does not close the italic. Escapes
-    // and two levels of balanced parentheses stay inside the destination.
+    // `/` in `/see [x](http://a.b/c) now/` does not close the italic. Each part
+    // accepts only what its production does: a complete label before `](`
+    // (`link_text`, four levels deep), the destination and title escapes, one
+    // space before a title, and the `url_char` and `email_autolink` alphabets.
+    // Parentheses nest two levels inside a destination.
+    var labelLineEnd = '\\n(?![ \\t]*\\n)';
+    var labelComment = '#(?:[^#\\n]|#(?!\\})|' + labelLineEnd + '){1,512}#\\}';
+    var labelCode = [3, 2, 1].map(function (n) {
+        var run = '```'.slice(0, n);
+        return run + '(?:[^`\\n]|' + (n > 1 ? '`(?!' + run.slice(1) + ')|' : '') + labelLineEnd + '){1,512}' + run + '(?!`)';
+    }).join('|');
+    var labelChar = '\\\\(?:[^\\n]|(?=\\n))|' + labelCode + '|\\{' + labelComment
+        + '|\\{(?!' + labelComment + ')|[^\\[\\]\\\\`{\\n]|' + labelLineEnd;
+    var opaqueLabel = '(?:' + labelChar + '){0,512}';
+    for (var labelDepth = 0; labelDepth < 3; labelDepth++) {
+        opaqueLabel = '(?:' + labelChar + '|\\[' + opaqueLabel + '\\]){0,512}';
+    }
+    // `email_autolink` letters are Unicode letters. Without the `u` flag any
+    // non-ASCII character that is not whitespace stands in for one.
+    var emailClass = function (chars) {
+        return '(?:[A-Za-z' + chars + ']|[^\\x00-\\x7F\\s])';
+    };
+    var destChar = '\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]';
+    var destination = '(?:' + destChar + '|\\((?:' + destChar + '|\\((?:' + destChar + '){0,256}\\)){0,256}\\)){0,2048}';
+    var titled = function (quote) {
+        return quote + '(?:\\\\' + quote + '|\\\\(?!' + quote + ')|[^' + quote + '\\\\\\r\\n]){0,512}' + quote;
+    };
+    // `url_char` outside ASCII excludes C1 controls, White_Space and format
+    // characters; a format character above the BMP is caught at its surrogates.
+    var urlChar = '(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&\'()*+,;=%]'
+        + '|(?!\\uD804[\\uDCBD\\uDCCD]|\\uD80D[\\uDC30-\\uDC3F]|\\uD82F[\\uDCA0-\\uDCA3]|\\uD834[\\uDD73-\\uDD7A]|\\uDB40[\\uDC01\\uDC20-\\uDC7F])'
+        + '[^\\x00-\\xA0\\xAD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u1680\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u2064\\u2066-\\u206F\\u3000\\uFEFF\\uFFF9-\\uFFFB])';
     var opaqueInline = '(?:' + opaqueBracedInline
-        + '|\\]\\((?:[^\\s()\\\\]|\\\\.|\\((?:[^\\s()\\\\]|\\\\.|\\((?:[^\\s()\\\\]|\\\\.){0,256}\\)){0,256}\\)){1,2048}'
-        + '(?:[ \\t]+(?:"(?:[^"\\\\\\n]|\\\\.){0,512}"|\'(?:[^\'\\\\\\n]|\\\\.){0,512}\'))?\\)'
-        + '|<[a-zA-Z][a-zA-Z0-9+.-]{0,2047}:[^>\\s]{1,2048}>|<[^>\\s@]{1,2048}@[^>\\s]{1,2048}>'
+        + '|\\[' + opaqueLabel + '\\]\\(' + destination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)'
+        + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
+        + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
         + ')';
 
     // Keep a complete braced inline atomic while a bare span searches for its

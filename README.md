@@ -417,6 +417,25 @@ can drop the one character a rule is about. The spec corpus is the exception and
 can afford to be - it marks `tests/corpus/**` as `-text`, so
 `250-line-endings-and-a-byte-order-mark-3.crv` really does begin `ef bb bf`.
 
+### Link destinations inside a bare run
+
+A delimiter inside a link destination, its title or an autolink does not close
+the bare run around it, so `/see [x](http://a.b/c) now/` stays one italic run.
+The three grammars follow the spec's productions for what counts: a `](` needs a
+complete label before it (`link_text`), a destination and a title take only
+their own escapes, a title follows exactly one space (`link_title`), a URL
+autolink holds only `url_char`, and an email autolink needs a dotted domain
+ending in letters (`email_autolink`). Anything else closes the run where the
+spec closes it.
+
+Known limits, shared by all three unless noted:
+
+- A label nested more than four brackets deep, or a destination holding three
+  levels of parentheses, is not recognized. A regex cannot count.
+- Prism and highlight.js compile without the `u` flag, so an email autolink
+  accepts any non-ASCII character other than whitespace where the spec asks for
+  a letter. The TextMate grammar uses `\p{L}`.
+
 ### Fence words
 
 All three surfaces answer `carve` and `crv`. `.crv` is the canonical file

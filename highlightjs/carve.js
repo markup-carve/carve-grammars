@@ -150,10 +150,37 @@
         + ')\\}';
     // Link destinations and autolinks are opaque too (PART 9 section 9 E2a), so
     // `/see [x](http://a.b/c/) now/` does not close at the `/` before `)`.
-    // Escapes and two levels of balanced parentheses stay inside.
+    // Each part accepts only what its production does: a complete label before
+    // `](` (`link_text`, four levels deep), the destination and title escapes,
+    // one space before a title, and the `url_char` and `email_autolink`
+    // alphabets. Parentheses nest two levels inside a destination.
+    const LABEL_LINE_END = String.raw`\n(?![ \t]*\n)`;
+    const LABEL_COMMENT = String.raw`#(?:[^#\n]|#(?!\})|` + LABEL_LINE_END + String.raw`){1,512}#\}`;
+    const LABEL_CODE = [3, 2, 1].map((n) => {
+        const run = '```'.slice(0, n);
+        return run + '(?:[^`\\n]|' + (n > 1 ? '`(?!' + run.slice(1) + ')|' : '') + LABEL_LINE_END + '){1,512}' + run + '(?!`)';
+    }).join('|');
+    const LABEL_CHAR = String.raw`\\(?:[^\n]|(?=\n))|` + LABEL_CODE + String.raw`|\{` + LABEL_COMMENT
+        + String.raw`|\{(?!` + LABEL_COMMENT + ')|[^\\[\\]\\\\`{\\n]|' + LABEL_LINE_END;
+    let OPAQUE_LABEL = '(?:' + LABEL_CHAR + '){0,512}';
+    for (let depth = 0; depth < 3; depth++) {
+        OPAQUE_LABEL = '(?:' + LABEL_CHAR + String.raw`|\[` + OPAQUE_LABEL + String.raw`\]){0,512}`;
+    }
+    // `email_autolink` letters are Unicode letters. Without the `u` flag any
+    // non-ASCII character that is not whitespace stands in for one.
+    const emailClass = (chars) => String.raw`(?:[A-Za-z` + chars + String.raw`]|[^\x00-\x7F\s])`;
+    const DEST_CHAR = String.raw`\\[()\\]|\\(?![()\\])|[^ \t\r\n()\\]`;
+    const DESTINATION = '(?:' + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`){0,256}\)){0,256}\)){0,2048}`;
+    const titled = (quote) => quote + String.raw`(?:\\` + quote + String.raw`|\\(?!` + quote + ')|[^' + quote + String.raw`\\\r\n]){0,512}` + quote;
+    // `url_char` outside ASCII excludes C1 controls, White_Space and format
+    // characters; a format character above the BMP is caught at its surrogates.
+    const URL_CHAR = String.raw`(?:[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]`
+        + String.raw`|(?!\uD804[\uDCBD\uDCCD]|\uD80D[\uDC30-\uDC3F]|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F])`
+        + String.raw`[^\x00-\xA0\xAD\u0600-\u0605\u061C\u06DD\u070F\u0890\u0891\u08E2\u1680\u180E\u2000-\u200F\u2028-\u202F\u205F-\u2064\u2066-\u206F\u3000\uFEFF\uFFF9-\uFFFB])`;
     const OPAQUE_INLINE_SOURCE = '(?:' + OPAQUE_BRACED_SOURCE
-        + String.raw`|\]\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.|\((?:[^\s()\\]|\\.){0,256}\)){0,256}\)){1,2048}(?:[ \t]+(?:"(?:[^"\\\n]|\\.){0,512}"|'(?:[^'\\\n]|\\.){0,512}'))?\)`
-        + String.raw`|<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:[^>\s]{1,2048}>|<[^>\s@]{1,2048}@[^>\s]{1,2048}>`
+        + String.raw`|\[` + OPAQUE_LABEL + String.raw`\]\(` + DESTINATION + '(?: (?:' + titled('"') + '|' + titled("'") + String.raw`))?\)`
+        + String.raw`|<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:` + URL_CHAR + '{1,2048}>'
+        + '|<' + emailClass(String.raw`0-9\-_.+`) + String.raw`{1,512}@(?:` + emailClass(String.raw`0-9\-_`) + String.raw`{1,512}\.){1,64}` + emailClass('') + '{1,512}>'
         + ')';
     const OPAQUE_INLINE = {
         begin: new RegExp(OPAQUE_INLINE_SOURCE),
