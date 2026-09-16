@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/see <http://a.b/c> now/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
