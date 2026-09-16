@@ -147,6 +147,11 @@
     // ... and additionally not opening on the `^` that marks a footnote
     // reference, for the two span rules that guarded against it before.
     var bracketTextSpan = '(?![\\]^])' + bracketText;
+    // An escaped opener is text: `\[x](u)` is not a link (carve-grammars#460).
+    // The lookbehind sits after the opener, so it only runs where one matched.
+    var unescaped = function (opener) {
+        return opener + '(?<!(?:^|[^\\\\])(?:\\\\\\\\)*\\\\' + opener + ')';
+    };
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -154,7 +159,7 @@
     // (corpus 123). Prism tokenizes left to right, so the span and its empty
     // block have to be ONE rule -- a lookbehind would lose its `]` to the span.
     var spanEmptyAttrs = {
-        pattern: new RegExp('\\[' + bracketTextSpan + '\\]\\{\\s*\\}'),
+        pattern: new RegExp(unescaped('\\[') + bracketTextSpan + '\\]\\{\\s*\\}'),
         inside: {
             'attr-value': { pattern: /\{\s*\}/, inside: { 'punctuation': /[{}]/ } },
             'string': new RegExp('\\[' + bracketText + '\\]'),
@@ -1116,7 +1121,7 @@
                 },
                 'punctuation': /\|=|\|/,
                 'attributes': attributes,
-                'url': /\[[^\]]+\]\([^\s)]+\)/,
+                'url': new RegExp(unescaped('\\[') + /[^\]]+\]\([^\s)]+\)/.source),
             }, inline),
         },
 
@@ -1515,7 +1520,7 @@
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {
-            pattern: new RegExp('!\\[' + bracketText + '\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
             greedy: true,
             alias: 'url',
             inside: {
@@ -1558,7 +1563,7 @@
         // text may be empty too, so it uses `bracketText` rather than the
         // non-empty body: `![][r]` is an image, where `[][r]` is not a link.
         'reference-image': {
-            pattern: new RegExp('!\\[' + bracketText + '\\]\\[[^\\]\\n]{0,512}\\]'),
+            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\[[^\\]\\n]{0,512}\\]'),
             greedy: true,
             alias: 'url',
             inside: {
@@ -1571,7 +1576,7 @@
         // from the reference `[^label]` below - the caret leads here - and
         // matched first so neither rule claims the other's brackets.
         'inline-footnote': {
-            pattern: /\^\[[^\]\n]{0,512}\]/,
+            pattern: new RegExp(unescaped('\\^') + /\[[^\]\n]{0,512}\]/.source),
             alias: 'symbol',
             // The body is ordinary inline content - `^[see *later*]` keeps its
             // bold - so the shared inline rules apply inside it.
@@ -1582,7 +1587,7 @@
 
         // Footnote references: [^label]
         'footnote': {
-            pattern: /\[\^[^\]]{1,512}\]/,
+            pattern: new RegExp(unescaped('\\[') + /\^[^\]]{1,512}\]/.source),
             alias: 'symbol',
         },
 
@@ -1591,7 +1596,7 @@
         // `(url)`, `[ref]`, or `{attrs}` suffix. The bracket MUST contain at
         // least one `@key` item.
         'citation': {
-            pattern: /\[\+?(?:[^\]@]{0,512}@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*(?:[^\]]{0,512})?)\](?!\(|\[|\{)/,
+            pattern: new RegExp(unescaped('\\[') + /\+?(?:[^\]@]{0,512}@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*(?:[^\]]{0,512})?)\](?!\(|\[|\{)/.source),
             greedy: true,
             alias: 'string',
             inside: {
@@ -1638,7 +1643,7 @@
                 // The link text may be empty ([](url), spec corpus 03-links-8)
                 // and the title may contain backslash-escaped quotes:
                 // [t](/url "ti\"tle") (spec corpus 03-links-4).
-                pattern: new RegExp('\\[' + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+                pattern: new RegExp(unescaped('\\[') + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
                 greedy: true,
                 inside: {
                     'string': /"(?:[^"\\]|\\[\s\S])*"/,
@@ -1646,7 +1651,7 @@
                 },
             },
             {
-                pattern: new RegExp('\\[' + bracketTextNonEmpty + '\\]\\[[^\\]]{0,512}\\]'),
+                pattern: new RegExp(unescaped('\\[') + bracketTextNonEmpty + '\\]\\[[^\\]]{0,512}\\]'),
                 greedy: true,
                 inside: {
                     'punctuation': /\[|\]\[|\]/,
@@ -1685,7 +1690,7 @@
         },
 
         'span': {
-            pattern: new RegExp('\\[' + bracketTextSpan + '\\](?=\\{)'),
+            pattern: new RegExp(unescaped('\\[') + bracketTextSpan + '\\](?=\\{)'),
             alias: 'string',
         },
 
