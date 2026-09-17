@@ -63,7 +63,7 @@ export { CarveLineBlock } from './extensions/carve-line-block.js';
 export { CarveHeading } from './extensions/carve-heading.js';
 
 // Serializer
-export { serializeToCarve, escapeCarve, carveMediaDirective } from './serializer.js';
+export { serializeToCarve, serializeToCarveWithReport, escapeCarve, carveMediaDirective } from './serializer.js';
 
 // Loader
 export { carveToProseMirror, carveToProseMirrorWithReport, astToProseMirror, UnsupportedNodeError } from './carve-to-pm.js';

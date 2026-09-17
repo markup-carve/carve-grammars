@@ -68,5 +68,12 @@ export function astToProseMirror(
 ): JSONContent;
 
 export function serializeToCarve(document: JSONContent): string;
+export function serializeToCarveWithReport(document: JSONContent): {
+  source: string;
+  /** Attributes or nodes the Carve source does not carry. */
+  dropped: Record<string, string>;
+  /** Nodes written as literal text. */
+  degraded: Record<string, string>;
+};
 export function escapeCarve(text: string, trailingSafe?: boolean): string;
 export function carveMediaDirective(source: string): string;
