@@ -5,7 +5,15 @@
   },
   {
     "type": "bold>forced-italic",
-    "text": "{/b *c* d/}"
+    "text": "{/b "
+  },
+  {
+    "type": "bold>forced-italic>bold",
+    "text": "*c*"
+  },
+  {
+    "type": "bold>forced-italic",
+    "text": " d/}"
   },
   {
     "type": "bold",

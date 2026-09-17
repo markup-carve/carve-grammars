@@ -5,7 +5,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "{/b *c* d/}"
+    "text": "{/b "
+  },
+  {
+    "scope": "strong",
+    "text": "*c*"
+  },
+  {
+    "scope": "emphasis",
+    "text": " d/}"
   },
   {
     "scope": "strong",

@@ -5,7 +5,15 @@
   },
   {
     "scope": "strong",
-    "text": "{*`make*}"
+    "text": "{*"
+  },
+  {
+    "scope": "code",
+    "text": "`make"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
   },
   {
     "scope": "link",
@@ -17,7 +25,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "{_``x_}"
+    "text": "{_"
+  },
+  {
+    "scope": "code",
+    "text": "``x"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_}"
   },
   {
     "scope": "link",
@@ -29,7 +45,15 @@
   },
   {
     "scope": "addition",
-    "text": "{=`y=}"
+    "text": "{="
+  },
+  {
+    "scope": "code",
+    "text": "`y"
+  },
+  {
+    "scope": "addition",
+    "text": "=}"
   },
   {
     "scope": "string",
@@ -45,7 +69,15 @@
   },
   {
     "scope": "addition",
-    "text": "{+`added+}"
+    "text": "{+"
+  },
+  {
+    "scope": "code",
+    "text": "`added"
+  },
+  {
+    "scope": "addition",
+    "text": "+}"
   },
   {
     "scope": null,

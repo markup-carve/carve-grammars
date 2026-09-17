@@ -9,7 +9,15 @@
   },
   {
     "type": "forced-italic",
-    "text": "{/italic *bold*/}"
+    "text": "{/italic "
+  },
+  {
+    "type": "forced-italic>bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "forced-italic",
+    "text": "/}"
   },
   {
     "type": "text",

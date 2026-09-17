@@ -1,7 +1,11 @@
 [
   {
     "type": "forced-strike",
-    "text": "{~` ~}"
+    "text": "{~"
+  },
+  {
+    "type": "forced-strike>code",
+    "text": "` ~}"
   },
   {
     "type": "text",

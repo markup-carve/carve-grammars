@@ -297,31 +297,29 @@ const CASES = [
     // ---- prism/carve.js, the seven line-scanning inline rules -------------
     {
         name: 'prism forced-bold {*',
-        before: /\{\*(?!\*\})[^\n]*?\*\}/,
+        before: () => withoutBounds(prismRule('forced-bold', '\\{\\*')),
         after: () => prismRule('forced-bold', '\\{\\*'),
         alphabet: ['{', '}', '*', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism forced-italic {/',
-        before: /\{\/(?!\/\})[^\n]*?\/\}/,
+        before: () => withoutBounds(prismRule('forced-italic', '\\{\\/')),
         after: () => prismRule('forced-italic', '\\{\\/'),
         alphabet: ['{', '}', '/', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism forced-underline {_',
-        before: /\{_(?!_\})[^\n]*?_\}/,
+        before: () => withoutBounds(prismRule('forced-underline', '\\{_')),
         after: () => prismRule('forced-underline', '\\{_'),
         alphabet: ['{', '}', '_', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism forced-strike {~',
-        before: /\{~(?!~\})(?:(?!~>)[^\n])+?~\}/,
+        before: () => withoutBounds(prismRule('forced-strike', '\\{~')),
         after: () => prismRule('forced-strike', '\\{~'),
-        // No `>`: an arrow now defers to the substitution rule, which splits
-        // at a top-level arrow (carve-grammars#471).
         alphabet: ['{', '}', '~', 'a', ' ', '\n'],
         maxLength: 7,
     },
@@ -339,14 +337,14 @@ const CASES = [
     },
     {
         name: 'prism superscript {^',
-        before: /\{\^(?!\^\})[^\n]*?\^\}/,
+        before: () => withoutBounds(prismRule('superscript', '\\{\\^')),
         after: () => prismRule('superscript', '\\{\\^'),
         alphabet: ['{', '}', '^', 'a', ' ', '\n'],
         maxLength: 8,
     },
     {
         name: 'prism subscript {,',
-        before: /\{,(?!,\})[^\n]*?,\}/,
+        before: () => withoutBounds(prismRule('subscript', '\\{,')),
         after: () => prismRule('subscript', '\\{,'),
         alphabet: ['{', '}', ',', 'a', ' ', '\n'],
         maxLength: 8,
@@ -356,7 +354,7 @@ const CASES = [
     // compared on multi-line input too.
     {
         name: 'prism inserted {+',
-        before: /\{\+(?!\+\})[^}]*\+\}/,
+        before: () => withoutBounds(prismRule('inserted', '\\{\\+')),
         after: () => prismRule('inserted', '\\{\\+'),
         alphabet: ['{', '}', '+', 'a', '\n'],
         maxLength: 8,
@@ -376,7 +374,7 @@ const CASES = [
          * `[^}]*` here.
          */
         name: 'prism deleted {-',
-        before: /\{-(?!-\})[^}]*-\}/,
+        before: () => withoutBounds(prismRule('deleted', '\\{-')),
         after: () => prismRule('deleted', '\\{-'),
         alphabet: ['{', '}', '-', 'a', '\n'],
         maxLength: 8,
@@ -390,21 +388,21 @@ const CASES = [
     // the opener's source everywhere except forced-strike, whose opener is part
     // of this fix - see the row's own note.
     ...[
-        ['forced-bold {*', /\{\*(?!\*\})/, /\*\}/, null, ['{', '}', '*', 'a', ' ', '\n']],
-        ['forced-italic {/', /\{\/(?!\/\})/, /\/\}/, null, ['{', '}', '/', 'a', ' ', '\n']],
-        ['forced-underline {_', /\{_(?!_\})/, /_\}/, null, ['{', '}', '_', 'a', ' ', '\n']],
+        ['forced-bold {*', /\{\*(?!\*\})/, /\*\}/, null, ['{', '}', '*', 'a', ' ', '\n'], true],
+        ['forced-italic {/', /\{\/(?!\/\})/, /\/\}/, null, ['{', '}', '/', 'a', ' ', '\n'], true],
+        ['forced-underline {_', /\{_(?!_\})/, /_\}/, null, ['{', '}', '_', 'a', ' ', '\n'], true],
         // Its OPENER changed too: `(?!.*~>)` was a greedy scan of the rest of
         // the line, so it is matched on the part that did not change. Both
         // halves of the begin are compared, which is the point - the guard and
         // the arrow lookahead were rewritten in the same commit.
-        ['forced-strike {~', /\{~(?!~\})(?!.*~>)/, /~\}/, '\\{~(?!~\\})', ['{', '}', '~', 'a', ' ', '\n']],
-        ['inserted {+', /\{\+(?!\+\})/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
+        ['forced-strike {~', /\{~(?!~\})/, /~\}/, null, ['{', '}', '~', 'a', ' ', '\n'], true],
+        ['inserted {+', /\{\+(?!\+\})/, /\+\}/, null, ['{', '}', '+', 'a', '\n'], true],
         // Its OPENER changed in carve-grammars#378 - `{--}` is a braced en dash,
         // not an empty deletion - so the baseline carries the guard, the same way
         // `forced-strike` above carries the half of its opener that did not change.
-        ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
-        ['subscript {,', /\{,(?!,\})/, /,\}/, null, ['{', '}', ',', 'a', ' ', '\n']],
-        ['superscript {^', /\{\^(?!\^\})/, /\^\}/, null, ['{', '}', '^', 'a', ' ', '\n']],
+        ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n'], true],
+        ['subscript {,', /\{,(?!,\})/, /,\}/, null, ['{', '}', ',', 'a', ' ', '\n'], true],
+        ['superscript {^', /\{\^(?!\^\})/, /\^\}/, null, ['{', '}', '^', 'a', ' ', '\n'], true],
         ['emphasis /', /(?<![\w:/])\/(?=\S)(?!\/)/, /\/(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['/', 'a', ' ', '\n', '{'], true],
         ['underline _', /(?<![\w/])_(?![\s_])/, /_(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['_', 'a', ' ', '\n', '{'], true],
         // The `\[` escape is redundant inside a class and kept anyway: the

@@ -5,7 +5,11 @@
   },
   {
     "type": "forced-bold",
-    "text": "{*$`a*}"
+    "text": "{*"
+  },
+  {
+    "type": "forced-bold>math",
+    "text": "$`a*}"
   },
   {
     "type": "text",
@@ -13,7 +17,11 @@
   },
   {
     "type": "forced-strike",
-    "text": "{~$$`b~}"
+    "text": "{~"
+  },
+  {
+    "type": "forced-strike>math",
+    "text": "$$`b~}"
   },
   {
     "type": "text",
@@ -21,7 +29,11 @@
   },
   {
     "type": "forced-italic",
-    "text": "{/!`c/}"
+    "text": "{/"
+  },
+  {
+    "type": "forced-italic>literal",
+    "text": "!`c/}"
   },
   {
     "type": "text",
@@ -29,7 +41,15 @@
   },
   {
     "type": "forced-underline",
-    "text": "{_!`d`_}"
+    "text": "{_"
+  },
+  {
+    "type": "forced-underline>literal",
+    "text": "!`d`"
+  },
+  {
+    "type": "forced-underline",
+    "text": "_}"
   },
   {
     "type": "text",

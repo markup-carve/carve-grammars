@@ -280,6 +280,22 @@
     // and a braced span of ANOTHER kind are atoms, and a delimiter of its own
     // kind is body text where it cannot close. Built with the `u` flag.
     var bareCode = '```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)';
+    // A braced span's body: a braced span of another kind, a closed code span
+    // and a link destination or autolink are atoms, so the closer is the first
+    // one outside all three. `kinds` is empty for an insertion or deletion,
+    // which closes at its first closer.
+    function forcedBody(delimiter, kinds) {
+        var atom = '(?:' + (kinds === undefined ? bracedInline(bracedKinds.filter(function (kind) { return kind !== delimiter; })) + '|' : '')
+            + bareCode + '|\\[' + opaqueLabel + linkTail
+            + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
+            + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>)';
+        // The cheap scan, tempered on the delimiter, fails fast where no closer
+        // exists at all.
+        var run = '(?:[^' + delimiter + '\\n]|\\n(?![ \\t\\r]*\\n)){0,4096}';
+        return '(?=' + run + '(?:' + delimiter + '(?!\\})' + run + '){0,32}' + delimiter + '\\})'
+            + '(?:' + atom + '|\\\\[^\\n]|(?!' + atom + ')[^\\n\\\\]|\\n(?![ \\t\\r]*\\n)){0,4096}?';
+    }
+
     function bareRun(delimiter) {
         var braced = bracedInline(bracedKinds.filter(function (kind) { return kind !== delimiter; }));
         var opaque = '(?:' + braced
@@ -372,15 +388,15 @@
         // past them is simply not matched and the `{` stays plain text, which is
         // the safe direction.
         'forced-bold': {
-            pattern: /\{\*(?!\*\})[^*\n]{0,4096}(?:\*(?!\})[^*\n]{0,4096}){0,32}\*\}/,
+            pattern: RegExp('\\{\\*(?!\\*\\})' + forcedBody('\\*') + '\\*\\}'),
             alias: 'bold',
         },
         'forced-italic': {
-            pattern: /\{\/(?!\/\})[^/\n]{0,4096}(?:\/(?!\})[^/\n]{0,4096}){0,32}\/\}/,
+            pattern: RegExp('\\{/(?!/\\})' + forcedBody('/') + '/\\}'),
             alias: 'italic',
         },
         'forced-underline': {
-            pattern: /\{_(?!_\})[^_\n]{0,4096}(?:_(?!\})[^_\n]{0,4096}){0,32}_\}/,
+            pattern: RegExp('\\{_(?!_\\})' + forcedBody('_') + '_\\}'),
             alias: 'underline',
         },
         'forced-strike': {
@@ -388,7 +404,7 @@
             // top-level one.
             // `(?!~\})` rejects the empty `{~~}` while admitting whitespace
             // as real content, including the corpus spelling `{~ ~}`.
-            pattern: /\{~(?!~\})[^~\n]{0,4096}(?:~(?!\})[^~\n]{0,4096}){0,32}~\}/,
+            pattern: RegExp('\\{~(?!~\\})' + forcedBody('~') + '~\\}'),
             alias: 'deleted',
         },
         'bold': {
@@ -507,7 +523,7 @@
             // construct, and the derived family check below reads lines. Given
             // a bound, at the same 4096 the rest of the file uses.
             pattern: new RegExp(
-                /\{=(?!=\})[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|/.source
+                '\\{=(?!=\\})' + forcedBody('=') + '=\\}|'
                 + /(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
                 + bareRun('=')
                 + /(?<=\S)=(?![\p{L}\p{N}])/.source,
@@ -517,11 +533,11 @@
         },
         // Braced-only: a bare `^` / `,` is literal text (no bare sup/sub).
         'superscript': {
-            pattern: /\{\^(?!\^\})[^\^\n]{0,4096}(?:\^(?!\})[^\^\n]{0,4096}){0,32}\^\}/,
+            pattern: RegExp('\\{\\^(?!\\^\\})' + forcedBody('\\^') + '\\^\\}'),
             alias: 'important',
         },
         'subscript': {
-            pattern: /\{,(?!,\})[^,\n]{0,4096}(?:,(?!\})[^,\n]{0,4096}){0,32},\}/,
+            pattern: RegExp('\\{,(?!,\\})' + forcedBody(',') + ',\\}'),
             alias: 'important',
         },
     };
@@ -1423,7 +1439,7 @@
         // instead of on `\n`, so the run still crosses lines the way `[^}]*`
         // did and a body may still hold a non-closing `+`.
         'inserted': {
-            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
+            pattern: RegExp('\\{\\+(?!\\+\\})' + forcedBody('\\+', []) + '\\+\\}'),
             alias: 'inserted',
         },
         // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
@@ -1431,7 +1447,7 @@
         // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
         // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
         'deleted': {
-            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
+            pattern: RegExp('\\{-(?!-\\})' + forcedBody('-', []) + '-\\}'),
             alias: 'deleted',
         },
         'changed': inline['changed'],
@@ -1856,12 +1872,21 @@
         'forced-underline', 'forced-strike', 'bold-italic', 'bold', 'italic', 'underline', 'strike',
         'highlight', 'superscript', 'subscript', 'inserted', 'deleted', 'mention', 'tag', 'escape', 'typography',
     ].forEach(function (name) { substitutionContent[name] = Prism.languages.carve[name]; });
-    // A bare run's content is inline content too. Its own rule is left out, or
-    // the run would match itself again.
-    ['bold', 'italic', 'underline', 'strike', 'highlight'].forEach(function (name) {
-        var content = Object.assign({}, substitutionContent);
-        delete content[name];
-        inline[name].inside = content;
+    // A bare or braced run's content is inline content too. Its own rules are
+    // left out, or the run would match itself again, and inside a braced span
+    // its own delimiter is text.
+    [
+        ['bold', ['bold', 'forced-bold']], ['italic', ['italic', 'forced-italic']],
+        ['underline', ['underline', 'forced-underline']], ['strike', ['strike', 'forced-strike']],
+        ['highlight', ['highlight']], ['forced-bold', ['bold', 'forced-bold']],
+        ['forced-italic', ['italic', 'forced-italic']], ['forced-underline', ['underline', 'forced-underline']],
+        ['forced-strike', ['strike', 'forced-strike']], ['superscript', ['superscript']],
+        // A deletion's own `-` delimiters would read as a dash.
+        ['subscript', ['subscript']], ['inserted', ['inserted']], ['deleted', ['deleted', 'typography']],
+    ].forEach(function (pair) {
+        var content = Object.assign({ 'changed': inline['changed'] }, substitutionContent);
+        pair[1].forEach(function (name) { delete content[name]; });
+        (inline[pair[0]] || Prism.languages.carve[pair[0]]).inside = content;
     });
     inline['changed'].inside = {
         'deleted': {

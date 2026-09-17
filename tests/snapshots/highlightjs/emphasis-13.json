@@ -9,7 +9,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "{/italic *bold*/}"
+    "text": "{/italic "
+  },
+  {
+    "scope": "strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/}"
   },
   {
     "scope": null,

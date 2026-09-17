@@ -5,7 +5,15 @@
   },
   {
     "scope": "strong",
-    "text": "{*`a\n*}"
+    "text": "{*"
+  },
+  {
+    "scope": "code",
+    "text": "`a\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
   },
   {
     "scope": null,
@@ -21,7 +29,15 @@
   },
   {
     "scope": "strong",
-    "text": "{*`a\n*}"
+    "text": "{*"
+  },
+  {
+    "scope": "code",
+    "text": "`a\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
   },
   {
     "scope": null,

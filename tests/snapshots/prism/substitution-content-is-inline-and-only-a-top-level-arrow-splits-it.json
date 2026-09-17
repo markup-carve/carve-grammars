@@ -1,7 +1,11 @@
 [
   {
     "type": "forced-strike",
-    "text": "{~`a~>b~}"
+    "text": "{~"
+  },
+  {
+    "type": "forced-strike>code",
+    "text": "`a~>b~}"
   },
   {
     "type": "text",
@@ -9,7 +13,15 @@
   },
   {
     "type": "forced-strike",
-    "text": "{~a `x~>y` b~}"
+    "text": "{~a "
+  },
+  {
+    "type": "forced-strike>code",
+    "text": "`x~>y`"
+  },
+  {
+    "type": "forced-strike",
+    "text": " b~}"
   },
   {
     "type": "text",
@@ -41,7 +53,15 @@
   },
   {
     "type": "forced-strike",
-    "text": "{~a\\~>b~}"
+    "text": "{~a"
+  },
+  {
+    "type": "forced-strike>escape",
+    "text": "\\~"
+  },
+  {
+    "type": "forced-strike",
+    "text": ">b~}"
   },
   {
     "type": "text",

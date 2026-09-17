@@ -63,24 +63,14 @@ const BOUNDED = {
         // `(?:[^%\n]|\n(?![ \t]*\n))` and a marker written against the bare
         // class would pin the rule to the version that could not span a break.
         ['inline comment', '%(?!\\})', 3],
-        // carve-grammars#300 - the nine siblings of the rule above, each
-        // matched on its opener plus the first character of its body class for
-        // the same reason.
-        ['forced bold', '/\\{\\*(?!\\*\\})[^', 3],
-        ['forced italic', '/\\{\\/(?!\\/\\})[^', 3],
-        ['forced underline', '/\\{_(?!_\\})[^', 3],
-        ['forced strike', '/\\{~(?!~\\})[^', 3],
-        ['braced highlight', '/\\{=(?!=\\})[^', 3],
-        ['superscript', '/\\{\\^(?!\\^\\})[^', 3],
-        ['subscript', '/\\{,(?!,\\})[^', 3],
+        // carve-grammars#300 - the nine braced siblings of the rule above now
+        // share one body.
+        ['braced span body', "+ '(?:' + atom + '|", 1],
+        ['braced span precheck run', "var run = '(?:[^' + delimiter", 1],
+        ['braced span precheck', "return '(?=' + run + '(?:' + delimiter", 1],
+        ['braced span atoms', "return kind + '(?:[^' + kind", 1],
         ['bare run code atoms', 'var bareCode = ', 3],
         ['bare run body', "+ '|(?!' + opaque + ')[^' + delimiter", 1],
-        ['critic inserted', '/\\{\\+(?!\\+\\})[^', 3],
-        // The opener carries `(?!-\\})` since carve-grammars#378 - `{--}` is a
-        // braced en dash, not an empty deletion - and the marker carries it too,
-        // so a revert to the unguarded opener fails the "is still there" check
-        // rather than passing a rule this file no longer describes.
-        ['critic deleted', '/\\{-(?!-\\})[^', 3],
         ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
         ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],
         ['substitution brace guard', 'var closedComment = ', 2],
@@ -105,6 +95,9 @@ const BOUNDED = {
         ['paired() guard repetition', 'const guard = `${run}', 1],
         // The five bare modes.
         ['bare run code atoms', 'const BARE_CODE = ', 3],
+        ['braced span body', 'const body = `(?:${atom}|', 1],
+        ['braced span precheck run', 'const run = `(?:[^${d}', 1],
+        ['braced span precheck', 'const cheap = `${run}(?:${d}', 1],
         ['bare run guard', 'begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?', 1],
         // The substitution's arrow hunt.
         ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
