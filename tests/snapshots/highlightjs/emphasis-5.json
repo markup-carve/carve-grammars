@@ -17,7 +17,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "/italic with *bold* inside/"
+    "text": "/italic with "
+  },
+  {
+    "scope": "strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": "emphasis",
+    "text": " inside/"
   },
   {
     "scope": null,

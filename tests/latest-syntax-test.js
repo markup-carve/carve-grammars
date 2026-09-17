@@ -55,7 +55,7 @@ for (const [name, tokenize, strongScope] of surfaces) {
 
     for (const braced of [
         '{*b~ c*}', '{/b~ c/}', '{_b~ c_}', '{^b~ c^}', '{,b~ c,}',
-        ...(['prism', 'highlightjs'].includes(name) ? ['{~b~ c~}'] : []), '{=b~ c=}', '{+b~ c+}', '{-b~ c-}', '{# b~ c #}', '{% b~ c %}',
+        '{=b~ c=}', '{+b~ c+}', '{-b~ c-}', '{# b~ c #}', '{% b~ c %}',
         String.raw`{/b\c~ d/}`,
     ]) {
         const source = `~a ${braced} d~`;
@@ -64,10 +64,8 @@ for (const [name, tokenize, strongScope] of surfaces) {
     }
 
     // A same-kind forced opener inside a bare run is text, so the run closes at `b~`.
-    if (!['prism', 'highlightjs'].includes(name)) {
-        const sameKind = await tokenize('~a {~b~ c~} d~');
-        assert(!sameKind.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: a same-kind forced opener hid the bare closer`);
-    }
+    const sameKind = await tokenize('~a {~b~ c~} d~');
+    assert(!sameKind.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: a same-kind forced opener hid the bare closer`);
 
     const literalBracePair = await tokenize('*a {--} b*');
     assert(literalBracePair.some((token) => token.text.includes(' b') && token.scope?.includes(strongScope)), `${name}: a literal braced en dash stopped a bare run`);

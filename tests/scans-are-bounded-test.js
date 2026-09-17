@@ -73,7 +73,8 @@ const BOUNDED = {
         ['braced highlight', '/\\{=(?!=\\})[^', 3],
         ['superscript', '/\\{\\^(?!\\^\\})[^', 3],
         ['subscript', '/\\{,(?!,\\})[^', 3],
-        ['bare emphasis bodies', "function bareBody(delimiter, repetition = '{0,4096}')", 1],
+        ['bare run code atoms', 'var bareCode = ', 3],
+        ['bare run body', "+ '|(?!' + opaque + ')[^' + delimiter", 1],
         ['critic inserted', '/\\{\\+(?!\\+\\})[^', 3],
         // The opener carries `(?!-\\})` since carve-grammars#378 - `{--}` is a
         // braced en dash, not an empty deletion - and the marker carries it too,
@@ -97,19 +98,14 @@ const BOUNDED = {
         // spelling that could not see a comment spanning a break.
         ['critic comment', 'begin: /\\{#', 1],
         ['bracket label body', 'const BRACKET_SCAN =', 1],
-        // carve-grammars#300. THIRTEEN modes are built from this one line, so
-        // it is the single highest-value line in the file to pin: the run that
+        // carve-grammars#300. Every braced mode is built from this line: the run
         // the guard repeats, and the repetition count that stops an unclosed
         // opener from scanning to the end of the paragraph.
-        ['paired() guard run', 'const run = `${runAtom}', 1],
-        // carve-grammars#390. The bare highlight's guard steps over an ESCAPED
-        // delimiter by consuming the pair rather than counting the backslash
-        // run in a lookbehind, so the escape-aware run is a second line that
-        // scans, and it is bounded the same way. Matched on the assignment, so
-        // a rewrite that drops the bound fails the bounds check rather than the
-        // "is still there" one.
-        ['paired() escape-aware run', 'const escapedRun = opaqueBraces', 1],
-        ['paired() guard repetition', 'const guard = `${body}', 1],
+        ['paired() guard run', 'const run = `(?:${plainAtom}', 1],
+        ['paired() guard repetition', 'const guard = `${run}', 1],
+        // The five bare modes.
+        ['bare run code atoms', 'const BARE_CODE = ', 3],
+        ['bare run guard', 'begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?', 1],
         // The substitution's arrow hunt.
         ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
         ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],

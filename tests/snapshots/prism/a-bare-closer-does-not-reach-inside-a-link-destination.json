@@ -1,7 +1,31 @@
 [
   {
     "type": "italic",
-    "text": "/see [x](http://a.b/c) now/"
+    "text": "/see "
+  },
+  {
+    "type": "italic>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "italic>url",
+    "text": "x"
+  },
+  {
+    "type": "italic>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "italic>url",
+    "text": "http://a.b/c"
+  },
+  {
+    "type": "italic>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "italic",
+    "text": " now/"
   },
   {
     "type": "text",

@@ -5,7 +5,31 @@
   },
   {
     "type": "bold",
-    "text": "*[the docs](url) for more*"
+    "text": "*"
+  },
+  {
+    "type": "bold>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "bold>url",
+    "text": "the docs"
+  },
+  {
+    "type": "bold>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "bold>url",
+    "text": "url"
+  },
+  {
+    "type": "bold>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "bold",
+    "text": " for more*"
   },
   {
     "type": "text",

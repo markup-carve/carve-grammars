@@ -471,15 +471,8 @@ const DOCUMENTS = [...strings(ALPHABET, BODY_LENGTH)].map((body) => `x ${body} y
  * the guard as well as after - the guard changed neither.
  */
 const RESIDUALS = {
-    /*
-     * A CLOSER FOLLOWED BY ANOTHER `=`. The engine reads `=a==` as a mark over
-     * `a` plus a literal `=`; both grammars spell the body as `[^=\n]+?`, so
-     * the closer they find is refused by `(?![\w=])` and the run has nowhere
-     * left to go. Widening it means letting the body hold its own delimiter,
-     * which is what the BRACED form `{=a=}` is for.
-     */
-    prism: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
-    // TextMate reads all three as the engine does since carve-grammars#476.
+    // A closer followed by another `=` closes since carve-grammars#476.
+    prism: [],
     textmate: [],
     /*
      * THE INTELLIJ PORT HAS NOT TAKEN carve-grammars#385, so with its checkout

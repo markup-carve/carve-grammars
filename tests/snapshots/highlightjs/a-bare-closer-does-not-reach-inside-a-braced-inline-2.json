@@ -1,7 +1,15 @@
 [
   {
     "scope": "deletion",
-    "text": "~a{+b~+} c~"
+    "text": "~a"
+  },
+  {
+    "scope": "addition",
+    "text": "{+b~+}"
+  },
+  {
+    "scope": "deletion",
+    "text": " c~"
   },
   {
     "scope": null,

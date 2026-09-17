@@ -213,7 +213,7 @@ const withoutBounds = (pattern) =>
     new RegExp(pattern.source
         .replaceAll('{0,4096}', '*')
         .replaceAll('{1,4096}', '+')
-        .replaceAll('{0,32}', '*'));
+        .replaceAll('{0,32}', '*'), pattern.flags);
 
 /* ------------------------------------------------------------------ *
  * The comparison.
@@ -405,13 +405,13 @@ const CASES = [
         ['deleted {-', /\{-(?!-\})/, /-\}/, null, ['{', '}', '-', 'a', '\n']],
         ['subscript {,', /\{,(?!,\})/, /,\}/, null, ['{', '}', ',', 'a', ' ', '\n']],
         ['superscript {^', /\{\^(?!\^\})/, /\^\}/, null, ['{', '}', '^', 'a', ' ', '\n']],
-        ['emphasis /', /(?<![\w:/])\/(?=\S)/, /\/(?![A-Za-z0-9/])/, null, ['/', 'a', ' ', '\n', '{'], true],
-        ['underline _', /(?<![\w/])_(?!\s)/, /_(?!\w)/, null, ['_', 'a', ' ', '\n', '{'], true],
+        ['emphasis /', /(?<![\w:/])\/(?=\S)(?!\/)/, /\/(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['/', 'a', ' ', '\n', '{'], true],
+        ['underline _', /(?<![\w/])_(?![\s_])/, /_(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['_', 'a', ' ', '\n', '{'], true],
         // The `\[` escape is redundant inside a class and kept anyway: the
         // opener is matched against the SHIPPED source text character for
         // character, so it has to be spelled the way the grammar spells it.
         // eslint-disable-next-line no-useless-escape
-        ['strong *', /(?<![\w*])\*(?![\s\[*])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{'], true],
+        ['strong *', /(?<![\w*])\*(?![\s\[*])/, /\*(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['*', 'a', ' ', '\n', '{'], true],
         // Its OPENER carries carve-grammars#325's guard, so the reference
         // pattern does too: `(?![>=])` is not part of the #300 bound and
         // leaving it out here would report the guard as a language change this
@@ -422,8 +422,8 @@ const CASES = [
         // the opener guard refuses; the backslash is not, because the escape
         // family has its own generated space in tests/highlight-opener-test.js
         // and this row's question is the bound.
-        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![=\w])/, null, ['=', 'a', ' ', '\n', '{'], true],
-        ['strikethrough ~', /(?<!\w)~(?=\S)/, /~(?!\w)/, null, ['~', 'a', ' ', '\n', '{'], true],
+        ['highlight =', /(?<![=\w])=(?=\S)(?![>=])/, /=(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['=', 'a', ' ', '\n', '{'], true],
+        ['strikethrough ~', /(?<![\w~])~(?![\s~])/, /~(?![A-Za-z0-9\u0080-\uFFFF])/, null, ['~', 'a', ' ', '\n', '{'], true],
     ].map(([label, opener, closer, prefix, alphabet, flanked = false]) => ({
         name: `hljs ${label}`,
         before: () => (flanked

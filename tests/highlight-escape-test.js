@@ -168,6 +168,9 @@ const ROWS = [
     ['x =\\=> y', 'nor when what follows would be an arrow'],
     ['x  =\\= y', 'nor one column further in'],
     ['a =b c\\= d= e', 'the body steps over an escaped = and closes on the real one'],
+    ['x =<== y', 'a closer followed by another = still closes'],
+    ['x =!== y', 'after a !'],
+    ['x =a== y', 'after a word character'],
     ['x =\\== y', 'an escaped = is body content, and the next = closes'],
     ['x =\\\\= y', 'an even run escapes the backslash, so the = after it closes'],
     ['x =\\\\\\\\= y', 'and a longer even run still does'],
@@ -203,24 +206,6 @@ const ROWS = [
 assert.ok(ROWS.length >= 26, `ROWS holds ${ROWS.length}, expected at least 26`);
 
 /*
- * AND THE ROWS THAT ARE STILL WRONG, pinned exactly rather than left out.
- *
- * All three are "a closer followed by another `=`", which the engine marks and
- * `(?![=\w])` refuses. Fixing them means letting the body hold its own
- * delimiter, which is a larger change with its own measurement
- * (carve-grammars#390); leaving them unasserted would let a regression hide
- * among them. Asserted per grammar because they fail differently: the two
- * single-`match` grammars decline the row, and highlight.js opens and closes one
- * character late.
- */
-// TextMate's column matches the engine since carve-grammars#476.
-const RESIDUALS = [
-    ['x =<== y', { textmate: '<', prism: null, highlightjs: '<=' }],
-    ['x =!== y', { textmate: '!', prism: null, highlightjs: '!=' }],
-    ['x =a== y', { textmate: 'a', prism: null, highlightjs: 'a=' }],
-];
-
-/*
  * `x =\ = y` USED TO BE PINNED HERE as a known-wrong row that was not this
  * ticket's: highlight.js's closer carried no "not preceded by whitespace"
  * guard, so it marked where the engine does not, with no escape involved.
@@ -252,21 +237,5 @@ ok('the rows are not all one answer', () => {
         `the engine marks ${marked} of ${ROWS.length} rows - a list that is nearly all one answer `
             + 'passes a grammar that colours everything or nothing');
 });
-
-console.log('\nthe residuals are still exactly as wrong as they were:');
-
-for (const [name, read] of GRAMMARS) {
-    ok(`${name}: the three "closer then =" residuals read as pinned`, () => {
-        for (const [source, expected] of RESIDUALS) {
-            assert.notEqual(engineMark(source), null, `${JSON.stringify(source)} stopped marking in the engine`);
-            assert.equal(
-                reading(read, source),
-                expected[name],
-                `${JSON.stringify(source)} in ${name}: the pinned residual moved. If it now agrees `
-                    + 'with the engine, take the row out of RESIDUALS and put it in ROWS',
-            );
-        }
-    });
-}
 
 console.log(`\n${passed} checks passed`);

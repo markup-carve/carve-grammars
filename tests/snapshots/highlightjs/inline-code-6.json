@@ -1,10 +1,10 @@
 [
   {
-    "scope": "strong",
-    "text": "*a ` b*"
+    "scope": null,
+    "text": "*a "
   },
   {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "` b*\n"
   }
 ]

@@ -61,7 +61,11 @@
   },
   {
     "type": "highlight",
-    "text": "{=`y=}"
+    "text": "{="
+  },
+  {
+    "type": "highlight>code",
+    "text": "`y=}"
   },
   {
     "type": "span",

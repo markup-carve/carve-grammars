@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "deletion",
-    "text": "~~"
-  },
-  {
-    "scope": null,
-    "text": "~\nx\n"
+    "text": " ~~~\nx\n"
   },
   {
     "scope": "keyword",

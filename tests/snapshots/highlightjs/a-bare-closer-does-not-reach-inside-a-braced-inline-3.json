@@ -1,7 +1,15 @@
 [
   {
     "scope": "strong",
-    "text": "*a {_b* c_} d*"
+    "text": "*a "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{_b* c_}"
+  },
+  {
+    "scope": "strong",
+    "text": " d*"
   },
   {
     "scope": null,

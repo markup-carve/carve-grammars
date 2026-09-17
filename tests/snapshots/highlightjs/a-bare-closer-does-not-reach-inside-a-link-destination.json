@@ -1,7 +1,15 @@
 [
   {
     "scope": "emphasis",
-    "text": "/see [x](http://a.b/c) now/"
+    "text": "/see "
+  },
+  {
+    "scope": "link",
+    "text": "[x](http://a.b/c)"
+  },
+  {
+    "scope": "emphasis",
+    "text": " now/"
   },
   {
     "scope": null,

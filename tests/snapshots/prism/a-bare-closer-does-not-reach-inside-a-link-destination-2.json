@@ -1,7 +1,15 @@
 [
   {
     "type": "italic",
-    "text": "/see <http://a.b/c> now/"
+    "text": "/see "
+  },
+  {
+    "type": "italic>url",
+    "text": "<http://a.b/c>"
+  },
+  {
+    "type": "italic",
+    "text": " now/"
   },
   {
     "type": "text",
