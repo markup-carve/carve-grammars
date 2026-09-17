@@ -17,15 +17,7 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "attr",
-    "text": "{.c}"
-  },
-  {
-    "scope": null,
-    "text": " literal text\n\n"
+    "text": " {.c} literal text\n\n"
   },
   {
     "scope": "bullet",
