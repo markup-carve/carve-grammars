@@ -1,23 +1,51 @@
 [
   {
-    "scope": "meta",
-    "text": "{~a~>~}"
+    "scope": "deletion",
+    "text": "{~a"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,
     "text": " deletes, "
   },
   {
-    "scope": "meta",
-    "text": "{~~>b~}"
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "addition",
+    "text": "b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,
     "text": " inserts, and "
   },
   {
-    "scope": "meta",
-    "text": "{~~>~}"
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,

@@ -1301,9 +1301,287 @@
       "name": "markup.deleted.carve"
     },
     "critic_sub": {
-      "match": "\\{~[^}]*~>[^}]*~\\}",
-      "name": "markup.changed.carve",
-      "comment": "Editorial substitution requires the `~>` arrow; a `{~x~}` with no arrow is forced strikethrough (PART 9 S22)."
+      "comment": "A substitution splits at its first top-level arrow, where code, math, a literal, a comment or an escape is opaque, and each half is inline content (markup-carve/carve#2092, ported from markup-carve/vscode-carve#244). With no top-level arrow the braces are a forced strikethrough. Declared limit: a link, image or autolink that spans the arrow is scoped whole in the deleted half, where the spec splits inside it.",
+      "name": "markup.changed.critic.carve",
+      "begin": "(\\{~)(?=(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\`~\\n]|~(?![>}]))*?~>(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{#(?:[^#\\n]|#(?!\\}))*#\\}|\\{%(?:[^%\\n]|%(?!\\}))*%\\}|[^\\\\~\\n]|~(?!\\}))*?~\\})",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.critic.carve"
+        }
+      },
+      "end": "(~\\})|(?=$)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.critic.carve"
+        }
+      },
+      "patterns": [
+        {
+          "begin": "\\G(?!~>)",
+          "end": "(?=~>|$)",
+          "contentName": "markup.deleted.carve",
+          "patterns": [
+            {
+              "name": "constant.character.escape.carve",
+              "match": "\\\\."
+            },
+            {
+              "name": "comment.block.critic.carve",
+              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            },
+            {
+              "name": "comment.block.inline.carve",
+              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "name": "markup.raw.inline.carve",
+              "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.raw.carve"
+                },
+                "2": {
+                  "name": "markup.raw.inline.content.carve"
+                },
+                "3": {
+                  "name": "punctuation.definition.raw.carve"
+                }
+              }
+            },
+            {
+              "name": "markup.raw.inline.carve",
+              "match": "(`+)((?:(?!~>).)+?)(?=~>)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.raw.carve"
+                },
+                "2": {
+                  "name": "markup.raw.inline.content.carve"
+                }
+              }
+            },
+            {
+              "include": "#link_inline"
+            },
+            {
+              "include": "#link_ref"
+            },
+            {
+              "include": "#image"
+            },
+            {
+              "include": "#image_ref"
+            },
+            {
+              "include": "#footnote_inline"
+            },
+            {
+              "include": "#footnote_ref"
+            },
+            {
+              "include": "#forced_strong"
+            },
+            {
+              "include": "#forced_italic"
+            },
+            {
+              "include": "#forced_underline"
+            },
+            {
+              "include": "#forced_strike"
+            },
+            {
+              "include": "#superscript"
+            },
+            {
+              "include": "#subscript"
+            },
+            {
+              "include": "#attributes_empty"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#autolink"
+            },
+            {
+              "match": "([*/_=])(?!(?:(?!~>).)*?\\1)"
+            },
+            {
+              "include": "#bold_italic"
+            },
+            {
+              "include": "#strong"
+            },
+            {
+              "include": "#italic"
+            },
+            {
+              "include": "#underline"
+            },
+            {
+              "include": "#strike"
+            },
+            {
+              "include": "#highlight"
+            },
+            {
+              "include": "#mention"
+            },
+            {
+              "include": "#tag"
+            },
+            {
+              "include": "#smart_typography"
+            }
+          ]
+        },
+        {
+          "begin": "(~>)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.critic.carve"
+            }
+          },
+          "end": "(?=~\\}|$)",
+          "contentName": "markup.inserted.carve",
+          "patterns": [
+            {
+              "name": "constant.character.escape.carve",
+              "match": "\\\\."
+            },
+            {
+              "name": "comment.block.critic.carve",
+              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            },
+            {
+              "name": "comment.block.inline.carve",
+              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "name": "markup.raw.inline.carve",
+              "match": "(`+)([^`]|[^`][\\s\\S]*?[^`])(\\1)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.raw.carve"
+                },
+                "2": {
+                  "name": "markup.raw.inline.content.carve"
+                },
+                "3": {
+                  "name": "punctuation.definition.raw.carve"
+                }
+              }
+            },
+            {
+              "name": "markup.raw.inline.carve",
+              "match": "(`+)((?:(?!~\\}).)+?)(?=~\\})",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.raw.carve"
+                },
+                "2": {
+                  "name": "markup.raw.inline.content.carve"
+                }
+              }
+            },
+            {
+              "include": "#link_inline"
+            },
+            {
+              "include": "#link_ref"
+            },
+            {
+              "include": "#image"
+            },
+            {
+              "include": "#image_ref"
+            },
+            {
+              "include": "#footnote_inline"
+            },
+            {
+              "include": "#footnote_ref"
+            },
+            {
+              "include": "#forced_strong"
+            },
+            {
+              "include": "#forced_italic"
+            },
+            {
+              "include": "#forced_underline"
+            },
+            {
+              "include": "#forced_strike"
+            },
+            {
+              "include": "#superscript"
+            },
+            {
+              "include": "#subscript"
+            },
+            {
+              "include": "#attributes_empty"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#autolink"
+            },
+            {
+              "match": "([*/_=])(?!(?:(?!~\\}).)*?\\1)"
+            },
+            {
+              "include": "#bold_italic"
+            },
+            {
+              "include": "#strong"
+            },
+            {
+              "include": "#italic"
+            },
+            {
+              "include": "#underline"
+            },
+            {
+              "include": "#strike"
+            },
+            {
+              "include": "#highlight"
+            },
+            {
+              "include": "#mention"
+            },
+            {
+              "include": "#tag"
+            },
+            {
+              "include": "#smart_typography"
+            }
+          ]
+        }
+      ]
     },
     "critic_comment": {
       "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment across a break coloured the markup inside it - 87 of 286 generated documents. Same shape and same fix as `braced_comment`. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too. AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\{#` alone claimed it and every line after it. The guard rejects the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}` - and leaves a multi-line comment, whose first line holds no `}` at all, opening as it should.",

@@ -28,9 +28,11 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
  * otherwise - the same rule the probe applies, so a run without those
  * variables measures what it can and leaves the rest recorded.
  *
+ * @param {Function} [factory] - Tokenizer factory; `textmateLineTokenizer` gives
+ *   one leaf per TextMate token, where Shiki merges same-colored neighbors.
  * @returns {Promise<Array<[string, Function]>>} `[surface id, tokenizer]` pairs.
  */
-export async function textmateEngines() {
+export async function textmateEngines(factory = textmateTokenizer) {
     const out = [];
     for (const [id, surface] of Object.entries(SURFACES)) {
         if (surface.extract !== 'tmlanguage') continue;
@@ -38,7 +40,7 @@ export async function textmateEngines() {
         if (!root || !existsSync(root)) continue;
         const grammar = resolve(root, surface.files[0]);
         if (!existsSync(grammar)) continue;
-        out.push([id, await textmateTokenizer(grammar)]);
+        out.push([id, await factory(grammar)]);
     }
 
     return out;

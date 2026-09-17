@@ -436,6 +436,15 @@ Known limits, shared by all three unless noted:
   accepts any non-ASCII character other than whitespace where the spec asks for
   a letter. The TextMate grammar uses `\p{L}`.
 
+### Substitutions
+
+A substitution splits at its first arrow outside code, math, a literal, a
+comment or an escape, and each half holds inline content. With no such arrow,
+`{~ ~}` is a forced strikethrough.
+
+Known limit: in highlight.js and TextMate, a link or autolink that spans the
+arrow stays whole in the deleted half. `{~[x](u~>v)~>c~}` splits after `u`.
+
 ### Fence words
 
 All three surfaces answer `carve` and `crv`. `.crv` is the canonical file
