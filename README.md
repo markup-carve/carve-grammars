@@ -672,6 +672,7 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 - `astToProseMirror(ast, options?)` - convert an existing `@markup-carve/carve`
   AST to ProseMirror JSON.
 - `serializeToCarve(doc)` - serialize an `editor.getJSON()` document to Carve markup.
+- `serializeToCarveWithReport(doc)` - the same, returning `{ source, dropped, degraded }`. `dropped` names what the source could not carry (a mention's display `label` that differs from its `id`), `degraded` a node written as literal text (a mention name with no Carve spelling, such as `Lea Thompson`, becomes `\@Lea Thompson`). A stock Tiptap `mention` node is written like `carveMention`: `id` is the name, a `null` label counts as absent, and `mentionSuggestionChar` is never written.
 - `escapeCarve(text)` - contextually escape literal Carve syntax in a plain-text run so it round-trips as text (used internally by `serializeToCarve`).
 - `CarveKit` - the bundled Tiptap extension set.
 - Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`, `CarveUnsupported`.

@@ -161,7 +161,65 @@ const LINK_REF_DEF_ATTR_KEYS = ['label', 'href', 'title'];
 // line, not part of the authored `{author= year=}` run that leads the entry.
 const CITATION_DEF_ATTR_KEYS = ['key'];
 
-export function serializeToCarve(doc) {
+// Tiptap's stock mention (tiptap/extension-mention 3.29.2) keeps its name in
+// `id`/`label` and adds editor state; markup-carve/carve-php#2154 rules how a
+// bridge reads them.
+const MENTION_NAME = /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/;
+const MENTION_EDITOR_ATTRS = new Set(['id', 'label', 'mentionSuggestionChar']);
+const MENTION_LABEL_DROPPED = 'the mention name is its id, so a different display label is not carried';
+
+function isText(value) {
+    return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+}
+
+function recordLoss(report, bucket, key, reason) {
+    if (!report) return;
+    const into = report[bucket] || (report[bucket] = {});
+    if (!(key in into)) into[key] = reason;
+}
+
+function serializeMention(node, report) {
+    const kind = node.type === 'carveTag' ? 'tag' : 'mention';
+    const sigil = kind === 'tag' ? '#' : '@';
+    const attrs = node.attrs || {};
+    const id = isText(attrs.id) ? String(attrs.id) : '';
+    const label = isText(attrs.label) ? String(attrs.label) : '';
+    let name = id || label;
+    if (id !== '' && label !== '' && label !== id) {
+        recordLoss(report, 'dropped', 'label', MENTION_LABEL_DROPPED);
+    }
+    if (attrs.label != null && !isText(attrs.label)) {
+        const type = Array.isArray(attrs.label) ? 'array' : typeof attrs.label;
+        recordLoss(report, 'dropped', 'label', `a Carve attribute holds a string, and this value is of type ${type}`);
+    }
+    for (const key of Object.keys(attrs)) {
+        if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) {
+            recordLoss(report, 'dropped', key, `a ${kind} has no Carve spelling for an attribute`);
+        }
+    }
+    if (name === '') {
+        recordLoss(report, 'dropped', kind, `a ${kind} with no name has nothing to write`);
+        return '';
+    }
+    if (MENTION_NAME.test(name)) return sigil + name;
+    // Never normalized: a resolver would receive a key the author never wrote.
+    recordLoss(report, 'degraded', kind, `the name has no Carve ${kind} spelling, so it is written as literal text`);
+    return escapeCarve(sigil + name);
+}
+
+/**
+ * Serialize and report what the Carve source could not carry: `dropped` names
+ * each attribute or node that is gone, `degraded` each node whose text survives
+ * as literal text.
+ */
+export function serializeToCarveWithReport(doc) {
+    const report = {};
+    const source = serializeToCarve(doc, { report });
+    return { source, dropped: report.dropped || {}, degraded: report.degraded || {} };
+}
+
+export function serializeToCarve(doc, options = {}) {
+    const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
     const preservedFingerprint = doc?.attrs?.carveFingerprint;
     if (typeof preservedSource === 'string' && typeof preservedFingerprint === 'string') {
@@ -176,7 +234,7 @@ export function serializeToCarve(doc) {
             // delimiter choices and marker placement survive. Where both sides
             // changed the same characters, the editor wins: the user changed
             // that construct and canonical Carve is safer than stale source.
-            const currentProjection = serializeToCarve(clean);
+            const currentProjection = serializeToCarve(clean, options);
             return mergeAuthoredSource(preservedSource, projectedSource, currentProjection);
         }
     }
@@ -1467,10 +1525,8 @@ export function serializeToCarve(doc) {
                 } else {
                     result += '![' + alt + '](' + src + title + ')' + imgAttrs;
                 }
-            } else if (node.type === 'carveMention') {
-                result += '@' + (node.attrs?.id || '');
-            } else if (node.type === 'carveTag') {
-                result += '#' + (node.attrs?.id || '');
+            } else if (node.type === 'carveMention' || node.type === 'mention' || node.type === 'carveTag') {
+                result += serializeMention(node, report);
             } else if (node.type === 'carveFootnote') {
                 if (node.attrs?.carveSource) {
                     result += node.attrs.carveSource;
