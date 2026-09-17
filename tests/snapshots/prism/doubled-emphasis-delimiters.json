@@ -1,15 +1,7 @@
 [
   {
     "type": "text",
-    "text": "*"
-  },
-  {
-    "type": "bold",
-    "text": "*a*"
-  },
-  {
-    "type": "text",
-    "text": "* ~"
+    "text": "**a** ~"
   },
   {
     "type": "strike",

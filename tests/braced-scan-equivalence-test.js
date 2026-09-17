@@ -418,7 +418,7 @@ const CASES = [
         // opener is matched against the SHIPPED source text character for
         // character, so it has to be spelled the way the grammar spells it.
         // eslint-disable-next-line no-useless-escape
-        ['strong *', /(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{'], true],
+        ['strong *', /(?<![\w*])\*(?![\s\[*])/, /\*(?!\w)/, null, ['*', 'a', ' ', '\n', '{'], true],
         // Its OPENER carries carve-grammars#325's guard, so the reference
         // pattern does too: `(?![>=])` is not part of the #300 bound and
         // leaving it out here would report the guard as a language change this

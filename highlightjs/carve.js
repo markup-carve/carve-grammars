@@ -496,7 +496,7 @@
 
     // Strong: *text* - not in the middle of words, can contain emphasis.
     // Excludes *[ which is abbreviation-definition syntax.
-    const STRONG_PAIR = paired(/(?<!\w)\*(?![\s\[])/, /\*(?!\w)/, { flanked: true, opaqueBraces: true });
+    const STRONG_PAIR = paired(/(?<![\w*])\*(?![\s\[*])/, /\*(?!\w)/, { flanked: true, opaqueBraces: true });
     const STRONG = {
         className: 'strong',
         ...STRONG_PAIR,
