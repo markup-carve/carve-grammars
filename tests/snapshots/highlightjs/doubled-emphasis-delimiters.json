@@ -1,11 +1,7 @@
 [
   {
-    "scope": "strong",
-    "text": "**a*"
-  },
-  {
     "scope": null,
-    "text": "* "
+    "text": "**a** "
   },
   {
     "scope": "deletion",

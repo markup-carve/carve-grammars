@@ -1458,19 +1458,19 @@
     },
     "critic_comment_in_strong": {
       "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
-      "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+      "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?!\\w)))",
       "end": "#\\}|^(?=[ \\t]*$)",
       "name": "comment.block.critic.carve"
     },
     "braced_comment_in_strong": {
       "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
-      "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+      "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?!\\w)))",
       "end": "%\\}|^(?=[ \\t]*$)",
       "name": "comment.block.inline.carve"
     },
     "strong": {
-      "begin": "(?<![\\w*])(\\*)(?![\\s*])",
-      "end": "(?<=\\S)(\\*)(?![\\w*])|^[ \\t]*$",
+      "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?!\\w)))",
+      "end": "(?<=\\S)(\\*)(?!\\w)|^[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.bold.carve"

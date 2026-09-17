@@ -372,7 +372,8 @@
             alias: 'deleted',
         },
         'bold': {
-            pattern: new RegExp('\\*(?![\\s*])' + bareBody('*') + '(?<=\\S)\\*'),
+            // A `*` glued to a closer opens nothing: `*a**b* c` bolds only `a`.
+            pattern: new RegExp('(?<![\\w*])\\*(?![\\s*])' + bareBody('*') + '(?<=\\S)\\*'),
             alias: 'bold',
         },
         'italic': {
