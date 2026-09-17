@@ -464,6 +464,19 @@ before resolving it. `tests/lib/aliases.js` holds the required set and
 `tests/alias-parity-test.js` asserts it on each surface through that surface's
 own registration API.
 
+### TextMate limits
+
+A TextMate rule sees one line at a time, so a few shapes color differently from
+how Carve reads them. vscode-carve declares the same three.
+
+- A bare bold run can cross a soft line break, so its opener can't check for a
+  closer first. When the only closer-shaped `*` sits inside a code span, or
+  there is none, the run colors to the end of its paragraph:
+  `` x *a `b* c` d `` renders as text but shows as bold.
+- A braced span whose closer is on a later line is not scoped as a span.
+- A bare italic, underline, strikethrough or highlight run is scoped only when
+  its closer is on the same line.
+
 ### Prism
 
 The grammar registers itself against the global `Prism`, so `Prism` must be

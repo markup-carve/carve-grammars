@@ -479,7 +479,8 @@ const RESIDUALS = {
      * which is what the BRACED form `{=a=}` is for.
      */
     prism: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
-    textmate: ['x =<== y\n', 'x =!== y\n', 'x =a== y\n'],
+    // TextMate reads all three as the engine does since carve-grammars#476.
+    textmate: [],
     /*
      * THE INTELLIJ PORT HAS NOT TAKEN carve-grammars#385, so with its checkout
      * named this sweep sees the whole pre-fix set: the three rows above plus
