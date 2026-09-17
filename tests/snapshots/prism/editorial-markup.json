@@ -20,8 +20,24 @@
     "text": " "
   },
   {
-    "type": "changed",
-    "text": "{~old~>new~}"
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted",
+    "text": "old"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted",
+    "text": "new"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
   },
   {
     "type": "text",

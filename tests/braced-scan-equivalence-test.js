@@ -320,9 +320,9 @@ const CASES = [
         name: 'prism forced-strike {~',
         before: /\{~(?!~\})(?:(?!~>)[^\n])+?~\}/,
         after: () => prismRule('forced-strike', '\\{~'),
-        // `>` is in the alphabet because the old form barred `~>` from the body
-        // and the new one spells that as part of the tempering.
-        alphabet: ['{', '}', '~', '>', 'a', ' ', '\n'],
+        // No `>`: an arrow now defers to the substitution rule, which splits
+        // at a top-level arrow (carve-grammars#471).
+        alphabet: ['{', '}', '~', 'a', ' ', '\n'],
         maxLength: 7,
     },
     {
@@ -381,13 +381,6 @@ const CASES = [
         alphabet: ['{', '}', '-', 'a', '\n'],
         maxLength: 8,
     },
-    {
-        name: 'prism changed {~ ~> ~}',
-        before: /\{~[^~]*~>[^~]*~\}/,
-        after: () => prismRule('changed', '~>'),
-        alphabet: ['{', '}', '~', '>', 'a'],
-        maxLength: 8,
-    },
     // ---- highlightjs/carve.js, all thirteen paired() modes ----------------
     // One helper, so one defect and one fix - but each call site instantiates
     // the guard from its own closer, so each is compared separately. The five
@@ -404,7 +397,7 @@ const CASES = [
         // the line, so it is matched on the part that did not change. Both
         // halves of the begin are compared, which is the point - the guard and
         // the arrow lookahead were rewritten in the same commit.
-        ['forced-strike {~', /\{~(?!~\})(?!.*~>)/, /~\}/, '\\{~(?!~\\})', ['{', '}', '~', '>', 'a', ' ', '\n']],
+        ['forced-strike {~', /\{~(?!~\})(?!.*~>)/, /~\}/, '\\{~(?!~\\})', ['{', '}', '~', 'a', ' ', '\n']],
         ['inserted {+', /\{\+(?!\+\})/, /\+\}/, null, ['{', '}', '+', 'a', '\n']],
         // Its OPENER changed in carve-grammars#378 - `{--}` is a braced en dash,
         // not an empty deletion - so the baseline carries the guard, the same way
@@ -440,16 +433,6 @@ const CASES = [
         alphabet,
         maxLength: alphabet.length > 5 ? 7 : 8,
     })),
-    // Not a paired() mode: the CriticMarkup substitution hunts for its `~>`
-    // arrow with a lookahead of its own, and that scan ran to end of line too -
-    // it is the other reason `{~` stayed superlinear after paired() was fixed.
-    {
-        name: 'hljs changed {~ ~> ~}',
-        before: /\{~(?=[^}\n]*~>)/,
-        after: () => hljsBegin('\\{~(?=[^~}', /~\}/),
-        alphabet: ['{', '}', '~', '>', 'a', '\n'],
-        maxLength: 7,
-    },
 ];
 
 console.log('language equivalence, pre-fix pattern against the pattern that ships:');

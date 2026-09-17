@@ -266,6 +266,18 @@
         + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
         + ')';
 
+    // A substitution splits at its first top-level arrow: code, a comment and
+    // an escape are opaque (markup-carve/carve#2092).
+    var substitutionAtom = '\\\\[^\\n]'
+        + '|```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)'
+        + '|\\{#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|\\{%(?:[^%\\n]|%(?!\\})){0,4096}%\\}';
+    function substitutionHalf(notAfterTilde) {
+        var closedComment = '#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|%(?:[^%\\n]|%(?!\\})){0,4096}%\\}';
+        // A code span still open at the closer ends there.
+        var openCode = notAfterTilde === '}' ? '|`+(?![^`\\n]{0,4096}`)' : '';
+        return '(?:' + substitutionAtom + openCode + '|\\{(?!' + closedComment + ')|[^\\\\`{~\\n]|~(?![' + notAfterTilde + '])){0,4096}?';
+    }
+
     // Keep a complete braced inline atomic while a bare span searches for its
     // closer. An escape pair comes first so `\\{_..._}` is prose rather than
     // a forced span. The fallback is barred only when the WHOLE braced form
@@ -279,6 +291,12 @@
     // Shared inline emphasis/markup, referenced from block tokens that contain
     // running text (headings, list items, table cells, quotes).
     var inline = {
+        // No top-level arrow: forced-strike.
+        'changed': {
+            pattern: RegExp('\\{~' + substitutionHalf('>}') + '~>' + substitutionHalf('}') + '~\\}'),
+            greedy: true,
+            alias: 'important',
+        },
         // BOTH NESTING ORDERS. The engine renders `/*both*/` and `*/both/*`
         // identically - each is <strong><em>both</em></strong> - and only the
         // canonical order had a branch, so the mirrored one fell through to
@@ -362,13 +380,11 @@
             alias: 'underline',
         },
         'forced-strike': {
-            // `~` is tempered against BOTH `>` and `}` here: `(?!~>)` in the
-            // old form barred a substitution arrow from the body, and the lazy
-            // scan stopped at the first `~}`, so a `~` inside the body is
-            // neither.
+            // An arrow is body text here: `changed` runs first and takes a
+            // top-level one.
             // `(?!~\})` rejects the empty `{~~}` while admitting whitespace
             // as real content, including the corpus spelling `{~ ~}`.
-            pattern: /\{~(?!~\})[^~\n]{0,4096}(?:~(?![>}])[^~\n]{0,4096}){0,32}~\}/,
+            pattern: /\{~(?!~\})[^~\n]{0,4096}(?:~(?!\})[^~\n]{0,4096}){0,32}~\}/,
             alias: 'deleted',
         },
         'bold': {
@@ -1414,15 +1430,7 @@
             pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
             alias: 'deleted',
         },
-        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
-        // halves are each delimited by `~`, so the scan already stops at the
-        // next one. Bounded anyway: it is the last unbounded scan in the braced
-        // family, and the derived check below asserts the family as a whole
-        // rather than a list somebody has to remember to extend.
-        'changed': {
-            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
-            alias: 'important',
-        },
+        'changed': inline['changed'],
 
         'code': [
             {
@@ -1837,6 +1845,27 @@
     // delimiter-specific 'div-delimiter' entry already on 'div'.inside is
     // spread first, so it still wins over the body patterns for the
     // opener/closer lines themselves.
+    // Each half of a substitution is inline content.
+    var substitutionContent = { 'comment': { pattern: bracedCommentPattern, greedy: true } };
+    ['math', 'literal', 'raw-inline', 'code', 'image', 'reference-image', 'inline-footnote',
+        'footnote', 'cross-ref', 'url', 'span', 'critic-comment', 'forced-bold', 'forced-italic',
+        'forced-underline', 'forced-strike', 'bold-italic', 'bold', 'italic', 'underline', 'strike',
+        'highlight', 'superscript', 'subscript', 'mention', 'tag', 'escape', 'typography',
+    ].forEach(function (name) { substitutionContent[name] = Prism.languages.carve[name]; });
+    inline['changed'].inside = {
+        'deleted': {
+            pattern: RegExp('^(\\{~)(?!~>)' + substitutionHalf('>}') + '(?=~>)'),
+            lookbehind: true,
+            inside: substitutionContent,
+        },
+        'inserted': {
+            pattern: /(~>)[\s\S]+(?=~\}$)/,
+            lookbehind: true,
+            inside: substitutionContent,
+        },
+        'punctuation': /\{~|~>|~\}/,
+    };
+
     var divDelimiterOnly = Prism.languages.carve.div.inside;
     var figureGroupDelimiterOnly = Prism.languages.carve['figure-group'].inside;
     var divBody = Object.assign({}, Prism.languages.carve);

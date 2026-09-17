@@ -80,7 +80,11 @@ const BOUNDED = {
         // so a revert to the unguarded opener fails the "is still there" check
         // rather than passing a rule this file no longer describes.
         ['critic deleted', '/\\{-(?!-\\})[^', 3],
-        ['critic changed', '/\\{~[^', 2],
+        ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
+        ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],
+        ['substitution brace guard', 'var closedComment = ', 2],
+        ['substitution open code', 'var openCode = ', 1],
+        ['substitution half', "return '(?:' + substitutionAtom", 1],
     ],
     'highlightjs/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
@@ -106,10 +110,14 @@ const BOUNDED = {
         // "is still there" one.
         ['paired() escape-aware run', 'const escapedRun = opaqueBraces', 1],
         ['paired() guard repetition', 'const guard = `${body}', 1],
-        // The two `~` line scans that kept `{~` superlinear after the guard
-        // above was bounded.
-        ['critic substitution arrow', 'begin: /\\{~(?=[^', 2],
-        ['forced strike arrow lookahead', 'const NO_ARROW_AHEAD =', 2],
+        // The substitution's arrow hunt.
+        ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
+        ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],
+        ['substitution open code', "+ (notAfterTilde === '}' ? '|`+(?![^`", 1],
+        ['substitution brace guard', "+ '|\\\\{(?!#(?:[^#\\\\n]", 2],
+        ['substitution half', "+ '|[^\\\\\\\\`{~\\\\n]|~(?![' + notAfterTilde", 1],
+        ['substitution boundary guard', '([*/_=])(?!(?:(?!${boundary})', 1],
+        ['substitution open code mode', "begin: /`+(?![^`\\n]{0,4096}`)/, end: /(?=~\\})/", 1],
     ],
 };
 

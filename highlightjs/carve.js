@@ -354,17 +354,21 @@
     const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?!\*\})/, /\*\}/), relevance: 5 };
     const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?!\/\})/, /\/\}/), relevance: 5 };
     const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?!_\})/, /_\}/), relevance: 5 };
-    // The `(?!...~>)` is what keeps a substitution (`{~old~>new~}`) out of the
-    // strikethrough rule. It used to be spelled `(?!.*~>)`, a greedy scan of the
-    // whole rest of the line that then backtracked over it looking for the
-    // arrow - so on a line with no `>` at all it cost the line from every
-    // position, which is the other half of why `{~` stayed superlinear after
-    // the guard was bounded. Same unrolling as everywhere else here.
-    const NO_ARROW_AHEAD = '(?![^~\\n]{0,4096}(?:~(?!>)[^~\\n]{0,4096}){0,32}~>)';
+    // A substitution splits at its first top-level arrow: code, a comment and
+    // an escape are opaque (markup-carve/carve#2092). A code span still open
+    // at the closer ends there.
+    const SUBSTITUTION_ATOM = '\\\\[^\\n]'
+        + '|```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)'
+        + '|\\{#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|\\{%(?:[^%\\n]|%(?!\\})){0,4096}%\\}';
+    const substitutionHalf = (notAfterTilde) => '(?:' + SUBSTITUTION_ATOM
+        + (notAfterTilde === '}' ? '|`+(?![^`\\n]{0,4096}`)' : '')
+        + '|\\{(?!#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|%(?:[^%\\n]|%(?!\\})){0,4096}%\\})'
+        + '|[^\\\\`{~\\n]|~(?![' + notAfterTilde + '])){0,4096}?';
+    const SUBSTITUTION_AHEAD = substitutionHalf('>}') + '~>' + substitutionHalf('}') + '~\\}';
     const FORCED_STRIKE = {
         className: 'deletion',
         // Forced content may be whitespace, but the empty `{~~}` is literal.
-        ...paired(new RegExp(`\\{~(?!~\\})${NO_ARROW_AHEAD}`), /~\}/),
+        ...paired(/\{~(?!~\})/, /~\}/),
         relevance: 5,
     };
 
@@ -1538,17 +1542,11 @@
         },
         relevance: 10,
     };
+    // The deleted half is this mode's own text; the arrow starts the inserted
+    // half. Both hold inline content, given below once every mode exists.
     const CRITIC_SUB = {
-        className: 'meta',
-        // The `~>` arrow is what distinguishes a substitution from a forced
-        // strikethrough (`{~gone~}`), so it is required here.
-        //
-        // The arrow hunt is unrolled for the reason `paired()` above is:
-        // written `[^}\n]*~>` it scanned to end of line from every position and
-        // kept `{~` superlinear even after the guard was bounded (225 ms on
-        // 24 KB, x3.6 per doubling, carve-grammars#300). Tempered on a `~` that
-        // is not the arrow, it gives up at the next `~` instead.
-        begin: /\{~(?=[^~}\n]{0,4096}(?:~(?!>)[^~}\n]{0,4096}){0,32}~>)/,
+        className: 'deletion',
+        begin: new RegExp(`\\{~(?=${SUBSTITUTION_AHEAD})`),
         end: /~\}/,
         relevance: 10,
     };
@@ -1817,6 +1815,28 @@
     // own comment above), not the full inline repertoire - matching the same
     // targeted scope as the TextMate and Prism fixes for this same bug.
     HEADING.contains = [HEADING_TAG];
+
+    const substitutionContent = (boundary, openCode) => [
+        ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,
+        ...openCode, INLINE_CODE, IMAGE, REFERENCE_IMAGE, INLINE_FOOTNOTE, FOOTNOTE_REF, SPAN,
+        REFERENCE_LINK, LINK, AUTOLINK, EMAIL_AUTOLINK, MENTION, CROSS_REF, TAG,
+        FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT,
+        // An emphasis opener whose closer lies only past the boundary is text.
+        { begin: new RegExp(`([*/_=])(?!(?:(?!${boundary}).){0,4096}?\\1)`), relevance: 0 },
+        HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, TYPOGRAPHY,
+    ];
+    CRITIC_SUB.contains = [
+        {
+            className: 'punctuation',
+            begin: /~>/,
+            starts: {
+                className: 'addition',
+                end: /(?=~\})/,
+                contains: substitutionContent('~\\}', [{ className: 'code', begin: /`+(?![^`\n]{0,4096}`)/, end: /(?=~\})/ }]),
+            },
+        },
+        ...substitutionContent('~>', []),
+    ];
 
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)

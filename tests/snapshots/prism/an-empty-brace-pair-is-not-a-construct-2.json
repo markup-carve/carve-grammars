@@ -1,23 +1,55 @@
 [
   {
-    "type": "changed",
-    "text": "{~a~>~}"
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted",
+    "text": "a"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
   },
   {
     "type": "text",
     "text": " deletes, "
   },
   {
-    "type": "changed",
-    "text": "{~~>b~}"
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted",
+    "text": "b"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
   },
   {
     "type": "text",
     "text": " inserts, and "
   },
   {
-    "type": "changed",
-    "text": "{~~>~}"
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
   },
   {
     "type": "text",

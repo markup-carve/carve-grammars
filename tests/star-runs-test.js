@@ -7,11 +7,12 @@ import assert from 'node:assert/strict';
 
 import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
+import { textmateLineTokenizer } from './lib/textmate-lines.js';
 
 const surfaces = [
     ['prism', prismTokens, (leaf) => leaf.scope?.split('>').includes('bold')],
     ['highlightjs', hljsTokens, (leaf) => leaf.ancestors.includes('strong')],
-    ...(await textmateEngines()).map(([name, tokenize]) =>
+    ...(await textmateEngines(textmateLineTokenizer)).map(([name, tokenize]) =>
         [name, tokenize, (leaf) => leaf.scope?.split(' ').some((s) => s.startsWith('markup.bold'))]),
 ];
 

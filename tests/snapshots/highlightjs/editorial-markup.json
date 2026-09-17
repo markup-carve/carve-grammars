@@ -20,8 +20,20 @@
     "text": " "
   },
   {
-    "scope": "meta",
-    "text": "{~old~>new~}"
+    "scope": "deletion",
+    "text": "{~old"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "addition",
+    "text": "new"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,
