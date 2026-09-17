@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "strong",
+    "text": "{*$`a*}"
+  },
+  {
+    "scope": null,
+    "text": " here\n\nx"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~$$`b~}"
+  },
+  {
+    "scope": null,
+    "text": " here\n\nx"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/!`c/}"
+  },
+  {
+    "scope": null,
+    "text": " here\n\nx"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{_!`d`_}"
+  },
+  {
+    "scope": null,
+    "text": " here\n"
+  }
+]

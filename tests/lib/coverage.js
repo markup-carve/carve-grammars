@@ -27,6 +27,10 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Spec corpus 471-472, measured by the round-trip gate: structured, no
+    // whole-document fallback.
+    'a-forced-opener-of-an-open-kind-is-literal',
+    'substitution-content-is-inline-and-only-a-top-level-arrow-splits-it',
     // Classified against spec corpus 463-470. The round-trip gate verifies
     // every file in each category and will reject a category that needs the
     // whole-document fallback instead.

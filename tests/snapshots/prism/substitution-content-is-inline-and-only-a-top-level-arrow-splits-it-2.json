@@ -1,0 +1,82 @@
+[
+  {
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted>math",
+    "text": "$`a~>b`"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted",
+    "text": "c"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted>literal",
+    "text": "!`a~>b`"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted",
+    "text": "c"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted",
+    "text": "a"
+  },
+  {
+    "type": "changed>deleted>critic-comment",
+    "text": "{# ~> #}"
+  },
+  {
+    "type": "changed>deleted",
+    "text": "b"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted",
+    "text": "c"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

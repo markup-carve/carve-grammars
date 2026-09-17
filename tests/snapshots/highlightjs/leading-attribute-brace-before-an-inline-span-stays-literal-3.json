@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"`\"}"
+  },
+  {
+    "scope": null,
+    "text": " y\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"`\"}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

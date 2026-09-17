@@ -1,0 +1,62 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*`a*}"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "code",
+    "text": "`b`"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*x`a*}"
+  },
+  {
+    "type": "code",
+    "text": "`*}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx"
+  },
+  {
+    "type": "inserted",
+    "text": "{+`a+}"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "code",
+    "text": "`b`"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "inserted",
+    "text": "{+x`a+}"
+  },
+  {
+    "type": "code",
+    "text": "`+}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

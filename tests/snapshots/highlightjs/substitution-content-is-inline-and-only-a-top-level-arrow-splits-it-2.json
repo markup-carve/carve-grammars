@@ -1,0 +1,78 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "string",
+    "text": "$`a~>b`"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "addition",
+    "text": "c"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "string",
+    "text": "!`a~>b`"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "addition",
+    "text": "c"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~a"
+  },
+  {
+    "scope": "comment",
+    "text": "{# ~> #}"
+  },
+  {
+    "scope": "deletion",
+    "text": "b"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "addition",
+    "text": "c"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

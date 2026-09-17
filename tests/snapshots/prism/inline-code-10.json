@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*$`a*}"
+  },
+  {
+    "type": "text",
+    "text": " here\n\nx"
+  },
+  {
+    "type": "forced-strike",
+    "text": "{~$$`b~}"
+  },
+  {
+    "type": "text",
+    "text": " here\n\nx"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/!`c/}"
+  },
+  {
+    "type": "text",
+    "text": " here\n\nx"
+  },
+  {
+    "type": "forced-underline",
+    "text": "{_!`d`_}"
+  },
+  {
+    "type": "text",
+    "text": " here\n"
+  }
+]

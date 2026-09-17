@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "x{.k title=\"`\"} y\n\nx{title=\""
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "a\"}"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx"
+  },
+  {
+    "type": "forced-bold",
+    "text": "{*a { b*}"
+  },
+  {
+    "type": "text",
+    "text": " c\n"
+  }
+]

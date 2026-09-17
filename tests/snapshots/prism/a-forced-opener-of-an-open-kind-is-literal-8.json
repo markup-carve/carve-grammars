@@ -1,0 +1,34 @@
+[
+  {
+    "type": "highlight",
+    "text": "{==h==}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{//x//}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "highlight",
+    "text": "{= =h= =}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "forced-italic",
+    "text": "{/ /x/ /}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "{/a *b {/c/}"
+  },
+  {
+    "scope": null,
+    "text": "*/}\n"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~`a~>b~}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~a `x~>y` b~}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/old/"
+  },
+  {
+    "scope": "punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/new/"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~a\\~>b~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold",
+    "text": "*a "
+  },
+  {
+    "type": "bold>forced-italic",
+    "text": "{/b *c* d/}"
+  },
+  {
+    "type": "bold",
+    "text": " e*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

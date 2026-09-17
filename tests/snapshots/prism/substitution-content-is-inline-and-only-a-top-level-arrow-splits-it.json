@@ -1,0 +1,50 @@
+[
+  {
+    "type": "forced-strike",
+    "text": "{~`a~>b~}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "forced-strike",
+    "text": "{~a `x~>y` b~}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>deleted>italic",
+    "text": "/old/"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>inserted>italic",
+    "text": "/new/"
+  },
+  {
+    "type": "changed>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "forced-strike",
+    "text": "{~a\\~>b~}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
