@@ -105,7 +105,8 @@ carve #259).
 Each single-char delimiter has two equivalent forms: a **bare** form
 (`=text=`) and a **forced brace** form (`{=text=}`) that also works intraword;
 both parse to the same element. The two columns above list bare / forced.
-`serializeToCarve` emits the bare form for `* / _ ~` and the forced `{…}` form
+`serializeToCarve` emits the bare form for `* / _ ~`, or the forced form where a
+letter or digit touches the delimiter, and the forced `{…}` form
 for `= , ^` (round-trip-safe: those delimiters are likelier to be inert bare);
 `{+…+}` / `{-…-}` (insert / delete) have only the brace form, since `+` / `-`
 are not emphasis delimiters.

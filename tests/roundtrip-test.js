@@ -635,10 +635,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 367 -> 381 with the bump to 7bd6577. All fourteen are new documents in
  * 12-inline-code, 152, 471 and 472; nine render differently in the published
  * engine (0.1.6) than in the corpus.
+ *
+ * 381 -> 376 when a bare mark glued to a word character is written in its
+ * forced form (#484): 01-emphasis-12, 01-emphasis-15, 12-inline-code-10,
+ * 12-inline-code-11 and 152-...-2 write directly.
  */
 assert.strictEqual(
-    envelopedFiles.length, 381,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 381`,
+    envelopedFiles.length, 376,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 376`,
 );
 
 assert.strictEqual(

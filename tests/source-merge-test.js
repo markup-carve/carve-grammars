@@ -36,8 +36,8 @@ for (const file of listCorpusFiles()) {
 
 // The three move together with the corpus. The conflict set is the number to
 // watch.
-assert.strictEqual(envelopes, 381, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 377, 'an append normalized authored layout in additional documents');
+assert.strictEqual(envelopes, 376, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 372, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });
