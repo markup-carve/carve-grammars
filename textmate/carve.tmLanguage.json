@@ -652,7 +652,7 @@
       "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
     "link_ref_def": {
-      "match": "^(?:\\A\\x{FEFF})?(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?",
+      "match": "^(?:\\A\\x{FEFF})?(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\}))(?=[ \\t]*$))?",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"
@@ -671,13 +671,25 @@
         },
         "6": {
           "name": "string.quoted.link.title.carve"
+        },
+        "7": {
+          "name": "meta.attributes.carve"
+        },
+        "8": {
+          "name": "punctuation.definition.attributes.carve"
+        },
+        "9": {
+          "name": "meta.attributes.carve"
+        },
+        "10": {
+          "name": "punctuation.definition.attributes.carve"
         }
       },
       "name": "meta.link.reference.def.carve",
       "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column."
     },
     "link_ref_def_in_container": {
-      "match": "^([ \\t]*)(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?",
+      "match": "^([ \\t]*)(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\}))(?=[ \\t]*$))?",
       "captures": {
         "2": {
           "name": "punctuation.definition.link.carve"
@@ -696,6 +708,18 @@
         },
         "7": {
           "name": "string.quoted.link.title.carve"
+        },
+        "8": {
+          "name": "meta.attributes.carve"
+        },
+        "9": {
+          "name": "punctuation.definition.attributes.carve"
+        },
+        "10": {
+          "name": "meta.attributes.carve"
+        },
+        "11": {
+          "name": "punctuation.definition.attributes.carve"
         }
       },
       "name": "meta.link.reference.def.carve"
@@ -1372,7 +1396,7 @@
       "comment": "A standalone attribute line may span physical lines. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
     },
     "attributes": {
-      "match": "(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
+      "match": "(?<![\\w\"'])(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
       "captures": {
         "1": {
           "name": "punctuation.definition.attributes.carve"

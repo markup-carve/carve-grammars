@@ -21,22 +21,6 @@
   },
   {
     "type": "text",
-    "text": " "
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".x"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " {.x}\n"
   }
 ]

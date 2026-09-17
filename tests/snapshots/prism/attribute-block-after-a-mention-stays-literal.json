@@ -4,31 +4,7 @@
     "text": "@u"
   },
   {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-name",
-    "text": "k"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "="
-  },
-  {
-    "type": "attributes",
-    "text": "v"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".w"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "{k=v.w}\n"
   }
 ]

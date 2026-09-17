@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "::: "
-  },
-  {
-    "scope": "attr",
-    "text": "{.sidebar}"
-  },
-  {
-    "scope": null,
-    "text": "\nnot a div\n"
+    "text": "::: {.sidebar}\nnot a div\n"
   },
   {
     "scope": "keyword",

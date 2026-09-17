@@ -21,27 +21,19 @@
   },
   {
     "type": "list",
-    "text": "- "
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>class-name",
-    "text": ".c"
-  },
-  {
-    "type": "attributes>punctuation",
-    "text": "}"
+    "text": "-"
   },
   {
     "type": "text",
-    "text": " literal text\n\n"
+    "text": " {.c} literal text\n\n"
   },
   {
     "type": "list",
-    "text": "- "
+    "text": "-"
+  },
+  {
+    "type": "text",
+    "text": " "
   },
   {
     "type": "attributes>punctuation",

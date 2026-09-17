@@ -1,7 +1,11 @@
 [
   {
     "type": "list",
-    "text": "- "
+    "text": "-"
+  },
+  {
+    "type": "text",
+    "text": " "
   },
   {
     "type": "attributes>punctuation",

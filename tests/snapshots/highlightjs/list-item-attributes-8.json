@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "para "
-  },
-  {
-    "scope": "attr",
-    "text": "{.c}"
-  },
-  {
-    "scope": null,
-    "text": " more\n"
+    "text": "para {.c} more\n"
   }
 ]

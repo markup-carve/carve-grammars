@@ -181,9 +181,13 @@
         // hard-break rule - Prism applies a pattern to the remaining text chunk,
         // so `^` matches at a chunk boundary rather than a real line start.
         pattern: RegExp(
-            '(?<=(?:^|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}'
-            + '|\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}',
+            // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
+            '(?<=(?:^|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$))'
+            + '|(?<=[*/_~=`>}:)\\]$<|])' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$))',
         ),
+        greedy: true,
         alias: 'attr-value',
         inside: {
             'id': /#[A-Za-z_][\w-]*/,
@@ -1205,8 +1209,8 @@
             // quote, and `{title="a}b"} x` is a valid item (#85).
             pattern: RegExp(
                 '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
-                + ') *(?:\\[[ xX\\-_>?]\\] +)?(?![ \\t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
-                + gluedAttrBlock + ') *(?![ \\t]*$))',
+                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
+                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$))',
                 'm',
             ),
             alias: 'punctuation',

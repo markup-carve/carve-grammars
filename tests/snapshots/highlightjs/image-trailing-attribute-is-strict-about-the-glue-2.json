@@ -5,14 +5,6 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "attr",
-    "text": "{.x}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": " {.x}\n"
   }
 ]
