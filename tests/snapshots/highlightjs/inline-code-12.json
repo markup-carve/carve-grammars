@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "strong",
+    "text": "{*`a\n*}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\nx"
+  },
+  {
+    "scope": "strong",
+    "text": "{*`a\n*}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

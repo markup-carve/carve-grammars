@@ -1,0 +1,10 @@
+[
+  {
+    "type": "forced-bold",
+    "text": "{*a *b* c*}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

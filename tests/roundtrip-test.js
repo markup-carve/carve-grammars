@@ -631,10 +631,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * need the envelope only because the PUBLISHED engine (0.1.6) still reads a
  * used-up backtick as opening a code span; carve-js#1816 fixes it, so the two
  * come back when this repo's dependency reaches 0.1.7.
+ *
+ * 367 -> 381 with the bump to 7bd6577. All fourteen are new documents in
+ * 12-inline-code, 152, 471 and 472; nine render differently in the published
+ * engine (0.1.6) than in the corpus.
  */
 assert.strictEqual(
-    envelopedFiles.length, 367,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 367`,
+    envelopedFiles.length, 381,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 381`,
 );
 
 assert.strictEqual(

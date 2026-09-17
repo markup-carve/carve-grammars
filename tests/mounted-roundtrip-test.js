@@ -490,5 +490,7 @@ imported.destroy();
 // 236 -> 237 with the spec bump to carve 9c84524 (12-inline-code-7), then
 // 237 -> 230 when an empty code span got a carrier instead of being dropped:
 // that document, the five 276 fence variants and 367-...-4 are equivalent now.
-assert.strictEqual(changed.length, 230, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 230 -> 240 with the bump to 7bd6577: ten of its fifteen new documents.
+assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

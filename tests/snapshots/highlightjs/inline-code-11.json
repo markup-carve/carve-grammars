@@ -1,0 +1,58 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "strong",
+    "text": "{*`a*}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "code",
+    "text": "`b`"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "{*x`a*}"
+  },
+  {
+    "scope": "code",
+    "text": "`*}\n\n"
+  },
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "addition",
+    "text": "{+`a+}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "code",
+    "text": "`b`"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "addition",
+    "text": "{+x`a+}"
+  },
+  {
+    "scope": "code",
+    "text": "`+}\n"
+  }
+]
