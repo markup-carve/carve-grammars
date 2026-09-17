@@ -1,15 +1,7 @@
 [
   {
     "type": "text",
-    "text": "==x== ~"
-  },
-  {
-    "type": "strike",
-    "text": "~y~"
-  },
-  {
-    "type": "text",
-    "text": "~ "
+    "text": "==x== ~~y~~ "
   },
   {
     "type": "highlight",

@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "==x== "
-  },
-  {
-    "scope": "deletion",
-    "text": "~~y~"
-  },
-  {
-    "scope": null,
-    "text": "~ "
+    "text": "==x== ~~y~~ "
   },
   {
     "scope": "addition",

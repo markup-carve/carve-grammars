@@ -1,7 +1,15 @@
 [
   {
     "type": "bold",
-    "text": "*bold with /italic/ inside*"
+    "text": "*bold with "
+  },
+  {
+    "type": "bold>italic",
+    "text": "/italic/"
+  },
+  {
+    "type": "bold",
+    "text": " inside*"
   },
   {
     "type": "text",
@@ -9,7 +17,15 @@
   },
   {
     "type": "italic",
-    "text": "/italic with *bold* inside/"
+    "text": "/italic with "
+  },
+  {
+    "type": "italic>bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "italic",
+    "text": " inside/"
   },
   {
     "type": "text",

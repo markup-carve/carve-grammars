@@ -208,19 +208,13 @@
     // of the brace-pair family atomic while a surrounding bare span searches
     // for its closer. The bodies use the same bounded, tempered shape as the
     // individual forced/editorial rules below.
-    var opaqueBracedInline = '\\{(?:'
-        + '\\*(?:[^*\\n]|\\*(?!\\})){1,4096}\\*'
-        + '|/(?:[^/\\n]|/(?!\\})){1,4096}/'
-        + '|_(?:[^_\\n]|_(?!\\})){1,4096}_'
-        + '|\\^(?:[^\\^\\n]|\\^(?!\\})){1,4096}\\^'
-        + '|,(?:[^,\\n]|,(?!\\})){1,4096},'
-        + '|~(?:[^~\\n]|~(?!\\})){1,4096}~'
-        + '|=(?:[^=\\n]|=(?!\\})){1,4096}='
-        + '|\\+(?:[^+\\n]|\\+(?!\\})){1,4096}\\+'
-        + '|-(?:[^-\\n]|-(?!\\})){1,4096}-'
-        + '|#(?:[^#\\n]|#(?!\\})){1,4096}#'
-        + '|%(?:[^%\\n]|%(?!\\})){1,4096}%'
-        + ')\\}';
+    var bracedKinds = ['\\*', '/', '_', '\\^', ',', '~', '=', '\\+', '-', '#', '%'];
+    function bracedInline(kinds) {
+        return '\\{(?:' + kinds.map(function (kind) {
+            return kind + '(?:[^' + kind + '\\n]|' + kind + '(?!\\})){1,4096}' + kind;
+        }).join('|') + ')\\}';
+    }
+    var opaqueBracedInline = bracedInline(bracedKinds);
 
     // Link destinations and autolinks are opaque too (PART 9 section 9 E2a): the
     // `/` in `/see [x](http://a.b/c) now/` does not close the italic. Each part
@@ -257,6 +251,10 @@
     var urlChar = '(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&\'()*+,;=%]'
         + '|(?!\\uD804[\\uDCBD\\uDCCD]|\\uD80D[\\uDC30-\\uDC3F]|\\uD82F[\\uDCA0-\\uDCA3]|\\uD834[\\uDD73-\\uDD7A]|\\uDB40[\\uDC01\\uDC20-\\uDC7F])'
         + '[^\\x00-\\xA0\\xAD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u1680\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u2064\\u2066-\\u206F\\u3000\\uFEFF\\uFFF9-\\uFFFB])';
+    // The same `url_char` for a pattern built with the `u` flag, where an astral
+    // character is one code point rather than a surrogate pair.
+    var urlCharUnicode = urlChar.replace(/\(\?!\\uD804.*?\)(?=\[\^)/,
+        '(?![\\u{110BD}\\u{110CD}\\u{13430}-\\u{1343F}\\u{1BCA0}-\\u{1BCA3}\\u{1D173}-\\u{1D17A}\\u{E0001}\\u{E0020}-\\u{E007F}])');
     var linkTail = '\\]\\(' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)';
     // Only a title directly before the closing `)` is a string.
     var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$)/;
@@ -278,14 +276,20 @@
         return '(?:' + substitutionAtom + openCode + '|\\{(?!' + closedComment + ')|[^\\\\`{~\\n]|~(?![' + notAfterTilde + '])){0,4096}?';
     }
 
-    // Keep a complete braced inline atomic while a bare span searches for its
-    // closer. An escape pair comes first so `\\{_..._}` is prose rather than
-    // a forced span. The fallback is barred only when the WHOLE braced form
-    // matches: an incomplete `{_` and literal pairs such as `{--}` must remain
-    // ordinary body text. Bound the atom count because Prism retries greedy
-    // tokens from many offsets.
-    function bareBody(delimiter, repetition = '{0,4096}') {
-        return '(?:\\\\[^\\n]|' + opaqueInline + '|(?!' + opaqueInline + ')[^' + delimiter + '\\\\\\n])' + repetition;
+    // The bare run as markup-carve/vscode-carve#258 reads it: a closed code span
+    // and a braced span of ANOTHER kind are atoms, and a delimiter of its own
+    // kind is body text where it cannot close. Built with the `u` flag.
+    var bareCode = '```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)';
+    function bareRun(delimiter) {
+        var braced = bracedInline(bracedKinds.filter(function (kind) { return kind !== delimiter; }));
+        var opaque = '(?:' + braced
+            + '|\\[' + opaqueLabel + linkTail
+            + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlCharUnicode + '{1,2048}>'
+            + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
+            + ')';
+        return '(?:\\\\[^\\n]|' + bareCode + '|' + opaque
+            + '|(?<=\\s)' + delimiter + '|' + delimiter + '(?=[\\p{L}\\p{N}])'
+            + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\n`]){1,4096}?';
     }
 
     // Shared inline emphasis/markup, referenced from block tokens that contain
@@ -389,23 +393,22 @@
         },
         'bold': {
             // A `*` glued to a closer opens nothing: `*a**b* c` bolds only `a`.
-            pattern: new RegExp('(?<![\\w*])\\*(?![\\s*])' + bareBody('*') + '(?<=\\S)\\*'),
+            pattern: new RegExp('(?<![\\w*])\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)\\*(?![\\p{L}\\p{N}])', 'u'),
             alias: 'bold',
         },
         'italic': {
-            // leading guard via Prism lookbehind (avoids URLs, paths); the
-            // trailing `(?![\w/])` lookahead is fine (lookahead is universal).
-            pattern: new RegExp('(^|[^\\w/])/(?![\\s/])' + bareBody('/') + '(?<=\\S)/(?![A-Za-z0-9/])'),
+            // The leading guard avoids URLs and paths.
+            pattern: new RegExp('(^|[^\\w/])/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
             lookbehind: true,
             alias: 'italic',
         },
         'underline': {
-            pattern: new RegExp('(^|[^\\w_/])_(?![\\s_])' + bareBody('_') + '(?<=\\S)_(?![\\w_])'),
+            pattern: new RegExp('(^|[^\\w_/])_(?![\\s_])' + bareRun('_') + '(?<=\\S)_(?![\\p{L}\\p{N}])', 'u'),
             lookbehind: true,
             alias: 'underline',
         },
         'strike': {
-            pattern: new RegExp('~(?![\\s~])' + bareBody('~') + '(?<=\\S)~'),
+            pattern: new RegExp('(?<![\\w~])~(?![\\s~])' + bareRun('~') + '(?<=\\S)~(?![\\p{L}\\p{N}])', 'u'),
             alias: 'deleted',
         },
         'highlight': {
@@ -505,9 +508,10 @@
             // a bound, at the same 4096 the rest of the file uses.
             pattern: new RegExp(
                 /\{=(?!=\})[^=\n]{0,4096}(?:=(?!\})[^=\n]{0,4096}){0,32}=\}|/.source
-                + /(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?!>)/.source
-                + bareBody('=', '{1,4096}?')
-                + /(?<=\S)=(?![\w=])/.source,
+                + /(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
+                + bareRun('=')
+                + /(?<=\S)=(?![\p{L}\p{N}])/.source,
+                'u',
             ),
             alias: 'important',
         },
@@ -1850,8 +1854,15 @@
     ['math', 'literal', 'raw-inline', 'code', 'image', 'reference-image', 'inline-footnote',
         'footnote', 'cross-ref', 'url', 'span', 'critic-comment', 'forced-bold', 'forced-italic',
         'forced-underline', 'forced-strike', 'bold-italic', 'bold', 'italic', 'underline', 'strike',
-        'highlight', 'superscript', 'subscript', 'mention', 'tag', 'escape', 'typography',
+        'highlight', 'superscript', 'subscript', 'inserted', 'deleted', 'mention', 'tag', 'escape', 'typography',
     ].forEach(function (name) { substitutionContent[name] = Prism.languages.carve[name]; });
+    // A bare run's content is inline content too. Its own rule is left out, or
+    // the run would match itself again.
+    ['bold', 'italic', 'underline', 'strike', 'highlight'].forEach(function (name) {
+        var content = Object.assign({}, substitutionContent);
+        delete content[name];
+        inline[name].inside = content;
+    });
     inline['changed'].inside = {
         'deleted': {
             pattern: RegExp('^(\\{~)(?!~>)' + substitutionHalf('>}') + '(?=~>)'),

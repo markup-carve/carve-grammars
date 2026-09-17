@@ -1,7 +1,15 @@
 [
   {
     "type": "bold",
-    "text": "*a {_b* c_} d*"
+    "text": "*a "
+  },
+  {
+    "type": "bold>forced-underline",
+    "text": "{_b* c_}"
+  },
+  {
+    "type": "bold",
+    "text": " d*"
   },
   {
     "type": "text",

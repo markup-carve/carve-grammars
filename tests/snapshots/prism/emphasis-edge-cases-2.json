@@ -1,7 +1,15 @@
 [
   {
     "type": "bold",
-    "text": "*a `x` b*"
+    "text": "*a "
+  },
+  {
+    "type": "bold>code",
+    "text": "`x`"
+  },
+  {
+    "type": "bold",
+    "text": " b*"
   },
   {
     "type": "text",

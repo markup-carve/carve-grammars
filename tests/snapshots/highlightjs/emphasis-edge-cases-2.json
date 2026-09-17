@@ -1,7 +1,15 @@
 [
   {
     "scope": "strong",
-    "text": "*a `x` b*"
+    "text": "*a "
+  },
+  {
+    "scope": "code",
+    "text": "`x`"
+  },
+  {
+    "scope": "strong",
+    "text": " b*"
   },
   {
     "scope": null,

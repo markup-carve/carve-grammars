@@ -9,10 +9,9 @@
  */
 import assert from 'node:assert/strict';
 
+import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
 import { textmateLineTokenizer } from './lib/textmate-lines.js';
-
-const KINDS = 'ibushnc';
 
 const textmateKinds = (leaf) => {
     const scopes = (leaf.scope ?? '').split(' ');
@@ -24,14 +23,40 @@ const textmateKinds = (leaf) => {
     if (has('markup.strikethrough.carve') || has('markup.deleted.carve')) kinds.add('s');
     if (has('markup.inserted.carve')) kinds.add('n');
     if (has('markup.highlight.carve')) kinds.add('h');
-    if (scopes.some((s) => s.startsWith('markup.raw.inline') || s.startsWith('markup.math'))) kinds.add('c');
+    if (scopes.some((s) => /^markup\.(raw\.inline|math|other\.math)/.test(s))) kinds.add('c');
     return kinds;
 };
 
-const surfaces = (await textmateEngines(textmateLineTokenizer)).map(([name, tokenize]) => [name, tokenize, textmateKinds]);
+const prismKinds = (leaf) => {
+    const path = (leaf.scope ?? '').split('>');
+    const kinds = new Set();
+    if (path.includes('italic') || path.includes('bold-italic')) kinds.add('i');
+    if (path.includes('bold') || path.includes('bold-italic')) kinds.add('b');
+    if (path.includes('underline')) kinds.add('u');
+    if (path.includes('strike') || path.includes('forced-strike')) kinds.add('s');
+    if (path.includes('inserted')) kinds.add('n');
+    if (path.includes('highlight')) kinds.add('h');
+    if (path.includes('code') || path.includes('math')) kinds.add('c');
+    return kinds;
+};
 
-// Not listed: a bare bold run whose only closer-shaped star sits inside a code
-// span colors to the end of its paragraph, since a TextMate begin sees one line.
+// highlight.js has one theme word for italic and underline, and one for
+// highlight and insertion, so both sides are compared in its alphabet.
+const hljsKinds = (leaf) => {
+    const kinds = new Set();
+    for (const [scope, kind] of [['emphasis', 'i'], ['strong', 'b'], ['deletion', 's'], ['addition', 'h'], ['code', 'c'], ['string', 'c']]) {
+        if (leaf.ancestors.includes(scope)) kinds.add(kind);
+    }
+    return kinds;
+};
+const hljsAlphabet = { u: 'i', n: 'h' };
+
+const surfaces = [
+    ['prism', prismTokens, prismKinds, {}],
+    ['highlightjs', hljsTokens, hljsKinds, hljsAlphabet],
+    ...(await textmateEngines(textmateLineTokenizer)).map(([name, tokenize]) => [name, tokenize, textmateKinds, {}]),
+];
+
 const rows = [
     ["//a/", {"":"...."}],
     ["/a//", {"i":"did."}],
@@ -85,21 +110,24 @@ const rows = [
     ["*bold with /italic/ inside*", {"b":"dbbbbbbbbbbdbbbbbbdbbbbbbbd","i":"d..........diiiiiid.......d"}],
     ["x $$`a b", {"c":"..dddccc"}],
     ["x $`a b", {"c":"..ddccc"}],
+    // A TextMate begin sees one line, so there this run colors to the end of its paragraph.
+    ["x *a `b* c` d", {"c":".....dccccd.."}, ['textmate', 'vscode-carve', 'intellij-carve']],
 ];
 
 let checked = 0;
-for (const [name, tokenize, classify] of surfaces) {
-    for (const [source, masks] of rows) {
+for (const [name, tokenize, classify, alphabet] of surfaces) {
+    for (const [source, masks, skip] of rows) {
+        if (skip?.includes(name)) continue;
         const got = [];
         for (const leaf of await tokenize(`${source}\n`)) {
             for (let i = 0; i < leaf.text.length; i++) got.push(classify(leaf));
         }
         const dontCare = Object.values(masks)[0];
-        for (const kind of KINDS) {
-            const want = masks[kind] ?? dontCare.replace(/[^d]/g, '.');
-            const seen = [...want].map((m, i) => (m === 'd' ? 'd' : got[i]?.has(kind) ? kind : '.')).join('');
-            assert.equal(seen, want, `${name}: ${kind} in ${JSON.stringify(source)}`);
-        }
+        const want = [...dontCare].map((m, i) => (m === 'd' ? 'd' : [...new Set(
+            Object.entries(masks).filter(([, mask]) => mask[i] !== '.' && mask[i] !== 'd').map(([kind]) => alphabet[kind] ?? kind),
+        )].sort().join('') || '.'));
+        const seen = want.map((w, i) => (w === 'd' ? 'd' : [...(got[i] ?? [])].sort().join('') || '.'));
+        assert.deepEqual(seen, want, `${name}: ${JSON.stringify(source)}`);
         checked++;
     }
 }

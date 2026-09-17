@@ -477,6 +477,13 @@ how Carve reads them. vscode-carve declares the same three.
 - A bare italic, underline, strikethrough or highlight run is scoped only when
   its closer is on the same line.
 
+### Prism and highlight.js limits
+
+- Prism scopes a bare run only when its closer is on the same line.
+- highlight.js compiles without the `u` flag, so it reads any non-ASCII
+  character after a bare closer as a letter. `/a/« b` renders `a` in italics
+  but shows as text.
+
 ### Prism
 
 The grammar registers itself against the global `Prism`, so `Prism` must be

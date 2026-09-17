@@ -1,7 +1,15 @@
 [
   {
     "type": "strike",
-    "text": "~a{+b~+} c~"
+    "text": "~a"
+  },
+  {
+    "type": "strike>inserted",
+    "text": "{+b~+}"
+  },
+  {
+    "type": "strike",
+    "text": " c~"
   },
   {
     "type": "text",
