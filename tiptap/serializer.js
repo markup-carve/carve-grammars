@@ -218,6 +218,8 @@ export function serializeToCarveWithReport(doc) {
     return { source, dropped: report.dropped || {}, degraded: report.degraded || {} };
 }
 
+const WORD_CHARACTER = /^[\p{L}\p{N}]$/u;
+
 export function serializeToCarve(doc, options = {}) {
     const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
@@ -1396,7 +1398,23 @@ export function serializeToCarve(doc, options = {}) {
                 if (hasDelete) t = '{-' + t + '-}';
                 // A bare closer cannot end an unclosed run, at any nesting depth.
                 const openRun = !!node.carveOpenRun;
-                const wrap = (delim) => (openRun ? '{' + delim + t + delim + '}' : delim + t + delim);
+                // The outermost bare delimiter touches the neighboring text. Where
+                // the spec's bare_opener or bare_closer would refuse it there,
+                // only the forced form keeps the mark.
+                const outermost = link || carveSpan || abbr ? null
+                    : hasBold ? '*' : hasItalic ? '/' : hasUnderline ? '_' : hasStrike && !hasDelete ? '~' : null;
+                const previous = result.slice(-1);
+                const beforePrevious = result.slice(-2, -1);
+                // A marked neighbor starts with its own delimiter or bracket.
+                const next = content[idx + 1];
+                const following = next?.type === 'text' && !(next.marks || []).length ? (next.text || '')[0] || '' : '';
+                const glued = (delim) => WORD_CHARACTER.test(previous) || previous === delim
+                    || ((delim === '/' || delim === '_') && (previous === '/' || previous === '_')
+                        && beforePrevious !== '' && !/\s/.test(beforePrevious))
+                    || WORD_CHARACTER.test(following);
+                const wrap = (delim) => (openRun || (delim === outermost && glued(delim))
+                    ? '{' + delim + t + delim + '}'
+                    : delim + t + delim);
                 if (hasStrike && !hasDelete) t = wrap('~');
                 if (hasHighlight) t = !openRun && bareable('=') ? '=' + t + '=' : '{=' + t + '=}';
                 if (hasUnderline) t = wrap('_');

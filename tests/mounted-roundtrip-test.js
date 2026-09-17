@@ -492,5 +492,6 @@ imported.destroy();
 // that document, the five 276 fence variants and 367-...-4 are equivalent now.
 //
 // 230 -> 240 with the bump to 7bd6577: ten of its fifteen new documents.
-assert.strictEqual(changed.length, 240, `mounted rich projection changed for ${changed.length} corpus documents`);
+// 240 -> 233 when a glued bare mark is written in its forced form (#484).
+assert.strictEqual(changed.length, 233, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
