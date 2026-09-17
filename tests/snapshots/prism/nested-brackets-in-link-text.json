@@ -5,15 +5,7 @@
   },
   {
     "type": "url",
-    "text": "a "
-  },
-  {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url",
-    "text": "b] c"
+    "text": "a [b] c"
   },
   {
     "type": "url>punctuation",

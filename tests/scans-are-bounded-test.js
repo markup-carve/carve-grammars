@@ -50,7 +50,7 @@ const BOUNDED = {
         ['inline footnote', "unescaped('\\\\^') + /\\[[^\\]\\n]", 1],
         ['autolink', 'a-zA-Z0-9+.-]*:[^>', 3],
         ['critic comment', '/\\{#(?!#\\})[^}]', 1],
-        ['inline code', '(`{1,16})(?:[^`]|[^`][\\s\\S]', 2],
+        ['inline code', "(?<!`)(`{3,16})(?:[^`]|[^`][\\\\s\\\\S]", 2],
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],
         ['bracket label body', "var BRACKET_SCAN =", 1],

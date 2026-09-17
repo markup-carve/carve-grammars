@@ -9,15 +9,7 @@
   },
   {
     "type": "url",
-    "text": "t^"
-  },
-  {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url",
-    "text": "n]"
+    "text": "t^[n]"
   },
   {
     "type": "url>punctuation",

@@ -1,11 +1,11 @@
 [
   {
     "scope": "link",
-    "text": "[x](a(b(c)"
+    "text": "[x](a(b(c))d)"
   },
   {
     "scope": null,
-    "text": ")d) and "
+    "text": " and "
   },
   {
     "scope": "link",

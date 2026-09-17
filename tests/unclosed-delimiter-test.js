@@ -86,6 +86,13 @@ const CLOSED = [
     ['unpartnered run across a line break', 'a `payload\nsecond line\n', 'second line', ['prism']],
 ];
 
+// A backtick after the break must not partner one before it: a code span ends
+// with its paragraph (carve#2074, 12-inline-code-9).
+const SPLIT_PAIR = [
+    ['verbatim pair split by a paragraph break', 'a `code\n\n' + SENTINEL + '` d\n'],
+    ['wide verbatim pair split by a paragraph break', 'a ``code\n\n' + SENTINEL + '`` d\n'],
+];
+
 let failed = 0;
 console.log('carve-grammars unclosed delimiters:');
 
@@ -103,6 +110,15 @@ for (const [engineName, tokenize] of ENGINES) {
         }
     }
 
+    for (const [label, source] of SPLIT_PAIR) {
+        const leaked = tokenize(source).filter((t) => t.text.includes(SENTINEL) && t.scope);
+        if (leaked.length) {
+            fails.push(`FAIL [${engineName}] ${label}: the pair reached across the paragraph`
+                + `\n   source: ${JSON.stringify(source)}`
+                + `\n   sentinel scoped as: ${leaked.map((t) => t.scope).join(', ')}`);
+        }
+    }
+
     const closed = CLOSED.filter(([, , , engines]) => engines.includes(engineName));
     for (const [label, source, payload] of closed) {
         const tokens = tokenize(source);
@@ -114,7 +130,7 @@ for (const [engineName, tokenize] of ENGINES) {
         }
     }
 
-    const total = UNCLOSED.length + closed.length;
+    const total = UNCLOSED.length + SPLIT_PAIR.length + closed.length;
     console.log(`  ${fails.length ? '✗' : '✓'} ${engineName}: ${total - fails.length}/${total} delimiter cases`);
     fails.forEach((f) => console.log(f + '\n'));
     failed += fails.length;

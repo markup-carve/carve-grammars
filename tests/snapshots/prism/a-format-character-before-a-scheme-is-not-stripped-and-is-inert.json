@@ -13,7 +13,7 @@
   },
   {
     "type": "url",
-    "text": "​javascript:alert(1"
+    "text": "​javascript:alert(1)"
   },
   {
     "type": "url>punctuation",
@@ -21,6 +21,6 @@
   },
   {
     "type": "text",
-    "text": ")\n"
+    "text": "\n"
   }
 ]

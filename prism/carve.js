@@ -243,6 +243,8 @@
     };
     var destChar = '\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]';
     var destination = '(?:' + destChar + '|\\((?:' + destChar + '|\\((?:' + destChar + '){0,256}\\)){0,256}\\)){0,2048}';
+    // A destination is never empty (carve#2070): `[x]()` and `[x]( "t")` are text.
+    var nonEmptyDestination = '(?![ \\t\\r\\n)])' + destination;
     var titled = function (quote) {
         return quote + '(?:\\\\' + quote + '|\\\\(?!' + quote + ')|[^' + quote + '\\\\\\r\\n]){0,512}' + quote;
     };
@@ -251,8 +253,11 @@
     var urlChar = '(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&\'()*+,;=%]'
         + '|(?!\\uD804[\\uDCBD\\uDCCD]|\\uD80D[\\uDC30-\\uDC3F]|\\uD82F[\\uDCA0-\\uDCA3]|\\uD834[\\uDD73-\\uDD7A]|\\uDB40[\\uDC01\\uDC20-\\uDC7F])'
         + '[^\\x00-\\xA0\\xAD\\u0600-\\u0605\\u061C\\u06DD\\u070F\\u0890\\u0891\\u08E2\\u1680\\u180E\\u2000-\\u200F\\u2028-\\u202F\\u205F-\\u2064\\u2066-\\u206F\\u3000\\uFEFF\\uFFF9-\\uFFFB])';
+    var linkTail = '\\]\\(' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)';
+    // Only a title directly before the closing `)` is a string.
+    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$)/;
     var opaqueInline = '(?:' + opaqueBracedInline
-        + '|\\[' + opaqueLabel + '\\]\\(' + destination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)'
+        + '|\\[' + opaqueLabel + linkTail
         + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
         + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
         + ')';
@@ -570,6 +575,10 @@
      * line it should not.
      */
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // A backtick a quoted attribute value used up opens no code span
+    // (carve#2074): `[a]{title="`"} and [n](u)` is a span, a text run and a
+    // link. The attribute rules run after 'code', so the guard is here.
+    var attrValueFree = '(?<!\\{[^{}\\n]{0,512}=["\'][^"\'\\n]{0,512})';
     var maximalRun = '(?<!`)`+(?!`)';
     var narrowRun = '(?<!`)`{1,2}(?!`)';
     var unpartneredTail =
@@ -1378,6 +1387,38 @@
         },
 
         // Inline code spans
+        // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
+        //
+        // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
+        // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
+        // own character NOR the newline, so an unclosed `{+` scanned to the end
+        // of the DOCUMENT rather than the end of the line (#300: 215 ms for `{+`
+        // and 211 ms for `{-` on 24 KB against 42-145 ms for the seven
+        // line-scanning rules). Unrolled the same way, tempered on `+`/`-`
+        // instead of on `\n`, so the run still crosses lines the way `[^}]*`
+        // did and a body may still hold a non-closing `+`.
+        'inserted': {
+            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
+            alias: 'inserted',
+        },
+        // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
+        // deletion - the engine renders `a {--} b` as `a \u2013 b` - and this rule
+        // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
+        // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
+        'deleted': {
+            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
+            alias: 'deleted',
+        },
+        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
+        // halves are each delimited by `~`, so the scan already stops at the
+        // next one. Bounded anyway: it is the last unbounded scan in the braced
+        // family, and the derived check below asserts the family as a whole
+        // rather than a list somebody has to remember to extend.
+        'changed': {
+            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
+            alias: 'important',
+        },
+
         'code': [
             {
                 /*
@@ -1391,7 +1432,14 @@
                  * the same statement about the opener - a run is entered at
                  * its own start, never one character in.
                  */
-                pattern: /(?<!`)(`{1,16})(?:[^`]|[^`][\s\S]{0,4096}?[^`])\1(?!`)/,
+                pattern: RegExp(attrValueFree + '(?<!`)(`{1,2})(?:[^`]|[^`](?:[^\\n]|\\n(?![ \\t\\r]*\\n)){0,4096}?[^`])\\1(?!`)'),
+                greedy: true,
+            },
+            {
+                // A run of three or more is a fence spelling, and a fence's
+                // payload may hold a blank line. A narrow run may not: a code
+                // span ends with its paragraph (carve#2074).
+                pattern: RegExp(attrValueFree + '(?<!`)(`{3,16})(?:[^`]|[^`][\\s\\S]{0,4096}?[^`])\\1(?!`)'),
                 greedy: true,
             },
             {
@@ -1440,7 +1488,7 @@
                  * is a residual this grammar keeps on purpose rather than
                  * guessing at (tests/opaque-payload-test.js).
                  */
-                pattern: unpartneredRun('', narrowRun),
+                pattern: RegExp(attrValueFree + unpartneredRun('', narrowRun).source, 'm'),
                 greedy: true,
             },
         ],
@@ -1520,12 +1568,12 @@
         // Images: ![alt](src "title"); the title may contain
         // backslash-escaped quotes like the link title.
         'image': {
-            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\([^\\s)]{1,2048}(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + linkTail),
             greedy: true,
             alias: 'url',
             inside: {
-                'string': /"(?:[^"\\]|\\[\s\S])*"/,
-                'punctuation': /!\[|\]\(|\)/,
+                'string': linkTitle,
+                'punctuation': /^!\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
             },
         },
 
@@ -1643,11 +1691,11 @@
                 // The link text may be empty ([](url), spec corpus 03-links-8)
                 // and the title may contain backslash-escaped quotes:
                 // [t](/url "ti\"tle") (spec corpus 03-links-4).
-                pattern: new RegExp(unescaped('\\[') + bracketText + '\\]\\([^\\s)]+(?:[ \\t]+"(?:[^"\\\\]|\\\\[\\s\\S])*")?\\)'),
+                pattern: new RegExp(unescaped('\\[') + bracketText + linkTail),
                 greedy: true,
                 inside: {
-                    'string': /"(?:[^"\\]|\\[\s\S])*"/,
-                    'punctuation': /\[|\]\(|\)/,
+                    'string': linkTitle,
+                    'punctuation': /^\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
                 },
             },
             {
@@ -1694,37 +1742,7 @@
             alias: 'string',
         },
 
-        // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
-        //
-        // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
-        // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
-        // own character NOR the newline, so an unclosed `{+` scanned to the end
-        // of the DOCUMENT rather than the end of the line (#300: 215 ms for `{+`
-        // and 211 ms for `{-` on 24 KB against 42-145 ms for the seven
-        // line-scanning rules). Unrolled the same way, tempered on `+`/`-`
-        // instead of on `\n`, so the run still crosses lines the way `[^}]*`
-        // did and a body may still hold a non-closing `+`.
-        'inserted': {
-            pattern: /\{\+(?!\+\})[^+}]{0,4096}(?:\+(?!\})[^+}]{0,4096}){0,32}\+\}/,
-            alias: 'inserted',
-        },
-        // THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty
-        // deletion - the engine renders `a {--} b` as `a \u2013 b` - and this rule
-        // read it as `{-` plus nothing plus `-}` (carve-grammars#378). One
-        // character is enough: `{- -}`, `{---}` and `{----}` are all deletions.
-        'deleted': {
-            pattern: /\{-(?!-\})[^\-}]{0,4096}(?:-(?!\})[^\-}]{0,4096}){0,32}-\}/,
-            alias: 'deleted',
-        },
-        // The one `{~ ... ~}` rule the sweep did NOT flag - a substitution's two
-        // halves are each delimited by `~`, so the scan already stops at the
-        // next one. Bounded anyway: it is the last unbounded scan in the braced
-        // family, and the derived check below asserts the family as a whole
-        // rather than a list somebody has to remember to extend.
-        'changed': {
-            pattern: /\{~[^~]{0,4096}~>[^~]{0,4096}~\}/,
-            alias: 'important',
-        },
+
         'critic-comment': {
             pattern: /\{#(?!#\})[^}]{0,4096}#\}/,
             alias: 'comment',

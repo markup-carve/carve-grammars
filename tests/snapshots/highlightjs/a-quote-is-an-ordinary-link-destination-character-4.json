@@ -1,7 +1,7 @@
 [
   {
     "scope": "link",
-    "text": "[x](​javascript:alert(1))"
+    "text": "[x](\"t\")"
   },
   {
     "scope": null,

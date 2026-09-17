@@ -1,11 +1,11 @@
 [
   {
     "scope": "link",
-    "text": "[x](http://a/b\\)"
+    "text": "[x](http://a/b\\)c)"
   },
   {
     "scope": null,
-    "text": "c) and "
+    "text": " and "
   },
   {
     "scope": "link",

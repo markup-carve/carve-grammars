@@ -1,7 +1,31 @@
 [
   {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "A"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/a "
+  },
+  {
+    "type": "url>string",
+    "text": "'plain'"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
     "type": "text",
-    "text": "[A](/a 'plain') and "
+    "text": " and "
   },
   {
     "type": "url>punctuation",

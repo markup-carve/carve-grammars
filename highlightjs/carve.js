@@ -172,13 +172,15 @@
     const DEST_CHAR = String.raw`\\[()\\]|\\(?![()\\])|[^ \t\r\n()\\]`;
     const DESTINATION = '(?:' + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`){0,256}\)){0,256}\)){0,2048}`;
     const titled = (quote) => quote + String.raw`(?:\\` + quote + String.raw`|\\(?!` + quote + ')|[^' + quote + String.raw`\\\r\n]){0,512}` + quote;
+    // A destination is never empty (carve#2070): `[x]()` and `[x]( "t")` are text.
+    const LINK_TAIL = String.raw`\]\((?![ \t\r\n)])` + DESTINATION + '(?: (?:' + titled('"') + '|' + titled("'") + String.raw`))?\)`;
     // `url_char` outside ASCII excludes C1 controls, White_Space and format
     // characters; a format character above the BMP is caught at its surrogates.
     const URL_CHAR = String.raw`(?:[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]`
         + String.raw`|(?!\uD804[\uDCBD\uDCCD]|\uD80D[\uDC30-\uDC3F]|\uD82F[\uDCA0-\uDCA3]|\uD834[\uDD73-\uDD7A]|\uDB40[\uDC01\uDC20-\uDC7F])`
         + String.raw`[^\x00-\xA0\xAD\u0600-\u0605\u061C\u06DD\u070F\u0890\u0891\u08E2\u1680\u180E\u2000-\u200F\u2028-\u202F\u205F-\u2064\u2066-\u206F\u3000\uFEFF\uFFF9-\uFFFB])`;
     const OPAQUE_INLINE_SOURCE = '(?:' + OPAQUE_BRACED_SOURCE
-        + String.raw`|\[` + OPAQUE_LABEL + String.raw`\]\(` + DESTINATION + '(?: (?:' + titled('"') + '|' + titled("'") + String.raw`))?\)`
+        + String.raw`|\[` + OPAQUE_LABEL + LINK_TAIL
         + String.raw`|<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:` + URL_CHAR + '{1,2048}>'
         + '|<' + emailClass(String.raw`0-9\-_.+`) + String.raw`{1,512}@(?:` + emailClass(String.raw`0-9\-_`) + String.raw`{1,512}\.){1,64}` + emailClass('') + '{1,512}>'
         + ')';
@@ -705,7 +707,7 @@
     // Inline links: [text](url) with optional trailing attributes
     const LINK = {
         className: 'link',
-        begin: new RegExp('\\[' + BRACKET_TEXT + '\\]\\([^)]*\\)(\\{[^}]+\\})?'),
+        begin: new RegExp('\\[' + BRACKET_TEXT + LINK_TAIL + '(\\{[^}]+\\})?'),
         relevance: 5,
     };
 
@@ -726,7 +728,7 @@
     // Images: ![alt](url) with optional trailing attributes
     const IMAGE = {
         className: 'link',
-        begin: new RegExp('!\\[' + BRACKET_TEXT + '\\]\\([^)]*\\)(\\{[^}]+\\})?'),
+        begin: new RegExp('!\\[' + BRACKET_TEXT + LINK_TAIL + '(\\{[^}]+\\})?'),
         relevance: 5,
     };
 

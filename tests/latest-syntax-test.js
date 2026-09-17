@@ -139,7 +139,6 @@ const destinations = (d) => [
     '[x `]` y](a' + d + ')',
     `[x {# ] #} y](a${d})`,
     `[a [b [c]]](a${d})`,
-    `[x]( "t${d}")`,
     String.raw`[x](a "t\\"` + d + '")',
     `[x](a${String.fromCharCode(0xa0)}b${d})`,
     `<x:é${d}>`,
@@ -148,9 +147,11 @@ const destinations = (d) => [
 // Shapes the spec does not read as a destination or an autolink, so the run
 // closes inside them (carve-grammars#454): no label before `](`, an address
 // `email_autolink` rejects, a title gap other than one space, an escape the
-// destination does not have, and a character outside `url_char`.
+// destination does not have, a character outside `url_char`, and an empty
+// destination (carve#2070).
 const closedDestinations = (d) => [
     `](a${d})`,
+    `[x]( "t${d}")`,
     String.raw`\[x](a` + d + ')',
     `<a@b${d}>`,
     `<a@b.c${d}>`,

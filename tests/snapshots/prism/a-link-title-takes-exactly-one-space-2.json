@@ -1,30 +1,6 @@
 [
   {
-    "type": "image>punctuation",
-    "text": "!["
-  },
-  {
-    "type": "image",
-    "text": "a"
-  },
-  {
-    "type": "image>punctuation",
-    "text": "]("
-  },
-  {
-    "type": "image",
-    "text": "/p.png  "
-  },
-  {
-    "type": "image>string",
-    "text": "\"T\""
-  },
-  {
-    "type": "image>punctuation",
-    "text": ")"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "![a](/p.png  \"T\")\n"
   }
 ]

@@ -1,0 +1,62 @@
+[
+  {
+    "scope": null,
+    "text": "Run "
+  },
+  {
+    "scope": "strong",
+    "text": "{*`make*}"
+  },
+  {
+    "scope": "link",
+    "text": "[the docs](u)"
+  },
+  {
+    "scope": null,
+    "text": ".\n\nA "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{_``x_}"
+  },
+  {
+    "scope": "link",
+    "text": "![logo](p.png)"
+  },
+  {
+    "scope": null,
+    "text": " here.\n\nA "
+  },
+  {
+    "scope": "addition",
+    "text": "{=`y=}"
+  },
+  {
+    "scope": "string",
+    "text": "[note]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": " here.\n\n"
+  },
+  {
+    "scope": "addition",
+    "text": "{+`added+}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "link",
+    "text": "[n](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
