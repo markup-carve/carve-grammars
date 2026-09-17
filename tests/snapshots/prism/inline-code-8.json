@@ -5,7 +5,11 @@
   },
   {
     "type": "forced-bold",
-    "text": "{*`make*}"
+    "text": "{*"
+  },
+  {
+    "type": "forced-bold>code",
+    "text": "`make*}"
   },
   {
     "type": "url>punctuation",
@@ -33,7 +37,11 @@
   },
   {
     "type": "forced-underline",
-    "text": "{_``x_}"
+    "text": "{_"
+  },
+  {
+    "type": "forced-underline>code",
+    "text": "``x_}"
   },
   {
     "type": "image>punctuation",
@@ -89,7 +97,11 @@
   },
   {
     "type": "inserted",
-    "text": "{+`added+}"
+    "text": "{+"
+  },
+  {
+    "type": "inserted>code",
+    "text": "`added+}"
   },
   {
     "type": "text",

@@ -1,7 +1,15 @@
 [
   {
     "scope": "deletion",
-    "text": "{~` ~}"
+    "text": "{~"
+  },
+  {
+    "scope": "code",
+    "text": "` "
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,

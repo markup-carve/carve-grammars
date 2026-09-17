@@ -1,58 +1,62 @@
 [
   {
     "scope": null,
-    "text": "x"
+    "text": "x{*"
+  },
+  {
+    "scope": "code",
+    "text": "`a*} and `"
+  },
+  {
+    "scope": null,
+    "text": "b"
+  },
+  {
+    "scope": "code",
+    "text": "`\n\n"
   },
   {
     "scope": "strong",
-    "text": "{*`a*}"
-  },
-  {
-    "scope": null,
-    "text": " and "
+    "text": "{*x"
   },
   {
     "scope": "code",
-    "text": "`b`"
-  },
-  {
-    "scope": null,
-    "text": "\n\n"
+    "text": "`a*}`"
   },
   {
     "scope": "strong",
-    "text": "{*x`a*}"
-  },
-  {
-    "scope": "code",
-    "text": "`*}\n\n"
+    "text": "*}"
   },
   {
     "scope": null,
-    "text": "x"
+    "text": "\n\nx{+"
+  },
+  {
+    "scope": "code",
+    "text": "`a+} and `"
+  },
+  {
+    "scope": null,
+    "text": "b"
+  },
+  {
+    "scope": "code",
+    "text": "`\n\n"
   },
   {
     "scope": "addition",
-    "text": "{+`a+}"
-  },
-  {
-    "scope": null,
-    "text": " and "
+    "text": "{+x"
   },
   {
     "scope": "code",
-    "text": "`b`"
-  },
-  {
-    "scope": null,
-    "text": "\n\n"
+    "text": "`a+}`"
   },
   {
     "scope": "addition",
-    "text": "{+x`a+}"
+    "text": "+}"
   },
   {
-    "scope": "code",
-    "text": "`+}\n"
+    "scope": null,
+    "text": "\n"
   }
 ]

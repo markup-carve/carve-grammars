@@ -1,27 +1,23 @@
 [
   {
     "type": "text",
-    "text": "x"
-  },
-  {
-    "type": "forced-bold",
-    "text": "{*`a*}"
-  },
-  {
-    "type": "text",
-    "text": " and "
+    "text": "x{*"
   },
   {
     "type": "code",
-    "text": "`b`"
+    "text": "`a*} and `"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": "b"
   },
   {
-    "type": "forced-bold",
-    "text": "{*x`a*}"
+    "type": "code",
+    "text": "`\n\n{*x`"
+  },
+  {
+    "type": "text",
+    "text": "a*}"
   },
   {
     "type": "code",
@@ -29,27 +25,23 @@
   },
   {
     "type": "text",
-    "text": "\n\nx"
-  },
-  {
-    "type": "inserted",
-    "text": "{+`a+}"
-  },
-  {
-    "type": "text",
-    "text": " and "
+    "text": "\n\nx{+"
   },
   {
     "type": "code",
-    "text": "`b`"
+    "text": "`a+} and `"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": "b"
   },
   {
-    "type": "inserted",
-    "text": "{+x`a+}"
+    "type": "code",
+    "text": "`\n\n{+x`"
+  },
+  {
+    "type": "text",
+    "text": "a+}"
   },
   {
     "type": "code",

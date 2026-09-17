@@ -1,10 +1,18 @@
 [
   {
     "scope": "strong",
-    "text": "{*a {/b *}"
+    "text": "{*a "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/b *} d/}"
+  },
+  {
+    "scope": "strong",
+    "text": " e*}"
   },
   {
     "scope": null,
-    "text": " d/} e*}\n"
+    "text": "\n"
   }
 ]

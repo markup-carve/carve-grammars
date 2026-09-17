@@ -184,6 +184,24 @@
     const LETTER_OR_DIGIT = '[A-Za-z0-9\\u0080-\\uFFFF]';
     const BARE_CODE = '```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)';
     const bareCloser = (d) => `(?<=\\S)${d}(?!${LETTER_OR_DIGIT})`;
+    // A braced span's body: a braced span of another kind, a closed code span
+    // and a link destination or autolink are atoms, so the closer is the first
+    // one outside all three. An insertion or deletion (`atoms` false) closes at
+    // its first closer.
+    const DESTINATION_SOURCE = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE + '|', '');
+    const braced = (d, opener, atoms = true) => {
+        const atom = '(?:' + (atoms ? bracedSource(BRACED_KINDS.filter((kind) => kind !== d)) + '|' : '')
+            + `${BARE_CODE}|${DESTINATION_SOURCE})`;
+        // The cheap scan, tempered on the delimiter, fails fast where no closer
+        // exists at all.
+        const run = `(?:[^${d}\\n]|\\n(?![ \\t]*\\n)){0,4096}`;
+        const cheap = `${run}(?:${d}(?!\\})${run}){0,32}${d}\\}`;
+        const body = `(?:${atom}|\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|(?!${atom})[^\\n\\\\]|\\n(?![ \\t]*\\n)){0,4096}?`;
+        return {
+            begin: new RegExp(`${opener.source}(?=${cheap})(?=${body}${d}\\})`),
+            end: new RegExp(`${d}\\}`),
+        };
+    };
     const bare = (d, opener) => {
         const opaque = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE, bracedSource(BRACED_KINDS.filter((kind) => kind !== d)));
         const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}|${d}(?=${LETTER_OR_DIGIT})`
@@ -267,9 +285,9 @@
     // Forced intraword family (PART 9 S22). Content may contain the delimiter
     // (`{/a/b/}` is <em>a/b</em>), so the run ends at the closing `X}`. These
     // must precede ATTRIBUTE, or `{_path_}` reads as a boolean attribute.
-    const FORCED_STRONG = { className: 'strong', ...paired(/\{\*(?!\*\})/, /\*\}/), relevance: 5 };
-    const FORCED_EMPHASIS = { className: 'emphasis', ...paired(/\{\/(?!\/\})/, /\/\}/), relevance: 5 };
-    const FORCED_UNDERLINE = { className: 'emphasis', ...paired(/\{_(?!_\})/, /_\}/), relevance: 5 };
+    const FORCED_STRONG = { className: 'strong', ...braced('\\*', /\{\*(?!\*\})/), relevance: 5 };
+    const FORCED_EMPHASIS = { className: 'emphasis', ...braced('/', /\{\/(?!\/\})/), relevance: 5 };
+    const FORCED_UNDERLINE = { className: 'emphasis', ...braced('_', /\{_(?!_\})/), relevance: 5 };
     // A substitution splits at its first top-level arrow: code, a comment and
     // an escape are opaque (markup-carve/carve#2092). A code span still open
     // at the closer ends there.
@@ -284,7 +302,7 @@
     const FORCED_STRIKE = {
         className: 'deletion',
         // Forced content may be whitespace, but the empty `{~~}` is literal.
-        ...paired(/\{~(?!~\})/, /~\}/),
+        ...braced('~', /\{~(?!~\})/),
         relevance: 5,
     };
 
@@ -305,7 +323,7 @@
      * Forced content may consist only of whitespace, but the empty `{==}` is
      * literal, like every other empty pair in the family.
      */
-    const FORCED_HIGHLIGHT = { className: 'addition', ...paired(/\{=(?!=\})/, /=\}/), relevance: 5 };
+    const FORCED_HIGHLIGHT = { className: 'addition', ...braced('=', /\{=(?!=\})/), relevance: 5 };
 
     const ATTRIBUTE_EMPTY = {
         className: 'attr',
@@ -474,7 +492,7 @@
     // Insert: {+text+}
     const INSERT = {
         className: 'addition',
-        ...paired(/\{\+(?!\+\})/, /\+\}/),
+        ...braced('\\+', /\{\+(?!\+\})/, false),
         relevance: 5,
     };
 
@@ -486,7 +504,7 @@
     // `{- -}`, `{---}` and `{----}` are all deletions.
     const DELETE = {
         className: 'deletion',
-        ...paired(/\{-(?!-\})/, /-\}/),
+        ...braced('-', /\{-(?!-\})/, false),
         relevance: 5,
     };
 
@@ -500,14 +518,14 @@
     // Subscript (Carve): braced-only `{,text,}` - a bare `,` is literal text.
     const SUBSCRIPT = {
         className: 'built_in',
-        ...paired(/\{,(?!,\})/, /,\}/),
+        ...braced(',', /\{,(?!,\})/),
         relevance: 3,
     };
 
     // Superscript (Carve): braced-only `{^text^}` - a bare `^` is literal text.
     const SUPERSCRIPT = {
         className: 'built_in',
-        ...paired(/\{\^(?!\^\})/, /\^\}/),
+        ...braced('\\^', /\{\^(?!\^\})/),
         relevance: 3,
     };
 
@@ -1750,6 +1768,35 @@
         const at = content.findIndex((m) => m === HIGHLIGHT || m === STRONG || m === EMPHASIS);
         content.splice(at, 0, crossing);
         mode.contains = [{ begin: new RegExp(`\\s${d}`), relevance: 0 }, DELIMITED_COMMENT, ...content];
+    }
+
+    // A braced span holds inline content. Its own delimiter is text inside it,
+    // a code span still open at its closer ends there, and a bare opener whose
+    // closer lies only past the span's closer is text.
+    for (const [d, mode, own] of [
+        ['\\*', FORCED_STRONG, [STRONG]], ['/', FORCED_EMPHASIS, [EMPHASIS]], ['_', FORCED_UNDERLINE, [UNDERLINE]],
+        ['~', FORCED_STRIKE, [STRIKETHROUGH]], ['=', FORCED_HIGHLIGHT, [HIGHLIGHT]], ['\\^', SUPERSCRIPT, []],
+        [',', SUBSCRIPT, []], ['\\+', INSERT, []], ['-', DELETE, []],
+    ]) {
+        const closer = `${d}\\}`;
+        // An insertion or deletion has no atoms: a braced opener whose own
+        // closer lies only past this one is text.
+        const unscoped = mode === INSERT || mode === DELETE
+            ? [{ begin: new RegExp(`\\{([*/_~=^,+-])(?=(?:(?!\\1\\})[^\\n]){0,4096}?${closer})`), relevance: 0 }]
+            : [];
+        mode.contains = [
+            ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, ...unscoped,
+            { begin: new RegExp(`${d}(?!\\})`), relevance: 0 },
+            { className: 'code', begin: /(?:\$\$?|!)?`+(?![^`\n]{0,4096}`)/, end: new RegExp(`(?=${closer})`) },
+            CRITIC_SUB,
+            {
+                begin: new RegExp(`([${['\\*', '/', '_', '~', '='].filter((c) => c !== d).join('')}])(?=[^\\n]*?${bareCloser('\\1')})(?=(?:(?!${bareCloser('\\1')})[^\\n])*?${closer})`),
+                relevance: 0,
+            },
+            ...substitutionContent('(?!)', []).slice(3).filter((m) => m !== mode && !own.includes(m)
+                && m.begin?.source !== '([*/_=])(?!(?:(?!(?!)).){0,4096}?\\1)'),
+            OPAQUE_DESTINATION,
+        ];
     }
 
     CRITIC_SUB.contains = [

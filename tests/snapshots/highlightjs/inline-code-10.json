@@ -5,7 +5,15 @@
   },
   {
     "scope": "strong",
-    "text": "{*$`a*}"
+    "text": "{*"
+  },
+  {
+    "scope": "code",
+    "text": "$`a"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
   },
   {
     "scope": null,
@@ -13,7 +21,15 @@
   },
   {
     "scope": "deletion",
-    "text": "{~$$`b~}"
+    "text": "{~"
+  },
+  {
+    "scope": "code",
+    "text": "$$`b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,
@@ -21,7 +37,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "{/!`c/}"
+    "text": "{/"
+  },
+  {
+    "scope": "code",
+    "text": "!`c"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/}"
   },
   {
     "scope": null,
@@ -29,7 +53,15 @@
   },
   {
     "scope": "emphasis",
-    "text": "{_!`d`_}"
+    "text": "{_"
+  },
+  {
+    "scope": "string",
+    "text": "!`d`"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_}"
   },
   {
     "scope": null,

@@ -1,7 +1,15 @@
 [
   {
     "scope": "deletion",
-    "text": "{~`a~>b~}"
+    "text": "{~"
+  },
+  {
+    "scope": "code",
+    "text": "`a~>b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
   },
   {
     "scope": null,
@@ -9,7 +17,15 @@
   },
   {
     "scope": "deletion",
-    "text": "{~a `x~>y` b~}"
+    "text": "{~a "
+  },
+  {
+    "scope": "code",
+    "text": "`x~>y`"
+  },
+  {
+    "scope": "deletion",
+    "text": " b~}"
   },
   {
     "scope": null,
@@ -41,7 +57,15 @@
   },
   {
     "scope": "deletion",
-    "text": "{~a\\~>b~}"
+    "text": "{~a"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\~"
+  },
+  {
+    "scope": "deletion",
+    "text": ">b~}"
   },
   {
     "scope": null,
