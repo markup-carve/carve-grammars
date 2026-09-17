@@ -1,10 +1,6 @@
 [
   {
     "scope": null,
-    "text": "a "
-  },
-  {
-    "scope": "comment",
-    "text": "{% oops\n"
+    "text": "a {% oops\n"
   }
 ]

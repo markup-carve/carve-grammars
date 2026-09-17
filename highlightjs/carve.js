@@ -1404,7 +1404,10 @@
     //
     const DELIMITED_COMMENT = {
         className: 'comment',
-        begin: /\{%/,
+        // Opens only where its closer arrives in the paragraph: an unclosed
+        // `{%` is text, so it cannot swallow an enclosing closer
+        // (carve-grammars#461). Tempered like CRITIC_COMMENT's guard.
+        begin: /\{%(?=(?:[^%\n]|%(?!\})|\n(?![ \t\r]*\n)){0,4096}%\})/,
         end: /%\}/,
         relevance: 5,
     };

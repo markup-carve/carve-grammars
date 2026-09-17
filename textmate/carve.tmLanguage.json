@@ -1432,6 +1432,18 @@
         }
       ]
     },
+    "critic_comment_in_strong": {
+      "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
+      "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+      "end": "#\\}|^(?=[ \\t]*$)",
+      "name": "comment.block.critic.carve"
+    },
+    "braced_comment_in_strong": {
+      "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
+      "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?![\\w*])))",
+      "end": "%\\}|^(?=[ \\t]*$)",
+      "name": "comment.block.inline.carve"
+    },
     "strong": {
       "begin": "(?<![\\w*])(\\*)(?![\\s*])",
       "end": "(?<=\\S)(\\*)(?![\\w*])|^[ \\t]*$",
@@ -1454,7 +1466,7 @@
           "include": "#opaque_destination"
         },
         {
-          "include": "#braced_comment"
+          "include": "#braced_comment_in_strong"
         },
         {
           "include": "#critic_add"
@@ -1466,7 +1478,7 @@
           "include": "#critic_sub"
         },
         {
-          "include": "#critic_comment"
+          "include": "#critic_comment_in_strong"
         },
         {
           "include": "#forced_strong"
