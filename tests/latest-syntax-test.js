@@ -55,12 +55,18 @@ for (const [name, tokenize, strongScope] of surfaces) {
 
     for (const braced of [
         '{*b~ c*}', '{/b~ c/}', '{_b~ c_}', '{^b~ c^}', '{,b~ c,}',
-        '{~b~ c~}', '{=b~ c=}', '{+b~ c+}', '{-b~ c-}', '{# b~ c #}', '{% b~ c %}',
+        ...(['prism', 'highlightjs'].includes(name) ? ['{~b~ c~}'] : []), '{=b~ c=}', '{+b~ c+}', '{-b~ c-}', '{# b~ c #}', '{% b~ c %}',
         String.raw`{/b\c~ d/}`,
     ]) {
         const source = `~a ${braced} d~`;
         const tokens = await tokenize(source);
         assert(tokens.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: ${JSON.stringify(braced)} exposed its inner closer`);
+    }
+
+    // A same-kind forced opener inside a bare run is text, so the run closes at `b~`.
+    if (!['prism', 'highlightjs'].includes(name)) {
+        const sameKind = await tokenize('~a {~b~ c~} d~');
+        assert(!sameKind.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: a same-kind forced opener hid the bare closer`);
     }
 
     const literalBracePair = await tokenize('*a {--} b*');
@@ -207,17 +213,19 @@ for (const [name, tokenize] of surfaces) {
 
 const textmate = JSON.parse(readFileSync(new URL('../textmate/carve.tmLanguage.json', import.meta.url), 'utf8'));
 const italicMatch = textmate.repository.italic.match;
-const opaqueStart = italicMatch.indexOf('(?:\\{');
-const opaqueEnd = italicMatch.indexOf(')|\\\\[^\\n]', opaqueStart) + 1;
-assert(opaqueStart >= 0 && opaqueEnd > opaqueStart, 'textmate: opaque braced-inline source is not extractable');
-const textmateOpaque = italicMatch.slice(opaqueStart, opaqueEnd);
+const code = '```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)';
+const destinationStart = italicMatch.indexOf('|(?:\\[');
+const destinationEnd = italicMatch.indexOf('|(?<=\\s)/', destinationStart);
+assert(destinationStart >= 0 && destinationEnd > destinationStart, 'textmate: the opaque destination atom is not extractable');
+const destination = italicMatch.slice(destinationStart, destinationEnd);
 for (const [name, pattern] of [
     ['italic', italicMatch],
     ['underline', textmate.repository.underline.match],
     ['strike', textmate.repository.strike.match],
     ['highlight', textmate.repository.highlight.patterns[1].match],
 ]) {
-    assert.equal(pattern.split(textmateOpaque).length - 1, 2, `textmate: ${name} drifted from the shared opaque braced-inline language`);
+    assert.equal(pattern.split(destination).length - 1, 1, `textmate: ${name} drifted from the shared opaque destination atom`);
+    assert.ok(pattern.split(code).length - 1 >= 11, `textmate: ${name} drifted from the shared code atoms`);
 }
 
 const definition = {

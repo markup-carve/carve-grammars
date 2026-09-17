@@ -213,10 +213,11 @@ assert.ok(ROWS.length >= 26, `ROWS holds ${ROWS.length}, expected at least 26`);
  * single-`match` grammars decline the row, and highlight.js opens and closes one
  * character late.
  */
+// TextMate's column matches the engine since carve-grammars#476.
 const RESIDUALS = [
-    ['x =<== y', { textmate: null, prism: null, highlightjs: '<=' }],
-    ['x =!== y', { textmate: null, prism: null, highlightjs: '!=' }],
-    ['x =a== y', { textmate: null, prism: null, highlightjs: 'a=' }],
+    ['x =<== y', { textmate: '<', prism: null, highlightjs: '<=' }],
+    ['x =!== y', { textmate: '!', prism: null, highlightjs: '!=' }],
+    ['x =a== y', { textmate: 'a', prism: null, highlightjs: 'a=' }],
 ];
 
 /*
