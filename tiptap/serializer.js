@@ -184,33 +184,40 @@ function serializeMention(node, report) {
     const attrs = node.attrs || {};
     const id = isText(attrs.id) ? String(attrs.id) : '';
     const label = isText(attrs.label) ? String(attrs.label) : '';
-    let name = id || label;
-    if (id !== '' && label !== '' && label !== id) {
-        recordLoss(report, 'dropped', 'label', MENTION_LABEL_DROPPED);
-    }
+    const name = id || label;
     if (attrs.label != null && !isText(attrs.label)) {
         const type = Array.isArray(attrs.label) ? 'array' : typeof attrs.label;
-        recordLoss(report, 'dropped', 'label', `a Carve attribute holds a string, and this value is of type ${type}`);
-    }
-    for (const key of Object.keys(attrs)) {
-        if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) {
-            recordLoss(report, 'dropped', key, `a ${kind} has no Carve spelling for an attribute`);
-        }
+        recordLoss(report, 'degraded', 'label', `a Carve attribute holds a string, and this value is of type ${type}`);
     }
     if (name === '') {
         recordLoss(report, 'dropped', kind, `a ${kind} with no name has nothing to write`);
         return '';
     }
-    if (MENTION_NAME.test(name)) return sigil + name;
+    const spellable = MENTION_NAME.test(name);
+    for (const key of Object.keys(attrs)) {
+        if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) {
+            recordLoss(report, 'dropped', key, spellable
+                ? `a ${kind} has no Carve spelling for an attribute`
+                : `the ${kind} is written as text, which holds no attribute`);
+        }
+    }
+    if (spellable) {
+        if (id !== '' && label !== '' && label !== id) {
+            recordLoss(report, 'degraded', 'label', MENTION_LABEL_DROPPED);
+        }
+        return sigil + name;
+    }
     // Never normalized: a resolver would receive a key the author never wrote.
-    recordLoss(report, 'degraded', kind, `the name has no Carve ${kind} spelling, so it is written as literal text`);
-    return escapeCarve(sigil + name);
+    // The text is what the editor showed, which Tiptap takes from `label`.
+    recordLoss(report, 'degraded', id !== '' ? 'id' : 'label',
+        `the name has no Carve ${kind} spelling, so it is written as literal text`);
+    return escapeCarve(sigil + (label !== '' ? label : id));
 }
 
 /**
  * Serialize and report what the Carve source could not carry: `dropped` names
- * each attribute or node that is gone, `degraded` each node whose text survives
- * as literal text.
+ * each attribute or node that is gone, `degraded` each name whose text survives
+ * as literal text and each field carried in a lesser form.
  */
 export function serializeToCarveWithReport(doc) {
     const report = {};

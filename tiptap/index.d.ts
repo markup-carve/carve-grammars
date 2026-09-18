@@ -72,7 +72,7 @@ export function serializeToCarveWithReport(document: JSONContent): {
   source: string;
   /** Attributes or nodes the Carve source does not carry. */
   dropped: Record<string, string>;
-  /** Nodes written as literal text. */
+  /** Names written as literal text, and fields carried in a lesser form. */
   degraded: Record<string, string>;
 };
 export function escapeCarve(text: string, trailingSafe?: boolean): string;
