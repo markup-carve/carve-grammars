@@ -185,6 +185,10 @@ function serializeMention(node, report) {
     const id = isText(attrs.id) ? String(attrs.id) : '';
     const label = isText(attrs.label) ? String(attrs.label) : '';
     const name = id || label;
+    // A producer may keep the sigil in the id it sends. carve-php and carve-rs
+    // both read past one rather than writing a second (#495).
+    const bare = (value) => (value.startsWith(sigil) ? value.slice(1) : value);
+    const withSigil = (value) => (value.startsWith(sigil) ? value : sigil + value);
     if (attrs.label != null && !isText(attrs.label)) {
         const type = Array.isArray(attrs.label) ? 'array' : typeof attrs.label;
         recordLoss(report, 'degraded', 'label', `a Carve attribute holds a string, and this value is of type ${type}`);
@@ -193,7 +197,7 @@ function serializeMention(node, report) {
         recordLoss(report, 'dropped', kind, `a ${kind} with no name has nothing to write`);
         return '';
     }
-    const spellable = MENTION_NAME.test(name);
+    const spellable = MENTION_NAME.test(bare(name));
     for (const key of Object.keys(attrs)) {
         if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) {
             recordLoss(report, 'dropped', key, spellable
@@ -205,13 +209,13 @@ function serializeMention(node, report) {
         if (id !== '' && label !== '' && label !== id) {
             recordLoss(report, 'degraded', 'label', MENTION_LABEL_DROPPED);
         }
-        return sigil + name;
+        return withSigil(name);
     }
     // Never normalized: a resolver would receive a key the author never wrote.
     // The text is what the editor showed, which Tiptap takes from `label`.
     recordLoss(report, 'degraded', id !== '' ? 'id' : 'label',
         `the name has no Carve ${kind} spelling, so it is written as literal text`);
-    return escapeCarve(sigil + (label !== '' ? label : id));
+    return escapeCarve(withSigil(label !== '' ? label : id));
 }
 
 /**
