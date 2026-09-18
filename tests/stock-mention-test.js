@@ -27,24 +27,28 @@ console.log('stock mention:');
 const named = [
     ['a stock mention with a null label', 'mention', { id: 'alice', label: null, mentionSuggestionChar: '@' }, 'ping @alice', {}],
     ['a label equal to the id', 'mention', { id: 'alice', label: 'alice', mentionSuggestionChar: '@' }, 'ping @alice', {}],
-    ['a label that differs from the id', 'mention', { id: 'u123', label: 'Alice', mentionSuggestionChar: '@' }, 'ping @u123', { label: LABEL_DROPPED }],
+    ['a label that differs from the id', 'mention', { id: 'u123', label: 'Alice', mentionSuggestionChar: '@' }, 'ping @u123', {}, { label: LABEL_DROPPED }],
     ['a null id', 'mention', { id: null, label: 'Alice', mentionSuggestionChar: '@' }, 'ping @Alice', {}],
     ['the id alone', 'mention', { id: 'alice' }, 'ping @alice', {}],
     ['the label alone', 'mention', { label: 'Alice' }, 'ping @Alice', {}],
     ['a carveMention with a null id', 'carveMention', { id: null, label: 'alice', mentionSuggestionChar: '@' }, 'ping @alice', {}],
     ['a tag with a null label', 'carveTag', { id: 'release', label: null, mentionSuggestionChar: '#' }, 'ping #release', {}],
-    ['a tag with a different label', 'carveTag', { id: 'release', label: 'Release', mentionSuggestionChar: '#' }, 'ping #release', { label: LABEL_DROPPED }],
+    ['a tag with a different label', 'carveTag', { id: 'release', label: 'Release', mentionSuggestionChar: '#' }, 'ping #release', {}, { label: LABEL_DROPPED }],
     ['a stock mention whose suggestion char is #', 'mention', { id: 'alice', label: null, mentionSuggestionChar: '#' }, 'ping @alice', {}],
-    ['a label that is not text', 'mention', { id: 'alice', label: ['Alice'], mentionSuggestionChar: '@' }, 'ping @alice',
+    ['a label that is not text', 'mention', { id: 'alice', label: ['Alice'], mentionSuggestionChar: '@' }, 'ping @alice', {},
         { label: 'a Carve attribute holds a string, and this value is of type array' }],
+    ['an attribute Carve cannot spell', 'mention', { id: 'alice', label: null, mentionSuggestionChar: '@', 'data-team': 'core' }, 'ping @alice',
+        { 'data-team': 'a mention has no Carve spelling for an attribute' }],
+    ['a tag attribute Carve cannot spell', 'carveTag', { id: 'release', label: null, 'data-team': 'core' }, 'ping #release',
+        { 'data-team': 'a tag has no Carve spelling for an attribute' }],
 ];
 
-for (const [name, type, attrs, carve, dropped] of named) {
+for (const [name, type, attrs, carve, dropped, degraded = {}] of named) {
     ok(`${name} writes ${carve} and reads back as one node`, () => {
         const report = serializeToCarveWithReport(paragraph(type, attrs));
         assert.strictEqual(report.source, carve);
         assert.deepStrictEqual(report.dropped, dropped);
-        assert.deepStrictEqual(report.degraded, {});
+        assert.deepStrictEqual(report.degraded, degraded);
         assert.strictEqual(serializeToCarve(paragraph(type, attrs)), carve);
         const nodes = inlineNodes(carve);
         assert.strictEqual(nodes.length, 2, JSON.stringify(nodes));
@@ -61,19 +65,39 @@ ok('the issue example keeps the mention between its text', () => {
     assert.strictEqual(serializeToCarve(doc), 'hi @alice bye');
 });
 
+const MENTION_AS_TEXT = 'the name has no Carve mention spelling, so it is written as literal text';
+const TAG_AS_TEXT = 'the name has no Carve tag spelling, so it is written as literal text';
+const ATTRIBUTE_AS_TEXT = 'the mention is written as text, which holds no attribute';
+
 for (const [name, id] of [['a name holding a space', 'Lea Thompson'], ['a name with a non-ASCII letter', 'jürgen']]) {
     ok(`${name} is escaped literal text, reported and never normalized`, () => {
         const report = serializeToCarveWithReport(paragraph('mention', { id, label: null }));
         assert.strictEqual(report.source, 'ping \\@' + id);
-        assert.deepStrictEqual(report.degraded, { mention: 'the name has no Carve mention spelling, so it is written as literal text' });
+        assert.deepStrictEqual(report.dropped, {});
+        assert.deepStrictEqual(report.degraded, { id: MENTION_AS_TEXT });
         assert.deepStrictEqual(inlineNodes(report.source), [{ type: 'text', text: 'ping @' + id }]);
     });
 }
 
-ok('an attribute Carve cannot spell is reported', () => {
-    const report = serializeToCarveWithReport(paragraph('mention', { id: 'alice', label: null, mentionSuggestionChar: '@', 'data-team': 'core' }));
-    assert.strictEqual(report.source, 'ping @alice');
-    assert.deepStrictEqual(report.dropped, { 'data-team': 'a mention has no Carve spelling for an attribute' });
-});
+// The report is keyed on the field that held the name, and the text is what
+// the editor showed (markup-carve/carve-php#2154, markup-carve/carve-php#2167).
+const asText = [
+    ['a name that lives in the label alone', 'mention', { id: null, label: 'Lea Thompson' }, 'ping \\@Lea Thompson', {}, { label: MENTION_AS_TEXT }],
+    ['an unspellable id beside a spellable label', 'mention', { id: 'u 1', label: 'Lea' }, 'ping \\@Lea', {}, { id: MENTION_AS_TEXT }],
+    ['an unspellable name carrying an attribute', 'mention', { id: 'Lea Thompson', label: null, 'data-team': 'core' }, 'ping \\@Lea Thompson',
+        { 'data-team': ATTRIBUTE_AS_TEXT }, { id: MENTION_AS_TEXT }],
+    ['an unspellable tag name', 'carveTag', { id: 'big release', label: null, mentionSuggestionChar: '#' }, 'ping \\#big release', {}, { id: TAG_AS_TEXT }],
+    ['an unspellable tag name carrying an attribute', 'carveTag', { id: 'big release', label: null, 'data-team': 'core' }, 'ping \\#big release',
+        { 'data-team': 'the tag is written as text, which holds no attribute' }, { id: TAG_AS_TEXT }],
+];
+
+for (const [name, type, attrs, carve, dropped, degraded] of asText) {
+    ok(`${name} writes ${carve}`, () => {
+        const report = serializeToCarveWithReport(paragraph(type, attrs));
+        assert.strictEqual(report.source, carve);
+        assert.deepStrictEqual(report.dropped, dropped);
+        assert.deepStrictEqual(report.degraded, degraded);
+    });
+}
 
 console.log(`\n${passed} passed`);
