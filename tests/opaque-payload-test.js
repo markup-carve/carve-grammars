@@ -902,9 +902,9 @@ const RESIDUALS = [
          * that repository's own fixture next to the braced comment reading it
          * the same way, and there is nothing for this table to assert.
          */
-        engines: ['prism', 'emacs-carve'],
-        ticket: 'needs a container model, carve-grammars#312; and the single-line '
-            + 'guard on markup-carve/emacs-carve#21',
+        // Prism is inert since carve-grammars#490: its comment rule is greedy.
+        engines: ['emacs-carve'],
+        ticket: 'the single-line guard on markup-carve/emacs-carve#21',
     },
 ];
 

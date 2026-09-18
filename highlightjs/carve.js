@@ -1487,7 +1487,7 @@
         // The body still excludes `}` entirely, so the `#}` the guard finds is
         // the first one and `end` cannot overshoot it, and the scan stays
         // bounded at the 4096 carve-grammars#300 gave it.
-        begin: /\{#(?!#\})(?=(?:[^}\n]|\n(?![ \t\r]*\n)){0,4096}#\})/,
+        begin: /\{#(?!#\})(?:(?<![^\s\w"'][{]#)|(?![^}\n]{0,4096}(?<!#)[}]))(?=(?:[^#\n]|#(?!\})|\n(?![ \t\r]*\n)){0,4096}#\})/,
         end: /#\}/,
         relevance: 5,
     };
