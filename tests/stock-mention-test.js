@@ -103,4 +103,36 @@ for (const [name, type, attrs, carve, dropped, degraded] of asText) {
     });
 }
 
+// Neither field holds a name, so nothing is written and the report is keyed on
+// the node kind (markup-carve/carve-php#2176). An attribute the node carried
+// goes with it and is named beside it.
+const NO_NAME = 'a mention with no name has nothing to write';
+const TAG_NO_NAME = 'a tag with no name has nothing to write';
+const nameless = [
+    ['no attributes at all', 'mention', {}, { mention: NO_NAME }],
+    ['a null id', 'mention', { id: null }, { mention: NO_NAME }],
+    ['a null label', 'mention', { label: null }, { mention: NO_NAME }],
+    ['both null', 'mention', { id: null, label: null }, { mention: NO_NAME }],
+    ['the stock shape with both null', 'mention', { id: null, label: null, mentionSuggestionChar: '@' }, { mention: NO_NAME }],
+    ['a tag with no attributes at all', 'carveTag', {}, { tag: TAG_NO_NAME }],
+    ['a tag with a null id', 'carveTag', { id: null }, { tag: TAG_NO_NAME }],
+    ['a tag with a null label', 'carveTag', { label: null }, { tag: TAG_NO_NAME }],
+    ['a tag with both null', 'carveTag', { id: null, label: null }, { tag: TAG_NO_NAME }],
+    ['the stock tag shape with both null', 'carveTag', { id: null, label: null, mentionSuggestionChar: '#' }, { tag: TAG_NO_NAME }],
+    ['an attribute beside no name', 'mention', { id: null, label: null, 'data-team': 'core' },
+        { mention: NO_NAME, 'data-team': 'a mention has no Carve spelling for an attribute' }],
+    ['an attribute beside no tag name', 'carveTag', { id: null, label: null, 'data-team': 'core' },
+        { tag: TAG_NO_NAME, 'data-team': 'a tag has no Carve spelling for an attribute' }],
+];
+
+for (const [name, type, attrs, dropped] of nameless) {
+    ok(`${name} writes nothing and is reported`, () => {
+        const report = serializeToCarveWithReport(paragraph(type, attrs));
+        assert.strictEqual(report.source, 'ping');
+        assert.deepStrictEqual(report.dropped, dropped);
+        assert.deepStrictEqual(report.degraded, {});
+        assert.deepStrictEqual(inlineNodes(report.source), [{ type: 'text', text: 'ping' }]);
+    });
+}
+
 console.log(`\n${passed} passed`);

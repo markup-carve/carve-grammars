@@ -193,18 +193,22 @@ function serializeMention(node, report) {
         const type = Array.isArray(attrs.label) ? 'array' : typeof attrs.label;
         recordLoss(report, 'degraded', 'label', `a Carve attribute holds a string, and this value is of type ${type}`);
     }
+    const ownAttributes = (reason) => {
+        for (const key of Object.keys(attrs)) {
+            if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) recordLoss(report, 'dropped', key, reason);
+        }
+    };
     if (name === '') {
         recordLoss(report, 'dropped', kind, `a ${kind} with no name has nothing to write`);
+        // The node's own attributes go with it, and are named beside it rather
+        // than vanishing in silence (markup-carve/carve-php#2176).
+        ownAttributes(`a ${kind} has no Carve spelling for an attribute`);
         return '';
     }
     const spellable = MENTION_NAME.test(bare(name));
-    for (const key of Object.keys(attrs)) {
-        if (!MENTION_EDITOR_ATTRS.has(key) && attrs[key] != null) {
-            recordLoss(report, 'dropped', key, spellable
-                ? `a ${kind} has no Carve spelling for an attribute`
-                : `the ${kind} is written as text, which holds no attribute`);
-        }
-    }
+    ownAttributes(spellable
+        ? `a ${kind} has no Carve spelling for an attribute`
+        : `the ${kind} is written as text, which holds no attribute`);
     if (spellable) {
         if (id !== '' && label !== '' && label !== id) {
             recordLoss(report, 'degraded', 'label', MENTION_LABEL_DROPPED);
