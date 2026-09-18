@@ -1777,7 +1777,10 @@
 
 
         'critic-comment': {
-            pattern: /\{#(?!#\})[^}]{0,4096}#\}/,
+            // A `}` inside the payload is text; glued to a construct and closed
+            // by `}`, the braces are an attribute block instead.
+            pattern: /\{#(?!#\})(?:(?<![^\s\w"'][{]#)|(?![^}\n]{0,4096}(?<!#)[}]))(?:[^#\n]|#(?!\})|\n(?![ \t\r]*\n)){0,4096}#\}/,
+            greedy: true,
             alias: 'comment',
         },
 

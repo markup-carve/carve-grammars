@@ -1641,7 +1641,7 @@
     },
     "critic_comment": {
       "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment across a break coloured the markup inside it - 87 of 286 generated documents. Same shape and same fix as `braced_comment`. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too. AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\{#` alone claimed it and every line after it. The guard rejects the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}` - and leaves a multi-line comment, whose first line holds no `}` at all, opening as it should.",
-      "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})",
+      "begin": "\\{#(?!#\\})(?:(?=[^\\n]*?#\\})(?<![^\\s\\w\\\"']\\{#)|(?![^}\\n]*(?<!#)\\}))",
       "end": "#\\}|^(?=[ \\t]*$)",
       "name": "comment.block.critic.carve"
     },
@@ -1983,7 +1983,7 @@
     },
     "critic_comment_in_strong": {
       "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
-      "begin": "\\{#(?!#\\})(?![^}\\n]*(?<!#)\\})(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
+      "begin": "\\{#(?!#\\})(?:(?=[^\\n]*?#\\})(?<![^\\s\\w\\\"']\\{#)|(?![^}\\n]*(?<!#)\\}))(?:(?=.*?#\\})|(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
       "end": "#\\}|^(?=[ \\t]*$)",
       "name": "comment.block.critic.carve"
     },

@@ -465,6 +465,13 @@ before resolving it. `tests/lib/aliases.js` holds the required set and
 `tests/alias-parity-test.js` asserts it on each surface through that surface's
 own registration API.
 
+### Attribute blocks
+
+Known limit, shared by all three: a block glued to a bare delimiter is read as
+attached even where the delimiter closes no run. In `` x*{title="`"} y `` the
+braces are text, so the backtick opens a code span, but all three scope an
+attribute block.
+
 ### TextMate limits
 
 A TextMate rule sees one line at a time, so a few shapes color differently from

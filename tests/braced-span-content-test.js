@@ -97,8 +97,7 @@ const rows = [
     ["{^a {^b^} c^}", {"":"dd.....dd...."}],
     ["{_a *b_} c*", {"u":"dduuuudd..."}],
     ["{_a /b/ c_}", {"i":"dd..did..dd","u":"dduududuudd"}],
-    // highlight.js opens no critic comment holding a `}`, so its bold ends early.
-    ["{*a {# b*} c #} d*}", {"b":"ddbbddbbbbbbbddbbdd"}, ['highlightjs']],
+    ["{*a {# b*} c #} d*}", {"b":"ddbbddbbbbbbbddbbdd"}],
     ["{*a {% b*} c %} d*}", {"b":"ddbdddddddddbddbbdd"}],
     ["{*a {+b*} c+} d*}", {"b":"ddbbddbbbbbddbbdd","n":"dd..ddnnnnndd..dd"}],
     ["{*a {,b*} c,} d*}", {"b":"ddbbddbbbbbddbbdd"}],
