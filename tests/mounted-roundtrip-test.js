@@ -493,5 +493,13 @@ imported.destroy();
 //
 // 230 -> 240 with the bump to 7bd6577: ten of its fifteen new documents.
 // 240 -> 233 when a glued bare mark is written in its forced form (#484).
-assert.strictEqual(changed.length, 233, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// 233 -> 236 with the dependency at carve-js 0.1.7 (#466), measured in two
+// steps. The engine alone takes it to 240: 463-...-2 and both 467 documents
+// (carve-js#1726), 471-...-5 and -7 for -3 and -6 (carve-js#1831), 472-... for
+// its forced strike around a code span holding the arrow, and the four
+// substitution documents the old string attrs could no longer read. Carrying
+// the halves as inline arrays takes those four back out: 01-emphasis-15,
+// 33-editorial-markup, 388-...-2 and 472-...-2. It adds none.
+assert.strictEqual(changed.length, 236, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

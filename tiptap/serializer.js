@@ -1208,8 +1208,9 @@ export function serializeToCarve(doc, options = {}) {
                 return;
             }
             if (node.type === 'carveSubstitution') {
-                result += `{~${node.attrs?.oldText || ''}~>${node.attrs?.newText || ''}~}`
-                    + serializeAttributes(node.attrs, ['oldText', 'newText']);
+                const half = (side) => serializeInline(node.attrs?.[side] || [], false);
+                result += `{~${half('old')}~>${half('new')}~}`
+                    + serializeAttributes(node.attrs, ['old', 'new']);
                 return;
             }
             if (node.type === 'carveInlineExtension') {

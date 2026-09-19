@@ -282,6 +282,7 @@ export function createInlineFieldsView({ className, label, display, fields }) {
             for (const field of fields) {
                 const input = inputs.get(field.name);
                 if (field.type === 'checkbox') input.checked = Boolean(current.attrs?.[field.name]);
+                else if (field.read) input.value = field.read(current.attrs?.[field.name]);
                 else input.value = current.attrs?.[field.name] ?? '';
                 input.disabled = !editor.isEditable;
             }
@@ -296,7 +297,8 @@ export function createInlineFieldsView({ className, label, display, fields }) {
         apply.addEventListener('click', () => {
             transact(editor, getPos, current, Object.fromEntries(fields.map(field => {
                 const input = inputs.get(field.name);
-                return [field.name, field.type === 'checkbox' ? input.checked : input.value.trim()];
+                if (field.type === 'checkbox') return [field.name, input.checked];
+                return [field.name, field.write ? field.write(input.value) : input.value.trim()];
             })));
             close();
         });

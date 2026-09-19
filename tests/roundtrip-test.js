@@ -639,10 +639,18 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 381 -> 376 when a bare mark glued to a word character is written in its
  * forced form (#484): 01-emphasis-12, 01-emphasis-15, 12-inline-code-10,
  * 12-inline-code-11 and 152-...-2 write directly.
+ *
+ * 376 -> 372 with the dependency at carve-js 0.1.7 (#466). Five write directly:
+ * 12-inline-code-8 and -9 (carve-js#1815), both 467 documents (carve-js#1726)
+ * and 472-...-2, whose substitution halves now carry their inline content.
+ * 12-inline-code-11 takes the envelope instead: a code span's closer is
+ * searched across the rest of the block (carve-js#1828), which is the reading
+ * its corpus HTML pins, and the projection spells that document differently
+ * while rendering the same.
  */
 assert.strictEqual(
-    envelopedFiles.length, 376,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 376`,
+    envelopedFiles.length, 372,
+    `${envelopedFiles.length} corpus documents need the source envelope, not 372`,
 );
 
 assert.strictEqual(
