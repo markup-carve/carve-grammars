@@ -1404,6 +1404,10 @@ export function serializeToCarve(doc, options = {}) {
                 // is literal text, so both always serialize braced.
                 // Innermost, because the content is literal: any other mark
                 // has to wrap the whole `{# ... #}`, never sit inside it.
+                // An unclosed run ends at the FIRST braced mark closer around
+                // it, so only the innermost mark needs its forced form and
+                // every mark outside it follows the ordinary bare rules.
+                let runOpen = !!node.carveOpenRun;
                 if (hasCriticComment) t = '{#' + t + '#}';
                 if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '{^' + t + '^}';
@@ -1412,8 +1416,8 @@ export function serializeToCarve(doc, options = {}) {
                 // cannot round-trip - a Carve limitation, not fixable here.
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
-                // A bare closer cannot end an unclosed run, at any nesting depth.
-                const openRun = !!node.carveOpenRun;
+                // Every one of those is braced, so any of them already ended it.
+                if (hasCriticComment || hasSub || hasSup || hasInsert || hasDelete) runOpen = false;
                 // The outermost bare delimiter touches the neighboring text. Where
                 // the spec's bare_opener or bare_closer would refuse it there,
                 // only the forced form keeps the mark.
@@ -1428,11 +1432,17 @@ export function serializeToCarve(doc, options = {}) {
                     || ((delim === '/' || delim === '_') && (previous === '/' || previous === '_')
                         && beforePrevious !== '' && !/\s/.test(beforePrevious))
                     || WORD_CHARACTER.test(following);
-                const wrap = (delim) => (openRun || (delim === outermost && glued(delim))
-                    ? '{' + delim + t + delim + '}'
-                    : delim + t + delim);
+                const wrap = (delim) => {
+                    const forced = runOpen || (delim === outermost && glued(delim));
+                    runOpen = false;
+                    return forced ? '{' + delim + t + delim + '}' : delim + t + delim;
+                };
                 if (hasStrike && !hasDelete) t = wrap('~');
-                if (hasHighlight) t = !openRun && bareable('=') ? '=' + t + '=' : '{=' + t + '=}';
+                if (hasHighlight) {
+                    const forced = runOpen || !bareable('=');
+                    runOpen = false;
+                    t = forced ? '{=' + t + '=}' : '=' + t + '=';
+                }
                 if (hasUnderline) t = wrap('_');
                 if (hasItalic) t = wrap('/');
                 if (hasBold) t = wrap('*');
