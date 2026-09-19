@@ -43,9 +43,24 @@ const BRACED = [
     ['{=` =}', '{=``=}'],
     ['{^` ^}', '{^``^}'],
     ['{~y` ~} z', '{~y``~} z'],
-    ['{*{~` ~}*}', '{*{~``~}*}'],
     ['[{~` ~}](u)', '[{~``~}](u)'],
     ['a ``', 'a ``'],
+    // Only the INNERMOST mark around the run needs its forced form: its braced
+    // closer ends the run, and every mark outside it is an ordinary mark.
+    ['{*{~` ~}*}', '*{~``~}*'],
+    ['{/{~` ~}/}', '/{~``~}/'],
+    ['{_{~` ~}_}', '_{~``~}_'],
+    ['{*{_{~` ~}_}*}', '*_{~``~}_*'],
+    ['a {*{~` ~}*} b', 'a *{~``~}* b'],
+    // Superscript has no bare form, so it is the braced closer that ends the
+    // run and the strong outside it goes bare.
+    ['{*{^` ^}*}', '*{^``^}*'],
+    // A bare closer glued to a word character is refused, so the outermost mark
+    // keeps its forced form on either side.
+    ['x{*{~` ~}*}', 'x{*{~``~}*}'],
+    ['{*{~` ~}*}x', '{*{~``~}*}x'],
+    // Highlight is not bareable beside the braced strike, so it stays forced.
+    ['{={~` ~}=}', '{={~``~}=}'],
 ];
 for (const [source, want] of BRACED) {
     assert.strictEqual(written(source), want, `written: ${source}`);
