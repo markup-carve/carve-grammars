@@ -4,6 +4,13 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixed
+
+- An attribute on a mention or tag with neither an `id` nor a `label` is
+  reported as dropped beside the node, instead of going with the node in
+  silence. The node itself already wrote nothing and reported its kind, which
+  is what the ruling settled on (markup-carve/carve-php#2176).
+
 ### Added
 
 - CarveKit retains the non-rendered `carvePos` attribute on block nodes, and
