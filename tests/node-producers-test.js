@@ -72,8 +72,23 @@ ok('literal_inline -> carveLiteral', () => {
 
 ok('substitution -> carveSubstitution', () => {
     const node = producesAndRoundTrips('A {~old~>new~} word.\n', 'carveSubstitution');
-    assert.strictEqual(node.attrs.oldText, 'old');
-    assert.strictEqual(node.attrs.newText, 'new');
+    assert.deepStrictEqual(node.attrs.old, [{ type: 'text', text: 'old' }]);
+    assert.deepStrictEqual(node.attrs.new, [{ type: 'text', text: 'new' }]);
+});
+
+// Each half is inline content, not a string (markup-carve/carve#2095): a
+// string-valued attr drops the emphasis instead of carrying it through.
+ok('substitution halves keep their inline content', () => {
+    const node = producesAndRoundTrips('A {~/old/~>*new*~} word.\n', 'carveSubstitution');
+    assert.deepStrictEqual(node.attrs.old, [{ type: 'text', text: 'old', marks: [{ type: 'italic' }] }]);
+    assert.deepStrictEqual(node.attrs.new, [{ type: 'text', text: 'new', marks: [{ type: 'bold' }] }]);
+});
+
+// An absent half is `[]`, and stays a key: the schema requires both.
+ok('an empty substitution half is an empty array', () => {
+    const node = producesAndRoundTrips('A {~old~>~} word.\n', 'carveSubstitution');
+    assert.deepStrictEqual(node.attrs.new, []);
+    assert.ok('new' in node.attrs, 'the empty half keeps its key');
 });
 
 ok('raw_inline -> carveRawInline', () => {

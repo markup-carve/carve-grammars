@@ -347,14 +347,14 @@
     "substitution": {
       "kind": "node",
       "pm": "carveSubstitution",
-      "notes": "inline atom; oldText and newText attrs",
+      "notes": "inline atom; old and new attrs, each an inline array",
       "attrs": {
         "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
         "carveKeyValues": "authored key=values",
         "class": "authored classes",
         "id": "authored id",
-        "newText": "the replacement",
-        "oldText": "the replaced text"
+        "new": "the replacement, as inline content; `[]` when the half is empty",
+        "old": "the replaced text, as inline content; `[]` when the half is empty"
       }
     },
     "symbol": {

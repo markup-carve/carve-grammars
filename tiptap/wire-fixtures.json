@@ -820,8 +820,18 @@
               {
                 "type": "carveSubstitution",
                 "attrs": {
-                  "oldText": "old",
-                  "newText": "new"
+                  "old": [
+                    {
+                      "type": "text",
+                      "text": "old"
+                    }
+                  ],
+                  "new": [
+                    {
+                      "type": "text",
+                      "text": "new"
+                    }
+                  ]
                 }
               },
               {

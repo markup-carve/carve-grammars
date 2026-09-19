@@ -1109,12 +1109,15 @@ function convertInlineNode(node, marks, ctx) {
                 ...(marks.length ? { marks } : {}),
             }];
 
+        // Both halves are inline content (markup-carve/carve#2095), so they are
+        // converted like any other inline array and stay arrays here - the way
+        // a citation item's `prefix` and `suffix` do. An absent half is `[]`.
         case 'substitution':
             return [{
                 type: 'carveSubstitution',
                 attrs: {
-                    oldText: node.oldText || '',
-                    newText: node.newText || '',
+                    old: convertInline(node.old || [], ctx),
+                    new: convertInline(node.new || [], ctx),
                     ...(convertAttrs(node.attrs) || {}),
                 },
                 ...(marks.length ? { marks } : {}),

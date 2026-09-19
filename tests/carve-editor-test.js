@@ -144,7 +144,7 @@ element._editor.commands.setContent({ type: 'doc', content: [
         { type: 'text', text: ' ' },
         { type: 'carveMath', attrs: { src: 'x^2', display: false } },
         { type: 'text', text: ' ' },
-        { type: 'carveSubstitution', attrs: { oldText: 'old', newText: 'new' } },
+        { type: 'carveSubstitution', attrs: { old: [{ type: 'text', text: 'old' }], new: [{ type: 'text', text: 'new' }] } },
     ] },
     { type: 'paragraph', content: [
         { type: 'text', text: 'Text ' },
