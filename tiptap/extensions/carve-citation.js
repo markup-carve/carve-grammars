@@ -8,8 +8,13 @@ export const CarveCitation = Node.create({
     group: 'inline',
     inline: true,
     atom: true,
+    // `items` is an array of parsed citation items, so it cannot travel in an
+    // HTML attribute: rendered, it became `[object Object],[object Object]`,
+    // which the attribute-run slot read back and wrote into the Carve source as
+    // an authored `{items="..."}` run. The source and the ProseMirror JSON
+    // carry the items; HTML does not.
     addAttributes() {
-        return { raw: { default: '' }, integral: { default: false }, items: { default: null }, ...attributeSlots(['data-carve-citation']) };
+        return { raw: { default: '' }, integral: { default: false }, items: { default: null, rendered: false }, ...attributeSlots(['data-carve-citation']) };
     },
     parseHTML() { return [{ tag: 'span[data-carve-citation]' }]; },
     renderHTML({ HTMLAttributes, node }) {
