@@ -4,20 +4,11 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
-### Fixed
+## [0.1.9] - 2026-09-20
 
-- An attribute on a mention or tag with neither an `id` nor a `label` is
-  reported as dropped beside the node, instead of going with the node in
-  silence. The node itself already wrote nothing and reported its kind, which
-  is what the ruling settled on (markup-carve/carve-php#2176).
+### Changed
 
-### Added
-
-- CarveKit retains the non-rendered `carvePos` attribute on block nodes, and
-  the schema map documents it for bridges that restore collected definitions
-  to their authored position.
-
-## [0.1.9] - 2026-09-16
+- **Breaking:** a `carveSubstitution` node carries its halves as `old` and `new`, two arrays of inline nodes, in place of the `oldText` and `newText` strings. Both keys are required and an empty half is `[]`. A half holding emphasis, code or a reference keeps it now, where a string lost it. A consumer reading `oldText` / `newText` reads `old` / `new` instead, and a stored document written by an earlier version carries the old keys. Schema in markup-carve/carve#2095 (#466).
 
 ### Added
 
@@ -25,6 +16,7 @@ All notable changes to `carve-grammars` are documented here.
 - Frontmatter quick fields are configurable. `CarveKit.configure({ carveFrontmatter: { fields: [...] } })` replaces the built-in `title` / `lang` / `author` / `description` list; a descriptor carries a `key` plus optional `label`, `placeholder`, `multiline` and a constrained `inputAttributes` allowlist, and an empty array renders the raw front matter editor alone. Omitting the option renders what it rendered before (#421).
 - Reusable language-diff presentation helpers: a Shiki transformer (#414), its browser-safe entry point (#415), and a highlighter-agnostic DOM renderer (#431).
 - Typed front matter payloads are highlighted, with the typed grammar delegated rather than re-spelled (#407, #408).
+- CarveKit retains the non-rendered `carvePos` attribute on block nodes, and the schema map documents it for bridges that restore collected definitions to their authored position (#455).
 
 ### Fixed
 
@@ -34,6 +26,16 @@ All notable changes to `carve-grammars` are documented here.
 - The include directive's closer is the first `}}` outside a quoted run, on every surface (#418).
 - A `}` inside a quoted include option value no longer ends the value (#413), and a quoted option value holding spaces is read as one value (#411).
 - JSON front matter survives an edit through the metadata fields instead of being corrupted (#420).
+- Bare emphasis, underline, strong, highlight and strike runs scope their content and find their closer the way the spec's executable grammar does, on all three surfaces. Measured on 52 shapes at carve `7bd6577`: TextMate disagreed on 27, Prism on 29 and highlight.js on 25, and all three now agree on every one (#473, #475, #476). A bold run also closes before a star, and opens before a brace only when that brace closes (#472, #474), and a braced span inside a forced emphasis, superscript or subscript is an atom the outer closer cannot reach into (#485, #486).
+- `serializeToCarve` writes a glued emphasis mark in its forced form, so bolding part of a word no longer loses the mark (#484). It braces only the innermost mark around an empty code span (#453), and it reads the outermost mark past the ones a mount sorts ahead of it, so a run that has been through a real editor keeps its delimiters (#501).
+- A link destination, its title and an autolink are opaque to a bare delimiter, so an emphasis run spanning one keeps its mark (#450). The opaque atom accepts only what the spec's productions accept (#454), a TextMate bold-italic body consumes an escape pair so an escaped bracket no longer starts a label (#457), and an escaped bracket opener is text in Prism (#460). An empty destination and a quote inside one follow the corpus at carve `ac1af6a` (#462, #464).
+- An unclosed `{#` or `{%` inside a bold run is text, instead of a comment that takes the bold closer and colors to the end of the line (#461), and a critic comment holding a closing brace is scoped as one comment (#487, #490). The comment opener looks ahead for its closer before scanning the payload, so a document made of unclosed openers no longer pays the tempered scan at every one (#492).
+- The highlight.js include opener requires the pad before `}}` and a path, which is what Prism and TextMate already required (#424, #434).
+- An inline attribute block is syntax only where it attaches. With nothing to attach to, the braces are prose on all three surfaces (#467).
+- A substitution splits only at an arrow outside code, math, a literal, a comment or an escape; with no such arrow the braces are a forced strikethrough (#471).
+- A stock Tiptap `mention` node serializes by its id instead of vanishing (#477). Mention losses are reported under the keys and buckets carve-php and carve-rs use (#493), a sigil the producer left in the id is read past instead of doubled (#495), and an attribute on a mention or tag with neither an `id` nor a `label` is reported as dropped beside the node rather than going with it in silence (markup-carve/carve-php#2176).
+- An empty code span survives the Tiptap bridge. The loader returned nothing for one, so its paragraph projected empty and a paragraph appended after it was dropped (#447). A bare closer also stops at a complete braced inline in Prism, highlight.js and TextMate (#445).
+- A substitution's halves and a citation's parsed items stay out of the rendered HTML, where each entry became the string `[object Object]`. Reading that HTML back crashed the substitution's node view, and for a citation it wrote the stringified array into the Carve source as an authored attribute run (#504).
 
 ## [0.1.8] - 2026-09-13
 
