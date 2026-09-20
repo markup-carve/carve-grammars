@@ -22,8 +22,18 @@ export const CarveSubstitution = Node.create({
     // Both halves are inline content, so they travel as arrays of inline nodes
     // and an empty half is `[]` (markup-carve/carve#2095). Editing a half in the
     // node view replaces it with the literal text typed there.
+    //
+    // `rendered: false` because an HTML attribute holds a string: rendered, each
+    // half became `[object Object]`, and reading that HTML back crashed
+    // `halfText`. HTML is not the interchange format for a substitution - the
+    // Carve source and the ProseMirror JSON are - so through HTML the halves
+    // come back empty instead of wrong.
     addAttributes() {
-        return { old: { default: [] }, new: { default: [] }, ...attributeSlots(['data-carve-substitution']) };
+        return {
+            old: { default: [], rendered: false },
+            new: { default: [], rendered: false },
+            ...attributeSlots(['data-carve-substitution']),
+        };
     },
     parseHTML() { return [{ tag: 'span[data-carve-substitution]' }]; },
     renderHTML({ HTMLAttributes, node }) {
