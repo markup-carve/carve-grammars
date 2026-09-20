@@ -174,6 +174,24 @@ mentionEditor.querySelector('input[name="id"]').value = 'grace';
 mentionEditor.querySelector('.carve-control-primary').click();
 assert.match(element.value, /@grace/, 'inline field editors apply attribute changes');
 
+// A substitution half is inline content, and the two places that can only show
+// a string flatten it: the node-view label and `renderHTML`. Between them these
+// two documents cover every kind of half - several nodes joined, a nested one
+// recursed into, one carrying neither text nor content, and an absent one.
+element.value = 'A {~a :kbd[Ctrl] b :rocket:~>*new*~} word.\n';
+assert.strictEqual(
+    element.shadowRoot.querySelector('.carve-substitution-editor .carve-inline-control-trigger').textContent,
+    'a Ctrl b  → new',
+    'the node-view label flattens both halves',
+);
+assert.match(element._editor.getHTML(), /<del>a Ctrl b <\/del> → <ins>new<\/ins>/, 'renderHTML flattens both halves');
+element.value = 'A {~old~>~} word.\n';
+assert.strictEqual(
+    element.shadowRoot.querySelector('.carve-substitution-editor .carve-inline-control-trigger').textContent,
+    'old → ∅',
+    'an empty half reads as the empty sign',
+);
+
 element._editor.commands.setContent({ type: 'doc', content: [{
     type: 'paragraph', content: [
         { type: 'carveCommentInline', attrs: { content: 'legacy comment', delimited: true } },

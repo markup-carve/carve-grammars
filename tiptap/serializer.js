@@ -1130,21 +1130,30 @@ export function serializeToCarve(doc, options = {}) {
         const sameOuterMark = (left, right) => Boolean(left && right
             && left.type === right.type
             && pmFingerprint(left.attrs || {}) === pmFingerprint(right.attrs || {}));
+        // Position 0 is not the outermost mark once a document has been through
+        // a real editor: ProseMirror reorders a text node's marks by schema
+        // rank, so `code` or `link` can sit ahead of the delimited mark that
+        // spans the whole run. Scan for the first groupable mark instead. Where
+        // position 0 already holds one, this picks the same mark.
+        const outerMarkIndex = (node) => (node?.type === 'text'
+            ? (node.marks || []).findIndex((mark) => groupableDelimitedMarks.has(mark.type))
+            : -1);
         const content = [];
         for (let index = 0; index < normalized.length;) {
             const node = normalized[index];
-            const candidateOuter = node?.type === 'text' ? node.marks?.[0] : null;
-            const outer = groupableDelimitedMarks.has(candidateOuter?.type) ? candidateOuter : null;
+            const outerIndex = outerMarkIndex(node);
+            const outer = outerIndex === -1 ? null : node.marks[outerIndex];
             let end = index + 1;
             while (outer && end < normalized.length) {
                 const candidate = normalized[end];
-                if (candidate?.type !== 'text' || !sameOuterMark(outer, candidate.marks?.[0])) break;
+                const candidateIndex = outerMarkIndex(candidate);
+                if (candidateIndex === -1 || !sameOuterMark(outer, candidate.marks[candidateIndex])) break;
                 end++;
             }
             if (outer && end - index > 1) {
                 const inner = normalized.slice(index, end).map((part) => ({
                     ...part,
-                    marks: (part.marks || []).slice(1),
+                    marks: (part.marks || []).filter((_, at) => at !== outerMarkIndex(part)),
                 }));
                 content.push({
                     type: 'text',

@@ -87,6 +87,13 @@ const fixed = [
     // An empty code span was dropped without a report.
     '12-inline-code-7',
     '276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column',
+    // The mark a mount sorts behind `code` or `link` (#501). Protected because
+    // the fallback reparses as different content rather than as a visible
+    // fallback: the delimited mark splits around the inner span.
+    '94-strong-emphasis-starting-with-a-link',
+    '467-a-bare-closer-does-not-reach-inside-a-link-destination',
+    '467-a-bare-closer-does-not-reach-inside-a-link-destination-2',
+    '472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it',
 ];
 for (const name of fixed) assert.ok(!changed.includes(name), `${name} regressed after editor mount`);
 
@@ -501,5 +508,11 @@ imported.destroy();
 // substitution documents the old string attrs could no longer read. Carrying
 // the halves as inline arrays takes those four back out: 01-emphasis-15,
 // 33-editorial-markup, 388-...-2 and 472-...-2. It adds none.
-assert.strictEqual(changed.length, 236, `mounted rich projection changed for ${changed.length} corpus documents`);
+//
+// The spec bump to carve 5863d1d adds two documents and moves none: the changed
+// list is identical at both pins.
+//
+// 236 -> 232 when the outermost mark stopped being read off position 0 (#501).
+// 94-..., both 467-... and 472-... come back; nothing joins.
+assert.strictEqual(changed.length, 232, `mounted rich projection changed for ${changed.length} corpus documents`);
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

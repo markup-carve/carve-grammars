@@ -807,6 +807,23 @@ check('a resolved no-break space before a sibling span keeps the escape',
     doc(para(text('a\uE000'), text('b', 'bold'))),
     'a\\ *b*');
 
+// ProseMirror ranks a text node's marks by schema order, so after a mount the
+// mark that spans the whole run can sit behind `code` or `link`. Reading the
+// outermost mark off position 0 then wrote each run with its own delimiters:
+// `~a ~{~`x~>y`~}~ b~`, which reparses with the strike split around the code
+// span (markup-carve/carve-grammars#501).
+check('a strike spanning a code span survives the code mark sorting first',
+    doc(para(text('a ', 'strike'), text('x~>y', 'code', 'strike'), text(' b', 'strike'))),
+    '~a `x~>y` b~');
+
+check('a bold run spanning a link survives the link mark sorting first',
+    doc(para(
+        text('See ', 'bold'),
+        { type: 'text', text: 'the docs', marks: [{ type: 'link', attrs: { href: 'url' } }, { type: 'bold' }] },
+        text(' for more', 'bold'),
+    )),
+    '*See [the docs](url) for more*');
+
 // `String.prototype.trim` eats U+00A0. It is content, not layout.
 check('a no-break space at either edge survives the final trim',
     doc(para(text('\u00A0a\u00A0'))),
