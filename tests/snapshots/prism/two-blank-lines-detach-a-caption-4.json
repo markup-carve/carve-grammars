@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "lua"
+  },
+  {
     "type": "code-block",
-    "text": "lua\nlocal n = 1\n"
+    "text": "\nlocal n = 1\n"
   },
   {
     "type": "code-block>punctuation",

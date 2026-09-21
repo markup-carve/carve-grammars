@@ -972,12 +972,17 @@
             pattern: /^(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\n]{0,512}\n[\s\S]*?^\1\2\3*[ \t]*$/m,
             greedy: true,
             inside: {
-                'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
+                // BEFORE `punctuation`, which consumes the opening fence this
+                // rule's lookbehind needs. Listed after it the language word
+                // never matched, and carried the same class as the code body
+                // while TextMate names it `fenced_code.block.language` and
+                // highlight.js scopes the opener `keyword` (#523).
                 'language': {
                     pattern: /(^\uFEFF?(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
                     lookbehind: true,
                     alias: 'class-name',
                 },
+                'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
             },
         },
 

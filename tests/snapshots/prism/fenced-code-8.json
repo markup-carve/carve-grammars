@@ -5,7 +5,15 @@
   },
   {
     "type": "code-block",
-    "text": " \"notes.txt\"\nremember the milk\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "\"notes.txt\""
+  },
+  {
+    "type": "code-block",
+    "text": "\nremember the milk\n"
   },
   {
     "type": "code-block>punctuation",

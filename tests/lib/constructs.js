@@ -417,7 +417,14 @@ export const CONSTRUCTS = [
     { name: "caption", sample: "> q\n^ Attribution", payload: "Attribution", textmate: "caption" },
     { name: "numbered caption", sample: "^ Figure #: A sunset", payload: "A sunset", textmate: "markup.caption" },
     { name: "heading", sample: "# Title", payload: "Title", textmate: "heading" },
-    { name: "fenced code", sample: "```php\ncode\n```", payload: "php", textmate: "fenced_code.block.language" },
+    {
+        // NAMED, because "carries a scope" is satisfied by the enclosing
+        // `code-block` and that is exactly how the language word went
+        // unscoped in Prism for as long as it did (#523).
+        name: "fenced code", sample: "```php\ncode\n```", payload: "php",
+        textmate: "fenced_code.block.language",
+        engineScopes: { prism: ['language'], highlightjs: ['keyword'] },
+    },
     { name: "blockquote", sample: "> quoted", payload: "quoted", textmate: "quote" },
     { name: "list marker", sample: "- item", payload: "-", textmate: "punctuation.definition.list" },
     { name: "nested list markers", sample: "- - A", payload: "- ", textmate: "punctuation.definition.list.unnumbered" },

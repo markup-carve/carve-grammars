@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "c++"
+  },
+  {
     "type": "code-block",
-    "text": "c++\nint main() {}\n"
+    "text": "\nint main() {}\n"
   },
   {
     "type": "code-block>punctuation",

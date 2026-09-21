@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "js"
+  },
+  {
     "type": "code-block",
-    "text": "js title=\"x\"\ncode\n"
+    "text": " title=\"x\"\ncode\n"
   },
   {
     "type": "code-block>punctuation",

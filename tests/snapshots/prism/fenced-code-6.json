@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
     "type": "code-block",
-    "text": "php \"src/Auth.php\"\n$ok = true;\n"
+    "text": " \"src/Auth.php\"\n$ok = true;\n"
   },
   {
     "type": "code-block>punctuation",

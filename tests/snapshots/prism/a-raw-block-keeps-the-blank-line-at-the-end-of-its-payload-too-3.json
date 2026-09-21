@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "=html"
+  },
+  {
     "type": "code-block",
-    "text": "=html\nb\n"
+    "text": "\nb\n"
   },
   {
     "type": "code-block>punctuation",
