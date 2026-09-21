@@ -200,13 +200,16 @@ const htmlShapes = [
     ['[`c`]{.k}', '[`c`]{.k}'],
     ['[`c` x](/u)', '[`c` x](/u)'],
     ['# `code()` heading\n\n[`code()` heading][]', '# `code()` heading\n\n[`code()` heading][]'],
+    // A raw block is not claimed by the code block's `pre` rule (#531).
+    ['```=html\n<x>\n```', '```=html\n<x>\n```'],
+    ['```=html\na\n\n  b\n```', '```=html\na\n\n  b\n```'],
 ];
 for (const [source, expected] of htmlShapes) {
     const doc = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.ok(!/<a\b[^>]*>(?:(?!<\/a>).)*<a\b/.test(htmlFor(doc)), `${source} renders an <a> inside an <a>`);
     assert.equal(throughHtml(doc), expected, `${source} changed through HTML`);
 }
-console.log(`  ✓ ${htmlShapes.length} reference, abbreviation and code-span shapes survive the editor's own HTML`);
+console.log(`  ✓ ${htmlShapes.length} reference, abbreviation, code-span and raw-block shapes survive the editor's own HTML`);
 
 const withoutCode = new Editor({ extensions: [CarveKit.configure({ starterKit: { code: false } })], content: '<p>x</p>' });
 assert.equal('code' in withoutCode.schema.marks, false, 'starterKit: { code: false } no longer removes the code mark');
