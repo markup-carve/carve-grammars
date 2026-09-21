@@ -204,11 +204,18 @@ const htmlProjectionLosses = new Map([
     // A heading id in rendered HTML may be generated, so importing one would
     // invent `{#slug}`; CarveHeading drops it deliberately.
     ['heading-with-attributes', '{.big}\n## A heading'],
-    // A header row's cell count follows the body row, which has a third cell.
+    // The source is a RAGGED table, three body cells against two header ones.
+    // ProseMirror's table parser rectangularizes on the way in, so the header
+    // row comes back with a third, empty cell. Only a ragged table is affected.
     ['table-with-spans', '| a |  | b |\n|= h |= i |=  |'],
-    // HTML has no place for a substitution's two halves.
+    // The halves ARE in the HTML, as the `<del>` and `<ins>` the node renders.
+    // They are not read back because a half is inline content and reading it
+    // as the flattened text would replace marked-up content rather than empty
+    // it, and markup-carve/carve#2095 ruled that an empty half beats a wrong
+    // one. The Carve source and the ProseMirror JSON are the interchange.
     ['substitution', 'A {~~>~} word.'],
-    // A line block's lines are one paragraph in HTML.
+    // Not a line block, which is `::: |`: this is a paragraph holding a SOFT
+    // break, which HTML collapses to a space. The render is unchanged.
     ['line-block', '| one | two'],
 ]);
 for (const fixture of fixtures.cases) {
