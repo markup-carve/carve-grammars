@@ -4,8 +4,12 @@
     "text": "~~~"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "yaml"
+  },
+  {
     "type": "code-block",
-    "text": "yaml\nkey: value\n"
+    "text": "\nkey: value\n"
   },
   {
     "type": "code-block>punctuation",

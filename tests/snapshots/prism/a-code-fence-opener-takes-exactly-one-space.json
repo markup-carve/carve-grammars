@@ -5,7 +5,15 @@
   },
   {
     "type": "code-block",
-    "text": "  php\nx = 1\n"
+    "text": "  "
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
+    "type": "code-block",
+    "text": "\nx = 1\n"
   },
   {
     "type": "code-block>punctuation",

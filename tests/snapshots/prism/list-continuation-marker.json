@@ -20,8 +20,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "sh"
+  },
+  {
     "type": "code-block",
-    "text": "sh\ndocker build -t app .\n"
+    "text": "\ndocker build -t app .\n"
   },
   {
     "type": "code-block>punctuation",

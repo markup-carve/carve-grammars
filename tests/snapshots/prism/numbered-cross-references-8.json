@@ -20,8 +20,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "python"
+  },
+  {
     "type": "code-block",
-    "text": "python\ndef greet():\n    return 1\n"
+    "text": "\ndef greet():\n    return 1\n"
   },
   {
     "type": "code-block>punctuation",

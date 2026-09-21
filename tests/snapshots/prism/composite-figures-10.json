@@ -108,8 +108,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "js"
+  },
+  {
     "type": "code-block",
-    "text": "js\nconst x = 1\n"
+    "text": "\nconst x = 1\n"
   },
   {
     "type": "code-block>punctuation",

@@ -20,8 +20,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "text"
+  },
+  {
     "type": "code-block",
-    "text": "text\n::: tip\n"
+    "text": "\n::: tip\n"
   },
   {
     "type": "code-block>punctuation",

@@ -28,8 +28,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
     "type": "code-block",
-    "text": "php \"from the header\"\ncode\n"
+    "text": " \"from the header\"\ncode\n"
   },
   {
     "type": "code-block>punctuation",

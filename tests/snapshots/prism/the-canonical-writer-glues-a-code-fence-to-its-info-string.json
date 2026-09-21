@@ -5,7 +5,15 @@
   },
   {
     "type": "code-block",
-    "text": " php   \"src/Auth.php\"    [Composer]\ncomposer require x\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
+    "type": "code-block",
+    "text": "   \"src/Auth.php\"    [Composer]\ncomposer require x\n"
   },
   {
     "type": "code-block>punctuation",

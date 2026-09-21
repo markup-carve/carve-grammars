@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
     "type": "code-block",
-    "text": "php [NPM]\nnpm install x\n"
+    "text": " [NPM]\nnpm install x\n"
   },
   {
     "type": "code-block>punctuation",

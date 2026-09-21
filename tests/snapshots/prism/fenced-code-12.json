@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
     "type": "code-block",
-    "text": "php [Composer] \"x\"\ncode\n"
+    "text": " [Composer] \"x\"\ncode\n"
   },
   {
     "type": "code-block>punctuation",

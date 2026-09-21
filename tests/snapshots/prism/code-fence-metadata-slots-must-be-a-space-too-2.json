@@ -5,7 +5,15 @@
   },
   {
     "type": "code-block",
-    "text": " \tjs\nx\n"
+    "text": " \t"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "js"
+  },
+  {
+    "type": "code-block",
+    "text": "\nx\n"
   },
   {
     "type": "code-block>punctuation",

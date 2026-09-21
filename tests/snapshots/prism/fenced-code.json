@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "python"
+  },
+  {
     "type": "code-block",
-    "text": "python\nprint(\"hi\")\n"
+    "text": "\nprint(\"hi\")\n"
   },
   {
     "type": "code-block>punctuation",

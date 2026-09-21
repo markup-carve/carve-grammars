@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "js"
+  },
+  {
     "type": "code-block",
-    "text": "js \"*.config.js\"\nexport default {}\n"
+    "text": " \"*.config.js\"\nexport default {}\n"
   },
   {
     "type": "code-block>punctuation",

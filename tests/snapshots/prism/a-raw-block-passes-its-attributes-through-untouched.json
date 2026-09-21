@@ -4,8 +4,12 @@
     "text": "```"
   },
   {
+    "type": "code-block>language>class-name",
+    "text": "=html"
+  },
+  {
     "type": "code-block",
-    "text": "=html\n<custom onclick=\"reveal()\">t</custom>\n"
+    "text": "\n<custom onclick=\"reveal()\">t</custom>\n"
   },
   {
     "type": "code-block>punctuation",

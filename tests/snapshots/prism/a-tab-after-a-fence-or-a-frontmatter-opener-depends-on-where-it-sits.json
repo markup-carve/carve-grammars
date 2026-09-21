@@ -5,7 +5,15 @@
   },
   {
     "type": "code-block",
-    "text": "\tphp\nx\n"
+    "text": "\t"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "php"
+  },
+  {
+    "type": "code-block",
+    "text": "\nx\n"
   },
   {
     "type": "code-block>punctuation",
