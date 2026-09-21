@@ -1,5 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
-import { attributeOrderSlot } from './carve-attribute-slots.js';
+import { attributeSlots } from './carve-attribute-slots.js';
 import { createInlineFieldsView } from './editable-atom-view.js';
 
 /**
@@ -54,11 +54,7 @@ export const CarveMath = Node.create({
             // Carve attributes on the span: `$`a^2`{.boxed #eq1}`. Without a
             // place to keep them the serializer had nothing to write back, so
             // they were dropped silently on the way out.
-            id: {
-                default: null,
-                parseHTML: element => element.getAttribute('id'),
-                renderHTML: attributes => (attributes.id ? { id: attributes.id } : {}),
-            },
+            ...attributeSlots(['data-carve-math', 'data-display']),
             class: {
                 default: null,
                 parseHTML: element => {
@@ -77,23 +73,6 @@ export const CarveMath = Node.create({
                 },
                 renderHTML: attributes => (attributes.class ? { class: attributes.class } : {}),
             },
-            // Authored key/values (`data-k=v`) cannot each be a declared Tiptap
-            // attribute, since the names are the author's. They travel together
-            // in one map instead.
-            carveKeyValues: {
-                default: null,
-                parseHTML: element => {
-                    const own = new Set(['id', 'class', 'data-carve-math', 'data-display']);
-                    const pairs = {};
-                    for (const attribute of Array.from(element.attributes || [])) {
-                        if (!own.has(attribute.name)) pairs[attribute.name] = attribute.value;
-                    }
-
-                    return Object.keys(pairs).length ? pairs : null;
-                },
-                renderHTML: attributes => attributes.carveKeyValues || {},
-            },
-            ...attributeOrderSlot(),
         };
     },
 

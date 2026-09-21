@@ -20,7 +20,7 @@ export const CarveCitationDefinition = Node.create({
     addAttributes() {
         return {
             key: { default: '' },
-            ...attributeSlots(['data-carve-citation-definition']),
+            ...attributeSlots(['key', 'data-carve-citation-definition']),
         };
     },
     parseHTML() { return [{ tag: 'div[data-carve-citation-definition]' }]; },

@@ -8,7 +8,7 @@ export const CarveCrossref = Node.create({
     group: 'inline',
     inline: true,
     atom: true,
-    addAttributes() { return { target: { default: '' }, ...attributeSlots(['data-carve-crossref']) }; },
+    addAttributes() { return { target: { default: '' }, ...attributeSlots(['target', 'data-carve-crossref']) }; },
     parseHTML() { return [{ tag: 'span[data-carve-crossref]' }]; },
     renderHTML({ HTMLAttributes, node }) {
         return ['span', mergeAttributes(HTMLAttributes, { 'data-carve-crossref': 'true' }), `</#${node.attrs.target}>`];

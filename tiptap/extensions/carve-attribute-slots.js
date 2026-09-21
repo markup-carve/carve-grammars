@@ -16,11 +16,15 @@
  * unchanged (markup-carve/carve-grammars#240).
  *
  * @param {string[]} own - HTML attribute names this node renders itself, which
- *   are therefore NOT authored key/values on the way back in.
+ *   are therefore NOT authored key/values on the way back in. Matched without
+ *   regard to case, because the DOM lowercases an attribute name while a slot
+ *   rendered from a camelCase schema attribute keeps its spelling here.
  * @returns {object} Tiptap attribute declarations.
  */
 export function attributeSlots(own = []) {
-    const reserved = new Set(['id', 'class', 'data-carve-attr-order', ...own]);
+    const reserved = new Set(
+        ['id', 'class', 'data-carve-attr-order', ...own].map(name => name.toLowerCase()),
+    );
 
     return {
         id: {
@@ -52,10 +56,10 @@ export function attributeSlots(own = []) {
 /**
  * The one slot that carries an attribute run's WRITTEN ORDER.
  *
- * Separate from `attributeSlots` because most nodes and marks in this kit
- * declare `id`/`class`/`carveKeyValues` by hand rather than through the helper,
- * and every one of them needs this slot too - a node that carries the run but
- * not its order still respells it.
+ * Separate from `attributeSlots` because `carveSpan` keeps the author's pairs
+ * as JSON text in one `data-carve-key-values` attribute rather than as real
+ * HTML attributes, and still needs the order - a node that carries the run but
+ * not its order respells it.
  *
  * @returns {object} Tiptap attribute declaration for `carveAttrOrder`.
  */

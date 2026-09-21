@@ -8,8 +8,9 @@ export const CarveSymbol = Node.create({
     group: 'inline',
     inline: true,
     atom: true,
-    addAttributes() { return { name: { default: '' }, ...attributeSlots(['data-carve-symbol']) }; },
-    parseHTML() { return [{ tag: 'span[data-carve-symbol]' }]; },
+    addAttributes() { return { name: { default: '' }, ...attributeSlots(['name', 'data-carve-symbol']) }; },
+    // Above the default 50: CarveSpan claims any span with a simple class.
+    parseHTML() { return [{ tag: 'span[data-carve-symbol]', priority: 60 }]; },
     renderHTML({ HTMLAttributes, node }) {
         return ['span', mergeAttributes(HTMLAttributes, { 'data-carve-symbol': 'true' }), `:${node.attrs.name}:`];
     },

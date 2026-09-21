@@ -108,7 +108,8 @@ export const CarveFrontmatter = Node.create({
     addAttributes() {
         return { content: { default: '' }, format: { default: 'yaml' } };
     },
-    parseHTML() { return [{ tag: 'pre[data-carve-frontmatter]' }]; },
+    // Above the default 50, or CodeBlock's generic `pre` rule claims it first.
+    parseHTML() { return [{ tag: 'pre[data-carve-frontmatter]', priority: 60 }]; },
     renderHTML({ HTMLAttributes, node }) {
         return ['pre', mergeAttributes(HTMLAttributes, { 'data-carve-frontmatter': 'true' }), node.attrs.content];
     },

@@ -18,7 +18,7 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 import ListItem from '@tiptap/extension-list-item';
 import HardBreak from '@tiptap/extension-hard-break';
-import { attributeOrderSlot, attributeSlots } from './extensions/carve-attribute-slots.js';
+import { attributeSlots } from './extensions/carve-attribute-slots.js';
 import { CarveHeading } from './extensions/carve-heading.js';
 
 import { CarveInsert } from './extensions/carve-insert.js';
@@ -219,13 +219,23 @@ export const CarveKit = Extension.create({
             name: 'carveBlockAttributes',
             addGlobalAttributes() {
                 return [{
-                    types: ['paragraph', 'blockquote', 'bulletList', 'orderedList', 'taskList', 'horizontalRule'],
-                    attributes: {
-                        id: { default: null },
-                        class: { default: null },
-                        carveKeyValues: { default: null },
-                        ...attributeOrderSlot(),
-                    },
+                    types: ['paragraph', 'blockquote', 'horizontalRule'],
+                    // `style` is reserved although no block here renders one:
+                    // carve-php and carve-js write an authored `{align=right}`
+                    // out as `style="text-align: right;"`, and reading that
+                    // back as a key/value respells the author's run.
+                    attributes: attributeSlots(['style']),
+                }, {
+                    types: ['bulletList'],
+                    attributes: attributeSlots(['carveTight']),
+                }, {
+                    types: ['orderedList'],
+                    attributes: attributeSlots([
+                        'carveTight', 'carveOlType', 'carveDelim', 'carveBareMarker', 'type', 'start',
+                    ]),
+                }, {
+                    types: ['taskList'],
+                    attributes: attributeSlots(['carveTight', 'data-type']),
                 }, {
                     // `` `code`{.cls} `` is an attribute run on INLINE CODE. The
                     // stock Code mark declares no attributes at all, so the run
@@ -313,10 +323,11 @@ export const CarveKit = Extension.create({
                         },
                         carveHeader: { default: null },
                         carveLabel: { default: null },
-                        id: { default: null },
-                        class: { default: null },
-                        carveKeyValues: { default: null },
-                        ...attributeOrderSlot(),
+                        ...attributeSlots([
+                            'spellcheck', 'data-language-raw', 'carveHeader', 'carveLabel',
+                            // Both engines render a fence title as `title`.
+                            'title',
+                        ]),
                     };
                 },
 
@@ -495,10 +506,8 @@ export const CarveKit = Extension.create({
                 addAttributes() {
                     return {
                         ...this.parent?.(),
-                        id: { default: null },
+                        ...attributeSlots(),
                         class: { default: null, parseHTML: authoredClasses },
-                        carveKeyValues: { default: null },
-                        ...attributeOrderSlot(),
                     };
                 },
                 parseHTML() {
@@ -570,10 +579,10 @@ export const CarveKit = Extension.create({
                             // An ATTRIBUTE RUN on the link (`[t](/u){#id .c}`).
                             // Without these the run was dropped in silence: an
                             // id and classes the author wrote simply vanished.
-                            id: { default: null },
-                            class: { default: null },
-                            carveKeyValues: { default: null },
-                            ...attributeOrderSlot(),
+                            ...attributeSlots([
+                                'href', 'target', 'rel', 'title', 'carveRef', 'carveRawRef',
+                                'carveReferenceDefinition', 'carveAutolink',
+                            ]),
                         };
                     },
                     addKeyboardShortcuts() {
@@ -604,10 +613,9 @@ export const CarveKit = Extension.create({
                         ...this.parent?.(),
                         carveRef: { default: null },
                         carveRawRef: { default: null },
-                        id: { default: null },
-                        class: { default: null },
-                        carveKeyValues: { default: null },
-                        ...attributeOrderSlot(),
+                        ...attributeSlots([
+                            'src', 'alt', 'title', 'width', 'height', 'carveRef', 'carveRawRef',
+                        ]),
                     };
                 },
             }).configure({ inline: true, ...(this.options.image ?? {}) }));
@@ -637,8 +645,13 @@ export const CarveKit = Extension.create({
                     } : {},
             };
             const tableAttrs = {
-                id: { default: null }, class: { default: null }, carveKeyValues: { default: null },
-                ...attributeOrderSlot(), textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
+                ...attributeSlots([
+                    'colspan', 'rowspan', 'colwidth', 'data-colwidth', 'style',
+                    'data-carve-inherited-align',
+                    // Both engines write `scope` on a header cell.
+                    'scope',
+                ]),
+                textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
             };
             const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
             const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
@@ -706,10 +719,8 @@ export const CarveKit = Extension.create({
                         },
                         // A task item takes a marker attribute the same way a
                         // plain item does: `-{.c} [ ] text`.
-                        id: { default: null },
+                        ...attributeSlots(['data-checked', 'data-task-state', 'data-type']),
                         class: { default: null, parseHTML: authoredClasses },
-                        carveKeyValues: { default: null },
-                        ...attributeOrderSlot(),
                     };
                 },
                 parseHTML() {

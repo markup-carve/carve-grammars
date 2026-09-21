@@ -11,7 +11,8 @@ export const CarveComment = Node.create({
     addAttributes() {
         return { block: { default: false }, delimited: { default: false } };
     },
-    parseHTML() { return [{ tag: 'pre[data-carve-comment]' }]; },
+    // Above the default 50, or CodeBlock's generic `pre` rule claims it first.
+    parseHTML() { return [{ tag: 'pre[data-carve-comment]', priority: 60 }]; },
     renderHTML({ HTMLAttributes }) {
         return ['pre', mergeAttributes(HTMLAttributes, { 'data-carve-comment': 'true' }), ['code', 0]];
     },

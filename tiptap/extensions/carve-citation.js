@@ -14,7 +14,7 @@ export const CarveCitation = Node.create({
     // an authored `{items="..."}` run. The source and the ProseMirror JSON
     // carry the items; HTML does not.
     addAttributes() {
-        return { raw: { default: '' }, integral: { default: false }, items: { default: null, rendered: false }, ...attributeSlots(['data-carve-citation']) };
+        return { raw: { default: '' }, integral: { default: false }, items: { default: null, rendered: false }, ...attributeSlots(['raw', 'integral', 'data-carve-citation']) };
     },
     parseHTML() { return [{ tag: 'span[data-carve-citation]' }]; },
     renderHTML({ HTMLAttributes, node }) {

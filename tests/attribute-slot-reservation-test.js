@@ -1,0 +1,201 @@
+/**
+ * The author's key/value pairs render as real HTML attributes, and nothing a
+ * node renders itself comes back as one of them (#506, #507).
+ *
+ * Two failures this pins. A type that declared `carveKeyValues` by hand got
+ * Tiptap's default rendering, so the map reached the DOM as the string
+ * `[object Object]` and the pairs were gone on read-back. A type that renders
+ * an attribute of its own without naming it in `attributeSlots` got it back as
+ * an authored run: a citation came out of HTML spelled
+ * `[@a2020]{raw="[@a2020]" integral="false"}`.
+ */
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Window } from 'happy-dom';
+import { Editor } from '@tiptap/core';
+import { carveToHtml } from '@markup-carve/carve';
+import { CarveKit, carveToProseMirror, serializeToCarve } from '../tiptap/index.js';
+import { listCorpusFiles } from './lib/corpus.js';
+
+const win = new Window({ url: 'http://localhost/' });
+globalThis.window = win;
+globalThis.document = win.document;
+for (const key of ['DOMParser', 'Node', 'Element', 'HTMLElement', 'navigator', 'getComputedStyle', 'MutationObserver']) {
+    if (globalThis[key] === undefined && win[key] !== undefined) {
+        try { globalThis[key] = win[key]; } catch { /* read-only global */ }
+    }
+}
+
+const here = dirname(fileURLToPath(import.meta.url));
+const fixtures = JSON.parse(readFileSync(resolve(here, '../tiptap/wire-fixtures.json'), 'utf8'));
+
+const editor = new Editor({ extensions: [CarveKit], content: '<p>x</p>' });
+const schema = editor.schema;
+
+const declared = new Map();
+for (const entry of editor.extensionManager.attributes) {
+    if (!declared.has(entry.type)) declared.set(entry.type, {});
+    declared.get(entry.type)[entry.name] = entry.attribute;
+}
+
+// A value for every declared attribute, so each renderHTML that can emit
+// something does. The exceptions are attributes whose renderHTML reads the
+// value rather than passing it through.
+function probeValue(name, spec) {
+    if (name === 'checked') return true;
+    if (name === 'level') return 2;
+    if (name === 'carveAttrOrder') return ['#id'];
+    if (name === 'colspan' || name === 'rowspan') return 2;
+    if (name === 'colwidth') return null;
+    if (name === 'textAlign' || name === 'carveInheritedTextAlign') return 'center';
+    if (typeof spec.default === 'boolean') return true;
+    if (typeof spec.default === 'number') return spec.default;
+    if (Array.isArray(spec.default)) return spec.default;
+
+    return `PROBE_${name}`;
+}
+
+function renderedAttributes(spec) {
+    let current = spec;
+    for (let depth = 0; Array.isArray(current) && depth < 10; depth++) {
+        if (current.length > 1 && current[1] && typeof current[1] === 'object' && !Array.isArray(current[1])) {
+            return current[1];
+        }
+        current = current[1];
+    }
+
+    return {};
+}
+
+let swept = 0;
+for (const [kind, types] of [['node', schema.nodes], ['mark', schema.marks]]) {
+    for (const [name, type] of Object.entries(types)) {
+        const attributes = type.spec.attrs;
+        if (!attributes || !('carveKeyValues' in attributes)) continue;
+
+        const values = {};
+        for (const [key, spec] of Object.entries(attributes)) values[key] = probeValue(key, spec);
+        values.carveKeyValues = null;
+
+        const rendered = renderedAttributes(kind === 'node'
+            ? type.spec.toDOM(type.create(values))
+            : type.spec.toDOM(type.create(values), true));
+        const element = win.document.createElement('div');
+        for (const [key, value] of Object.entries(rendered)) {
+            if (value === null || value === undefined) continue;
+            element.setAttribute(key, String(value));
+        }
+
+        const parse = declared.get(name)?.carveKeyValues?.parseHTML;
+        assert.ok(parse, `${kind} ${name} declares carveKeyValues without a parseHTML, so an author's pairs are read from a "carvekeyvalues" attribute that no renderer writes`);
+        assert.deepEqual(
+            parse(element), null,
+            `${kind} ${name} reads back its own rendered attributes as an authored run: ${Object.keys(parse(element) || {}).join(' ')}`,
+        );
+        swept++;
+    }
+}
+assert.equal(swept, 33, `${swept} types declare carveKeyValues, not 33; a new one needs its own reserved list`);
+console.log(`  ✓ ${swept} types keep their own rendered attributes out of the author's key/value slot`);
+
+function htmlFor(doc) {
+    const instance = new Editor({ extensions: [CarveKit], content: doc });
+    try {
+        return instance.getHTML();
+    } finally {
+        instance.destroy();
+    }
+}
+
+function throughHtml(doc) {
+    const instance = new Editor({ extensions: [CarveKit], content: doc });
+    try {
+        instance.commands.setContent(instance.getHTML());
+
+        return serializeToCarve({ ...instance.getJSON(), attrs: undefined });
+    } finally {
+        instance.destroy();
+    }
+}
+
+// #506 named these eight as the corpus documents that reach a hand-declared
+// slot. Their pairs have to survive the HTML the editor itself writes.
+const corpusPairs = [
+    // The item's own attribute block widens its marker, so its second block
+    // is written at the wider content column. Render-equivalent either way.
+    ['413-an-item-s-attribute-block-moves-its-content-column-its-checkbox-does-not-9',
+        '-{title="😀"} [x] a\n\n              # h'],
+    ['89-block-attribute-lines-2', '{#id2 key="val2" .foo .bar .baz}\nOkay'],
+    ['90-list-item-attributes-2', '3.{#x k="v"} A numbered item with id and key-value.'],
+    ['289-a-structural-attribute-leads-the-author-s-own', '{k="v" .attr}\na. alpha'],
+    ['11-fenced-code-6', '```php "src/Auth.php"\n$ok = true;\n```'],
+    ['71-attribute-edge-cases-5', '![a](u){k="{y}"}'],
+    ['42-admonitions-5', '{title="attr title"}\n::: note "opener title"\nBody.\n:::'],
+    ['71-attribute-edge-cases-4', '[t](u){k="{y}"}'],
+];
+const byName = new Map(listCorpusFiles().map((file) => [file.name, file]));
+for (const [name, expected] of corpusPairs) {
+    const file = byName.get(name);
+    assert.ok(file, `corpus document ${name} is gone; the case it pinned needs a new home`);
+    const doc = carveToProseMirror(file.source, { unsupported: 'preserve' });
+    assert.ok(!htmlFor(doc).includes('[object Object]'), `${name} renders an attribute map into HTML as [object Object]`);
+    assert.equal(throughHtml(doc), expected, `${name} lost or invented an attribute run through HTML`);
+}
+console.log(`  ✓ ${corpusPairs.length} corpus documents keep their authored pairs through the editor's own HTML`);
+
+// carve-php and carve-js write plumbing of their own onto the elements this
+// kit parses, and none of it is an author's key/value. These documents mount
+// ENGINE-rendered HTML, which is the path wp-carve and the panel bar take.
+const engineHtml = [
+    // A fence title renders as `title`.
+    ['11-fenced-code-6', '```php\n$ok = true;\n```'],
+    // An admonition is labelled from its kind word.
+    ['24-generic-divs-5', '::: outer\n:::: middle\n::::: note\nX\n:::::\n::::\n:::'],
+    ['42-admonitions-2', '::: tip "Pro Tip"\nSave early, save often.\n:::'],
+    // A header cell carries `scope`.
+    ['09-tables', '| Fruit prices |\n|= Fruit |= Price |\n| Apple | $1 |\n| Pear | $2 |'],
+    // An authored `{align=...}` renders as a computed `style`.
+    ['420-text-block-alignment-renders-the-css-declaration', 'Aligned text.'],
+    ['420-text-block-alignment-renders-the-css-declaration-2', '::: box\nAligned text.\n:::'],
+    // What the engines DO carry comes back.
+    ['89-block-attribute-lines-2', '{#id2 .foo .bar .baz key="val2"}\nOkay'],
+];
+for (const [name, expected] of engineHtml) {
+    const file = byName.get(name);
+    assert.ok(file, `corpus document ${name} is gone; the case it pinned needs a new home`);
+    const instance = new Editor({ extensions: [CarveKit], content: carveToHtml(file.source) });
+    try {
+        assert.equal(serializeToCarve(instance.getJSON()), expected, `${name} reads engine-rendered HTML back wrongly`);
+    } finally {
+        instance.destroy();
+    }
+}
+console.log(`  \u2713 ${engineHtml.length} corpus documents keep engine plumbing out of the author's run`);
+
+// The projection through HTML is lossy for reasons that have nothing to do
+// with attribute runs. Every other fixture writes the same Carve either way.
+const htmlProjectionLosses = new Map([
+    // A heading id in rendered HTML may be generated, so importing one would
+    // invent `{#slug}`; CarveHeading drops it deliberately.
+    ['heading-with-attributes', '{.big}\n## A heading'],
+    // A header row's cell count follows the body row, which has a third cell.
+    ['table-with-spans', '| a |  | b |\n|= h |= i |=  |'],
+    // HTML has no place for a substitution's two halves.
+    ['substitution', 'A {~~>~} word.'],
+    // A line block's lines are one paragraph in HTML.
+    ['line-block', '| one | two'],
+]);
+for (const fixture of fixtures.cases) {
+    const direct = serializeToCarve(fixture.pm);
+    const viaHtml = throughHtml(fixture.pm);
+    assert.ok(!htmlFor(fixture.pm).includes('[object Object]'), `${fixture.name} renders an attribute map into HTML as [object Object]`);
+    assert.equal(
+        viaHtml, htmlProjectionLosses.get(fixture.name) ?? direct,
+        `${fixture.name} serializes differently after a getHTML()/setContent() cycle`,
+    );
+}
+console.log(`  ✓ ${fixtures.cases.length} wire fixtures survive a getHTML()/setContent() cycle`);
+
+editor.destroy();

@@ -1,14 +1,13 @@
 import Heading from '@tiptap/extension-heading';
 import { mergeAttributes } from '@tiptap/core';
-import { attributeOrderSlot } from './carve-attribute-slots.js';
-
-const STRUCTURAL_ATTRIBUTES = new Set(['id', 'class']);
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /** Tiptap heading that retains Carve's authored attribute run. */
 export const CarveHeading = Heading.extend({
     addAttributes() {
         return {
             ...this.parent?.(),
+            ...attributeSlots(),
             id: {
                 default: null,
                 // Rendered Carve HTML puts generated ids on headings inside
@@ -18,22 +17,6 @@ export const CarveHeading = Heading.extend({
                 parseHTML: () => null,
                 renderHTML: attributes => attributes.id ? { id: attributes.id } : {},
             },
-            class: {
-                default: null,
-                parseHTML: element => element.getAttribute('class') || null,
-                renderHTML: attributes => attributes.class ? { class: attributes.class } : {},
-            },
-            carveKeyValues: {
-                default: null,
-                parseHTML: element => {
-                    const entries = [...element.attributes]
-                        .filter(attribute => !STRUCTURAL_ATTRIBUTES.has(attribute.name))
-                        .map(attribute => [attribute.name, attribute.value]);
-                    return entries.length ? Object.fromEntries(entries) : null;
-                },
-                renderHTML: attributes => attributes.carveKeyValues ?? {},
-            },
-            ...attributeOrderSlot(),
         };
     },
 
