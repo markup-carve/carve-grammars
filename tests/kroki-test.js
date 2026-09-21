@@ -75,7 +75,14 @@ console.log('carve-grammars kroki renderer:');
         fetch.calls[0]?.init?.method === 'POST' && fetch.calls[0]?.init?.body === '@startuml\nA -> B\n@enduml');
     const img = el.querySelector('img');
     ok('replaces the <pre> with an <img>', !!img && !el.querySelector('pre.plantuml'));
-    ok('img carries the Kroki SVG as a data URI', !!img && img.getAttribute('src')?.startsWith('data:image/svg+xml;base64,'));
+    // Decoded, not merely prefixed: replacing the response with an empty SVG
+    // kept the prefix and left every check here green, so a blank diagram
+    // shipped past the whole suite.
+    const src = img?.getAttribute('src') ?? '';
+    ok('img carries the Kroki SVG as a data URI', src.startsWith('data:image/svg+xml;base64,'));
+    ok('the data URI decodes to the SVG Kroki returned',
+        atob(src.slice('data:image/svg+xml;base64,'.length)) === '<svg id="uml"><g/></svg>',
+        atob(src.slice('data:image/svg+xml;base64,'.length)));
     ok('img is tagged with the diagram type class', img?.className.includes('carve-diagram-plantuml'));
 }
 

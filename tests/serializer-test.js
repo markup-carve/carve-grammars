@@ -829,4 +829,26 @@ check('a no-break space at either edge survives the final trim',
     doc(para(text('\u00A0a\u00A0'))),
     '\u00A0a\u00A0');
 
+// Two constructs nothing pinned. Serializing a hard break as a bare newline
+// (a SOFT break, rendered as a space instead of `<br>`) and dropping an
+// image's title both left the whole suite green.
+check('a hard break keeps its backslash',
+    doc(para(text('one'), { type: 'hardBreak' }, text('two'))),
+    'one\\\ntwo');
+
+check("an image keeps its title", doc(para({
+    type: 'image', attrs: { src: 'u', alt: 'a', title: 't' },
+})), '![a](u "t")');
+
+// serializeToCarve is public and takes any document, so both nodes also have
+// a BLOCK branch for a host that hands them straight to the doc. Nothing
+// reached it: writing a bare newline for the hard break, which is a soft
+// break rendered as a space, and dropping the image title both left the whole
+// suite green.
+check('a hard break written as a block keeps its backslash',
+    doc({ type: 'hardBreak' }), '\\');
+
+check('an image written as a block keeps its title',
+    doc({ type: 'image', attrs: { src: 'u', alt: 'a', title: 't' } }), '![a](u "t")');
+
 console.log(`\n${passed} passed`);
