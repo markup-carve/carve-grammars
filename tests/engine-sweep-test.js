@@ -40,6 +40,7 @@
  */
 import { prismTokens, hljsTokens } from './lib/engines.js';
 import { CONSTRUCTS, LITERALS, assertInventory } from './lib/constructs.js';
+import { ENGINE_SCOPES } from './lib/engine-scopes.js';
 
 const ATTR_SCOPE = /attr/i;
 
@@ -68,10 +69,14 @@ function check(engineName, tokenize) {
         else if (construct.whole && !carrying.some((t) => t.text === payload)) {
             problem = `scoped in PIECES - no single token spells ${JSON.stringify(payload)}`;
         } else {
-            const expected = construct.engineScopes?.[engineName] ?? [];
+            const expected = construct.engineScopes?.[engineName]
+                ? [construct.engineScopes[engineName]]
+                : ENGINE_SCOPES[construct.textmate]?.[engineName];
             const seen = carrying.flatMap((t) => [t.scope, ...(t.ancestors ?? [])]);
-            const missing = expected.filter((scope) => !seen.some((s) => s.includes(scope)));
-            if (missing.length) problem = `no token carries ${missing.map((s) => JSON.stringify(s)).join(' or ')}`;
+            if (!expected) problem = `no expected ${engineName} scope for TextMate selector ${JSON.stringify(construct.textmate)}`;
+            else if (!expected.some((scopes) => scopes.every((scope) => seen.some((s) => s.includes(scope))))) {
+                problem = `no token carries an expected scope set (${expected.map((scopes) => scopes.map(JSON.stringify).join(' + ')).join(' or ')})`;
+            }
         }
 
         if (problem) {
