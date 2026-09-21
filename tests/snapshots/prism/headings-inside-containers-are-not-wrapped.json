@@ -32,7 +32,7 @@
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -40,11 +40,11 @@
     "text": "\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " Divved"
   },
   {
@@ -52,7 +52,7 @@
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -60,7 +60,7 @@
     "text": "\n\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {

@@ -27,13 +27,12 @@
  * coverage-matrix gate that protects the tiptap grammar.
  */
 import assert from 'node:assert';
-import { createRequire } from 'node:module';
 import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { listCorpusFiles } from './lib/corpus.js';
 import { coveredCategories, slugOf } from './lib/coverage.js';
+import { prismTokens as prismLeafScopes, hljsTokens as hljsLeafScopes } from './lib/engines.js';
 
-const require = createRequire(import.meta.url);
 const UPDATE = process.env.UPDATE_SNAPSHOTS === '1';
 const SNAP_DIR = fileURLToPath(new URL('./snapshots', import.meta.url));
 
@@ -44,72 +43,30 @@ let compared = 0;
 
 console.log('carve-grammars highlight snapshots:');
 
-// ----- Prism setup (mirror tests/grammar-test.js: choose the host, then a
-// single dynamic import that reads globalThis.Prism). -----
-const Prism = require('prismjs');
-globalThis.Prism = Prism;
-await import('../prism/carve.js');
-delete globalThis.Prism;
-const carveGrammar = Prism.languages.carve;
-
-/** Flatten a Prism token tree to leaf {type, text} entries with a type path. */
-function prismLeaves(tokens, parentPath = '') {
-    const out = [];
-    for (const tok of tokens) {
-        if (typeof tok === 'string') {
-            out.push({ type: parentPath || 'text', text: tok });
-            continue;
-        }
-        const path = parentPath ? `${parentPath}>${tok.type}` : tok.type;
-        if (Array.isArray(tok.content)) {
-            out.push(...prismLeaves(tok.content, path));
-        } else if (tok.content && typeof tok.content === 'object') {
-            out.push(...prismLeaves([tok.content], path));
-        } else {
-            out.push({ type: path, text: String(tok.content) });
-        }
-    }
-    return out;
-}
-
-function prismTokens(source) {
-    return prismLeaves(Prism.tokenize(source, carveGrammar));
-}
-
-// ----- highlight.js setup -----
-const hljs = require('highlight.js');
-const hljsCarve = (await import('../highlightjs/carve.mjs')).default;
-hljs.registerLanguage('carve', hljsCarve);
-
-const ENTITIES = { '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&#x27;': "'", '&#39;': "'" };
-function unescapeHtml(s) {
-    return s.replace(/&(?:lt|gt|amp|quot|#x27|#39);/g, (m) => ENTITIES[m]);
-}
-
-/**
- * Scan highlight.js HTML output into a flat list of {scope, text} entries, where
- * scope is the innermost hljs-* class covering the text (null when unscoped).
+/*
+ * THE GOLDEN RECORDS EVERY CLASS THE READER SEES.
+ *
+ * Both engines are read through tests/lib/engines.js, which this file used to
+ * shadow with narrower copies of the same two flatteners. The copies dropped
+ * exactly the part a reader sees:
+ *
+ * - Prism renders `type` AND `alias` as CSS classes, and the local flattener
+ *   recorded only `type`. Changing the `italic` rule's alias to `bold`, so
+ *   every `/run/` is highlighted as bold, moved none of the 3480 goldens
+ *   (markup-carve/carve-grammars#512).
+ * - highlight.js nests its spans, and the local scanner kept only the
+ *   innermost, so an outer scope could change unseen on the documents that
+ *   nest.
+ *
+ * The recorded key names stay `type` and `scope`, so this is a change of
+ * VALUE: a golden moves only where the run carried something the old shape
+ * could not say.
  */
-function hljsTokens(source) {
-    const { value } = hljs.highlight(source, { language: 'carve' });
-    const out = [];
-    const scopeStack = [];
-    const re = /<span class="([^"]*)">|<\/span>|([^<]+)/g;
-    let m;
-    while ((m = re.exec(value)) !== null) {
-        if (m[1] !== undefined) {
-            const cls = m[1].replace(/^hljs-/, '');
-            scopeStack.push(cls);
-        } else if (m[2] !== undefined) {
-            const text = unescapeHtml(m[2]);
-            const scope = scopeStack.length ? scopeStack[scopeStack.length - 1] : null;
-            out.push({ scope, text });
-        } else {
-            scopeStack.pop();
-        }
-    }
-    return out;
-}
+const prismTokens = (source) =>
+    prismLeafScopes(source).map(({ scope, text }) => ({ type: scope ?? 'text', text }));
+
+const hljsTokens = (source) =>
+    hljsLeafScopes(source).map(({ ancestors, text }) => ({ scope: ancestors.join('>') || null, text }));
 
 /**
  * Compare against (or bootstrap) a golden snapshot file.

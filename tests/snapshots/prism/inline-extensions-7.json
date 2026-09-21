@@ -1,30 +1,30 @@
 [
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":foo"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "a"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".cls"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

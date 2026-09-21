@@ -1,26 +1,26 @@
 [
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "a"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "/p.png "
   },
   {
-    "type": "image>string",
+    "type": "image>url>string",
     "text": "\"T\""
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {

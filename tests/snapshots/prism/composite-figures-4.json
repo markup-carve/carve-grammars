@@ -1,58 +1,58 @@
 [
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>figure-group-delimiter",
+    "type": "figure-group>tag>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>figure-group-delimiter>class-name",
+    "type": "figure-group>tag>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "lone"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "l.png"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>caption>punctuation",
+    "type": "figure-group>tag>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>caption",
+    "type": "figure-group>tag>caption>title",
     "text": " The only panel"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -60,11 +60,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure #: One panel is valid"
   },
   {

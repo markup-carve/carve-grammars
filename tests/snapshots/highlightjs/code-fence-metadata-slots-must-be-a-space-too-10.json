@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```js \"T\" [L]"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\nx\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

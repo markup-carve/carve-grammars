@@ -1,82 +1,82 @@
 [
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": "::::"
   },
   {
-    "type": "figure-group>figure-group-delimiter",
+    "type": "figure-group>tag>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>figure-group-delimiter>class-name",
+    "type": "figure-group>tag>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>div>div-delimiter>punctuation",
+    "type": "figure-group>tag>div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>div>div-delimiter",
+    "type": "figure-group>tag>div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>div>div-delimiter>class-name",
+    "type": "figure-group>tag>div>tag>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "figure-group>div",
+    "type": "figure-group>tag>div>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>div>image>punctuation",
+    "type": "figure-group>tag>div>tag>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>div>image",
+    "type": "figure-group>tag>div>tag>image>url",
     "text": "x"
   },
   {
-    "type": "figure-group>div>image>punctuation",
+    "type": "figure-group>tag>div>tag>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>div>image",
+    "type": "figure-group>tag>div>tag>image>url",
     "text": "x.png"
   },
   {
-    "type": "figure-group>div>image>punctuation",
+    "type": "figure-group>tag>div>tag>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group>div",
+    "type": "figure-group>tag>div>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>div>caption>punctuation",
+    "type": "figure-group>tag>div>tag>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>div>caption",
+    "type": "figure-group>tag>div>tag>caption>title",
     "text": " Figure #: inner"
   },
   {
-    "type": "figure-group>div",
+    "type": "figure-group>tag>div>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>div>div-delimiter>punctuation",
+    "type": "figure-group>tag>div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": "::::"
   },
   {
@@ -84,11 +84,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure #: group"
   },
   {

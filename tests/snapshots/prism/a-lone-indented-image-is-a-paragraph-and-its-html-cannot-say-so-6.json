@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -8,23 +8,23 @@
     "text": "t\n\n  "
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "Apollo"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "a.jpg"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {

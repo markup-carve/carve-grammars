@@ -20,27 +20,27 @@
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\na\n"
   },
   {
-    "type": "div>reference-definition>constant",
+    "type": "div>tag>reference-definition>url>constant",
     "text": "[^z]:"
   },
   {
-    "type": "div>reference-definition",
+    "type": "div>tag>reference-definition>url",
     "text": " zz"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nb\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

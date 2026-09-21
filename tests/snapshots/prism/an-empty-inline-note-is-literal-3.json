@@ -4,23 +4,23 @@
     "text": "x "
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "^["
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

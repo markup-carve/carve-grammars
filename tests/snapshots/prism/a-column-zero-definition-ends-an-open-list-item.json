@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "1. "
   },
   {
@@ -32,7 +32,7 @@
     "text": "\n"
   },
   {
-    "type": "underline",
+    "type": "underline>underline",
     "text": "_u_"
   },
   {
@@ -40,11 +40,11 @@
     "text": "\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /u"
   },
   {
@@ -76,7 +76,7 @@
     "text": "\n"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\#"
   },
   {

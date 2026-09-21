@@ -4,7 +4,7 @@
     "text": "The bare run is flag-shaped and stays literal: a "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
@@ -12,7 +12,7 @@
     "text": "(p) b.\n\nThe braced form converts wherever it stands: a "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "{--}"
   },
   {
@@ -20,7 +20,7 @@
     "text": "(p) b, x"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "{--}"
   },
   {
@@ -28,7 +28,7 @@
     "text": "y, "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "{--}"
   },
   {

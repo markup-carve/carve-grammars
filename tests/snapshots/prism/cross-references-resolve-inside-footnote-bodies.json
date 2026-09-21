@@ -1,10 +1,10 @@
 [
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " H"
   },
   {
@@ -12,7 +12,7 @@
     "text": "\n\nBody"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^n]"
   },
   {
@@ -20,11 +20,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^n]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " see </#h>"
   },
   {

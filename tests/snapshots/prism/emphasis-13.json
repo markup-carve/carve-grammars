@@ -1,6 +1,6 @@
 [
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "{/a/b/}"
   },
   {
@@ -8,15 +8,15 @@
     "text": " and "
   },
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "{/italic "
   },
   {
-    "type": "forced-italic>bold",
+    "type": "forced-italic>italic>bold>bold",
     "text": "*bold*"
   },
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "/}"
   },
   {

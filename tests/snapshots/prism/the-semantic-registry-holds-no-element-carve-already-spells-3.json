@@ -1,18 +1,18 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[*b*]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "code"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -20,19 +20,19 @@
     "text": " "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[*b*]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "mark"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

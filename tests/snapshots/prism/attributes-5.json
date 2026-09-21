@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".todo"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -24,7 +24,7 @@
     "text": "one\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {

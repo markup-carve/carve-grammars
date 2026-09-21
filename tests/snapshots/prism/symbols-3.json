@@ -4,7 +4,7 @@
     "text": "Vote "
   },
   {
-    "type": "symbol",
+    "type": "symbol>constant",
     "text": ":+1:"
   },
   {
@@ -12,7 +12,7 @@
     "text": " or "
   },
   {
-    "type": "symbol",
+    "type": "symbol>constant",
     "text": ":-1:"
   },
   {
@@ -20,7 +20,7 @@
     "text": ". Tolerance "
   },
   {
-    "type": "symbol",
+    "type": "symbol>constant",
     "text": ":+-:"
   },
   {
@@ -28,7 +28,7 @@
     "text": " is a symbol, but a "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "+-"
   },
   {
@@ -36,7 +36,7 @@
     "text": " b and word:"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "+-"
   },
   {

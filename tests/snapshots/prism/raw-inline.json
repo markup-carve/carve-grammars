@@ -4,7 +4,7 @@
     "text": "Use "
   },
   {
-    "type": "raw-inline",
+    "type": "raw-inline>string",
     "text": "`<br>`{=html}"
   },
   {
@@ -12,7 +12,7 @@
     "text": " to break, and "
   },
   {
-    "type": "raw-inline",
+    "type": "raw-inline>string",
     "text": "`\\foo`{=latex}"
   },
   {

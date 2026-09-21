@@ -1,14 +1,14 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "-   "
   },
   {
-    "type": "list>constant",
+    "type": "list>punctuation>constant",
     "text": "[ ]"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": " "
   },
   {
@@ -16,7 +16,7 @@
     "text": "item\n"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": "    # H"
   },
   {

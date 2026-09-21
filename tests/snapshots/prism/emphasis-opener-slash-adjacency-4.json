@@ -4,7 +4,7 @@
     "text": "a/"
   },
   {
-    "type": "strike",
+    "type": "strike>deleted",
     "text": "~y~"
   },
   {
@@ -12,7 +12,7 @@
     "text": " a/"
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "=y="
   },
   {

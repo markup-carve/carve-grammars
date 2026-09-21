@@ -1,10 +1,10 @@
 [
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[*bold* heading]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /x"
   },
   {
@@ -12,19 +12,19 @@
     "text": "\n\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " "
   },
   {
-    "type": "title>bold",
+    "type": "title>important>bold>bold",
     "text": "*bold*"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " heading"
   },
   {

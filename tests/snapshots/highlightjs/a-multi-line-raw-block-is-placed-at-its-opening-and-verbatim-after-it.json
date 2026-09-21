@@ -8,7 +8,7 @@
     "text": "\n\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```=html"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\n  <b>x</b>\n  <i>y</i>\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```"
   },
   {

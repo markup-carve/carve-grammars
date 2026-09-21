@@ -1,6 +1,6 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[*x*]"
   },
   {

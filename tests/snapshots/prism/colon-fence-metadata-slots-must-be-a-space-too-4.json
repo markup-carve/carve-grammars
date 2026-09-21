@@ -4,7 +4,7 @@
     "text": "::: note \"Title\" \t[First]\nx\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

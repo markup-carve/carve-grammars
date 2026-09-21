@@ -12,11 +12,11 @@
     "text": "\n\n\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Source: the cited work"
   },
   {

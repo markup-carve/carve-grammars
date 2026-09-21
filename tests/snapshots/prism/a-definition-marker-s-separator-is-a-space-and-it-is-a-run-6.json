@@ -4,7 +4,7 @@
     "text": "x"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^f]"
   },
   {
@@ -12,7 +12,7 @@
     "text": "\n\n"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^f]"
   },
   {

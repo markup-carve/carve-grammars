@@ -8,7 +8,7 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```python"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\ndef greet():\n    return 1\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

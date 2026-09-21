@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "-   "
   },
   {
@@ -8,7 +8,7 @@
     "text": "lead\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": " - "
   },
   {
@@ -16,15 +16,15 @@
     "text": "prose\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": " - "
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[t]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /t"
   },
   {

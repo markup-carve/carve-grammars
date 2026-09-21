@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -40,7 +40,7 @@
     "text": "\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "  - "
   },
   {
@@ -48,7 +48,7 @@
     "text": "b\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {

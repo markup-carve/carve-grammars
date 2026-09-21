@@ -1,14 +1,14 @@
 [
   {
-    "type": "strike",
+    "type": "strike>deleted",
     "text": "~a"
   },
   {
-    "type": "strike>inserted",
+    "type": "strike>deleted>inserted>inserted",
     "text": "{+b~+}"
   },
   {
-    "type": "strike",
+    "type": "strike>deleted",
     "text": " c~"
   },
   {

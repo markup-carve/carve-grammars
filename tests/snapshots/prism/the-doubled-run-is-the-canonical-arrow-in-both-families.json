@@ -4,7 +4,7 @@
     "text": "Canonical: "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<--"
   },
   {
@@ -12,7 +12,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "-->"
   },
   {
@@ -20,7 +20,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<-->"
   },
   {
@@ -28,7 +28,7 @@
     "text": " and "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<=="
   },
   {
@@ -36,7 +36,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "==>"
   },
   {
@@ -44,7 +44,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<=>"
   },
   {
@@ -52,7 +52,7 @@
     "text": "\n\nDeprecated but still rendered: "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<-"
   },
   {
@@ -60,7 +60,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "->"
   },
   {
@@ -68,7 +68,7 @@
     "text": " "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<->"
   },
   {
@@ -76,7 +76,7 @@
     "text": "\n\nNot an arrow: key => value stays literal, and p "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<="
   },
   {

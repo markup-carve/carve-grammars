@@ -12,7 +12,7 @@
     "text": " stays one code span.\n\nA "
   },
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!```literal with `` inside```"
   },
   {
@@ -20,7 +20,7 @@
     "text": " stays prose.\n\nThen "
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$```a `` b```"
   },
   {
@@ -28,7 +28,7 @@
     "text": " ends the run.\n\n"
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$$```x `` y```"
   },
   {

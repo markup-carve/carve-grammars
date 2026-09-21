@@ -1,10 +1,10 @@
 [
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[a]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /u\t\"T\""
   },
   {

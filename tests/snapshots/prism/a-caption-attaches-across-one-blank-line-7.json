@@ -1,6 +1,6 @@
 [
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$$`E = mc^2`"
   },
   {
@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Equation: mass-energy"
   },
   {

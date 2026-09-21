@@ -4,7 +4,7 @@
     "text": "Great "
   },
   {
-    "type": "symbol",
+    "type": "symbol>constant",
     "text": ":rocket:"
   },
   {
@@ -12,19 +12,19 @@
     "text": " and "
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":widget"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "Ctrl"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {

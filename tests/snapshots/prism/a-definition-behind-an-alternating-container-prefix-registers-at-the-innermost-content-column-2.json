@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -28,7 +28,7 @@
     "text": "\n\nSee "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^f]"
   },
   {

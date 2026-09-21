@@ -1,6 +1,6 @@
 [
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\tyaml\ntitle: x\n"
   },
   {
-    "type": "thematic-break",
+    "type": "thematic-break>punctuation",
     "text": "---"
   },
   {

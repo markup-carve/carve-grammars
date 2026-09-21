@@ -1,10 +1,10 @@
 [
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~"
   },
   {
-    "type": "forced-strike>code",
+    "type": "forced-strike>deleted>code",
     "text": "`a~>b~}"
   },
   {
@@ -12,15 +12,15 @@
     "text": "\n\n"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~a "
   },
   {
-    "type": "forced-strike>code",
+    "type": "forced-strike>deleted>code",
     "text": "`x~>y`"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": " b~}"
   },
   {
@@ -28,23 +28,23 @@
     "text": "\n\n"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted>italic",
+    "type": "changed>important>deleted>italic>italic",
     "text": "/old/"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted>italic",
+    "type": "changed>important>inserted>italic>italic",
     "text": "/new/"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -52,15 +52,15 @@
     "text": "\n\n"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~a"
   },
   {
-    "type": "forced-strike>escape",
+    "type": "forced-strike>deleted>escape>constant",
     "text": "\\~"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": ">b~}"
   },
   {

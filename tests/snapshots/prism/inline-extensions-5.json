@@ -4,19 +4,19 @@
     "text": ":1[x]\n"
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":a1"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "x"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {

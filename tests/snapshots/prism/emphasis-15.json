@@ -4,7 +4,7 @@
     "text": "re"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~view~}"
   },
   {
@@ -12,23 +12,23 @@
     "text": " it, then "
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted",
+    "type": "changed>important>deleted",
     "text": "old"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "new"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -36,7 +36,7 @@
     "text": ", and "
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "{=mark=}"
   },
   {

@@ -1,6 +1,6 @@
 [
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\*"
   },
   {
@@ -8,7 +8,7 @@
     "text": "lit"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\*"
   },
   {
@@ -16,7 +16,7 @@
     "text": " "
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\["
   },
   {
@@ -24,7 +24,7 @@
     "text": "x"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\]"
   },
   {
@@ -32,7 +32,7 @@
     "text": " \\"
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#h"
   },
   {
@@ -40,7 +40,7 @@
     "text": " \\"
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@u"
   },
   {

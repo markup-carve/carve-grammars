@@ -4,7 +4,7 @@
     "text": "{~a"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
@@ -20,11 +20,11 @@
     "text": "{~"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "b"
   },
   {
@@ -40,7 +40,7 @@
     "text": "{~"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {

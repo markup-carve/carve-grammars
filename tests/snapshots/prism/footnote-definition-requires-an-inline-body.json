@@ -4,7 +4,7 @@
     "text": "Use "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^a]"
   },
   {
@@ -12,7 +12,7 @@
     "text": ".\n\n"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^a]"
   },
   {

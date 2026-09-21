@@ -4,27 +4,27 @@
     "text": "x "
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "^["
   },
   {
-    "type": "inline-footnote",
+    "type": "inline-footnote>symbol",
     "text": "a [^1"
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -32,11 +32,11 @@
     "text": " c]\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^1]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " n"
   },
   {

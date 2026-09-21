@@ -1,6 +1,6 @@
 [
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": "/_x_/"
   },
   {
@@ -8,7 +8,7 @@
     "text": " and "
   },
   {
-    "type": "underline",
+    "type": "underline>underline",
     "text": "_/x/_"
   },
   {

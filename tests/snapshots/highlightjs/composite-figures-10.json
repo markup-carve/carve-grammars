@@ -40,7 +40,7 @@
     "text": "\n\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```js"
   },
   {
@@ -48,7 +48,7 @@
     "text": "\nconst x = 1\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

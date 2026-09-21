@@ -4,15 +4,15 @@
     "text": "{~"
   },
   {
-    "scope": "string",
+    "scope": "deletion>string",
     "text": "$`a~>b`"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "c"
   },
   {
@@ -28,15 +28,15 @@
     "text": "{~"
   },
   {
-    "scope": "string",
+    "scope": "deletion>string",
     "text": "!`a~>b`"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "c"
   },
   {
@@ -52,7 +52,7 @@
     "text": "{~a"
   },
   {
-    "scope": "comment",
+    "scope": "deletion>comment",
     "text": "{# ~> #}"
   },
   {
@@ -60,11 +60,11 @@
     "text": "b"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "c"
   },
   {

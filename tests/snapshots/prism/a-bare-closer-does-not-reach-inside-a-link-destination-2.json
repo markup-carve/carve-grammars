@@ -1,14 +1,14 @@
 [
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": "/see "
   },
   {
-    "type": "italic>url",
+    "type": "italic>italic>url",
     "text": "<http://a.b/c>"
   },
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": " now/"
   },
   {

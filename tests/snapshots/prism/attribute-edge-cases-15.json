@@ -1,6 +1,6 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[x]"
   },
   {
@@ -8,7 +8,7 @@
     "text": "{.123} "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[y]"
   },
   {
@@ -16,7 +16,7 @@
     "text": "{"
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#7-x"
   },
   {
@@ -24,7 +24,7 @@
     "text": "} and "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[z]"
   },
   {

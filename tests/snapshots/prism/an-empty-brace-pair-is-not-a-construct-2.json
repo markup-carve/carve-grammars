@@ -1,18 +1,18 @@
 [
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted",
+    "type": "changed>important>deleted",
     "text": "a"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -20,19 +20,19 @@
     "text": " deletes, "
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "b"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -40,15 +40,15 @@
     "text": " inserts, and "
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {

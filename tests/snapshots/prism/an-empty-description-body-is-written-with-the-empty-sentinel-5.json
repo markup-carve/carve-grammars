@@ -1,10 +1,10 @@
 [
   {
-    "type": "definition-list>definition-term>punctuation",
+    "type": "definition-list>definition-term>title>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-list>definition-term",
+    "type": "definition-list>definition-term>title",
     "text": " t1"
   },
   {
@@ -20,11 +20,11 @@
     "text": "{empty}\n"
   },
   {
-    "type": "definition-list>definition-term>punctuation",
+    "type": "definition-list>definition-term>title>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-list>definition-term",
+    "type": "definition-list>definition-term>title",
     "text": " t2"
   },
   {

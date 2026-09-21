@@ -32,27 +32,27 @@
     "text": "\n\nThe "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[HTML]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "abbr"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes>string",
+    "type": "attributes>attr-value>string",
     "text": "\"Custom\""
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

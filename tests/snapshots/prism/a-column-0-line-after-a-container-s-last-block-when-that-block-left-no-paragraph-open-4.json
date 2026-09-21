@@ -1,10 +1,10 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {

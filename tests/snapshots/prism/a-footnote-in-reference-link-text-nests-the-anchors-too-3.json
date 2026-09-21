@@ -40,7 +40,7 @@
     "text": " c "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^1]"
   },
   {
@@ -48,11 +48,11 @@
     "text": " b\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /u"
   },
   {
@@ -60,11 +60,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^1]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " n"
   },
   {

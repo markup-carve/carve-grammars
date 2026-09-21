@@ -8,15 +8,15 @@
     "text": "~"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>id",
+    "type": "table>attributes>attr-value>id",
     "text": "#score"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {

@@ -1,10 +1,10 @@
 [
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#i"
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#j"
   },
   {

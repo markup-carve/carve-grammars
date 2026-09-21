@@ -4,15 +4,15 @@
     "text": "|"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>class-name",
+    "type": "table>attributes>attr-value>class-name",
     "text": ".total"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -32,15 +32,15 @@
     "text": "|"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>class-name",
+    "type": "table>attributes>attr-value>class-name",
     "text": ".total"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
