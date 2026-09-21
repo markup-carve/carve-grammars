@@ -12,16 +12,12 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " a"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": a\n"
   },
   {
     "type": "div>tag>div-delimiter",

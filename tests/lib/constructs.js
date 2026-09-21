@@ -568,6 +568,12 @@ export const CONSTRUCTS = [
     { name: "table continuation in a list item", sample: "- item\n\n  | a |\n  + cont cell |", payload: "+", textmate: "keyword.operator.table.continuation" },
     { name: "ref def label", sample: "[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
     {
+        // A lone caret is a reference label; only `^` followed by more label
+        // opens a footnote (#533). highlight.js and TextMate both missed it.
+        name: "ref def caret label", sample: "[^]: /u", payload: "/u",
+        textmate: "markup.underline.link", engineScopes: { prism: ['reference-definition'], highlightjs: ['link'] },
+    },
+    {
         name: "ref def url", sample: "[r]: https://ref.example", payload: "https://ref.example",
         textmate: "markup.underline.link", engineScopes: { prism: ['url'], highlightjs: ['link'] },
     },
@@ -1172,6 +1178,20 @@ export const LITERALS = [
         payload: '+',
         scopes: { prism: 'table-continuation', highlightjs: 'string', textmate: 'table.continuation' },
     },
+    // `reference_definition` is anchored at end of line, and its title slot
+    // takes exactly one space; either failure leaves prose (#533).
+    {
+        name: 'leftover text after a reference definition makes it prose',
+        sample: '[a]: /u zzz\n',
+        payload: '/u',
+        scopes: { prism: 'reference-definition', highlightjs: 'symbol', textmate: 'meta.link.reference.def' },
+    },
+    {
+        name: 'two spaces before a reference title make it prose',
+        sample: '[a]: /u  "T"\n',
+        payload: '/u',
+        scopes: { prism: 'reference-definition', highlightjs: 'symbol', textmate: 'meta.link.reference.def' },
+    },
 ];
 
 /*
@@ -1193,7 +1213,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 201
-export const MIN_LITERALS = 42
+export const MIN_LITERALS = 44
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

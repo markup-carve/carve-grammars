@@ -9,7 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[a]:  javascript:alert(1)"
+    "text": "[a]:  "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "javascript:alert(1)"
   },
   {
     "scope": null,

@@ -12,12 +12,24 @@
     "text": " b\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^1]:"
+    "type": "footnote>symbol",
+    "text": "[^1]"
   },
   {
-    "type": "reference-definition>url",
-    "text": " see ^[</#h>]"
+    "type": "text",
+    "text": ": see "
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "</#h>"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "text",

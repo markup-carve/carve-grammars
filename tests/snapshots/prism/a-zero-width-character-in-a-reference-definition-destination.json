@@ -1,7 +1,15 @@
 [
   {
+    "type": "reference-definition>url>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " ﻿https://e.com/"
+  },
+  {
     "type": "text",
-    "text": "[r]: ﻿https://e.com/\n\nsee "
+    "text": "\n\nsee "
   },
   {
     "type": "url>punctuation",

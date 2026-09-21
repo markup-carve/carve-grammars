@@ -5,19 +5,15 @@
   },
   {
     "type": "text",
-    "text": "x\n"
+    "text": "x\n  "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "  [^g]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " b"
+    "type": "footnote>symbol",
+    "text": "[^g]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": b\n"
   },
   {
     "type": "reference-definition>url>constant",

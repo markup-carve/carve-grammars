@@ -16,15 +16,11 @@
     "text": "- "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " note body"
+    "type": "footnote>symbol",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": note body\n"
   }
 ]

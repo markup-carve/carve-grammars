@@ -1,11 +1,7 @@
 [
   {
-    "scope": "symbol",
-    "text": "[a]: /u  \"T\""
-  },
-  {
     "scope": null,
-    "text": "\n\n"
+    "text": "[a]: /u  \"T\"\n\n"
   },
   {
     "scope": "link",

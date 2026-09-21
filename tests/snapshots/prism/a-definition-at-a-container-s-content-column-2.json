@@ -5,19 +5,15 @@
   },
   {
     "type": "text",
-    "text": "a\n"
+    "text": "a\n  "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "  [^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " t"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\ntail\n\nx"
+    "text": ": t\ntail\n\nx"
   },
   {
     "type": "footnote>symbol",

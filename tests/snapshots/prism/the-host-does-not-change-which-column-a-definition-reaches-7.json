@@ -1,15 +1,11 @@
 [
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " b"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": b\n\n"
   },
   {
     "type": "list>punctuation",

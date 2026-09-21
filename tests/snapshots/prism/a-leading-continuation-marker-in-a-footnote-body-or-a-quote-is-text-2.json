@@ -1,15 +1,11 @@
 [
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " +"
+    "type": "footnote>symbol",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n flush\n\nsee"
+    "text": ": +\n flush\n\nsee"
   },
   {
     "type": "footnote>symbol",

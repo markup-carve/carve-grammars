@@ -20,27 +20,19 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^b]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " bee"
+    "type": "footnote>symbol",
+    "text": "[^b]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": bee\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " ay"
+    "type": "footnote>symbol",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": ay\n"
   }
 ]

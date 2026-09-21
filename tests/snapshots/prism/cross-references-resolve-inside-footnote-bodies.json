@@ -20,12 +20,24 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^n]:"
+    "type": "footnote>symbol",
+    "text": "[^n]"
   },
   {
-    "type": "reference-definition>url",
-    "text": " see </#h>"
+    "type": "text",
+    "text": ": see "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "h"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "text",

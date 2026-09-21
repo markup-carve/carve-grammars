@@ -12,15 +12,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^fn]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " Defined anywhere; resolved by label."
+    "type": "footnote>symbol",
+    "text": "[^fn]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": Defined anywhere; resolved by label.\n"
   }
 ]

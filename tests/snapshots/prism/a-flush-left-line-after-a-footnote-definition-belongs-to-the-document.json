@@ -4,16 +4,12 @@
     "text": "a\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " note"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\nb\n\nsee"
+    "text": ": note\nb\n\nsee"
   },
   {
     "type": "footnote>symbol",

@@ -1332,15 +1332,17 @@
         },
 
         // Reference link / abbreviation definitions
+        // Anchored at end of line (grammar.ebnf `reference_definition`):
+        // `[a]: /u zzz` is prose, not a definition (#533).
         'reference-definition': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[[^\]]+\]: +\S+.*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$/m,
             alias: 'url',
             inside: {
                 'constant': /^\uFEFF?[ \t]*\[[^\]]+\]:/,
                 // `link_title`, one space after the destination, scoped as an
                 // inline link's title is rather than as part of the URL (#523).
                 'string': {
-                    pattern: /(^ (?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
+                    pattern: /(^ [^\S\n]*(?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
                     lookbehind: true,
                 },
             },

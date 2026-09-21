@@ -5,14 +5,6 @@
   },
   {
     "scope": null,
-    "text": "\n\n"
-  },
-  {
-    "scope": "symbol",
-    "text": "[r]: a b c"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\n\n[r]: a b c\n"
   }
 ]

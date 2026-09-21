@@ -32,15 +32,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " reference body."
+    "type": "footnote>symbol",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": reference body.\n"
   }
 ]

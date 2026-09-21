@@ -5,19 +5,15 @@
   },
   {
     "type": "text",
-    "text": "body\n\n"
+    "text": "body\n\n  "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "  [^g]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " n"
+    "type": "footnote>symbol",
+    "text": "[^g]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": n\n"
   },
   {
     "type": "title>important",

@@ -12,27 +12,19 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^two words]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " This definition is not referenced."
+    "type": "footnote>symbol",
+    "text": "[^two words]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": This definition is not referenced.\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^broken\nlabel]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " This is not a definition."
+    "type": "footnote>symbol",
+    "text": "[^broken\nlabel]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": This is not a definition.\n"
   }
 ]
