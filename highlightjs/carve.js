@@ -701,7 +701,8 @@
     // `link_title` are scoped apart, as TextMate does (#523).
     const REFERENCE_DEF = {
         className: 'symbol',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[[^\]^\]]+\]:(?= )/,
+        // Anchored at end of line, so `[a]: /u zzz` stays prose (#533).
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]:(?= [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$)/,
         end: /$/,
         relevance: 10,
         contains: [
@@ -709,11 +710,11 @@
             // prose (grammar.ebnf `reference_definition`, anchored at end of line).
             {
                 className: 'link',
-                begin: /(?<=\]: )(?:\S|\uFEFF)+(?=(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^\n]*\})?[ \t]*$)/,
+                begin: /(?=\S|\uFEFF)(?<=\]: [^\S\n]*)(?:\S|\uFEFF)+(?=(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^\n]*\})?[ \t]*$)/,
             },
             {
                 className: 'string',
-                begin: /(?=["'])(?<=\]: (?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
+                begin: /(?=["'])(?<=\]: [^\S\n]*(?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
             },
         ],
     };

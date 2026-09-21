@@ -652,7 +652,7 @@
       "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
     "link_ref_def": {
-      "match": "^(?:\\A\\x{FEFF})?(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\}))(?=[ \\t]*$))?",
+      "match": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])([^\\]]+)(\\])(:) [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?(?=[ \\t]*$)",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"
@@ -689,7 +689,7 @@
       "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column."
     },
     "link_ref_def_in_container": {
-      "match": "^([ \\t]*)(\\[)(?![@^])([^\\]]+)(\\])(:) +(\\S+)(?:[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\}))(?=[ \\t]*$))?",
+      "match": "^([ \\t]*)(\\[)(?!@|\\^[^\\]])([^\\]]+)(\\])(:) [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?(?=[ \\t]*$)",
       "captures": {
         "2": {
           "name": "punctuation.definition.link.carve"

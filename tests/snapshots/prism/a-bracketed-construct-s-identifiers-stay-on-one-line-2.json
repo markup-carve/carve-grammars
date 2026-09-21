@@ -12,15 +12,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f g]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " n"
+    "type": "footnote>symbol",
+    "text": "[^f g]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": n\n"
   }
 ]

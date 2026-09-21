@@ -1,27 +1,19 @@
 [
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^outer]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " intro"
+    "type": "footnote>symbol",
+    "text": "[^outer]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": intro\n\n     "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "     [^inner]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " note"
+    "type": "footnote>symbol",
+    "text": "[^inner]"
   },
   {
     "type": "text",
-    "text": "\n\n     see"
+    "text": ": note\n\n     see"
   },
   {
     "type": "footnote>symbol",

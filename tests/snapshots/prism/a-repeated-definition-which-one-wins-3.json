@@ -12,27 +12,19 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " one"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": one\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " two"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": two\n"
   }
 ]

@@ -28,16 +28,12 @@
     "text": "\na\n"
   },
   {
-    "type": "div>tag>reference-definition>url>constant",
-    "text": "[^z]:"
-  },
-  {
-    "type": "div>tag>reference-definition>url",
-    "text": " zz"
+    "type": "div>tag>footnote>symbol",
+    "text": "[^z]"
   },
   {
     "type": "div>tag",
-    "text": "\nb\n"
+    "text": ": zz\nb\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

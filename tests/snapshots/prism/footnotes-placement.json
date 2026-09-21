@@ -56,27 +56,19 @@
     "text": "\n\nMore text.\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^a]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " first note"
+    "type": "footnote>symbol",
+    "text": "[^a]"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": ": first note\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^b]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " second note"
+    "type": "footnote>symbol",
+    "text": "[^b]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": second note\n"
   }
 ]

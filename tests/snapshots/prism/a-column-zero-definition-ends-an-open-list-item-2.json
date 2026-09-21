@@ -8,16 +8,12 @@
     "text": "a\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^f]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " note"
+    "type": "footnote>symbol",
+    "text": "[^f]"
   },
   {
     "type": "text",
-    "text": "\nafter"
+    "text": ": note\nafter"
   },
   {
     "type": "footnote>symbol",

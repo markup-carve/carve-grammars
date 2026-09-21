@@ -12,27 +12,27 @@
     "text": " b\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^1]:"
+    "type": "footnote>symbol",
+    "text": "[^1]"
   },
   {
-    "type": "reference-definition>url",
-    "text": " see [^2]"
+    "type": "text",
+    "text": ": see "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^2]"
   },
   {
     "type": "text",
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^2]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " two"
+    "type": "footnote>symbol",
+    "text": "[^2]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": two\n"
   }
 ]

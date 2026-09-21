@@ -1,7 +1,15 @@
 [
   {
+    "scope": "symbol",
+    "text": "[^]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
     "scope": null,
-    "text": "[^]: /u\n\nsee "
+    "text": "\n\nsee "
   },
   {
     "scope": "link",

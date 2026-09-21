@@ -12,12 +12,44 @@
     "text": " b\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^1]:"
+    "type": "footnote>symbol",
+    "text": "[^1]"
   },
   {
-    "type": "reference-definition>url",
-    "text": " see [t[^2]][r]"
+    "type": "text",
+    "text": ": see "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "t"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "^2"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
   },
   {
     "type": "text",
@@ -36,15 +68,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^2]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " two"
+    "type": "footnote>symbol",
+    "text": "[^2]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": two\n"
   }
 ]

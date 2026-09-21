@@ -478,7 +478,7 @@
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
-          "evidence": "reference-definition",
+          "evidence": "footnote",
           "payload": "parsed"
         },
         "abbreviation_definition": {

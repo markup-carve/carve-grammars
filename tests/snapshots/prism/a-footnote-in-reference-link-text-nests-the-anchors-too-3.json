@@ -60,15 +60,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^1]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " n"
+    "type": "footnote>symbol",
+    "text": "[^1]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": n\n"
   }
 ]

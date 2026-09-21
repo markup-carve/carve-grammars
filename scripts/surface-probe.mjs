@@ -564,12 +564,10 @@ const SIGNATURE_OVERRIDES = {
          */
         raw_block: ['codeblock'],
         /*
-         * ONE DEFINITION RULE for both definition shapes: the pattern is
-         * `\[[^\]]+\]: +\S+`, and a footnote label is `^a` - a bracketed run
-         * like any other - so `[^a]: note` is the same match as `[r]: /url`.
-         * The same fold this file makes for the four comment shapes.
+         * No block rule of its own: the reference-definition rule refuses a
+         * `^label` (#533), so the label is scoped by the inline `footnote` rule.
          */
-        footnote_definition: ['referencedefinition'],
+        footnote_definition: ['footnote'],
         comment_block: ['comment'],
         comment_line: ['comment'],
         inline_comment: ['comment'],

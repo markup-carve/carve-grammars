@@ -12,16 +12,12 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^n]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " First paragraph of the note."
+    "type": "footnote>symbol",
+    "text": "[^n]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": First paragraph of the note.\n"
   },
   {
     "type": "continuation-marker>punctuation",

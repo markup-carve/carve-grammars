@@ -12,15 +12,11 @@
     "text": ".\n"
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "[^m]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " First line of the note"
+    "type": "footnote>symbol",
+    "text": "[^m]"
   },
   {
     "type": "text",
-    "text": "\n   and a continuation line.\n"
+    "text": ": First line of the note\n   and a continuation line.\n"
   }
 ]

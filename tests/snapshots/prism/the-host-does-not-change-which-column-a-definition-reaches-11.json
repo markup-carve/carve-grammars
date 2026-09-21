@@ -5,31 +5,23 @@
   },
   {
     "type": "text",
-    "text": "x\n"
+    "text": "x\n  "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "  [^g]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " b"
+    "type": "footnote>symbol",
+    "text": "[^g]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": b\n   "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": "   [^n]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " note text"
+    "type": "footnote>symbol",
+    "text": "[^n]"
   },
   {
     "type": "text",
-    "text": "\n\nSee "
+    "text": ": note text\n\nSee "
   },
   {
     "type": "footnote>symbol",

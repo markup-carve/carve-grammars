@@ -9,18 +9,14 @@
   },
   {
     "type": "text",
-    "text": ".\n\n"
+    "text": ".\n\n "
   },
   {
-    "type": "reference-definition>url>constant",
-    "text": " [^fn]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " body."
+    "type": "footnote>symbol",
+    "text": "[^fn]"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": ": body.\n"
   }
 ]

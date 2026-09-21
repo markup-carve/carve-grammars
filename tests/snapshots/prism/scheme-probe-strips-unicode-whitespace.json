@@ -21,6 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n\n[a]:  javascript:alert(1)\n"
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[a]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": "  javascript:alert(1)"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

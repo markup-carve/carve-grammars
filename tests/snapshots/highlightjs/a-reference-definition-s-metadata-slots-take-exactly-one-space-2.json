@@ -1,11 +1,7 @@
 [
   {
-    "scope": "symbol",
-    "text": "[a]: /u  {.c}"
-  },
-  {
     "scope": null,
-    "text": "\n\n"
+    "text": "[a]: /u  {.c}\n\n"
   },
   {
     "scope": "link",

@@ -21,18 +21,6 @@
   },
   {
     "type": "text",
-    "text": "\n\n"
-  },
-  {
-    "type": "reference-definition>url>constant",
-    "text": "[r]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " a b c"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "\n\n[r]: a b c\n"
   }
 ]
