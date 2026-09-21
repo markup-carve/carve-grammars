@@ -33,7 +33,11 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " https://example.com/intro \"Introduction\""
+    "text": " https://example.com/intro "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"Introduction\""
   },
   {
     "type": "text",

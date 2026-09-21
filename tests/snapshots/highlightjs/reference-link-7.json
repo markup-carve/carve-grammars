@@ -9,7 +9,19 @@
   },
   {
     "scope": "symbol",
-    "text": "[y]: /u \"a\\\"b\\\"c\""
+    "text": "[y]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"a\\\"b\\\"c\""
   },
   {
     "scope": null,

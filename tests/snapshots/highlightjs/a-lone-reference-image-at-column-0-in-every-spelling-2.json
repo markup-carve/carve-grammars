@@ -9,7 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[Apollo]: a.jpg"
+    "text": "[Apollo]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "a.jpg"
   },
   {
     "scope": null,

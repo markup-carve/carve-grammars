@@ -412,8 +412,16 @@ export const CONSTRUCTS = [
         enginePayload: "[-]", textmate: "constant.language.checkbox",
     },
     { name: "definition term", sample: ":: term\n:  definition", payload: "term", textmate: "entity.name.tag.definition.term" },
-    { name: "table continuation row", sample: "+ cont cell |", payload: "+", textmate: "keyword.operator.table.continuation" },
-    { name: "continuation marker", sample: "- step\n+\n> note", payload: "+", textmate: "list" },
+    {
+        name: "table continuation row", sample: "+ cont cell |", payload: "+",
+        textmate: "keyword.operator.table.continuation", engineScopes: { prism: ['table-continuation'] },
+    },
+    {
+        // `continuation_marker`, which attaches the quote to the item; Prism
+        // read it as a table continuation (#523).
+        name: "continuation marker", sample: "- step\n+\n> note", payload: "+", textmate: "list",
+        engineScopes: { prism: ['continuation-marker'], highlightjs: ['punctuation'] },
+    },
     { name: "caption", sample: "> q\n^ Attribution", payload: "Attribution", textmate: "caption" },
     { name: "numbered caption", sample: "^ Figure #: A sunset", payload: "A sunset", textmate: "markup.caption" },
     { name: "heading", sample: "# Title", payload: "Title", textmate: "heading" },
@@ -559,8 +567,16 @@ export const CONSTRUCTS = [
     { name: "abbreviation", sample: "*[HTML]: HyperText", payload: "HTML", textmate: "abbreviation" },
     { name: "table continuation in a list item", sample: "- item\n\n  | a |\n  + cont cell |", payload: "+", textmate: "keyword.operator.table.continuation" },
     { name: "ref def label", sample: "[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
-    { name: "ref def url", sample: "[r]: https://ref.example", payload: "https://ref.example", textmate: "markup.underline.link" },
-    { name: "ref def title", sample: "[r]: https://ref.example \"Site\"", payload: "Site", textmate: "string.quoted.link.title" },
+    {
+        name: "ref def url", sample: "[r]: https://ref.example", payload: "https://ref.example",
+        textmate: "markup.underline.link", engineScopes: { prism: ['url'], highlightjs: ['link'] },
+    },
+    {
+        // NAMED, because the enclosing definition satisfies "carries a scope"
+        // and both engines scoped the title as part of the URL (#523).
+        name: "ref def title", sample: "[r]: https://ref.example \"Site\"", payload: "Site",
+        textmate: "string.quoted.link.title", engineScopes: { prism: ['string'], highlightjs: ['string'] },
+    },
     {
         // Frontmatter is document-start-only. Its payload may carry scopes from
         // the delegated YAML/TOML/JSON grammar rather than from Carve itself.
@@ -1141,6 +1157,21 @@ export const LITERALS = [
         payload: 'figure',
         scopes: { prism: 'figure-group', highlightjs: 'section', textmate: 'figure-group' },
     },
+    // `continuation_row` ends in `|`; without it the line is a paragraph, and
+    // a lone `+` is a `continuation_marker` (#523). highlight.js scopes a
+    // table row `string`.
+    {
+        name: 'a plus-led line with no closing pipe is prose',
+        sample: '+ foo\n',
+        payload: '+',
+        scopes: { prism: 'table-continuation', highlightjs: 'string', textmate: 'table.continuation' },
+    },
+    {
+        name: 'a lone plus is not a table continuation',
+        sample: '- step\n+\n> note\n',
+        payload: '+',
+        scopes: { prism: 'table-continuation', highlightjs: 'string', textmate: 'table.continuation' },
+    },
 ];
 
 /*
@@ -1162,7 +1193,7 @@ export const LITERALS = [
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
 export const MIN_CONSTRUCTS = 201
-export const MIN_LITERALS = 37
+export const MIN_LITERALS = 42
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can

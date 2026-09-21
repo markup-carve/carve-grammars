@@ -33,7 +33,11 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " /intro \"T\""
+    "text": " /intro "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"T\""
   },
   {
     "type": "text",

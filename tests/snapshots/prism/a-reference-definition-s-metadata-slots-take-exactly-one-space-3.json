@@ -5,7 +5,11 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " /u \"T\""
+    "text": " /u "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"T\""
   },
   {
     "type": "text",

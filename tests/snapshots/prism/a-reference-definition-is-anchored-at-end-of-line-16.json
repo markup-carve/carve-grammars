@@ -5,7 +5,15 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " /u \"T\" {.c}"
+    "text": " /u "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"T\""
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " {.c}"
   },
   {
     "type": "text",

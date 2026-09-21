@@ -20,7 +20,7 @@
     "text": "intro\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "continuation-marker>punctuation",
     "text": "+"
   },
   {

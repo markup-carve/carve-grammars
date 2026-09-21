@@ -1,7 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[a@b]: /v"
+    "text": "[a@b]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/v"
   },
   {
     "scope": null,

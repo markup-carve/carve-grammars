@@ -9,7 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "     [r]: /url"
+    "text": "     [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
   },
   {
     "scope": null,

@@ -13,7 +13,19 @@
   },
   {
     "scope": "symbol",
-    "text": "[intro]: https://example.com/intro \"Introduction\""
+    "text": "[intro]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "https://example.com/intro"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"Introduction\""
   },
   {
     "scope": null,

@@ -20,7 +20,7 @@
     "text": "A first paragraph,\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "continuation-marker>punctuation",
     "text": "+"
   },
   {

@@ -17,7 +17,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[ex]: https://example.com {.external}"
+    "text": "[ex]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "https://example.com"
+  },
+  {
+    "scope": "symbol",
+    "text": " {.external}"
   },
   {
     "scope": null,
