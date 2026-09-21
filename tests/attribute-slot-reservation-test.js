@@ -150,6 +150,18 @@ console.log(`  ✓ ${corpusPairs.length} corpus documents keep their authored pa
 const authoredSources = [
     ['|{scope=row} x |', '|{scope="row"} x |'],
     ['| x |{scope=row}', '| x |{scope="row"}'],
+    // Reserving a name kept it from being read back; it never kept it from
+    // being WRITTEN, so an authored pair overwrote the node's own attribute
+    // and the loss went past the pair itself (#519). The link lost its
+    // destination and came back as bare text; the abbreviation read its
+    // expansion out of the `title` the author had written.
+    ['[safe](https://example.com){href="javascript:steal"}',
+        '[safe](https://example.com){href="javascript:steal"}'],
+    ['[x]{abbr="derived" title="authored"}', '[x]{abbr="derived" title="authored"}'],
+    ['{aria-label="Mine"}\n::: note "Careful"\nBody.\n:::',
+        '{aria-label="Mine"}\n::: note "Careful"\nBody.\n:::'],
+    ['{align=right style="color: red"}\nAligned text.',
+        '{align="right" style="color: red"}\nAligned text.'],
 ];
 for (const [source, expected] of authoredSources) {
     assert.equal(throughHtml(carveToProseMirror(source, { unsupported: 'preserve' })), expected,
