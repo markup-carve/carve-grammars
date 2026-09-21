@@ -4,7 +4,7 @@
     "text": "Escaped "
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\-"
   },
   {
@@ -12,7 +12,7 @@
     "text": "> and "
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\."
   },
   {

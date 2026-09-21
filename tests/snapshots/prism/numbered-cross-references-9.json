@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#eq-emc"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\n"
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$$`E = mc^2`"
   },
   {
@@ -24,11 +24,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Equation #: mass-energy"
   },
   {
@@ -36,15 +36,15 @@
     "text": "\n\nSee "
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": "</#"
   },
   {
-    "type": "cross-ref",
+    "type": "cross-ref>url",
     "text": "eq-emc"
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": ">"
   },
   {

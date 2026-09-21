@@ -4,7 +4,7 @@
     "text": "Flow: a "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "-->"
   },
   {
@@ -12,7 +12,7 @@
     "text": " b "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<--"
   },
   {
@@ -20,7 +20,7 @@
     "text": " c "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<-->"
   },
   {
@@ -28,7 +28,7 @@
     "text": " d "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "==>"
   },
   {
@@ -36,7 +36,7 @@
     "text": " e; x "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "!="
   },
   {
@@ -44,7 +44,7 @@
     "text": " y, p "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "<="
   },
   {
@@ -52,7 +52,7 @@
     "text": " q, r "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": ">="
   },
   {
@@ -60,7 +60,7 @@
     "text": " s, "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "+-"
   },
   {
@@ -68,7 +68,7 @@
     "text": "1.\n"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "(c)"
   },
   {
@@ -76,7 +76,7 @@
     "text": " 2024, "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "(r)"
   },
   {
@@ -84,7 +84,7 @@
     "text": ", "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "(tm)"
   },
   {

@@ -4,7 +4,7 @@
     "text": "foo"
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*bar*}"
   },
   {
@@ -12,7 +12,7 @@
     "text": "baz and my"
   },
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "{_path_}"
   },
   {
@@ -20,7 +20,7 @@
     "text": "name and a"
   },
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "{/b/}"
   },
   {

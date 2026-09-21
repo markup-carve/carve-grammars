@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -8,11 +8,11 @@
     "text": "body\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "  [^g]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " n"
   },
   {
@@ -20,7 +20,7 @@
     "text": "\n"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": "   # h"
   },
   {

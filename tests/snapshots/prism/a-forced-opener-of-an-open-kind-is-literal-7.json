@@ -1,22 +1,22 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*a "
   },
   {
-    "type": "bold>forced-italic",
+    "type": "bold>bold>forced-italic>italic",
     "text": "{/b "
   },
   {
-    "type": "bold>forced-italic>bold",
+    "type": "bold>bold>forced-italic>italic>bold>bold",
     "text": "*c*"
   },
   {
-    "type": "bold>forced-italic",
+    "type": "bold>bold>forced-italic>italic",
     "text": " d/}"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": " e*"
   },
   {

@@ -1,6 +1,6 @@
 [
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*a *b* c*}"
   },
   {

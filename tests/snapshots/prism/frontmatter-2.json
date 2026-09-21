@@ -1,6 +1,6 @@
 [
   {
-    "type": "front-matter>frontmatter-delimiter",
+    "type": "front-matter>frontmatter-delimiter>punctuation",
     "text": "---json"
   },
   {
@@ -36,7 +36,7 @@
     "text": "\n"
   },
   {
-    "type": "front-matter>frontmatter-delimiter",
+    "type": "front-matter>frontmatter-delimiter>punctuation",
     "text": "---"
   },
   {

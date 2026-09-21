@@ -4,7 +4,7 @@
     "text": "a\n\n"
   },
   {
-    "type": "thematic-break",
+    "type": "thematic-break>punctuation",
     "text": "---"
   },
   {
@@ -12,7 +12,7 @@
     "text": "\n\nb\n\n"
   },
   {
-    "type": "thematic-break",
+    "type": "thematic-break>punctuation",
     "text": "***"
   },
   {
@@ -20,7 +20,7 @@
     "text": "\n\nc\n\n"
   },
   {
-    "type": "thematic-break",
+    "type": "thematic-break>punctuation",
     "text": "___"
   },
   {

@@ -4,11 +4,11 @@
     "text": "a ![t]z][r] b\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /i.png"
   },
   {

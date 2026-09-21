@@ -1,6 +1,6 @@
 [
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "{_x_}"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\n\n"
   },
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "{_x_}"
   },
   {

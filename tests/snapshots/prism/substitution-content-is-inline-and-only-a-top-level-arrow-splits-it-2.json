@@ -1,22 +1,22 @@
 [
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted>math",
+    "type": "changed>important>deleted>math>string",
     "text": "$`a~>b`"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "c"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -24,23 +24,23 @@
     "text": "\n\n"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted>literal",
+    "type": "changed>important>deleted>literal>string",
     "text": "!`a~>b`"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "c"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -48,31 +48,31 @@
     "text": "\n\n"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted",
+    "type": "changed>important>deleted",
     "text": "a"
   },
   {
-    "type": "changed>deleted>critic-comment",
+    "type": "changed>important>deleted>critic-comment>comment",
     "text": "{# ~> #}"
   },
   {
-    "type": "changed>deleted",
+    "type": "changed>important>deleted",
     "text": "b"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "c"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {

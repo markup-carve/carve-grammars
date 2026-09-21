@@ -1,22 +1,22 @@
 [
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "reference-image",
+    "type": "reference-image>url",
     "text": "Apollo"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]["
   },
   {
-    "type": "reference-image>constant",
+    "type": "reference-image>url>constant",
     "text": "nope"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]"
   },
   {

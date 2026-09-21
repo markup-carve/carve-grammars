@@ -4,11 +4,11 @@
     "text": "Text\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure 1: moon"
   },
   {

@@ -24,11 +24,11 @@
     "text": " for details.\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[Other Page]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /other-page"
   },
   {

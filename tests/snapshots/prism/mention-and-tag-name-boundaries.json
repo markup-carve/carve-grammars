@@ -4,7 +4,7 @@
     "text": "Ping "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john-doe"
   },
   {
@@ -12,7 +12,7 @@
     "text": ", "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john_doe"
   },
   {
@@ -20,7 +20,7 @@
     "text": " and "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john"
   },
   {
@@ -28,7 +28,7 @@
     "text": ".doe about "
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#release-1"
   },
   {
@@ -36,7 +36,7 @@
     "text": ".0 today.\n\nReach "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john"
   },
   {
@@ -44,7 +44,7 @@
     "text": ". That is "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john"
   },
   {
@@ -52,7 +52,7 @@
     "text": "'s idea, "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@john"
   },
   {

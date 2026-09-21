@@ -1,14 +1,14 @@
 [
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*a "
   },
   {
-    "type": "forced-bold>forced-italic",
+    "type": "forced-bold>bold>forced-italic>italic",
     "text": "{/b *} d/}"
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": " e*}"
   },
   {

@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\nabc \n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

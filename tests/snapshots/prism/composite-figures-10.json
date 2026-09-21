@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#fig-m"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -16,15 +16,15 @@
     "text": "\n"
   },
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>figure-group-delimiter",
+    "type": "figure-group>tag>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>figure-group-delimiter>class-name",
+    "type": "figure-group>tag>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
@@ -120,11 +120,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " A listing panel"
   },
   {
@@ -132,7 +132,7 @@
     "text": "\n\n"
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$$`E = mc^2`"
   },
   {
@@ -140,11 +140,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " An equation panel"
   },
   {
@@ -176,11 +176,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " A quoted panel"
   },
   {
@@ -188,7 +188,7 @@
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -196,11 +196,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure #: Mixed panels"
   },
   {

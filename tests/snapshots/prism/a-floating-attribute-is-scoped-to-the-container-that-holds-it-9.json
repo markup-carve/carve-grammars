@@ -1,10 +1,10 @@
 [
   {
-    "type": "definition-list>definition-term>punctuation",
+    "type": "definition-list>definition-term>title>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-list>definition-term",
+    "type": "definition-list>definition-term>title",
     "text": " t"
   },
   {
@@ -20,7 +20,7 @@
     "text": "d\n   {.k}\n"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": "   # H"
   },
   {

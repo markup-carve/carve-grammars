@@ -1,6 +1,6 @@
 [
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$$`a + b = c`"
   },
   {
@@ -8,11 +8,11 @@
     "text": "\n\n\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Equation: the sum"
   },
   {

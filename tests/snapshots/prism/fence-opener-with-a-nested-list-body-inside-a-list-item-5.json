@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -8,7 +8,7 @@
     "text": "::: note\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "  - "
   },
   {

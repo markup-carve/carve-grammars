@@ -1,26 +1,26 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*x*"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".a"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "\t"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".b"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -28,23 +28,23 @@
     "text": "\n\n"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*y*"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "\t"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -52,23 +52,23 @@
     "text": "\n\n"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*z*"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".d"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "\t"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

@@ -1,42 +1,42 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>span",
+    "type": "div>tag>span>string",
     "text": "[Roses are red,\nViolets are blue.]"
   },
   {
-    "type": "div>attributes>punctuation",
+    "type": "div>tag>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "div>attributes>class-name",
+    "type": "div>tag>attributes>attr-value>class-name",
     "text": ".verse"
   },
   {
-    "type": "div>attributes>punctuation",
+    "type": "div>tag>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

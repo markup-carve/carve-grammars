@@ -1,6 +1,6 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*a*"
   },
   {
@@ -8,7 +8,7 @@
     "text": " and "
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*b*"
   },
   {

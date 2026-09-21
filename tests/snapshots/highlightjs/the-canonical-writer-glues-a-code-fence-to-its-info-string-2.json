@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```php \"src/Auth.php\" [Composer]"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\ncomposer require x\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

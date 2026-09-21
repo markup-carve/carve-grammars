@@ -12,43 +12,43 @@
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": "  "
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>reference-definition>constant",
+    "type": "div>tag>reference-definition>url>constant",
     "text": "   [r]:"
   },
   {
-    "type": "div>reference-definition",
+    "type": "div>tag>reference-definition>url",
     "text": " /url"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": "  "
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

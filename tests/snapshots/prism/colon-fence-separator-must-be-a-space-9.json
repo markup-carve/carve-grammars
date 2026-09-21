@@ -4,7 +4,7 @@
     "text": "::: \t"
   },
   {
-    "type": "hard-break",
+    "type": "hard-break>constant",
     "text": "\\"
   },
   {
@@ -12,7 +12,7 @@
     "text": "\nx\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -1,6 +1,6 @@
 [
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "=x="
   },
   {
@@ -8,7 +8,7 @@
     "text": " and "
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "{=y=}"
   },
   {

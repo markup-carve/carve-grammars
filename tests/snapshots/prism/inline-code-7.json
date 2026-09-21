@@ -1,10 +1,10 @@
 [
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~"
   },
   {
-    "type": "forced-strike>code",
+    "type": "forced-strike>deleted>code",
     "text": "` ~}"
   },
   {

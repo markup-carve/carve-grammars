@@ -4,7 +4,7 @@
     "text": "Liste:\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -12,7 +12,7 @@
     "text": "eins\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {

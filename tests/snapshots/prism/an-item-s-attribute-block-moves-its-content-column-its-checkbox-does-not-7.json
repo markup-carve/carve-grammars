@@ -1,18 +1,18 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "-"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".x"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -20,7 +20,7 @@
     "text": " a\n"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": "  # one"
   },
   {
@@ -28,19 +28,19 @@
     "text": "\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "-"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".averylongclass"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -48,7 +48,7 @@
     "text": " b\n"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": "  # two"
   },
   {

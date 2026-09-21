@@ -4,7 +4,7 @@
     "text": "An inline "
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$`x = 1`"
   },
   {
@@ -12,27 +12,27 @@
     "text": " and a named "
   },
   {
-    "type": "math",
+    "type": "math>string",
     "text": "$`y`"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "aria-label"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes>string",
+    "type": "attributes>attr-value>string",
     "text": "\"why\""
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

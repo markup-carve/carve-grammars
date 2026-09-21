@@ -20,15 +20,15 @@
     "text": "|"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>class-name",
+    "type": "table>attributes>attr-value>class-name",
     "text": ".head"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -80,15 +80,15 @@
     "text": "|"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>class-name",
+    "type": "table>attributes>attr-value>class-name",
     "text": ".win"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {

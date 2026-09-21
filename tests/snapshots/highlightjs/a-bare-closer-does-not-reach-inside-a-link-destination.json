@@ -4,7 +4,7 @@
     "text": "/see "
   },
   {
-    "scope": "link",
+    "scope": "emphasis>link",
     "text": "[x](http://a.b/c)"
   },
   {

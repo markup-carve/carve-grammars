@@ -16,7 +16,7 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "     ```"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n     [r]: /url\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "     ```"
   },
   {

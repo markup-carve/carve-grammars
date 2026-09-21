@@ -1,30 +1,30 @@
 [
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": "/see "
   },
   {
-    "type": "italic>url>punctuation",
+    "type": "italic>italic>url>punctuation",
     "text": "["
   },
   {
-    "type": "italic>url",
+    "type": "italic>italic>url",
     "text": "x"
   },
   {
-    "type": "italic>url>punctuation",
+    "type": "italic>italic>url>punctuation",
     "text": "]("
   },
   {
-    "type": "italic>url",
+    "type": "italic>italic>url",
     "text": "http://a.b/c"
   },
   {
-    "type": "italic>url>punctuation",
+    "type": "italic>italic>url>punctuation",
     "text": ")"
   },
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": " now/"
   },
   {

@@ -4,7 +4,7 @@
     "text": "*bold with "
   },
   {
-    "scope": "emphasis",
+    "scope": "strong>emphasis",
     "text": "/italic/"
   },
   {
@@ -20,7 +20,7 @@
     "text": "/italic with "
   },
   {
-    "scope": "strong",
+    "scope": "emphasis>strong",
     "text": "*bold*"
   },
   {

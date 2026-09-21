@@ -4,7 +4,7 @@
     "text": "::: 123\ncontent\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

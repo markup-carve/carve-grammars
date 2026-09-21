@@ -4,23 +4,23 @@
     "text": "a ^[see "
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "reference-image",
+    "type": "reference-image>url",
     "text": "z"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]["
   },
   {
-    "type": "reference-image>constant",
+    "type": "reference-image>url>constant",
     "text": "r"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]"
   },
   {
@@ -28,11 +28,11 @@
     "text": "] b\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /i.png"
   },
   {

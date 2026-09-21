@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "````markdown"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\n```python\nprint(\"hi\")\n```\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "````"
   },
   {

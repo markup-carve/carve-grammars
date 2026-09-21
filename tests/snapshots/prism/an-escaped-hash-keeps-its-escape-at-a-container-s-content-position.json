@@ -32,11 +32,11 @@
     "text": "\n\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\#"
   },
   {
@@ -44,7 +44,7 @@
     "text": " heading\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -52,7 +52,7 @@
     "text": "\\"
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#tag"
   },
   {

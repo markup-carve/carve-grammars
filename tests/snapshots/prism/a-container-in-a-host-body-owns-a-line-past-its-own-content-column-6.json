@@ -1,10 +1,10 @@
 [
   {
-    "type": "definition-list>definition-term>punctuation",
+    "type": "definition-list>definition-term>title>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-list>definition-term",
+    "type": "definition-list>definition-term>title",
     "text": " t"
   },
   {
@@ -32,11 +32,11 @@
     "text": "\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "    [r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /url"
   },
   {

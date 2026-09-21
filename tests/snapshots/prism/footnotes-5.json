@@ -4,7 +4,7 @@
     "text": "See"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^m]"
   },
   {
@@ -12,7 +12,7 @@
     "text": " and again"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^m]"
   },
   {
@@ -20,11 +20,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^m]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " One note, two refs."
   },
   {

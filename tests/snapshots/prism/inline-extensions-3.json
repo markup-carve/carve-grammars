@@ -1,18 +1,18 @@
 [
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":foo"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "bar"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {

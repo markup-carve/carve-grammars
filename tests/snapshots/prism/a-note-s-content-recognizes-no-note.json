@@ -4,15 +4,15 @@
     "text": "x "
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "^["
   },
   {
-    "type": "inline-footnote",
+    "type": "inline-footnote>symbol",
     "text": "a ^[b"
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {

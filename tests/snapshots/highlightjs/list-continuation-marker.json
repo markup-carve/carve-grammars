@@ -16,7 +16,7 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```sh"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\ndocker build -t app .\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

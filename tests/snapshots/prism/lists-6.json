@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "1. "
   },
   {
@@ -8,7 +8,7 @@
     "text": "setup\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "   - "
   },
   {
@@ -16,7 +16,7 @@
     "text": "clone\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "   - "
   },
   {
@@ -24,7 +24,7 @@
     "text": "install\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "2. "
   },
   {

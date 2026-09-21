@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "loose"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -16,11 +16,11 @@
     "text": "\n"
   },
   {
-    "type": "definition-list>definition-term>punctuation",
+    "type": "definition-list>definition-term>title>punctuation",
     "text": "::"
   },
   {
-    "type": "definition-list>definition-term",
+    "type": "definition-list>definition-term>title",
     "text": " Term"
   },
   {

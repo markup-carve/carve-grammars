@@ -4,7 +4,7 @@
     "text": "<!"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "--"
   },
   {
@@ -12,7 +12,7 @@
     "text": " a comment "
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "-->"
   },
   {

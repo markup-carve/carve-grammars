@@ -1,6 +1,6 @@
 [
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\!"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\\\""
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\#"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\\$"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\%"
   },
   {
@@ -24,35 +24,35 @@
     "text": "\\&\\'"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\("
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\)"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\*"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\+"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\,"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\-"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\."
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\/"
   },
   {
@@ -60,15 +60,15 @@
     "text": "\\:\\;"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\<"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\="
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\>"
   },
   {
@@ -76,47 +76,47 @@
     "text": "\\?"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\@"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\["
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\\\"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\]"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\^"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\_"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\`"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\{"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\|"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\}"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\~"
   },
   {

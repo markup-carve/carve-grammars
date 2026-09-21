@@ -1,6 +1,6 @@
 [
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#a"
   },
   {
@@ -8,7 +8,7 @@
     "text": " "
   },
   {
-    "type": "tag",
+    "type": "tag>variable",
     "text": "#b"
   },
   {

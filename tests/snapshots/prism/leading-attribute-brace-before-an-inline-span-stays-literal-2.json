@@ -28,7 +28,7 @@
     "text": "\n\nx"
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*a { b*}"
   },
   {

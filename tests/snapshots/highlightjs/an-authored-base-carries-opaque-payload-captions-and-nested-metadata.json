@@ -8,7 +8,7 @@
     "text": "\n\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "   ~~~~"
   },
   {
@@ -16,7 +16,7 @@
     "text": "\n    ```\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "   ~~~~"
   },
   {

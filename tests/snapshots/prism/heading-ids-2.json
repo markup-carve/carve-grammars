@@ -1,10 +1,10 @@
 [
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " Getting Started"
   },
   {
@@ -12,15 +12,15 @@
     "text": "\n\nJump to "
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": "</#"
   },
   {
-    "type": "cross-ref",
+    "type": "cross-ref>url",
     "text": "getting-started"
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": ">"
   },
   {

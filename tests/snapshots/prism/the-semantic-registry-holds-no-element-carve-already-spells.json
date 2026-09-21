@@ -8,7 +8,7 @@
     "text": " "
   },
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!`x`"
   },
   {
@@ -16,7 +16,7 @@
     "text": " "
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "=x="
   },
   {

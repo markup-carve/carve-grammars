@@ -8,15 +8,15 @@
     "text": "\n"
   },
   {
-    "scope": "punctuation",
+    "scope": "language-json>punctuation",
     "text": "{"
   },
   {
-    "scope": "attr",
+    "scope": "language-json>attr",
     "text": "\"title\""
   },
   {
-    "scope": "punctuation",
+    "scope": "language-json>punctuation",
     "text": ":"
   },
   {
@@ -24,11 +24,11 @@
     "text": " "
   },
   {
-    "scope": "string",
+    "scope": "language-json>string",
     "text": "\"My Document\""
   },
   {
-    "scope": "punctuation",
+    "scope": "language-json>punctuation",
     "text": "}"
   },
   {

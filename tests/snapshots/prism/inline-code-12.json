@@ -4,11 +4,11 @@
     "text": "x"
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*"
   },
   {
-    "type": "forced-bold>code",
+    "type": "forced-bold>bold>code",
     "text": "`a\n*}"
   },
   {
@@ -16,35 +16,35 @@
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nx"
   },
   {
-    "type": "div>forced-bold",
+    "type": "div>tag>forced-bold>bold",
     "text": "{*"
   },
   {
-    "type": "div>forced-bold>code",
+    "type": "div>tag>forced-bold>bold>code",
     "text": "`a\n*}"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -1,14 +1,14 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*bold with "
   },
   {
-    "type": "bold>italic",
+    "type": "bold>bold>italic>italic",
     "text": "/italic/"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": " inside*"
   },
   {
@@ -16,15 +16,15 @@
     "text": " and "
   },
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": "/italic with "
   },
   {
-    "type": "italic>bold",
+    "type": "italic>italic>bold>bold",
     "text": "*bold*"
   },
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": " inside/"
   },
   {

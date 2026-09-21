@@ -4,7 +4,7 @@
     "text": "a "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^1]"
   },
   {
@@ -12,11 +12,11 @@
     "text": " b\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^1]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " see [t[^2]][r]"
   },
   {
@@ -24,11 +24,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[r]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /u"
   },
   {
@@ -36,11 +36,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^2]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " two"
   },
   {

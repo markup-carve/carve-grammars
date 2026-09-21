@@ -4,15 +4,15 @@
     "text": "para\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "* "
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[d]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " u"
   },
   {

@@ -1,6 +1,6 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[a]"
   },
   {
@@ -8,7 +8,7 @@
     "text": "{:en_US} "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[b]"
   },
   {
@@ -16,7 +16,7 @@
     "text": "{:-en} "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[c]"
   },
   {
@@ -24,7 +24,7 @@
     "text": "{:en-} "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[d]"
   },
   {

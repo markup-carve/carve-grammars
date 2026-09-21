@@ -1,6 +1,6 @@
 [
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\/"
   },
   {
@@ -8,7 +8,7 @@
     "text": "literal"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\/"
   },
   {
@@ -16,7 +16,7 @@
     "text": " and "
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\*"
   },
   {
@@ -24,7 +24,7 @@
     "text": "not bold"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\*"
   },
   {

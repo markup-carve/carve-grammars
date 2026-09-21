@@ -1,10 +1,10 @@
 [
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@a"
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@b"
   },
   {

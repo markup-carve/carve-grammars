@@ -1,10 +1,10 @@
 [
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^n]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " intro"
   },
   {
@@ -12,23 +12,23 @@
     "text": "\n\n    "
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "alt"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "image.png"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {
@@ -36,7 +36,7 @@
     "text": "\n"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": "    ^ Caption"
   },
   {
@@ -44,7 +44,7 @@
     "text": "\n\nsee"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^n]"
   },
   {

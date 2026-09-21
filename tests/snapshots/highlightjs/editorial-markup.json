@@ -24,11 +24,11 @@
     "text": "{~old"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "new"
   },
   {

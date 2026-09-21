@@ -1,6 +1,6 @@
 [
   {
-    "type": "front-matter>frontmatter-delimiter",
+    "type": "front-matter>frontmatter-delimiter>punctuation",
     "text": "---"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\n"
   },
   {
-    "type": "front-matter>key",
+    "type": "front-matter>key>property",
     "text": "title"
   },
   {
@@ -20,7 +20,7 @@
     "text": " My Document\n"
   },
   {
-    "type": "front-matter>key",
+    "type": "front-matter>key>property",
     "text": "author"
   },
   {
@@ -32,7 +32,7 @@
     "text": " Jane Doe\n"
   },
   {
-    "type": "front-matter>key",
+    "type": "front-matter>key>property",
     "text": "date"
   },
   {
@@ -68,7 +68,7 @@
     "text": "\n"
   },
   {
-    "type": "front-matter>frontmatter-delimiter",
+    "type": "front-matter>frontmatter-delimiter>punctuation",
     "text": "---"
   },
   {
