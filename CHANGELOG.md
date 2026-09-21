@@ -45,6 +45,7 @@ All notable changes to `carve-grammars` are documented here.
 - Prism and TextMate read a lone `+` as a continuation marker, not a table row. Prism scopes it with a new `continuation-marker` token, and `table-continuation` keeps only the row form that ends in `|` (#523).
 - A reference definition is scoped only where the line completes one, on all three surfaces, so `[a]: /u zzz` and a title after two spaces are prose. Prism scopes the title as `string` apart from the URL, highlight.js scopes the destination as `link` and the title as `string`, and Prism no longer scopes a footnote definition as a reference definition (#523, #533).
 - The Tiptap entry declares every package it imports. Seventeen Tiptap extensions and the ProseMirror bundle were listed only as dev dependencies, so a consumer who installed the declared peers could not import `./tiptap`, and a strict pnpm install failed even with all of them present. They are optional peers now, with the other Tiptap peers' range, and the README lists the full set. The Shiki types package `shiki/diff` names in its typings is declared too (#541).
+- A Shiki 4 project can install the package. The peer ranges for the Shiki themes and types packages stopped at 3, so npm refused the install with ERESOLVE; both accept `^2 || ^3 || ^4` now (#544).
 
 ## [0.1.8] - 2026-09-13
 
