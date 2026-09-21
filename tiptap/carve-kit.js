@@ -1,6 +1,7 @@
 import { Extension } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
 import StarterKit from '@tiptap/starter-kit';
+import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
 import Highlight from '@tiptap/extension-highlight';
 import Subscript from '@tiptap/extension-subscript';
@@ -282,7 +283,14 @@ export const CarveKit = Extension.create({
                 underline: false,
                 link: false,
                 ...this.options.starterKit,
+                code: false,
             }));
+            // Carve lets any inline mark wrap a code span. The stock mark
+            // excludes all others, so `*`x`*` lost its strong on the way back
+            // in from HTML (#529).
+            if (this.options.starterKit?.code !== false) {
+                extensions.push(Code.extend({ excludes: '' }).configure(this.options.starterKit?.code ?? {}));
+            }
         }
 
         if (this.options.heading !== false) {

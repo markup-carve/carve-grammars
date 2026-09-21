@@ -193,13 +193,24 @@ const htmlShapes = [
     ['A [HTML]{abbr="X"} span.', 'A [HTML]{abbr="X"} span.'],
     ['# a [x](/y) b\n\n[a [x](/y) b][]', '# a [x](/y) b\n\n[a x b][]'],
     ['# a <https://e.com> b\n\n[a <https://e.com> b][]', '# a <https://e.com> b\n\n[a https://e.com b][]'],
+    // A code span keeps the mark around it (#529).
+    ['*`x` y*', '*`x` y*'],
+    ['_`x`_', '_`x`_'],
+    ['{=`x`=}', '{=`x`=}'],
+    ['[`c`]{.k}', '[`c`]{.k}'],
+    ['[`c` x](/u)', '[`c` x](/u)'],
+    ['# `code()` heading\n\n[`code()` heading][]', '# `code()` heading\n\n[`code()` heading][]'],
 ];
 for (const [source, expected] of htmlShapes) {
     const doc = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.ok(!/<a\b[^>]*>(?:(?!<\/a>).)*<a\b/.test(htmlFor(doc)), `${source} renders an <a> inside an <a>`);
     assert.equal(throughHtml(doc), expected, `${source} changed through HTML`);
 }
-console.log(`  ✓ ${htmlShapes.length} reference and abbreviation shapes survive the editor's own HTML`);
+console.log(`  ✓ ${htmlShapes.length} reference, abbreviation and code-span shapes survive the editor's own HTML`);
+
+const withoutCode = new Editor({ extensions: [CarveKit.configure({ starterKit: { code: false } })], content: '<p>x</p>' });
+assert.equal('code' in withoutCode.schema.marks, false, 'starterKit: { code: false } no longer removes the code mark');
+withoutCode.destroy();
 
 // carve-php and carve-js write plumbing of their own onto the elements this
 // kit parses, and none of it is an author's key/value. These documents mount
