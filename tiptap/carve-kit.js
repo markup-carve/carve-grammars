@@ -644,18 +644,19 @@ export const CarveKit = Extension.create({
                         'data-carve-inherited-align': attrs.carveInheritedTextAlign,
                     } : {},
             };
-            const tableAttrs = {
+            // `scope` is header-only: both engines write it on a `<th>` and on
+            // nothing else, so reserving it on a row or a body cell would drop
+            // an authored `|{scope=row} x |` instead.
+            const tableAttrs = (own = []) => ({
                 ...attributeSlots([
                     'colspan', 'rowspan', 'colwidth', 'data-colwidth', 'style',
-                    'data-carve-inherited-align',
-                    // Both engines write `scope` on a header cell.
-                    'scope',
+                    'data-carve-inherited-align', ...own,
                 ]),
                 textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
-            };
-            const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
-            const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
-            const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs }; } });
+            });
+            const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs() }; } });
+            const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs() }; } });
+            const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs(['scope']) }; } });
             extensions.push(CustomTableRow.configure(this.options.tableRow ?? {}));
             extensions.push(CustomTableCell.configure(this.options.tableCell ?? {}));
             extensions.push(CustomTableHeader.configure(this.options.tableHeader ?? {}));

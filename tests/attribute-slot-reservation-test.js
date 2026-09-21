@@ -145,6 +145,18 @@ for (const [name, expected] of corpusPairs) {
 }
 console.log(`  ✓ ${corpusPairs.length} corpus documents keep their authored pairs through the editor's own HTML`);
 
+// A name reserved on one node is still the author's on another. `scope` is
+// engine plumbing on a header cell and an ordinary key/value anywhere else.
+const authoredSources = [
+    ['|{scope=row} x |', '|{scope="row"} x |'],
+    ['| x |{scope=row}', '| x |{scope="row"}'],
+];
+for (const [source, expected] of authoredSources) {
+    assert.equal(throughHtml(carveToProseMirror(source, { unsupported: 'preserve' })), expected,
+        `${source} lost its authored run through HTML`);
+}
+console.log(`  ✓ ${authoredSources.length} authored runs survive on a node that reserves the name elsewhere`);
+
 // carve-php and carve-js write plumbing of their own onto the elements this
 // kit parses, and none of it is an author's key/value. These documents mount
 // ENGINE-rendered HTML, which is the path wp-carve and the panel bar take.
@@ -172,7 +184,7 @@ for (const [name, expected] of engineHtml) {
         instance.destroy();
     }
 }
-console.log(`  \u2713 ${engineHtml.length} corpus documents keep engine plumbing out of the author's run`);
+console.log(`  ✓ ${engineHtml.length} corpus documents keep engine plumbing out of the author's run`);
 
 // The projection through HTML is lossy for reasons that have nothing to do
 // with attribute runs. Every other fixture writes the same Carve either way.
