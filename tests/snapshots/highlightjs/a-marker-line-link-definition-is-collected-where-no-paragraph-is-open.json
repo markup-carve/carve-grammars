@@ -1,7 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[f]: t"
+    "text": "[f]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "t"
   },
   {
     "scope": null,

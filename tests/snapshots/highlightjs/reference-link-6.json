@@ -9,7 +9,19 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: /url \"Title\""
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"Title\""
   },
   {
     "scope": null,

@@ -1180,14 +1180,21 @@
             }, inline),
         },
 
-        // Table continuation / list continuation: a lone `+`
-        // Table/list continuation: a lone `+` (grammar.ebnf
-        // `continuation_marker`) or a continuation ROW carrying cells
-        // (`continuation_row`, corpus 63-table-multi-line-cell-continuation).
-        // The row form has to end in `|`, so `one + two` in prose stays
-        // literal.
+        // A lone `+` is grammar.ebnf `continuation_marker`, which attaches a
+        // block to a list item, quote, footnote or description; it is not
+        // table syntax (#523).
+        'continuation-marker': {
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$/m,
+            inside: {
+                'punctuation': /\+/,
+            },
+        },
+
+        // A continuation ROW carrying cells (`continuation_row`, corpus
+        // 63-table-multi-line-cell-continuation). It has to end in `|`, so
+        // `one + two` in prose stays literal.
         'table-continuation': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[^\n]*\|[ \t]*$/m,
             inside: Object.assign({
                 'punctuation': /^\uFEFF?[ \t]*\+|\|/,
             }, inline),
@@ -1330,6 +1337,12 @@
             alias: 'url',
             inside: {
                 'constant': /^\uFEFF?[ \t]*\[[^\]]+\]:/,
+                // `link_title`, one space after the destination, scoped as an
+                // inline link's title is rather than as part of the URL (#523).
+                'string': {
+                    pattern: /(^ (?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
+                    lookbehind: true,
+                },
             },
         },
         // `abbreviation_term = (letter | digit)+`, and `letter` is enumerated

@@ -17,7 +17,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[ok]: /p.png"
+    "text": "[ok]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/p.png"
   },
   {
     "scope": null,

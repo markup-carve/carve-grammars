@@ -1,7 +1,19 @@
 [
   {
     "scope": "symbol",
-    "text": "[a]: /u \"T\""
+    "text": "[a]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"T\""
   },
   {
     "scope": null,

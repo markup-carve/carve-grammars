@@ -9,7 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "  [r]: /first"
+    "text": "  [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/first"
   },
   {
     "scope": null,
@@ -17,7 +21,11 @@
   },
   {
     "scope": "symbol",
-    "text": "   [r]: /second"
+    "text": "   [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/second"
   },
   {
     "scope": null,

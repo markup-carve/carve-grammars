@@ -13,7 +13,19 @@
   },
   {
     "scope": "symbol",
-    "text": " [x]: /intro \"T\""
+    "text": " [x]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/intro"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"T\""
   },
   {
     "scope": null,

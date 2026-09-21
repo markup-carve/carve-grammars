@@ -5,7 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: /i.png"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/i.png"
   },
   {
     "scope": null,

@@ -697,12 +697,25 @@
         relevance: 5,
     };
 
-    // Reference definitions: [ref]: url
+    // Reference definitions: [ref]: url "title". The destination and the
+    // `link_title` are scoped apart, as TextMate does (#523).
     const REFERENCE_DEF = {
         className: 'symbol',
         begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[[^\]^\]]+\]:(?= )/,
         end: /$/,
         relevance: 10,
+        contains: [
+            // Only on a line that completes a definition; `[a]: /u zzz` is
+            // prose (grammar.ebnf `reference_definition`, anchored at end of line).
+            {
+                className: 'link',
+                begin: /(?<=\]: )(?:\S|\uFEFF)+(?=(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^\n]*\})?[ \t]*$)/,
+            },
+            {
+                className: 'string',
+                begin: /(?=["'])(?<=\]: (?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
+            },
+        ],
     };
 
     // Footnote references: [^note]

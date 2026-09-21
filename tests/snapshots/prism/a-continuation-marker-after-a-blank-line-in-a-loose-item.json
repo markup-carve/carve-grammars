@@ -8,7 +8,7 @@
     "text": "a\n\n  b\n\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "continuation-marker>punctuation",
     "text": "+"
   },
   {

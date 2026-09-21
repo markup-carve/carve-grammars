@@ -9,7 +9,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[ex]: /u {.external #a}"
+    "text": "[ex]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " {.external #a}"
   },
   {
     "scope": null,

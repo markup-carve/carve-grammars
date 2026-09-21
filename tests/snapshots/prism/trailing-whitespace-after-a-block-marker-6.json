@@ -8,11 +8,11 @@
     "text": "a\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "continuation-marker>punctuation",
     "text": "+"
   },
   {
-    "type": "table-continuation",
+    "type": "continuation-marker",
     "text": " "
   },
   {

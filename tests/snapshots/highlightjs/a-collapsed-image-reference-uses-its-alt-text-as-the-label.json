@@ -9,7 +9,19 @@
   },
   {
     "scope": "symbol",
-    "text": "[moon]: /moon.png \"Title\""
+    "text": "[moon]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/moon.png"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"Title\""
   },
   {
     "scope": null,

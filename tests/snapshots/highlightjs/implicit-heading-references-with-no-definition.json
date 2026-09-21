@@ -65,7 +65,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[Defined]: /wins"
+    "text": "[Defined]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/wins"
   },
   {
     "scope": null,

@@ -13,7 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: /u"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
   },
   {
     "scope": null,
@@ -21,7 +25,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r2]: /i.png"
+    "text": "[r2]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/i.png"
   },
   {
     "scope": null,

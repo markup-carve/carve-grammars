@@ -1,7 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[*bold* heading]: /x"
+    "text": "[*bold* heading]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/x"
   },
   {
     "scope": null,

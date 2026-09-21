@@ -5,7 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: http://x"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "http://x"
   },
   {
     "scope": null,

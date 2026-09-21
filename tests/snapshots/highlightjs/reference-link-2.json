@@ -13,7 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[x]: /intro"
+    "text": "[x]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/intro"
   },
   {
     "scope": null,

@@ -29,7 +29,11 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " /url \"Title\""
+    "text": " /url "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"Title\""
   },
   {
     "type": "text",

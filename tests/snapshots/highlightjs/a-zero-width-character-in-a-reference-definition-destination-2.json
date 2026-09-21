@@ -1,7 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[r]: https://e﻿.com/"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "https://e﻿.com/"
   },
   {
     "scope": null,

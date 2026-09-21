@@ -25,7 +25,11 @@
   },
   {
     "type": "reference-definition>url",
-    "text": " /moon.png \"Title\""
+    "text": " /moon.png "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"Title\""
   },
   {
     "type": "text",

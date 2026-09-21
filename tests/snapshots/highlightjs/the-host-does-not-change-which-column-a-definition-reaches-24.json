@@ -17,7 +17,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: /a"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/a"
   },
   {
     "scope": null,
@@ -25,7 +29,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[r]: /b"
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/b"
   },
   {
     "scope": null,

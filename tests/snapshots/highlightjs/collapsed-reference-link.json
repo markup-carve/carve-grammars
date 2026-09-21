@@ -13,7 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[Other Page]: /other-page"
+    "text": "[Other Page]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/other-page"
   },
   {
     "scope": null,

@@ -16,8 +16,12 @@
     "text": "b\n"
   },
   {
-    "type": "table-continuation>punctuation",
-    "text": "    +"
+    "type": "continuation-marker",
+    "text": "    "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
   },
   {
     "type": "text",
