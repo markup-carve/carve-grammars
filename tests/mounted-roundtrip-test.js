@@ -5,6 +5,8 @@ import { Editor } from '@tiptap/core';
 import { carveToHtml } from '@markup-carve/carve';
 import { CarveKit, carveToProseMirror, serializeToCarve } from '../tiptap/index.js';
 import { listCorpusFiles } from './lib/corpus.js';
+import { slugOf } from './lib/coverage.js';
+import { assertLedger } from './lib/ledger.js';
 
 const win = new Window({ url: 'http://localhost/' });
 globalThis.window = win;
@@ -514,5 +516,5 @@ imported.destroy();
 //
 // 236 -> 232 when the outermost mark stopped being read off position 0 (#501).
 // 94-..., both 467-... and 472-... come back; nothing joins.
-assert.strictEqual(changed.length, 232, `mounted rich projection changed for ${changed.length} corpus documents`);
+assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
