@@ -663,9 +663,15 @@ export const CarveKit = Extension.create({
                 ]),
                 textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
             });
+            // Tiptap 3 cells declare an `align` of their own, read from the
+            // same `text-align` the kit writes for `textAlign`, and the
+            // serializer wrote it back as an authored `{align=...}` (#532).
+            const withoutStockAlign = (parent) => (parent?.align
+                ? { ...parent, align: { ...parent.align, parseHTML: () => null } }
+                : parent);
             const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs() }; } });
-            const CustomTableCell = TableCell.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs() }; } });
-            const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs(['scope']) }; } });
+            const CustomTableCell = TableCell.extend({ addAttributes() { return { ...withoutStockAlign(this.parent?.()), ...tableAttrs() }; } });
+            const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...withoutStockAlign(this.parent?.()), ...tableAttrs(['scope']) }; } });
             extensions.push(CustomTableRow.configure(this.options.tableRow ?? {}));
             extensions.push(CustomTableCell.configure(this.options.tableCell ?? {}));
             extensions.push(CustomTableHeader.configure(this.options.tableHeader ?? {}));
