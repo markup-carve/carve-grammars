@@ -1057,6 +1057,9 @@ function convertInlineNode(node, marks, ctx) {
             }];
 
         case 'link': {
+            // Links never nest: an inner link renders as its text, and a second
+            // link mark on the same text writes an `<a>` inside an `<a>`.
+            if (marks.some((mark) => mark.type === 'link')) return descend(node, marks, ctx);
             const attrs = { href: node.href || '' };
             if (node.title) attrs.title = node.title;
             // A REFERENCE link is not an inline link, and PART 12 section 3a is
@@ -1086,6 +1089,7 @@ function convertInlineNode(node, marks, ctx) {
             const text = node.text ?? node.href ?? '';
             // An autolink takes an attribute run of its own
             // (`<https://e.com>{#id .c}` renders the id and class on the `<a>`).
+            if (marks.some((mark) => mark.type === 'link')) return [{ type: 'text', text, marks }];
             const attrs = { href: node.href || text, carveAutolink: true, ...(convertAttrs(node.attrs) || {}) };
             return [{ type: 'text', text, marks: [...marks, { type: 'link', attrs }] }];
         }

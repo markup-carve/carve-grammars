@@ -585,6 +585,15 @@ export const CarveKit = Extension.create({
                             ]),
                         };
                     },
+                    // A reference with no target renders `href=""`, which the
+                    // stock `a[href]` rule rejects, so the whole link came back
+                    // as bare text (#522). The reference carries it instead.
+                    parseHTML() {
+                        return [
+                            ...(this.parent?.() ?? []),
+                            { tag: 'a[carveref]', getAttrs: (dom) => (dom.getAttribute('href') ? false : null) },
+                        ];
+                    },
                     addKeyboardShortcuts() {
                         return {
                             'Mod-Shift-k': () => {
