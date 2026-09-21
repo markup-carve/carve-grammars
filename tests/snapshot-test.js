@@ -40,6 +40,7 @@ const SNAP_DIR = fileURLToPath(new URL('./snapshots', import.meta.url));
 let passed = 0;
 let written = 0;
 let failures = 0;
+let compared = 0;
 
 console.log('carve-grammars highlight snapshots:');
 
@@ -126,6 +127,7 @@ function hljsTokens(source) {
  * and a real token change is a diff of the files that actually changed (#74).
  */
 function snapshot(grammar, name, tokens) {
+    compared++;
     const dir = `${SNAP_DIR}/${grammar}`;
     const file = `${dir}/${slugOf(name)}.json`;
     const serialized = JSON.stringify(tokens, null, 2) + '\n';
@@ -212,8 +214,11 @@ const corpus = listCorpusFiles();
 const categories = [...new Set(corpus.map((f) => f.category))];
 const prismCovered = coveredCategories('prism', categories);
 const hljsCovered = coveredCategories('highlightjs', categories);
+const notCompared = { prism: [], highlightjs: [] };
 
 for (const file of corpus) {
+    if (!prismCovered.has(file.category)) notCompared.prism.push(file.name);
+    if (!hljsCovered.has(file.category)) notCompared.highlightjs.push(file.name);
     if (prismCovered.has(file.category)) {
         const tokens = prismTokens(file.source);
         sanityPrism(file.name, file.source, tokens);
@@ -266,9 +271,44 @@ for (const file of corpus) {
     }
 }
 
+/*
+ * HOW MANY DOCUMENTS WERE COMPARED, reconciled against the corpus.
+ *
+ * The loop above reads a document only when its category is covered, and for
+ * a highlighter `coveredCategories` returns "everything not explicitly
+ * skipped". So one entry in `COVERAGE.prism.skip` removes a whole category
+ * from this run, and every gate stays green: the coverage partition compares
+ * the derived list with the list it was derived from, and the orphan sweep
+ * below only sees goldens whose corpus file is GONE, not goldens nobody read.
+ * Measured on `326-...`, 29 documents: 3480 compared became 3451 and both
+ * tests passed (markup-carve/carve-grammars#513).
+ *
+ * The expectation is DERIVED, not recorded: `listCorpusFiles` already
+ * reconciles the corpus against the count the spec pin declares, so two
+ * grammars over that corpus is the whole population. A skip for a highlighter
+ * is refused outright rather than accounted for, because `covered + skipped`
+ * is the same number either way - which is the identity that let the shrink
+ * through.
+ */
+for (const grammar of ['prism', 'highlightjs']) {
+    assert.deepStrictEqual(
+        notCompared[grammar], [],
+        `${grammar} skips ${notCompared[grammar].length} corpus document(s), starting with `
+        + `${notCompared[grammar][0]}. A highlighter tokenizes arbitrary text, so `
+        + 'tests/lib/coverage.js declares no skips for it and this suite reads every document. '
+        + 'A deliberate skip has to change this assertion and say what it buys.',
+    );
+}
+assert.strictEqual(
+    compared, 2 * corpus.length,
+    `${compared} snapshot comparisons over ${corpus.length} corpus documents and two grammars, `
+    + `not ${2 * corpus.length}`,
+);
+
 console.log('');
 if (written) console.log(`  ${written} snapshot${written === 1 ? '' : 's'} written`);
 if (passed) console.log(`  ${passed} snapshot${passed === 1 ? '' : 's'} matched`);
+console.log(`  ${compared} comparison${compared === 1 ? '' : 's'} over ${corpus.length} corpus documents`);
 
 assert.strictEqual(failures, 0, `${failures} snapshot(s) differ from golden`);
 

@@ -39,6 +39,28 @@ for (const grammar of Object.keys(COVERAGE)) {
     });
 }
 
+ok('a highlighter declares no skip, so its partition is not self-derived', () => {
+    /*
+     * `assertPartition` derives a highlighter's covered set as "every category
+     * not explicitly skipped", then checks that list against the list it came
+     * from, so it cannot fail while the skip map is empty. What makes that
+     * safe is the emptiness itself, and nothing asserted it: one entry removed
+     * a category of 29 documents from the snapshot run and both gates stayed
+     * green (markup-carve/carve-grammars#513).
+     *
+     * The rule this pins is the one tests/lib/coverage.js states: a
+     * highlighter tokenizes arbitrary text, so every category is coverable.
+     */
+    for (const grammar of ['prism', 'highlightjs']) {
+        assert.deepStrictEqual(
+            [...COVERAGE[grammar].skip.keys()], [],
+            `${grammar} declares a skip. Its covered set is derived as the complement, so a skip `
+            + 'silently shrinks the snapshot population instead of failing anything. Decide the '
+            + 'skip here and in tests/snapshot-test.js together.',
+        );
+    }
+});
+
 ok('tiptap: every skip has a non-empty reason', () => {
     for (const [cat, reason] of COVERAGE.tiptap.skip) {
         assert.ok(reason && reason.trim().length > 0, `tiptap skip "${cat}" needs a reason`);
