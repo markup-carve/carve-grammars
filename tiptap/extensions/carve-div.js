@@ -1,5 +1,5 @@
 import { Node, mergeAttributes } from '@tiptap/core';
-import { attributeOrderSlot } from './carve-attribute-slots.js';
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /**
  * First direct child that carries the admonition-title class (carve-php and
@@ -73,9 +73,13 @@ export const CarveDiv = Node.create({
 
     addAttributes() {
         return {
-            id: { default: null },
-            carveKeyValues: { default: null },
-            ...attributeOrderSlot(),
+            // The two ARIA names are reserved because both engines label an
+            // admonition with them from its kind word, so reading one back
+            // writes `{aria-label="Note"}` onto a container nobody annotated.
+            ...attributeSlots([
+                'label', 'data-carve-class', 'data-carve-title', 'data-carve-typed',
+                'aria-label', 'aria-labelledby', 'style',
+            ]),
             label: { default: null },
             // Whether the class was written as the KIND WORD on the opener or in
             // an attribute run above a bare fence. Undeclared, it was dropped on
@@ -106,11 +110,11 @@ export const CarveDiv = Node.create({
                     if (attr !== null) return attr;
                     const child = findTitleChild(element);
                     if (child) return child.textContent.trim();
-                    // carve-js renders an authored {title="..."} block attribute
-                    // as a literal title attribute on the container (carve-php
-                    // promotes it to an admonition-title paragraph instead);
-                    // capture it so the title survives that engine's seed too.
-                    return element.getAttribute('title');
+                    // A literal `title` attribute is carve-js rendering an
+                    // AUTHORED `{title="..."}` run. It belongs in the run the
+                    // key/value slot reads, not in the opener, and taking it
+                    // here as well wrote the title line twice.
+                    return null;
                 },
                 renderHTML: attributes => {
                     if (attributes.title == null) return {};
