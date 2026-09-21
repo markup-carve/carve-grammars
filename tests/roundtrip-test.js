@@ -23,6 +23,7 @@ import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { normalizeAst } from './lib/ast-normalize.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
 import { COVERAGE, isCovered, skipReason, slugOf } from './lib/coverage.js';
+import { assertLedger } from './lib/ledger.js';
 
 console.log('carve-grammars serializer round-trip:');
 
@@ -648,9 +649,10 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * its corpus HTML pins, and the projection spells that document differently
  * while rendering the same.
  */
-assert.strictEqual(
-    envelopedFiles.length, 372,
-    `${envelopedFiles.length} corpus documents need the source envelope, not 372`,
+assertLedger(
+    'enveloped-ledger.json',
+    envelopedFiles.map(slugOf),
+    'the set of corpus documents that need the source envelope',
 );
 
 assert.strictEqual(
