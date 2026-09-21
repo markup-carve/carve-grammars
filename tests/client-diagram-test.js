@@ -67,6 +67,9 @@ console.log('carve-grammars client diagram renderers:');
     const gimg = el.querySelector('img.carve-diagram');
     ok('replaces the <pre> with an inert <img> data URI', !el.querySelector('pre.graphviz') && !!gimg && gimg.getAttribute('src')?.startsWith('data:image/svg+xml;base64,'));
     ok('the data URI has the xml prolog stripped', gimg && !atob(gimg.getAttribute('src').split(',')[1]).includes('<?xml'));
+    // An <img> with no alt text is what a screen reader gets. Emptying it left
+    // the whole suite green.
+    ok('the inert <img> carries alt text', gimg?.getAttribute('alt') === 'diagram', gimg?.getAttribute('alt'));
     ok('leaves a non-graphviz block (mermaid) untouched', !!el.querySelector('pre.mermaid'));
 
     const second = await renderGraphvizDiagrams(el, { load });
@@ -93,13 +96,17 @@ console.log('carve-grammars client diagram renderers:');
 {
     const el = container([['graphviz', 'oops']]);
     const errors = [];
-    const load = async () => ({ renderString() { throw new Error('bad DOT'); } });
+    let attempts = 0;
+    const load = async () => ({ renderString() { attempts++; throw new Error('bad DOT'); } });
     const count = await renderGraphvizDiagrams(el, { load, onError: (node, m) => errors.push(m) });
 
     ok('a render failure leaves the <pre> in place', count === 0 && !!el.querySelector('pre.graphviz'));
     ok('the failure is recorded + onError called', el.querySelector('pre.graphviz')?.dataset.graphvizError === 'bad DOT' && errors[0] === 'bad DOT');
     const retry = await renderGraphvizDiagrams(el, { load });
-    ok('an errored block is not retried', retry === 0);
+    // COUNTED, not inferred from the return value. A retry throws again and
+    // returns 0 too, so removing the processed flag left this assertion green
+    // while every call re-ran the WASM render.
+    ok('an errored block is not retried', retry === 0 && attempts === 1, `attempts=${attempts}`);
 }
 
 // --- D2 (string SVG output) -----------------------------------------------
