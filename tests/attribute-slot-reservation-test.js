@@ -169,6 +169,18 @@ for (const [source, expected] of authoredSources) {
 }
 console.log(`  ✓ ${authoredSources.length} authored runs survive on a node that reserves the name elsewhere`);
 
+// A cell's alignment marker renders as `text-align`, which Tiptap 3's own
+// `align` attribute read back as an authored run (#532).
+const alignedTables = [
+    ['|= a |=> b |\n| c | d |', '|= a |=> b |\n| c | d |'],
+    ['| a |{align=right} b |', '| a |{align="right"} b |'],
+];
+for (const [source, expected] of alignedTables) {
+    assert.equal(throughHtml(carveToProseMirror(source, { unsupported: 'preserve' })), expected,
+        `${source} changed through HTML`);
+}
+console.log(`  ✓ ${alignedTables.length} aligned tables keep their markers and runs through HTML`);
+
 // A reference with no target renders `href=""`, which the stock link rule
 // rejects, and a definition-resolved abbreviation read back as an authored
 // run (#522). An inner link unwraps to text, so no `<a>` nests in an `<a>`.
