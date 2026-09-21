@@ -22,7 +22,8 @@
 
 import assert from 'node:assert';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -99,6 +100,32 @@ ok('still resolves the entry points the map already named', () => {
   for (const specifier of ['', '/shiki', '/tiptap/carve-kit.js']) {
     assert.strictEqual(codeOf(`${manifest.name}${specifier}`), 'RESOLVED', specifier || '.');
   }
+});
+
+ok('declares every package its shipped files import', () => {
+  // A devDependency satisfies this repo's own tests and nothing a consumer
+  // installs. Hoisting hid 18 such imports in the Tiptap kit (#541).
+  const ts = createRequire(import.meta.url)('typescript');
+  const declared = new Set([
+    ...Object.keys(manifest.dependencies ?? {}),
+    ...Object.keys(manifest.peerDependencies ?? {}),
+    manifest.name,
+  ]);
+  const shipped = manifest.files
+    .filter((entry) => entry.endsWith('/'))
+    .flatMap((dir) => readdirSync(join(root, dir), { recursive: true }).map((f) => join(dir, f)))
+    .filter((f) => /\.(m?js|cjs|d\.ts)$/.test(f));
+  const undeclared = [];
+  for (const file of shipped) {
+    const { importedFiles } = ts.preProcessFile(readFileSync(join(root, file), 'utf8'), true, true);
+    for (const { fileName } of importedFiles) {
+      if (/^(\.|\/|node:)/.test(fileName)) continue;
+      const pkg = fileName.split('/').slice(0, fileName.startsWith('@') ? 2 : 1).join('/');
+      if (!declared.has(pkg)) undeclared.push(`${file}: ${fileName}`);
+    }
+  }
+  assert.ok(shipped.length > 50, `only ${shipped.length} shipped files found`);
+  assert.deepStrictEqual(undeclared, []);
 });
 
 ok('is named in the test script, so it is not dead on arrival', () => {
