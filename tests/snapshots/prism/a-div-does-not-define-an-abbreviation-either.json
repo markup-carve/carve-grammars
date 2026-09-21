@@ -1,14 +1,14 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n*[HTML]: Hyper Text\n\nThe HTML spec.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

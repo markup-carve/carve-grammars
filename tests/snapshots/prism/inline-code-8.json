@@ -4,11 +4,11 @@
     "text": "Run "
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*"
   },
   {
-    "type": "forced-bold>code",
+    "type": "forced-bold>bold>code",
     "text": "`make*}"
   },
   {
@@ -36,31 +36,31 @@
     "text": ".\n\nA "
   },
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "{_"
   },
   {
-    "type": "forced-underline>code",
+    "type": "forced-underline>underline>code",
     "text": "``x_}"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "logo"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "p.png"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {
@@ -68,27 +68,27 @@
     "text": " here.\n\nA "
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "{="
   },
   {
-    "type": "highlight>code",
+    "type": "highlight>important>code",
     "text": "`y=}"
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[note]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -96,11 +96,11 @@
     "text": " here.\n\n"
   },
   {
-    "type": "inserted",
+    "type": "inserted>inserted",
     "text": "{+"
   },
   {
-    "type": "inserted>code",
+    "type": "inserted>inserted>code",
     "text": "`added+}"
   },
   {

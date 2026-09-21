@@ -4,7 +4,7 @@
     "text": "Text"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^a]"
   },
   {
@@ -12,11 +12,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^a]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " A note."
   },
   {

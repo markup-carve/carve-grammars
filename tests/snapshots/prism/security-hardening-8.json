@@ -4,27 +4,27 @@
     "text": "A "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[danger]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "onclick"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes>string",
+    "type": "attributes>attr-value>string",
     "text": "\"steal()\""
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

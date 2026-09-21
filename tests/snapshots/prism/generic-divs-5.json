@@ -1,70 +1,70 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "outer"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": "::::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "middle"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nX\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": "::::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

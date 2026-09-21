@@ -8,7 +8,7 @@
     "text": "\n"
   },
   {
-    "scope": "attr",
+    "scope": "language-yaml>attr",
     "text": "title:"
   },
   {
@@ -16,7 +16,7 @@
     "text": " "
   },
   {
-    "scope": "string",
+    "scope": "language-yaml>string",
     "text": "x"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "scope": "meta",
+    "scope": "language-yaml>meta",
     "text": "---"
   },
   {

@@ -4,7 +4,7 @@
     "text": "a [t"
   },
   {
-    "type": "critic-comment",
+    "type": "critic-comment>comment",
     "text": "{# ] #}"
   },
   {
@@ -12,15 +12,15 @@
     "text": "z]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

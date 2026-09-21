@@ -4,11 +4,11 @@
     "text": "a"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
@@ -16,15 +16,15 @@
     "text": "- b"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "--"
   },
   {
@@ -32,15 +32,15 @@
     "text": " c"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
@@ -48,19 +48,19 @@
     "text": "- d"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "--"
   },
   {
@@ -68,19 +68,19 @@
     "text": " e"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {

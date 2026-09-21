@@ -1,6 +1,6 @@
 [
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\["
   },
   {
@@ -8,7 +8,7 @@
     "text": "not a link"
   },
   {
-    "type": "escape",
+    "type": "escape>constant",
     "text": "\\]"
   },
   {

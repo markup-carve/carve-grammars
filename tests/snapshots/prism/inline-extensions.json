@@ -4,19 +4,19 @@
     "text": "Press "
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":kbd"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "Ctrl+C"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {

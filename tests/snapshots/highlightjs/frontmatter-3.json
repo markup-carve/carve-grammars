@@ -8,7 +8,7 @@
     "text": "\n"
   },
   {
-    "scope": "attr",
+    "scope": "language-ini>attr",
     "text": "title"
   },
   {
@@ -16,7 +16,7 @@
     "text": " = "
   },
   {
-    "scope": "string",
+    "scope": "language-ini>string",
     "text": "\"My Document\""
   },
   {

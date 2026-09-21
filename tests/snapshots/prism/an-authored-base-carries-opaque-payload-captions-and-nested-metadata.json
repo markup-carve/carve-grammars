@@ -1,10 +1,10 @@
 [
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^n]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " intro"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n\nsee"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^n]"
   },
   {

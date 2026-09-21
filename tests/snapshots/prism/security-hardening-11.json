@@ -20,23 +20,23 @@
     "text": ")"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "href"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes>string",
+    "type": "attributes>attr-value>string",
     "text": "\"javascript:steal\""
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

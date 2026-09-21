@@ -1,58 +1,58 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[x]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "1 "
   },
   {
-    "type": "attributes>language",
+    "type": "attributes>attr-value>language",
     "text": ":fr"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "lang"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "de "
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "title"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "t"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

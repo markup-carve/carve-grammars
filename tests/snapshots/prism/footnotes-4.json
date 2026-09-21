@@ -4,19 +4,19 @@
     "text": "Text"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^a]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".ref"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -24,11 +24,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^a]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " note."
   },
   {

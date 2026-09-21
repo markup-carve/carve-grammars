@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "1. "
   },
   {
@@ -8,7 +8,7 @@
     "text": "outer\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "   1. "
   },
   {
@@ -16,7 +16,7 @@
     "text": "inner\nlazy\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "   2. "
   },
   {

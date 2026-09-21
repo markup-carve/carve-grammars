@@ -4,7 +4,7 @@
     "text": "==x== ~~y~~ "
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "=z="
   },
   {
@@ -12,7 +12,7 @@
     "text": " "
   },
   {
-    "type": "strike",
+    "type": "strike>deleted",
     "text": "~w~"
   },
   {

@@ -20,31 +20,31 @@
     "text": ")"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "title"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "\"See: RFC 3986, http://example"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".com"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "\""
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

@@ -4,7 +4,7 @@
     "text": "See the note"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^m]"
   },
   {
@@ -12,11 +12,11 @@
     "text": ".\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^m]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " First line of the note"
   },
   {

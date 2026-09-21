@@ -4,15 +4,15 @@
     "text": "`code`"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".cls"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

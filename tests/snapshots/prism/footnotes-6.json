@@ -4,7 +4,7 @@
     "text": "Wrapped"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^two\nwords]"
   },
   {
@@ -12,11 +12,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^two words]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " This definition is not referenced."
   },
   {
@@ -24,11 +24,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^broken\nlabel]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " This is not a definition."
   },
   {

@@ -1,18 +1,18 @@
 [
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!`/kaet/`"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".ipa"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -20,7 +20,7 @@
     "text": " and "
   },
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!`a<b>`"
   },
   {
@@ -28,7 +28,7 @@
     "text": " and "
   },
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!`*not bold*`"
   },
   {

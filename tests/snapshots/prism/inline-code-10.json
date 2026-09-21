@@ -4,11 +4,11 @@
     "text": "x"
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*"
   },
   {
-    "type": "forced-bold>math",
+    "type": "forced-bold>bold>math>string",
     "text": "$`a*}"
   },
   {
@@ -16,11 +16,11 @@
     "text": " here\n\nx"
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~"
   },
   {
-    "type": "forced-strike>math",
+    "type": "forced-strike>deleted>math>string",
     "text": "$$`b~}"
   },
   {
@@ -28,11 +28,11 @@
     "text": " here\n\nx"
   },
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "{/"
   },
   {
-    "type": "forced-italic>literal",
+    "type": "forced-italic>italic>literal>string",
     "text": "!`c/}"
   },
   {
@@ -40,15 +40,15 @@
     "text": " here\n\nx"
   },
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "{_"
   },
   {
-    "type": "forced-underline>literal",
+    "type": "forced-underline>underline>literal>string",
     "text": "!`d`"
   },
   {
-    "type": "forced-underline",
+    "type": "forced-underline>underline",
     "text": "_}"
   },
   {

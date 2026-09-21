@@ -4,7 +4,7 @@
     "text": "Write me@example.com or ping "
   },
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@markus"
   },
   {

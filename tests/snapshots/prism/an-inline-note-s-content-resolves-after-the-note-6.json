@@ -4,27 +4,27 @@
     "text": "a "
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "^["
   },
   {
-    "type": "inline-footnote",
+    "type": "inline-footnote>symbol",
     "text": "</#h>"
   },
   {
-    "type": "inline-footnote>punctuation",
+    "type": "inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -32,11 +32,11 @@
     "text": " b\n\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " h"
   },
   {

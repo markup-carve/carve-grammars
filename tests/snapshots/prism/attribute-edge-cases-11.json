@@ -1,30 +1,30 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[x]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#k"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".key"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " kbd"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

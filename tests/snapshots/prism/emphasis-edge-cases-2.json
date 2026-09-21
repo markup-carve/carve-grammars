@@ -1,14 +1,14 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*a "
   },
   {
-    "type": "bold>code",
+    "type": "bold>bold>code",
     "text": "`x`"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": " b*"
   },
   {

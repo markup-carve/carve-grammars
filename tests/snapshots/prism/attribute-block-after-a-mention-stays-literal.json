@@ -1,6 +1,6 @@
 [
   {
-    "type": "mention",
+    "type": "mention>variable",
     "text": "@u"
   },
   {

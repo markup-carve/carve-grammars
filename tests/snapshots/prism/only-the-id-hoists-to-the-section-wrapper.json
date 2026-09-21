@@ -1,26 +1,26 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "a"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "b "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -28,11 +28,11 @@
     "text": "\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " Auto slug"
   },
   {
@@ -40,35 +40,35 @@
     "text": "\n\n"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "a"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "b "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#explicit"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -76,11 +76,11 @@
     "text": "\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " Written id"
   },
   {

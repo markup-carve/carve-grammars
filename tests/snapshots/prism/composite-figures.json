@@ -1,22 +1,22 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#fig-x"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".columns-2"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -24,127 +24,127 @@
     "text": "\n"
   },
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>figure-group-delimiter",
+    "type": "figure-group>tag>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>figure-group-delimiter>class-name",
+    "type": "figure-group>tag>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>attributes>punctuation",
+    "type": "figure-group>tag>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "figure-group>attributes>id",
+    "type": "figure-group>tag>attributes>attr-value>id",
     "text": "#fig-x-a"
   },
   {
-    "type": "figure-group>attributes>punctuation",
+    "type": "figure-group>tag>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "one"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "a.png"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>caption>punctuation",
+    "type": "figure-group>tag>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>caption",
+    "type": "figure-group>tag>caption>title",
     "text": " (a) One"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n\n"
   },
   {
-    "type": "figure-group>attributes>punctuation",
+    "type": "figure-group>tag>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "figure-group>attributes>id",
+    "type": "figure-group>tag>attributes>attr-value>id",
     "text": "#fig-x-b"
   },
   {
-    "type": "figure-group>attributes>punctuation",
+    "type": "figure-group>tag>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "two"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>image",
+    "type": "figure-group>tag>image>url",
     "text": "b.png"
   },
   {
-    "type": "figure-group>image>punctuation",
+    "type": "figure-group>tag>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>caption>punctuation",
+    "type": "figure-group>tag>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>caption",
+    "type": "figure-group>tag>caption>title",
     "text": " (b) Two"
   },
   {
-    "type": "figure-group",
+    "type": "figure-group>tag",
     "text": "\n"
   },
   {
-    "type": "figure-group>figure-group-delimiter>punctuation",
+    "type": "figure-group>tag>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -152,11 +152,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure #: Group caption"
   },
   {

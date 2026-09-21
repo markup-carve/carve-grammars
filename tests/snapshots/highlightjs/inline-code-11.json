@@ -20,7 +20,7 @@
     "text": "{*x"
   },
   {
-    "scope": "code",
+    "scope": "strong>code",
     "text": "`a*}`"
   },
   {
@@ -48,7 +48,7 @@
     "text": "{+x"
   },
   {
-    "scope": "code",
+    "scope": "addition>code",
     "text": "`a+}`"
   },
   {

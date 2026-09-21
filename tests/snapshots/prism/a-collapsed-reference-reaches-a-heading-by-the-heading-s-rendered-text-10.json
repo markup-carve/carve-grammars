@@ -1,18 +1,18 @@
 [
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " a :smile: "
   },
   {
-    "type": "title>italic",
+    "type": "title>important>italic>italic",
     "text": "/b/"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " c"
   },
   {

@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".gallery"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -16,23 +16,23 @@
     "text": "\n"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "Apollo 11"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "apollo.jpg"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {
@@ -40,11 +40,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Figure 1: First moon landing"
   },
   {

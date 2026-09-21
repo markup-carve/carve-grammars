@@ -1,22 +1,22 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nUntitled.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -24,31 +24,31 @@
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "warning"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>string",
+    "type": "div>tag>div-delimiter>string",
     "text": "\"Careful\""
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nTitled.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

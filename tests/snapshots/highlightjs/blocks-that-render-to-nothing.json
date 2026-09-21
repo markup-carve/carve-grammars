@@ -12,7 +12,7 @@
     "text": "> "
   },
   {
-    "scope": "comment",
+    "scope": "quote>comment",
     "text": "%%%\n> x\n> %%%"
   },
   {

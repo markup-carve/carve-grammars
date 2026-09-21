@@ -1,26 +1,26 @@
 [
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[a]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "x:y"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -28,43 +28,43 @@
     "text": "\n\n"
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[b]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#i"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".c"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "v"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -92,15 +92,15 @@
     "text": "|"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "table>attributes>class-name",
+    "type": "table>attributes>attr-value>class-name",
     "text": ".x"
   },
   {
-    "type": "table>attributes>punctuation",
+    "type": "table>attributes>attr-value>punctuation",
     "text": "}"
   },
   {

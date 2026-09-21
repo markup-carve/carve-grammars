@@ -32,19 +32,19 @@
     "text": "\n\nThe "
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":kbd"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "HTML"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {

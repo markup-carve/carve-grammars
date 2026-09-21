@@ -1,46 +1,46 @@
 [
   {
-    "type": "extension>function",
+    "type": "extension>function>function",
     "text": ":widget"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "["
   },
   {
-    "type": "extension",
+    "type": "extension>function",
     "text": "x"
   },
   {
-    "type": "extension>punctuation",
+    "type": "extension>function>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#i"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>attr-name",
+    "type": "attributes>attr-value>attr-name",
     "text": "k"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "="
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "v"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

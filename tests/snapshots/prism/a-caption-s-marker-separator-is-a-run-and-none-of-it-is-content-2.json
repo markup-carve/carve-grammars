@@ -12,23 +12,23 @@
     "text": "\n\n^   \n\n"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "a"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "image",
+    "type": "image>url",
     "text": "i.png"
   },
   {
-    "type": "image>punctuation",
+    "type": "image>url>punctuation",
     "text": ")"
   },
   {

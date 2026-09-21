@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "``` \"notes.txt\""
   },
   {
@@ -8,7 +8,7 @@
     "text": "\nremember the milk\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

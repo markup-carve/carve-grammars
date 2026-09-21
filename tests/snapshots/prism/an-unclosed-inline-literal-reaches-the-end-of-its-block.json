@@ -1,6 +1,6 @@
 [
   {
-    "type": "literal",
+    "type": "literal>string",
     "text": "!`unclosed"
   },
   {

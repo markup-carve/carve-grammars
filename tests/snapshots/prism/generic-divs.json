@@ -1,14 +1,14 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nA plain box.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -16,23 +16,23 @@
     "text": "\n\n"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#s"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": " "
   },
   {
-    "type": "attributes>class-name",
+    "type": "attributes>attr-value>class-name",
     "text": ".sidebar"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -40,15 +40,15 @@
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nA div with attributes.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -4,7 +4,7 @@
     "text": "text\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
@@ -12,7 +12,7 @@
     "text": "\ncode\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

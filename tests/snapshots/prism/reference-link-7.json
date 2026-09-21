@@ -24,11 +24,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[y]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /u \"a\\\"b\\\"c\""
   },
   {

@@ -4,31 +4,31 @@
     "text": "See "
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*"
   },
   {
-    "type": "bold>url>punctuation",
+    "type": "bold>bold>url>punctuation",
     "text": "["
   },
   {
-    "type": "bold>url",
+    "type": "bold>bold>url",
     "text": "the docs"
   },
   {
-    "type": "bold>url>punctuation",
+    "type": "bold>bold>url>punctuation",
     "text": "]("
   },
   {
-    "type": "bold>url",
+    "type": "bold>bold>url",
     "text": "url"
   },
   {
-    "type": "bold>url>punctuation",
+    "type": "bold>bold>url>punctuation",
     "text": ")"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": " for more*"
   },
   {

@@ -1,22 +1,22 @@
 [
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "reference-image",
+    "type": "reference-image>url",
     "text": "moon"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]["
   },
   {
-    "type": "reference-image>constant",
+    "type": "reference-image>url>constant",
     "text": "m"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]"
   },
   {
@@ -24,11 +24,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[m]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " /moon.png"
   },
   {

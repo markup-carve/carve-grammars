@@ -1,38 +1,38 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "tip"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>string",
+    "type": "div>tag>div-delimiter>string",
     "text": "\"Pro Tip\""
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>symbol",
+    "type": "div>tag>div-delimiter>symbol",
     "text": "[Build]"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nSave early, save often.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

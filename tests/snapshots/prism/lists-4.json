@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "1. "
   },
   {
@@ -8,7 +8,7 @@
     "text": "first\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "2. "
   },
   {
@@ -16,7 +16,7 @@
     "text": "second\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "3. "
   },
   {

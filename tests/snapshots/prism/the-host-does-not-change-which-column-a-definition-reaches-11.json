@@ -1,6 +1,6 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
@@ -8,11 +8,11 @@
     "text": "x\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "  [^g]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " b"
   },
   {
@@ -20,11 +20,11 @@
     "text": "\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "   [^n]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " note text"
   },
   {
@@ -32,7 +32,7 @@
     "text": "\n\nSee "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^n]"
   },
   {
@@ -40,7 +40,7 @@
     "text": " and "
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^g]"
   },
   {

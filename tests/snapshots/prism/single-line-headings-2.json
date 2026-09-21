@@ -1,10 +1,10 @@
 [
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "##"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " A"
   },
   {
@@ -12,11 +12,11 @@
     "text": "\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "##"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " still A"
   },
   {
@@ -24,11 +24,11 @@
     "text": "\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "#"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " B"
   },
   {

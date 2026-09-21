@@ -4,15 +4,15 @@
     "text": "{*a "
   },
   {
-    "scope": "emphasis",
+    "scope": "strong>emphasis",
     "text": "{/b "
   },
   {
-    "scope": "strong",
+    "scope": "strong>emphasis>strong",
     "text": "{*c*}"
   },
   {
-    "scope": "emphasis",
+    "scope": "strong>emphasis",
     "text": " d/}"
   },
   {

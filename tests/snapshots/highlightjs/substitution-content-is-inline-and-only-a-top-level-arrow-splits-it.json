@@ -4,7 +4,7 @@
     "text": "{~"
   },
   {
-    "scope": "code",
+    "scope": "deletion>code",
     "text": "`a~>b"
   },
   {
@@ -20,7 +20,7 @@
     "text": "{~a "
   },
   {
-    "scope": "code",
+    "scope": "deletion>code",
     "text": "`x~>y`"
   },
   {
@@ -36,15 +36,15 @@
     "text": "{~"
   },
   {
-    "scope": "emphasis",
+    "scope": "deletion>emphasis",
     "text": "/old/"
   },
   {
-    "scope": "punctuation",
+    "scope": "deletion>punctuation",
     "text": "~>"
   },
   {
-    "scope": "emphasis",
+    "scope": "deletion>addition>emphasis",
     "text": "/new/"
   },
   {
@@ -60,7 +60,7 @@
     "text": "{~a"
   },
   {
-    "scope": "symbol",
+    "scope": "deletion>symbol",
     "text": "\\~"
   },
   {

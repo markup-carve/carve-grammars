@@ -1,6 +1,6 @@
 [
   {
-    "type": "italic",
+    "type": "italic>italic",
     "text": "/italic/"
   },
   {
@@ -8,7 +8,7 @@
     "text": "  "
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*bold*"
   },
   {
@@ -16,7 +16,7 @@
     "text": "  "
   },
   {
-    "type": "bold-italic",
+    "type": "bold-italic>important",
     "text": "/*bold italic*/"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "underline",
+    "type": "underline>underline",
     "text": "_underline_"
   },
   {
@@ -32,7 +32,7 @@
     "text": "  "
   },
   {
-    "type": "strike",
+    "type": "strike>deleted",
     "text": "~strikethrough~"
   },
   {
@@ -40,7 +40,7 @@
     "text": "\n"
   },
   {
-    "type": "highlight",
+    "type": "highlight>important",
     "text": "=highlight="
   },
   {
@@ -48,7 +48,7 @@
     "text": "  "
   },
   {
-    "type": "superscript",
+    "type": "superscript>important",
     "text": "{^super^}"
   },
   {
@@ -56,7 +56,7 @@
     "text": "  "
   },
   {
-    "type": "subscript",
+    "type": "subscript>important",
     "text": "{,sub,}"
   },
   {

@@ -4,7 +4,7 @@
     "text": "Empty pairs are text: {//} {**} {__} {~~} {^^} {,,} {==} {++} {##}.\n\nA pair that holds something is the construct: "
   },
   {
-    "type": "forced-italic",
+    "type": "forced-italic>italic",
     "text": "{/i/}"
   },
   {
@@ -12,7 +12,7 @@
     "text": " "
   },
   {
-    "type": "forced-bold",
+    "type": "forced-bold>bold",
     "text": "{*b*}"
   },
   {
@@ -20,7 +20,7 @@
     "text": " "
   },
   {
-    "type": "forced-strike",
+    "type": "forced-strike>deleted",
     "text": "{~s~}"
   },
   {
@@ -28,7 +28,7 @@
     "text": " "
   },
   {
-    "type": "inserted",
+    "type": "inserted>inserted",
     "text": "{+ins+}"
   },
   {
@@ -36,7 +36,7 @@
     "text": " "
   },
   {
-    "type": "critic-comment",
+    "type": "critic-comment>comment",
     "text": "{# c #}"
   },
   {

@@ -32,19 +32,19 @@
     "text": "\n\nThe "
   },
   {
-    "type": "span",
+    "type": "span>string",
     "text": "[HTML]"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes",
+    "type": "attributes>attr-value",
     "text": "kbd"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {

@@ -8,7 +8,7 @@
     "text": "{{ "
   },
   {
-    "scope": "string",
+    "scope": "meta>string",
     "text": "chapter-2.crv"
   },
   {

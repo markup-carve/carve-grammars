@@ -1,30 +1,30 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>string",
+    "type": "div>tag>div-delimiter>string",
     "text": "\"Install *now* via `npm`\""
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\nBody.\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {

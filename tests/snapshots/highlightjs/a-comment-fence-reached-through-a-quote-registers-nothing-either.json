@@ -4,7 +4,7 @@
     "text": "> "
   },
   {
-    "scope": "comment",
+    "scope": "quote>comment",
     "text": "%%%\n> [r]: /url\n> %%%"
   },
   {

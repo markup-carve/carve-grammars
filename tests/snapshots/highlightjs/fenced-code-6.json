@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```php \"src/Auth.php\""
   },
   {
@@ -8,7 +8,7 @@
     "text": "\n$ok = true;\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

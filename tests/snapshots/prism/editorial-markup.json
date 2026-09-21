@@ -4,7 +4,7 @@
     "text": "a "
   },
   {
-    "type": "inserted",
+    "type": "inserted>inserted",
     "text": "{+ins+}"
   },
   {
@@ -12,7 +12,7 @@
     "text": " "
   },
   {
-    "type": "deleted",
+    "type": "deleted>deleted",
     "text": "{-del-}"
   },
   {
@@ -20,23 +20,23 @@
     "text": " "
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "{~"
   },
   {
-    "type": "changed>deleted",
+    "type": "changed>important>deleted",
     "text": "old"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~>"
   },
   {
-    "type": "changed>inserted",
+    "type": "changed>important>inserted",
     "text": "new"
   },
   {
-    "type": "changed>punctuation",
+    "type": "changed>important>punctuation",
     "text": "~}"
   },
   {
@@ -44,7 +44,7 @@
     "text": " b"
   },
   {
-    "type": "critic-comment",
+    "type": "critic-comment>comment",
     "text": "{# note #}"
   },
   {

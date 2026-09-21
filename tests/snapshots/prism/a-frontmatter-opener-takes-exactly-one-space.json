@@ -1,6 +1,6 @@
 [
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": "---"
   },
   {
@@ -8,7 +8,7 @@
     "text": "  yaml\ntitle: T\n"
   },
   {
-    "type": "thematic-break",
+    "type": "thematic-break>punctuation",
     "text": "---"
   },
   {

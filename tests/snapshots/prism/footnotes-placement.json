@@ -4,7 +4,7 @@
     "text": "Intro"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^a]"
   },
   {
@@ -12,7 +12,7 @@
     "text": " and"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^b]"
   },
   {
@@ -20,23 +20,23 @@
     "text": ".\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "div>tag>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "div>tag>div-delimiter>class-name",
     "text": "footnotes"
   },
   {
-    "type": "div",
+    "type": "div>tag",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -44,11 +44,11 @@
     "text": "\n\n"
   },
   {
-    "type": "title>punctuation",
+    "type": "title>important>punctuation",
     "text": "##"
   },
   {
-    "type": "title",
+    "type": "title>important",
     "text": " After"
   },
   {
@@ -56,11 +56,11 @@
     "text": "\n\nMore text.\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^a]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " first note"
   },
   {
@@ -68,11 +68,11 @@
     "text": "\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^b]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " second note"
   },
   {

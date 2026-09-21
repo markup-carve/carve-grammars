@@ -1,14 +1,14 @@
 [
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": "*a "
   },
   {
-    "type": "bold>forced-underline",
+    "type": "bold>bold>forced-underline>underline",
     "text": "{_b* c_}"
   },
   {
-    "type": "bold",
+    "type": "bold>bold",
     "text": " d*"
   },
   {

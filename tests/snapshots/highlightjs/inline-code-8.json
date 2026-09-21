@@ -8,7 +8,7 @@
     "text": "{*"
   },
   {
-    "scope": "code",
+    "scope": "strong>code",
     "text": "`make"
   },
   {
@@ -28,7 +28,7 @@
     "text": "{_"
   },
   {
-    "scope": "code",
+    "scope": "emphasis>code",
     "text": "``x"
   },
   {
@@ -48,7 +48,7 @@
     "text": "{="
   },
   {
-    "scope": "code",
+    "scope": "addition>code",
     "text": "`y"
   },
   {
@@ -72,7 +72,7 @@
     "text": "{+"
   },
   {
-    "scope": "code",
+    "scope": "addition>code",
     "text": "`added"
   },
   {

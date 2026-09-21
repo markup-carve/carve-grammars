@@ -4,7 +4,7 @@
     "text": "~a"
   },
   {
-    "scope": "addition",
+    "scope": "deletion>addition",
     "text": "{+b~+}"
   },
   {

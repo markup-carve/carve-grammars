@@ -4,7 +4,7 @@
     "text": "See"
   },
   {
-    "type": "footnote",
+    "type": "footnote>symbol",
     "text": "[^1]"
   },
   {
@@ -12,11 +12,11 @@
     "text": ".\n\n"
   },
   {
-    "type": "reference-definition>constant",
+    "type": "reference-definition>url>constant",
     "text": "[^1]:"
   },
   {
-    "type": "reference-definition",
+    "type": "reference-definition>url",
     "text": " - a"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n\n\n\n"
   },
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "  - "
   },
   {

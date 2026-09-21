@@ -4,7 +4,7 @@
     "text": "text\n>"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": ">="
   },
   {
@@ -12,7 +12,7 @@
     "text": " operator\n"
   },
   {
-    "type": "typography",
+    "type": "typography>constant",
     "text": ">="
   },
   {

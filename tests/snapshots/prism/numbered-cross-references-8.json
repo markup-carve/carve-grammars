@@ -1,14 +1,14 @@
 [
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "attributes>id",
+    "type": "attributes>attr-value>id",
     "text": "#lst-greet"
   },
   {
-    "type": "attributes>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
@@ -32,11 +32,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Listing #: a greeting"
   },
   {
@@ -44,15 +44,15 @@
     "text": "\n\nSee "
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": "</#"
   },
   {
-    "type": "cross-ref",
+    "type": "cross-ref>url",
     "text": "lst-greet"
   },
   {
-    "type": "cross-ref>punctuation",
+    "type": "cross-ref>url>punctuation",
     "text": ">"
   },
   {

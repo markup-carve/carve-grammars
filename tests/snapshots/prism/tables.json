@@ -72,11 +72,11 @@
     "text": "\n"
   },
   {
-    "type": "caption>punctuation",
+    "type": "caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": " Fruit prices"
   },
   {

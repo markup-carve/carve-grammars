@@ -1,6 +1,6 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
@@ -8,7 +8,7 @@
     "text": "\n\tindented with a tab\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

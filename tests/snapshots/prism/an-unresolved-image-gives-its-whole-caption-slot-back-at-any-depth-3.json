@@ -1,26 +1,26 @@
 [
   {
-    "type": "list",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "reference-image",
+    "type": "reference-image>url",
     "text": "a"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]["
   },
   {
-    "type": "reference-image>constant",
+    "type": "reference-image>url>constant",
     "text": "r"
   },
   {
-    "type": "reference-image>punctuation",
+    "type": "reference-image>url>punctuation",
     "text": "]"
   },
   {
@@ -28,7 +28,7 @@
     "text": "\n"
   },
   {
-    "type": "caption",
+    "type": "caption>title",
     "text": "  ^ cap"
   },
   {
