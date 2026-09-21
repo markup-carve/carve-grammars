@@ -509,6 +509,10 @@ export const CarveKit = Extension.create({
         // Custom ListItem that excludes task items (those with checkboxes)
         if (this.options.listItem !== false) {
             const CustomListItem = ListItem.extend({
+                // An item may open with any block or be empty, as Carve allows;
+                // the stock `paragraph block*` moved such content out on HTML
+                // parsing (#537).
+                content: 'block*',
                 // A marker attribute (`-{.c} item`) belongs to the ITEM, and
                 // ProseMirror drops any attribute a node does not declare.
                 addAttributes() {
@@ -708,6 +712,7 @@ export const CarveKit = Extension.create({
 
             // Extend TaskItem to also match li with checkbox input with high priority
             const CustomTaskItem = TaskItem.extend({
+                content: 'block*',
                 addAttributes() {
                     return {
                         ...this.parent?.(),

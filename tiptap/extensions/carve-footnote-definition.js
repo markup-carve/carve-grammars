@@ -11,7 +11,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
  * ```
  *
  * Hosts typically collect these at the end of the document. The body is regular
- * block content (`paragraph+`).
+ * block content, possibly empty (`block*`).
  *
  * @example
  * ```js
@@ -25,7 +25,7 @@ export const CarveFootnoteDefinition = Node.create({
 
     group: 'block',
 
-    content: 'paragraph+',
+    content: 'block*',
 
     defining: true,
 

@@ -502,8 +502,12 @@ function convertBlock(node, ctx) {
         }
 
         case 'blockquote':
-        case 'block_quote':
-            return { type: 'blockquote', content: convertBlocks(node.children || [], ctx) };
+        case 'block_quote': {
+            // `block+`: an empty quote holds an empty paragraph, as HTML
+            // parsing already gives it (#537).
+            const content = convertBlocks(node.children || [], ctx);
+            return { type: 'blockquote', content: content.length ? content : [{ type: 'paragraph' }] };
+        }
 
         case 'code-block':
         case 'code_block': {
@@ -1205,6 +1209,9 @@ function convertInlineNode(node, marks, ctx) {
         default: {
             const markType = INLINE_MARKS[node.type];
             if (markType) {
+                // A mark cannot hold itself; `{*a {*b*}*}` renders the same
+                // without the inner run (#537).
+                if (marks.some((mark) => mark.type === markType)) return descend(node, marks, ctx);
                 return descend(node, [...marks, { type: markType }], ctx);
             }
             throw new UnsupportedNodeError(node.type, node);

@@ -28,12 +28,20 @@ function normalizeHtml(html) {
 }
 
 const changed = [];
+// Mounting JSON never validates it, but parsing the editor's own HTML does, so
+// a document the schema rejects loses or moves content there (#537).
+const invalid = [];
 for (const file of listCorpusFiles()) {
     const editor = new Editor({
         extensions: [CarveKit],
         content: carveToProseMirror(file.source, { unsupported: 'preserve' }),
     });
     try {
+        try {
+            editor.state.doc.check();
+        } catch (error) {
+            invalid.push(`${file.name}: ${error.message.split('(')[0].trim()}`);
+        }
         // Strip the lossless source envelope deliberately: this measures the
         // editable projection, which is the path wp-carve's warning gate tests.
         const written = serializeToCarve({ ...editor.getJSON(), attrs: undefined });
@@ -44,6 +52,8 @@ for (const file of listCorpusFiles()) {
         editor.destroy();
     }
 }
+
+assert.deepEqual(invalid, [], `converted corpus documents the kit's schema rejects:\n${invalid.join('\n')}`);
 
 const fixed = [
     '03-links-2',

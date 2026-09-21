@@ -67,7 +67,7 @@ export const CarveDiv = Node.create({
 
     group: 'block',
 
-    content: 'block+',
+    content: 'block*',
 
     defining: true,
 

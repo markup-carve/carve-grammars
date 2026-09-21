@@ -48,7 +48,8 @@ export const CarveDefinitionList = Node.create({
     group: 'block',
 
     // Allow multiple terms followed by multiple descriptions, repeating
-    content: '(definitionTerm+ definitionDescription+)+',
+    // A term may stand without a description (#537).
+    content: '(definitionTerm+ definitionDescription*)+',
 
     // Tiptap keeps only attributes a node DECLARES, so without these the run
     // the converter now carries is dropped again on the way through a mount
@@ -173,7 +174,7 @@ export const CarveDefinitionTerm = Node.create({
 export const CarveDefinitionDescription = Node.create({
     name: 'definitionDescription',
 
-    content: 'block+',
+    content: 'block*',
 
     defining: true,
 
