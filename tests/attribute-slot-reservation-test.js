@@ -169,6 +169,26 @@ for (const [source, expected] of authoredSources) {
 }
 console.log(`  ✓ ${authoredSources.length} authored runs survive on a node that reserves the name elsewhere`);
 
+// A reference with no target renders `href=""`, which the stock link rule
+// rejects, and a definition-resolved abbreviation read back as an authored
+// run (#522). An inner link unwraps to text, so no `<a>` nests in an `<a>`.
+const htmlShapes = [
+    ['[t][nope]', '[t][nope]'],
+    ['[t][]', '[t][]'],
+    ['x [t][nope]{#i .c k=v} y', 'x [t][nope]{#i .c k=v} y'],
+    ['[t][r]\n\n[r]: javascript:x', '[t][r]\n\n[r]: javascript:x'],
+    ['*[HTML]: Hyper Text\n\nA HTML span.', '*[HTML]: Hyper Text\n\nA HTML span.'],
+    ['A [HTML]{abbr="X"} span.', 'A [HTML]{abbr="X"} span.'],
+    ['# a [x](/y) b\n\n[a [x](/y) b][]', '# a [x](/y) b\n\n[a x b][]'],
+    ['# a <https://e.com> b\n\n[a <https://e.com> b][]', '# a <https://e.com> b\n\n[a https://e.com b][]'],
+];
+for (const [source, expected] of htmlShapes) {
+    const doc = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.ok(!/<a\b[^>]*>(?:(?!<\/a>).)*<a\b/.test(htmlFor(doc)), `${source} renders an <a> inside an <a>`);
+    assert.equal(throughHtml(doc), expected, `${source} changed through HTML`);
+}
+console.log(`  ✓ ${htmlShapes.length} reference and abbreviation shapes survive the editor's own HTML`);
+
 // carve-php and carve-js write plumbing of their own onto the elements this
 // kit parses, and none of it is an author's key/value. These documents mount
 // ENGINE-rendered HTML, which is the path wp-carve and the panel bar take.

@@ -33,7 +33,13 @@ export const CarveAbbreviation = Mark.create({
                     return { title: attributes.title };
                 },
             },
-            resolved: { default: false, rendered: false },
+            // Without an HTML carrier a definition-resolved use came back
+            // as an authored `[X]{abbr=...}` run (#522).
+            resolved: {
+                default: false,
+                parseHTML: element => element.getAttribute('data-carve-abbreviation') === 'resolved',
+                renderHTML: attributes => (attributes.resolved ? { 'data-carve-abbreviation': 'resolved' } : {}),
+            },
             ...attributeSlots(['title', 'data-carve-abbreviation']),
         };
     },
