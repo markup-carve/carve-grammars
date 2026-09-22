@@ -32,6 +32,7 @@ import { fileURLToPath } from 'node:url';
 
 import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 let passed = 0;
@@ -148,16 +149,13 @@ for (const [opener, opens] of SEPARATORS) {
 }
 
 /*
- * The npm `test` script is an explicit list of `node tests/*.js` invocations,
- * not a glob, so a file absent from it proves nothing in CI.
+ * IS THIS FILE ACTUALLY RUN? `npm test` globs `tests/*-test.js` through
+ * `scripts/run-tests.mjs`, so a file cannot go missing from a hand-kept chain
+ * any more - but it can be named so the glob skips it. The shared guard asks
+ * the runner's own selection, which is the question that can still go wrong.
  */
-ok('this file is in the npm test chain', () => {
-    const pkg = JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8'));
-    const self = 'tests/fenced-quote-opener-test.js';
-    assert.ok(
-        pkg.scripts.test.includes(`node ${self}`),
-        `package.json "test" does not run ${self}, so this file proves nothing in CI`,
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);

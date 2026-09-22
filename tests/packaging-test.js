@@ -27,6 +27,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
@@ -128,15 +129,8 @@ ok('declares every package its shipped files import', () => {
   assert.deepStrictEqual(undeclared, []);
 });
 
-ok('is named in the test script, so it is not dead on arrival', () => {
-  // `test` is an explicit chain of `node tests/*.js` invocations, not a glob.
-  // A file added here without a link in that chain never runs, and looks
-  // exactly like a file that does - the same shape of defect as the one this
-  // file exists to catch, so it is pinned rather than trusted.
-  assert.ok(
-    manifest.scripts.test.includes('node tests/packaging-test.js'),
-    'tests/packaging-test.js is not in the test script chain',
-  );
+ok('this file is part of the suite npm test runs', () => {
+  assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);

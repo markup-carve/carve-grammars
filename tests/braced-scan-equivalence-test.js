@@ -40,6 +40,7 @@ import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -433,9 +434,50 @@ const CASES = [
     })),
 ];
 
-console.log('language equivalence, pre-fix pattern against the pattern that ships:');
+/*
+ * THIS FILE IS SLICED, because it was the whole wall clock of the suite.
+ *
+ * The rows above are independent generated sweeps over 17.3 million strings in
+ * total, and running them in one process made this file 174 of the 175 seconds
+ * the parallel runner took locally - and on a 4-core runner it starved, so
+ * parallelism across FILES could not help it (carve-grammars#549). A slice is
+ * an interleaved subset of the rows, so `scripts/run-tests.mjs` schedules them
+ * as separate processes beside every other file.
+ *
+ * Interleaved (`index % total === index of this slice`) rather than contiguous:
+ * the rows are grouped by surface, prism first and hljs last, and their cost
+ * varies with the alphabet, so contiguous blocks would be lopsided.
+ *
+ * The default is the whole space, so `node tests/braced-scan-equivalence-test.js`
+ * still runs everything, and every slice runs the rejection probes and the
+ * alphabet-coverage check below - a slice that proved nothing about whether the
+ * comparison can fail would be a slice that cannot fail.
+ */
+const sliceArg = process.argv.indexOf('--slice');
+const [sliceIndex, sliceTotal] = sliceArg === -1
+    ? [0, 1]
+    : (process.argv[sliceArg + 1] || '').split('/').map(Number);
+
+assert.ok(
+    Number.isInteger(sliceIndex) && Number.isInteger(sliceTotal)
+        && sliceTotal >= 1 && sliceIndex >= 0 && sliceIndex < sliceTotal,
+    `--slice wants <index>/<total> with 0 <= index < total, got ${JSON.stringify(process.argv[sliceArg + 1])}`,
+);
+
+const SLICE = CASES.filter((_, index) => index % sliceTotal === sliceIndex);
+
+// A slice that selected nothing would pass in silence, which is the whole
+// failure mode of splitting a sweep up.
+assert.ok(SLICE.length > 0, `slice ${sliceIndex}/${sliceTotal} selected none of the ${CASES.length} rows`);
+
+console.log(
+    'language equivalence, pre-fix pattern against the pattern that ships'
+    + (sliceTotal === 1
+        ? ':'
+        : ` (slice ${sliceIndex + 1} of ${sliceTotal}, ${SLICE.length} of ${CASES.length} rows):`),
+);
 let compared = 0;
-for (const c of CASES) {
+for (const c of SLICE) {
     ok(`${c.name} is unchanged as a language`, () => {
         const before = typeof c.before === 'function' ? c.before() : c.before;
         compared += agree(c.name, before, c.after(), c.alphabet, c.maxLength);
@@ -496,23 +538,13 @@ ok('the alphabets do generate bodies holding a non-closing delimiter', () => {
 });
 
 /*
- * A NEW TEST FILE IN THIS REPO IS DEAD UNTIL `npm test` NAMES IT.
- *
- * The `test` script is an explicit list of `node tests/*.js` invocations, not a
- * glob, so a file added here runs when someone runs it by hand and never again.
- * That has already cost this repo three times over - the same shape as the
- * hand-written opener list in `scripts/scan-superlinear.mjs` and the
- * hand-written URL list in `scripts/no-git-dependencies.mjs`. So the file
- * asserts its own presence in the chain.
+ * IS THIS FILE ACTUALLY RUN? `npm test` globs `tests/*-test.js` through
+ * `scripts/run-tests.mjs`, so a file cannot go missing from a hand-kept chain
+ * any more - but it can be named so the glob skips it. The shared guard asks
+ * the runner's own selection, which is the question that can still go wrong.
  */
-ok('this file is in the npm test chain', () => {
-    const pkg = JSON.parse(readFileSync(resolve(here, '..', 'package.json'), 'utf8'));
-    const self = 'tests/braced-scan-equivalence-test.js';
-    assert.ok(
-        pkg.scripts.test.includes(`node ${self}`),
-        `package.json "test" does not run ${self}, so this file proves nothing in CI - `
-            + 'the script is an explicit list, not a glob',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);
