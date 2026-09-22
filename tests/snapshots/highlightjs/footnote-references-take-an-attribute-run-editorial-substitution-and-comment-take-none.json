@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": "attr",
+    "text": "{.j}"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

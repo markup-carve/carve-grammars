@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "code",
+    "text": "`c`"
+  },
+  {
+    "scope": "attr",
+    "text": "{#a .k}"
+  },
+  {
+    "scope": "attr",
+    "text": "{#b k=1}"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k k=2}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

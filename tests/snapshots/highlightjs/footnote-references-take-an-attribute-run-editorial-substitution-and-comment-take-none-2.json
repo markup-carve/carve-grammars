@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "symbol",
+    "text": "^[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": "attr",
+    "text": "{.j}"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "strong",
+    "text": "*a*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": " {.j}\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": "{???}\n\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*c*"
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": "strong",
+    "text": "{*d*}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
