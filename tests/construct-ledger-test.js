@@ -45,6 +45,7 @@ import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
 import { unfaithful } from './lib/textmate-engine.js';
 import { measureModel } from './lib/tiptap-payload.js';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '..');
@@ -821,21 +822,13 @@ ok('the measurement reports a payload that really does leak', () => {
 });
 
 /*
- * A NEW TEST FILE IN THIS REPO IS DEAD UNTIL `npm test` NAMES IT.
- *
- * The `test` script is an explicit list of `node tests/*.js` invocations rather
- * than a glob, so a file added here runs when someone runs it by hand and never
- * again. A checklist nobody runs is the exact failure carve-grammars#284 is
- * about, one level up.
+ * IS THIS FILE ACTUALLY RUN? `npm test` globs `tests/*-test.js` through
+ * `scripts/run-tests.mjs`, so a file cannot go missing from a hand-kept chain
+ * any more - but it can be named so the glob skips it. The shared guard asks
+ * the runner's own selection, which is the question that can still go wrong.
  */
-ok('this file is in the npm test chain', () => {
-    const pkg = JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8'));
-    const self = 'tests/construct-ledger-test.js';
-    assert.ok(
-        pkg.scripts.test.includes(`node ${self}`),
-        `package.json "test" does not run ${self}, so this file proves nothing in CI - `
-            + 'the script is an explicit list, not a glob',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);

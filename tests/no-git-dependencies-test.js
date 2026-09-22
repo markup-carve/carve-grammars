@@ -32,6 +32,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
@@ -254,14 +255,8 @@ ok('the release workflow runs this script and not its own copy of the rule', () 
     );
 });
 
-ok('is named in the test script, so it is not dead on arrival', () => {
-    // `test` is an explicit chain of `node tests/*.js` invocations, not a glob.
-    // A file added without a link in that chain never runs and looks exactly
-    // like one that does.
-    assert.ok(
-        baseline.scripts.test.includes('node tests/no-git-dependencies-test.js'),
-        'tests/no-git-dependencies-test.js is not in the test script chain',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 rmSync(scratch, { recursive: true, force: true });

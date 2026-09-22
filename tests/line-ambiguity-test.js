@@ -51,6 +51,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 let passed = 0;
@@ -401,15 +402,8 @@ if (realPrism) {
 
 /* ------------------------------------------------------------------ not dead */
 
-ok('is named in the test script, so it is not dead on arrival', () => {
-    // `test` is an explicit chain of `node tests/*.js` invocations, not a glob.
-    // A file added without a link in that chain never runs and looks exactly
-    // like one that does.
-    const manifest = JSON.parse(readFileSync(resolve(here, '..', 'package.json'), 'utf8'));
-    assert.ok(
-        manifest.scripts.test.includes('node tests/line-ambiguity-test.js'),
-        'tests/line-ambiguity-test.js is not in the test script chain',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);

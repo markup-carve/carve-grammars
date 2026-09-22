@@ -24,6 +24,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
@@ -195,11 +196,8 @@ ok('the manifest satisfies the publish guard and the drift check at once', () =>
     assert.strictEqual(drift.status, 0, `the drift check rejects the committed manifest:\n${drift.out}`);
 });
 
-ok('is named in the test script, so it is not dead on arrival', () => {
-    assert.ok(
-        baselineManifest.scripts.test.includes('node tests/engine-drift-test.js'),
-        'tests/engine-drift-test.js is not in the test script chain',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 rmSync(scratch, { recursive: true, force: true });

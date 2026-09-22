@@ -23,6 +23,7 @@ import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { REQUIRED_ALIASES, SURFACE_EXTRAS } from './lib/aliases.js';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const require = createRequire(import.meta.url);
 
@@ -38,19 +39,12 @@ async function okAsync(name, fn) {
     console.log(`  ✓ aliases: ${name}`);
 }
 
-// ----- the test is only alive if the runner names it -----
-//
-// `npm test` is an explicit chain of `node tests/*.js` invocations, not a
-// glob, so a test file that is not named in it never runs and never fails.
-// This assertion is the one that catches that, and it has to live in the file
-// it is about.
-ok('this test file is wired into the npm test chain', () => {
-    const pkgPath = fileURLToPath(new URL('../package.json', import.meta.url));
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    assert.ok(
-        pkg.scripts.test.includes('node tests/alias-parity-test.js'),
-        'package.json "test" does not run tests/alias-parity-test.js, so this file is dead',
-    );
+// IS THIS FILE ACTUALLY RUN? `npm test` globs `tests/*-test.js` through
+// `scripts/run-tests.mjs`, so a file cannot go missing from a hand-kept chain
+// any more - but it can be named so the glob skips it. The shared guard asks
+// the runner's own selection, which is the question that can still go wrong.
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 // ----- Prism -----

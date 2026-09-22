@@ -40,6 +40,7 @@ import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -496,23 +497,13 @@ ok('the alphabets do generate bodies holding a non-closing delimiter', () => {
 });
 
 /*
- * A NEW TEST FILE IN THIS REPO IS DEAD UNTIL `npm test` NAMES IT.
- *
- * The `test` script is an explicit list of `node tests/*.js` invocations, not a
- * glob, so a file added here runs when someone runs it by hand and never again.
- * That has already cost this repo three times over - the same shape as the
- * hand-written opener list in `scripts/scan-superlinear.mjs` and the
- * hand-written URL list in `scripts/no-git-dependencies.mjs`. So the file
- * asserts its own presence in the chain.
+ * IS THIS FILE ACTUALLY RUN? `npm test` globs `tests/*-test.js` through
+ * `scripts/run-tests.mjs`, so a file cannot go missing from a hand-kept chain
+ * any more - but it can be named so the glob skips it. The shared guard asks
+ * the runner's own selection, which is the question that can still go wrong.
  */
-ok('this file is in the npm test chain', () => {
-    const pkg = JSON.parse(readFileSync(resolve(here, '..', 'package.json'), 'utf8'));
-    const self = 'tests/braced-scan-equivalence-test.js';
-    assert.ok(
-        pkg.scripts.test.includes(`node ${self}`),
-        `package.json "test" does not run ${self}, so this file proves nothing in CI - `
-            + 'the script is an explicit list, not a glob',
-    );
+ok('this file is part of the suite npm test runs', () => {
+    assertThisFileRuns(import.meta.url);
 });
 
 console.log(`\n${passed} passed`);
