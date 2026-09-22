@@ -648,6 +648,14 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * searched across the rest of the block (carve-js#1828), which is the reading
  * its corpus HTML pins, and the projection spells that document differently
  * while rendering the same.
+ *
+ * 364 -> 370 with the bump to fe81bde (sections 473-475). Both 473 documents
+ * split the combined token and escape its asterisk content, which renders the
+ * same. 474, 474-...-3 and 475 carry an attribute run on a strong mark or
+ * a footnote reference, which the projection drops, as it already does for
+ * 80-trailing-attribute-block-edge-cases and 22-footnotes-4. 475-...-3 is the
+ * published engine (0.1.7) still reading `{.k}` after a comment as its
+ * attribute block; carve-js#1876 makes it text.
  */
 assertLedger(
     'enveloped-ledger.json',

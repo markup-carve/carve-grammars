@@ -526,5 +526,9 @@ imported.destroy();
 //
 // 236 -> 232 when the outermost mark stopped being read off position 0 (#501).
 // 94-..., both 467-... and 472-... come back; nothing joins.
+//
+// 224 -> 227 with the bump to fe81bde: 474, 474-...-3 and 475 lose the
+// attribute run on a strong mark or a footnote reference, the loss
+// 80-trailing-attribute-block-edge-cases and 22-footnotes-4 already record.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

@@ -1,0 +1,66 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*a*"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " {.j}\n\n"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "{???}\n\n"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*c*"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*d*}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
