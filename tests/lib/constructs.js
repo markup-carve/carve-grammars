@@ -144,6 +144,19 @@ export const CONSTRUCTS = [
         engineScopes: { prism: ['bold-italic'] },
         skip: { highlightjs: 'the mirrored order is read by splitting the run, so no single token spells it' },
     },
+    // A RUN OF ASTERISKS IS CONTENT (corpus 473, markup-carve/carve#2137): the
+    // opener takes `/*`, the closer the last `*/`, and what is left is a literal
+    // `*` run. All three grammars read it that way; nothing pinned it.
+    {
+        name: "bold-italic holding one asterisk", sample: "a /***/ b\n", payload: "*",
+        textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'], highlightjs: ['strong'] },
+    },
+    {
+        name: "bold-italic holding two asterisks", sample: "a /****/ b\n", payload: "**",
+        textmate: "markup.bold.italic",
+        engineScopes: { prism: ['bold-italic'], highlightjs: ['strong'] },
+    },
     { name: "underline", sample: "some _under_ text", payload: "under", textmate: "markup.underline" },
     { name: "strike", sample: "some ~strike~ text", payload: "strike", textmate: "markup.strikethrough" },
     { name: "highlight bare", sample: "a =mark= b", payload: "mark", textmate: "markup.highlight" },
@@ -788,6 +801,16 @@ export const LITERALS = [
         scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'markup.bold.italic' },
     },
     {
+        // The neighbor of corpus 473: `/**/` leaves nothing for the body, so it
+        // is `<em>**</em>`, an italic over two asterisks. The payload is one `*`
+        // and the TextMate selector `bold`, because a bold-italic misreading has
+        // an EMPTY body: only its punctuation tokens would exist to check.
+        name: 'an empty combined token is an italic, not a bold-italic',
+        sample: 'a /**/ b\n',
+        payload: '*',
+        scopes: { prism: 'bold-italic', highlightjs: 'strong', textmate: 'bold' },
+    },
+    {
         // A slash before the mirrored opener makes the pair ambiguous with a
         // canonical opener, and the engine reads the canonical one:
         // `a /*/a/* b` is `a <em>*/a</em>* b`. Without the guard both grammars
@@ -1212,8 +1235,8 @@ export const LITERALS = [
  * touching a number, and the failure being guarded against is the population
  * getting SMALLER. Raise these when the inventory grows - the diff is the record.
  */
-export const MIN_CONSTRUCTS = 201
-export const MIN_LITERALS = 44
+export const MIN_CONSTRUCTS = 208
+export const MIN_LITERALS = 45
 
 /*
  * AND A FLOOR ON WHAT EACH SWEEP ACTUALLY ASSERTS, which is the number that can
@@ -1237,9 +1260,9 @@ export const MIN_ASSERTABLE = {
     // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
     // that grammar the five typography runs the other two already carried, and
     // carve-grammars#375 took the last one.
-    textmate: 201,
-    prism: 198,
-    highlightjs: 197,
+    textmate: 208,
+    prism: 205,
+    highlightjs: 204,
 };
 
 /**
