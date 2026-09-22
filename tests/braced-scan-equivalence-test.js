@@ -434,9 +434,50 @@ const CASES = [
     })),
 ];
 
-console.log('language equivalence, pre-fix pattern against the pattern that ships:');
+/*
+ * THIS FILE IS SLICED, because it was the whole wall clock of the suite.
+ *
+ * The rows above are independent generated sweeps over 17.3 million strings in
+ * total, and running them in one process made this file 174 of the 175 seconds
+ * the parallel runner took locally - and on a 4-core runner it starved, so
+ * parallelism across FILES could not help it (carve-grammars#549). A slice is
+ * an interleaved subset of the rows, so `scripts/run-tests.mjs` schedules them
+ * as separate processes beside every other file.
+ *
+ * Interleaved (`index % total === index of this slice`) rather than contiguous:
+ * the rows are grouped by surface, prism first and hljs last, and their cost
+ * varies with the alphabet, so contiguous blocks would be lopsided.
+ *
+ * The default is the whole space, so `node tests/braced-scan-equivalence-test.js`
+ * still runs everything, and every slice runs the rejection probes and the
+ * alphabet-coverage check below - a slice that proved nothing about whether the
+ * comparison can fail would be a slice that cannot fail.
+ */
+const sliceArg = process.argv.indexOf('--slice');
+const [sliceIndex, sliceTotal] = sliceArg === -1
+    ? [0, 1]
+    : (process.argv[sliceArg + 1] || '').split('/').map(Number);
+
+assert.ok(
+    Number.isInteger(sliceIndex) && Number.isInteger(sliceTotal)
+        && sliceTotal >= 1 && sliceIndex >= 0 && sliceIndex < sliceTotal,
+    `--slice wants <index>/<total> with 0 <= index < total, got ${JSON.stringify(process.argv[sliceArg + 1])}`,
+);
+
+const SLICE = CASES.filter((_, index) => index % sliceTotal === sliceIndex);
+
+// A slice that selected nothing would pass in silence, which is the whole
+// failure mode of splitting a sweep up.
+assert.ok(SLICE.length > 0, `slice ${sliceIndex}/${sliceTotal} selected none of the ${CASES.length} rows`);
+
+console.log(
+    'language equivalence, pre-fix pattern against the pattern that ships'
+    + (sliceTotal === 1
+        ? ':'
+        : ` (slice ${sliceIndex + 1} of ${sliceTotal}, ${SLICE.length} of ${CASES.length} rows):`),
+);
 let compared = 0;
-for (const c of CASES) {
+for (const c of SLICE) {
     ok(`${c.name} is unchanged as a language`, () => {
         const before = typeof c.before === 'function' ? c.before() : c.before;
         compared += agree(c.name, before, c.after(), c.alphabet, c.maxLength);

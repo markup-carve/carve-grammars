@@ -34,3 +34,39 @@ export function isTestFile(name) {
 export function testFiles() {
     return readdirSync(testDir).filter(isTestFile).sort();
 }
+
+/**
+ * Files whose work is too big for one process, and how many slices to cut.
+ *
+ * `braced-scan-equivalence-test.js` sweeps 17.3 million generated strings and
+ * was 174 of the 175 seconds the whole parallel suite took; on a 4-core runner
+ * it starved instead, so spreading the OTHER files around it could not help
+ * (carve-grammars#549). Slicing it is what makes the pool worth having.
+ *
+ * A file absent from here simply runs whole, so this table going stale costs
+ * speed and never correctness - and `tests/slices-test.js` refuses an entry
+ * that names a file which is gone or that does not take `--slice`.
+ */
+export const SLICED = {
+    'braced-scan-equivalence-test.js': 4,
+};
+
+/**
+ * What the runner actually executes: one entry per process, a sliced file
+ * contributing one per slice.
+ *
+ * @returns {{file: string, args: string[], label: string}[]}
+ */
+export function testUnits() {
+    return testFiles().flatMap((file) => {
+        const slices = SLICED[file] ?? 1;
+        if (slices === 1) {
+            return [{ file, args: [], label: file }];
+        }
+        return Array.from({ length: slices }, (_, index) => ({
+            file,
+            args: ['--slice', `${index}/${slices}`],
+            label: `${file} [slice ${index + 1}/${slices}]`,
+        }));
+    });
+}

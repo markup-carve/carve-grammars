@@ -43,7 +43,7 @@ import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
 
-import { repoRoot, testDir, testFiles } from './test-files.mjs';
+import { repoRoot, testDir, testUnits } from './test-files.mjs';
 
 const argv = process.argv.slice(2);
 const serial = argv.includes('--serial');
@@ -61,8 +61,8 @@ if (!Number.isInteger(width) || width < 1) {
     process.exit(2);
 }
 
-const files = testFiles().filter(
-    (f) => filters.length === 0 || filters.some((needle) => f.includes(needle)),
+const files = testUnits().filter(
+    (u) => filters.length === 0 || filters.some((needle) => u.file.includes(needle)),
 );
 
 // A glob that matches nothing would otherwise pass as a green run of no tests.
@@ -75,10 +75,10 @@ if (files.length === 0) {
     process.exit(2);
 }
 
-function run(file) {
+function run({ file, args, label }) {
     const started = Date.now();
     return new Promise((done) => {
-        const child = spawn(process.execPath, [join(testDir, file)], {
+        const child = spawn(process.execPath, [join(testDir, file), ...args], {
             cwd: repoRoot,
             stdio: ['ignore', 'pipe', 'pipe'],
         });
@@ -86,15 +86,15 @@ function run(file) {
         child.stdout.on('data', (c) => chunks.push(c));
         child.stderr.on('data', (c) => chunks.push(c));
         child.on('error', (error) => {
-            chunks.push(Buffer.from(`run-tests: could not spawn ${file}: ${error.message}\n`));
-            done({ file, code: 1, ms: Date.now() - started, output: Buffer.concat(chunks).toString('utf8') });
+            chunks.push(Buffer.from(`run-tests: could not spawn ${label}: ${error.message}\n`));
+            done({ file: label, code: 1, ms: Date.now() - started, output: Buffer.concat(chunks).toString('utf8') });
         });
         child.on('close', (code, signal) => {
             if (signal) {
-                chunks.push(Buffer.from(`run-tests: ${file} was killed by ${signal}\n`));
+                chunks.push(Buffer.from(`run-tests: ${label} was killed by ${signal}\n`));
             }
             done({
-                file,
+                file: label,
                 code: signal ? 1 : (code ?? 1),
                 ms: Date.now() - started,
                 output: Buffer.concat(chunks).toString('utf8'),
@@ -103,13 +103,16 @@ function run(file) {
     });
 }
 
-const queue = [...files];
+// SLICED UNITS FIRST. A long unit picked up last decides the wall clock no
+// matter how wide the pool is, and the sliced files are the long ones by
+// definition - they were sliced for being long.
+const queue = [...files].sort((a, b) => Number(b.args.length > 0) - Number(a.args.length > 0));
 const results = [];
 const suiteStarted = Date.now();
 
 async function worker() {
-    for (let file = queue.shift(); file !== undefined; file = queue.shift()) {
-        const result = await run(file);
+    for (let unit = queue.shift(); unit !== undefined; unit = queue.shift()) {
+        const result = await run(unit);
         results.push(result);
         const mark = result.code === 0 ? 'ok' : 'FAIL';
         process.stdout.write(
@@ -130,7 +133,7 @@ const slowest = [...results]
     .join('\n');
 
 process.stdout.write(
-    `\n===== ${files.length} test files, ${failed.length} failed, ${elapsed}s wall clock` +
+    `\n===== ${files.length} units, ${failed.length} failed, ${elapsed}s wall clock` +
         ` at ${width} job${width === 1 ? '' : 's'} =====\n` +
         `slowest files:\n${slowest}\n`,
 );
