@@ -24,39 +24,23 @@
     "text": "\n"
   },
   {
-    "type": "table-separator>table-boundary",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table-separator",
-    "text": "\t"
+    "type": "table",
+    "text": "\t--- "
   },
   {
-    "type": "table-separator>table-operator",
-    "text": "---"
-  },
-  {
-    "type": "table-separator",
-    "text": " "
-  },
-  {
-    "type": "table-separator>table-boundary",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table-separator",
-    "text": "\t"
+    "type": "table",
+    "text": "\t--- "
   },
   {
-    "type": "table-separator>table-operator",
-    "text": "---"
-  },
-  {
-    "type": "table-separator",
-    "text": " "
-  },
-  {
-    "type": "table-separator>table-boundary",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

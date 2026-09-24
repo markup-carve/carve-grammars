@@ -29,15 +29,7 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
-  },
-  {
-    "scope": null,
-    "text": "\t"
+    "text": " ---\t"
   },
   {
     "scope": "table-boundary",
@@ -45,15 +37,7 @@
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
-  },
-  {
-    "scope": null,
-    "text": "\t"
+    "text": " ---\t"
   },
   {
     "scope": "table-boundary",

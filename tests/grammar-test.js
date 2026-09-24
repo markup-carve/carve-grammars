@@ -156,6 +156,7 @@ if (realPrism) {
             assert.doesNotMatch(realPrism.highlight(body, carvePrism, 'carve'), /token table-operator/);
         }
         assert.match(delimiter, /class="token table-operator">---<\/span>/);
+        assert.doesNotMatch(realPrism.highlight('|\t---|\t---|', carvePrism, 'carve'), /token table-operator/);
     });
     const typesOf = (src) => realPrism.tokenize(src, carvePrism)
         .filter((t) => typeof t !== 'string')
@@ -601,6 +602,7 @@ if (realHljs) {
         const value = realHljs.highlight('|---|---| ', { language: 'carve' }).value;
         assert.match(value, /<span class="hljs-table-operator">---<\/span>/);
         assert.match(value, /<span class="hljs-table-boundary">\|<\/span> $/);
+        assert.doesNotMatch(realHljs.highlight('|\t---|\t---|', { language: 'carve' }).value, /hljs-table-operator/);
     });
     ok('hljs: row attributes cannot hold the table mode across a newline', () => {
         const value = realHljs.highlight('| a |{\nfoo}\npara *x*', { language: 'carve' }).value;

@@ -1167,7 +1167,7 @@
         // A delimiter row has no inline content, so recognize the whole line
         // before the general table rule splits it around code and escapes.
         'table-separator': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?:[ \t]*:?-+:?[ \t]*\|)+[ \t]*$/m,
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$/m,
             inside: {
                 'table-operator': /:?-+:?/,
                 'table-boundary': /\|/,

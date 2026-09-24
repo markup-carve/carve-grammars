@@ -1568,7 +1568,7 @@
 
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| \t]+\|[ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| ]+\|[ \t]*$)/,
         beginScope: 'table-boundary',
         end: [/\|/, /[ \t]*$/],
         endScope: { 1: 'table-boundary' },
