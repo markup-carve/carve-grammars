@@ -615,6 +615,8 @@ if (realHljs) {
         const continuation = realHljs.highlight('+ `a |\nplain *x*\nmore |', { language: 'carve' }).value;
         assert.match(continuation, /plain <span class="hljs-strong">\*x\*<\/span>/);
         assert.doesNotMatch(continuation, /class="hljs-table-boundary">\|<\/span>$/);
+        const blank = realHljs.highlight('| `a |\n\npara *x*', { language: 'carve' }).value;
+        assert.match(blank, /para <span class="hljs-strong">\*x\*<\/span>/);
     });
     ok('hljs: an escaped final pipe cannot open a continuation row', () => {
         const value = realHljs.highlight('+ a \\|\nplain *x*\nlast |', { language: 'carve' }).value;

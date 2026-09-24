@@ -632,7 +632,7 @@
     // onto an unrelated line. Keep the dynamic-width closer from INLINE_CODE.
     const TABLE_INLINE_CODE = {
         ...INLINE_CODE,
-        end: /(?<!`)`+(?!`)|\n[ \t\r]*\n|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$))/,
+        end: /(?<!`)`+(?!`)|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$))/,
         'on:end': (match, response) => {
             if (match[0] === '') return;
             INLINE_CODE['on:end'](match, response);
