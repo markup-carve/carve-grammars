@@ -597,6 +597,15 @@ if (realHljs) {
             assert.match(value, /para <span class="hljs-strong">\*x\*<\/span>/);
         }
     });
+    ok('hljs: delimiter rows permit trailing space without coloring it', () => {
+        const value = realHljs.highlight('|---|---| ', { language: 'carve' }).value;
+        assert.match(value, /<span class="hljs-table-operator">---<\/span>/);
+        assert.match(value, /<span class="hljs-table-boundary">\|<\/span> $/);
+    });
+    ok('hljs: row attributes cannot hold the table mode across a newline', () => {
+        const value = realHljs.highlight('| a |{\nfoo}\npara *x*', { language: 'carve' }).value;
+        assert.match(value, /para <span class="hljs-strong">\*x\*<\/span>/);
+    });
     ok('hljs: real highlight produces token markup', () => {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });
         assert.ok(value.length > 0, 'expected highlighted output');

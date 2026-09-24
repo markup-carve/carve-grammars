@@ -1568,10 +1568,10 @@
 
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| ]+\|$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| \t]+\|[ \t]*$)/,
         beginScope: 'table-boundary',
-        end: /\|$/,
-        endScope: 'table-boundary',
+        end: [/\|/, /[ \t]*$/],
+        endScope: { 1: 'table-boundary' },
         relevance: 5,
         contains: [
             { className: 'table-operator', begin: /:?-+:?/ },
@@ -1607,10 +1607,10 @@
     // Table rows: | cell | cell |
     const tableRow = (header) => ({
         begin: header
-            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}]*\})?[ \t]*$)/
-            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}]*\})?[ \t]*$)/,
+            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/
+            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/,
         beginScope: header ? 'table-operator' : 'table-boundary',
-        end: [/\|/, /(?:\{[^}]*\})?/, /[ \t]*$/],
+        end: [/\|/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
             INLINE_CODE,
@@ -1618,7 +1618,7 @@
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-operator', begin: /(?<=\|)[=]?[<~>](?:[\^~v])?(?= |\{)/ },
-            { className: 'table-boundary', begin: /\|(?!(?:\{[^}]*\})?[ \t]*$)(?=[^\n]*\|(?:\{[^}]*\})?[ \t]*$)/ },
+            { className: 'table-boundary', begin: /\|(?!(?:\{[^}\n]*\})?[ \t]*$)(?=[^\n]*\|(?:\{[^}\n]*\})?[ \t]*$)/ },
         ],
         relevance: 2,
     });
