@@ -1,15 +1,55 @@
 [
   {
-    "scope": "string",
-    "text": "|= A |= B |"
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " A "
+  },
+  {
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " B "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| x \\| y | z |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " x "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\|"
+  },
+  {
+    "scope": null,
+    "text": " y "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " z "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

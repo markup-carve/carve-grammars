@@ -86,6 +86,17 @@ import carve from '@markup-carve/carve-grammars/highlightjs/carve.js'
 hljs.registerLanguage('carve', carve)
 ```
 
+For Prism or highlight.js, load the optional table token colors after the
+highlighter's theme stylesheet:
+
+```js
+import '@markup-carve/carve-grammars/shiki/table-tokens.css'
+```
+
+Plain table pipes use a muted border color; header and span markers use a
+stronger operator color. Shiki's included light and dark themes carry the same
+palette without this stylesheet.
+
 TextMate consumers can load `textmate/carve.tmLanguage.json`. Shiki and
 VitePress users can call `carveMarkdown()` from
 `@markup-carve/carve-grammars/shiki`; it registers both `carve` and `crv`.

@@ -1,15 +1,47 @@
 [
   {
-    "scope": "string",
-    "text": "| a | b |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "punctuation",
-    "text": "+ x\t| y\t|"
+    "scope": "table-operator",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": " x\t"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " y\t"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

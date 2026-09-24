@@ -84,6 +84,7 @@
       "default": "./shiki/diff.js"
     },
     "./shiki/carve.css": "./shiki/carve.css",
+    "./shiki/table-tokens.css": "./shiki/table-tokens.css",
     "./diff": {
       "types": "./diff/index.d.ts",
       "default": "./diff/index.js"

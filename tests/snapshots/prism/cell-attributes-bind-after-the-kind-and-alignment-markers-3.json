@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": " Item "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " Cost "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,11 +32,11 @@
     "text": " Pen "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
+    "type": "table>table-operator",
     "text": ">"
   },
   {
@@ -56,7 +56,7 @@
     "text": " 9 "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

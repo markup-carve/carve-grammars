@@ -32,6 +32,19 @@ ok('light and dark extras cover the same scopes', () => {
     assert.deepStrictEqual(scopes(carveLightExtras), scopes(carveDarkExtras));
 });
 
+ok('table separators have a distinct color from cell content and operators', () => {
+    for (const [extras, boundaryColor, operatorColor] of [
+        [carveLightExtras, '#4f7f8d', '#cf222e'],
+        [carveDarkExtras, '#79a8b5', '#ff7b72'],
+    ]) {
+        const rule = (scope) => extras.find((entry) => entry.scope === scope
+            || Array.isArray(entry.scope) && entry.scope.includes(scope));
+        assert.strictEqual(rule('punctuation.separator.table').settings.foreground, boundaryColor);
+        assert.strictEqual(rule('keyword.operator.table.header').settings.foreground, operatorColor);
+        assert.strictEqual(rule('keyword.operator.table.colspan').settings.foreground, operatorColor);
+    }
+});
+
 ok('extended themes append the extras', () => {
     assert.ok(carveLightTheme.tokenColors.length > carveLightExtras.length);
     assert.ok(carveDarkTheme.tokenColors.length > carveDarkExtras.length);

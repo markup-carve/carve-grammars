@@ -1,15 +1,51 @@
 [
   {
-    "scope": "string",
-    "text": "|= Item |= Cost |"
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " Item "
+  },
+  {
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " Cost "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| Pen |>{.num} 9 |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Pen "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "{.num} 9 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

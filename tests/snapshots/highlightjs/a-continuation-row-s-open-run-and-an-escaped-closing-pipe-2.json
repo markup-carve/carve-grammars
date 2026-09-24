@@ -1,7 +1,15 @@
 [
   {
-    "scope": "string",
-    "text": "| a b \\|"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a b "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\|"
   },
   {
     "scope": null,

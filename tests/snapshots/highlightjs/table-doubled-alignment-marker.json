@@ -1,15 +1,47 @@
 [
   {
-    "scope": "string",
-    "text": "|=<< Note |= Plain |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "=<< Note "
+  },
+  {
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " Plain "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| a         | b       |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a         "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b       "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

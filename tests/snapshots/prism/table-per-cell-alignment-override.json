@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -8,15 +8,19 @@
     "text": " Item     "
   },
   {
-    "type": "table>punctuation",
-    "text": "|="
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "=>"
   },
   {
     "type": "table",
-    "text": "> Qty "
+    "text": " Qty "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +28,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,7 +36,7 @@
     "text": " Apple      "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -40,7 +44,7 @@
     "text": " 12     "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -48,7 +52,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -56,15 +60,19 @@
     "text": " Subtotal   "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
-    "text": "< 12    "
+    "type": "table>table-operator",
+    "text": "<"
   },
   {
-    "type": "table>punctuation",
+    "type": "table",
+    "text": " 12    "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

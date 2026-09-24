@@ -1,23 +1,71 @@
 [
   {
-    "scope": "string",
-    "text": "| Name | Score |{.head}"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Name "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Score "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|{.head}"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "meta",
-    "text": "|------|-------|"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "------"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "-------"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| Ann  | 9     |{.win}"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Ann  "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " 9     "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|{.win}"
   },
   {
     "scope": null,

@@ -13,11 +13,19 @@
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\n  "
   },
   {
-    "scope": "punctuation",
-    "text": "  + b |"
+    "scope": "table-operator",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

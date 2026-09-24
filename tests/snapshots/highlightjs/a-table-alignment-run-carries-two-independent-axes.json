@@ -1,23 +1,79 @@
 [
   {
-    "scope": "string",
-    "text": "|=~ Item |=>^ Qty |"
+    "scope": "table-operator",
+    "text": "|=~"
+  },
+  {
+    "scope": null,
+    "text": " Item "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "=>^"
+  },
+  {
+    "scope": null,
+    "text": " Qty "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| Apple | 12 |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Apple "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " 12 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| Subtotal |<v 12 |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Subtotal "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "<v"
+  },
+  {
+    "scope": null,
+    "text": " 12 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

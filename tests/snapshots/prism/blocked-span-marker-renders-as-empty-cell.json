@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -8,7 +8,7 @@
     "text": " A "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -16,7 +16,7 @@
     "text": " B "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": " C "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,31 +32,31 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
+    "type": "table>table-operator",
     "text": "---"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
+    "type": "table>table-operator",
     "text": "---"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
+    "type": "table>table-operator",
     "text": "---"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -64,7 +64,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -72,7 +72,7 @@
     "text": " x "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -80,7 +80,7 @@
     "text": " y "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -88,7 +88,7 @@
     "text": " z "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -96,11 +96,11 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>operator",
+    "type": "table>table-operator",
     "text": " ^"
   },
   {
@@ -108,11 +108,11 @@
     "text": " "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>operator",
+    "type": "table>table-operator",
     "text": " <"
   },
   {
@@ -120,7 +120,7 @@
     "text": " "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -128,7 +128,7 @@
     "text": " d "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

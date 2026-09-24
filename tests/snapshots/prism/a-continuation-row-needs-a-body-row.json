@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -8,7 +8,7 @@
     "text": " a "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -16,7 +16,7 @@
     "text": " b "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,23 +24,31 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
-    "text": " - "
+    "type": "table>table-operator",
+    "text": " -"
   },
   {
-    "type": "table>punctuation",
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
-    "text": " - "
+    "type": "table>table-operator",
+    "text": " -"
   },
   {
-    "type": "table>punctuation",
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -48,7 +56,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "+"
   },
   {
@@ -56,7 +64,7 @@
     "text": " cont "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {

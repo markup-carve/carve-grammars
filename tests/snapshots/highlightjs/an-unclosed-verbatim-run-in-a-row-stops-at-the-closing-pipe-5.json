@@ -1,7 +1,31 @@
 [
   {
-    "scope": "string",
-    "text": "| a `x|` | b |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "code",
+    "text": "`x|`"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

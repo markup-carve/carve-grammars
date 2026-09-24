@@ -8,7 +8,7 @@
     "text": "| a |\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "  +"
   },
   {
@@ -16,7 +16,7 @@
     "text": " "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {

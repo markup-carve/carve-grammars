@@ -1,15 +1,47 @@
 [
   {
-    "scope": "string",
-    "text": "|={.total} Total |= 99 |"
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": "{.total} Total "
+  },
+  {
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " 99 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| a | b |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

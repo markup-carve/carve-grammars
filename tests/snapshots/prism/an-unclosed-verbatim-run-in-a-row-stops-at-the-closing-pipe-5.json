@@ -1,22 +1,22 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
     "type": "table",
-    "text": " a `x"
+    "text": " a "
   },
   {
-    "type": "table>punctuation",
-    "text": "|"
+    "type": "table>code",
+    "text": "`x|`"
   },
   {
     "type": "table",
-    "text": "` "
+    "text": " "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": " b "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

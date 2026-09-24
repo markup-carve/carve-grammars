@@ -36,7 +36,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -44,7 +44,7 @@
     "text": " Region "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -52,7 +52,7 @@
     "text": " Q1 "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -60,7 +60,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -68,7 +68,7 @@
     "text": " Detail "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -76,7 +76,7 @@
     "text": " EUR "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -84,7 +84,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -92,7 +92,7 @@
     "text": " North "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -100,7 +100,7 @@
     "text": " 11 "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -108,7 +108,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -116,7 +116,7 @@
     "text": " All "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -124,7 +124,7 @@
     "text": " 33 "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

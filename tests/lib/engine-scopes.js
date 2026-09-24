@@ -560,12 +560,12 @@ export const ENGINE_SCOPES = {
   "keyword.operator.table.continuation": {
     "prism": [
       [
-        "table-continuation>punctuation"
+        "table-continuation>table-operator"
       ]
     ],
     "highlightjs": [
       [
-        "punctuation"
+        "table-operator"
       ]
     ]
   },
@@ -669,12 +669,12 @@ export const ENGINE_SCOPES = {
   "keyword.operator.table.header": {
     "prism": [
       [
-        "table>punctuation"
+        "table>table-header"
       ]
     ],
     "highlightjs": [
       [
-        "string"
+        "table-operator"
       ]
     ]
   },
@@ -693,12 +693,12 @@ export const ENGINE_SCOPES = {
   "punctuation.separator.table": {
     "prism": [
       [
-        "table>punctuation"
+        "table>table-boundary"
       ]
     ],
     "highlightjs": [
       [
-        "string"
+        "table-boundary"
       ]
     ]
   },
@@ -936,39 +936,39 @@ export const ENGINE_SCOPES = {
   "keyword.operator.table.alignment": {
     "prism": [
       [
-        "table"
+        "table>table-header"
+      ],
+      [
+        "table>table-operator"
       ]
     ],
     "highlightjs": [
       [
-        "string"
-      ],
-      [
-        "meta"
+        "table-operator"
       ]
     ]
   },
   "keyword.operator.table.rowspan": {
     "prism": [
       [
-        "table>operator"
+        "table>table-operator"
       ]
     ],
     "highlightjs": [
       [
-        "string"
+        "table-operator"
       ]
     ]
   },
   "keyword.operator.table.colspan": {
     "prism": [
       [
-        "table>operator"
+        "table>table-operator"
       ]
     ],
     "highlightjs": [
       [
-        "string"
+        "table-operator"
       ]
     ]
   },

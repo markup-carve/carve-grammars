@@ -142,6 +142,14 @@ ok('prism: every token pattern is a valid RegExp', () => {
 // (there is no percent-fence raw block in the spec), and math spans keep their
 // closing $.
 if (realPrism) {
+    ok('prism: table borders differ from operators and stay out of code', () => {
+        const html = realPrism.highlight('|= Name | `a|b` | ^ |\n| a\\|b | c |', carvePrism, 'carve');
+        assert.match(html, /class="token table-header">\|=<\/span>/);
+        assert.match(html, /class="token table-boundary">\|<\/span>/);
+        assert.match(html, /class="token table-operator"> \^<\/span>/);
+        assert.match(html, /class="token code">`a\|b`<\/span>/);
+        assert.match(html, /class="token escape constant">\\\|<\/span>/);
+    });
     const typesOf = (src) => realPrism.tokenize(src, carvePrism)
         .filter((t) => typeof t !== 'string')
         .map((t) => t.type);
@@ -553,6 +561,14 @@ let realHljs = null;
 try { realHljs = require('highlight.js'); } catch { /* not installed */ }
 if (realHljs) {
     realHljs.registerLanguage('carve', hljsDef);
+    ok('hljs: table borders differ from operators and stay out of code', () => {
+        const { value } = realHljs.highlight('|= Name | `a|b` | ^ |\n| a\\|b | c |', { language: 'carve' });
+        assert.match(value, /class="hljs-table-operator">\|=<\/span>/);
+        assert.match(value, /class="hljs-table-boundary">\|<\/span>/);
+        assert.match(value, /class="hljs-table-operator"> \^<\/span>/);
+        assert.match(value, /class="hljs-code">`a\|b`<\/span>/);
+        assert.match(value, /class="hljs-symbol">\\\|<\/span>/);
+    });
     ok('hljs: real highlight produces token markup', () => {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });
         assert.ok(value.length > 0, 'expected highlighted output');

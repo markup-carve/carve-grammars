@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": " Category       "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " Item   "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,7 +32,7 @@
     "text": " Fresh Fruits    "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -40,7 +40,7 @@
     "text": " Apple   "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -48,7 +48,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "+"
   },
   {
@@ -56,7 +56,7 @@
     "text": " from local      "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
@@ -64,7 +64,7 @@
     "text": "         "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
@@ -72,7 +72,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "+"
   },
   {
@@ -80,7 +80,7 @@
     "text": " farms           "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
@@ -88,7 +88,7 @@
     "text": "         "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
@@ -96,11 +96,11 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>operator",
+    "type": "table>table-operator",
     "text": " ^"
   },
   {
@@ -108,7 +108,7 @@
     "text": "               "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -116,7 +116,7 @@
     "text": " Banana  "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

@@ -1,18 +1,30 @@
 [
   {
-    "scope": "string",
-    "text": "|= h |"
+    "scope": "table-operator",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " h "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| a `b | c |"
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a "
+  },
+  {
+    "scope": "code",
+    "text": "`b | c |\n"
   }
 ]

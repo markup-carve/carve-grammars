@@ -1,11 +1,11 @@
 [
   {
-    "type": "table>punctuation",
-    "text": "|="
+    "type": "table>table-boundary",
+    "text": "|"
   },
   {
-    "type": "table",
-    "text": "~"
+    "type": "table>table-operator",
+    "text": "=~"
   },
   {
     "type": "table>attributes>attr-value>punctuation",
@@ -24,7 +24,7 @@
     "text": " Score "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,7 +32,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -40,7 +40,7 @@
     "text": " 9 "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

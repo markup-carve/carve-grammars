@@ -8,8 +8,16 @@
     "text": " y\n"
   },
   {
-    "scope": "string",
-    "text": "  | x |"
+    "scope": "table-boundary",
+    "text": "  |"
+  },
+  {
+    "scope": null,
+    "text": " x "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

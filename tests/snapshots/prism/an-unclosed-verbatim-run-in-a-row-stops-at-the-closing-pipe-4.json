@@ -1,23 +1,15 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
     "type": "table",
-    "text": " a ``b "
+    "text": " a "
   },
   {
-    "type": "table>punctuation",
-    "text": "|"
-  },
-  {
-    "type": "table",
-    "text": " c "
-  },
-  {
-    "type": "table>punctuation",
-    "text": "|"
+    "type": "table>code",
+    "text": "``b | c |"
   },
   {
     "type": "text",

@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": " Style    "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " Sample      "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -32,7 +32,7 @@
     "text": " italic    "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -48,7 +48,7 @@
     "text": "        "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -56,7 +56,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -64,7 +64,7 @@
     "text": " strong    "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -80,7 +80,7 @@
     "text": "        "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -88,7 +88,7 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -96,15 +96,23 @@
     "text": " code      "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
     "type": "table",
-    "text": " `literal`     "
+    "text": " "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>code",
+    "text": "`literal`"
+  },
+  {
+    "type": "table",
+    "text": "     "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

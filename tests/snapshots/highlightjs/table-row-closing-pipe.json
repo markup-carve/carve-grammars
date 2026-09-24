@@ -1,10 +1,10 @@
 [
   {
-    "scope": "string",
-    "text": "| a | b"
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a | b\n"
   }
 ]

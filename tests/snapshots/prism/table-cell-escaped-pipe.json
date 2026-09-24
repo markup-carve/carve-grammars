@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": " A "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " B "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,23 +24,23 @@
     "text": "\n"
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
     "type": "table",
-    "text": " x \\"
+    "text": " x "
   },
   {
-    "type": "table>punctuation",
-    "text": "|"
+    "type": "table>escape>constant",
+    "text": "\\|"
   },
   {
     "type": "table",
     "text": " y "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -48,7 +48,7 @@
     "text": " z "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

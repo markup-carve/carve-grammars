@@ -1,7 +1,15 @@
 [
   {
-    "scope": "string",
-    "text": "|=hot= is the reading |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "=hot= is the reading "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

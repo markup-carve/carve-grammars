@@ -1,14 +1,18 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
-    "text": "> "
+    "type": "table>table-operator",
+    "text": ">"
   },
   {
-    "type": "table>punctuation",
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

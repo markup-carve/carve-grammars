@@ -1,7 +1,15 @@
 [
   {
-    "scope": "string",
-    "text": "|{#x} =R |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "{#x} =R "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

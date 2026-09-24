@@ -1,0 +1,39 @@
+/* Optional source-view palette for Prism and highlight.js. Shiki uses its
+   theme rules, and TextMate editors use their own color schemes. */
+:root {
+  --carve-table-boundary: #4f7f8d;
+  --carve-table-operator: #cf222e;
+}
+
+.light,
+.vscode-light,
+[data-theme="light"] {
+  --carve-table-boundary: #4f7f8d;
+  --carve-table-operator: #cf222e;
+}
+
+.dark,
+.vscode-dark,
+[data-theme="dark"] {
+  --carve-table-boundary: #79a8b5;
+  --carve-table-operator: #ff7b72;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.vscode-light):not([data-theme="light"]) {
+    --carve-table-boundary: #79a8b5;
+    --carve-table-operator: #ff7b72;
+  }
+}
+
+.token.table-boundary,
+.hljs-table-boundary {
+  color: var(--carve-table-boundary);
+}
+
+.token.table-header,
+.token.table-operator,
+.hljs-table-operator {
+  color: var(--carve-table-operator);
+  font-weight: 650;
+}

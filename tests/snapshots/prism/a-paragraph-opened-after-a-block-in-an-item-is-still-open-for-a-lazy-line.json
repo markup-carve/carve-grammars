@@ -16,7 +16,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "  +"
   },
   {
@@ -24,7 +24,7 @@
     "text": " b "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {

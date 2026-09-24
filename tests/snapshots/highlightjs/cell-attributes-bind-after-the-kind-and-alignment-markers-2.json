@@ -1,15 +1,31 @@
 [
   {
-    "scope": "string",
-    "text": "|=~{#score} Score |"
+    "scope": "table-operator",
+    "text": "|=~"
+  },
+  {
+    "scope": null,
+    "text": "{#score} Score "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| 9 |"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " 9 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

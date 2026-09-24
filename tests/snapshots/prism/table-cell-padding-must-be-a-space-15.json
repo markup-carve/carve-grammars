@@ -1,6 +1,6 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -8,7 +8,7 @@
     "text": " a "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -16,7 +16,7 @@
     "text": " b "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-operator",
     "text": "+"
   },
   {
@@ -32,7 +32,7 @@
     "text": "\tx "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
@@ -40,7 +40,7 @@
     "text": " y "
   },
   {
-    "type": "table-continuation>punctuation",
+    "type": "table-continuation>table-boundary",
     "text": "|"
   },
   {
