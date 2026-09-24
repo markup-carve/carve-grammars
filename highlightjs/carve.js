@@ -764,7 +764,19 @@
     // so `one + two` in prose stays literal.
     const TABLE_CONTINUATION = {
         className: 'punctuation',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+(?:[ \t]*$|[^\n]*\|[ \t]*$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$/,
+        relevance: 5,
+    };
+    const TABLE_CONTINUATION_ROW = {
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\+[^\n]*\|[ \t]*$)/,
+        end: /\|[ \t]*$/,
+        endScope: 'table-boundary',
+        contains: [
+            { className: 'table-operator', begin: /\+(?=[^\n]*\|[ \t]*$)/ },
+            INLINE_CODE,
+            ESCAPE,
+            { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
+        ],
         relevance: 5,
     };
 
@@ -1556,14 +1568,20 @@
 
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
-        className: 'meta',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|[-:| ]+\|$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| ]+\|$)/,
+        beginScope: 'table-boundary',
+        end: /\|$/,
+        endScope: 'table-boundary',
         relevance: 5,
+        contains: [
+            { className: 'table-operator', begin: /:?-+:?/ },
+            { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
+        ],
     };
 
     /*
-     * A PIPE-LED LINE THAT IS NOT A TABLE ROW, which is what this mode has
-     * always matched and not what it was called.
+     * A PIPE-LED LINE THAT IS NOT A TABLE ROW. TABLE_ROW runs first and claims
+     * lines with a closing pipe; this fallback only claims incomplete rows.
      *
      * It was named LINE_BLOCK, and the ledger cited it as the rule for
      * `line_block`. It is not: a line block opens on a COLON FENCE
@@ -1587,12 +1605,25 @@
     };
 
     // Table rows: | cell | cell |
-    const TABLE_ROW = {
-        className: 'string',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|/,
+    const tableRow = (header) => ({
+        begin: header
+            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)/
+            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|/,
+        beginScope: header ? 'table-operator' : 'table-boundary',
         end: /\|(\{[^}]*\})?$/,
+        endScope: 'table-boundary',
+        contains: [
+            INLINE_CODE,
+            ESCAPE,
+            { className: 'table-operator', begin: /\|=(?= |\{)/ },
+            { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
+            { className: 'table-operator', begin: /(?<=\|)[=]?[<~>](?:[\^~v])?(?= |\{)/ },
+            { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
+        ],
         relevance: 2,
-    };
+    });
+    const TABLE_HEADER_ROW = tableRow(true);
+    const TABLE_ROW = tableRow(false);
 
     // Captions: ^ caption text
     const CAPTION = {
@@ -1837,9 +1868,11 @@
         DIV_BLOCK,
         HORIZONTAL_RULE,
         TABLE_SEPARATOR,
-        TABLE_CONTINUATION,  // `+` rows - before TABLE_ROW, which needs a leading `|`
-        PIPE_LED_LINE,     // Must be before TABLE_ROW (both start with |)
+        TABLE_CONTINUATION,
+        TABLE_CONTINUATION_ROW,
+        TABLE_HEADER_ROW,
         TABLE_ROW,
+        PIPE_LED_LINE,
         BLOCKQUOTE,
         CAPTION,
         TASK_LIST,         // Must be before LIST_BULLET

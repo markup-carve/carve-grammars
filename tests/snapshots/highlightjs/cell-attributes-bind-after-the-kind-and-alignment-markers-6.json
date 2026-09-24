@@ -1,15 +1,55 @@
 [
   {
-    "scope": "string",
-    "text": "|=<{.h} Name |=>{.c} Score |{.head}"
+    "scope": "table-operator",
+    "text": "|=<"
+  },
+  {
+    "scope": null,
+    "text": "{.h} Name "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "=>"
+  },
+  {
+    "scope": null,
+    "text": "{.c} Score "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|{.head}"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": "| Ann |>{.num} 9 |{.win}"
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " Ann "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "{.num} 9 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|{.win}"
   },
   {
     "scope": null,

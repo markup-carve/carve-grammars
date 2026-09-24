@@ -1168,13 +1168,30 @@
         'table': {
             pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|.*$/m,
             inside: Object.assign({
+                'code': /(?!)/,
+                'escape': /(?!)/,
                 // rowspan `^` / colspan `<` markers - must precede `punctuation`
                 // so the surrounding `|` is not consumed first.
-                'operator': {
-                    pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
-                    lookbehind: true,
-                },
-                'punctuation': /\|=|\|/,
+                'table-operator': [
+                    {
+                        pattern: /(\|)[ \t]*:?-+:?(?=[ \t]*\|)/,
+                        lookbehind: true,
+                    },
+                    {
+                        pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
+                        lookbehind: true,
+                    },
+                    {
+                        pattern: /(\|)=(?:[<~>][\^~v]?)(?= |\{)/,
+                        lookbehind: true,
+                    },
+                    {
+                        pattern: /(\|)[<~>](?:[\^~v])?(?= |\{)/,
+                        lookbehind: true,
+                    },
+                ],
+                'table-header': /\|=(?= |\{)/,
+                'table-boundary': /\|/,
                 'attributes': attributes,
                 'url': new RegExp(unescaped('\\[') + /[^\]]+\]\([^\s)]+\)/.source),
             }, inline),
@@ -1196,7 +1213,10 @@
         'table-continuation': {
             pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[^\n]*\|[ \t]*$/m,
             inside: Object.assign({
-                'punctuation': /^\uFEFF?[ \t]*\+|\|/,
+                'code': /(?!)/,
+                'escape': /(?!)/,
+                'table-operator': /^\uFEFF?[ \t]*\+/,
+                'table-boundary': /\|/,
             }, inline),
         },
 
@@ -1963,6 +1983,12 @@
         figureGroupDelimiterOnly,
         figureGroupBody
     );
+
+    // Reuse the full code and escape rules before looking for cell pipes.
+    for (const table of ['table', 'table-continuation']) {
+        Prism.languages.carve[table].inside.code = Prism.languages.carve.code;
+        Prism.languages.carve[table].inside.escape = Prism.languages.carve.escape;
+    }
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
     Prism.languages.carvemd = Prism.languages.carve;

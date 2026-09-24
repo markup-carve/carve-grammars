@@ -8,16 +8,32 @@
     "text": " one\n"
   },
   {
-    "scope": "string",
-    "text": " |= H |"
+    "scope": "table-operator",
+    "text": " |="
+  },
+  {
+    "scope": null,
+    "text": " H "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "string",
-    "text": " | x |"
+    "scope": "table-boundary",
+    "text": " |"
+  },
+  {
+    "scope": null,
+    "text": " x "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

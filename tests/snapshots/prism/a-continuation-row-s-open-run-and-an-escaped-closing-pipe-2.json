@@ -1,15 +1,15 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
     "type": "table",
-    "text": " a b \\"
+    "text": " a b "
   },
   {
-    "type": "table>punctuation",
-    "text": "|"
+    "type": "table>escape>constant",
+    "text": "\\|"
   },
   {
     "type": "text",

@@ -1,14 +1,18 @@
 [
   {
-    "type": "table>punctuation",
-    "text": "|="
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>highlight>important",
+    "text": "=hot="
   },
   {
     "type": "table",
-    "text": "hot= is the reading "
+    "text": " is the reading "
   },
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {

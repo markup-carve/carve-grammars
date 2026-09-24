@@ -1,18 +1,14 @@
 [
   {
-    "scope": "string",
-    "text": "| a `b | c d |"
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a "
   },
   {
-    "scope": "string",
-    "text": "| e | f |"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "`b | c d |\n| e | f |\n"
   }
 ]

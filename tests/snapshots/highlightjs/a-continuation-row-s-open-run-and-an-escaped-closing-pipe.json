@@ -1,15 +1,23 @@
 [
   {
-    "scope": "string",
-    "text": "| a `b |"
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a "
   },
   {
-    "scope": "punctuation",
-    "text": "+ c` |"
+    "scope": "code",
+    "text": "`b |\n+ c`"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

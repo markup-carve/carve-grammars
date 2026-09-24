@@ -5,11 +5,19 @@
   },
   {
     "scope": null,
-    "text": " | a |\n"
+    "text": " | a |\n  "
   },
   {
-    "scope": "punctuation",
-    "text": "  + |"
+    "scope": "table-operator",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": null,

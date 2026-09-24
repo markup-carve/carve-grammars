@@ -1,14 +1,18 @@
 [
   {
-    "type": "table>punctuation",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table",
-    "text": "\\= a "
+    "type": "table>escape>constant",
+    "text": "\\="
   },
   {
-    "type": "table>punctuation",
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
