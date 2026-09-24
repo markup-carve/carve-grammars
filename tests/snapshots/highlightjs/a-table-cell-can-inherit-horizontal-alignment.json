@@ -28,16 +28,24 @@
     "text": "|"
   },
   {
+    "scope": "table-operator",
+    "text": "?v"
+  },
+  {
     "scope": null,
-    "text": "?v Bottom "
+    "text": " Bottom "
   },
   {
     "scope": "table-boundary",
     "text": "|"
   },
   {
+    "scope": "table-operator",
+    "text": "?~"
+  },
+  {
     "scope": null,
-    "text": "?~ Middle "
+    "text": " Middle "
   },
   {
     "scope": "table-boundary",
@@ -52,8 +60,12 @@
     "text": "|"
   },
   {
+    "scope": "table-operator",
+    "text": "?^"
+  },
+  {
     "scope": null,
-    "text": "?^ Top "
+    "text": " Top "
   },
   {
     "scope": "table-boundary",

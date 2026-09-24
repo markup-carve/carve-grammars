@@ -150,6 +150,11 @@ if (realPrism) {
         assert.match(html, /class="token code">`a\|b`<\/span>/);
         assert.match(html, /class="token escape constant">\\\|<\/span>/);
     });
+    ok('prism: vertical table alignment is an operator', () => {
+        const html = realPrism.highlight('|=?^ Heading |= Other |\n|?v Value | Plain |', carvePrism, 'carve');
+        assert.match(html, /class="token table-operator">=\?\^<\/span>/);
+        assert.match(html, /class="token table-operator">\?v<\/span>/);
+    });
     ok('prism: a body cell with a dash is not a delimiter row', () => {
         const delimiter = realPrism.highlight('|---|---|', carvePrism, 'carve');
         for (const body of ['| Item | - |', '| `x` | - |', '| - | `x` |']) {
@@ -580,6 +585,11 @@ if (realHljs) {
         assert.match(value, /class="hljs-table-operator"> \^<\/span>/);
         assert.match(value, /class="hljs-code">`a\|b`<\/span>/);
         assert.match(value, /class="hljs-symbol">\\\|<\/span>/);
+    });
+    ok('hljs: vertical table alignment is an operator', () => {
+        const value = realHljs.highlight('|=?^ Heading |= Other |\n|?v Value | Plain |', { language: 'carve' }).value;
+        assert.match(value, /class="hljs-table-operator">\|=\?\^<\/span>/);
+        assert.match(value, /class="hljs-table-operator">\?v<\/span>/);
     });
     ok('hljs: an unclosed pipe-led line does not swallow later markup', () => {
         const { value } = realHljs.highlight('| verse line\nplain *para*\n\n| a | b |', { language: 'carve' });
