@@ -1174,7 +1174,7 @@
                 // so the surrounding `|` is not consumed first.
                 'table-operator': [
                     {
-                        pattern: /(\|)[ \t]*:?-+:?(?=[ \t]*\|)/,
+                        pattern: /(?<=^[ \t]*[-:| \t]*)(\|)[ \t]*:?-+:?(?=[ \t]*\|[-:| \t]*$)/,
                         lookbehind: true,
                     },
                     {

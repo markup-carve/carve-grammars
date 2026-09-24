@@ -150,6 +150,12 @@ if (realPrism) {
         assert.match(html, /class="token code">`a\|b`<\/span>/);
         assert.match(html, /class="token escape constant">\\\|<\/span>/);
     });
+    ok('prism: a body cell with a dash is not a delimiter row', () => {
+        const body = realPrism.highlight('| Item | - |', carvePrism, 'carve');
+        const delimiter = realPrism.highlight('|---|---|', carvePrism, 'carve');
+        assert.doesNotMatch(body, /token table-operator/);
+        assert.match(delimiter, /class="token table-operator">---<\/span>/);
+    });
     const typesOf = (src) => realPrism.tokenize(src, carvePrism)
         .filter((t) => typeof t !== 'string')
         .map((t) => t.type);
@@ -529,7 +535,7 @@ ok('hljs: an inline-literal mode (begins with !`) is registered before inline co
     assert.ok(codeIdx === -1 || litIdx < codeIdx, 'literal mode must precede inline-code modes');
 });
 
-ok('hljs: every mode begin/end is RegExp or string', () => {
+ok('hljs: every mode begin/end is a pattern or a capture-pattern array', () => {
     const seen = new Set();
     function walk(mode, path) {
         if (!mode || typeof mode !== 'object' || seen.has(mode)) return;
@@ -537,7 +543,11 @@ ok('hljs: every mode begin/end is RegExp or string', () => {
         for (const k of ['begin', 'end']) {
             if (k in mode) {
                 const v = mode[k];
-                assert.ok(isRegExp(v) || typeof v === 'string', `${path}.${k} must be RegExp or string`);
+                assert.ok(
+                    isRegExp(v) || typeof v === 'string' ||
+                    (Array.isArray(v) && v.every((part) => isRegExp(part) || typeof part === 'string')),
+                    `${path}.${k} must be a pattern or an array of patterns`,
+                );
             }
         }
         (mode.contains || []).forEach((m, i) => walk(m, `${path}.contains[${i}]`));
@@ -568,6 +578,15 @@ if (realHljs) {
         assert.match(value, /class="hljs-table-operator"> \^<\/span>/);
         assert.match(value, /class="hljs-code">`a\|b`<\/span>/);
         assert.match(value, /class="hljs-symbol">\\\|<\/span>/);
+    });
+    ok('hljs: an unclosed pipe-led line does not swallow later markup', () => {
+        const { value } = realHljs.highlight('| verse line\nplain *para*\n\n| a | b |', { language: 'carve' });
+        assert.match(value, /plain <span class="hljs-strong">\*para\*<\/span>/);
+        assert.match(value, /<span class="hljs-table-boundary">\|<\/span> b <span class="hljs-table-boundary">\|<\/span>/);
+    });
+    ok('hljs: a row attribute is not colored as its closing border', () => {
+        const { value } = realHljs.highlight('| a | b |{.c}', { language: 'carve' });
+        assert.match(value, /<span class="hljs-table-boundary">\|<\/span><span class="hljs-meta">\{\.c\}<\/span>$/);
     });
     ok('hljs: real highlight produces token markup', () => {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });

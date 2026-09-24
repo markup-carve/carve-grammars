@@ -24,11 +24,11 @@
     "text": "\n"
   },
   {
-    "scope": "table-boundary",
-    "text": "|"
+    "scope": "string",
+    "text": "| c | d"
   },
   {
     "scope": null,
-    "text": " c | d\n"
+    "text": "\n"
   }
 ]

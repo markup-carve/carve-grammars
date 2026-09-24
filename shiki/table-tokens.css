@@ -19,13 +19,6 @@
   --carve-table-operator: #ff7b72;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not(.light):not(.vscode-light):not([data-theme="light"]) {
-    --carve-table-boundary: #79a8b5;
-    --carve-table-operator: #ff7b72;
-  }
-}
-
 .token.table-boundary,
 .hljs-table-boundary {
   color: var(--carve-table-boundary);

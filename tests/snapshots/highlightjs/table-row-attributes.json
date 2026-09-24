@@ -17,7 +17,11 @@
   },
   {
     "scope": "table-boundary",
-    "text": "|{.head}"
+    "text": "|"
+  },
+  {
+    "scope": "meta",
+    "text": "{.head}"
   },
   {
     "scope": null,
@@ -65,7 +69,11 @@
   },
   {
     "scope": "table-boundary",
-    "text": "|{.win}"
+    "text": "|"
+  },
+  {
+    "scope": "meta",
+    "text": "{.win}"
   },
   {
     "scope": null,

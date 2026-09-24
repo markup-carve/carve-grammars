@@ -1,11 +1,11 @@
 [
   {
-    "scope": "table-boundary",
-    "text": "|"
+    "scope": "string",
+    "text": "| a"
   },
   {
     "scope": null,
-    "text": " a\n"
+    "text": "\n"
   },
   {
     "scope": "table-boundary",
