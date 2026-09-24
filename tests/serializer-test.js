@@ -141,6 +141,18 @@ check('consecutive line comments inside a block quote stay contiguous',
     { ...carveToProseMirror('> %% one\n> %% two', { unsupported: 'throw' }), attrs: undefined },
     '> %% one\n> %% two');
 
+check('consecutive line comments inside a footnote stay contiguous',
+    { ...carveToProseMirror('[^a]: lead\n\n   %% one\n   %% two', { unsupported: 'throw' }), attrs: undefined },
+    '[^a]: lead\n\n   %% one\n   %% two');
+
+check('consecutive line comments inside a definition description stay contiguous',
+    { ...carveToProseMirror(':: term\n: %% one\n  %% two', { unsupported: 'throw' }), attrs: undefined },
+    ':: term\n: %% one\n  %% two');
+
+check('consecutive line comments inside a figure group stay contiguous',
+    { ...carveToProseMirror('::: figure\n%% one\n%% two\n:::', { unsupported: 'throw' }), attrs: undefined },
+    '::: figure\n%% one\n%% two\n:::');
+
 // A `]` inside a linked comment has no clean answer: escaping it keeps the
 // link and silently corrupts the comment, since no escape is resolved inside
 // `{# ... #}`. Content integrity wins - the label ends early and the link

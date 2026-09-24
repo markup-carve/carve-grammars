@@ -649,7 +649,9 @@ export function serializeToCarve(doc, options = {}) {
                     serializeNode(child, indent, fenceDepth + 1);
                     // Panels are captioned blocks; without the blank line the
                     // next panel's first line continues the previous caption.
-                    if (i < panels.length - 1) output += '\n';
+                    // Contiguous line comments are self-delimiting, so they
+                    // stay on consecutive lines instead.
+                    if (i < panels.length - 1 && !isTightPair(child, panels[i + 1])) output += '\n';
                 });
                 output += groupFence + '\n';
                 if (groupCaption) serializeNode(groupCaption, indent, fenceDepth);
@@ -785,7 +787,13 @@ export function serializeToCarve(doc, options = {}) {
                     output += '[^' + fnLabel + ']:\n';
                 }
                 for (let i = startIndex; i < content.length; i++) {
-                    output += '\n';
+                    // A blank line keeps each body block distinct, except
+                    // between contiguous line comments: the parser does not
+                    // record a blank line between them, so writing one changes
+                    // the author's source.
+                    if (!(i > 0 && isTightPair(content[i - 1], content[i]))) {
+                        output += '\n';
+                    }
                     const blockText = serializeNodeToString(content[i]);
                     blockText.split('\n').forEach((line) => {
                         output += (line ? bodyIndent + line : '') + '\n';
@@ -858,8 +866,9 @@ export function serializeToCarve(doc, options = {}) {
 
                         return;
                     }
-                    // A blank line, or the block would join the one above it.
-                    output += '\n';
+                    // A blank line, or the block would join the one above it -
+                    // except between contiguous line comments.
+                    if (!isTightPair(blocks[i - 1], block)) output += '\n';
                     lines.forEach(line => {
                         output += (line ? DEFINITION_CONTENT_INDENT + line : '') + '\n';
                     });
