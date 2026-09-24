@@ -608,6 +608,16 @@ if (realHljs) {
         const value = realHljs.highlight('| a |{\nfoo}\npara *x*', { language: 'carve' }).value;
         assert.match(value, /para <span class="hljs-strong">\*x\*<\/span>/);
     });
+    ok('hljs: an unclosed code span cannot carry a table row into later lines', () => {
+        const value = realHljs.highlight('| `a |\nplain *x*\nmore |', { language: 'carve' }).value;
+        assert.match(value, /plain <span class="hljs-strong">\*x\*<\/span>/);
+        assert.doesNotMatch(value, /class="hljs-table-boundary">\|<\/span>$/);
+    });
+    ok('hljs: an escaped final pipe cannot open a continuation row', () => {
+        const value = realHljs.highlight('+ a \\|\nplain *x*\nlast |', { language: 'carve' }).value;
+        assert.match(value, /plain <span class="hljs-strong">\*x\*<\/span>/);
+        assert.doesNotMatch(value, /class="hljs-table-boundary">\|<\/span>$/);
+    });
     ok('hljs: real highlight produces token markup', () => {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });
         assert.ok(value.length > 0, 'expected highlighted output');

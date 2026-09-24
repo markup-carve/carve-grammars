@@ -768,12 +768,12 @@
         relevance: 5,
     };
     const TABLE_CONTINUATION_ROW = {
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\+[^\n]*\|[ \t]*$)/,
-        end: /\|[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\+(?:\\.|[^\\\n])*\|[ \t]*$)/,
+        end: /\|[ \t]*$|(?=\n)/,
         endScope: 'table-boundary',
         contains: [
-            { className: 'table-operator', begin: /\+(?=[^\n]*\|[ \t]*$)/ },
-            INLINE_CODE,
+            { className: 'table-operator', begin: /\+(?=(?:\\.|[^\\\n])*\|[ \t]*$)/ },
+            { ...INLINE_CODE, endsWithParent: true },
             ESCAPE,
             { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
         ],
@@ -1610,10 +1610,10 @@
             ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/
             : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/,
         beginScope: header ? 'table-operator' : 'table-boundary',
-        end: [/\|/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
+        end: [/\||(?=\n)/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
-            INLINE_CODE,
+            { ...INLINE_CODE, endsWithParent: true },
             ESCAPE,
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
