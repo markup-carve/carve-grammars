@@ -235,6 +235,36 @@ export function serializeToCarveWithReport(doc) {
 
 const WORD_CHARACTER = /^[\p{L}\p{N}]$/u;
 
+/**
+ * Whether a node is a single-line `%% text` comment.
+ *
+ * The serializer writes such a comment on one line. The same test decides when
+ * two adjacent siblings may sit on consecutive lines without the blank line
+ * used between ordinary blocks: `attrs.block` marks the fenced `%%%` form, and
+ * a body holding a newline is written fenced too, so both are excluded.
+ */
+function isLineComment(node) {
+    if (node?.type !== 'carveComment' || node.attrs?.block) return false;
+    return !(node.content || []).map((child) => child.text || '').join('').includes('\n');
+}
+
+/**
+ * Whether two adjacent sibling blocks must be written without a blank line
+ * between them.
+ */
+function isTightPair(prev, next) {
+    if (!prev || !next) return false;
+    // Consecutive same-type lists: a blank line would split one list into two.
+    if (prev.type === next.type && ['bulletList', 'orderedList', 'taskList'].includes(prev.type)) {
+        return true;
+    }
+    // Consecutive line comments: the author wrote contiguous `%%` lines, and
+    // the parser does not record the blank line that would separate them, so
+    // inserting one is a change the editor made rather than one the author
+    // wrote.
+    return isLineComment(prev) && isLineComment(next);
+}
+
 export function serializeToCarve(doc, options = {}) {
     const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
@@ -286,11 +316,7 @@ export function serializeToCarve(doc, options = {}) {
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth);
                     if (i < (node.content || []).length - 1) {
-                        const curr = child.type;
-                        const next = node.content[i + 1]?.type;
-                        // Only skip blank line between consecutive same-type lists
-                        const bothSameList = curr === next && ['bulletList', 'orderedList', 'taskList'].includes(curr);
-                        if (!bothSameList) {
+                        if (!isTightPair(child, node.content[i + 1])) {
                             output += '\n';
                         }
                     }
@@ -415,8 +441,9 @@ export function serializeToCarve(doc, options = {}) {
                     childText.split('\n').forEach(line => {
                         output += '> ' + line + '\n';
                     });
-                    // Add blank line between blocks (> followed by empty line)
-                    if (i < (node.content || []).length - 1) {
+                    // Add blank line between blocks (> followed by empty line),
+                    // except between contiguous line comments.
+                    if (i < (node.content || []).length - 1 && !isTightPair(child, node.content[i + 1])) {
                         output += '>\n';
                     }
                 });
@@ -524,11 +551,7 @@ export function serializeToCarve(doc, options = {}) {
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth + 1);
                     if (i < (node.content || []).length - 1) {
-                        const curr = child.type;
-                        const next = node.content[i + 1]?.type;
-                        // Only skip blank line between consecutive same-type lists
-                        const bothSameList = curr === next && ['bulletList', 'orderedList', 'taskList'].includes(curr);
-                        if (!bothSameList) {
+                        if (!isTightPair(child, node.content[i + 1])) {
                             output += '\n';
                         }
                     }
@@ -569,10 +592,7 @@ export function serializeToCarve(doc, options = {}) {
                 (node.content || []).forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth + 1);
                     if (i < (node.content || []).length - 1) {
-                        const curr = child.type;
-                        const next = node.content[i + 1]?.type;
-                        const bothSameList = curr === next && ['bulletList', 'orderedList', 'taskList'].includes(curr);
-                        if (!bothSameList) output += '\n';
+                        if (!isTightPair(child, node.content[i + 1])) output += '\n';
                     }
                 });
                 output += tabFence + '\n';
@@ -644,7 +664,7 @@ export function serializeToCarve(doc, options = {}) {
                 const children = node.content || [];
                 children.forEach((child, i) => {
                     serializeNode(child, indent, fenceDepth);
-                    if (i < children.length - 1) output += '\n';
+                    if (i < children.length - 1 && !isTightPair(child, children[i + 1])) output += '\n';
                 });
                 break;
             }
@@ -971,11 +991,12 @@ export function serializeToCarve(doc, options = {}) {
                 });
             }
             // Separate blocks with a blank line (loose item), EXCEPT keep a
-            // nested list tight directly under its lead - Carve nests a
+            // nested list tight directly under its lead (Carve nests a
             // content-column sublist marker without a blank line, and adding
-            // one would render the list loose.
+            // one would render the list loose) and keep contiguous line
+            // comments on consecutive lines.
             const next = content[i + 1];
-            if (next && !isList(next.type)) {
+            if (next && !isList(next.type) && !isTightPair(child, next)) {
                 output += '\n';
             }
         });

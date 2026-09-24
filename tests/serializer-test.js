@@ -102,6 +102,45 @@ check('a delimited inline comment stays glued inside a mark',
     { ...carveToProseMirror('*bo{% c %}ld* text\n', { unsupported: 'throw' }), attrs: undefined },
     '*bo{% c %}ld* text');
 
+// A `%% text` line comment occupies exactly its own line. The parser emits one
+// comment node per `%%` line and does not record whether the author left a
+// blank line between them, so consecutive line comments must stay on
+// consecutive lines: the blank line used between ordinary blocks is a change
+// the editor would otherwise make on every load/save.
+const lineComment = (t) => ({ type: 'carveComment', attrs: { block: false, delimited: false }, content: [text(t)] });
+const blockComment = (t) => ({ type: 'carveComment', attrs: { block: true, delimited: false }, content: [text(t)] });
+
+check('consecutive line comments stay on consecutive lines',
+    doc(lineComment('one'), lineComment('two'), lineComment('three')),
+    '%% one\n%% two\n%% three');
+
+check('a line comment is still separated from the next block',
+    doc(lineComment('one'), para(text('body'))),
+    '%% one\n\nbody');
+
+// The fenced `%%%` form is one block, not a run of lines. Two adjacent fenced
+// comments keep the blank line that stops the first closer from opening the
+// next comment.
+check('consecutive fenced comments keep their blank line',
+    doc(blockComment('one'), blockComment('two')),
+    '%%%\none\n%%%\n\n%%%\ntwo\n%%%');
+
+check('adjacent line comments survive the converter round trip',
+    { ...carveToProseMirror('%% one\n%% two\n%% three', { unsupported: 'throw' }), attrs: undefined },
+    '%% one\n%% two\n%% three');
+
+check('consecutive line comments inside a div stay contiguous',
+    { ...carveToProseMirror('::: note\n%% one\n%% two\n:::', { unsupported: 'throw' }), attrs: undefined },
+    '::: note\n%% one\n%% two\n:::');
+
+check('consecutive line comments inside a list item stay tight',
+    { ...carveToProseMirror('- %% one\n  %% two', { unsupported: 'throw' }), attrs: undefined },
+    '- %% one\n  %% two');
+
+check('consecutive line comments inside a block quote stay contiguous',
+    { ...carveToProseMirror('> %% one\n> %% two', { unsupported: 'throw' }), attrs: undefined },
+    '> %% one\n> %% two');
+
 // A `]` inside a linked comment has no clean answer: escaping it keeps the
 // link and silently corrupts the comment, since no escape is resolved inside
 // `{# ... #}`. Content integrity wins - the label ends early and the link
