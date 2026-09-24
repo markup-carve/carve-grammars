@@ -25,6 +25,10 @@
   },
   {
     "scope": "code",
-    "text": "`b | c |\n"
+    "text": "`b | c |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

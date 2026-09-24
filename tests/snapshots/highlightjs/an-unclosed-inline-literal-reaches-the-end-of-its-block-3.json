@@ -9,6 +9,10 @@
   },
   {
     "scope": "code",
-    "text": "`b | c d |\n"
+    "text": "`b | c d |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

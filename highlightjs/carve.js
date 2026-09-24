@@ -628,6 +628,16 @@
 
     // Inline code: `code`, ``code``, or any wider fence.
     const INLINE_CODE = verbatimFence({ className: 'code', relevance: 0 });
+    // A table cell can carry an open run onto a continuation row, but not
+    // onto an unrelated line. Keep the dynamic-width closer from INLINE_CODE.
+    const TABLE_INLINE_CODE = {
+        ...INLINE_CODE,
+        end: /(?<!`)`+(?!`)|\n[ \t\r]*\n|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$))/,
+        'on:end': (match, response) => {
+            if (match[0] === '') return;
+            INLINE_CODE['on:end'](match, response);
+        },
+    };
 
     // Inline links: [text](url) with optional trailing attributes
     const LINK = {
@@ -769,11 +779,11 @@
     };
     const TABLE_CONTINUATION_ROW = {
         begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\+(?:\\.|[^\\\n])*\|[ \t]*$)/,
-        end: /\|[ \t]*$|(?=\n)/,
+        end: /\|[ \t]*$|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$))/,
         endScope: 'table-boundary',
         contains: [
             { className: 'table-operator', begin: /\+(?=(?:\\.|[^\\\n])*\|[ \t]*$)/ },
-            { ...INLINE_CODE, endsWithParent: true },
+            TABLE_INLINE_CODE,
             ESCAPE,
             { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
         ],
@@ -1610,10 +1620,10 @@
             ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/
             : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/,
         beginScope: header ? 'table-operator' : 'table-boundary',
-        end: [/\||(?=\n)/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
+        end: [/\||(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$))/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
-            { ...INLINE_CODE, endsWithParent: true },
+            TABLE_INLINE_CODE,
             ESCAPE,
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
