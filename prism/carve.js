@@ -1164,6 +1164,16 @@
             },
         },
 
+        // A delimiter row has no inline content, so recognize the whole line
+        // before the general table rule splits it around code and escapes.
+        'table-separator': {
+            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$/m,
+            inside: {
+                'table-operator': /:?-+:?/,
+                'table-boundary': /\|/,
+            },
+        },
+
         // Table rows: | a | b |   (plus header `|=`, caption `^`, span markers)
         'table': {
             pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|.*$/m,
@@ -1173,10 +1183,6 @@
                 // rowspan `^` / colspan `<` markers - must precede `punctuation`
                 // so the surrounding `|` is not consumed first.
                 'table-operator': [
-                    {
-                        pattern: /(\|)[ \t]*:?-+:?(?=[ \t]*\|)/,
-                        lookbehind: true,
-                    },
                     {
                         pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
                         lookbehind: true,

@@ -28,24 +28,16 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": "\t---"
-  },
-  {
     "type": "table",
-    "text": " "
+    "text": "\t--- "
   },
   {
     "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": "\t---"
-  },
-  {
     "type": "table",
-    "text": " "
+    "text": "\t--- "
   },
   {
     "type": "table>table-boundary",

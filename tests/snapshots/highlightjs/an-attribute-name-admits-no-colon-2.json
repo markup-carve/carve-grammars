@@ -41,7 +41,11 @@
   },
   {
     "scope": "table-boundary",
-    "text": "|{.x}"
+    "text": "|"
+  },
+  {
+    "scope": "meta",
+    "text": "{.x}"
   },
   {
     "scope": null,

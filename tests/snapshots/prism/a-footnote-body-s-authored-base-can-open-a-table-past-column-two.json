@@ -28,23 +28,27 @@
     "text": "\n"
   },
   {
-    "type": "table",
+    "type": "table-separator",
     "text": "   "
   },
   {
-    "type": "table>table-boundary",
+    "type": "table-separator>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": " -"
-  },
-  {
-    "type": "table",
+    "type": "table-separator",
     "text": " "
   },
   {
-    "type": "table>table-boundary",
+    "type": "table-separator>table-operator",
+    "text": "-"
+  },
+  {
+    "type": "table-separator",
+    "text": " "
+  },
+  {
+    "type": "table-separator>table-boundary",
     "text": "|"
   },
   {

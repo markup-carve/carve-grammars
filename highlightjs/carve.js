@@ -1568,10 +1568,10 @@
 
     // Table separator: |---|---|
     const TABLE_SEPARATOR = {
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| ]+\|$)/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[-:| ]+\|[ \t]*$)/,
         beginScope: 'table-boundary',
-        end: /\|$/,
-        endScope: 'table-boundary',
+        end: [/\|/, /[ \t]*$/],
+        endScope: { 1: 'table-boundary' },
         relevance: 5,
         contains: [
             { className: 'table-operator', begin: /:?-+:?/ },
@@ -1590,9 +1590,9 @@
      * line at document level is neither - the engine renders it as a paragraph.
      *
      * The mode still earns its place, for the reason its old comment gave:
-     * TABLE_ROW closes on a line-final `|`, so on a single-pipe line it would
-     * open and run until some later line happened to end in one. This claims
-     * the line first and ends it at the newline. The rename is what stops the
+     * TABLE_ROW closes on a line-final `|`, so its opener must check for that
+     * closer before claiming a line. This fallback scopes an unclosed pipe-led
+     * line and ends it at the newline. The rename is what stops the
      * ledger reading a guard against that runaway as a construct's rule -
      * evidence names a rule the vocabulary declares, and nothing checks that
      * the named rule is about the construct.
@@ -1607,18 +1607,18 @@
     // Table rows: | cell | cell |
     const tableRow = (header) => ({
         begin: header
-            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)/
-            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|/,
+            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/
+            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$)/,
         beginScope: header ? 'table-operator' : 'table-boundary',
-        end: /\|(\{[^}]*\})?$/,
-        endScope: 'table-boundary',
+        end: [/\|/, /(?:\{[^}\n]*\})?/, /[ \t]*$/],
+        endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
             INLINE_CODE,
             ESCAPE,
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-operator', begin: /(?<=\|)[=]?[<~>](?:[\^~v])?(?= |\{)/ },
-            { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
+            { className: 'table-boundary', begin: /\|(?!(?:\{[^}\n]*\})?[ \t]*$)(?=[^\n]*\|(?:\{[^}\n]*\})?[ \t]*$)/ },
         ],
         relevance: 2,
     });
