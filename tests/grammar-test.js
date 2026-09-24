@@ -151,9 +151,10 @@ if (realPrism) {
         assert.match(html, /class="token escape constant">\\\|<\/span>/);
     });
     ok('prism: a body cell with a dash is not a delimiter row', () => {
-        const body = realPrism.highlight('| Item | - |', carvePrism, 'carve');
         const delimiter = realPrism.highlight('|---|---|', carvePrism, 'carve');
-        assert.doesNotMatch(body, /token table-operator/);
+        for (const body of ['| Item | - |', '| `x` | - |', '| - | `x` |']) {
+            assert.doesNotMatch(realPrism.highlight(body, carvePrism, 'carve'), /token table-operator/);
+        }
         assert.match(delimiter, /class="token table-operator">---<\/span>/);
     });
     const typesOf = (src) => realPrism.tokenize(src, carvePrism)
@@ -587,6 +588,14 @@ if (realHljs) {
     ok('hljs: a row attribute is not colored as its closing border', () => {
         const { value } = realHljs.highlight('| a | b |{.c}', { language: 'carve' });
         assert.match(value, /<span class="hljs-table-boundary">\|<\/span><span class="hljs-meta">\{\.c\}<\/span>$/);
+    });
+    ok('hljs: table guards respect trailing space, escapes, and pipes in attributes', () => {
+        const spaced = realHljs.highlight('| a | b | ', { language: 'carve' }).value;
+        assert.match(spaced, /<span class="hljs-table-boundary">\|<\/span> $/);
+        for (const source of ['| a \\|\npara *x*', '| a |{title="x|y"}\npara *x*']) {
+            const value = realHljs.highlight(source, { language: 'carve' }).value;
+            assert.match(value, /para <span class="hljs-strong">\*x\*<\/span>/);
+        }
     });
     ok('hljs: real highlight produces token markup', () => {
         const { value } = realHljs.highlight(SAMPLE, { language: 'carve' });

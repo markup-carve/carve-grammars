@@ -1607,10 +1607,10 @@
     // Table rows: | cell | cell |
     const tableRow = (header) => ({
         begin: header
-            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=[^\n]*\|(?:\{[^}]*\})?$)/
-            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=[^\n]*\|(?:\{[^}]*\})?$)/,
+            ? /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?)?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}]*\})?[ \t]*$)/
+            : /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}]*\})?[ \t]*$)/,
         beginScope: header ? 'table-operator' : 'table-boundary',
-        end: [/\|/, /(?:\{[^}]*\})?$/],
+        end: [/\|/, /(?:\{[^}]*\})?/, /[ \t]*$/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
             INLINE_CODE,
@@ -1618,7 +1618,7 @@
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-operator', begin: /(?<=\|)[=]?[<~>](?:[\^~v])?(?= |\{)/ },
-            { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
+            { className: 'table-boundary', begin: /\|(?!(?:\{[^}]*\})?[ \t]*$)(?=[^\n]*\|(?:\{[^}]*\})?[ \t]*$)/ },
         ],
         relevance: 2,
     });

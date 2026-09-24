@@ -940,6 +940,9 @@ export const ENGINE_SCOPES = {
       ],
       [
         "table>table-operator"
+      ],
+      [
+        "table-separator>table-operator"
       ]
     ],
     "highlightjs": [
