@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "Intro"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " ::: footnotes"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " :::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ": only note\n"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>string",
+    "text": "\"Careful\""
+  },
+  {
+    "type": "div>tag",
+    "text": "\nVisible body.\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>string",
+    "text": "\"Careful\""
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% hidden"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

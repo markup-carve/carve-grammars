@@ -1,0 +1,58 @@
+[
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol",
+    "text": "[First]"
+  },
+  {
+    "type": "div>tag",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol",
+    "text": "[End]"
+  },
+  {
+    "type": "div>tag",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

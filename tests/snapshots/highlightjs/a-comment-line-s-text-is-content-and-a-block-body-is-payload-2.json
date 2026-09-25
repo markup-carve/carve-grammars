@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "%%  x"
+  },
+  {
+    "scope": null,
+    "text": "\n\ntext\n"
+  }
+]
