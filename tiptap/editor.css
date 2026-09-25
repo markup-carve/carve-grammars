@@ -236,6 +236,31 @@
 .ProseMirror [data-carve-citation-definition]::before { content: 'Citation · ' attr(key); }
 .ProseMirror .carve-footnote-definition::before { content: 'Footnote · ' attr(data-footnote-label); }
 .ProseMirror figcaption[data-carve-caption]::before { content: 'Caption'; }
+/* A directive's body is usually EMPTY - its content is generated from the
+   document - so without a label it renders as a div of no height that the
+   author cannot see, select or delete. The block extension gets the same
+   treatment: its fallback is real content, and the label is what says the
+   fallback is standing in for something. */
+.ProseMirror [data-carve-directive],
+.ProseMirror [data-carve-block-extension] {
+  position: relative;
+  border-inline-start: 3px solid var(--carve-border, #c8ced7);
+  padding-inline-start: .75rem;
+  min-height: 1.4em;
+}
+.ProseMirror [data-carve-directive]::before,
+.ProseMirror [data-carve-block-extension]::before {
+  display: block;
+  color: var(--carve-ink-soft, #5a626d);
+  font: 700 .68rem/1.3 var(--carve-font-sans, system-ui, sans-serif);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.ProseMirror [data-carve-directive]::before { content: 'Generated · ' attr(kind); }
+.ProseMirror [data-carve-block-extension]::before { content: 'Extension · ' attr(name); }
+.ProseMirror .smallcaps {
+  font-variant-caps: small-caps;
+}
 .ProseMirror .critic-comment {
   background: var(--carve-warn-wash, #fff6dc);
   text-decoration: underline dotted var(--carve-warn, #9a6700);

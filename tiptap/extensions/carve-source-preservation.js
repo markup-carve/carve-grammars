@@ -9,6 +9,7 @@ const positionedBlocks = [
     'carveRawBlock', 'carveComment', 'carveFrontmatter', 'carveLinkRefDef',
     'carveFootnoteDefinition', 'carveCitationDefinition',
     'carveAbbreviationDefinition', 'carveEmbed', 'carveUnsupported',
+    'carveDirective', 'carveBlockExtension',
 ];
 
 /** Merge base for preserving authored source layout around structured edits. */

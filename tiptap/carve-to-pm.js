@@ -553,6 +553,42 @@ function convertBlock(node, ctx) {
         case 'admonition':
             return convertAdmonition(node, ctx);
 
+        // CARVE-P12-057 splits the named container three ways, and `kind` is the
+        // discriminator. Its own node, so a bridge reading the wire back gets the
+        // type from the NODE rather than from its own copy of the six-kind enum -
+        // and so it cannot come back as the `admonition` whose `kind` the AST
+        // schema refuses for exactly these words.
+        case 'directive': {
+            const attrs = { kind: node.kind || '', ...(convertAttrs(node.attrs) || {}) };
+            const directiveTitle = inlinePlainText(node.title || []);
+            if (directiveTitle !== '') attrs.title = directiveTitle;
+            if (node.label != null) attrs.label = node.label;
+
+            // Usually empty: a directive's content is generated from the
+            // document, not authored between the markers.
+            return { type: 'carveDirective', attrs, content: convertBlocks(node.children || [], ctx) };
+        }
+
+        // CARVE-P12-055. The fallback is the CONTENT - a real block the
+        // editor edits - because it is what the document means to a reader that
+        // does not implement the extension, so it must not be a blob.
+        case 'block-extension':
+        case 'block_extension': {
+            const attrs = { name: node.name || '', ...(convertAttrs(node.attrs) || {}) };
+            if (node.version != null) attrs.version = node.version;
+            if (node.payload != null) attrs.payload = node.payload;
+            const fallback = node.fallback ? convertBlocks([node.fallback], ctx) : [];
+
+            return {
+                type: 'carveBlockExtension',
+                attrs,
+                // `content: 'block'` is required by the schema, so a tree that
+                // arrives without one gets an empty paragraph rather than a
+                // document ProseMirror refuses to build.
+                content: fallback.length ? fallback : [{ type: 'paragraph' }],
+            };
+        }
+
         case 'definition-list':
         case 'definition_list':
             return convertDefinitionList(node, ctx);
@@ -1176,6 +1212,34 @@ function convertInlineNode(node, marks, ctx) {
 
         case 'span':
             return convertSpan(node, marks, ctx);
+
+        // CARVE-P12-050. The wrapper is a MARK, and the node's own attribute run
+        // rides an ordinary `carveSpan` around the same children - which is the
+        // shape the clause asks a canonical writer to produce, so the existing
+        // span machinery writes it and this mark needs no attributes of its own.
+        case 'small_caps': {
+            if (marks.some((mark) => mark.type === 'carveSmallCaps')) return descend(node, marks, ctx);
+            const attrs = convertAttrs(node.attrs);
+            const wrapper = attrs ? [{ type: 'carveSpan', attrs }] : [];
+
+            return descend(node, [...marks, ...wrapper, { type: 'carveSmallCaps' }], ctx);
+        }
+
+        // CARVE-P12-054. An atom: `pairs` IS the association, and a pair carries
+        // no type of its own, so there is no content expression for it. Each
+        // half is inline content, converted like a substitution's halves.
+        case 'ruby':
+            return [{
+                type: 'carveRuby',
+                attrs: {
+                    pairs: (node.pairs || []).map((pair) => ({
+                        base: convertInline(pair?.base || [], ctx),
+                        annotation: convertInline(pair?.annotation || [], ctx),
+                    })),
+                    ...(convertAttrs(node.attrs) || {}),
+                },
+                ...(marks.length ? { marks } : {}),
+            }];
 
         case 'critic-comment':
         case 'critic_comment':

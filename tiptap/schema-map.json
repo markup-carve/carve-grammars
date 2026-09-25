@@ -188,6 +188,34 @@
         "title": "fence title"
       }
     },
+    "directive": {
+      "kind": "node",
+      "pm": "carveDirective",
+      "notes": "a generated-content container (CARVE-P12-057): `::: toc`, `::: footnotes`, `::: bibliography`, `::: glossary`, `::: index`, `::: references`. ITS OWN NODE, deliberately not an alias of `div` the way `admonition` is. `kind` is what tells the three named-container types apart, so a bridge going back to the AST reads the type off the node instead of carrying its own copy of the six-kind enum - and cannot emit the `admonition` whose `kind` the AST schema refuses for exactly these six words. A directive's children are usually empty: its content is generated from the document, not authored between the markers",
+      "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes; the kind word is NOT among them, it is `kind`",
+        "id": "authored id",
+        "kind": "which generated content is placed here, one of the six",
+        "label": "opener `[label]` grouping id; inert in core",
+        "title": "the opener's quoted title, as `carveDiv` carries an admonition's"
+      }
+    },
+    "block_extension": {
+      "kind": "node",
+      "pm": "carveBlockExtension",
+      "notes": "a block an extension owns (CARVE-P12-055). The REQUIRED fallback is the node's CONTENT, not an attribute: it is a real block the editor edits, and it is what the document means to a reader that does not implement the extension, so the content expression is `block` and says so. Carve 0.1 source spells none, so one reaches the editor over the AST-JSON wire only, and a canonical writer writes the fallback and reports the substitution",
+      "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes",
+        "id": "authored id",
+        "name": "the globally qualified extension name; `org.example.diagram`, never `diagram`",
+        "payload": "the extension's own data as one object, `format` plus `value`; opaque to every core target and NOT rendered into HTML, for the reason `carveSubstitution` gives for its halves",
+        "version": "the extension's own version, opaque here"
+      }
+    },
     "definition_list": {
       "kind": "node",
       "pm": "definitionList",
@@ -369,6 +397,18 @@
         "name": "the shortcode name, without its colons"
       }
     },
+    "ruby": {
+      "kind": "node",
+      "pm": "carveRuby",
+      "notes": "an interchange-only ruby annotation (CARVE-P12-054); inline ATOM, because `pairs` IS the association and there is no parallel `children` field a content expression could stand in for. A pair carries no type, attrs or pos of its own. Carve 0.1 source spells no ruby, so one arrives over the AST-JSON wire only, and a canonical writer flattens each pair to its base followed by its annotation in parentheses",
+      "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes",
+        "id": "authored id",
+        "pairs": "per pair: `base` and `annotation`, each as an INLINE ARRAY, in reading order; an annotation may be empty, a base may not"
+      }
+    },
     "citation_group": {
       "kind": "node",
       "pm": "carveCitation",
@@ -438,6 +478,11 @@
     "superscript": {
       "kind": "mark",
       "pm": "superscript"
+    },
+    "small_caps": {
+      "kind": "mark",
+      "pm": "carveSmallCaps",
+      "notes": "an interchange-only small-caps wrapper (CARVE-P12-050). A MARK, not a node: it wraps inline content and nests with every other mark, where a node would make it an atom and stop the text inside being edited. Its own attribute run does NOT ride here - CARVE-P12-050 asks a canonical writer to keep it on an ordinary attributed span around the same children, so the bridge adds a `carveSpan` mark for it and this mark carries the small-caps distinction alone. Carve 0.1 source spells no small caps, so one arrives over the AST-JSON wire only, and a canonical writer drops the wrapper, leaves the letter case alone and reports the loss"
     },
     "insert": {
       "kind": "mark",
@@ -547,7 +592,7 @@
       "group": "inline",
       "attrs": {
         "markAttrs": "the mark's own attributes, as one map: a link's `href`/`title` and any authored run, a span's id/class/key-values. Absent where the mark had none",
-        "markType": "the ProseMirror mark this atom stands for: `link`, `carveSpan`, `carveAbbreviation`, `carveInsert`, `carveDelete` or `code`"
+        "markType": "the ProseMirror mark this atom stands for: `link`, `carveSpan`, `carveAbbreviation`, `carveInsert`, `carveDelete`, `code` or `carveSmallCaps`. The first six have a source spelling this atom writes back; a small-caps wrapper with no children has none, so it is REPORTED as dropped rather than written"
       }
     }
   }
