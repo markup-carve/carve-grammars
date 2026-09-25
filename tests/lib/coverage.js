@@ -738,6 +738,18 @@ const TIPTAP_COVERED = [
     // the same AST. The braces survive because the serializer has nothing to
     // respell: they are text on both sides of the trip.
     'include-directive-with-no-resolver-renders-literal',
+
+    // Carve main through 19b9f0a, which added corpus 496-498. Each of the nine
+    // files was run alone through the source-aware loader: all convert to rich
+    // nodes (`carveDiv`; `paragraph` + `blockquote` + `carveFootnoteDefinition`;
+    // `carveComment` + `paragraph`) with no whole-document fallback atom and no
+    // source envelope, and each reparses to the same AST.
+    'a-title-or-label-fills-the-container-body-slot',
+    'a-footnotes-placement-marker-inside-a-container-does-not-place',
+    // The comment's own bytes carry the ruling here: the AST keeps the text a
+    // `%%` line and a `%%%` body hold, including a trailing run and a no-break
+    // space, and the serializer re-emits them, so the trip is idempotent.
+    'a-comment-line-s-text-is-content-and-a-block-body-is-payload',
 ];
 
 // Categories that historically required the whole-document fallback. Their
