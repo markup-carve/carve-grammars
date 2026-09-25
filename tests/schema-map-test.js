@@ -45,6 +45,11 @@ const IMPLEMENTATION_TYPES = new Set([
   // nothing. `abbreviation_def` renders nothing at all, so it belongs here
   // rather than in AHEAD_OF_PIN - no spec bump will ever promote it.
   'abbreviation_def',
+  // A caption is not a node: `figure`, `figure_group` and `table` each carry
+  // their caption as an inline array, so the vocabulary paragraph names it only
+  // to say it is absent (spec/docs/profiles.md, "A caption is **not** in this
+  // list"). No bump will promote it, so it belongs here and not in AHEAD_OF_PIN.
+  'caption',
   'document',
   'frontmatter',
   'literal_inline',
@@ -64,18 +69,17 @@ const IMPLEMENTATION_TYPES = new Set([
  *
  * An entry here is a check weakened to accommodate a stale pin, so it is only
  * ever a temporary accommodation between an engine landing a type and `spec/`
- * catching up. The four below are exactly that, and they are why this file's
- * has-a-decision gate could not see the hole it exists to catch: carve main
- * names all four in the profile vocabulary, the pin at `fe81bde` does not, so
- * nothing here FORCED a decision and two engine bridges each wrote their own -
- * one mapping `directive`, the other calling it unmapped
- * (markup-carve/carve-grammars#561). Measured with the pin moved to carve
- * `ce347c3f`, the gate refuses exactly `block_extension, directive, ruby,
- * small_caps`, which is how these entries were shown to be required rather than
- * merely permitted. The bump itself is a separate change: it also needs 20 new
- * corpus categories classified and `caption` moved to IMPLEMENTATION_TYPES.
+ * catching up. The set is EMPTY, and the bump to carve `275425f3` is what
+ * emptied it: `block_extension`, `directive`, `ruby` and `small_caps` were
+ * declared here by markup-carve/carve-grammars#562 because the pin at `fe81bde`
+ * did not name them, so the has-a-decision gate below could not see the hole it
+ * exists to catch and two engine bridges each decided for themselves - one
+ * mapping `directive`, the other calling it unmapped
+ * (markup-carve/carve-grammars#561). At `275425f3` the vocabulary paragraph
+ * names all four, so the gate itself now forces their decision and the
+ * accommodation is gone rather than merely unused.
  */
-const AHEAD_OF_PIN = new Set(['block_extension', 'directive', 'ruby', 'small_caps']);
+const AHEAD_OF_PIN = new Set([]);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {
