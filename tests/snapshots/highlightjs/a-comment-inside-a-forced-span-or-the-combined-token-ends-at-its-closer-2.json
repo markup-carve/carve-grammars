@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "{_a %% b_}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

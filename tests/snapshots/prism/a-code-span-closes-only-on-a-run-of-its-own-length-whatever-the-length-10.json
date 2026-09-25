@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "![a "
+  },
+  {
+    "type": "code",
+    "text": "````]````"
+  },
+  {
+    "type": "text",
+    "text": " b](i)\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " cap"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

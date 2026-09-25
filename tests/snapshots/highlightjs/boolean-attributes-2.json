@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": "\nDetails here.\n"
+    "text": "\nBare spelling.\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.callout open=\"\"}"
+  },
+  {
+    "scope": null,
+    "text": "\nExplicit empty string.\n"
   }
 ]

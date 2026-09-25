@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*\"x\"*"
+  },
+  {
+    "type": "text",
+    "text": " b\n\na ~"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*\"x\"*"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold-italic>important",
+    "text": "/*a"
+  },
+  {
+    "type": "bold-italic>important>comment",
+    "text": "{%c%}"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "forced-bold>bold",
+    "text": "{*a "
+  },
+  {
+    "type": "forced-bold>bold>code",
+    "text": "````b````"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": " c*}"
+  },
+  {
+    "type": "text",
+    "text": " d\n"
+  }
+]

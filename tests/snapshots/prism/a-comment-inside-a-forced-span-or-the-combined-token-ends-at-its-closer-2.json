@@ -1,0 +1,10 @@
+[
+  {
+    "type": "forced-underline>underline",
+    "text": "{_a %% b_}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

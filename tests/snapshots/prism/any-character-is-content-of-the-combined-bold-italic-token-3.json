@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold-italic>important",
+    "text": "/*a\\ b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

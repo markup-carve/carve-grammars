@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "_*x* "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\\""
+  },
+  {
+    "scope": null,
+    "text": "'a' \"\n"
+  }
+]

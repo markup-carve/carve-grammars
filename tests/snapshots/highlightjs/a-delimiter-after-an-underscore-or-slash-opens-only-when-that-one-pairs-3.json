@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_*x*_"
+  },
+  {
+    "scope": null,
+    "text": " q\n\n"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/_x_/"
+  },
+  {
+    "scope": null,
+    "text": " q\n\n"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_*x* y_"
+  },
+  {
+    "scope": null,
+    "text": " q\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a."
+  },
+  {
+    "scope": "strong",
+    "text": "*\"x\"*"
+  },
+  {
+    "scope": null,
+    "text": " b\n\na,"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_\"x\"_"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/*a\t*/"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]
