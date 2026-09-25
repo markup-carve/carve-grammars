@@ -656,6 +656,28 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 80-trailing-attribute-block-edge-cases and 22-footnotes-4. 475-...-3 is the
  * published engine (0.1.7) still reading `{.k}` after a comment as its
  * attribute block; carve-js#1876 makes it text.
+ *
+ * 370 -> 403 with the bump to 275425f3 (sections 476-495). All 33 are new
+ * documents, nothing came back, and each was measured by spelling the rich
+ * projection out and comparing it to the authored source:
+ *
+ * - 480 and 482-...-9 fold a below-column line out of the container, and the
+ *   projection writes the body at the canonical column instead.
+ * - 484 (all six) and 488-...-2, -5, -7 write a non-pairing leading delimiter
+ *   escaped (`_\*x*`), or reorder a nested pair to `*_x_*` - the same
+ *   canonicalization as the glued bare mark in #484.
+ * - 485 (all four) drop the backslash before a quote, which the mounted ledger
+ *   already records for `a-leading-escaped-caret-keeps-its-escape`.
+ * - 486 (all seven) and 487-...-12 split the combined token into `*/ /*`, as
+ *   `a-combined-bold-italic-span-may-cross-a-line` already does.
+ * - 487-...-3 loses a trailing form feed after a table row, the trailing
+ *   whitespace loss 268 already records.
+ * - 490 (all four) write the comment outside the span it closes at.
+ * - 491 fills a collapsed image reference's label in.
+ * - 492 merges two adjacent forced strong spans into one run.
+ * - 493-...-2 writes the blockquote-kind div in its `>` marker form.
+ * - 494 and 495 drop the table's `{header-rows}` / `{footer-rows}` block, which
+ *   376 already records - no model for it, so not a new loss.
  */
 assertLedger(
     'enveloped-ledger.json',

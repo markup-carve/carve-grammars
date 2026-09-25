@@ -1,0 +1,10 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+a ````+}"
+  },
+  {
+    "type": "text",
+    "text": "```` b+} c\n"
+  }
+]

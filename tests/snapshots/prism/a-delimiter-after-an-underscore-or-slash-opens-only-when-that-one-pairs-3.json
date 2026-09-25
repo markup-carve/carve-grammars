@@ -1,0 +1,26 @@
+[
+  {
+    "type": "underline>underline",
+    "text": "_*x*_"
+  },
+  {
+    "type": "text",
+    "text": " q\n\n"
+  },
+  {
+    "type": "italic>italic",
+    "text": "/_x_/"
+  },
+  {
+    "type": "text",
+    "text": " q\n\n"
+  },
+  {
+    "type": "underline>underline",
+    "text": "_*x* y_"
+  },
+  {
+    "type": "text",
+    "text": " q\n"
+  }
+]

@@ -17,6 +17,38 @@
   },
   {
     "type": "text",
-    "text": "\nDetails here.\n"
+    "text": "\nBare spelling.\n\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".callout"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "open"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value>string",
+    "text": "\"\""
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\nExplicit empty string.\n"
   }
 ]

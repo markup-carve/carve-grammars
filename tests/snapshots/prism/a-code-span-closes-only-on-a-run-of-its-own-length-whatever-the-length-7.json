@@ -1,0 +1,18 @@
+[
+  {
+    "type": "forced-strike>deleted",
+    "text": "{~a "
+  },
+  {
+    "type": "forced-strike>deleted>code",
+    "text": "````~>````"
+  },
+  {
+    "type": "forced-strike>deleted",
+    "text": " b~>c~}"
+  },
+  {
+    "type": "text",
+    "text": " d\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "strong",
+    "text": "/*a{%c%}b*/"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

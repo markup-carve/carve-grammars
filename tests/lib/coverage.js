@@ -27,6 +27,75 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    /*
+     * Spec corpus 476-495, the 20 categories the bump to carve `275425f3`
+     * added. Each was classified from its OWN measured round trip over every
+     * file in it (112 documents in all): parse -> PM with `unsupported:
+     * 'preserve'` -> serialize -> reparse. None produced the whole-document
+     * carveUnsupported atom and none lost AST identity, so all 20 are covered
+     * rather than fallback. The per-entry note says which shape carried the
+     * risk, because that is the part a batch decision would have skipped.
+     */
+    // A fence opened inside a list item, closed by a line BELOW the item's
+    // content column: the closer belongs to the fence, not the item. 2 files.
+    'an-item-s-fence-is-read-once-whatever-block-it-follows',
+    // Backtick runs of 1, 3, 4 and 8, several nested in braced inlines
+    // ({* *}, {~ ~}, {+ +}) where a mis-sized closer would leak. 10 files.
+    'a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length',
+    // An open fence in a definition body, ended by a line below its column
+    // rather than by a closer: the serializer has to re-emit the column. 5 files.
+    'a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column',
+    // A fence closer indented below its container's column, so it is content;
+    // re-emitting it one column off would change the parse. 7 files.
+    'a-closer-below-the-container-s-column-does-not-count',
+    // A bare `:::` in a description body opens a div, so the serializer must
+    // keep the body indented enough for it to stay an opener. 7 files.
+    'a-bare-colon-opener-in-a-description-body-is-an-opener',
+    // A bare colon run interrupting a paragraph, including the trailing-run
+    // case with no line after it, where a dropped blank would re-pair. 7 files.
+    'a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it',
+    // A marker-line `:::` whose body folded into the item: the closer does not
+    // rescue it, so the round trip must not helpfully re-indent. 10 files.
+    'a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in',
+    // `::` with only trailing spaces is text, not a term marker; the distinction
+    // survives because the serializer keeps the significant space. 6 files.
+    'an-empty-term-marker-in-a-description-body-is-text',
+    // `_*x*` and friends: the outer delimiter opens only if it pairs, so the
+    // literal leading `_` has to come back escaped, not as emphasis. 6 files.
+    'a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs',
+    // Smart quotes after an escaped quote. The escape is what keeps the pairing
+    // stable across a reparse, so it has to survive verbatim. 5 files.
+    'a-quote-after-an-escaped-quote-closes',
+    // `/* ... */` holding a tab, a comment opener, a substitution and a
+    // backslash-newline, all content: no inner construct may be re-read. 7 files.
+    'any-character-is-content-of-the-combined-bold-italic-token',
+    // Form feed and no-break space as CONTENT in headings, code spans, table
+    // rows, term markers, task markers and a frontmatter fence. The risk was a
+    // serializer trimming them as whitespace; it does not. 12 files.
+    'a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested',
+    // A quote directly after a bare `*`, `_`, `/` or `=`: the quote's direction
+    // follows the delimiter's own decision, and both round-trip. 7 files.
+    'a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does',
+    // Caption placeholders: `#*`, `#:`, `#,`, `##`, `#1`, `#-a` and a glued
+    // `x#tag`. A caption is an inline array, so this rides the figure. 9 files.
+    'a-caption-s-placeholder-is-any-that-does-not-begin-a-tag',
+    // `%%` inside a forced span or `/* */` ends at the span's closer, including
+    // across a line break, so the comment cannot swallow the closer. 4 files.
+    'a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer',
+    // An unresolved reference keeps its literal source, so the round trip has
+    // to re-emit `[x][a & b]` unresolved rather than as a link. 3 files.
+    'an-unresolved-reference-s-literal-source-is-html-escaped-like-any-other-text',
+    // `{*a*}{*b*}` - two adjacent forced strong spans, which must not merge into
+    // one mark run on the way back out. 1 file.
+    'adjacent-strong-spans-use-html-only-where-their-delimiters-merge',
+    // A div whose body is only comments, and a visible-body control. The empty
+    // case is where a serializer is tempted to drop the container. 2 files.
+    'empty-containers-share-one-html-body-shape',
+    // `{header-rows=1}` with a `^` row span in the head: the attribute and the
+    // span both survive, so the head stays one row group. 1 file.
+    'an-explicit-table-head-span-keeps-one-row-group',
+    // The `{footer-rows=1}` twin of the above. 1 file.
+    'a-table-foot-span-keeps-one-row-group',
     // Spec corpus 473-475, measured by the round-trip gate: structured, no
     // whole-document fallback.
     'a-run-of-asterisks-inside-a-combined-token-is-content',

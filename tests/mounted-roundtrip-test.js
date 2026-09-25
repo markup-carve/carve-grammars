@@ -530,5 +530,17 @@ imported.destroy();
 // 224 -> 227 with the bump to fe81bde: 474, 474-...-3 and 475 lose the
 // attribute run on a strong mark or a footnote reference, the loss
 // 80-trailing-attribute-block-edge-cases and 22-footnotes-4 already record.
+//
+// 227 -> 248 with the bump to 275425f3 (sections 476-495). All 21 are new
+// documents and every one is a SUBSET of the 33 the enveloped ledger records,
+// so each spells differently AND renders differently once the envelope is
+// stripped; the other 12 spell differently and render the same. They land in
+// loss classes this ledger already holds: 480 and 482-...-9 re-column a folded
+// div body, 484-...-3 and -6 reorder or escape a non-pairing delimiter, 485 (all
+// four) drop a quote's escape, 486-...-4 to -7 and 490 (all four) split the
+// combined token or hoist a comment out of the span it closes at, 487-...-3
+// loses a trailing form feed, 491 fills a collapsed reference label in, 492
+// merges two adjacent forced strong spans, and 494 and 495 drop the table's
+// `{header-rows}` / `{footer-rows}` block exactly as 376 already does.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

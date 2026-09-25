@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "addition",
+    "text": "{+a "
+  },
+  {
+    "scope": "addition>code",
+    "text": "````+}````"
+  },
+  {
+    "scope": "addition",
+    "text": " b+}"
+  },
+  {
+    "scope": null,
+    "text": " c\n"
+  }
+]

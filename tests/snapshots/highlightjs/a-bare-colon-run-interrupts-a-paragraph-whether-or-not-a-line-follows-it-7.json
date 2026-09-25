@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "::: {.x}\nnot a div\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

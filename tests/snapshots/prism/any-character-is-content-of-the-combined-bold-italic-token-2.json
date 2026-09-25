@@ -1,0 +1,42 @@
+[
+  {
+    "type": "bold-italic>important",
+    "text": "/*a<b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n\n"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a # b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n\n"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a{b}c*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n\n"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a€b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n\n"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

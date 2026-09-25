@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ": a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n  b\n y\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "text",
+    "text": "\ntext\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": "-yaml\f\na: 1\n"
+  },
+  {
+    "type": "thematic-break>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "\n\nt\n"
+  }
+]
