@@ -35,4 +35,8 @@ export { CarveSubstitution } from './carve-substitution.js';
 export { CarveSymbol } from './carve-symbol.js';
 export { CarveSourcePreservation } from './carve-source-preservation.js';
 export { CarveLineBlock } from './carve-line-block.js';
+export { CarveDirective } from './carve-directive.js';
+export { CarveBlockExtension } from './carve-block-extension.js';
+export { CarveRuby } from './carve-ruby.js';
+export { CarveSmallCaps } from './carve-small-caps.js';
 export { CarveHeading } from './carve-heading.js';

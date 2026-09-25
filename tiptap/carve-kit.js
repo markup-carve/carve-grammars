@@ -56,6 +56,10 @@ import { CarveSubstitution } from './extensions/carve-substitution.js';
 import { CarveSymbol } from './extensions/carve-symbol.js';
 import { CarveSourcePreservation } from './extensions/carve-source-preservation.js';
 import { CarveLineBlock } from './extensions/carve-line-block.js';
+import { CarveDirective } from './extensions/carve-directive.js';
+import { CarveBlockExtension } from './extensions/carve-block-extension.js';
+import { CarveRuby } from './extensions/carve-ruby.js';
+import { CarveSmallCaps } from './extensions/carve-small-caps.js';
 
 // Tiptap 3 dropped the default export from @tiptap/extension-table - it now
 // exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
@@ -897,6 +901,24 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveCrossref !== false) {
             extensions.push(CarveCrossref.configure(this.options.carveCrossref ?? {}));
+        }
+
+        // The four types Carve 0.1 source does not spell, which reach the editor
+        // over the AST wire only (CARVE-P12-050, -054, -055, -057). Registered
+        // rather than left to the preservation atom: three of them have no source
+        // form at all, so an atom holding `carveSource` has nothing to hold and
+        // the construct would be lost rather than preserved.
+        if (this.options.carveDirective !== false) {
+            extensions.push(CarveDirective.configure(this.options.carveDirective ?? {}));
+        }
+        if (this.options.carveBlockExtension !== false) {
+            extensions.push(CarveBlockExtension.configure(this.options.carveBlockExtension ?? {}));
+        }
+        if (this.options.carveRuby !== false) {
+            extensions.push(CarveRuby.configure(this.options.carveRuby ?? {}));
+        }
+        if (this.options.carveSmallCaps !== false) {
+            extensions.push(CarveSmallCaps.configure(this.options.carveSmallCaps ?? {}));
         }
         if (this.options.carveSection !== false) {
             extensions.push(CarveSection.configure(this.options.carveSection ?? {}));

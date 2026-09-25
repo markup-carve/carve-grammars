@@ -501,6 +501,40 @@ export function serializeToCarve(doc, options = {}) {
                 serializeTable(node);
                 break;
 
+            // A directive is SPELLED like a typed container, so it is written by
+            // the carveDiv branch with its `kind` as the opener's word. The type
+            // lives in the node, which is the point: only the writer needs to
+            // know the two share a spelling.
+            case 'carveDirective': {
+                const { kind, ...directiveAttrs } = node.attrs || {};
+                const authoredClasses = String(directiveAttrs.class || '').split(/\s+/).filter(Boolean);
+                serializeNode({
+                    ...node,
+                    type: 'carveDiv',
+                    attrs: {
+                        ...directiveAttrs,
+                        class: [kind || '', ...authoredClasses].filter(Boolean).join(' '),
+                        carveTyped: true,
+                    },
+                }, indent, fenceDepth);
+                break;
+            }
+
+            // CARVE-P12-055: a reader that does not implement the extension
+            // renders the FALLBACK and reports the substitution. Carve 0.1 source
+            // spells no block extension, so the fallback is always what is
+            // written, and the name, version and payload have nowhere to go.
+            case 'carveBlockExtension': {
+                recordLoss(report, 'degraded', 'block_extension',
+                    'Carve source has no block-extension spelling, so the required fallback block is written'
+                    + ' in its place and the name, version and payload are not carried (CARVE-P12-055)');
+                (node.content || []).forEach((child, i) => {
+                    serializeNode(child, indent, fenceDepth);
+                    if (i < (node.content || []).length - 1) output += '\n';
+                });
+                break;
+            }
+
             case 'carveDiv':
                 const divClass = node.attrs?.class || '';
                 // Container title, captured from the rendered admonition-title
@@ -1252,6 +1286,28 @@ export function serializeToCarve(doc, options = {}) {
                     + serializeAttributes(node.attrs, ['old', 'new']);
                 return;
             }
+            // CARVE-P12-054: each pair becomes its base, `(`, its annotation and
+            // `)`, in pair order, and the flattened sequence is escaped like any
+            // other inline run. An empty annotation stays visible as `()`. An
+            // attribute run wraps the WHOLE fallback in one ordinary span.
+            if (node.type === 'carveRuby') {
+                const flattened = [];
+                for (const pair of node.attrs?.pairs || []) {
+                    flattened.push(
+                        ...(pair?.base || []),
+                        { type: 'text', text: '(' },
+                        ...(pair?.annotation || []),
+                        { type: 'text', text: ')' },
+                    );
+                }
+                const flat = serializeInline(flattened, false);
+                const rubyRun = serializeAttributes(node.attrs, ['pairs']);
+                result += rubyRun ? '[' + flat + ']' + rubyRun : flat;
+                recordLoss(report, 'degraded', 'ruby',
+                    'Carve source has no ruby spelling, so each pair is written as its base followed by its'
+                    + ' annotation in parentheses (CARVE-P12-054)');
+                return;
+            }
             if (node.type === 'carveInlineExtension') {
                 result += `:${node.attrs?.name || ''}[${serializeInline(node.content, false)}]`
                     + serializeAttributes(node.attrs, ['name']);
@@ -1299,6 +1355,14 @@ export function serializeToCarve(doc, options = {}) {
                 return;
             }
             if (node.type === 'carveEmptyMark') {
+                // A small-caps wrapper has no source spelling AND, here, no
+                // children to fall back to, so nothing at all can be written.
+                // That is a drop, not a degradation, and it has to be said.
+                if (node.attrs?.markType === 'carveSmallCaps') {
+                    recordLoss(report, 'dropped', 'small_caps',
+                        'a small-caps wrapper with no children has neither a source spelling nor content to'
+                        + ' write in its place (CARVE-P12-050)');
+                }
                 if (!isEmptyCode(node) || (openRunEnds && idx === content.length - 1)) {
                     result += emptyMarkSource(node.attrs);
                 }
@@ -1327,6 +1391,25 @@ export function serializeToCarve(doc, options = {}) {
                 const hasUnderline = marks.some(m => m.type === 'underline');
                 const link = marks.find(m => m.type === 'link');
                 const carveSpan = marks.find(m => m.type === 'carveSpan');
+                // ONLY THE OUTERMOST span run is written. Two attributed spans
+                // over the same text - a `[[x]{#in}]{#out}`, or the span
+                // CARVE-P12-050 puts around small-caps children inside one the
+                // author wrote - reach here as two marks, and one run is the most
+                // the spelling above can carry. It has always dropped the inner
+                // one; nothing said so.
+                if (marks.filter(m => m.type === 'carveSpan').length > 1) {
+                    recordLoss(report, 'dropped', 'span',
+                        'two attributed spans cover the same text and only the outermost run is written');
+                }
+                // CARVE-P12-050: a canonical writer writes the children WITHOUT
+                // the wrapper, keeps any attribute run on the ordinary span the
+                // converter put around them, and reports the loss. So the mark
+                // needs no token here - only the report.
+                if (marks.some(m => m.type === 'carveSmallCaps')) {
+                    recordLoss(report, 'degraded', 'small_caps',
+                        'Carve source has no small-caps spelling, so the children are written without the'
+                        + ' wrapper and their letter case is unchanged (CARVE-P12-050)');
+                }
                 const abbr = marks.find(m => m.type === 'carveAbbreviation');
 
                 // Apply marks from innermost to outermost.

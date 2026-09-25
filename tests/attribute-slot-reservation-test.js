@@ -97,7 +97,7 @@ for (const [kind, types] of [['node', schema.nodes], ['mark', schema.marks]]) {
         swept++;
     }
 }
-assert.equal(swept, 33, `${swept} types declare carveKeyValues, not 33; a new one needs its own reserved list`);
+assert.equal(swept, 36, `${swept} types declare carveKeyValues, not 36; a new one needs its own reserved list`);
 console.log(`  ✓ ${swept} types keep their own rendered attributes out of the author's key/value slot`);
 
 function htmlFor(doc) {

@@ -62,12 +62,20 @@ const IMPLEMENTATION_TYPES = new Set([
  * `heading_ref` and `substitution` were by the one before it - the gate working
  * as designed.
  *
- * The list is empty, which is the state it should spend most of its life in: an
- * entry here is a check weakened to accommodate a stale pin, so it is only ever
- * a temporary accommodation between an engine landing a type and `spec/`
- * catching up.
+ * An entry here is a check weakened to accommodate a stale pin, so it is only
+ * ever a temporary accommodation between an engine landing a type and `spec/`
+ * catching up. The four below are exactly that, and they are why this file's
+ * has-a-decision gate could not see the hole it exists to catch: carve main
+ * names all four in the profile vocabulary, the pin at `fe81bde` does not, so
+ * nothing here FORCED a decision and two engine bridges each wrote their own -
+ * one mapping `directive`, the other calling it unmapped
+ * (markup-carve/carve-grammars#561). Measured with the pin moved to carve
+ * `ce347c3f`, the gate refuses exactly `block_extension, directive, ruby,
+ * small_caps`, which is how these entries were shown to be required rather than
+ * merely permitted. The bump itself is a separate change: it also needs 20 new
+ * corpus categories classified and `caption` moved to IMPLEMENTATION_TYPES.
  */
-const AHEAD_OF_PIN = new Set();
+const AHEAD_OF_PIN = new Set(['block_extension', 'directive', 'ruby', 'small_caps']);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {

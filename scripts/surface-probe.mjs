@@ -767,6 +767,14 @@ const SIGNATURE_OVERRIDES = {
      */
     tiptap: {
         code_span: ['code'],
+        /*
+         * `extension` alone no longer picks the inline one. The map gained
+         * `block_extension` (carve-grammars#561), whose normalized name is a
+         * character SHORTER than `inline_extension`, so the shortest-name tie
+         * break handed the inline row the block type. Naming the whole type
+         * makes it a rank-1 hit, which no substring match can outrank.
+         */
+        extension_inline: ['inlineextension'],
         math_inline: ['math'],
         math_display: ['math'],
         comment_line: ['carvecomment'],
