@@ -1007,7 +1007,7 @@ function convertInlineNode(node, marks, ctx) {
 
         case 'non_breaking_space':
             record(ctx, 'degraded', 'non_breaking_space',
-                'the generated space survives as literal text without its source escape');
+                'the generated space survives as literal text; its source spelling is re-derived on write');
             return [{ type: 'text', text: '\u00a0', ...(marks.length ? { marks } : {}) }];
 
         case 'soft-break':
