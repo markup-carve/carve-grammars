@@ -69,8 +69,7 @@ const IMPLEMENTATION_TYPES = new Set([
  *
  * An entry here is a check weakened to accommodate a stale pin, so it is only
  * ever a temporary accommodation between an engine landing a type and `spec/`
- * catching up. The set is EMPTY, and the bump to carve `275425f3` is what
- * emptied it: `block_extension`, `directive`, `ruby` and `small_caps` were
+ * catching up. The bump to carve `275425f3` removed the previous entries: `block_extension`, `directive`, `ruby` and `small_caps` were
  * declared here by markup-carve/carve-grammars#562 because the pin at `fe81bde`
  * did not name them, so the has-a-decision gate below could not see the hole it
  * exists to catch and two engine bridges each decided for themselves - one
@@ -79,7 +78,8 @@ const IMPLEMENTATION_TYPES = new Set([
  * names all four, so the gate itself now forces their decision and the
  * accommodation is gone rather than merely unused.
  */
-const AHEAD_OF_PIN = new Set([]);
+// Coordinated with markup-carve/carve#2337; remove when the spec pin includes it.
+const AHEAD_OF_PIN = new Set(['non_breaking_space']);
 
 /** The normative vocabulary, read from the pinned spec submodule. */
 function specVocabulary() {

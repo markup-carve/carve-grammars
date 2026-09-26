@@ -227,4 +227,10 @@ ok('a mark nests around small caps rather than replacing it', () => {
     assert.strictEqual(serializeToCarve(pm), '*nasa*');
 });
 
+
+ok('a generated space survives as text and keeps inherited marks', () => {
+    const pm = doc(para({ type: 'strong', children: [{ type: 'non_breaking_space' }] }));
+    assert.deepStrictEqual(pm.content[0].content, [{ type: 'text', text: '\u00a0', marks: [{ type: 'bold' }] }]);
+});
+
 console.log(`\n${passed} passed`);

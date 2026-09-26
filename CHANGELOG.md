@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+- The ProseMirror bridge retains `non_breaking_space` as literal text and reports loss of its source escape. The shared schema map records that decision for engine bridges (markup-carve/carve#2337).
+
 ### Added
 
 - Table markup carries its own tokens on all three highlighters. Pipes take a
