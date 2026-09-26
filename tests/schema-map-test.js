@@ -47,28 +47,11 @@ const IMPLEMENTATION_TYPES = new Set([
 ]);
 
 /**
- * Types the map covers that the PINNED spec does not define yet. Each must
- * disappear from this list when `spec/` is bumped - the test enforces that.
- *
- * `figure_group` was promoted out of here by the bump to carve `49b8deb`, whose
- * profile vocabulary carries PART 9 §4c; `critic_comment` by the bump to carve
- * `92bef65`, as `admonition`, `autolink`, `caption_number`, `citation_group`,
- * `heading_ref` and `substitution` were by the one before it - the gate working
- * as designed.
- *
- * An entry here is a check weakened to accommodate a stale pin, so it is only
- * ever a temporary accommodation between an engine landing a type and `spec/`
- * catching up. The set is EMPTY, and the bump to carve `275425f3` is what
- * emptied it: `block_extension`, `directive`, `ruby` and `small_caps` were
- * declared here by markup-carve/carve-grammars#562 because the pin at `fe81bde`
- * did not name them, so the has-a-decision gate below could not see the hole it
- * exists to catch and two engine bridges each decided for themselves - one
- * mapping `directive`, the other calling it unmapped
- * (markup-carve/carve-grammars#561). At `275425f3` the vocabulary paragraph
- * names all four, so the gate itself now forces their decision and the
- * accommodation is gone rather than merely unused.
+ * The generated-space node is declared by markup-carve/carve#2337, which is
+ * still a coordinated draft. The promotion check below requires removing
+ * this entry when the spec pin includes the new vocabulary.
  */
-const AHEAD_OF_PIN = new Set([]);
+const AHEAD_OF_PIN = new Set(['non_breaking_space']);
 
 /** Every node type the pinned AST schema declares: the wire vocabulary a bridge meets. */
 function schemaNodeTypes() {

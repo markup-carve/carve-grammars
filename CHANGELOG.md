@@ -4,6 +4,14 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Breaking
+
+- The ProseMirror bridge keeps `non_breaking_space` as literal text and re-derives
+  its source spelling on write. A tree stored under the old U+E000 marker now
+  carries that character through the bridge as authored text, with no error and no
+  version signal; reparsing the source is the only remedy. The shared schema map
+  records the decision for engine bridges (markup-carve/carve#2337).
+
 ### Added
 
 - Table markup carries its own tokens on all three highlighters. Pipes take a

@@ -1005,6 +1005,11 @@ function convertInlineNode(node, marks, ctx) {
                 ? [{ type: 'text', text: node.value, ...(marks.length ? { marks } : {}) }]
                 : [];
 
+        case 'non_breaking_space':
+            record(ctx, 'degraded', 'non_breaking_space',
+                'the generated space survives as literal text; its source spelling is re-derived on write');
+            return [{ type: 'text', text: '\u00a0', ...(marks.length ? { marks } : {}) }];
+
         case 'soft-break':
         case 'soft_break':
             // A NEWLINE, not a space. A soft break is a line break the author
