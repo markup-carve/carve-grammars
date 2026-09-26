@@ -725,14 +725,17 @@ map.types.list          // { kind: 'node', pm: ['bulletList', 'orderedList', 'ta
 map.unmapped.figure     // 'figure / caption blocks are not modeled'
 ```
 
-Every Carve node type appears exactly once, either in `types` with its
-ProseMirror name(s) or in `unmapped` with the reason it has none - the negative
+Every node type the spec's AST schema declares (`resources/ast-schema.json`)
+appears exactly once, either in `types` with its ProseMirror name(s) or in
+`unmapped` with the reason it has none - the negative
 space is part of the contract, because a bridge that silently drops table
-alignment or figure captions is worse than one that says it cannot carry them.
+alignment or figure captions is worse than one that says it cannot carry them. That covers types a
+profile cannot deny as well: `tag` has its own entry (`carveTag`) even though
+profiles classify it as a `mention`, so a `carveTag` resolves back to `tag`.
 
 `tests/schema-map-test.js` keeps it honest: every ProseMirror name must exist in
-the `CarveKit` schema with the declared node/mark kind, and every type in the
-pinned spec vocabulary must have a decision. Types the map covers ahead of the
+the `CarveKit` schema with the declared node/mark kind, and every node type in
+the pinned AST schema must have a decision. Types the map covers ahead of the
 `spec/` pin are declared explicitly and must be removed once the pin catches up.
 
 Two sections are keyed by ProseMirror name rather than by Carve type, because

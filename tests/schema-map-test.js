@@ -7,8 +7,9 @@
  *
  *  1. every ProseMirror name it names must exist in the CarveKit schema, with
  *     the node/mark kind it declares, and
- *  2. every node type in the spec's vocabulary must have a mapped-or-unmapped
- *     decision, so a new type cannot fall silently out of every bridge.
+ *  2. every node type the pinned AST schema declares must have a
+ *     mapped-or-unmapped decision, so a new type cannot fall silently out of
+ *     every bridge.
  *
  * The map may run AHEAD of the pinned spec submodule: this repo's `spec/` pin
  * lags main from time to time, while engines already carry the newer types. Such
@@ -35,26 +36,14 @@ function ok(name, fn) {
 }
 
 /**
- * Node types that exist in an engine's AST but are not part of the spec's
- * profile vocabulary: the document root, plus payload and typography nodes an
- * implementation needs to represent source faithfully.
+ * Map entries that are not AST schema node types, and never will be.
  */
 const IMPLEMENTATION_TYPES = new Set([
-  // docs/profiles.md names this set explicitly: a serialized AST carries type
-  // names the profile vocabulary does not list, because denying them would mean
-  // nothing. `abbreviation_def` renders nothing at all, so it belongs here
-  // rather than in AHEAD_OF_PIN - no spec bump will ever promote it.
-  'abbreviation_def',
   // A caption is not a node: `figure`, `figure_group` and `table` each carry
-  // their caption as an inline array, so the vocabulary paragraph names it only
-  // to say it is absent (spec/docs/profiles.md, "A caption is **not** in this
-  // list"). No bump will promote it, so it belongs here and not in AHEAD_OF_PIN.
+  // their caption as an inline array.
   'caption',
-  'document',
-  'frontmatter',
-  'literal_inline',
+  // Formatter-internal; never serialized (spec/docs/profiles.md).
   'raw_text',
-  'smart_punctuation',
 ]);
 
 /**
@@ -64,16 +53,14 @@ const IMPLEMENTATION_TYPES = new Set([
  */
 const AHEAD_OF_PIN = new Set(['non_breaking_space']);
 
-/** The normative vocabulary, read from the pinned spec submodule. */
-function specVocabulary() {
-  const profiles = readFileSync(resolve(here, '../spec/docs/profiles.md'), 'utf8');
-  const names = new Set();
-  for (const label of ['Block', 'Inline']) {
-    const section = new RegExp(`\\*\\*${label}:\\*\\*([\\s\\S]*?)\\n\\n`).exec(profiles);
-    assert.ok(section, `no ${label} vocabulary paragraph in spec/docs/profiles.md`);
-    for (const m of section[1].matchAll(/`([A-Za-z0-9_-]+)`/g)) names.add(m[1]);
-  }
-  return names;
+/** Every node type the pinned AST schema declares: the wire vocabulary a bridge meets. */
+function schemaNodeTypes() {
+  const schema = JSON.parse(readFileSync(resolve(here, '../spec/resources/ast-schema.json'), 'utf8'));
+  return new Set(
+    Object.values(schema.$defs)
+      .map((def) => def.properties?.type?.const)
+      .filter((type) => typeof type === 'string'),
+  );
 }
 
 const schema = getSchema([CarveKit]);
@@ -131,9 +118,14 @@ ok('the declared node/mark kind agrees with the CarveKit schema', () => {
   assert.deepStrictEqual(wrong, [], `kind mismatches: ${wrong.join(', ')}`);
 });
 
-ok('every type in the pinned spec vocabulary has a decision', () => {
+ok('the pinned AST schema yields its node types', () => {
+  // A floor, so a schema reshape that empties the read fails instead of passing.
+  assert.ok(schemaNodeTypes().size > 40, `only ${schemaNodeTypes().size} node types read from ast-schema.json`);
+});
+
+ok('every node type in the pinned AST schema has a decision', () => {
   const covered = new Set([...Object.keys(map.types), ...Object.keys(map.unmapped)]);
-  const missing = [...specVocabulary()].filter((t) => !covered.has(t)).sort();
+  const missing = [...schemaNodeTypes()].filter((t) => !covered.has(t)).sort();
 
   assert.deepStrictEqual(
     missing,
@@ -143,7 +135,7 @@ ok('every type in the pinned spec vocabulary has a decision', () => {
 });
 
 ok('extra map entries are implementation types or declared ahead of the pin', () => {
-  const spec = specVocabulary();
+  const spec = schemaNodeTypes();
   const covered = [...Object.keys(map.types), ...Object.keys(map.unmapped)];
   const undeclared = covered
     .filter((t) => !spec.has(t) && !IMPLEMENTATION_TYPES.has(t) && !AHEAD_OF_PIN.has(t))
@@ -159,7 +151,7 @@ ok('extra map entries are implementation types or declared ahead of the pin', ()
 ok('AHEAD_OF_PIN holds nothing the pinned spec already defines', () => {
   // Promotion gate: once `spec/` is bumped, these entries must be removed, or
   // the list becomes a stale excuse.
-  const spec = specVocabulary();
+  const spec = schemaNodeTypes();
   const promoted = [...AHEAD_OF_PIN].filter((t) => spec.has(t)).sort();
 
   assert.deepStrictEqual(
@@ -167,6 +159,12 @@ ok('AHEAD_OF_PIN holds nothing the pinned spec already defines', () => {
     [],
     `the pinned spec now defines these; drop them from AHEAD_OF_PIN: ${promoted.join(', ')}`,
   );
+});
+
+ok('IMPLEMENTATION_TYPES holds nothing the pinned schema declares', () => {
+  const spec = schemaNodeTypes();
+  const stale = [...IMPLEMENTATION_TYPES].filter((t) => spec.has(t)).sort();
+  assert.deepStrictEqual(stale, [], `the schema declares these; drop them from IMPLEMENTATION_TYPES: ${stale.join(', ')}`);
 });
 
 ok('no type is both mapped and unmapped', () => {
