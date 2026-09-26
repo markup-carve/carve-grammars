@@ -4,6 +4,35 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- Table markup carries its own tokens on all three highlighters. Pipes take a
+  muted boundary color, and header, span and alignment markers stay distinct
+  from cell text. Prism and highlight.js consumers can opt into the matching
+  colors through the new `./shiki/table-tokens.css` export; Shiki hosts get them
+  from the theme. Horizontal and vertical alignment markers are scoped in
+  TextMate as well (#557, #558, #560).
+- `tiptap/schema-map.json` names a ProseMirror decision for `block_extension`,
+  `directive`, `ruby` and `small_caps`, and CarveKit, the converter and the
+  serializer build all four. `directive` is its own `carveDirective` node rather
+  than an alias of `carveDiv`, so a bridge returning to the AST does not have to
+  keep its own copy of the six directive kinds the schema enumerates (#561,
+  #562).
+
+### Fixed
+
+- `serializeToCarve` keeps a run of consecutive `%%` line comments on
+  consecutive lines. Each line is its own node and the serializer separated
+  every adjacent pair with a blank line, so an editor round trip respelled one
+  comment as several (#556).
+- An unclosed pipe-led line no longer holds highlight.js table mode open into
+  the paragraphs below it, an unclosed code span no longer spills a row past its
+  source line, and an escaped final pipe no longer opens a continuation row. In
+  Prism the delimiter color is limited to delimiter rows, so a body cell holding
+  `-` stays content (#558, #559).
+- `|< |` stays scoped as a colspan in TextMate while `|< span` stays an
+  alignment marker (#560).
+
 ## [0.1.9] - 2026-09-20
 
 ### Changed
