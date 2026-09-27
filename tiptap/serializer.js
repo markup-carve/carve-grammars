@@ -1343,6 +1343,15 @@ export function serializeToCarve(doc, options = {}) {
                     result += `{%${comment ? ` ${comment} ` : ''}%}`;
                     return;
                 }
+                if (node.attrs?.block) {
+                    // A folded fence (CARVE-P2-028) has no spelling this writer
+                    // reaches: the closer needs its own line at the run's
+                    // column, which an inline pass does not know. So `%%` is
+                    // written and SAID, not written in silence (#571).
+                    recordLoss(report, 'degraded', 'comment',
+                        'a fenced comment folded into an inline run is written as a `%%` line, which runs to'
+                        + ' the end of that run and swallows what followed the comment');
+                }
                 // Inline comments require a separating space. Without it,
                 // mounting `text %% note` and serializing produced
                 // `text%% note`, which reparses as visible paragraph text.
