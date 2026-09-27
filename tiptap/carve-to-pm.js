@@ -1251,9 +1251,11 @@ function convertInlineNode(node, marks, ctx) {
             return [{ type: 'text', text: node.text || '', marks: [...marks, { type: 'carveCriticComment' }] }];
 
         case 'comment':
+            // `block` reads the node's own flag, as the block arm does: an
+            // inline comment is not always the `%%` line form (CARVE-P2-028).
             return [{
                 type: 'carveCommentInline',
-                attrs: { delimited: Boolean(node.delimited) },
+                attrs: { block: Boolean(node.block), delimited: Boolean(node.delimited) },
                 content: node.content ? [{ type: 'text', text: node.content }] : [],
             }];
 

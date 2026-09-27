@@ -18,7 +18,7 @@ export const CarveComment = Node.create({
     },
 });
 
-/** A line comment encountered after paragraph text; it consumes the line tail. */
+/** A comment inside an inline run: a `%%` line tail, or a folded `%%%` fence. */
 export const CarveCommentInline = Node.create({
     name: 'carveCommentInline',
     group: 'inline',
@@ -26,10 +26,15 @@ export const CarveCommentInline = Node.create({
     content: 'text*',
     marks: '',
     addAttributes() {
+        // `block` is the SPELLING, as on `carveComment`: a fence folds into an
+        // inline run under a definition term (CARVE-P2-028), and `%%` runs to
+        // the end of the run where the fence ends at its closer. Undeclared, the
+        // editor strips it (markup-carve/carve-rs#2067).
+        //
         // `content` remains readable for older stored JSON documents. New
         // documents keep comment text in child text nodes so the caret can edit
         // it directly like any other inline content.
-        return { content: { default: null }, delimited: { default: false } };
+        return { block: { default: false }, content: { default: null }, delimited: { default: false } };
     },
     parseHTML() { return [{ tag: 'span[data-carve-comment-inline]' }]; },
     renderHTML({ HTMLAttributes, node }) {
