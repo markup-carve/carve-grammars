@@ -738,6 +738,11 @@ the `CarveKit` schema with the declared node/mark kind, and every node type in
 the pinned AST schema must have a decision. Types the map covers ahead of the
 `spec/` pin are declared explicitly and must be removed once the pin catches up.
 
+`tests/schema-attributes-test.js` checks the map's attribute claims against the
+assembled schema, with [per-name attribution](../tests/schema-attributes.md)
+for types that map to several ProseMirror names. Both gates run with
+`npm run test:schema-map` and `npm test`.
+
 Two sections are keyed by ProseMirror name rather than by Carve type, because
 neither names a Carve construct: `preservationNodes` (`carveUnsupported` and
 `carveUnsupportedInline`, the atoms holding a construct's exact source) and

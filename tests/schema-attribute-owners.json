@@ -1,0 +1,94 @@
+{
+  "list": {
+    "bulletList": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "carveTight",
+      "class"
+    ],
+    "orderedList": [
+      "carveAttrOrder",
+      "carveBareMarker",
+      "carveDelim",
+      "carveKeyValues",
+      "carveOlType",
+      "carveTight",
+      "class",
+      "start"
+    ],
+    "taskList": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "carveTight",
+      "class"
+    ]
+  },
+  "list_item": {
+    "listItem": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "class",
+      "id"
+    ],
+    "taskItem": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "checked",
+      "carveTaskState",
+      "class",
+      "id"
+    ]
+  },
+  "table_cell": {
+    "tableCell": [
+      "carveInheritedTextAlign",
+      "carveSpanMarker",
+      "colspan",
+      "rowspan",
+      "textAlign"
+    ],
+    "tableHeader": [
+      "carveInheritedTextAlign",
+      "carveSpanMarker",
+      "colspan",
+      "rowspan",
+      "textAlign"
+    ]
+  },
+  "div": {
+    "carveDiv": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "carveTyped",
+      "class",
+      "id",
+      "title",
+      "label"
+    ],
+    "carveTabSet": [],
+    "carveTab": [
+      "label"
+    ]
+  },
+  "comment": {
+    "carveComment": [
+      "block",
+      "delimited"
+    ],
+    "carveCommentInline": [
+      "block",
+      "content",
+      "delimited"
+    ]
+  },
+  "inline_extension": {
+    "carveInlineExtension": [
+      "carveAttrOrder",
+      "carveKeyValues",
+      "class",
+      "id",
+      "name"
+    ],
+    "carveEmbed": []
+  }
+}
