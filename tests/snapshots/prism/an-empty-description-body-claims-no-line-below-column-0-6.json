@@ -1,10 +1,10 @@
 [
   {
-    "type": "text",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "comment",
+    "type": "list>punctuation>comment",
     "text": "%% c"
   },
   {

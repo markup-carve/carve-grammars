@@ -879,7 +879,27 @@
             {
                 // trailing comment after whitespace (Prism lookbehind, no JS
                 // lookbehind: the leading space is captured and excluded).
-                pattern: /([ \t])%%.*$/m,
+                // A trailing `%%%` RUN is untouched by the exclusion below: it
+                // is not a shape any block rule can take, and an unterminated
+                // run degrades to a line comment wherever it sits. Corpus
+                // `326-...-6` (`- %%%` / `c` / `%%%`) pins the opener keeping
+                // its comment scope.
+                pattern: /([ \t])%{3,}.*$/m,
+                lookbehind: true,
+                greedy: true,
+            },
+            {
+                // A comment that follows NOTHING BUT A BLOCK MARKER is left to
+                // the block rule, which then scopes the marker and colours the
+                // comment in its own `inside`. Without the exclusion the comment
+                // is carved out first, the leftover `# ` / `- ` fails MARKER
+                // REQUIRES CONTENT, and the marker loses its scope although the
+                // engine renders a real heading or item (carve-grammars#578).
+                // THE EXCLUSION IS SPACE-ONLY, because the block rules are:
+                // a marker separated by a TAB leaves the line as prose (MARKER
+                // SEPARATORS), so no block rule would claim `#<TAB>%% h` and the
+                // comment has to stay a comment here.
+                pattern: /((?<!^[ \t]*(?:#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)) |\t)%%(?!%).*$/m,
                 lookbehind: true,
                 greedy: true,
             },
@@ -1016,6 +1036,11 @@
             alias: 'important',
             inside: Object.assign({
                 'punctuation': /^\uFEFF?#{1,6}/,
+                // A heading's inline run holds a trailing comment, and the
+                // top-level comment rule steps aside when the comment is all
+                // that follows the marker (carve-grammars#578). First in the
+                // set so a comment body is never read as emphasis.
+                'comment': { pattern: /(^|[ \t])%%(?!%).*$/, lookbehind: true, greedy: true },
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -1285,11 +1310,18 @@
             pattern: RegExp(
                 '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
                 + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
-                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$))',
+                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$))'
+                // A marker whose whole content is a comment takes the comment
+                // with it, so the marker keeps its scope and the comment is
+                // coloured by the set below. The top-level comment rule steps
+                // aside for exactly this shape (carve-grammars#578); without the
+                // tail the comment would be left unscoped instead.
+                + '(?:%{2}(?!%)[^\\r\\n]*$)?',
                 'm',
             ),
             alias: 'punctuation',
             inside: {
+                'comment': { pattern: /%%(?!%).*$/, greedy: true },
                 'constant': /\[[ xX\-_>?]\]/,
             },
         },
