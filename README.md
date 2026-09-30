@@ -126,4 +126,5 @@ compatibility, diagram configuration, API exports, and the schema map.
 ## Development
 
 Contributor setup, tests, and maintenance commands are in the
-[development guide](docs/development.md).
+[development guide](docs/development.md). The [September 30 audit](https://github.com/markup-carve/carve-grammars/blob/main/docs/spec-engine-audit-20260930.md)
+records current editor behavior and remaining highlighting gaps.

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{k='t\\zu'}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

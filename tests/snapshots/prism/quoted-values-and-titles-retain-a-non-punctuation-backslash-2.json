@@ -1,0 +1,30 @@
+[
+  {
+    "type": "span>string",
+    "text": "[a]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value>string",
+    "text": "\"t\\zu\""
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

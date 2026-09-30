@@ -1,0 +1,30 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "a"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/u "
+  },
+  {
+    "type": "url>string",
+    "text": "'t\\zu'"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

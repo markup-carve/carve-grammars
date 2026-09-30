@@ -889,10 +889,13 @@
                 // because the fence rules need the run at the line start.
                 // THE ROW TEST SITS AFTER THE RUN, not before it. As a leading
                 // lookbehind the assertion runs at EVERY space in the line and
-                // walks back to the line start each time, which is quadratic: a
-                // 40 000-character row cost 1133 ms against 2 ms at HEAD. Behind
-                // the `%%` it runs only where a comment actually opens.
-                pattern: /(?<=^[ \t]*\|[^\n]*?)([ \t])%{2,}(?:\\.|[^\\|\r\n])*?(?=[ \t]*(?:\||$))/m,
+                // walks back to the line start each time, making ordinary long
+                // lines quadratic. Behind the percent run it checks only
+                // possible comments. Dense comment openers still repeat the
+                // prefix scan; the performance sweep measures that residual.
+                // Consume internal whitespace runs together so the closing
+                // lookahead does not rescan a long whitespace body at each byte.
+                pattern: /([ \t])%{2,}(?<=^[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n\u2028\u2029 \t]|[ \t]+(?![ \t]|\||$))*(?=[ \t]*(?:\||$))/m,
                 lookbehind: true,
                 greedy: true,
             },

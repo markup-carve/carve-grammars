@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "["
+  },
+  {
+    "type": "critic-comment>comment",
+    "text": "{#a]#}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
