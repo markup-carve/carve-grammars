@@ -215,6 +215,47 @@ for (const [name, tokenize] of surfaces) {
     });
 }
 
+console.log('\nan UNPARTNERED run reaches the line end, so a %% after it is span content:');
+
+// The engine keeps `# a \`x %% hidden` as a span holding `x %% hidden`. Both
+// closed-span rules need a closer, so on a TextMate grammar neither claimed the
+// run and the trailing-comment rule took the payload instead. The rule that fixes
+// it is MATCH-ONLY and ends at the line - a begin/end rule reached from a
+// one-line block pushes state the block should never own
+// (markup-carve/intellij-carve#222).
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of [
+        ['a heading', '# a \`x %% hidden'],
+        ['a caption', '^ cap \`x %% hidden'],
+    ]) {
+        ok(`${name} keeps a %% inside an unpartnered run on ${shape}`, () => {
+            const scope = String(scopeOver(tokenize(source), source, '%%') ?? '');
+            assert.ok(
+                !/comment/.test(scope),
+                `the run reaches the line end, so this is span content: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
+console.log('\na quote CONTINUATION line still gets its comment:');
+
+// `> y` closing a span opened on the line above continues the quote's paragraph,
+// so the run there is a CLOSER and the comment after it is real. A line that
+// opens a block behind the same marker is the opposite case, and the control
+// below pins it: `> # a` does open a block, so its `%%` stays span content.
+ok('prism scopes a comment after a span closed on a quote continuation line', () => {
+    const source = '> a \`x\n> y\` %% hidden';
+    const scope = String(scopeOver(prismTokens(source), source, '%%') ?? '');
+    assert.ok(/comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+});
+
+ok('prism keeps a %% inside a span on a heading behind a quote marker', () => {
+    const source = '> # a \`x %% b\` c';
+    const scope = String(scopeOver(prismTokens(source), source, '%%') ?? '');
+    assert.ok(!/comment/.test(scope), `expected span content, got ${JSON.stringify(scope)}`);
+});
+
 console.log('\nan escaped backtick opens no span inside these blocks:');
 
 // Deleting the escape rule from any of the three block sets left every other

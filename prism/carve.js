@@ -1011,14 +1011,20 @@
                  * and both would get the comment scope back if this entry could
                  * reach them.
                  *
-                 * The exclusion is WIDER than the marker list above - `>`, `|` and
-                 * `^` join it - and over-breadth costs nothing here: a line the
-                 * walk can answer is already answered above, and this entry only
-                 * ever sees the lines it could not.
+                 * A QUOTE MARKER IS NOT ITSELF A BLOCK OPENER here. `> y` +
+                 * backtick continues the quote's paragraph, so a run on it can be a
+                 * closer and the fallback has to reach it - while `> # a` behind
+                 * the same marker does open a block and must stay excluded. The
+                 * marker prefix is therefore consumed before the opener test rather
+                 * than being one of the openers.
+                 *
+                 * `|` and `^` join the marker list, and over-breadth costs nothing
+                 * here: a line the walk can answer is already answered above, and
+                 * this entry only ever sees the lines it could not.
                  */
                 pattern: RegExp(
                     '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + '(?<!^[ \\t]*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|>|\\||\\^)[^\\n]*)'
+                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
                 ),
