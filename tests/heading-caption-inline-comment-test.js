@@ -215,6 +215,27 @@ for (const [name, tokenize] of surfaces) {
     });
 }
 
+console.log('\nan escaped backtick opens no span inside these blocks:');
+
+// Deleting the escape rule from any of the three block sets left every other
+// assertion here green, which means this case was untested - the escape row
+// above is a PARAGRAPH and never reaches a block's own inline set. Carve renders
+// `# a \\`x\\` z` with literal backticks and no code element.
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of [
+        ['a heading', '# a \\`x\\` z'],
+        ['a caption', '^ cap \\`x\\` z'],
+    ]) {
+        ok(`${name} opens no span on an escaped backtick pair in ${shape}`, () => {
+            const scope = String(scopeOver(tokenize(source), source, 'x') ?? '');
+            assert.ok(
+                !/code|raw|math|string/.test(scope),
+                `the text between two escaped backticks is not verbatim: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
 console.log('\nan unclosed span does NOT leak the block scope downstream:');
 
 /*
