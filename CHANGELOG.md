@@ -4,6 +4,15 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixes
+
+- Check table-comment openers before scanning row prefixes in Prism, and consume
+  internal comment whitespace runs together to avoid repeated closing scans
+  (#589).
+- Preserve empty, blank and trailing-newline fenced code and raw payloads
+  through editor serialization. Use Carve JS 0.1.9 for the bridge and refresh
+  the complete specification corpus and projection-loss ledgers (#589).
+
 ## [0.1.10] - 2026-09-30
 
 ### Breaking
@@ -48,12 +57,6 @@ All notable changes to `carve-grammars` are documented here.
   kills, so `::: note %% h` is scoped as the paragraph the engine renders. The
   comment on such a line is no longer highlighted, which is what lets the
   container rule refuse the line; `::: note "T" %% h` still paints (#583).
-- Check table-comment openers before scanning row prefixes in Prism, and consume
-  internal comment whitespace runs together to avoid repeated closing scans
-  (#589).
-- Preserve empty, blank and trailing-newline fenced code and raw payloads
-  through editor serialization. Use Carve JS 0.1.9 for the bridge and refresh
-  the complete specification corpus and projection-loss ledgers (#589).
 
 ### Improvements
 
