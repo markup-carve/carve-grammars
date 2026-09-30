@@ -5,31 +5,92 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
+# THE GATES ARE THEIR OWN JOBS, AND PUBLISH SITS BEHIND THEM VIA `needs:`, not by
+# step order. They used to be the first steps of the publish job, which is the
+# shape that shipped a vulnerable carve-py: the check failed, the publish step was
+# skipped, the job went green. A separate job joined by `needs:` makes the publish
+# unreachable rather than merely later.
+#
+# It also means the gates run the moment the tag lands, ahead of the `release`
+# environment's approval, so whoever approves the publish is looking at a gate
+# result instead of at nothing.
 jobs:
-  publish:
+  guard:
+    name: The tag, the manifests and the changelog agree
     runs-on: ubuntu-latest
-    # Inert until a `release` environment with a required reviewer exists
-    # (markup-carve/carve#2032).
-    environment: release
-    permissions:
-      # `write`, not `read`, and the gate below is the whole reason: a DRAFT
-      # release is invisible to a caller without push access, so under
-      # `contents: read` the listing comes back empty and the gate reports
-      # "no release" for a draft that is sitting right there with notes in
-      # it. See markup-carve/carve-wasm#80.
-      contents: write
-      id-token: write
     steps:
-      # GATE: the notes are not the workflow's to write. A CHANGELOG entry is
-      # deliberately one or two lines for a contributor, which makes poor
-      # release notes for a reader deciding whether to upgrade. A human writes
-      # the draft first and this refuses to publish without one.
+      - uses: actions/checkout@v4
+        with:
+          # The completeness gate walks every merge back to the previous tag, so
+          # it needs the tags and the history behind them.
+          fetch-depth: 0
+
+      - name: package.json agrees with the tag
+        run: |
+          VER_EXPECT="${GITHUB_REF_NAME#v}"
+          VER="$(node -p "require('./package.json').version")"
+          if [ "$VER_EXPECT" != "$VER" ]; then
+            echo "::error::Release tag ${GITHUB_REF_NAME} does not match package.json version $VER."
+            exit 1
+          fi
+
+      - name: The changelog describes this version
+        run: |
+          VER_EXPECT="${GITHUB_REF_NAME#v}"
+          if ! grep -qE "^## \[?${VER_EXPECT//./\\.}\]?" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no section for $VER_EXPECT."
+            exit 1
+          fi
+
+      # ...and it describes ALL of it. The step above only asks whether a section
+      # EXISTS, and a section exists from the moment `chore: cut X.Y.Z` writes it;
+      # development then carries on over it and nobody reopens it. Reconstructing
+      # this repository's pre-cut 0.1.10 section and renaming its heading passes
+      # the grep while describing none of #569, #570, #572, #581, #582 or #583.
+      # This step names every missing pull request at once, and
+      # `tests/changelog-completeness-test.js` runs its logic on every pull
+      # request so a release is not where a broken gate is discovered.
+      - name: The changelog section accounts for every merge in this release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/changelog-completeness.mjs "${GITHUB_REF_NAME}"
+
+      # A git dependency ships to every consumer: npm skips its integrity check,
+      # the install needs git and GitHub reachability (and resolves over SSH
+      # wherever an insteadOf rewrite is configured), and a commit pin stops
+      # tracking the engine's releases. 0.1.4 shipped with the engine pinned to a
+      # carve-js commit for exactly this reason and nothing noticed, because the
+      # manifest was never inspected before publishing.
       #
-      # Found by listing rather than `gh release view <tag>`: a draft's tag is
-      # not a git ref, so addressing one by tag can match nothing, change
-      # nothing and still exit 0.
-      - name: A release draft for this tag exists and has notes
-        if: github.event_name != 'workflow_dispatch'
+      # The rule lives in a script rather than inline so that its own behavior is
+      # testable: `tests/no-git-dependencies-test.js` runs it over the acceptance
+      # matrix on every pull request.
+      - name: No dependency is installed over git
+        run: node scripts/no-git-dependencies.mjs
+
+  release-notes:
+    name: A release draft for this tag exists and describes every merge
+    runs-on: ubuntu-latest
+    permissions:
+      # `write`, not `read`: a DRAFT release is invisible to a caller without
+      # push access, so under `contents: read` the listing comes back empty and
+      # the gate reports "no release" for a draft that is sitting right there with
+      # notes in it. See markup-carve/carve-wasm#80.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # GATE: the notes are not the workflow's to write. A CHANGELOG entry is
+      # deliberately one or two lines for a contributor, which makes poor release
+      # notes for a reader deciding whether to upgrade. A human writes the draft
+      # first and this refuses to publish without one.
+      #
+      # Found by listing rather than `gh release view <tag>`: a draft's tag is not
+      # a git ref, so addressing one by tag can match nothing, change nothing and
+      # still exit 0.
+      - name: The draft exists and has notes
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -42,41 +103,32 @@ jobs:
                  "check that the job still declares contents: write"
             exit 1
           fi
-          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
-          [ -n "$body" ] \
-            || { echo "::error::the release for $GITHUB_REF_NAME has no notes"; exit 1; }
+          printf '%s' "$release" | jq -r '.body // ""' > /tmp/release-notes.md
           printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
 
+      # ...and they describe ALL of it. A non-emptiness test cannot see a draft
+      # that went stale: the 0.1.10 draft was written on 2026-09-26 at 00:47, #569
+      # added its breaking entry at 11:19 the same day, and the draft still had no
+      # Breaking section at all when the tag was pushed. So the notes are held to
+      # the same bar as the changelog section, over the same range of merges.
+      - name: The notes account for every merge in this release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/changelog-completeness.mjs "${GITHUB_REF_NAME}" --body-file /tmp/release-notes.md
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [guard, release-notes]
+    # Inert until a `release` environment with a required reviewer exists
+    # (markup-carve/carve#2032).
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+    steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive # spec corpus submodule; npm test needs it
-
-      - name: Verify version and changelog match the tag
-        run: |
-          VER_EXPECT="${GITHUB_REF_NAME#v}"
-          VER="$(node -p "require('./package.json').version")"
-          if [ "$VER_EXPECT" != "$VER" ]; then
-            echo "::error::Release tag ${GITHUB_REF_NAME} does not match package.json version $VER."
-            exit 1
-          fi
-          if ! grep -qE "^## \[?${VER_EXPECT//./\\.}\]?" CHANGELOG.md; then
-            echo "::error::CHANGELOG.md has no section for $VER_EXPECT."
-            exit 1
-          fi
-
-      # A git dependency ships to every consumer: npm skips its integrity
-      # check, the install needs git and GitHub reachability (and resolves over
-      # SSH wherever an insteadOf rewrite is configured), and a commit pin stops
-      # tracking the engine's releases. 0.1.4 shipped with the engine pinned to
-      # a carve-js commit for exactly this reason and nothing noticed, because
-      # the manifest was never inspected before publishing.
-      #
-      # The rule lives in a script rather than inline here so that its own
-      # behavior is testable: `tests/no-git-dependencies-test.js` runs it over
-      # the acceptance matrix on every pull request. Inline, it only ever ran on
-      # a tag push, which is the worst moment to learn the guard is wrong.
-      - name: No dependency is installed over git
-        run: node scripts/no-git-dependencies.mjs
 
       - uses: actions/setup-node@v4
         with:
@@ -92,17 +144,16 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # A registry publish is not finished until the release page exists. The
-      # tag is pushed, CI publishes, the registry answers 200, and "released"
-      # feels done - while `/releases` still shows a draft, so a reader has no
-      # notes and no changelog for the version they just installed. Doing it
-      # here rather than by hand also means the draft stops being a thing
-      # someone has to remember to publish at the right moment.
+      # A registry publish is not finished until the release page exists. The tag
+      # is pushed, CI publishes, the registry answers 200, and "released" feels
+      # done - while `/releases` still shows a draft, so a reader has no notes and
+      # no changelog for the version they just installed. Doing it here rather
+      # than by hand also means the draft stops being a thing someone has to
+      # remember to publish at the right moment.
       #
       # Last, deliberately: a draft that stays a draft is recoverable, and one
       # published beside a failed publish is not.
       - name: Publish the release notes
-        if: github.event_name != 'workflow_dispatch'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -112,11 +163,11 @@ jobs:
             echo "No draft release for $GITHUB_REF_NAME; nothing to publish."
             exit 0
           fi
-          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT
-          # and GitHub replaces the tag with a generated `untagged-*`
-          # placeholder, because a draft's tag is a string on the object rather
-          # than a git ref - so the field has nothing to fall back to.
-          # `-F` (not `-f`) for draft, so it is sent as a boolean.
+          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT and
+          # GitHub replaces the tag with a generated `untagged-*` placeholder,
+          # because a draft's tag is a string on the object rather than a git ref -
+          # so the field has nothing to fall back to. `-F` (not `-f`) for draft, so
+          # it is sent as a boolean.
           gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
             -f tag_name="$GITHUB_REF_NAME" -F draft=false --jq '"published \(.tag_name)"'
           # Read it back: exit status does not tell you whether the tag survived.
