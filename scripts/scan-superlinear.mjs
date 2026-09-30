@@ -313,6 +313,14 @@ const lineBaits = [
     ['unterminated, brace baits', (n) => `{{ a.crv ${'@x:"a}b" '.repeat(n)}\n`],
     ['closed, brace baits', (n) => `{{ a.crv ${'@x:"a}b" '.repeat(n)}}}\n`],
     ['unterminated, closer baits', (n) => `{{ a.crv ${'@x:"a }} b" '.repeat(n)}\n`],
+    // A CELL COMMENT'S OWN BODY, which stops at the cell rather than at the line
+    // (carve-grammars#576). Two shapes, because the first two patches were
+    // quadratic in different places and neither showed up in any row above: a
+    // long row with no comment at all (the row test walked back to the line
+    // start at every space) and a comment body full of whitespace (a lazy body
+    // retried its closing lookahead at every space).
+    ['table row, no comment', (n) => `| ${'a'.repeat(n)} | b |\n`],
+    ['table cell comment, spaces', (n) => `| a %% ${' '.repeat(n)}h | b |\n`],
 ];
 
 console.log('\nin-line shapes (cost inside ONE line, not per line or per position)');

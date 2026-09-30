@@ -49,7 +49,23 @@
   },
   {
     "type": "comment",
-    "text": "%% tail | e |"
+    "text": "%% tail"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " e "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",
