@@ -21,7 +21,7 @@
   },
   {
     "type": "text",
-    "text": "\na\tb\n"
+    "text": "\ntab\tgap\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

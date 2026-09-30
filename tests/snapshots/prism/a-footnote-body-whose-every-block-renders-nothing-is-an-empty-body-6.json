@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "code",
+    "text": "```=html\n  <b>x</b>\n  ```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

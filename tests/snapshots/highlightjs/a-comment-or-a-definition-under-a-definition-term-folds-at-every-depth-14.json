@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> :: c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   [^n]: y"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

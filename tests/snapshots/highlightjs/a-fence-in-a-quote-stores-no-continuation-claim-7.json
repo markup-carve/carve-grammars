@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> > ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> > b"
+  },
+  {
+    "scope": null,
+    "text": "\ny\n"
+  }
+]

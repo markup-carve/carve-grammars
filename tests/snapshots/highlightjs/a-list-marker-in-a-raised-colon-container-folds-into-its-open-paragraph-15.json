@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " head\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "      :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n      :::\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": null,
+    "text": "\n      a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " second\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "      :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " third\n"
+  }
+]

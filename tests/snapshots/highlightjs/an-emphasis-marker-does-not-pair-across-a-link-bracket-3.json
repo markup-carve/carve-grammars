@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "emphasis>link",
+    "text": "[a](/u)"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

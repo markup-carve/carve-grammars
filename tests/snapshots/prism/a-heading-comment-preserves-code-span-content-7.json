@@ -1,0 +1,18 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>comment",
+    "text": "%% hidden"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "link",
+    "text": "[a][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"t\nu\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

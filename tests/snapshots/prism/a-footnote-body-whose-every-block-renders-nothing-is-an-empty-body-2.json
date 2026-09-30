@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n  n\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

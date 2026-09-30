@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "title",
+    "text": ":: c"
+  },
+  {
+    "scope": null,
+    "text": "\n  [^n]: y\n"
+  }
+]

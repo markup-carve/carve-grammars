@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[/[t](/v)/]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

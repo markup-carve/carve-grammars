@@ -1,0 +1,54 @@
+[
+  {
+    "scope": null,
+    "text": "X"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: footnotes"
+  },
+  {
+    "scope": null,
+    "text": "\nFirst marker.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: footnotes"
+  },
+  {
+    "scope": null,
+    "text": "\nSecond marker.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

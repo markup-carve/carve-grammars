@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](/i 't\\'u')"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

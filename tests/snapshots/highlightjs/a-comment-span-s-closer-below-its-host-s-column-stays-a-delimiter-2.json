@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ":  head"
+  },
+  {
+    "scope": null,
+    "text": "\n\n     %%%\n     a\n%%%\n\n   tail\n"
+  }
+]

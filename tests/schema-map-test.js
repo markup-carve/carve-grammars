@@ -47,11 +47,12 @@ const IMPLEMENTATION_TYPES = new Set([
 ]);
 
 /**
- * The generated-space node is declared by markup-carve/carve#2337, which is
- * still a coordinated draft. The promotion check below requires removing
- * this entry when the spec pin includes the new vocabulary.
+ * Node types the AST schema does not declare yet. The promotion check below
+ * requires removing an entry the moment the spec pin declares it, which is what
+ * retired `non_breaking_space` here: carve#2337 landed, the bump to `312001f`
+ * brought the vocabulary in, and the schema map already carries the type.
  */
-const AHEAD_OF_PIN = new Set(['non_breaking_space']);
+const AHEAD_OF_PIN = new Set([]);
 
 /** Every node type the pinned AST schema declares: the wire vocabulary a bridge meets. */
 function schemaNodeTypes() {

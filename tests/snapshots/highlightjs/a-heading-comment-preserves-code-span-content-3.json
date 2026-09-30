@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#raw-heading}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# a `x %% b`{=html} c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

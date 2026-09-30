@@ -1,0 +1,18 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " a\t"
+  },
+  {
+    "type": "comment",
+    "text": "%% hidden"
+  },
+  {
+    "type": "text",
+    "text": "\n: d\n"
+  }
+]

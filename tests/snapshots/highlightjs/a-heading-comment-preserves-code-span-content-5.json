@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> # a `x %% b` c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

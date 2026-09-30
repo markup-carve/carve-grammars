@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "text": "["
+  },
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "italic>italic>url",
+    "text": "t"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "italic>italic>url",
+    "text": "/v"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "text",
+    "text": "]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

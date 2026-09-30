@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]: %% n"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```=latex"
+  },
+  {
+    "scope": "code",
+    "text": "\n  \\x\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

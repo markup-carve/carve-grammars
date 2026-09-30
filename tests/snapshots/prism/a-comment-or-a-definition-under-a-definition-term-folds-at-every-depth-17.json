@@ -1,0 +1,22 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " c"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% note"
+  },
+  {
+    "type": "text",
+    "text": "\nmore\n"
+  }
+]

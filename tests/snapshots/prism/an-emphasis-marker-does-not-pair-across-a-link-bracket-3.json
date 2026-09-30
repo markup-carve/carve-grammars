@@ -1,0 +1,34 @@
+[
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "italic>italic>url",
+    "text": "a"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "italic>italic>url",
+    "text": "/u"
+  },
+  {
+    "type": "italic>italic>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

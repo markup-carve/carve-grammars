@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#d k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: foo"
+  },
+  {
+    "scope": null,
+    "text": "\na\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
