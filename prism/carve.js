@@ -919,7 +919,17 @@
                 // a marker separated by a TAB leaves the line as prose (MARKER
                 // SEPARATORS), so no block rule would claim `#<TAB>%% h` and the
                 // comment has to stay a comment here.
-                pattern: /((?<!^[ \t]*(?:#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)) |\t)%%(?!%).*$/m,
+                //
+                // A COLON-FENCE OPENER is in the list for the opposite reason
+                // (carve-grammars#579). Trailing junk makes such a line a
+                // paragraph, and the 'div' rule already refuses it - but only if
+                // it can SEE the junk. With the comment carved out first the rule
+                // saw a clean `::: note` and painted a container the engine does
+                // not open (oracle: `<p>::: note body :::</p>`). Left in the line,
+                // the comment keeps the opener from matching at all, which is the
+                // reading the ruling asks for. The line then colours as the prose
+                // it is, comment included.
+                pattern: /((?<!^[ \t]*(?::{3,}(?: +[a-zA-Z_][\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)) |\t)%%(?!%).*$/m,
                 lookbehind: true,
                 greedy: true,
             },
