@@ -97,6 +97,33 @@ for (const [name, tokenize] of surfaces) {
     }
 }
 
+console.log('\na span closes at its own WIDTH, so what follows it is outside code:');
+
+// Both rows are regressions a review caught in the first cut of the Prism prefix
+// walk. A run-parity count read ```x ` y``` as three runs and refused the real
+// trailing comment; a walk that did not skip escapes read `\\`` as an opener and
+// refused it in ordinary prose. Only Prism ever counted runs, but the readings
+// are the engines', so every surface is asked.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} scopes a trailing comment after a wide span holding a narrow run`, () => {
+        const source = '# a ``x ` y`` %% hidden';
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && /comment/.test(scope),
+            `expected a comment scope after the closed wide span, got ${JSON.stringify(scope)}`,
+        );
+    });
+
+    ok(`${name} scopes a trailing comment after an escaped backtick`, () => {
+        const source = 'a \\` %% hidden';
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && /comment/.test(scope),
+            `an escaped backtick opens no span, got ${JSON.stringify(scope)}`,
+        );
+    });
+}
+
 console.log('\nthe other direction still holds - a comment body is verbatim:');
 
 // The symmetric case, which a naive "code before comment" reorder would break:

@@ -207,23 +207,33 @@
      * (carve-grammars#601, markup-carve/carve#2682): `# a `x %% b` c` renders
      * `<h1>a <code>x %% b</code> c</h1>` on both engines. In a PARAGRAPH Prism
      * already read it that way - the greedy `code` token matches earlier in the
-     * line than the comment does and wins on position - but under a heading the
-     * `title` rule wraps the prefix into a token before `code` is ever reached,
-     * so the greedy rewind has no string left to span and the comment stood.
+     * line than the comment does and wins on position - but under a heading or a
+     * caption the block rule wraps the prefix into a token before `code` is ever
+     * reached, so the greedy rewind has no string left to span and the comment
+     * stood.
      *
-     * The guard states the rule directly instead: a comment opener is one only
-     * where every backtick RUN before it on the line is paired. An unpartnered
-     * run opens a span that reaches the end of its paragraph, so an odd count
-     * puts the `%%` inside code.
+     * `commentAfterPrefix` states the rule directly instead: the line is walked
+     * from its start, and a comment opener is one only where the walk reaches it
+     * OUTSIDE every span. A run with no width-matched partner therefore blocks
+     * the walk, which is the reading the engine gives it - an unpartnered run is
+     * a span to the end of its paragraph.
      *
-     * IT SITS AFTER THE `%%`, the position the table-cell rule already argues
-     * for (carve-grammars#576): a leading lookbehind would re-walk the line at
-     * every space. Each run is matched maximally (`` `+(?!`) ``), which leaves
-     * the lookbehind one parse per prefix rather than one per way of splitting
-     * the runs - `scripts/scan-superlinear.mjs` carries the backtick-dense
-     * shape, and growth is linear in the line length.
+     * FORWARD, NOT A LOOKBEHIND, and both reasons came out of review. Width has
+     * to be matched with a backreference (```x ` y``` closes at the wide run,
+     * so the lone one inside is content and a trailing `%%` after it IS a
+     * comment), and a backslash escape has to be skipped before the character it
+     * escapes can be read as a delimiter (`a \\` %% h` is an escape and then a
+     * comment). Neither is expressible in a JS lookbehind, which matches
+     * right-to-left. Anchored at `^` with a lazy prefix, the walk costs the line
+     * once rather than once per candidate: measured linear to a 512 KB line, and
+     * `scripts/scan-superlinear.mjs` carries the backtick-dense shapes.
+     *
+     * The prefix is capture 1, which `lookbehind: true` strips, so the token is
+     * still just the comment run.
      */
-    var outsideCodeSpan = '(?<=^(?:[^\\n`]*`+(?!`)[^\\n`]*`+(?!`))*[^\\n`]*[ \\t]%%)';
+    var codeSpanRun = '(?<!`)(`+)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
+    var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
+    var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
@@ -955,7 +965,18 @@
                 // the comment keeps the opener from matching at all, which is the
                 // reading the ruling asks for. The line then colours as the prose
                 // it is, comment included.
-                pattern: RegExp('((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)' + outsideCodeSpan + '.*$', 'm'),
+                // The marker exclusion moved BEHIND the `%%` when the prefix
+                // walk took over the front of the pattern: as a leading
+                // lookbehind it would run at every space in the line, the
+                // quadratic shape carve-grammars#576 took out of the row rule
+                // next door. It still asks the same question - a marker, a
+                // LITERAL SPACE, then the run - so the tab form is untouched.
+                pattern: RegExp(
+                    commentAfterPrefix
+                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '.*$',
+                    'm',
+                ),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1096,12 +1117,14 @@
                 // top-level comment rule steps aside when the comment is all
                 // that follows the marker (carve-grammars#578). First in the
                 // set so a comment body is never read as emphasis.
-                // Same code-span guard as the top-level rule (see
-                // `outsideCodeSpan`): the top-level rule now steps aside for a
-                // `%%` inside a code span, so this one must too, or the comment
-                // simply reappears one level down. `^` here is the start of the
-                // heading LINE, which is what the guard counts backticks from.
-                'comment': { pattern: RegExp('([ \\t])%%(?!%)' + outsideCodeSpan + '.*$'), lookbehind: true, greedy: true },
+                // Same prefix walk as the top-level rule: that rule now steps
+                // aside for a `%%` inside a code span, so this one must too, or
+                // the comment simply reappears one level down. `^` here is the
+                // start of the heading LINE - the title token's own text - which
+                // is where the walk has to begin. No marker exclusion: the
+                // top-level rule owns that case, and a marker-only comment is
+                // meant to land here (carve-grammars#578).
+                'comment': { pattern: RegExp(commentAfterPrefix + '.*$'), lookbehind: true, greedy: true },
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -2098,14 +2121,29 @@
      * `Prism.languages.carve.code` does not exist yet while that is being built.
      */
     for (const block of ['title', 'caption']) {
+        const own = Prism.languages.carve[block].inside;
+        /*
+         * ORDER IS THE WHOLE POINT HERE, twice over.
+         *
+         * `comment` leads, which is where the heading rule already put it so a
+         * comment body is never read as emphasis - and now also so its prefix
+         * walk starts at the marker. The walk is anchored at `^`, so a rule that
+         * consumed the `#` first would leave it nothing to anchor to and
+         * `# %% h` would lose the comment scope its marker case earned in
+         * carve-grammars#578.
+         *
+         * The verbatim rules come next, ahead of the shared `inline` set, which
+         * would otherwise reach the `*` inside a verbatim payload.
+         */
         Prism.languages.carve[block].inside = Object.assign(
-            { 'punctuation': Prism.languages.carve[block].inside['punctuation'] },
+            own['comment'] ? { 'comment': own['comment'] } : {},
+            { 'punctuation': own['punctuation'] },
             ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
                 set[name] = Prism.languages.carve[name];
 
                 return set;
             }, {}),
-            Prism.languages.carve[block].inside
+            own
         );
     }
 
