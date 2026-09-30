@@ -6,6 +6,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixed
 
+- Check table-comment openers before scanning row prefixes in Prism, and consume
+  internal comment whitespace runs together to avoid repeated closing scans.
 - Preserve empty, blank and trailing-newline fenced code and raw payloads through
   editor serialization. Use Carve JS 0.1.9 for the bridge and refresh the complete
   specification corpus and projection-loss ledgers.

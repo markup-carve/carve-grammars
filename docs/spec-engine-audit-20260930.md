@@ -54,6 +54,22 @@ Supporting nested label markup needs a label context that keeps comments, code
 and escapes opaque. Merely adding more regular-expression alternatives would
 also need the existing bounded-scan and equivalence checks.
 
+## Performance
+
+The sweep found a table-comment prefix assertion that ran before checking for
+any comment opener. Doubling ordinary unmatched lines gave roughly four times
+Prism's cost. Checking the opener first removes that broad slowdown. Consuming
+internal whitespace runs together also removes repeated closing-lookahead scans
+inside long comment bodies. Corpus snapshots are unchanged, and 7,835 generated
+token-stream comparisons retain the previous rule's scopes.
+
+Residual costs remain: Prism still scans the row prefix for every candidate
+comment, so densely repeated comment openers can grow faster than line length.
+The sweep now includes both non-row and table-row versions of that shape.
+Highlight.js also shows superlinear growth on a long uninterrupted pipe run.
+Those need separate attribution; passing bounded-scan checks does not establish
+linear cost for every grammar path.
+
 ## Next changes
 
 Bracket-run scopes should take priority over additional token colors. A fix must

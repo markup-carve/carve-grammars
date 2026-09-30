@@ -319,6 +319,8 @@ const lineBaits = [
     // long row with no comment at all (the row test walked back to the line
     // start at every space) and a comment body full of whitespace (a lazy body
     // retried its closing lookahead at every space).
+    ['non-row, comment openers', (n) => `x${' %%'.repeat(Math.ceil(n / 8))}\n`],
+    ['row, repeated comments', (n) => `| ${'a %%c |'.repeat(Math.ceil(n / 8))}\n`],
     ['table row, no comment', (n) => `| ${'a'.repeat(n)} | b |\n`],
     ['table cell comment, spaces', (n) => `| a %% ${' '.repeat(n)}h | b |\n`],
 ];
