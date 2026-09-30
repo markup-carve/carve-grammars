@@ -369,6 +369,7 @@ export const SIGNATURES = {
     thematic_break: ['thematicbreak', 'carverule', 'horizontalrule'],
     code_block: ['codeblock', 'fencedcode', 'codefence', 'fencedblock'],
     blockquote: ['blockquote', 'markupquote', 'quotecarve', 'blockquotes'],
+    quote_block: ['quoteblock'],
     unordered_list: ['listunnumbered', 'listdash', 'liststar', 'listbullet', 'unorderedlist', 'bulletlist'],
     ordered_list: ['listnumbered', 'listdecimal', 'listlower', 'listupper', 'listnumber', 'orderedlist'],
     definition_list: ['definitionlist', 'listdefinition', 'defterm', 'deflist', 'definitionterm', 'listitemdefinition'],
@@ -555,6 +556,15 @@ const SIGNATURE_OVERRIDES = {
         line_block: ['div'],
         local_hard_break_block: ['div'],
         /*
+         * A `quote_block` is the FOURTH spelling of the `:::` opener - the
+         * grammar makes it `colon_fence, space, ">"`, so it reaches the same
+         * container rule `::: note` does. Measured on this bump: `::: >` and
+         * `::: note` tokenize to the same scopes, down to the token boundary,
+         * with only the class-name text differing. A name cannot separate them,
+         * so the row cites the container that really scopes it.
+         */
+        quote_block: ['div'],
+        /*
          * A RAW BLOCK IS A CODE FENCE WITH AN `=FORMAT` INFO STRING, and this
          * grammar's `code-block` opener takes the info string as `[^\n]{0,512}`
          * - so ```` ```=html ```` opens the same block ```` ```js ```` does,
@@ -627,6 +637,15 @@ const SIGNATURE_OVERRIDES = {
         div: ['admonition'],
         line_block: ['admonition'],
         local_hard_break_block: ['admonition'],
+        /*
+         * A `quote_block` is the FOURTH spelling of the `:::` opener - the
+         * grammar makes it `colon_fence, space, ">"`, so it reaches the same
+         * container rule `::: note` does. Measured on this bump: `::: >` and
+         * `::: note` tokenize to the same scopes, down to the token boundary,
+         * with only the class-name text differing. A name cannot separate them,
+         * so the row cites the container that really scopes it.
+         */
+        quote_block: ['admonition'],
         raw_block: ['fencedcode'],
         math_display: ['mathinline'],
         collapsed_reference_link: ['linkref'],
@@ -658,6 +677,15 @@ const SIGNATURE_OVERRIDES = {
         admonition: ['div'],
         line_block: ['div'],
         local_hard_break_block: ['div'],
+        /*
+         * A `quote_block` is the FOURTH spelling of the `:::` opener - the
+         * grammar makes it `colon_fence, space, ">"`, so it reaches the same
+         * container rule `::: note` does. Measured on this bump: `::: >` and
+         * `::: note` tokenize to the same scopes, down to the token boundary,
+         * with only the class-name text differing. A name cannot separate them,
+         * so the row cites the container that really scopes it.
+         */
+        quote_block: ['div'],
         collapsed_reference_link: ['metalinkreference'],
         /*
          * The braced highlight joined `forced-emphasis` in
@@ -688,6 +716,15 @@ const SIGNATURE_OVERRIDES = {
         admonition: ['div'],
         line_block: ['div'],
         local_hard_break_block: ['div'],
+        /*
+         * A `quote_block` is the FOURTH spelling of the `:::` opener - the
+         * grammar makes it `colon_fence, space, ">"`, so it reaches the same
+         * container rule `::: note` does. Measured on this bump: `::: >` and
+         * `::: note` tokenize to the same scopes, down to the token boundary,
+         * with only the class-name text differing. A name cannot separate them,
+         * so the row cites the container that really scopes it.
+         */
+        quote_block: ['div'],
         footnote_definition: ['metafootnotedefinition'],
         collapsed_reference_link: ['metalinkreference'],
         reference_image: ['metaimagereference'],
@@ -745,6 +782,15 @@ const SIGNATURE_OVERRIDES = {
         admonition: ['divblock'],
         line_block: ['divblock'],
         local_hard_break_block: ['divblock'],
+        /*
+         * A `quote_block` is the FOURTH spelling of the `:::` opener - the
+         * grammar makes it `colon_fence, space, ">"`, so it reaches the same
+         * container rule `::: note` does. Measured on this bump: `::: >` and
+         * `::: note` tokenize to the same scopes, down to the token boundary,
+         * with only the class-name text differing. A name cannot separate them,
+         * so the row cites the container that really scopes it.
+         */
+        quote_block: ['divblock'],
         collapsed_reference_link: ['referencelink'],
         inline_comment: ['linecomment'],
         raw_inline: ['rawformat'],
@@ -792,6 +838,14 @@ const SIGNATURE_OVERRIDES = {
          * block, which does. So the bridge models it as the div it is.
          */
         local_hard_break_block: ['div'],
+        /*
+         * And the colon-fence quote is the blockquote it is: `::: >` arrives as
+         * the same `blockquote` node the `>` marker produces, so the bridge
+         * names the sibling and not this spelling. The colon spelling itself is
+         * carried by the source envelope, which is why section 535 of the
+         * corpus enlarges that population rather than leaving anything opaque.
+         */
+        quote_block: ['blockquote'],
         /*
          * The combined bold-italic spelling is not a type either: the engine
          * emits an `emphasis` mark INSIDE a `strong` mark, and the map carries
@@ -915,8 +969,18 @@ const SIGNATURE_OVERRIDES = {
  *
  * `forced_super` and `forced_sub` are NOT here: Carve has no bare `^x^`, so a
  * rule named `superscript` can only be the braced one.
+ *
+ * `quote_block` is the same shape one level up, on the BLOCK axis. The grammar
+ * spells it `colon_fence, space, ">"`, so it is a fourth `:::` container
+ * alongside the admonition, the line block and the local hard-break block, and
+ * a grammar may recognize it in the one container rule or in a rule of its own.
+ * Both look identical from a name: the vocabulary holds the container's name
+ * and nothing else either way. The four surfaces in this repository were read
+ * by hand instead and each carries a signature override, so only a surface
+ * whose checkout is absent falls through to this fold.
  */
 export const INDISTINGUISHABLE = {
+    quote_block: 'div',
     forced_emphasis: 'emphasis',
     forced_strong: 'strong',
     forced_underline: 'underline',
