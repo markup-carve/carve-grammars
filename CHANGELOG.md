@@ -2,7 +2,7 @@
 
 All notable changes to `carve-grammars` are documented here.
 
-## [Unreleased]
+## [0.1.10] - 2026-09-30
 
 ### Breaking
 
@@ -10,7 +10,12 @@ All notable changes to `carve-grammars` are documented here.
   its source spelling on write. A tree stored under the old U+E000 marker now
   carries that character through the bridge as authored text, with no error and no
   version signal; reparsing the source is the only remedy. The shared schema map
-  records the decision for engine bridges (markup-carve/carve#2337).
+  records the decision for engine bridges (markup-carve/carve#2337, #569).
+- `tiptap/schema-map.json` gives `tag` its own entry, so a bridge resolving
+  `carveTag` back to a Carve type reaches `tag` rather than `mention`. With it,
+  `mention.pm` is the string `carveMention` where it was the array
+  `["carveMention", "carveTag"]`. The map's `version` stays `1`; an engine that
+  vendors it and special-cases `carveTag` can drop that workaround (#570).
 
 ### Added
 
@@ -40,6 +45,22 @@ All notable changes to `carve-grammars` are documented here.
   `-` stays content (#558, #559).
 - `|< |` stays scoped as a colspan in TextMate while `|< span` stays an
   alignment marker (#560).
+- A `%%%` fence folded into an inline run keeps `block` on the
+  `carveCommentInline` node, where the converter and the schema each dropped the
+  flag. The serializer still writes the `%%` line form, and now reports it as
+  degraded and names the tail that spelling swallows, rather than storing a
+  different document in silence (#572).
+- Prism keeps a block marker's scope when a comment is all that follows it, so
+  `# %% h` is a heading and `- %% h` a list item, which highlight.js and
+  TextMate already had (#581).
+- A trailing `%%` comment ends at the table cell in Prism, highlight.js and
+  TextMate. Prism and TextMate ran it to the line end and swallowed every later
+  separator; highlight.js bounded it but gave the cell text no comment scope
+  (#582).
+- Prism paints no container for a colon-fence opener that a trailing comment
+  kills, so `::: note %% h` is scoped as the paragraph the engine renders. The
+  comment on such a line is no longer highlighted, which is what lets the
+  container rule refuse the line; `::: note "T" %% h` still paints (#583).
 
 ## [0.1.9] - 2026-09-20
 
