@@ -33,10 +33,20 @@ import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
 
 let passed = 0;
+// EVERY ASSERTION RUNS, and the failures are reported together at the end. The
+// throwing shape the other files use exits at the first failure, so a change
+// that breaks three surfaces reports one - and which one it reports depends on
+// declaration order rather than on the defect.
+const failures = [];
 function ok(name, fn) {
-    fn();
-    passed++;
-    console.log(`  ✓ ${name}`);
+    try {
+        fn();
+        passed++;
+        console.log(`  ✓ ${name}`);
+    } catch (error) {
+        failures.push(`${name}: ${error.message}`);
+        console.log(`  ✗ ${name}`);
+    }
 }
 
 const scopeOver = (tokens, source, text, from = 0) => {
@@ -195,3 +205,8 @@ for (const [name, tokenize] of surfaces) {
 }
 
 console.log(`\n${passed} passed`);
+if (failures.length) {
+    console.log(`\n${failures.length} failed:`);
+    for (const failure of failures) console.log(`  ${failure}`);
+    assert.fail(`${failures.length} assertion(s) failed`);
+}
