@@ -895,7 +895,7 @@
                 // prefix scan; the performance sweep measures that residual.
                 // Consume internal whitespace runs together so the closing
                 // lookahead does not rescan a long whitespace body at each byte.
-                pattern: /([ \t])%{2,}(?<=^[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n \t]|[ \t]+(?![ \t]|\||$))*(?=[ \t]*(?:\||$))/m,
+                pattern: /([ \t])%{2,}(?<=^[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n\u2028\u2029 \t]|[ \t]+(?![ \t]|\||$))*(?=[ \t]*(?:\||$))/m,
                 lookbehind: true,
                 greedy: true,
             },

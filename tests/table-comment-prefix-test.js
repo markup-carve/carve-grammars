@@ -12,11 +12,11 @@ assert.ok(rule, 'table-cell comment rule must be exercised');
 assert.ok(rule.pattern.source.indexOf('%{2,}') < rule.pattern.source.indexOf('(?<=^'),
     'check the comment opener before scanning the row prefix');
 const reference = { ...current, comment: current.comment.map(r => r === rule ? { ...r, pattern: previous } : r) };
-const alphabet = [' ', '\t', '%', '|', '\\', 'x'];
+const alphabet = [' ', '\t', '%', '|', '\\', 'x', '\r', '\u2028', '\u2029'];
 let comparisons = 0;
-function check(body) {
+function check(body, terminator = '\n') {
     for (const prefix of ['', '| a', ' | a', '> | a', '\n| a']) {
-        const source = `${prefix} ${body} | b |\n`;
+        const source = `${prefix} ${body} | b |${terminator}`;
         assert.deepEqual(Prism.tokenize(source, current), Prism.tokenize(source, reference), source);
         comparisons++;
     }
@@ -29,4 +29,6 @@ generate('', 4);
 for (const spaces of [' ', '\t', ' \t '.repeat(8)]) {
     for (const ending of ['h', '|', '', '\\|']) check(`%% ${spaces}${ending}`);
 }
+check('%% h', '\r');
+check('%% h', '\r\n');
 console.log(`Table comment prefix: ${comparisons} token streams retain their scopes.`);

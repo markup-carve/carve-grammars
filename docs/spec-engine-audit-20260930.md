@@ -60,7 +60,7 @@ The sweep found a table-comment prefix assertion that ran before checking for
 any comment opener. Doubling ordinary unmatched lines gave roughly four times
 Prism's cost. Checking the opener first removes that broad slowdown. Consuming
 internal whitespace runs together also removes repeated closing-lookahead scans
-inside long comment bodies. Corpus snapshots are unchanged, and 7,835 generated
+inside long comment bodies. Corpus snapshots are unchanged, and 36,975 generated
 token-stream comparisons retain the previous rule's scopes.
 
 Residual costs remain: Prism still scans the row prefix for every candidate
@@ -68,7 +68,8 @@ comment, so densely repeated comment openers can grow faster than line length.
 The sweep now includes both non-row and table-row versions of that shape.
 Highlight.js also shows superlinear growth on a long uninterrupted pipe run.
 Those need separate attribution; passing bounded-scan checks does not establish
-linear cost for every grammar path.
+linear cost for every grammar path. The sweep exits nonzero for these measured
+costs and remains outside CI.
 
 ## Next changes
 
