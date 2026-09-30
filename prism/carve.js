@@ -877,6 +877,26 @@
                 greedy: true,
             },
             {
+                // IN A TABLE ROW THE RUN ENDS AT THE CELL. A cell is an inline
+                // run of its own (`CARVE-P9-041`), so `| a %% h | b |` keeps two
+                // cells - corpus
+                // `518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-6`
+                // pins it. Reaching the line end swallowed every later boundary
+                // and the row lost its structure (carve-grammars#576).
+                //
+                // ANY run width, not just `%%`: the engine keeps both cells for
+                // `| a %%% h | b |` as well, and a `%%%` fence cannot open here
+                // because the fence rules need the run at the line start.
+                // THE ROW TEST SITS AFTER THE RUN, not before it. As a leading
+                // lookbehind the assertion runs at EVERY space in the line and
+                // walks back to the line start each time, which is quadratic: a
+                // 40 000-character row cost 1133 ms against 2 ms at HEAD. Behind
+                // the `%%` it runs only where a comment actually opens.
+                pattern: /(?<=^[ \t]*\|[^\n]*?)([ \t])%{2,}(?:\\.|[^\\|\r\n])*?(?=[ \t]*(?:\||$))/m,
+                lookbehind: true,
+                greedy: true,
+            },
+            {
                 // trailing comment after whitespace (Prism lookbehind, no JS
                 // lookbehind: the leading space is captured and excluded).
                 // A trailing `%%%` RUN is untouched by the exclusion below: it

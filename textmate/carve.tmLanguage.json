@@ -729,6 +729,11 @@
       "end": "$",
       "patterns": [
         {
+          "comment": "A CELL IS AN INLINE RUN, so a trailing comment's run ends at the cell, not at the line end (CARVE-P9-041; corpus 518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-6). Reaching the line end swallowed every later separator in the row (carve-grammars#576). Leads the row's patterns so #trailing_comment cannot claim the position first.",
+          "match": "(?<=[ \\t])%{2,}(?:\\\\.|[^\\\\|\\r\\n])*",
+          "name": "comment.line.percent.carve"
+        },
+        {
           "match": "(\\|=)((?:[<~>][\\^~v]|\\?[\\^~v]|[<~>]))(?= |\\{[^}]*\\} )",
           "captures": {
             "1": {

@@ -53,7 +53,11 @@
   },
   {
     "scope": null,
-    "text": " d %% tail "
+    "text": " d "
+  },
+  {
+    "scope": "comment",
+    "text": "%% tail "
   },
   {
     "scope": "table-boundary",

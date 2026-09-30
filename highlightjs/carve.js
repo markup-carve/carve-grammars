@@ -1625,6 +1625,15 @@
         contains: [
             TABLE_INLINE_CODE,
             ESCAPE,
+            /*
+             * A CELL IS AN INLINE RUN, so a trailing `%%` comment is a comment
+             * here and its run ENDS AT THE CELL (`CARVE-P9-041`, corpus
+             * `518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-6`).
+             * Without this the cell text carried no comment scope at all
+             * (carve-grammars#577) - the document-level comment rule never
+             * reaches inside this mode.
+             */
+            { className: 'comment', begin: /(?<=[ \t])%{2,}(?:\\.|[^\\|\r\n])*/ },
             { className: 'table-operator', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-operator', begin: /(?<=\|)[=]?(?:[<~>](?:[\^~v])?|\?[\^~v])(?= |\{)/ },
