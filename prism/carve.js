@@ -974,8 +974,10 @@
                 // the comment keeps the opener from matching at all, which is the
                 // reading the ruling asks for. The line then colours as the prose
                 // it is, comment included.
-                // The marker exclusion moved BEHIND the `%%` when the prefix
-                // walk took over the front of the pattern: as a leading
+                // THE WALK RUNS ON EVERY LINE; the entry below catches the one
+                // shape it has to refuse.
+                //
+                // The marker exclusion sits BEHIND the `%%`: as a leading
                 // lookbehind it would run at every space in the line, the
                 // quadratic shape carve-grammars#576 took out of the row rule
                 // next door. It still asks the same question - a marker, a
@@ -983,6 +985,40 @@
                 pattern: RegExp(
                     commentAfterPrefix
                     + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '.*$',
+                    'm',
+                ),
+                lookbehind: true,
+                greedy: true,
+            },
+            {
+                /*
+                 * A CONTINUATION LINE, where the walk above cannot answer.
+                 *
+                 * The walk is LINE-LOCAL, and a paragraph's span may open on an
+                 * EARLIER line: `a `x` / `y` %% hidden` closes on the second, so
+                 * the walk there sees a run with no partner, blocks, and the real
+                 * comment goes unscoped. Line-locally an unpartnered opener and an
+                 * unpartnered closer are the same text, so no line-local rule can
+                 * tell them apart. This entry takes the closer reading, confined
+                 * to the lines where that is the only one available.
+                 *
+                 * A line that OPENS A BLOCK starts its own inline run, so a run on
+                 * it can only be an opener and the walk's refusal is final. Those
+                 * lines are excluded here, which is what keeps the readings the
+                 * walk earned: corpus 516-...-5 is a heading inside a quote and
+                 * 532-...-5 is a container label, both hold a `%%` inside a span,
+                 * and both would get the comment scope back if this entry could
+                 * reach them.
+                 *
+                 * The exclusion is WIDER than the marker list above - `>`, `|` and
+                 * `^` join it - and over-breadth costs nothing here: a line the
+                 * walk can answer is already answered above, and this entry only
+                 * ever sees the lines it could not.
+                 */
+                pattern: RegExp(
+                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + '(?<!^[ \\t]*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|>|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
                 ),
@@ -2141,13 +2177,16 @@
          * `# %% h` would lose the comment scope its marker case earned in
          * carve-grammars#578.
          *
-         * The verbatim rules come next, ahead of the shared `inline` set, which
-         * would otherwise reach the `*` inside a verbatim payload.
+         * `escape` comes next, ahead of the verbatim rules: a backslashed
+         * backtick is a literal and opens no span, so without it
+         * `# a \\`x\\` z` grew a code span the engine does not render. The
+         * verbatim rules then sit ahead of the shared `inline` set, which would
+         * otherwise reach the `*` inside a verbatim payload.
          */
         Prism.languages.carve[block].inside = Object.assign(
             own['comment'] ? { 'comment': own['comment'] } : {},
             { 'punctuation': own['punctuation'] },
-            ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+            ['escape', 'math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
                 set[name] = Prism.languages.carve[name];
 
                 return set;

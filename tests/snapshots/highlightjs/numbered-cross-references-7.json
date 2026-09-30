@@ -9,7 +9,15 @@
   },
   {
     "scope": "title",
-    "text": "^ Costs \\# units"
+    "text": "^ Costs "
+  },
+  {
+    "scope": "title>symbol",
+    "text": "\\#"
+  },
+  {
+    "scope": "title",
+    "text": " units"
   },
   {
     "scope": null,

@@ -31,6 +31,7 @@ import assert from 'node:assert/strict';
 
 import { hljsTokens, prismTokens } from './lib/engines.js';
 import { textmateEngines } from './lib/surface-engines.js';
+import { textmateLineTokenizer } from './lib/textmate-lines.js';
 
 let passed = 0;
 // EVERY ASSERTION RUNS, and the failures are reported together at the end. The
@@ -60,7 +61,17 @@ const scopeOver = (tokens, source, text, from = 0) => {
     return undefined;
 };
 
-const surfaces = [['prism', prismTokens], ['highlightjs', hljsTokens], ...(await textmateEngines())];
+// THE RAW vscode-textmate DRIVER, not the Shiki-backed default. Shiki merges
+// same-colored neighbors, so a span and the title around it can arrive as one
+// leaf - and on these documents it also threw `startIndex` of undefined on some
+// runs and not others, which is a flaky test rather than a measurement. The
+// line-faithful driver gives one leaf per TextMate token and is deterministic
+// here.
+const surfaces = [
+    ['prism', prismTokens],
+    ['highlightjs', hljsTokens],
+    ...(await textmateEngines(textmateLineTokenizer)),
+];
 
 console.log('a %% between backticks on a heading line is code content:');
 
@@ -202,6 +213,43 @@ for (const [name, tokenize] of surfaces) {
         const text = scopeOver(tokens, source, 'cap');
         assert.ok(text && !/comment/.test(text), `the text before it is not comment, got ${JSON.stringify(text)}`);
     });
+}
+
+console.log('\nan unclosed span does NOT leak the block scope downstream:');
+
+/*
+ * THE BLOCK SCOPE MUST STOP AT ITS LINE (markup-carve/intellij-carve#222).
+ * Giving a one-line block an inline set is how a highlighter leaks: an UNCLOSED
+ * run opens a verbatim rule whose natural end is the paragraph, so the rule can
+ * outlive the block that hosts it and take the block's own scope with it. In
+ * intellij-carve it survived to the end of the FILE, and the six assertions that
+ * shipped with the fix all passed - none of them put an unclosed span on the
+ * line.
+ *
+ * Measured here on all three surfaces rather than argued: highlight.js did leak,
+ * because the paragraph-break branch of its verbatim end matched the same
+ * newline as the line bound and consumed the blank line past the parent.
+ */
+const downstream = {
+    'a heading': `# a \`x\n\npara one\n`,
+    'a caption': `![i](u)\n^ cap \`x\n\npara one\n`,
+    'a heading behind a quote': `> # a \`x\n\npara one\n`,
+    'a heading on a list marker': `- # a \`x\n\npara one\n`,
+    // Controls: neither shape opens a run that can outlive its line.
+    'a CLOSED span (control)': `# a \`x\` c\n\npara one\n`,
+    'no span at all (control)': `# a b\n\npara one\n`,
+};
+
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of Object.entries(downstream)) {
+        ok(`${name} keeps the block scope of ${shape} off the paragraph below`, () => {
+            const scope = String(scopeOver(tokenize(source), source, 'para one') ?? '');
+            assert.ok(
+                !/heading|caption|section|title/.test(scope),
+                `the paragraph below carries a block scope: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
 }
 
 console.log(`\n${passed} passed`);

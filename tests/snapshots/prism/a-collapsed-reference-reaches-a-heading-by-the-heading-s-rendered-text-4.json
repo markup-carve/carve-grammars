@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a\\_b heading"
+    "text": " a"
+  },
+  {
+    "type": "title>important>escape>constant",
+    "text": "\\_"
+  },
+  {
+    "type": "title>important",
+    "text": "b heading"
   },
   {
     "type": "text",

@@ -29,7 +29,15 @@
   },
   {
     "type": "caption>title",
-    "text": " Costs \\# units"
+    "text": " Costs "
+  },
+  {
+    "type": "caption>title>escape>constant",
+    "text": "\\#"
+  },
+  {
+    "type": "caption>title",
+    "text": " units"
   },
   {
     "type": "text",
