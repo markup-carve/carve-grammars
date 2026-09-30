@@ -2084,10 +2084,12 @@
     );
 
     /*
-     * A HEADING HOLDS A VERBATIM SPAN (carve-grammars#601,
-     * markup-carve/carve#2682). `title.inside` had no `code` rule, so
-     * `# a `x %% b` c` painted the span as title text once the comment guard
-     * stopped claiming it. The sigil forms come with it, in the order the
+     * A HEADING OR CAPTION HOLDS A VERBATIM SPAN (carve-grammars#601,
+     * markup-carve/carve#2682). Neither `title.inside` nor `caption.inside` had
+     * a `code` rule, so `# a `x %% b` c` and `^ cap `x %% b` c` painted the span
+     * as title text once the comment guard stopped claiming it. A caption's
+     * content is an inline run for the same reason a heading's is: the engines
+     * render `<figcaption>cap <code>x %% b</code> c</figcaption>`. The sigil forms come with it, in the order the
      * document level uses them: a `$` or `!` prefix owns the backtick run after
      * it, so `code` alone would have taken the run and left the sigil behind.
      * The set is spliced in right after `punctuation` rather than appended - the
@@ -2095,15 +2097,17 @@
      * first. It is added here, not at the object literal, because
      * `Prism.languages.carve.code` does not exist yet while that is being built.
      */
-    Prism.languages.carve['title'].inside = Object.assign(
-        { 'punctuation': Prism.languages.carve['title'].inside['punctuation'] },
-        ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
-            set[name] = Prism.languages.carve[name];
+    for (const block of ['title', 'caption']) {
+        Prism.languages.carve[block].inside = Object.assign(
+            { 'punctuation': Prism.languages.carve[block].inside['punctuation'] },
+            ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+                set[name] = Prism.languages.carve[name];
 
-            return set;
-        }, {}),
-        Prism.languages.carve['title'].inside
-    );
+                return set;
+            }, {}),
+            Prism.languages.carve[block].inside
+        );
+    }
 
     // Reuse the full code and escape rules before looking for cell pipes.
     for (const table of ['table', 'table-continuation']) {

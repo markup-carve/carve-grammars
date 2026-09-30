@@ -9,7 +9,11 @@
   },
   {
     "scope": "title",
-    "text": "^ %% hidden"
+    "text": "^ "
+  },
+  {
+    "scope": "title>comment",
+    "text": "%% hidden"
   },
   {
     "scope": null,

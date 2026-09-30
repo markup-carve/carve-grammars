@@ -1,5 +1,6 @@
 /**
- * A HEADING'S TITLE IS AN INLINE RUN, both ways (carve-grammars#601,
+ * A HEADING'S TITLE AND A CAPTION'S CONTENT ARE INLINE RUNS, both ways
+ * (carve-grammars#601,
  * markup-carve/carve#2682).
  *
  * carve-js 0.1.4 and carve-php 685e94fa3 agree byte for byte: a backtick run on
@@ -9,6 +10,13 @@
  * ```
  * # a `x %% b` c   ->  <h1>a <code>x %% b</code> c</h1>
  * # a %% hidden    ->  <h1>a</h1>
+ * ```
+ *
+ * A caption reads the same way, behind an image so the block is a figure:
+ *
+ * ```
+ * ![a](i.png)
+ * ^ cap %% hidden  ->  <figcaption>cap</figcaption>
  * ```
  *
  * Three surfaces disagreed, in two directions. Prism ran its top-level comment
@@ -105,6 +113,57 @@ for (const [name, tokenize] of surfaces) {
             scope,
             'the backtick run after the comment opener is comment body',
         );
+    });
+}
+
+console.log('\na caption content is an inline run too:');
+
+// Behind an image, so the block is a figure and the `^` line is its caption.
+const FIGURE = '![a](i.png)\n';
+
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} scopes no comment over the %% inside a caption's code span`, () => {
+        const source = `${FIGURE}^ cap \`x %% b\` c`;
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && !/comment/.test(scope),
+            `expected a non-comment scope over the %% in the caption span, got ${JSON.stringify(scope)}`,
+        );
+    });
+
+    ok(`${name} scopes a caption's trailing comment`, () => {
+        const source = `${FIGURE}^ cap %% hidden`;
+        const tokens = tokenize(source);
+        const scope = scopeOver(tokens, source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        const text = scopeOver(tokens, source, 'cap');
+        assert.ok(text && !/comment/.test(text), `the caption text carries no comment scope, got ${JSON.stringify(text)}`);
+    });
+
+    ok(`${name} scopes a caption's trailing comment behind an earlier backtick pair`, () => {
+        // The shape the run-pairing guard exists for: a CLOSED span before the
+        // `%%` leaves the opener outside code, so the comment still opens.
+        const source = `${FIGURE}^ cap \`y\` %% hidden`;
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+    });
+}
+
+console.log('\nthe control: a bare ^ line with no figure is prose, and stays as it reads:');
+
+// A bare `^ cap` is a PARAGRAPH on the engines - these grammars have no block
+// context and scope it as a caption anyway, which is a known and accepted
+// limitation, not this ticket. The control is that the fix does not CHANGE that
+// reading: the trailing comment is a comment either way, as a caption's trailing
+// run or as a paragraph's.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} still reads a bare ^ line's trailing comment as a comment`, () => {
+        const source = '^ cap %% hidden';
+        const tokens = tokenize(source);
+        const scope = scopeOver(tokens, source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        const text = scopeOver(tokens, source, 'cap');
+        assert.ok(text && !/comment/.test(text), `the text before it is not comment, got ${JSON.stringify(text)}`);
     });
 }
 

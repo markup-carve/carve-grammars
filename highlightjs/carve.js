@@ -1818,6 +1818,11 @@
     HEADING.contains = [
         MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE, INLINE_CODE, RAW_FORMAT, LINE_COMMENT, HEADING_TAG,
     ];
+    // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
+    // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
+    // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
+    // no trailing attribute block argument, so nothing asks for it.
+    CAPTION.contains = [MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE, INLINE_CODE, RAW_FORMAT, LINE_COMMENT];
 
     const substitutionContent = (boundary, openCode) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,
