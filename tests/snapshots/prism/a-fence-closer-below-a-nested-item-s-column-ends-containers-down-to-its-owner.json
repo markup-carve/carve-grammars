@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n\n    "
+  },
+  {
+    "type": "code",
+    "text": "```\n    p\n```"
+  },
+  {
+    "type": "text",
+    "text": "\n\n    tail\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "Intro"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: footnotes"
+  },
+  {
+    "scope": null,
+    "text": "\nNotes below:\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\nAfter.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]: one note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

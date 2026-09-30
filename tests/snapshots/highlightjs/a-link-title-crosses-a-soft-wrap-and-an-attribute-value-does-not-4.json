@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "[a](/u \"t"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\\""
+  },
+  {
+    "scope": null,
+    "text": "\nu\")\n"
+  }
+]

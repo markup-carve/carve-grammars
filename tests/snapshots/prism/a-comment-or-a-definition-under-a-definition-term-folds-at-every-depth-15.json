@@ -1,0 +1,34 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "  ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " c"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n    [^n]: y\n"
+  }
+]

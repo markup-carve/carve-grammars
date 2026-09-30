@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "Plain.\n\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "footnotes"
+  },
+  {
+    "type": "div>tag",
+    "text": "\nNo notes here.\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

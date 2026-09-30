@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n\n"
+  },
+  {
+    "type": "code-block",
+    "text": "    ```=latex\n    \\x\n    "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

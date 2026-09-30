@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": ":::["
+  },
+  {
+    "type": "comment",
+    "text": "{% %% hidden %}"
+  },
+  {
+    "type": "text",
+    "text": " after]\nbody\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

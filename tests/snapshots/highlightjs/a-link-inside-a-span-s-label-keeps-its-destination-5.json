@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[![a](/i)]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

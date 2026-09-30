@@ -1,0 +1,10 @@
+[
+  {
+    "type": "span>string",
+    "text": "[a]"
+  },
+  {
+    "type": "text",
+    "text": "{k=\"t\nu\"}\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[[t](/v)]"
+  },
+  {
+    "scope": "attr",
+    "text": "{}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

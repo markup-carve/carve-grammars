@@ -1,0 +1,38 @@
+[
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\na\n\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "=latex"
+  },
+  {
+    "type": "code-block",
+    "text": "\n\\x\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " :: c"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "   "
+  },
+  {
+    "type": "comment",
+    "text": "%% note"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "   more"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

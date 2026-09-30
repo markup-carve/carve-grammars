@@ -1,0 +1,34 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "continuation-marker",
+    "text": " "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "m\n"
+  }
+]

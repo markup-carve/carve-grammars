@@ -1,0 +1,38 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "t"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " c"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n  [r]: /u\n"
+  }
+]

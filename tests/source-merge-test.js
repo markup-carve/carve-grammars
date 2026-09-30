@@ -44,8 +44,13 @@ for (const file of listCorpusFiles()) {
 // documents (182, 268-8, 291-2, 291-4), whose appends are structurally
 // unterminated. A bump that changed the conflict set would show up here as a
 // third number, which is the one worth auditing.
-assert.strictEqual(envelopes, 403, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 399, 'an append normalized authored layout in additional documents');
+//
+// 403 -> 475 and 399 -> 471 came from the bump to carve `312001f`, which added
+// 280 corpus documents in categories 499-533. Exactly 72 of them get a source
+// envelope and all 72 take the authored-append path, so the same +72 lands on
+// both totals and the conflict set again does not move: still those four.
+assert.strictEqual(envelopes, 475, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 471, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });

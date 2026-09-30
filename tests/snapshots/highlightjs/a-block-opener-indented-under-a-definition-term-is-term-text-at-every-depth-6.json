@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "title",
+    "text": ":: a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": ": b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    ::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n    body\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

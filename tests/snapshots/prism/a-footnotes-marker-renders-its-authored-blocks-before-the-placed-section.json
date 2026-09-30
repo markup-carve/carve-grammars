@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "Intro"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "footnotes"
+  },
+  {
+    "type": "div>tag",
+    "text": "\nNotes below:\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\nAfter.\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ": one note\n"
+  }
+]

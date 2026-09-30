@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "["
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "{_a]_}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

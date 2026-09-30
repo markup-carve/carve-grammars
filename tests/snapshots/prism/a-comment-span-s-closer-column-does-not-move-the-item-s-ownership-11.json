@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "- "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n  hidden\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n tail\n"
+  }
+]

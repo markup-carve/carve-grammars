@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "section",
+    "text": "# a `x %% b` c %% hidden"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

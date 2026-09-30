@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": ":::["
+  },
+  {
+    "type": "code",
+    "text": "`a %% secret`"
+  },
+  {
+    "type": "text",
+    "text": "]\nbody\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

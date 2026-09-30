@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  },
+  {
+    "scope": "comment",
+    "text": "  %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[use][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

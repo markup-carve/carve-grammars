@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "<https://e.com>"
+  },
+  {
+    "type": "text",
+    "text": "]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

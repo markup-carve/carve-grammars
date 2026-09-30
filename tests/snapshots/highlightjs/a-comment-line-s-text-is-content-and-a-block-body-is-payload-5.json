@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "%%\u000b"
+  },
+  {
+    "scope": null,
+    "text": "\n\ntext\u000b\n"
+  }
+]

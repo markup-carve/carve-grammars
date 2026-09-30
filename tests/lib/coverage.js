@@ -750,6 +750,31 @@ const TIPTAP_COVERED = [
     // `%%` line and a `%%%` body hold, including a trailing run and a no-break
     // space, and the serializer re-emits them, so the trip is idempotent.
     'a-comment-line-s-text-is-content-and-a-block-body-is-payload',
+
+    /*
+     * Spec corpus 499-533, the categories the bump to carve `312001f` added.
+     * Each was classified from its OWN measured round trip over every file in
+     * it: parse -> PM with `unsupported: 'preserve'` -> serialize -> reparse.
+     * The fifteen below need no source envelope on any file, so the structured
+     * projection is write-identical and they are covered rather than skipped.
+     * The twenty that DO ride the envelope are in `TIPTAP_SKIP`, each with the
+     * line that changes once the envelope is removed.
+     */
+    'a-footnotes-marker-renders-its-authored-blocks-before-the-placed-section',
+    'an-unplaced-footnotes-marker-keeps-its-authored-blocks-inside-the-div',
+    'a-core-directive-kind-class-leads-authored-attributes',
+    'an-attribute-line-under-an-attributed-sub-item-stays-in-that-item',
+    'a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth',
+    'a-verbatim-line-keeps-what-sits-past-its-fence-opener-not-past-its-container',
+    'a-nested-quoted-term-leaves-no-paragraph-for-a-lazy-line',
+    'a-fence-in-a-quote-stores-no-continuation-claim',
+    'a-heading-comment-preserves-code-span-content',
+    'a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim',
+    'a-dropped-raw-block-takes-no-line-in-the-container-that-holds-it',
+    'an-empty-code-payload-renders-no-characters',
+    'a-container-label-publishes-its-inline-run',
+    'a-container-label-preserves-closed-inline-constructs-before-cutting-a-comment',
+    'a-braced-span-cannot-close-beyond-its-bracket-run',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -843,6 +868,31 @@ const TIPTAP_SKIP = new Map([
     ['158-indented-colon-fence-blocks-stay-literal', 'the converter does not model the `soft_break` node'],
     ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
+
+    // Added with the bump to carve `312001f`. Each reason was measured the way
+    // the header above prescribes: serialize the rich projection with its
+    // lossless source envelope removed, then reparse. Every one of these
+    // reaches a DIFFERENT AST, and the quoted pair is the first line that moves.
+    ['a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth', 'with the source envelope removed `    %% note` comes back as ``, so the reparse differs'],
+    ['comment-columns-and-surviving-list-items', 'with the source envelope removed `%% c` comes back as ``, so the reparse differs'],
+    ['a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph', 'with the source envelope removed `      :::` comes back as `  :::`, so the reparse differs'],
+    ['a-comment-span-s-closer-below-its-host-s-column-stays-a-delimiter', 'with the source envelope removed `    %%%` comes back as `  %% %`, so the reparse differs'],
+    ['a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner', 'with the source envelope removed ````` comes back as `    ````, so the reparse differs'],
+    ['a-comment-span-s-closer-column-does-not-move-the-item-s-ownership', 'with the source envelope removed `  %%%` comes back as ``, so the reparse differs'],
+    ['a-comment-span-opened-below-every-content-column-is-located-there', 'with the source envelope removed ` %%%` comes back as ``, so the reparse differs'],
+    ['a-fence-a-container-inside-a-quote-holds-open-stores-no-claim', 'with the source envelope removed `>` comes back as `> `, so the reparse differs'],
+    ['a-nested-marker-comment-keeps-its-own-ownership', 'with the source envelope removed `  - %%%` comes back as `  - %% %`, so the reparse differs'],
+    ['a-band-paragraph-after-an-invisible-line-leaves-the-item-loose', 'with the source envelope removed ` - b` comes back as `  - b`, so the reparse differs'],
+    ['a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator', 'with the source envelope removed `| a\\t%% hidden | b |` comes back as `|= a%% hidden |= b |`, so the reparse differs'],
+    ['a-zero-line-and-a-one-blank-raw-payload-are-not-the-same-block', 'with the source envelope removed `  ```` comes back as ``, so the reparse differs'],
+    ['an-emphasis-marker-does-not-pair-across-a-link-bracket', 'with the source envelope removed `/[a](/u)/` comes back as `[/a/](/u)`, so the reparse differs'],
+    ['a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not', 'with the source envelope removed `[a]{k=\\"t` comes back as `\\\\[a]{k=\\"t`, so the reparse differs'],
+    ['a-link-inside-a-span-s-label-keeps-its-destination', 'with the source envelope removed `[/[t](/v)/]{.c}` comes back as `[[/t/](/v)]{.c}`, so the reparse differs'],
+    ['a-quoted-value-and-a-quoted-title-escape-different-sets', 'with the source envelope removed `![a](/i \'t\\\\\'u\')` comes back as `![a](/i \\"t\'u\\")`, so the reparse differs'],
+    ['a-tab-does-not-open-the-title-slot', 'with the source envelope removed `[a](/u\\t\\"t\\")` comes back as `\\\\[a](/u\\t\\"t\\")`, so the reparse differs'],
+    ['a-footnote-body-whose-every-block-renders-nothing-is-an-empty-body', 'with the source envelope removed `[^1]: %% n` comes back as `[^1]:`, so the reparse differs'],
+    ['a-fence-after-a-footnote-quote-has-its-own-base', 'with the source envelope removed `[^1]: > q` comes back as `[^1]:`, so the reparse differs'],
+    ['an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only', 'with the source envelope removed `  > q` comes back as ``, so the reparse differs'],
 ]);
 
 export const COVERAGE = {

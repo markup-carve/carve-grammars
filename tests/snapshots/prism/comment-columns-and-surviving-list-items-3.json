@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "intro\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%\nc\n%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n  tail\n"
+  }
+]

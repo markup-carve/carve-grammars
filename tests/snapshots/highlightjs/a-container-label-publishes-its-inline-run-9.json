@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "code>keyword",
+    "text": "``` js [/i/]"
+  },
+  {
+    "scope": "code",
+    "text": "\nc\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

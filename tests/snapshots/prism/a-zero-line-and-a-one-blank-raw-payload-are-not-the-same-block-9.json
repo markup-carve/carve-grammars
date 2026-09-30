@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "a\n\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "=html"
+  },
+  {
+    "type": "code-block",
+    "text": "\n\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n\nb\n"
+  }
+]

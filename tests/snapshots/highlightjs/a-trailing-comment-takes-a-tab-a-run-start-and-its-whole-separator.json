@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a\t"
+  },
+  {
+    "scope": "comment",
+    "text": "%% hidden"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
