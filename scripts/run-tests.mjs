@@ -43,12 +43,12 @@ import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
 
-import { repoRoot, testDir, testUnits } from './test-files.mjs';
+import { filtersFrom, repoRoot, testDir, testUnits } from './test-files.mjs';
 
 const argv = process.argv.slice(2);
 const serial = argv.includes('--serial');
 const jobsFlag = argv.indexOf('--jobs');
-const filters = argv.filter((a, i) => !a.startsWith('--') && i !== jobsFlag + 1);
+const filters = filtersFrom(argv);
 
 const width = serial
     ? 1

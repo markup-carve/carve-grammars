@@ -70,3 +70,24 @@ export function testUnits() {
         }));
     });
 }
+
+/**
+ * The substring filters a command line asks for, with the value of `--jobs`
+ * excluded.
+ *
+ * It lives here, next to the selection it narrows, because the runner had it
+ * inline and nothing could reach it: `indexOf` answers `-1` for an absent
+ * `--jobs`, so `jobsFlag + 1` was `0` and the FIRST positional was dropped as
+ * though it were the flag's value. `run-tests.mjs roundtrip` therefore filtered
+ * on nothing and ran all of it, and the header's own example,
+ * `run-tests.mjs roundtrip span`, filtered on `span` alone
+ * (carve-grammars#591).
+ *
+ * @param {string[]} argv the arguments after the script name
+ * @returns {string[]}
+ */
+export function filtersFrom(argv) {
+    const jobsFlag = argv.indexOf('--jobs');
+    const jobsValueAt = jobsFlag === -1 ? -1 : jobsFlag + 1;
+    return argv.filter((a, i) => !a.startsWith('--') && i !== jobsValueAt);
+}
