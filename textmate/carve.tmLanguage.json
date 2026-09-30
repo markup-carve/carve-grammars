@@ -1160,8 +1160,8 @@
       "name": "constant.character.escape.carve"
     },
     "code_inline_multi": {
-      "comment": "Two or more backticks: inline code that may itself contain single backticks; closed by the same run length (\\1).",
-      "match": "(`{2,})(.+?)(\\1)",
+      "comment": "Two or more backticks: inline code that may itself contain single backticks; closed by a WHOLE run of the same length. The guards are what makes the closer a whole run: without them `x ``` z` inside a two-backtick span closed the span on the first two characters of the three-run, the leftover backtick opened another span, and a trailing comment after it was scoped as code (carve-grammars#601). A LONGER RUN IS CONTENT, which is the reading Prism was given in carve-grammars#312.",
+      "match": "(?<!`)(`{2,})(?!`)(.+?)(?<!`)(\\1)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.raw.carve"
@@ -1201,7 +1201,8 @@
       "contentName": "markup.raw.inline.carve"
     },
     "code_inline": {
-      "match": "(`)([^`\\n]+)(`)",
+      "comment": "A DELIMITER RUN IS ENTERED AT ITS OWN START and closed by a WHOLE run of the same width (carve-grammars#601, the reading Prism was given in carve-grammars#312). Without the guards a single backtick could be one character into a wider run, which is content.",
+      "match": "(?<!`)(`)([^`\\n]+)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.raw.carve"

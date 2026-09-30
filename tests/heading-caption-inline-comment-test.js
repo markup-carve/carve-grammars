@@ -215,6 +215,32 @@ for (const [name, tokenize] of surfaces) {
     });
 }
 
+console.log('\na LONGER run inside a span is content, not its closer:');
+
+// The TextMate `code_inline_multi` rule closed a two-backtick span on the first
+// two characters of a three-backtick run; the leftover backtick opened another
+// span and the real trailing comment was scoped as code. The defect predates
+// this change in a PARAGRAPH - it reaches the comment only once a heading has an
+// inline set - and the fix is on the shared rule, so both hosts get it. This is
+// the reading Prism was given in carve-grammars#312.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} closes a wide span on a WHOLE run of its own width in a heading`, () => {
+        const source = '# a \`\`x \`\`\` z\`\` %% hidden';
+        const tokens = tokenize(source);
+        const inner = String(scopeOver(tokens, source, 'z') ?? '');
+        assert.ok(/code|raw/.test(inner), `the longer run is span content, got ${JSON.stringify(inner)}`);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+
+    ok(`${name} closes a wide span on a WHOLE run of its own width in a paragraph`, () => {
+        const source = 'p a \`\`x \`\`\` z\`\` %% hidden';
+        const tokens = tokenize(source);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+}
+
 console.log('\nan UNPARTNERED run reaches the line end, so a %% after it is span content:');
 
 // The engine keeps `# a \`x %% hidden` as a span holding `x %% hidden`. Both
