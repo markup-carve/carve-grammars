@@ -775,6 +775,7 @@ const TIPTAP_COVERED = [
     'a-container-label-publishes-its-inline-run',
     'a-container-label-preserves-closed-inline-constructs-before-cutting-a-comment',
     'a-braced-span-cannot-close-beyond-its-bracket-run',
+    'quoted-values-and-titles-retain-a-non-punctuation-backslash',
 ];
 
 // Categories that historically required the whole-document fallback. Their

@@ -678,6 +678,15 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * - 493-...-2 writes the blockquote-kind div in its `>` marker form.
  * - 494 and 495 drop the table's `{header-rows}` / `{footer-rows}` block, which
  *   376 already records - no model for it, so not a new loss.
+ *
+ * Carve JS 0.1.9 exposes 31 additional spelling losses in existing fixtures,
+ * including line-blocks-2/-3/-9, non-breaking-space variants and bracket-run
+ * boundaries. The engine now reads these according to the specification;
+ * projecting through editor nodes still canonicalizes their source. Other
+ * corrected readings and the fenced-payload writer remove 30 entries, leaving
+ * 476. Eleven newly exposed mounted rendering gaps are separately recorded in
+ * mounted-ledger.json, including below-column list continuations (277), a
+ * definition-term continuation (504-4) and an empty comment label (518-10).
  */
 assertLedger(
     'enveloped-ledger.json',

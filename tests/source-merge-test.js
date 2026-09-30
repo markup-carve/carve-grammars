@@ -9,6 +9,7 @@ const stable = (source) => JSON.stringify(normalizeAst(parse(source)));
 let envelopes = 0;
 let authoredAppend = 0;
 let canonicalAppend = 0;
+const canonicalFiles = [];
 
 for (const file of listCorpusFiles()) {
     const { doc, preserved } = carveToProseMirrorWithReport(file.source, { unsupported: 'preserve' });
@@ -30,28 +31,21 @@ for (const file of listCorpusFiles()) {
     const canonical = stable(serializeToCarve(canonicalDoc));
 
     if (actual === authored) authoredAppend++;
-    else if (actual === canonical) canonicalAppend++;
+    else if (actual === canonical) { canonicalAppend++; canonicalFiles.push(file.name); }
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// The three move together with the corpus. The conflict set is the number to
-// watch.
-//
-// 370 -> 403 and 366 -> 399 came from the spec bump to carve `275425f3`, which
-// added 112 corpus documents in categories 476-495. Exactly 33 of them get a
-// source envelope, and all 33 take the authored-append path, so the +33 lands
-// on both totals and the conflict set does not move: it is still the same four
-// documents (182, 268-8, 291-2, 291-4), whose appends are structurally
-// unterminated. A bump that changed the conflict set would show up here as a
-// third number, which is the one worth auditing.
-//
-// 403 -> 475 and 399 -> 471 came from the bump to carve `312001f`, which added
-// 280 corpus documents in categories 499-533. Exactly 72 of them get a source
-// envelope and all 72 take the authored-append path, so the same +72 lands on
-// both totals and the conflict set again does not move: still those four.
-assert.strictEqual(envelopes, 475, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 471, 'an append normalized authored layout in additional documents');
-assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
+// Carve JS 0.1.9, the latest corpus and the payload writer leave 476 source
+// envelopes: 474 preserve an authored append and two use canonical output.
+// The former EOF fence conflicts (291-2 and 291-4) now preserve authored appends.
+// Keep the exact remaining conflict set below, not just its size.
+assert.strictEqual(envelopes, 476, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 474, 'an append normalized authored layout in additional documents');
+assert.strictEqual(canonicalAppend, 2, 'the set of structurally unterminated append conflicts changed');
+assert.deepStrictEqual(canonicalFiles, [
+    '182-openers-past-the-nesting-cap-are-one-paragraph',
+    '268-trailing-whitespace-on-a-content-line-is-dropped-8',
+]);
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });
 escaped.content[0].content[0].text = 'edited';

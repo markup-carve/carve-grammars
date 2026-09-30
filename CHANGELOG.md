@@ -2,6 +2,14 @@
 
 All notable changes to `carve-grammars` are documented here.
 
+## [Unreleased]
+
+### Fixed
+
+- Preserve empty, blank and trailing-newline fenced code and raw payloads through
+  editor serialization. Use Carve JS 0.1.9 for the bridge and refresh the complete
+  specification corpus and projection-loss ledgers.
+
 ## [0.1.10] - 2026-09-30
 
 ### Breaking

@@ -128,8 +128,11 @@ function verbatimRanges(source) {
             : (typeof node.value === 'string' ? node.value : null);
         if (payload && node.pos && Object.hasOwn(VERBATIM_TYPES, node.type)) {
             const at = source.indexOf(payload, node.pos.startOffset);
-            if (at >= 0 && at + payload.length <= node.pos.endOffset) {
-                ranges.push([at, at + payload.length]);
+            // EOF block positions omit the final terminator, which remains payload.
+            const end = node.type === 'code_block' && source.endsWith('\n')
+                && node.pos.endOffset === source.length - 1 ? source.length : node.pos.endOffset;
+            if (at >= 0 && at + payload.length <= end) {
+                ranges.push([at, at + payload.length, node.type]);
             }
         }
         for (const key of Object.keys(node)) {
@@ -148,8 +151,9 @@ function verbatimRanges(source) {
  * closed constructs. An unclosed run reaches further than the region the
  * generator wrote - a `` ` `` with no partner takes the rest of the paragraph -
  * so a document that lost its delimiter answers false here instead of being
- * asserted on as though it were the shape it was generated as. The residuals at
- * the end of this file are where those live.
+ * asserted on as though it were the shape it was generated as. Code-block callers
+ * include the terminating newline in their expected region. The residuals at
+ * the end of this file are where unmatched constructs live.
  *
  * @param {string} source - the generated document.
  * @param {number} start - where the generated payload begins.
@@ -221,10 +225,10 @@ function* strings(alphabet, maxLength) {
  * stay on one line.
  */
 const CONSTRUCTS = [
-    { name: 'code_block', wrap: (b) => ['```\n', b, '\n```\n'], alphabet: ['`', '~', '*', '/', '\n', ' '] },
-    { name: 'code_block with a language', wrap: (b) => ['```js\n', b, '\n```\n'], alphabet: ['`', '*', '/', '\n', ' '] },
-    { name: 'code_block on a tilde fence', wrap: (b) => ['~~~\n', b, '\n~~~\n'], alphabet: ['~', '`', '*', '\n'] },
-    { name: 'code_block on a wide fence', wrap: (b) => ['````\n', b, '\n````\n'], alphabet: ['`', '*', '\n'] },
+    { name: 'code_block', wrap: (b) => ['```\n', b + '\n', '```\n'], alphabet: ['`', '~', '*', '/', '\n', ' '] },
+    { name: 'code_block with a language', wrap: (b) => ['```js\n', b + '\n', '```\n'], alphabet: ['`', '*', '/', '\n', ' '] },
+    { name: 'code_block on a tilde fence', wrap: (b) => ['~~~\n', b + '\n', '~~~\n'], alphabet: ['~', '`', '*', '\n'] },
+    { name: 'code_block on a wide fence', wrap: (b) => ['````\n', b + '\n', '````\n'], alphabet: ['`', '*', '\n'] },
     { name: 'raw_block', wrap: (b) => ['```=html\n', b, '\n```\n'], alphabet: ['`', '*', '<', '\n'] },
     { name: 'code_span', wrap: (b) => ['a `', b, '` z\n'], alphabet: ['`', '*', '/', ' '] },
     { name: 'code_span on a wide fence', wrap: (b) => ['a ``', b, '`` z\n'], alphabet: ['`', '*', ' '] },
@@ -279,7 +283,7 @@ const CONSTRUCTS = [
      * `engineReadsVerbatim` bounds it without arithmetic. A body that closes the
      * fence, or that the engine reads some other way, simply does not qualify.
      */
-    { name: 'code_block with no closing fence', wrap: (b) => ['```\n', b, '\n'], alphabet: ['`', '*', '/', '\n', ' '] },
+    { name: 'code_block with no closing fence', wrap: (b) => ['```\n', b + '\n', ''], alphabet: ['`', '*', '/', '\n', ' '] },
     {
         name: 'code_span with no closing run',
         wrap: (b) => ['a `', b, '\n'],
@@ -689,7 +693,7 @@ for (const [engine, tokenize] of ENGINES) {
                 [`x\n${PAYLOAD}`, fence],
             ]) {
                 const source = `${opener}\n${body}\n${closer}\n`;
-                if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length)) continue;
+                if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length + (opener.includes('=') ? 0 : 1))) continue;
                 sources.push(source);
             }
         }
@@ -733,7 +737,7 @@ for (const [engine, tokenize] of ENGINES) {
             for (const fence of ['```', '~~~', '````']) {
                 for (const body of [`${line}\n${PAYLOAD}`, `${PAYLOAD}\n${line}`]) {
                     const source = `${fence}\n${body}\n${fence}\n`;
-                    if (!engineReadsVerbatim(source, fence.length + 1, fence.length + 1 + body.length)) continue;
+                    if (!engineReadsVerbatim(source, fence.length + 1, fence.length + 2 + body.length)) continue;
                     sources.push(source);
                 }
             }
@@ -777,7 +781,7 @@ for (const [engine, tokenize] of ENGINES) {
                             const opener = openIndent + character.repeat(open);
                             const body = `x ${PAYLOAD} y`;
                             const source = `${opener}\n${body}\n${indent}${character.repeat(close)}\n`;
-                            if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 1 + body.length)) {
+                            if (!engineReadsVerbatim(source, opener.length + 1, opener.length + 2 + body.length)) {
                                 continue;
                             }
                             sources.push(source);
@@ -814,7 +818,7 @@ console.log('\na payload bigger than the forward scan:');
 for (const [engine, tokenize] of ENGINES) {
     ok(`${engine}: a ${Math.round(LONG_PAYLOAD.length / 1024)} KB code block keeps its payload inert`, () => {
         assert.ok(
-            engineReadsVerbatim(LONG_PAYLOAD, 4, LONG_PAYLOAD.length - 5),
+            engineReadsVerbatim(LONG_PAYLOAD, 4, LONG_PAYLOAD.length - 4),
             'the engine did not read this as one code block, so the row proves nothing',
         );
         assert.strictEqual(

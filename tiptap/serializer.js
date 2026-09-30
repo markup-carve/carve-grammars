@@ -452,9 +452,8 @@ export function serializeToCarve(doc, options = {}) {
             case 'codeBlock': {
                 const lang = node.attrs?.language || '';
                 // Carve info string sits directly after the fence: ```php
-                // Strip one trailing newline from the code text (carve-php renders
-                // <code>…\n</code>) so we don't emit a blank line before the fence.
-                const code = (node.content || []).map(c => c.text || '').join('').replace(/\n$/, '');
+                // Keep authored payload line endings, including empty and blank bodies.
+                const code = (node.content || []).map(c => c.text || '').join('');
                 const longest = (code.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
                 const fence = '`'.repeat(Math.max(3, longest + 1));
                 const header = node.attrs?.carveHeader != null ? ` "${String(node.attrs.carveHeader).replace(/"/g, '\\"')}"` : '';
@@ -474,7 +473,7 @@ export function serializeToCarve(doc, options = {}) {
                 }
                 const blockAttrs = serializeAttributes(runAttrs, ['language', 'carveLanguageRaw', 'carveHeader', 'carveLabel']);
                 if (blockAttrs) output += blockAttrs + '\n';
-                output += fence + lang + header + label + '\n' + code + '\n' + fence + '\n';
+                output += fence + lang + header + label + '\n' + code + (code && !code.endsWith('\n') ? '\n' : '') + fence + '\n';
                 break;
             }
 
@@ -748,10 +747,10 @@ export function serializeToCarve(doc, options = {}) {
                 break;
 
             case 'carveRawBlock': {
-                const raw = (node.content || []).map(child => child.text || '').join('').replace(/\n$/, '');
+                const raw = (node.content || []).map(child => child.text || '').join('');
                 const longest = (raw.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
                 const fence = '`'.repeat(Math.max(3, longest + 1));
-                output += `${fence}=${node.attrs?.format || ''}\n${raw}\n${fence}\n`;
+                output += `${fence}=${node.attrs?.format || ''}\n${raw}${raw && !/^\n+$/.test(raw) ? '\n' : ''}${fence}\n`;
                 break;
             }
 
