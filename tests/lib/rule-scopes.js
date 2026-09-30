@@ -59,6 +59,7 @@ export const SCOPE_SAMPLES = {
     thematic_break: { sample: '***\n', payload: '***' },
     code_block: { sample: '```\ncode\n```\n', payload: '```' },
     blockquote: { sample: '> quoted\n', payload: '>' },
+    quote_block: { sample: '::: >\nquoted\n:::\n', payload: '::: >' },
     unordered_list: { sample: '- item\n', payload: '-' },
     ordered_list: { sample: '1. item\n', payload: '1.' },
     definition_list: { sample: ':: Term\n: definition\n', payload: '::' },

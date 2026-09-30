@@ -35,12 +35,17 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Carve JS 0.1.9, the latest corpus and the payload writer leave 476 source
-// envelopes: 474 preserve an authored append and two use canonical output.
+// Carve JS 0.1.9, the latest corpus and the payload writer leave 486 source
+// envelopes: 484 preserve an authored append and two use canonical output.
 // The former EOF fence conflicts (291-2 and 291-4) now preserve authored appends.
-// Keep the exact remaining conflict set below, not just its size.
-assert.strictEqual(envelopes, 476, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 474, 'an append normalized authored layout in additional documents');
+// Section 535 added the last ten. The AST models neither the authored fence
+// character (`~~~` re-emits as a backtick fence), the authored thematic marker
+// (`***` re-emits as `---`), nor the over-indent column of a marker line inside
+// an opaque quote, so each of the ten projects to canonical spelling and the
+// envelope carries the authored bytes back. Keep the exact remaining conflict
+// set below, not just its size.
+assert.strictEqual(envelopes, 486, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 484, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 2, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

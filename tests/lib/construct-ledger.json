@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-03",
+      "measured": "2026-09-30",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -40,6 +40,11 @@
         "blockquote": {
           "status": "IMPLEMENTED",
           "evidence": "blockquote",
+          "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "IMPLEMENTED",
+          "evidence": "admonition",
           "payload": "parsed"
         },
         "unordered_list": {
@@ -387,7 +392,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-03",
+      "measured": "2026-09-30",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -409,6 +414,11 @@
         "blockquote": {
           "status": "IMPLEMENTED",
           "evidence": "blockquote",
+          "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "IMPLEMENTED",
+          "evidence": "div",
           "payload": "parsed"
         },
         "unordered_list": {
@@ -756,7 +766,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-03",
+      "measured": "2026-09-30",
       "gapTicket": "#317",
       "constructs": {
         "heading": {
@@ -778,6 +788,11 @@
         "blockquote": {
           "status": "IMPLEMENTED",
           "evidence": "BLOCKQUOTE",
+          "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "IMPLEMENTED",
+          "evidence": "DIV_BLOCK",
           "payload": "parsed"
         },
         "unordered_list": {
@@ -1125,7 +1140,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-03",
+      "measured": "2026-09-30",
       "gapTicket": "#310",
       "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
@@ -1145,6 +1160,11 @@
           "payload": "inert"
         },
         "blockquote": {
+          "status": "IMPLEMENTED",
+          "evidence": "blockquote",
+          "payload": "parsed"
+        },
+        "quote_block": {
           "status": "IMPLEMENTED",
           "evidence": "blockquote",
           "payload": "parsed"
@@ -1518,6 +1538,11 @@
           "evidence": "block_quote",
           "payload": "parsed"
         },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/tree-sitter-carve#245",
+          "payload": "none"
+        },
         "unordered_list": {
           "status": "IMPLEMENTED",
           "evidence": "_list_dash",
@@ -1886,6 +1911,11 @@
           "status": "IMPLEMENTED",
           "evidence": "block-quotes",
           "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "unordered_list": {
           "status": "IMPLEMENTED",
@@ -2256,6 +2286,11 @@
           "evidence": "block-quotes",
           "payload": "parsed"
         },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
+        },
         "unordered_list": {
           "status": "IMPLEMENTED",
           "evidence": "markup.list.unnumbered.carve",
@@ -2623,6 +2658,11 @@
           "status": "IMPLEMENTED",
           "evidence": "block-quotes",
           "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/sublime-carve#31",
+          "payload": "none"
         },
         "unordered_list": {
           "status": "IMPLEMENTED",
@@ -2992,6 +3032,11 @@
           "evidence": "carveBlockquote",
           "payload": "parsed"
         },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/vim-carve#26",
+          "payload": "none"
+        },
         "unordered_list": {
           "status": "IMPLEMENTED",
           "evidence": "carveListBullet",
@@ -3360,6 +3405,11 @@
           "status": "IMPLEMENTED",
           "evidence": "carve-blockquote-face",
           "payload": "parsed"
+        },
+        "quote_block": {
+          "status": "UNMEASURED",
+          "ticket": "markup-carve/emacs-carve#19",
+          "payload": "none"
         },
         "unordered_list": {
           "status": "IMPLEMENTED",

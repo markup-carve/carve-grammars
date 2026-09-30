@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>comment",
+    "text": "%%%\n  > x\n    > y\n  > %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
