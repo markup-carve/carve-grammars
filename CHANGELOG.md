@@ -4,14 +4,6 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
-### Fixed
-
-- Check table-comment openers before scanning row prefixes in Prism, and consume
-  internal comment whitespace runs together to avoid repeated closing scans.
-- Preserve empty, blank and trailing-newline fenced code and raw payloads through
-  editor serialization. Use Carve JS 0.1.9 for the bridge and refresh the complete
-  specification corpus and projection-loss ledgers.
-
 ## [0.1.10] - 2026-09-30
 
 ### Breaking
@@ -27,22 +19,7 @@ All notable changes to `carve-grammars` are documented here.
   `["carveMention", "carveTag"]`. The map's `version` stays `1`; an engine that
   vendors it and special-cases `carveTag` can drop that workaround (#570).
 
-### Added
-
-- Table markup carries its own tokens on all three highlighters. Pipes take a
-  muted boundary color, and header, span and alignment markers stay distinct
-  from cell text. Prism and highlight.js consumers can opt into the matching
-  colors through the new `./shiki/table-tokens.css` export; Shiki hosts get them
-  from the theme. Horizontal and vertical alignment markers are scoped in
-  TextMate as well (#557, #558, #560).
-- `tiptap/schema-map.json` names a ProseMirror decision for `block_extension`,
-  `directive`, `ruby` and `small_caps`, and CarveKit, the converter and the
-  serializer build all four. `directive` is its own `carveDirective` node rather
-  than an alias of `carveDiv`, so a bridge returning to the AST does not have to
-  keep its own copy of the six directive kinds the schema enumerates (#561,
-  #562).
-
-### Fixed
+### Fixes
 
 - `serializeToCarve` keeps a run of consecutive `%%` line comments on
   consecutive lines. Each line is its own node and the serializer separated
@@ -71,6 +48,27 @@ All notable changes to `carve-grammars` are documented here.
   kills, so `::: note %% h` is scoped as the paragraph the engine renders. The
   comment on such a line is no longer highlighted, which is what lets the
   container rule refuse the line; `::: note "T" %% h` still paints (#583).
+- Check table-comment openers before scanning row prefixes in Prism, and consume
+  internal comment whitespace runs together to avoid repeated closing scans
+  (#589).
+- Preserve empty, blank and trailing-newline fenced code and raw payloads
+  through editor serialization. Use Carve JS 0.1.9 for the bridge and refresh
+  the complete specification corpus and projection-loss ledgers (#589).
+
+### Improvements
+
+- Table markup carries its own tokens on all three highlighters. Pipes take a
+  muted boundary color, and header, span and alignment markers stay distinct
+  from cell text. Prism and highlight.js consumers can opt into the matching
+  colors through the new `./shiki/table-tokens.css` export; Shiki hosts get them
+  from the theme. Horizontal and vertical alignment markers are scoped in
+  TextMate as well (#557, #558, #560).
+- `tiptap/schema-map.json` names a ProseMirror decision for `block_extension`,
+  `directive`, `ruby` and `small_caps`, and CarveKit, the converter and the
+  serializer build all four. `directive` is its own `carveDirective` node rather
+  than an alias of `carveDiv`, so a bridge returning to the AST does not have to
+  keep its own copy of the six directive kinds the schema enumerates (#561,
+  #562).
 
 ## [0.1.9] - 2026-09-20
 
