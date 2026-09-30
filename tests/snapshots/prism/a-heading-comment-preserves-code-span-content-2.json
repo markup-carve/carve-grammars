@@ -9,11 +9,11 @@
   },
   {
     "type": "title>important>code",
-    "text": "``x ` "
+    "text": "``x ` %% b``"
   },
   {
-    "type": "comment",
-    "text": "%% b`` c"
+    "type": "title>important",
+    "text": " c"
   },
   {
     "type": "text",

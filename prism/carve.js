@@ -231,7 +231,16 @@
      * The prefix is capture 1, which `lookbehind: true` strips, so the token is
      * still just the comment run.
      */
-    var codeSpanRun = '(?<!`)(`+)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
+    /*
+     * THE OPENER'S WIDTH IS BOUNDED AND MAXIMAL, and both halves buy linearity.
+     * ``+` can backtrack over every width of a long run, and each retry then
+     * pays a closer check of that width at every byte inside it - a line of
+     * 48000 backticks went from 412 ms to 13.6 s, quadratic, and the sweep
+     * flagged it. ``{1,16}(?!`)` admits one width per run, and 16 is the bound
+     * the `code` token below already uses for a span, so a wider run opens no
+     * span here just as it opens none there.
+     */
+    var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
     var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
     var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
 
