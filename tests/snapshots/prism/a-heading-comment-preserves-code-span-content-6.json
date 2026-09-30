@@ -5,11 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a !`x "
+    "text": " a "
   },
   {
-    "type": "comment",
-    "text": "%% b` c"
+    "type": "title>important>literal>string",
+    "text": "!`x %% b`"
+  },
+  {
+    "type": "title>important",
+    "text": " c"
   },
   {
     "type": "text",

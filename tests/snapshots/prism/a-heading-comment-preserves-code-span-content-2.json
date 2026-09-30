@@ -5,7 +5,11 @@
   },
   {
     "type": "title>important",
-    "text": " a ``x ` "
+    "text": " a "
+  },
+  {
+    "type": "title>important>code",
+    "text": "``x ` "
   },
   {
     "type": "comment",

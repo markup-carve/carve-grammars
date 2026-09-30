@@ -202,6 +202,29 @@
         },
     };
 
+    /*
+     * A `%%` INSIDE A CODE SPAN IS CODE CONTENT, not a comment opener
+     * (carve-grammars#601, markup-carve/carve#2682): `# a `x %% b` c` renders
+     * `<h1>a <code>x %% b</code> c</h1>` on both engines. In a PARAGRAPH Prism
+     * already read it that way - the greedy `code` token matches earlier in the
+     * line than the comment does and wins on position - but under a heading the
+     * `title` rule wraps the prefix into a token before `code` is ever reached,
+     * so the greedy rewind has no string left to span and the comment stood.
+     *
+     * The guard states the rule directly instead: a comment opener is one only
+     * where every backtick RUN before it on the line is paired. An unpartnered
+     * run opens a span that reaches the end of its paragraph, so an odd count
+     * puts the `%%` inside code.
+     *
+     * IT SITS AFTER THE `%%`, the position the table-cell rule already argues
+     * for (carve-grammars#576): a leading lookbehind would re-walk the line at
+     * every space. Each run is matched maximally (`` `+(?!`) ``), which leaves
+     * the lookbehind one parse per prefix rather than one per way of splitting
+     * the runs - `scripts/scan-superlinear.mjs` carries the backtick-dense
+     * shape, and growth is linear in the line length.
+     */
+    var outsideCodeSpan = '(?<=^(?:[^\\n`]*`+(?!`)[^\\n`]*`+(?!`))*[^\\n`]*[ \\t]%%)';
+
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
     // A bare delimiter cannot close through a braced inline. Keep each member
@@ -932,7 +955,7 @@
                 // the comment keeps the opener from matching at all, which is the
                 // reading the ruling asks for. The line then colours as the prose
                 // it is, comment included.
-                pattern: /((?<!^[ \t]*(?::{3,}(?: +[a-zA-Z_][\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)) |\t)%%(?!%).*$/m,
+                pattern: RegExp('((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)' + outsideCodeSpan + '.*$', 'm'),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1073,7 +1096,12 @@
                 // top-level comment rule steps aside when the comment is all
                 // that follows the marker (carve-grammars#578). First in the
                 // set so a comment body is never read as emphasis.
-                'comment': { pattern: /(^|[ \t])%%(?!%).*$/, lookbehind: true, greedy: true },
+                // Same code-span guard as the top-level rule (see
+                // `outsideCodeSpan`): the top-level rule now steps aside for a
+                // `%%` inside a code span, so this one must too, or the comment
+                // simply reappears one level down. `^` here is the start of the
+                // heading LINE, which is what the guard counts backticks from.
+                'comment': { pattern: RegExp('([ \\t])%%(?!%)' + outsideCodeSpan + '.*$'), lookbehind: true, greedy: true },
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -2053,6 +2081,28 @@
         {},
         figureGroupDelimiterOnly,
         figureGroupBody
+    );
+
+    /*
+     * A HEADING HOLDS A VERBATIM SPAN (carve-grammars#601,
+     * markup-carve/carve#2682). `title.inside` had no `code` rule, so
+     * `# a `x %% b` c` painted the span as title text once the comment guard
+     * stopped claiming it. The sigil forms come with it, in the order the
+     * document level uses them: a `$` or `!` prefix owns the backtick run after
+     * it, so `code` alone would have taken the run and left the sigil behind.
+     * The set is spliced in right after `punctuation` rather than appended - the
+     * shared `inline` set would otherwise reach the `*` in a verbatim payload
+     * first. It is added here, not at the object literal, because
+     * `Prism.languages.carve.code` does not exist yet while that is being built.
+     */
+    Prism.languages.carve['title'].inside = Object.assign(
+        { 'punctuation': Prism.languages.carve['title'].inside['punctuation'] },
+        ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+            set[name] = Prism.languages.carve[name];
+
+            return set;
+        }, {}),
+        Prism.languages.carve['title'].inside
     );
 
     // Reuse the full code and escape rules before looking for cell pipes.

@@ -21,11 +21,15 @@
   },
   {
     "type": "title>important",
-    "text": " a `x "
+    "text": " a "
   },
   {
-    "type": "comment",
-    "text": "%% b`{=html} c"
+    "type": "title>important>raw-inline>string",
+    "text": "`x %% b`{=html}"
+  },
+  {
+    "type": "title>important",
+    "text": " c"
   },
   {
     "type": "text",

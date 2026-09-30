@@ -5,11 +5,19 @@
   },
   {
     "type": "title>important",
-    "text": " a `x "
+    "text": " a "
+  },
+  {
+    "type": "title>important>code",
+    "text": "`x %% b`"
+  },
+  {
+    "type": "title>important",
+    "text": " c "
   },
   {
     "type": "comment",
-    "text": "%% b` c %% hidden"
+    "text": "%% hidden"
   },
   {
     "type": "text",

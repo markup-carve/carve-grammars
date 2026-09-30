@@ -1797,7 +1797,27 @@
     // still a tag construct. Deliberately narrow - just HEADING_TAG (see its
     // own comment above), not the full inline repertoire - matching the same
     // targeted scope as the TextMate and Prism fixes for this same bug.
-    HEADING.contains = [HEADING_TAG];
+    /*
+     * A HEADING'S TITLE IS AN INLINE RUN (carve-grammars#601,
+     * markup-carve/carve#2682). `HEADING` carried no `contains` at all, so
+     * nothing ran inside the title: a trailing `%%` kept the `section` scope
+     * although the engine strips it (`# a %% hidden` is `<h1>a</h1>`), and a
+     * code span went unscoped.
+     *
+     * The same shape and the same repair as the table row above: the cell is an
+     * inline run too, and it lists its code mode before its comment mode. The
+     * sigil forms lead, as they do at document level: a `$` or `!` prefix owns
+     * the backtick run after it, so `INLINE_CODE` alone would take the run and
+     * leave the sigil painted as title text.
+     * highlight.js takes the EARLIEST match among `contains`, so the order
+     * decides only a tie - a backtick run that opens first claims the `%%`
+     * inside it (`# a `x %% b` c` keeps `x %% b` as code content) and a `%%`
+     * that opens first claims the backticks after it, which is what both
+     * engines do.
+     */
+    HEADING.contains = [
+        MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE, INLINE_CODE, RAW_FORMAT, LINE_COMMENT, HEADING_TAG,
+    ];
 
     const substitutionContent = (boundary, openCode) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,

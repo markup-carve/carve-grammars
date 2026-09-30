@@ -1,7 +1,11 @@
 [
   {
     "scope": "section",
-    "text": "# $`x`"
+    "text": "# "
+  },
+  {
+    "scope": "section>string",
+    "text": "$`x`"
   },
   {
     "scope": null,

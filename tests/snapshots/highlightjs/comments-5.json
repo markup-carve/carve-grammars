@@ -1,7 +1,11 @@
 [
   {
     "scope": "section",
-    "text": "# Title %% editor note"
+    "text": "# Title "
+  },
+  {
+    "scope": "section>comment",
+    "text": "%% editor note"
   },
   {
     "scope": null,

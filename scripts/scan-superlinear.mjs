@@ -324,6 +324,15 @@ const lineBaits = [
     ['row, repeated comments', (n) => `| ${'a %%c |'.repeat(Math.ceil(n / 8))}\n`],
     ['table row, no comment', (n) => `| ${'a'.repeat(n)} | b |\n`],
     ['table cell comment, spaces', (n) => `| a %% ${' '.repeat(n)}h | b |\n`],
+    // A HEADING'S COMMENT GUARD COUNTS BACKTICK RUNS (carve-grammars#601). The
+    // `outsideCodeSpan` lookbehind runs at every comment candidate and walks the
+    // line prefix pairing runs, so the cost lives in one long line and no
+    // repeated opener above reaches it: the shape needs backtick runs AND a
+    // trailing `%%` on the same heading line. Two rungs, because the lookbehind
+    // succeeds on an even count and FAILS on an odd one, and a failing lookbehind
+    // is where a regex pays for every parse it has to rule out.
+    ['heading, paired runs then %%', (n) => `# ${'\`x\` '.repeat(Math.ceil(n / 4))}%% h\n`],
+    ['heading, unpaired runs then %%', (n) => `# ${'\`x\` '.repeat(Math.ceil(n / 4))}\` %% h\n`],
 ];
 
 console.log('\nin-line shapes (cost inside ONE line, not per line or per position)');

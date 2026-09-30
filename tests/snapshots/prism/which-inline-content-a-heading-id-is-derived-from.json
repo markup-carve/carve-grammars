@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a $`x` b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>math>string",
+    "text": "$`x`"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",

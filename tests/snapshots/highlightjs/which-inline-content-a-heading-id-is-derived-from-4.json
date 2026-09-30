@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a `c` b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>code",
+    "text": "`c`"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,
