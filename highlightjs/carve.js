@@ -1798,43 +1798,30 @@
     // own comment above), not the full inline repertoire - matching the same
     // targeted scope as the TextMate and Prism fixes for this same bug.
     /*
-     * A HEADING'S TITLE IS AN INLINE RUN (carve-grammars#601,
-     * markup-carve/carve#2682). `HEADING` carried no `contains` at all, so
-     * nothing ran inside the title: a trailing `%%` kept the `section` scope
-     * although the engine strips it (`# a %% hidden` is `<h1>a</h1>`), and a
-     * code span went unscoped.
+     * A HEADING'S TITLE AND A CAPTION'S CONTENT ARE INLINE RUNS
+     * (carve-grammars#601, markup-carve/carve#2682). Neither mode had a
+     * `contains` at all, so a trailing `%%` kept the block scope although the
+     * engine strips it, and a span went unscoped. Same repair as the table row
+     * above, since a cell is an inline run too.
      *
-     * The same shape and the same repair as the table row above: the cell is an
-     * inline run too, and it lists its code mode before its comment mode. The
-     * `ESCAPE` leads: a backslashed backtick is a literal and opens no span, so
-     * without it `# a \\`x\\` z` grew a code span the engine does not render.
-     * The sigil forms come next, as they do at document level: a `$` or `!`
-     * prefix owns the backtick run after it, so `INLINE_CODE` alone would take
-     * the run and leave the sigil painted as title text.
-     * highlight.js takes the EARLIEST match among `contains`, so the order
-     * decides only a tie - a backtick run that opens first claims the `%%`
-     * inside it (`# a `x %% b` c` keeps `x %% b` as code content) and a `%%`
-     * that opens first claims the backticks after it, which is what both
-     * engines do.
+     * highlight.js takes the EARLIEST match among `contains`, so order settles
+     * only a tie. `ESCAPE` leads because a backslashed backtick opens no span,
+     * and the sigil forms precede `INLINE_CODE`, which would otherwise take the
+     * run and leave the `$` or `!` behind.
      */
     /*
-     * A VERBATIM MODE IN A ONE-LINE BLOCK ENDS AT THE LINE.
-     *
-     * `verbatimFence` ends on a matching run or a PARAGRAPH break, which is right
-     * in a paragraph and wrong in a heading: an unclosed run in `# a `x` held the
-     * mode open and scoped every following heading and paragraph as code, up to
-     * the next blank line. The engine ends the span with the heading.
-     * highlight.js applies a child mode's `end` before the parent's, so the
-     * parent `$` never got the chance - the bound has to sit on the child.
+     * A VERBATIM MODE IN A ONE-LINE BLOCK ENDS AT THE LINE. `verbatimFence` ends
+     * on a matching run or a PARAGRAPH break, so an unclosed run in a heading
+     * held the mode open and scoped every block after it as code. highlight.js
+     * applies a child's `end` before the parent's, so the bound has to sit on
+     * the child.
      */
     const lineBounded = (mode) => ({
         ...mode,
-        // THE LINE BOUND COMES FIRST in the alternation. Last, it lost to
-        // `verbatimFence`'s own paragraph-break branch, which matches at the very
-        // same newline and CONSUMES the blank line - the child then popped past
-        // the parent's `$`, and the heading scope ran on over the paragraph after
-        // it. Zero-width and first, it wins the position and the parent closes
-        // with its line.
+        // FIRST in the alternation. Last, it lost the position to
+        // `verbatimFence`'s own paragraph-break branch, which CONSUMES the blank
+        // line, so the child popped past the parent's `$` and carried the block
+        // scope onward.
         end: new RegExp(`(?=\\n)|${mode.end.source}`),
         'on:end': (match, response) => {
             // The line boundary is an end in its own right, never width-checked.
