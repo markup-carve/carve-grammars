@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> # a `x %% b` c"
+    "text": "> # a "
+  },
+  {
+    "scope": "quote>code",
+    "text": "`x %% b`"
+  },
+  {
+    "scope": "quote",
+    "text": " c"
   },
   {
     "scope": null,
