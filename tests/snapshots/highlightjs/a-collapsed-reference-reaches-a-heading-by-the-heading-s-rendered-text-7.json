@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a !`Cat` b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>string",
+    "text": "!`Cat`"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,

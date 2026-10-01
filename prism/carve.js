@@ -202,6 +202,29 @@
         },
     };
 
+    /*
+     * A `%%` INSIDE A CODE SPAN IS CODE CONTENT (carve-grammars#601,
+     * markup-carve/carve#2682). In a PARAGRAPH the greedy `code` token already
+     * won this on position; under a heading or caption the block rule wraps the
+     * prefix into a token before `code` is reached, leaving the rewind nothing
+     * to span. `commentAfterPrefix` walks the line forward instead, and a `%%`
+     * opens a comment only where the walk arrives outside every span - so an
+     * unpartnered run blocks it, which is the span-to-paragraph-end reading.
+     *
+     * FORWARD, NOT A LOOKBEHIND: width needs a backreference and an escape
+     * needs reading left to right, and a JS lookbehind matches right-to-left.
+     * The prefix is capture 1, which `lookbehind: true` strips.
+     *
+     * THE OPENER'S WIDTH IS BOUNDED AND MAXIMAL, which is what keeps it linear.
+     * An unbounded ``+` backtracks over every width of a long run and pays a
+     * closer check of that width at every byte inside it: 48000 backticks on one
+     * line took 13.6 s against 412 ms. Sixteen is the bound the `code` token
+     * uses, so a wider run opens no span here either.
+     */
+    var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
+    var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
+    var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
+
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
     // A bare delimiter cannot close through a braced inline. Keep each member
@@ -932,7 +955,43 @@
                 // the comment keeps the opener from matching at all, which is the
                 // reading the ruling asks for. The line then colours as the prose
                 // it is, comment included.
-                pattern: /((?<!^[ \t]*(?::{3,}(?: +[a-zA-Z_][\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)) |\t)%%(?!%).*$/m,
+                // THE MARKER EXCLUSION SITS BEHIND THE `%%`. As a leading
+                // lookbehind it would run at every space in the line, the
+                // quadratic shape carve-grammars#576 took out of the row rule next
+                // door. Same question either way - a marker, a LITERAL SPACE, then
+                // the run - so the tab form is untouched.
+                pattern: RegExp(
+                    commentAfterPrefix
+                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '.*$',
+                    'm',
+                ),
+                lookbehind: true,
+                greedy: true,
+            },
+            {
+                /*
+                 * A CONTINUATION LINE, which the line-local walk cannot answer: a
+                 * paragraph's span may open on an EARLIER line, and locally an
+                 * unpartnered opener and an unpartnered closer are the same text.
+                 * This entry takes the closer reading, confined to lines where that
+                 * is the only one available.
+                 *
+                 * A line that OPENS A BLOCK starts its own inline run, so a run on
+                 * it can only be an opener and the walk's refusal is final. Corpus
+                 * 516-...-5 (a heading in a quote) and 532-...-5 (a container
+                 * label) both get the comment back if this entry reaches them.
+                 *
+                 * A QUOTE MARKER IS NOT ITSELF SUCH AN OPENER, so it is consumed
+                 * before the test: `> y` + backtick continues a paragraph, while
+                 * `> # a` behind the same marker opens a block.
+                 */
+                pattern: RegExp(
+                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
+                    + '.*$',
+                    'm',
+                ),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1073,7 +1132,14 @@
                 // top-level comment rule steps aside when the comment is all
                 // that follows the marker (carve-grammars#578). First in the
                 // set so a comment body is never read as emphasis.
-                'comment': { pattern: /(^|[ \t])%%(?!%).*$/, lookbehind: true, greedy: true },
+                // Same prefix walk as the top-level rule: that rule now steps
+                // aside for a `%%` inside a code span, so this one must too, or
+                // the comment simply reappears one level down. `^` here is the
+                // start of the heading LINE - the title token's own text - which
+                // is where the walk has to begin. No marker exclusion: the
+                // top-level rule owns that case, and a marker-only comment is
+                // meant to land here (carve-grammars#578).
+                'comment': { pattern: RegExp(commentAfterPrefix + '.*$'), lookbehind: true, greedy: true },
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -2054,6 +2120,36 @@
         figureGroupDelimiterOnly,
         figureGroupBody
     );
+
+    /*
+     * A HEADING OR CAPTION HOLDS A VERBATIM SPAN (carve-grammars#601,
+     * markup-carve/carve#2682). Neither inside set had a `code` rule, so the
+     * span painted as title text once the comment guard stopped claiming it.
+     * Added here rather than at the object literal, because
+     * `Prism.languages.carve.code` does not exist yet while that is built.
+     */
+    for (const block of ['title', 'caption']) {
+        const own = Prism.languages.carve[block].inside;
+        /*
+         * ORDER CARRIES THREE DECISIONS. `comment` leads, so a comment body is
+         * never read as emphasis and its `^`-anchored walk starts at the marker -
+         * a rule consuming the `#` first costs `# %% h` the scope it earned in
+         * carve-grammars#578. `escape` is next, since a backslashed backtick
+         * opens no span. The sigil forms precede `code`, which would otherwise
+         * take the run and leave the `$` or `!` behind. All of it precedes the
+         * shared `inline` set, which would reach the `*` in a verbatim payload.
+         */
+        Prism.languages.carve[block].inside = Object.assign(
+            own['comment'] ? { 'comment': own['comment'] } : {},
+            { 'punctuation': own['punctuation'] },
+            ['escape', 'math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+                set[name] = Prism.languages.carve[name];
+
+                return set;
+            }, {}),
+            own
+        );
+    }
 
     // Reuse the full code and escape rules before looking for cell pipes.
     for (const table of ['table', 'table-continuation']) {

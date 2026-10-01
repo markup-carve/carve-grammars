@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# `code()` heading"
+    "text": "# "
+  },
+  {
+    "scope": "section>code",
+    "text": "`code()`"
+  },
+  {
+    "scope": "section",
+    "text": " heading"
   },
   {
     "scope": null,

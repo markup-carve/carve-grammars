@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a !`Cat` b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>literal>string",
+    "text": "!`Cat`"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",

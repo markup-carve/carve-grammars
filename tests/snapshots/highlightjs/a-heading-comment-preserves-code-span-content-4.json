@@ -1,7 +1,19 @@
 [
   {
     "scope": "section",
-    "text": "# a `x %% b` c %% hidden"
+    "text": "# a "
+  },
+  {
+    "scope": "section>code",
+    "text": "`x %% b`"
+  },
+  {
+    "scope": "section",
+    "text": " c "
+  },
+  {
+    "scope": "section>comment",
+    "text": "%% hidden"
   },
   {
     "scope": null,

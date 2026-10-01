@@ -1,7 +1,11 @@
 [
   {
     "scope": "section",
-    "text": "# a %% c"
+    "text": "# a "
+  },
+  {
+    "scope": "section>comment",
+    "text": "%% c"
   },
   {
     "scope": null,

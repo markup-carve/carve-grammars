@@ -1,0 +1,374 @@
+/**
+ * A HEADING'S TITLE AND A CAPTION'S CONTENT ARE INLINE RUNS, both ways
+ * (carve-grammars#601,
+ * markup-carve/carve#2682).
+ *
+ * carve-js 0.1.4 and carve-php 685e94fa3 agree byte for byte: a backtick run on
+ * a heading line keeps a `%%` inside it as code content, and a real trailing
+ * `%%` is stripped. Corpus section 516 pins both.
+ *
+ * ```
+ * # a `x %% b` c   ->  <h1>a <code>x %% b</code> c</h1>
+ * # a %% hidden    ->  <h1>a</h1>
+ * ```
+ *
+ * A caption reads the same way, behind an image so the block is a figure:
+ *
+ * ```
+ * ![a](i.png)
+ * ^ cap %% hidden  ->  <figcaption>cap</figcaption>
+ * ```
+ *
+ * Three surfaces disagreed, in two directions. Prism ran its top-level comment
+ * rule inside the code span; TextMate/Shiki and highlight.js ran no comment rule
+ * inside the title at all, so the stripped bytes were painted as heading text.
+ *
+ * ONE ASSERTION PER SURFACE PER DIRECTION, each in its own `ok`. A suite stops at
+ * the first failing assertion inside a test, so a shared test would hide every
+ * surface after the first to break.
+ */
+import assert from 'node:assert/strict';
+
+import { hljsTokens, prismTokens } from './lib/engines.js';
+import { textmateEngines } from './lib/surface-engines.js';
+import { textmateLineTokenizer } from './lib/textmate-lines.js';
+
+let passed = 0;
+// EVERY ASSERTION RUNS, and the failures are reported together at the end. The
+// throwing shape the other files use exits at the first failure, so a change
+// that breaks three surfaces reports one - and which one it reports depends on
+// declaration order rather than on the defect.
+const failures = [];
+function ok(name, fn) {
+    try {
+        fn();
+        passed++;
+        console.log(`  ✓ ${name}`);
+    } catch (error) {
+        failures.push(`${name}: ${error.message}`);
+        console.log(`  ✗ ${name}`);
+    }
+}
+
+const scopeOver = (tokens, source, text, from = 0) => {
+    const at = source.indexOf(text, from);
+    let offset = 0;
+    for (const token of tokens) {
+        const end = offset + token.text.length;
+        if (offset <= at && at < end) return token.scope;
+        offset = end;
+    }
+    return undefined;
+};
+
+// THE RAW vscode-textmate DRIVER, not the Shiki-backed default. Shiki merges
+// same-colored neighbors, so a span and the title around it can arrive as one
+// leaf - and on these documents it also threw `startIndex` of undefined on some
+// runs and not others, which is a flaky test rather than a measurement. The
+// line-faithful driver gives one leaf per TextMate token and is deterministic
+// here.
+const surfaces = [
+    ['prism', prismTokens],
+    ['highlightjs', hljsTokens],
+    ...(await textmateEngines(textmateLineTokenizer)),
+];
+
+console.log('a %% between backticks on a heading line is code content:');
+
+const SPAN = '# a `x %% b` c';
+
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} scopes no comment over the %% inside a heading's code span`, () => {
+        const scope = scopeOver(tokenize(SPAN), SPAN, '%%');
+        assert.ok(
+            scope && !/comment/.test(scope),
+            `expected a non-comment scope over the %% in ${JSON.stringify(SPAN)}, got ${JSON.stringify(scope)}`,
+        );
+    });
+
+    ok(`${name} scopes the heading's code span as verbatim`, () => {
+        const scope = scopeOver(tokenize(SPAN), SPAN, 'x %% b');
+        assert.ok(
+            scope && /code|raw/.test(scope),
+            `expected a code or raw scope over the span body, got ${JSON.stringify(scope)}`,
+        );
+    });
+}
+
+console.log('\na real trailing %% on a heading is a comment:');
+
+// Behind a space and behind a tab alike - the engine strips both.
+for (const [name, tokenize] of surfaces) {
+    for (const source of ['# a %% hidden', '# a\t%% hidden']) {
+        ok(`${name} scopes the trailing comment of ${JSON.stringify(source)}`, () => {
+            const scope = scopeOver(tokenize(source), source, '%%');
+            assert.ok(
+                scope && /comment/.test(scope),
+                `expected a comment scope over the trailing run, got ${JSON.stringify(scope)}`,
+            );
+        });
+
+        ok(`${name} keeps the heading text of ${JSON.stringify(source)} out of the comment`, () => {
+            const scope = scopeOver(tokenize(source), source, 'a');
+            assert.ok(
+                scope && !/comment/.test(scope),
+                `expected the title text to carry no comment scope, got ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
+console.log('\na span closes at its own WIDTH, so what follows it is outside code:');
+
+// Both rows are regressions a review caught in the first cut of the Prism prefix
+// walk. A run-parity count read ```x ` y``` as three runs and refused the real
+// trailing comment; a walk that did not skip escapes read `\\`` as an opener and
+// refused it in ordinary prose. Only Prism ever counted runs, but the readings
+// are the engines', so every surface is asked.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} scopes a trailing comment after a wide span holding a narrow run`, () => {
+        const source = '# a ``x ` y`` %% hidden';
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && /comment/.test(scope),
+            `expected a comment scope after the closed wide span, got ${JSON.stringify(scope)}`,
+        );
+    });
+
+    ok(`${name} scopes a trailing comment after an escaped backtick`, () => {
+        const source = 'a \\` %% hidden';
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && /comment/.test(scope),
+            `an escaped backtick opens no span, got ${JSON.stringify(scope)}`,
+        );
+    });
+}
+
+console.log('\nthe other direction still holds - a comment body is verbatim:');
+
+// The symmetric case, which a naive "code before comment" reorder would break:
+// the `%%` opens FIRST here, so the backticks after it are comment body.
+const INSIDE = '# a %% see `x` here';
+
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} keeps backticks after a heading's %% inside the comment`, () => {
+        const tokens = tokenize(INSIDE);
+        const scope = scopeOver(tokens, INSIDE, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        assert.equal(
+            scopeOver(tokens, INSIDE, '`x`'),
+            scope,
+            'the backtick run after the comment opener is comment body',
+        );
+    });
+}
+
+console.log('\na caption content is an inline run too:');
+
+// Behind an image, so the block is a figure and the `^` line is its caption.
+const FIGURE = '![a](i.png)\n';
+
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} scopes no comment over the %% inside a caption's code span`, () => {
+        const source = `${FIGURE}^ cap \`x %% b\` c`;
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(
+            scope && !/comment/.test(scope),
+            `expected a non-comment scope over the %% in the caption span, got ${JSON.stringify(scope)}`,
+        );
+    });
+
+    ok(`${name} scopes a caption's trailing comment`, () => {
+        const source = `${FIGURE}^ cap %% hidden`;
+        const tokens = tokenize(source);
+        const scope = scopeOver(tokens, source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        const text = scopeOver(tokens, source, 'cap');
+        assert.ok(text && !/comment/.test(text), `the caption text carries no comment scope, got ${JSON.stringify(text)}`);
+    });
+
+    ok(`${name} scopes a caption's trailing comment behind an earlier backtick pair`, () => {
+        // The shape the run-pairing guard exists for: a CLOSED span before the
+        // `%%` leaves the opener outside code, so the comment still opens.
+        const source = `${FIGURE}^ cap \`y\` %% hidden`;
+        const scope = scopeOver(tokenize(source), source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+    });
+}
+
+console.log('\nthe control: a bare ^ line with no figure is prose, and stays as it reads:');
+
+// A bare `^ cap` is a PARAGRAPH on the engines - these grammars have no block
+// context and scope it as a caption anyway, which is a known and accepted
+// limitation, not this ticket. The control is that the fix does not CHANGE that
+// reading: the trailing comment is a comment either way, as a caption's trailing
+// run or as a paragraph's.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} still reads a bare ^ line's trailing comment as a comment`, () => {
+        const source = '^ cap %% hidden';
+        const tokens = tokenize(source);
+        const scope = scopeOver(tokens, source, '%%');
+        assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        const text = scopeOver(tokens, source, 'cap');
+        assert.ok(text && !/comment/.test(text), `the text before it is not comment, got ${JSON.stringify(text)}`);
+    });
+}
+
+console.log('\na SIGIL-prefixed span closes on a whole run too:');
+
+// The `!` and `$` rules had the same missing guard as the plain code rules, and
+// in a block it reached further: the literal closed on part of a longer run, the
+// leftover backtick opened an unpartnered span, and the trailing comment scoped
+// as code. Every sigil, so a later guard cannot be added to one and forgotten on
+// the others.
+for (const [name, tokenize] of surfaces) {
+    for (const sigil of ['!', '$', '$$']) {
+        ok(`${name} keeps a trailing comment outside a ${sigil} span in a heading`, () => {
+            const source = `# a ${sigil}\`x\` %% hidden`;
+            const scope = String(scopeOver(tokenize(source), source, '%%') ?? '');
+            assert.ok(/comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        });
+    }
+
+    ok(`${name} closes a wide ! span on a WHOLE run of its own width in a heading`, () => {
+        const source = '# a !\`\`x \`\`\` y \`\` %% hidden';
+        const tokens = tokenize(source);
+        const inner = String(scopeOver(tokens, source, 'y') ?? '');
+        assert.ok(/raw|string|literal/.test(inner), `the longer run is span content, got ${JSON.stringify(inner)}`);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+}
+
+console.log('\na LONGER run inside a span is content, not its closer:');
+
+// The TextMate `code_inline_multi` rule closed a two-backtick span on the first
+// two characters of a three-backtick run; the leftover backtick opened another
+// span and the real trailing comment was scoped as code. The defect predates
+// this change in a PARAGRAPH - it reaches the comment only once a heading has an
+// inline set - and the fix is on the shared rule, so both hosts get it. This is
+// the reading Prism was given in carve-grammars#312.
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} closes a wide span on a WHOLE run of its own width in a heading`, () => {
+        const source = '# a \`\`x \`\`\` z\`\` %% hidden';
+        const tokens = tokenize(source);
+        const inner = String(scopeOver(tokens, source, 'z') ?? '');
+        assert.ok(/code|raw/.test(inner), `the longer run is span content, got ${JSON.stringify(inner)}`);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+
+    ok(`${name} closes a wide span on a WHOLE run of its own width in a paragraph`, () => {
+        const source = 'p a \`\`x \`\`\` z\`\` %% hidden';
+        const tokens = tokenize(source);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+}
+
+console.log('\nan UNPARTNERED run reaches the line end, so a %% after it is span content:');
+
+// The engine keeps `# a \`x %% hidden` as a span holding `x %% hidden`. Both
+// closed-span rules need a closer, so on a TextMate grammar neither claimed the
+// run and the trailing-comment rule took the payload instead. The rule that fixes
+// it is MATCH-ONLY and ends at the line - a begin/end rule reached from a
+// one-line block pushes state the block should never own
+// (markup-carve/intellij-carve#222).
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of [
+        ['a heading', '# a \`x %% hidden'],
+        ['a caption', '^ cap \`x %% hidden'],
+    ]) {
+        ok(`${name} keeps a %% inside an unpartnered run on ${shape}`, () => {
+            const scope = String(scopeOver(tokenize(source), source, '%%') ?? '');
+            assert.ok(
+                !/comment/.test(scope),
+                `the run reaches the line end, so this is span content: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
+console.log('\na quote CONTINUATION line still gets its comment:');
+
+// `> y` closing a span opened on the line above continues the quote's paragraph,
+// so the run there is a CLOSER and the comment after it is real. A line that
+// opens a block behind the same marker is the opposite case, and the control
+// below pins it: `> # a` does open a block, so its `%%` stays span content.
+ok('prism scopes a comment after a span closed on a quote continuation line', () => {
+    const source = '> a \`x\n> y\` %% hidden';
+    const scope = String(scopeOver(prismTokens(source), source, '%%') ?? '');
+    assert.ok(/comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+});
+
+ok('prism keeps a %% inside a span on a heading behind a quote marker', () => {
+    const source = '> # a \`x %% b\` c';
+    const scope = String(scopeOver(prismTokens(source), source, '%%') ?? '');
+    assert.ok(!/comment/.test(scope), `expected span content, got ${JSON.stringify(scope)}`);
+});
+
+console.log('\nan escaped backtick opens no span inside these blocks:');
+
+// Deleting the escape rule from any of the three block sets left every other
+// assertion here green, which means this case was untested - the escape row
+// above is a PARAGRAPH and never reaches a block's own inline set. Carve renders
+// `# a \\`x\\` z` with literal backticks and no code element.
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of [
+        ['a heading', '# a \\`x\\` z'],
+        ['a caption', '^ cap \\`x\\` z'],
+    ]) {
+        ok(`${name} opens no span on an escaped backtick pair in ${shape}`, () => {
+            const scope = String(scopeOver(tokenize(source), source, 'x') ?? '');
+            assert.ok(
+                !/code|raw|math|string/.test(scope),
+                `the text between two escaped backticks is not verbatim: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
+console.log('\nan unclosed span does NOT leak the block scope downstream:');
+
+/*
+ * THE BLOCK SCOPE MUST STOP AT ITS LINE (markup-carve/intellij-carve#222).
+ * Giving a one-line block an inline set is how a highlighter leaks: an UNCLOSED
+ * run opens a verbatim rule whose natural end is the paragraph, so the rule can
+ * outlive the block that hosts it and take the block's own scope with it. In
+ * intellij-carve it survived to the end of the FILE, and the six assertions that
+ * shipped with the fix all passed - none of them put an unclosed span on the
+ * line.
+ *
+ * Measured here on all three surfaces rather than argued: highlight.js did leak,
+ * because the paragraph-break branch of its verbatim end matched the same
+ * newline as the line bound and consumed the blank line past the parent.
+ */
+const downstream = {
+    'a heading': `# a \`x\n\npara one\n`,
+    'a caption': `![i](u)\n^ cap \`x\n\npara one\n`,
+    'a heading behind a quote': `> # a \`x\n\npara one\n`,
+    'a heading on a list marker': `- # a \`x\n\npara one\n`,
+    // Controls: neither shape opens a run that can outlive its line.
+    'a CLOSED span (control)': `# a \`x\` c\n\npara one\n`,
+    'no span at all (control)': `# a b\n\npara one\n`,
+};
+
+for (const [name, tokenize] of surfaces) {
+    for (const [shape, source] of Object.entries(downstream)) {
+        ok(`${name} keeps the block scope of ${shape} off the paragraph below`, () => {
+            const scope = String(scopeOver(tokenize(source), source, 'para one') ?? '');
+            assert.ok(
+                !/heading|caption|section|title/.test(scope),
+                `the paragraph below carries a block scope: ${JSON.stringify(scope)}`,
+            );
+        });
+    }
+}
+
+console.log(`\n${passed} passed`);
+if (failures.length) {
+    console.log(`\n${failures.length} failed:`);
+    for (const failure of failures) console.log(`  ${failure}`);
+    assert.fail(`${failures.length} assertion(s) failed`);
+}

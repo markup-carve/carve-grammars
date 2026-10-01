@@ -1,15 +1,15 @@
 [
   {
-    "type": "text",
-    "text": ":::["
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
-    "type": "code",
-    "text": "`a %% secret`"
+    "type": "div>tag>div-delimiter>symbol",
+    "text": "[`a %% secret`]"
   },
   {
-    "type": "text",
-    "text": "]\nbody\n"
+    "type": "div>tag",
+    "text": "\nbody\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

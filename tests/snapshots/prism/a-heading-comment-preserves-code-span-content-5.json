@@ -5,11 +5,7 @@
   },
   {
     "type": "blockquote",
-    "text": " # a `x "
-  },
-  {
-    "type": "comment",
-    "text": "%% b` c"
+    "text": " # a `x %% b` c"
   },
   {
     "type": "text",

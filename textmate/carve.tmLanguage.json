@@ -272,6 +272,31 @@
       "contentName": "entity.name.section.carve",
       "patterns": [
         {
+          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways.",
+          "include": "#escape"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#code_inline_unpartnered_line"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
           "include": "#heading_tag"
         }
       ],
@@ -589,16 +614,42 @@
       "comment": "The in-container blockquote: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this, and only after the container's `end` has established that the line sits at or beyond the item's content column - which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137)."
     },
     "caption": {
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(\\^) +(?![ \\t]*$)(.*)$",
-      "captures": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(\\^) +(?![ \\t]*$)",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.caption.carve"
-        },
-        "2": {
-          "name": "markup.caption.carve"
         }
       },
+      "end": "$",
       "name": "meta.caption.carve",
+      "contentName": "markup.caption.carve",
+      "patterns": [
+        {
+          "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to.",
+          "include": "#escape"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#code_inline_unpartnered_line"
+        },
+        {
+          "include": "#trailing_comment"
+        }
+      ],
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
@@ -1109,8 +1160,8 @@
       "name": "constant.character.escape.carve"
     },
     "code_inline_multi": {
-      "comment": "Two or more backticks: inline code that may itself contain single backticks; closed by the same run length (\\1).",
-      "match": "(`{2,})(.+?)(\\1)",
+      "comment": "Two or more backticks: inline code that may itself contain single backticks; closed by a WHOLE run of the same length. The guards are what makes the closer a whole run: without them `x ``` z` inside a two-backtick span closed the span on the first two characters of the three-run, the leftover backtick opened another span, and a trailing comment after it was scoped as code (carve-grammars#601). A LONGER RUN IS CONTENT, which is the reading Prism was given in carve-grammars#312.",
+      "match": "(?<!`)(`{2,})(?!`)(.+?)(?<!`)(\\1)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.raw.carve"
@@ -1120,6 +1171,19 @@
         },
         "3": {
           "name": "punctuation.definition.raw.carve"
+        }
+      },
+      "name": "markup.raw.inline.carve"
+    },
+    "code_inline_unpartnered_line": {
+      "comment": "AN UNPARTNERED RUN ON A ONE-LINE BLOCK'S LINE IS A CODE SPAN TO THE END OF THAT LINE. `#code_inline` and `#code_inline_multi` both need a closer, so on `# a `x %% hidden` neither claimed the run and `#trailing_comment` scoped the payload as a comment - where the engine keeps it as span content. `#code_inline_unpartnered` answers the same question at document level, but it is a begin/end rule that runs to the next blank line, and a begin/end rule reached from a heading pushes state a one-line block should never own (markup-carve/intellij-carve#222). This is MATCH-ONLY and ends at the line, which is where the block ends too, so it cannot outlive its host. Used by `#heading`, `#heading_in_container` and `#caption`, never at document level.",
+      "match": "(`+)([^\\n]*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.raw.carve"
+        },
+        "2": {
+          "name": "markup.raw.inline.carve"
         }
       },
       "name": "markup.raw.inline.carve"
@@ -1137,7 +1201,8 @@
       "contentName": "markup.raw.inline.carve"
     },
     "code_inline": {
-      "match": "(`)([^`\\n]+)(`)",
+      "comment": "A DELIMITER RUN IS ENTERED AT ITS OWN START and closed by a WHOLE run of the same width (carve-grammars#601, the reading Prism was given in carve-grammars#312). Without the guards a single backtick could be one character into a wider run, which is content.",
+      "match": "(?<!`)(`)([^`\\n]+)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.raw.carve"
@@ -2503,7 +2568,7 @@
       "name": "constant.other.smart_typography.carve"
     },
     "math_inline": {
-      "match": "(\\$\\$?)(`)([^`\\n]*)(`)",
+      "match": "(\\$\\$?)(`)(?!`)([^`\\n]*)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.math.carve"
@@ -2520,8 +2585,8 @@
       }
     },
     "literal_inline_multi": {
-      "comment": "A `!` prefix on two or more backticks: an inline literal that may itself contain single backticks; closed by the same run length (\\2).",
-      "match": "(!)(`{2,})(.+?)(\\2)",
+      "comment": "A WHOLE RUN CLOSES IT, the guard #code_inline_multi carries and for the same reason (carve-grammars#601): without it a two-backtick literal closed on the first two characters of a three-backtick run, the leftover backtick opened an unpartnered span, and the trailing comment after it scoped as code. A `!` prefix on two or more backticks: an inline literal that may itself contain single backticks; closed by the same run length (\\2).",
+      "match": "(!)(`{2,})(?!`)(.+?)(?<!`)(\\2)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.literal.carve"
@@ -2538,7 +2603,7 @@
       }
     },
     "literal_inline": {
-      "match": "(!)(`)([^`\\n]*)(`)",
+      "match": "(!)(`)(?!`)([^`\\n]*)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.literal.carve"
@@ -2868,6 +2933,31 @@
       "name": "markup.heading.carve",
       "contentName": "entity.name.section.carve",
       "patterns": [
+        {
+          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways.",
+          "include": "#escape"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#code_inline_unpartnered_line"
+        },
+        {
+          "include": "#trailing_comment"
+        },
         {
           "include": "#heading_tag"
         }

@@ -9,7 +9,19 @@
   },
   {
     "scope": "section",
-    "text": "# a `x %% b`{=html} c"
+    "text": "# a "
+  },
+  {
+    "scope": "section>code",
+    "text": "`x %% b`"
+  },
+  {
+    "scope": "section>meta",
+    "text": "{=html}"
+  },
+  {
+    "scope": "section",
+    "text": " c"
   },
   {
     "scope": null,

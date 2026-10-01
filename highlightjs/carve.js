@@ -1797,7 +1797,46 @@
     // still a tag construct. Deliberately narrow - just HEADING_TAG (see its
     // own comment above), not the full inline repertoire - matching the same
     // targeted scope as the TextMate and Prism fixes for this same bug.
-    HEADING.contains = [HEADING_TAG];
+    /*
+     * A HEADING'S TITLE AND A CAPTION'S CONTENT ARE INLINE RUNS
+     * (carve-grammars#601, markup-carve/carve#2682). Neither mode had a
+     * `contains` at all, so a trailing `%%` kept the block scope although the
+     * engine strips it, and a span went unscoped. Same repair as the table row
+     * above, since a cell is an inline run too.
+     *
+     * highlight.js takes the EARLIEST match among `contains`, so order settles
+     * only a tie. `ESCAPE` leads because a backslashed backtick opens no span,
+     * and the sigil forms precede `INLINE_CODE`, which would otherwise take the
+     * run and leave the `$` or `!` behind.
+     */
+    /*
+     * A VERBATIM MODE IN A ONE-LINE BLOCK ENDS AT THE LINE. `verbatimFence` ends
+     * on a matching run or a PARAGRAPH break, so an unclosed run in a heading
+     * held the mode open and scoped every block after it as code. highlight.js
+     * applies a child's `end` before the parent's, so the bound has to sit on
+     * the child.
+     */
+    const lineBounded = (mode) => ({
+        ...mode,
+        // FIRST in the alternation. Last, it lost the position to
+        // `verbatimFence`'s own paragraph-break branch, which CONSUMES the blank
+        // line, so the child popped past the parent's `$` and carried the block
+        // scope onward.
+        end: new RegExp(`(?=\\n)|${mode.end.source}`),
+        'on:end': (match, response) => {
+            // The line boundary is an end in its own right, never width-checked.
+            if (match[0] === '') return;
+            mode['on:end'](match, response);
+        },
+    });
+    const ONE_LINE_VERBATIM = [MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE, INLINE_CODE].map(lineBounded);
+
+    HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG];
+    // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
+    // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
+    // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
+    // no trailing attribute block argument, so nothing asks for it.
+    CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT];
 
     const substitutionContent = (boundary, openCode) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,

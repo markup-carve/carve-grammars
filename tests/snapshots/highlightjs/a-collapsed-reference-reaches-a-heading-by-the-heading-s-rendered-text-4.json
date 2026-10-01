@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a\\_b heading"
+    "text": "# a"
+  },
+  {
+    "scope": "section>symbol",
+    "text": "\\_"
+  },
+  {
+    "scope": "section",
+    "text": "b heading"
   },
   {
     "scope": null,

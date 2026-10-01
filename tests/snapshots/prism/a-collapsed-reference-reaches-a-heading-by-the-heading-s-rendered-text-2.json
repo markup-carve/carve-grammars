@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " `code()` heading"
+    "text": " "
+  },
+  {
+    "type": "title>important>code",
+    "text": "`code()`"
+  },
+  {
+    "type": "title>important",
+    "text": " heading"
   },
   {
     "type": "text",

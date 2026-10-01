@@ -1,7 +1,11 @@
 [
   {
     "scope": "section",
-    "text": "# a\t%% hidden"
+    "text": "# a\t"
+  },
+  {
+    "scope": "section>comment",
+    "text": "%% hidden"
   },
   {
     "scope": null,
