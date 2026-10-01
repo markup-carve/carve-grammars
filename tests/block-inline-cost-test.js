@@ -106,4 +106,87 @@ ok('the heading ratio does not grow with the line', () => {
     );
 });
 
+
+/*
+ * A QUOTED ONE-LINE BLOCK'S RULES COST WHAT THE SAME TEXT COSTS AS A PARAGRAPH
+ * (carve-grammars#604).
+ *
+ * carve-grammars#601 reached `> # h %% c` and `> ^ cap %% c` in highlight.js by
+ * prefixing each quoted-block rule with a lookbehind for the marker run. The
+ * reading is right and the spelling was quadratic: the lookbehind is
+ * VARIABLE-LENGTH, so it walks back to the line start from every sentinel
+ * position, and the walk is at its most expensive exactly where it must FAIL -
+ * ordinary quoted prose carrying inline code, which is a common shape rather
+ * than an adversarial one. A 32 KB `> a ` line of backtick runs took 2485 ms
+ * against 21 ms unprefixed, four times per doubling. The line test runs after
+ * the candidate now.
+ *
+ * SAME DENOMINATOR AND SAME REASONING as the Prism rows above: a ratio against
+ * the identical text as a paragraph, never a millisecond figure. Measured
+ * through `hljs.highlight` rather than a test helper, so nothing between the
+ * engine and the clock.
+ */
+const hljs = require('highlight.js');
+hljs.registerLanguage('carve', (await import('../highlightjs/carve.mjs')).default);
+
+// Backtick runs in prose: a sentinel every three bytes, no span ever closing.
+// This is the shape the lookbehind failed on, and failing is its worst case.
+const spans = (n) => `${BT}x `.repeat(n);
+
+const hljsTime = (source) => {
+    const start = process.hrtime.bigint();
+    hljs.highlight(source, { language: 'carve' });
+
+    return Number(process.hrtime.bigint() - start) / 1e6;
+};
+
+const hljsRatio = (prefix, n) => {
+    const quoted = `${prefix}${spans(n)}\n`;
+    const para = `p ${spans(n)}\n`;
+    hljsTime(quoted);
+    hljsTime(para);
+    const seen = [];
+    for (let round = 0; round < 5; round++) {
+        const pair = [];
+        if (round % 2) {
+            pair[1] = hljsTime(quoted);
+            pair[0] = hljsTime(para);
+        } else {
+            pair[0] = hljsTime(para);
+            pair[1] = hljsTime(quoted);
+        }
+        seen.push(pair[1] / Math.max(pair[0], 0.05));
+    }
+    seen.sort((a, b) => a - b);
+
+    return seen[2];
+};
+
+console.log('\na quoted one-line block costs what the same text costs as a paragraph:');
+
+// `> a ` carries NO marker, so every candidate is rejected - the row the
+// lookbehind was slowest on. `> # h ` carries one, so the rules actually run.
+for (const [name, prefix] of [['quoted prose', '> a '], ['a quoted heading', '> # h ']]) {
+    for (const n of [2730, 10920]) {
+        ok(`hljs: ${name} is within ${CEILING}x of the paragraph at ${n * 3} bytes`, () => {
+            const measured = hljsRatio(prefix, n);
+            assert.ok(
+                measured < CEILING,
+                `${name} cost ${measured.toFixed(1)}x the paragraph at ${n * 3} bytes`,
+            );
+        });
+    }
+}
+
+// Pre-fix the unmarked row was ~2x the paragraph at 8 KB and ~120x at 32 KB, so
+// a single size would have passed. GROWTH is the assertion that catches it.
+ok('hljs: the quoted-prose ratio does not grow with the line', () => {
+    const small = hljsRatio('> a ', 2730);
+    const large = hljsRatio('> a ', 10920);
+    assert.ok(
+        large < small * 4 + CEILING,
+        `the ratio grew from ${small.toFixed(1)}x to ${large.toFixed(1)}x with the line`,
+    );
+});
+
 console.log(`\n${passed} passed`);
