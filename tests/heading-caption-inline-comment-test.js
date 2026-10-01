@@ -215,6 +215,32 @@ for (const [name, tokenize] of surfaces) {
     });
 }
 
+console.log('\na SIGIL-prefixed span closes on a whole run too:');
+
+// The `!` and `$` rules had the same missing guard as the plain code rules, and
+// in a block it reached further: the literal closed on part of a longer run, the
+// leftover backtick opened an unpartnered span, and the trailing comment scoped
+// as code. Every sigil, so a later guard cannot be added to one and forgotten on
+// the others.
+for (const [name, tokenize] of surfaces) {
+    for (const sigil of ['!', '$', '$$']) {
+        ok(`${name} keeps a trailing comment outside a ${sigil} span in a heading`, () => {
+            const source = `# a ${sigil}\`x\` %% hidden`;
+            const scope = String(scopeOver(tokenize(source), source, '%%') ?? '');
+            assert.ok(/comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
+        });
+    }
+
+    ok(`${name} closes a wide ! span on a WHOLE run of its own width in a heading`, () => {
+        const source = '# a !\`\`x \`\`\` y \`\` %% hidden';
+        const tokens = tokenize(source);
+        const inner = String(scopeOver(tokens, source, 'y') ?? '');
+        assert.ok(/raw|string|literal/.test(inner), `the longer run is span content, got ${JSON.stringify(inner)}`);
+        const comment = String(scopeOver(tokens, source, '%%') ?? '');
+        assert.ok(/comment/.test(comment), `the trailing comment is outside the span, got ${JSON.stringify(comment)}`);
+    });
+}
+
 console.log('\na LONGER run inside a span is content, not its closer:');
 
 // The TextMate `code_inline_multi` rule closed a two-backtick span on the first
