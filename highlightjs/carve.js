@@ -1837,10 +1837,63 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT];
-    const quotedLineBlock = '(?=[\\x5c`$!%])(?<=^[ \\t]*(?:> )+(?:#{1,6} |\\^ )[^\\n]*)';
+    /*
+     * THE LINE TEST RUNS AFTER THE CANDIDATE, NEVER AS A LEADING LOOKBEHIND
+     * (carve-grammars#604). Spelled `(?<=^[ \t]*(?:> )+(?:#{1,6} |\^ )[^\n]*)`
+     * ahead of the rule, the test is a VARIABLE-LENGTH lookbehind: it walks back
+     * to the line start from every sentinel position, and the walk is at its
+     * most expensive exactly where it must FAIL - ordinary quoted prose carrying
+     * inline code. A 32 KB `> a ` line of backtick runs cost 2485 ms against
+     * 21 ms unprefixed, four times per doubling. The quoted-block rules below
+     * are reached once per CANDIDATE instead, and a sticky prefix test reads
+     * only the marker run rather than the span between it and the match. Same
+     * move as the table row's in #582 and the one-line blocks' in #603.
+     */
+    const QUOTED_LINE_BLOCK_PREFIX = /[ \t]*(?:> )+(?:#{1,6} |\^ )/y;
+    /*
+     * The line start is the last cost that still grew with the line: a plain
+     * `lastIndexOf('\n')` per candidate walks back over the whole line, which
+     * held the 32 KB row at 64 ms against 12 ms unprefixed and still doubled
+     * four times per doubling. So the line a candidate sits on is remembered,
+     * BOTH ENDS OF IT: caching only the start leaves `indexOf('\n')` rescanning
+     * the rest of the line on every candidate, which is the same quadratic
+     * wearing a different hat and cost 10.4 s on a 2 MB line. A candidate
+     * inside the cached line answers without reading the document at all, and
+     * one outside it pays a single backward walk to seed the next line.
+     */
+    let quotedLineSeen = { input: null, lineStart: 0, lineEnd: -1 };
+    const quotedLineStart = (input, index) => {
+        const stale = quotedLineSeen.input !== input
+            || index < quotedLineSeen.lineStart
+            || (quotedLineSeen.lineEnd !== -1 && index > quotedLineSeen.lineEnd);
+        if (stale) {
+            const lineStart = input.lastIndexOf('\n', index - 1) + 1;
+            quotedLineSeen = { input, lineStart, lineEnd: input.indexOf('\n', lineStart) };
+        }
+
+        return quotedLineSeen.lineStart;
+    };
+    const onQuotedLineBlock = (mode) => (match, response) => {
+        const lineStart = quotedLineStart(match.input, match.index);
+        QUOTED_LINE_BLOCK_PREFIX.lastIndex = lineStart;
+        // The marker must END at or before the candidate: `> # a` opens the
+        // block, `> a # b` does not, and `> # ` itself is the marker rather than
+        // content the rules may claim.
+        if (!QUOTED_LINE_BLOCK_PREFIX.test(match.input)
+            || QUOTED_LINE_BLOCK_PREFIX.lastIndex > match.index) {
+            response.ignoreMatch();
+
+            return;
+        }
+        if (mode['on:begin']) mode['on:begin'](match, response);
+    };
     BLOCKQUOTE.contains.push(...[ESCAPE, ...ONE_LINE_VERBATIM].map((mode) => ({
-        ...mode, begin: RegExp(quotedLineBlock + mode.begin.source),
-    })), { ...LINE_COMMENT, begin: RegExp(quotedLineBlock + '(?<=[ \\t])%%') });
+        ...mode, 'on:begin': onQuotedLineBlock(mode),
+    })), {
+        ...LINE_COMMENT,
+        begin: /(?<=[ \t])%%/,
+        'on:begin': onQuotedLineBlock(LINE_COMMENT),
+    });
 
 
     const substitutionContent = (boundary, openCode) => [
