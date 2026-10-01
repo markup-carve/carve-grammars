@@ -1837,6 +1837,11 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT];
+    const quotedLineBlock = '(?=[\\x5c`$!%])(?<=^[ \\t]*(?:> )+(?:#{1,6} |\\^ )[^\\n]*)';
+    BLOCKQUOTE.contains.push(...[ESCAPE, ...ONE_LINE_VERBATIM].map((mode) => ({
+        ...mode, begin: RegExp(quotedLineBlock + mode.begin.source),
+    })), { ...LINE_COMMENT, begin: RegExp(quotedLineBlock + '(?<=[ \\t])%%') });
+
 
     const substitutionContent = (boundary, openCode) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,

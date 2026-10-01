@@ -594,7 +594,12 @@
           "name": "punctuation.definition.quote.carve"
         },
         "2": {
-          "name": "markup.quote.carve"
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "include": "#quoted_line_inline"
+            }
+          ]
         }
       },
       "name": "markup.quote.carve",
@@ -607,7 +612,12 @@
           "name": "punctuation.definition.quote.carve"
         },
         "2": {
-          "name": "markup.quote.carve"
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "include": "#quoted_line_inline"
+            }
+          ]
         }
       },
       "name": "markup.quote.carve",
@@ -2963,6 +2973,21 @@
         }
       ],
       "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138)."
+    },
+    "quoted_line_inline": {
+      "patterns": [
+        {
+          "include": "#escape"
+        },
+        {
+          "begin": "(?:\\$\\$?|!)?(`+)(?!`)",
+          "end": "(?<!`)\\1(?!`)|(?=$)",
+          "name": "markup.raw.inline.carve"
+        },
+        {
+          "include": "#trailing_comment"
+        }
+      ]
     }
   }
 }
