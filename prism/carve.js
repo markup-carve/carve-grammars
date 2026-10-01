@@ -2128,25 +2128,68 @@
      * Added here rather than at the object literal, because
      * `Prism.languages.carve.code` does not exist yet while that is built.
      */
+    /*
+     * A VERBATIM RULE IN A ONE-LINE BLOCK: ESCAPE-GUARDED, AND BOUND TO THE LINE
+     * (carve-grammars#602).
+     *
+     * #600 put `escape` AHEAD of these rules so a backslashed backtick could not
+     * open a span. That reading is right and the ordering was not: `escape`
+     * tokenizes every \\ on the line, which splits it into hundreds of
+     * fragments, and the greedy verbatim rules then retry from each one. A
+     * heading carrying 800 units took 733 ms against 11 ms for the same text as a
+     * paragraph, and `npm run perf:sweep` stopped finishing.
+     *
+     * The document level has no such problem because its `code` runs long before
+     * its `escape`. So these entries carry the guard themselves - `notEscaped` is
+     * the odd-backslash test the unpartnered entries already use - and the set
+     * goes back to the document's order, with `escape` after it.
+     *
+     * The tail is cut to one line in the same pass. `unpartneredTail` runs a span
+     * to the end of its PARAGRAPH, and a heading or caption ENDS with its line,
+     * so there is nothing for it to continue into. highlight.js and the TextMate
+     * grammar were given that bound in #600; Prism was not, because its tail is
+     * already bounded and looked cheap.
+     */
+    var lineOnlyTail = '[^\\n]{0,4096}';
+    function blockVerbatim(token) {
+        const bind = (entry) => {
+            if (!(entry.pattern instanceof RegExp)) return entry;
+            let source = entry.pattern.source;
+            if (source.includes(unpartneredTail)) {
+                source = source.replace(unpartneredTail, lineOnlyTail);
+            }
+            if (!source.includes(notEscaped)) source = notEscaped + source;
+            if (source === entry.pattern.source) return entry;
+
+            return Object.assign({}, entry, {
+                pattern: RegExp(source, entry.pattern.flags),
+            });
+        };
+
+        return Array.isArray(token) ? token.map(bind) : bind(token);
+    }
+
     for (const block of ['title', 'caption']) {
         const own = Prism.languages.carve[block].inside;
         /*
          * ORDER CARRIES THREE DECISIONS. `comment` leads, so a comment body is
          * never read as emphasis and its `^`-anchored walk starts at the marker -
          * a rule consuming the `#` first costs `# %% h` the scope it earned in
-         * carve-grammars#578. `escape` is next, since a backslashed backtick
-         * opens no span. The sigil forms precede `code`, which would otherwise
-         * take the run and leave the `$` or `!` behind. All of it precedes the
-         * shared `inline` set, which would reach the `*` in a verbatim payload.
+         * carve-grammars#578. The sigil forms precede `code`, which would
+         * otherwise take the run and leave the `$` or `!` behind. `escape` comes
+         * AFTER them, as at document level, and the reason is on `blockVerbatim`.
+         * All of it precedes the shared `inline` set, which would reach the `*`
+         * in a verbatim payload.
          */
         Prism.languages.carve[block].inside = Object.assign(
             own['comment'] ? { 'comment': own['comment'] } : {},
             { 'punctuation': own['punctuation'] },
-            ['escape', 'math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
-                set[name] = Prism.languages.carve[name];
+            ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+                set[name] = blockVerbatim(Prism.languages.carve[name]);
 
                 return set;
             }, {}),
+            { 'escape': Prism.languages.carve['escape'] },
             own
         );
     }

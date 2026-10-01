@@ -335,10 +335,18 @@ const lineBaits = [
     ['heading, paired runs then %%', (n) => `# ${'\`x\` '.repeat(Math.ceil(n / 4))}%% h\n`],
     ['heading, unpaired runs then %%', (n) => `# ${'\`x\` '.repeat(Math.ceil(n / 4))}\` %% h\n`],
     ['heading, wide runs then %%', (n) => `# ${'\`\`x\`\` '.repeat(Math.ceil(n / 6))}%% h\n`],
-    ['heading, escapes then %%', (n) => `# ${'\\\\\` '.repeat(Math.ceil(n / 3))}%% h\n`],
+    ['heading, escaped backticks then %%', (n) => `# ${'\\\` '.repeat(Math.ceil(n / 3))}%% h\n`],
+    // TWO backslashes, which is an escaped BACKSLASH and then a LIVE span
+    // opener - hundreds of them on one line. The row was in this file by
+    // accident, as a mis-escaped spelling of the row above, and it is the row
+    // that found carve-grammars#602: a heading's verbatim rules retried from
+    // every fragment `escape` had split the line into. Kept deliberately now.
+    ['heading, live openers then %%', (n) => `# ${'\\\\\` '.repeat(Math.ceil(n / 4))}%% h\n`],
     ['heading, one open run', (n) => `# a \`${'x'.repeat(n)}\n`],
 ];
 
+// A single pass costing more than this backs the row off to a smaller size.
+const IN_LINE_CEILING = 250;
 console.log('\nin-line shapes (cost inside ONE line, not per line or per position)');
 console.log(`shape                          bytes  prism      ratio    hljs       ratio`);
 for (const [label, gen] of lineBaits) {
@@ -347,13 +355,27 @@ for (const [label, gen] of lineBaits) {
     // the failure mode `bracedOpeners` exists to stop elsewhere in this file.
     const small = gen(16000);
     const large = gen(32000);
+    // STEP UP TO THE FULL SIZE, and stop at the first rung that costs more than
+    // `IN_LINE_CEILING`. `measurePair` takes 16 samples, so a row that is seconds
+    // at 32 KB turns into minutes and the script simply never reaches the rows
+    // after it - which is what the heading rows did on arrival
+    // (carve-grammars#602). A row that stops early still PRINTS, with the size it
+    // reached, so a reader sees an expensive row rather than a missing one.
+    let reached = 32000;
+    for (const probe of [2000, 8000, 32000]) {
+        reached = probe;
+        const one = time(() => Prism.tokenize(gen(probe), Prism.languages.carve))
+            + time(() => hljs.highlight(gen(probe), { language: 'carve' }));
+        if (one > IN_LINE_CEILING) break;
+    }
+    const sized = reached === 32000 ? [small, large] : [gen(Math.ceil(reached / 2)), gen(reached)];
     const prism = measurePair(
-        () => Prism.tokenize(small, Prism.languages.carve),
-        () => Prism.tokenize(large, Prism.languages.carve),
+        () => Prism.tokenize(sized[0], Prism.languages.carve),
+        () => Prism.tokenize(sized[1], Prism.languages.carve),
     );
     const hl = measurePair(
-        () => hljs.highlight(small, { language: 'carve' }),
-        () => hljs.highlight(large, { language: 'carve' }),
+        () => hljs.highlight(sized[0], { language: 'carve' }),
+        () => hljs.highlight(sized[1], { language: 'carve' }),
     );
     const prismRatio = prism[1] / Math.max(prism[0], 0.01);
     const hlRatio = hl[1] / Math.max(hl[0], 0.01);
@@ -361,7 +383,7 @@ for (const [label, gen] of lineBaits) {
         ? '  <-- SUPERLINEAR' : '';
     if (flag) suspects++;
     console.log(
-        `${label.padEnd(26)} ${String(large.length).padStart(8)}  ${prism[1].toFixed(1).padStart(9)}  ${prismRatio.toFixed(2).padStart(5)}`
+        `${label.padEnd(26)} ${String(sized[1].length).padStart(8)}  ${prism[1].toFixed(1).padStart(9)}  ${prismRatio.toFixed(2).padStart(5)}`
         + `  ${hl[1].toFixed(1).padStart(9)}  ${hlRatio.toFixed(2).padStart(5)}${flag}`,
     );
 }
