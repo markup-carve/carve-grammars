@@ -1,0 +1,62 @@
+[
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "outer"
+  },
+  {
+    "type": "text",
+    "text": "\n::: widget Custom Title\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Heading"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "first\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "second\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "text",
+    "text": "\nAfter.\n"
+  }
+]

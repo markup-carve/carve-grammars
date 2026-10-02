@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "keyword",
+    "text": ":::: outer"
+  },
+  {
+    "scope": null,
+    "text": "\n::: widget Custom Title\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Heading"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " first\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " second\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::::"
+  },
+  {
+    "scope": null,
+    "text": "\nAfter.\n"
+  }
+]

@@ -777,6 +777,29 @@ const TIPTAP_COVERED = [
     'a-braced-span-cannot-close-beyond-its-bracket-run',
     'quoted-values-and-titles-retain-a-non-punctuation-backslash',
     'a-marker-line-opaque-quote-keeps-overindented-markers-literal',
+
+    /*
+     * Spec corpus 536-537, the two categories the bump to carve `1acc54c`
+     * added. Each was measured on its own, file by file: parse -> PM with
+     * `unsupported: 'preserve'` -> serialize -> reparse. All three documents
+     * convert to rich nodes (`paragraph`; `carveDiv`; two `paragraph`s), none
+     * produces the whole-document `carveUnsupported` atom, none rides the
+     * source envelope, and each reparses to the same AST - so both are
+     * covered rather than fallback.
+     */
+    // A link and an image whose destinations are denied schemes. The render
+    // loss is the renderer's decision; the parse keeps the inline nodes, and
+    // the serializer re-emits both destinations verbatim. 1 file.
+    'a-denied-destination-takes-one-render-loss-row-per-sink',
+    // An opener whose metadata is invalid (a bare title, an unclosed quoted
+    // title, an unclosed label). Under the pinned engine the recovery clause
+    // of carve#2693 is not implemented yet, so the bare-title file reads as a
+    // `carveDiv` holding its inner opener as text and the unclosed-metadata
+    // file as two paragraphs. Both projections are rich and idempotent either
+    // way, because the serializer re-emits the opener line byte for byte -
+    // which is what keeps this classification valid across the engine bump
+    // the spec declares pending in `resources/engine-pin-drift.txt`. 2 files.
+    'invalid-named-container-metadata-keeps-the-subtree',
 ];
 
 // Categories that historically required the whole-document fallback. Their

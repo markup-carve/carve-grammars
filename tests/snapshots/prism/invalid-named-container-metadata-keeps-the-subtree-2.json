@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "::: note \"Unclosed\nBody one.\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag",
+    "text": "\n\n::: widget [Unclosed\nBody two.\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
