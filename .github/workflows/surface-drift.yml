@@ -31,9 +31,13 @@ on:
     - cron: "0 5 * * *"
   workflow_dispatch:
 
+# Every job declares timeout-minutes so a hung step fails in minutes
+# rather than inheriting the 360-minute GitHub default.
+
 jobs:
   surface-pins:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       # Every surface is reported, even when an earlier one refuses: a job that
       # stops at the first stale row hides the rest of the ledger.
