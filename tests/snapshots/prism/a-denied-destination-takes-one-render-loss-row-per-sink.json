@@ -1,0 +1,50 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "report me"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "javascript:one"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "report me too"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "vbscript:two"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

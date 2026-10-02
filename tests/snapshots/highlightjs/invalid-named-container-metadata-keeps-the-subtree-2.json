@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "::: note \"Unclosed\nBody one.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n::: widget [Unclosed\nBody two.\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
