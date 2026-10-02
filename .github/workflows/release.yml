@@ -14,10 +14,14 @@ on:
 # It also means the gates run the moment the tag lands, ahead of the `release`
 # environment's approval, so whoever approves the publish is looking at a gate
 # result instead of at nothing.
+# Every job declares timeout-minutes so a hung step fails in minutes
+# rather than inheriting the 360-minute GitHub default.
+
 jobs:
   guard:
     name: The tag, the manifests and the changelog agree
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -71,6 +75,7 @@ jobs:
   release-notes:
     name: A release draft for this tag exists and describes every merge
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       # `write`, not `read`: a DRAFT release is invisible to a caller without
       # push access, so under `contents: read` the listing comes back empty and
@@ -118,6 +123,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: [guard, release-notes]
     # Inert until a `release` environment with a required reviewer exists
     # (markup-carve/carve#2032).
