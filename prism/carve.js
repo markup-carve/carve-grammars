@@ -809,8 +809,8 @@
     var containerPattern = function (opener) {
         return RegExp(
             '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
-            + '(?!\\n[^ \\t\\n])(?:\\n' + blankOrIndentedLine + '*?[ \\t]+\\2[ \\t]*$)?'
-            + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^[ \\t]*\\3[ \\t]*$)?',
+            + '(?!\\n[^ \\t\\n])(?:\\n' + blankOrIndentedLine + '*?[ \\t]+\\2[ \\t]*$(?![^\\r\\n]))?'
+            + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^(?<![^\\r\\n])[ \\t]*\\3[ \\t]*$(?![^\\r\\n]))?',
             'm',
         );
     };
@@ -1032,7 +1032,7 @@
                 // the run - so the tab form is untouched.
                 pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
-                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
                     + '.*$',
                     'm',
                 )),
@@ -1057,8 +1057,8 @@
                  * `> # a` behind the same marker opens a block.
                  */
                 pattern: outsideContainerMetadata(RegExp(
-                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
+                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
                 )),

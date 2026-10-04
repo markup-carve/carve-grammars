@@ -95,6 +95,22 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             assert.ok(scopesAt(tokens, source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode content retains comments');
         }
     }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `::: note\nBody${separator}:::\nMore.\n:::\nOutside.\n`;
+            const tokens = tokenize(source);
+            assert.ok(scopesAt(tokens, source, 'More.').every(scope => /div/.test(scope)), 'prism: Unicode separators do not close a container');
+            assert.ok(scopesAt(tokens, source, 'Outside.').every(scope => !/div/.test(scope)), 'prism: logical closer still closes');
+        }
+    }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            for (const line of [`  Body${separator}  :::`, `  :::${separator}content`]) {
+                const source = `- ::: note\n${line}\n  More.\n  :::\n`;
+                assert.ok(scopesAt(tokenize(source), source, 'More.').every(scope => /div/.test(scope)), 'prism: marker-line container keeps Unicode content in its body');
+            }
+        }
+    }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
     const files = readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file));
     assert.ok(files.length >= 6, 'recovery corpus cases must be present');
