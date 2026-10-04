@@ -2822,6 +2822,177 @@
       },
       "name": "markup.quote.carve"
     },
+    "figure_group_on_marker_line": {
+      "comment": "A COMPOSITE FIGURE MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- ::: figure`), the same way `#admonition_on_marker_line` lets the generic container do: carve-js renders the group inside the `<li>`. Identical to `#figure_group` except for the \\G anchor, which `#block_comment_on_marker_line` explains, and the end, which is `#admonition_on_marker_line`'s; reachable ONLY from `#container_blocks`, and listed before `#admonition_on_marker_line` for the reason `#figure_group` precedes `#admonition`.",
+      "begin": "\\G(?<=[ \\t])(:{3,}) +(figure)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.figure-group.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.figure-group.carve"
+        }
+      },
+      "end": "^[ \\t]+\\1[ \\t]*$|^(?=[^ \\t\\n])",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.figure-group.carve"
+        }
+      },
+      "name": "meta.figure-group.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
+    "admonition_on_marker_line": {
+      "comment": "A `:::` CONTAINER MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- ::: note`, `1. ::: note`, `- [ ] ::: note`), and the spec nests it inside the item (corpus 116-fence-opener-with-a-nested-list-body-inside-a-list-item-2). `#admonition` cannot reach that shape: its begin is anchored on ^, and the item's begin match has already consumed the marker. So the opener went unscoped and its indented closer was then read as a NEW opener, leaving `meta.admonition.carve` open to the end of the document. Anchored on \\G with the `(?<=[ \\t])` guard, for the reasons `#block_comment_on_marker_line` gives. The body is `#admonition`'s. The end has `#block_comment_on_marker_line`'s two branches: an INDENTED closer, and a zero-width stop at a column-0 line, which ends the item and with it an unclosed container (corpus 362, 364, 365). KNOWN LIMIT: the engine demotes the opener to item text when the very next line is lazy or below the item's content column (corpus 161, 364-2, the 482 family); that needs the next line, which a line-based grammar cannot see, so those openers over-colour.",
+      "begin": "\\G(?<=[ \\t])(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "3": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.admonition.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "6": {
+          "name": "constant.other.label.admonition.carve"
+        }
+      },
+      "end": "^[ \\t]+\\1[ \\t]*$|^(?=[^ \\t\\n])",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#figure_group"
+        },
+        {
+          "include": "#admonition"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
     "block_comment_on_marker_line": {
       "comment": "A COMMENT FENCE MAY OPEN ON A LIST ITEM'S MARKER LINE (`- %%%`), and then its body is hidden exactly as it is anywhere else: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits, so the whole run from opener to closer is one comment and nothing after it is affected (corpus 337-a-comment-fence-opened-on-an-item-s-marker-line-hides-its-body-too, carve-grammars#243). `#block_comment` cannot reach that shape: its begin is anchored on ^, and the container's own begin match has already consumed `- ` by the time this line is scanned. So the `%%%` fell through to `#trailing_comment` and scoped as a LINE comment, no block opened, the hidden body came back as live syntax, and the real closer was then taken for an opener. Anchored on \\G rather than ^: \\G matches at the current scan position, which on a marker line is exactly where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\t])` guard is what keeps it to a marker line specifically: a later match on the same line moves the \\G anchor too, and a percent run glued to the end of one (`- /a/%%%`) is not a fence. The end has TWO branches. The first is the ordinary closer, INDENTED because it sits at the item's content column. The second is a zero-width container boundary: a column-0 line ends the item and with it the open fence, so corpus 326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-6 (`- %%%` / `c` / `%%%` / `tail`) keeps `c` and `tail` VISIBLE. Without it an unclosed opener would run to end of document.",
       "begin": "\\G(?<=[ \\t])(%{3,})(?!%)[^\\n]*$",
@@ -2839,6 +3010,12 @@
         },
         {
           "include": "#blockquote_on_marker_line"
+        },
+        {
+          "include": "#figure_group_on_marker_line"
+        },
+        {
+          "include": "#admonition_on_marker_line"
         },
         {
           "include": "#fenced_code_in_container"

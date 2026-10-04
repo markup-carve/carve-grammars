@@ -1360,6 +1360,81 @@
         'on:end': popFence('_groupDivFences'),
     };
 
+    // A `:::` container may open on a LIST ITEM'S OWN MARKER LINE (`- ::: note`,
+    // `1. ::: note`), which the spec nests inside the item (corpus
+    // 116-fence-opener-with-a-nested-list-body-inside-a-list-item-2). The marker
+    // stays in a lookbehind, as for the quote above, so the list modes keep
+    // scoping it. Without these modes the opener was prose and its indented
+    // closer opened a container of its own.
+    //
+    // Two things differ from the line-start modes. The container ENDS WITH ITS
+    // ITEM: a column-0 line closes both, so the end is that boundary and the
+    // INDENTED closer is a contained mode that ends its parent. And the opener
+    // FOLDS INTO THE ITEM AS TEXT when the very next line is nonblank and below
+    // the item's content column (corpus 161, 364-2 and the 482 family): the
+    // content column is where the fence starts, except after a task box, which
+    // puts it two past the bullet.
+    const columns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
+    const foldsIntoItem = (m) => {
+        const input = m.input;
+        const lineStart = input.lastIndexOf('\n', m.index - 1) + 1;
+        const prefix = input.slice(lineStart, m.index).replace(/^\uFEFF/, '');
+        const task = /[-*] +\[[ xX\-_>?]\] +$/.exec(prefix);
+        const contentColumn = task ? columns(prefix.slice(0, task.index)) + 2 : columns(prefix);
+        const lineEnd = input.indexOf('\n', m.index);
+        if (lineEnd === -1) return false;
+        const nextEnd = input.indexOf('\n', lineEnd + 1);
+        const next = input.slice(lineEnd + 1, nextEnd === -1 ? undefined : nextEnd);
+        if (/^[ \t]*$/.test(next)) return false;
+        return columns(/^[ \t]*/.exec(next)[0]) < contentColumn;
+    };
+    // The container and its closer share one `data` object: highlight.js gives
+    // each mode its own, and the closer has to see the opener's width. The
+    // stack restarts with each document, since a container still open at the
+    // end of one never reaches the `end` that pops it.
+    const fencesOf = (data, m) => {
+        if (data.input !== m.input || m.index < data.at) data.stack = [];
+        data.input = m.input;
+        data.at = m.index;
+        return data.stack;
+    };
+    const markerLineContainer = (scope, opener) => {
+        const data = {};
+        const closer = {
+            scope,
+            data,
+            begin: /^[ \t]+(:{3,})[ \t]*$/,
+            'on:begin': (m, resp) => {
+                const open = fencesOf(data, m);
+                if (m[1].length !== open[open.length - 1]) resp.ignoreMatch();
+                else open.pop();
+            },
+            endsParent: true,
+        };
+        const container = {
+            beginScope: scope,
+            data,
+            begin: RegExp('(?=:)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(:{3,})' + opener),
+            'on:begin': (m, resp) => {
+                if (foldsIntoItem(m)) resp.ignoreMatch();
+                else fencesOf(data, m).push(m[1].length);
+            },
+            end: /(?=\n[^ \t\n])/,
+            'on:end': (m) => {
+                fencesOf(data, m).pop();
+            },
+            relevance: 10,
+        };
+        return [container, closer];
+    };
+    const [FIGURE_GROUP_ON_MARKER_LINE, FIGURE_GROUP_MARKER_LINE_CLOSER] = markerLineContainer('section', ' +figure[ \\t]*$');
+    const DIV_ON_MARKER_LINE_OPENER =
+        '(?: +(?:\\||\\\\|>)| +[a-zA-Z_][\\w-]*(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?| *\\[[^\\]\\n]*\\])?[ \\t]*$';
+    const [DIV_ON_MARKER_LINE, DIV_MARKER_LINE_CLOSER] = markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
+    // Inside a group, like DIV_BLOCK_IN_GROUP: its body must not offer a group.
+    const [DIV_ON_MARKER_LINE_IN_GROUP, DIV_IN_GROUP_MARKER_LINE_CLOSER] =
+        markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
+
     // Carve comments: `%%` to end of line, a `%%%` fenced block, and the
     // CriticMarkup comment `{# ... #}`.
     //
@@ -1982,6 +2057,8 @@
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,
+        FIGURE_GROUP_ON_MARKER_LINE,  // Must be before DIV_ON_MARKER_LINE, as above
+        DIV_ON_MARKER_LINE,
         HORIZONTAL_RULE,
         TABLE_SEPARATOR,
         TABLE_CONTINUATION,
@@ -2090,10 +2167,19 @@
     // indented-block-openers note in the module docblock); tree-sitter-carve is
     // where a real container model lives.
     const IN_GROUP = CONTAINS
-        .filter((mode) => mode !== ABBREVIATION_DEF && mode !== FIGURE_GROUP_BLOCK)
-        .map((mode) => (mode === DIV_BLOCK ? DIV_BLOCK_IN_GROUP : mode));
+        .filter((mode) => mode !== ABBREVIATION_DEF && mode !== FIGURE_GROUP_BLOCK && mode !== FIGURE_GROUP_ON_MARKER_LINE)
+        .map((mode) => {
+            if (mode === DIV_BLOCK) return DIV_BLOCK_IN_GROUP;
+            if (mode === DIV_ON_MARKER_LINE) return DIV_ON_MARKER_LINE_IN_GROUP;
+            return mode;
+        });
     FIGURE_GROUP_BLOCK.contains = IN_GROUP;
     DIV_BLOCK_IN_GROUP.contains = [...IN_GROUP.filter((mode) => mode !== DIV_BLOCK_IN_GROUP), 'self'];
+
+    // A marker-line container's body is the line-start one's, led by its closer.
+    DIV_ON_MARKER_LINE.contains = [DIV_MARKER_LINE_CLOSER, ...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)];
+    FIGURE_GROUP_ON_MARKER_LINE.contains = [FIGURE_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
+    DIV_ON_MARKER_LINE_IN_GROUP.contains = [DIV_IN_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
 
     return {
         // `crv` is the canonical file extension, and every surface this package

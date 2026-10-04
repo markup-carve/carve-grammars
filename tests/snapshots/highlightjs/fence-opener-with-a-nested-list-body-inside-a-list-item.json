@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " ::: note\n"
+    "text": " "
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "bullet",
