@@ -1226,6 +1226,7 @@
             pattern: containerPattern(' +figure[ \\t]*$(?![^\\r\\n])'),
             lookbehind: true,
 
+
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -1284,6 +1285,7 @@
             ),
             lookbehind: true,
 
+
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
@@ -1302,7 +1304,7 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?![^\n])/m,
+                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?![^\r\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
                             'string': /"[^"\n]*"/,

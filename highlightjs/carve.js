@@ -1261,7 +1261,7 @@
     // suppressed.
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])?[ \t]*$(?![^\n])/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])?[ \t]*$(?![^\r\n])/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -1321,7 +1321,7 @@
 
     const FIGURE_GROUP_BLOCK = {
         beginScope: 'section',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?![^\n])/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?![^\r\n])/,
         'on:begin': pushFence('_groupFences'),
         endScope: 'section',
         end: /^[ \t]*(:{3,})[ \t]*$/,
@@ -1354,7 +1354,7 @@
     // trades away.
     const DIV_BLOCK_IN_GROUP = {
         ...DIV_BLOCK,
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\n])/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\r\n])/,
         'on:begin': pushFence('_groupDivFences'),
         'on:end': popFence('_groupDivFences'),
     };

@@ -57,6 +57,14 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             }
         }
     }
+    if (name === 'prism' || name === 'highlightjs') {
+        for (const kind of ['note', 'figure']) {
+            const source = `::: ${kind}\r\nBody.\r\n:::\r\n`;
+            const tokens = tokenize(source);
+            assert.equal(tokens.map(t => t.text).join(''), source);
+            assert.ok(scopesAt(tokens, source, kind).every(scope => /div-delimiter|figure-group|keyword|section/.test(scope)), `${name}: CRLF opener`);
+        }
+    }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
     const files = readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file));
     assert.ok(files.length >= 6, 'recovery corpus cases must be present');
