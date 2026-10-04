@@ -1,7 +1,19 @@
 [
   {
-    "type": "text",
-    "text": "::: note [a\t"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "text": " [a\t"
   },
   {
     "type": "comment",

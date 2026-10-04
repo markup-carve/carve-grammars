@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": "\n::: widget Custom Title\n"
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: widget Custom Title"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "section",

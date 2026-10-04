@@ -985,7 +985,7 @@
                 // the run - so the tab form is untouched.
                 pattern: RegExp(
                     commentAfterPrefix
-                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
                     + '.*$',
                     'm',
                 ),
@@ -1010,8 +1010,8 @@
                  * `> # a` behind the same marker opens a block.
                  */
                 pattern: RegExp(
-                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
+                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
                 ),
@@ -1258,10 +1258,8 @@
         },
 
         // Container divs ::: class  /  :::
-        // Strict opener shapes only: type word, optional "title" (straight
-        // quotes), optional [label], the | / \ layout tokens, or a typeless
-        // [label]. Trailing junk makes the line a paragraph, so it must not
-        // highlight as a fence.
+        // A separated kind word opens a container even when its metadata is
+        // invalid (carve#2693). Sigil and typeless forms keep strict syntax.
         //
         // The pattern spans the WHOLE container (opener through its matching
         // closer), not just the opener line (carve-grammars#125): a per-line
@@ -1284,7 +1282,7 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)| +[a-zA-Z_][\\w-]*(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?| *\\[[^\\]\\n]*\\])?[ \\t]*$',
+                '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$',
             ),
             lookbehind: true,
             alias: 'tag',
@@ -1303,15 +1301,29 @@
                 // line start - `::: |` mis-scoped its own `|` layout token
                 // as a table row. Leaving nothing ungrabbed on a delimiter
                 // line closes that gap.
-                'div-delimiter': {
-                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/m,
-                    inside: {
-                        'punctuation': /:{3,}/,
-                        'string': /"[^"\n]*"/,
-                        'symbol': /\[[^\]\n]*\]/,
-                        'class-name': /[a-zA-Z_][\w-]*|\||\\|>/,
+                'div-delimiter': [
+                    {
+                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/m,
+                        inside: {
+                            'punctuation': /:{3,}/,
+                            'string': /"[^"\n]*"/,
+                            'symbol': /\[[^\]\n]*\]/,
+                            'class-name': /[a-zA-Z0-9_][\w-]*|\||\\|>/,
+                        },
                     },
-                },
+                    {
+                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*$/m,
+                        inside: {
+                            'invalid-metadata': {
+                                pattern: /(^\uFEFF?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*)(?=$|[\s\u0085"{\[“”])[^\r\n]+/,
+                                lookbehind: true,
+                                alias: 'error',
+                            },
+                            'punctuation': /:{3,}/,
+                            'class-name': /[a-zA-Z0-9_][\w-]*/,
+                        },
+                    },
+                ],
             },
         },
 

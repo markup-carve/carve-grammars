@@ -1240,9 +1240,8 @@
     // sigil tokens, through its matching closer. `::: >` is the fenced block
     // quote (markup-carve/carve#1718), the third member of that family: like
     // `::: |` it takes no identifier, so it reaches no `::: name` rule and was
-    // scoped as nothing at all before it was listed here. Strict opener shapes only -
-    // unquoted or curly-quoted trailing text is a paragraph, not a fence, and
-    // must not highlight.
+    // scoped as nothing at all before it was listed here. A separated kind
+    // word recovers invalid metadata; sigil and typeless forms stay strict.
     //
     // A real begin/end mode (carve-grammars#125), not two independent
     // single-line modes: a per-line match left the body wide open to the
@@ -1262,7 +1261,7 @@
     // suppressed.
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])?[ \t]*$/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -1355,7 +1354,7 @@
     // trades away.
     const DIV_BLOCK_IN_GROUP = {
         ...DIV_BLOCK,
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$/,
         'on:begin': pushFence('_groupDivFences'),
         'on:end': popFence('_groupDivFences'),
     };

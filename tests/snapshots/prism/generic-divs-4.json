@@ -1,7 +1,19 @@
 [
   {
-    "type": "text",
-    "text": "::: 123\ncontent\n"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "123"
+  },
+  {
+    "type": "div>tag",
+    "text": "\ncontent\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

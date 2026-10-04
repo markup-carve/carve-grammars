@@ -15,12 +15,8 @@
  * `::: <TAB>>` are all paragraph text in every engine, while two spaces open
  * the container. A tab belongs at the START of a line and nowhere else on one.
  *
- * The same run appears before every other colon-fence token, and every one of
- * them accepted a tab (carve-grammars#355): corpus 254 and 255 exist to pin
- * exactly this rule, and all three grammars coloured their documents as
- * containers. Fixed in the same sweep, since it is one character class in one
- * pattern per grammar - the snapshot churn in this change is those documents
- * losing a scope they should never have had.
+ * A tab cannot separate the fence from its kind. After a separated kind,
+ * invalid metadata still opens a container (carve#2693, corpus 255).
  *
  * The one branch that is NOT a space run is the bare `[label]`: `:::[l]` opens
  * a div, measured, so that branch takes ` *` where the rest take ` +`.
@@ -135,9 +131,9 @@ const SEPARATORS = [
     [':::[l]', true],
     [':::\t[l]', false],
     ['::: note "T"', true],
-    ['::: note\t"T"', false],
+    ['::: note\t"T"', true],
     ['::: note "T" [l]', true],
-    ['::: note "T"\t[l]', false],
+    ['::: note "T"\t[l]', true],
 ];
 
 for (const [opener, opens] of SEPARATORS) {
