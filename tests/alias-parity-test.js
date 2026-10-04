@@ -162,7 +162,7 @@ ok('shiki: the documented extras are listed', () => {
 });
 
 let shiki = null;
-try { shiki = await import('shiki'); } catch { /* not installed */ }
+try { shiki = await import('./lib/shiki.js'); } catch { /* not installed */ }
 if (shiki) {
     await okAsync('shiki: a real highlighter renders under every required fence word', async () => {
         const highlighter = await shiki.createHighlighter({
