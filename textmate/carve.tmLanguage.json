@@ -2857,7 +2857,7 @@
           "include": "#fenced_code"
         },
         {
-          "include": "#heading"
+          "include": "#heading_in_container"
         },
         {
           "include": "#hr"
@@ -2947,7 +2947,7 @@
           "include": "#fenced_code"
         },
         {
-          "include": "#heading"
+          "include": "#heading_in_container"
         },
         {
           "include": "#hr"
@@ -3033,7 +3033,7 @@
           "include": "#fenced_code"
         },
         {
-          "include": "#heading"
+          "include": "#heading_in_container"
         },
         {
           "include": "#hr"
@@ -3129,7 +3129,7 @@
           "include": "#fenced_code"
         },
         {
-          "include": "#heading"
+          "include": "#heading_in_container"
         },
         {
           "include": "#hr"

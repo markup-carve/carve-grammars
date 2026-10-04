@@ -228,8 +228,58 @@
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
         + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
-    // A named container owns its whole opener tail, including percent runs.
-    var namedContainerComment = '(?<!^\\uFEFF?(?:' + listMarkerBeforeBlock + '(?![^\\n]*\\n[^ \\t\\n])|[ \\t]*):{3,} +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[\\u201C\\u201D])[^\\n]*)';
+    var namedContainerRanges = { source: null, ranges: [] };
+    var namedContainerPrefix = ':{3,} +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[\\u201C\\u201D])';
+    var namedContainerLine = RegExp('^\\uFEFF?[ \\t]*' + namedContainerPrefix);
+    var markerNamedContainerLine = RegExp('^\\uFEFF?' + listMarkerBeforeBlock + namedContainerPrefix);
+
+    function metadataRanges(source) {
+        if (namedContainerRanges.source === source) return namedContainerRanges.ranges;
+        var lines = [];
+        var linePattern = /[^\r\n]*(?:\r\n|\r|\n|$)/g;
+        var match;
+        while ((match = linePattern.exec(source)) && match[0].length) {
+            var text = match[0].replace(/[\r\n]+$/, '');
+            lines.push({ text: text, start: match.index, end: match.index + text.length });
+        }
+        var ranges = [];
+        for (var index = 0; index < lines.length; ++index) {
+            var line = lines[index];
+            var opener = namedContainerLine.exec(line.text);
+            if (!opener) {
+                opener = markerNamedContainerLine.exec(line.text);
+                var next = lines[index + 1];
+                if (opener && next && next.text && !/^[ \t]/.test(next.text)) opener = null;
+            }
+            if (opener) ranges.push({ start: line.start + opener[0].length, end: line.end });
+        }
+        namedContainerRanges = { source: source, ranges: ranges };
+        return ranges;
+    }
+
+    // Cache opener tails in one forward pass. Looking backward to the start
+    // of the line at every comment opener makes long comment runs quadratic.
+    function outsideContainerMetadata(pattern) {
+        var filtered = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        filtered.exec = function (source) {
+            var ranges = metadataRanges(source);
+            var match;
+            while ((match = RegExp.prototype.exec.call(this, source))) {
+                var offset = match.index + (match[1] ? match[1].length : 0);
+                var low = 0;
+                var high = ranges.length;
+                while (low < high) {
+                    var middle = (low + high) >>> 1;
+                    if (ranges[middle].start <= offset) low = middle + 1;
+                    else high = middle;
+                }
+                var range = ranges[low - 1];
+                if (!range || offset > range.end) return match;
+            }
+            return null;
+        };
+        return filtered;
+    }
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
@@ -832,7 +882,7 @@
                 // `\n(?![ \t]*\n)` are disjoint, so each character is still
                 // matched by exactly one branch and an unclosed `{%` still
                 // gives up at the next `%` rather than scanning ahead.
-                pattern: RegExp('\\{%' + namedContainerComment + bracedCommentPattern.source.slice(3)),
+                pattern: outsideContainerMetadata(bracedCommentPattern),
                 greedy: true,
             },
             {
@@ -955,7 +1005,7 @@
                 // except in the metadata tail owned by a named container. Corpus
                 // `326-...-6` (`- %%%` / `c` / `%%%`) pins the opener keeping
                 // its comment scope.
-                pattern: RegExp('([ \\t])%{3,}' + namedContainerComment + '.*$', 'm'),
+                pattern: outsideContainerMetadata(RegExp('([ \\t])%{3,}.*$', 'm')),
                 lookbehind: true,
                 greedy: true,
             },
@@ -979,13 +1029,12 @@
                 // quadratic shape carve-grammars#576 took out of the row rule next
                 // door. Same question either way - a marker, a LITERAL SPACE, then
                 // the run - so the tab form is untouched.
-                pattern: RegExp(
+                pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
-                    + namedContainerComment
                     + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
                     + '.*$',
                     'm',
-                ),
+                )),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1006,13 +1055,12 @@
                  * before the test: `> y` + backtick continues a paragraph, while
                  * `> # a` behind the same marker opens a block.
                  */
-                pattern: RegExp(
+                pattern: outsideContainerMetadata(RegExp(
                     '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + namedContainerComment
                     + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
-                ),
+                )),
                 lookbehind: true,
                 greedy: true,
             },
