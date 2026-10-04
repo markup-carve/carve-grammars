@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { textmateLineTokenizer } from './lib/textmate-lines.js';
 import { textmateTokenizer } from './lib/textmate-engine.js';
@@ -6,6 +7,13 @@ import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 assertThisFileRuns(import.meta.url);
 const path = fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url));
+const grammar = JSON.parse(readFileSync(path, 'utf8'));
+for (const name of ['admonition', 'figure_group']) {
+    const regular = grammar.repository[name];
+    const marker = grammar.repository[`${name}_on_marker_line`];
+    assert.deepEqual(marker.patterns, regular.patterns);
+    assert.deepEqual(marker.beginCaptures, regular.beginCaptures);
+}
 const tokenizers = [await textmateLineTokenizer(path), await textmateTokenizer(path)];
 for (const tokenize of tokenizers) {
     for (const [marker, indent] of [['- ', '  '], ['1. ', '   '], ['- [ ] ', '  '], ['- - ', '    ']]) {
@@ -26,13 +34,15 @@ for (const tokenize of tokenizers) {
         }
     }
     for (const kind of ['note', 'figure']) {
-        const source = `- a\n  - ::: ${kind}\n    body\n  - sibling\n  tail`;
-        const tokens = tokenize(source);
-        assert.equal(tokens.map(t => t.text).join(''), source);
-        for (const text of ['sibling', 'tail']) {
-            const leaves = tokens.filter(t => t.text.includes(text));
-            assert.ok(leaves.length, source);
-            assert.ok(leaves.every(t => !(t.scope ?? '').includes('meta.admonition') && !(t.scope ?? '').includes('meta.figure-group')), source);
+        for (const [marker, indent] of [['- ', '    '], ['- [ ] ', '    '], ['1. ', '     '], ['10. ', '      ']]) {
+            const source = `- a\n  ${marker}::: ${kind}\n${indent}body\n  - sibling\n  tail`;
+            const tokens = tokenize(source);
+            assert.equal(tokens.map(t => t.text).join(''), source);
+            for (const text of ['sibling', 'tail']) {
+                const leaves = tokens.filter(t => t.text.includes(text));
+                assert.ok(leaves.length, source);
+                assert.ok(leaves.every(t => !(t.scope ?? '').includes('meta.admonition') && !(t.scope ?? '').includes('meta.figure-group')), source);
+            }
         }
     }
     const consecutive = tokenize('- ::: note\n  text\n  :::\n\n- ::: figure\n  ![a](b.png)\n  :::\n\nAfter.');

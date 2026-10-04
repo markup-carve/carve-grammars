@@ -869,7 +869,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "task_item": {
-      "comment": "A task item is a bullet whose content happens to start with a checkbox, and ITS CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest. That is measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). A definition two columns under `- [ ] a` is collected exactly as it is under `- a`, which is why the checkbox counts as CONTENT rather than as part of the marker, and why `end` asks for a fixed two columns here while `#list_item` reconstructs the separator width from the marker line. The rule is a container in its own right for the same reason: a one-line match would leave the following lines to the document level, where a definition must be flush-left, and `- [ ] a` would lose the indented definition that `- a` keeps.",
+      "comment": "A task item is a bullet whose content happens to start with a checkbox, and ITS CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest. That is measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). A definition two columns under `- [ ] a` is collected exactly as it is under `- a`, which is why the checkbox counts as CONTENT rather than as part of the marker, and why `while` asks for a fixed two columns here while `#list_item` reconstructs the separator width from the marker line. The rule is a container in its own right for the same reason: a one-line match would leave the following lines to the document level, where a definition must be flush-left, and `- [ ] a` would lose the indented definition that `- a` keeps.",
       "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*]) +(\\[)([ xX\\-_>?])(\\]) +(?![ \\t]*$)",
       "beginCaptures": {
         "2": {
@@ -885,7 +885,7 @@
           "name": "punctuation.definition.checkbox.carve"
         }
       },
-      "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2})",
+      "while": "^(?=[ \\t]*$|\\1[ \\t]{2})",
       "patterns": [
         {
           "include": "#container_blocks"
@@ -3000,7 +3000,7 @@
       "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
     },
     "container_blocks": {
-      "comment": "The block pattern set a container's body reaches, shared by every list-item rule so the three of them cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only. `#link_ref_def_in_container` stands in for `#link_ref_def`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the item's content column. `#block_comment_on_marker_line` leads, and is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
+      "comment": "Block patterns shared by list-item bodies. Frontmatter remains document-start only. The list item's zero-width while condition checks its content column before child rules run. Marker-line variants recognize comment fences, quotes, generic containers, and composite figures at the scan position after a list marker. Indented link-reference definitions use the container variant.",
       "patterns": [
         {
           "include": "#block_comment_on_marker_line"
