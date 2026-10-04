@@ -11,7 +11,11 @@ const grammar = JSON.parse(readFileSync(path, 'utf8'));
 for (const name of ['admonition', 'figure_group']) {
     const regular = grammar.repository[name];
     const marker = grammar.repository[`${name}_on_marker_line`];
-    assert.deepEqual(marker.patterns, regular.patterns.map(pattern => pattern.include === '#heading' ? { include: '#heading_in_container' } : pattern));
+    assert.deepEqual(marker.patterns, regular.patterns.map(pattern => {
+        const include = pattern.include === '#heading' ? '#heading_in_container'
+            : ['#admonition', '#admonition_in_group', '#figure_group'].includes(pattern.include) ? `${pattern.include}_in_list` : pattern.include;
+        return { ...pattern, include };
+    }));
     assert.deepEqual(marker.beginCaptures, regular.beginCaptures);
 }
 const tokenizers = [await textmateLineTokenizer(path), await textmateTokenizer(path)];

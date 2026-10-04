@@ -49,16 +49,17 @@ export async function textmateLineTokenizer(path) {
 
     return (source) => {
         const out = [];
-        const lines = source.split('\n');
+        const parts = source.split(/(\r\n|\r|\n)/);
         let state = INITIAL;
-        lines.forEach((line, index) => {
+        for (let index = 0; index < parts.length; index += 2) {
+            const line = parts[index];
             const result = loaded.tokenizeLine(line, state);
             state = result.ruleStack;
             for (const token of result.tokens) {
                 out.push({ scope: token.scopes.join(' '), text: line.slice(token.startIndex, token.endIndex) });
             }
-            if (index < lines.length - 1) out.push({ scope: '', text: '\n' });
-        });
+            if (index + 1 < parts.length) out.push({ scope: '', text: parts[index + 1] });
+        }
 
         return out;
     };
