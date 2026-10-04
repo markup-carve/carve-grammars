@@ -30,7 +30,7 @@ function scopesAt(tokens, source, text) {
 }
 for (const [name, tokenize, openerScope, invalidScope] of engines) {
     for (const kind of ['note', 'widget', 'figure', '123']) {
-        for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', ' "Valid" %% comment', ' "Valid"\t%% comment', ' [label] %% comment', ' x %%%', '\u2028x', '\u2029x', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
+        for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', ' "Valid" %% comment', ' "Valid"\t%% comment', ' [label] %% comment', ' x %%%', ' {% c %}', ' "Valid" {% c %}', '\u2028x', '\u2029x', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
             const source = `::: ${kind}${tail}\n# Heading\n\n- first\n- second\n:::\n\nAfter.`;
             const tokens = tokenize(source);
             assert.equal(tokens.map(t => t.text).join(''), source, name);
@@ -41,11 +41,11 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             assert.ok(scopesAt(tokens, source, kind).every(scope => !/figure-group/.test(scope)), `${name}: recovered figure is generic`);
         }
     }
-    for (const opener of [':::note', ':::\tnote', '::: \tnote', '::: {.x}', '::: note!junk', "::: note'Title'"]) {
+    for (const opener of [':::note', ':::\tnote', '::: \tnote', '::: {.x}', '::: note!junk', "::: note'Title'", '::: |\u2028x', '::: >\u2029x', ':::[label]\u2028x', ':::\u2028x']) {
         const source = `${opener}\nBody.`;
-        assert.ok(scopesAt(tokenize(source), source, opener).every(scope => !openerScope.test(scope)), `${name}: ${opener}`);
+        assert.ok(scopesAt(tokenize(source), source, opener).every(scope => !/div|admonition|figure-group|keyword/.test(scope)), `${name}: ${opener}`);
     }
-    for (const tail of [' "Valid"', ' [label]', ' "Valid" [label]', ' [a\t%% hidden]']) {
+    for (const tail of [' "Valid"', ' [label]', ' "Valid" [label]', ' [a\t%% hidden]', ' [a {% c %}]']) {
         const source = `::: note${tail}\nBody.\n:::\n`;
         const tokens = tokenize(source);
         if (invalidScope) assert.ok(tokens.every(t => !invalidScope.test(t.scope ?? '')), `${name}: valid metadata`);

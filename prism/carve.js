@@ -831,7 +831,7 @@
                 // `\n(?![ \t]*\n)` are disjoint, so each character is still
                 // matched by exactly one branch and an unclosed `{%` still
                 // gives up at the next `%` rather than scanning ahead.
-                pattern: bracedCommentPattern,
+                pattern: RegExp('\\{%' + namedContainerComment + bracedCommentPattern.source.slice(3)),
                 greedy: true,
             },
             {
@@ -1223,7 +1223,7 @@
         // generic container, which is what the `inside` composed after this
         // object literal arranges (the group's body holds no 'figure-group').
         'figure-group': {
-            pattern: containerPattern(' +figure[ \\t]*$'),
+            pattern: containerPattern(' +figure[ \\t]*$(?![^\\r\\n])'),
             lookbehind: true,
 
             alias: 'tag',
@@ -1280,9 +1280,10 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$',
+                '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
+
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
