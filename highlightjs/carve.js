@@ -1321,7 +1321,7 @@
 
     const FIGURE_GROUP_BLOCK = {
         beginScope: 'section',
-        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$/,
+        begin: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?![^\n])/,
         'on:begin': pushFence('_groupFences'),
         endScope: 'section',
         end: /^[ \t]*(:{3,})[ \t]*$/,

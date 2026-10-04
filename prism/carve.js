@@ -224,6 +224,8 @@
     var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
     var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
     var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
+    // A named container owns its whole opener tail, including percent runs.
+    var namedContainerComment = '(?<!^\\uFEFF?[ \\t]*:{3,} +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[\\u201C\\u201D])[^\\n]*)';
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
@@ -948,12 +950,11 @@
             {
                 // trailing comment after whitespace (Prism lookbehind, no JS
                 // lookbehind: the leading space is captured and excluded).
-                // A trailing `%%%` RUN is untouched by the exclusion below: it
-                // is not a shape any block rule can take, and an unterminated
-                // run degrades to a line comment wherever it sits. Corpus
+                // An unterminated percent run degrades to a line comment,
+                // except in the metadata tail owned by a named container. Corpus
                 // `326-...-6` (`- %%%` / `c` / `%%%`) pins the opener keeping
                 // its comment scope.
-                pattern: /([ \t])%{3,}.*$/m,
+                pattern: RegExp('([ \\t])%{3,}' + namedContainerComment + '.*$', 'm'),
                 lookbehind: true,
                 greedy: true,
             },
@@ -969,15 +970,9 @@
                 // SEPARATORS), so no block rule would claim `#<TAB>%% h` and the
                 // comment has to stay a comment here.
                 //
-                // A COLON-FENCE OPENER is in the list for the opposite reason
-                // (carve-grammars#579). Trailing junk makes such a line a
-                // paragraph, and the 'div' rule already refuses it - but only if
-                // it can SEE the junk. With the comment carved out first the rule
-                // saw a clean `::: note` and painted a container the engine does
-                // not open (oracle: `<p>::: note body :::</p>`). Left in the line,
-                // the comment keeps the opener from matching at all, which is the
-                // reading the ruling asks for. The line then colours as the prose
-                // it is, comment included.
+                // A named container owns its complete metadata tail. Leaving
+                // percent runs in place lets valid labels retain their scope
+                // and marks a rejected title or label as invalid metadata.
                 // THE MARKER EXCLUSION SITS BEHIND THE `%%`. As a leading
                 // lookbehind it would run at every space in the line, the
                 // quadratic shape carve-grammars#576 took out of the row rule next
@@ -985,6 +980,7 @@
                 // the run - so the tab form is untouched.
                 pattern: RegExp(
                     commentAfterPrefix
+                    + namedContainerComment
                     + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
                     + '.*$',
                     'm',
@@ -1011,6 +1007,7 @@
                  */
                 pattern: RegExp(
                     '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + namedContainerComment
                     + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
                     + '.*$',
                     'm',
@@ -1228,6 +1225,7 @@
         'figure-group': {
             pattern: containerPattern(' +figure[ \\t]*$'),
             lookbehind: true,
+
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -1303,7 +1301,7 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/m,
+                        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?![^\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
                             'string': /"[^"\n]*"/,

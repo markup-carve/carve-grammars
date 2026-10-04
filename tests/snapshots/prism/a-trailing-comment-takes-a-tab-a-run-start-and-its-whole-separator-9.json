@@ -12,15 +12,15 @@
     "text": "note"
   },
   {
-    "type": "div>tag>div-delimiter>invalid-metadata>error",
-    "text": " [a\t"
+    "type": "div>tag>div-delimiter",
+    "text": " "
   },
   {
-    "type": "comment",
-    "text": "%% hidden]"
+    "type": "div>tag>div-delimiter>symbol",
+    "text": "[a\t%% hidden]"
   },
   {
-    "type": "text",
+    "type": "div>tag",
     "text": "\nbody\n"
   },
   {

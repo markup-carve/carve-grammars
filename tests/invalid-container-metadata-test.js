@@ -30,7 +30,7 @@ function scopesAt(tokens, source, text) {
 }
 for (const [name, tokenize, openerScope, invalidScope] of engines) {
     for (const kind of ['note', 'widget', 'figure', '123']) {
-        for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
+        for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', ' "Valid" %% comment', ' "Valid"\t%% comment', ' [label] %% comment', ' x %%%', '\u2028x', '\u2029x', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
             const source = `::: ${kind}${tail}\n# Heading\n\n- first\n- second\n:::\n\nAfter.`;
             const tokens = tokenize(source);
             assert.equal(tokens.map(t => t.text).join(''), source, name);
@@ -45,13 +45,22 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
         const source = `${opener}\nBody.`;
         assert.ok(scopesAt(tokenize(source), source, opener).every(scope => !openerScope.test(scope)), `${name}: ${opener}`);
     }
-    for (const tail of [' "Valid"', ' [label]', ' "Valid" [label]']) {
+    for (const tail of [' "Valid"', ' [label]', ' "Valid" [label]', ' [a\t%% hidden]']) {
         const source = `::: note${tail}\nBody.\n:::\n`;
         const tokens = tokenize(source);
         if (invalidScope) assert.ok(tokens.every(t => !invalidScope.test(t.scope ?? '')), `${name}: valid metadata`);
+        if (name !== 'highlightjs') {
+            if (tail.includes('"')) assert.ok(scopesAt(tokens, source, '"Valid"').every(scope => /string/.test(scope)), `${name}: title scope`);
+            if (tail.includes('[')) {
+                const label = tail.slice(tail.indexOf('['));
+                assert.ok(scopesAt(tokens, source, label).every(scope => /symbol|label/.test(scope)), `${name}: label scope`);
+            }
+        }
     }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
-    for (const file of readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file))) {
+    const files = readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file));
+    assert.ok(files.length >= 6, 'recovery corpus cases must be present');
+    for (const file of files) {
         const source = readFileSync(new URL(file, corpus), 'utf8');
         const html = readFileSync(new URL(file.replace(/\.crv$/, '.html'), corpus), 'utf8');
         assert.match(html, /<(aside|div) /);
