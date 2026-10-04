@@ -119,9 +119,11 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
                 const source = `text${separator}${marker} %% comment\n`;
                 assert.ok(scopesAt(tokenize(source), source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode text before a marker retains its comment');
             }
-            const comment = `%% first${separator}second %% third`;
-            const commentSource = `text ${comment}\n`;
-            assert.ok(scopesAt(tokenize(commentSource), commentSource, comment).every(scope => /comment/.test(scope)), 'prism: Unicode separators stay inside a logical-line comment');
+            for (const run of ['%%', '%%%']) {
+                const comment = `${run} first${separator}second %% third`;
+                const commentSource = `text ${comment}\n`;
+                assert.ok(scopesAt(tokenize(commentSource), commentSource, comment).every(scope => /comment/.test(scope)), 'prism: Unicode separators stay inside a logical-line comment');
+            }
         }
     }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
