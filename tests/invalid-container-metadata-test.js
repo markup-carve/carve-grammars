@@ -33,14 +33,14 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
         for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', ' "Valid" %% comment', ' "Valid"\t%% comment', ' [label] %% comment', ' x %%%', ' {% c %}', ' "Valid" {% c %}', '\u2028x', '\u2029x', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
             for (const marker of ['', '- ', '- [x] ', '1. ']) {
                 const indent = marker === '1. ' ? '   ' : marker ? '  ' : '';
-            const source = `${marker}::: ${kind}${tail}\n${indent}# Heading\n\n${indent}- first\n${indent}- second\n${indent}:::\n\nAfter.`;
-            const tokens = tokenize(source);
-            assert.equal(tokens.map(t => t.text).join(''), source, name);
-            assert.ok(scopesAt(tokens, source, kind).every(scope => openerScope.test(scope)), `${name}: ${marker}${kind}${tail}`);
-            if (invalidScope) assert.ok(scopesAt(tokens, source, tail).every(scope => invalidScope.test(scope)), `${name}: invalid metadata ${tail}`);
-            assert.ok(scopesAt(tokens, source, '# Heading').some(scope => (marker && name.startsWith('textmate') ? /admonition/ : /title|heading|section/).test(scope)), `${name}: ${marker}${kind}${tail}: heading`);
-            assert.ok(scopesAt(tokens, source, 'After.').every(scope => !/div|admonition|figure-group|keyword/.test(scope)), `${name}: following paragraph`);
-            assert.ok(scopesAt(tokens, source, kind).every(scope => !/figure-group/.test(scope)), `${name}: recovered figure is generic`);
+                const source = `${marker}::: ${kind}${tail}\n${indent}# Heading\n\n${indent}- first\n${indent}- second\n${indent}:::\n\nAfter.`;
+                const tokens = tokenize(source);
+                assert.equal(tokens.map(t => t.text).join(''), source, name);
+                assert.ok(scopesAt(tokens, source, kind).every(scope => openerScope.test(scope)), `${name}: ${marker}${kind}${tail}`);
+                if (invalidScope) assert.ok(scopesAt(tokens, source, tail).every(scope => invalidScope.test(scope)), `${name}: invalid metadata ${tail}`);
+                assert.ok(scopesAt(tokens, source, '# Heading').some(scope => (marker && name.startsWith('textmate') ? /admonition/ : /title|heading|section/).test(scope)), `${name}: ${marker}${kind}${tail}: heading`);
+                assert.ok(scopesAt(tokens, source, 'After.').every(scope => !/div|admonition|figure-group|keyword/.test(scope)), `${name}: following paragraph`);
+                assert.ok(scopesAt(tokens, source, kind).every(scope => !/figure-group/.test(scope)), `${name}: recovered figure is generic`);
             }
         }
     }
@@ -73,6 +73,57 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             const source = `- ::: note${tail}\nlazy\n`;
             const tokens = tokenize(source);
             assert.ok(scopesAt(tokens, source, 'comment').every(scope => /comment/.test(scope)), `${name}: folded opener comment`);
+        }
+    }
+    if (name === 'prism') {
+        const source = '- ::: note "Valid" %% comment\r\n\r\n  Body.\r\n  :::\r\n';
+        assert.ok(scopesAt(tokenize(source), source, '%% comment').every(scope => /invalid-metadata/.test(scope)), 'prism: blank CRLF line after marker opener');
+    }
+    if (name === 'prism') {
+        const source = `::: note ${'x'.repeat(12000)} {% comment %}\nBody.\n:::\n`;
+        const tokens = tokenize(source);
+        assert.equal(tokens.map(token => token.text).join(''), source);
+        assert.ok(scopesAt(tokens, source, '{% comment %}').every(scope => /invalid-metadata/.test(scope)), 'prism: long metadata retains comments');
+    }
+    if (name === 'prism') {
+        const source = '::: note {% unclosed\nBody {% actual %}\n:::\n';
+        assert.ok(scopesAt(tokenize(source), source, '{% actual %}').every(scope => /comment/.test(scope)), 'prism: rejected multiline metadata comment does not swallow a body comment');
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `text${separator}::: note %% comment\nBody.\n`;
+            const tokens = tokenize(source);
+            assert.ok(scopesAt(tokens, source, 'note').every(scope => !/div-delimiter/.test(scope)), 'prism: Unicode separators do not start a container');
+            assert.ok(scopesAt(tokens, source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode content retains comments');
+        }
+    }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `::: note\nBody${separator}:::\nMore.\n:::\nOutside.\n`;
+            const tokens = tokenize(source);
+            assert.ok(scopesAt(tokens, source, 'More.').every(scope => /div/.test(scope)), 'prism: Unicode separators do not close a container');
+            assert.ok(scopesAt(tokens, source, 'Outside.').every(scope => !/div/.test(scope)), 'prism: logical closer still closes');
+        }
+    }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            for (const line of [`  Body${separator}  :::`, `  :::${separator}content`]) {
+                const source = `- ::: note\n${line}\n  More.\n  :::\n`;
+                assert.ok(scopesAt(tokenize(source), source, 'More.').every(scope => /div/.test(scope)), 'prism: marker-line container keeps Unicode content in its body');
+            }
+        }
+    }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `::: note\nBody\n:::${separator}content\nMore.\n:::\nOutside.\n`;
+            assert.ok(scopesAt(tokenize(source), source, 'More.').every(scope => /div/.test(scope)), 'prism: text after a Unicode-separated closer keeps the container open');
+            for (const marker of ['#', '-']) {
+                const source = `text${separator}${marker} %% comment\n`;
+                assert.ok(scopesAt(tokenize(source), source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode text before a marker retains its comment');
+            }
+            for (const run of ['%%', '%%%']) {
+                const comment = `${run} first${separator}second %% third`;
+                const commentSource = `text ${comment}\n`;
+                assert.ok(scopesAt(tokenize(commentSource), commentSource, comment).every(scope => /comment/.test(scope)), 'prism: Unicode separators stay inside a logical-line comment');
+            }
         }
     }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
