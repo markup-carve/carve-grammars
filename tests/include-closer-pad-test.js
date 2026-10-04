@@ -2,7 +2,7 @@
  * An include directive needs a path and a padded closer on every surface, and
  * the closer is the first `}}` outside a quoted run.
  */
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './lib/shiki.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';

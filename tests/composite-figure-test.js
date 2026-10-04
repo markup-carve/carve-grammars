@@ -32,7 +32,7 @@
  *     document scoped generic. Nothing in either sweep could see it, because
  *     each of their samples holds exactly one container.
  */
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './lib/shiki.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';

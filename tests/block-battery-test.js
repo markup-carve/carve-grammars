@@ -10,7 +10,7 @@ import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createHighlighter } from 'shiki'
+import { createHighlighter } from './lib/shiki.js'
 import { BLOCK_BATTERY, classify } from './lib/block-battery.js'
 
 const require = createRequire(import.meta.url)
