@@ -1,14 +1,26 @@
 [
   {
-    "type": "text",
-    "text": "::: note [a\t"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
-    "type": "comment",
-    "text": "%% hidden]"
+    "type": "div>tag>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol",
+    "text": "[a\t%% hidden]"
+  },
+  {
+    "type": "div>tag",
     "text": "\nbody\n"
   },
   {

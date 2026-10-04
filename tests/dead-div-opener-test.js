@@ -1,16 +1,4 @@
-/**
- * A `:::` opener that a trailing comment kills paints no container
- * (carve-grammars#579).
- *
- * The oracle at carve main renders `::: note %% h` / `body` / `:::` as
- * `<p>::: note body :::</p>`: trailing junk makes the line a paragraph, and an
- * unbracketed `%%` after the kind is junk. prism's own 'div' rule already refuses
- * such a line - it only needs to SEE the junk, which it could not while the
- * comment was carved out of the line first.
- *
- * The orphan closing `:::` keeps its delimiter scope. Knowing it closes nothing
- * means tracking whether a container is open, which no grammar here models.
- */
+/** A kind word survives invalid metadata; a missing kind still opens nothing. */
 import assert from 'node:assert/strict';
 
 import { hljsTokens, prismTokens } from './lib/engines.js';
@@ -23,7 +11,7 @@ function ok(name, fn) {
     console.log(`  ✓ ${name}`);
 }
 
-console.log('a colon-fence opener killed by a trailing comment:');
+console.log('colon-fence recovery after a trailing comment:');
 
 const scopeOfKind = (tokens, source, kind) => {
     const at = source.indexOf(kind);
@@ -37,7 +25,6 @@ const scopeOfKind = (tokens, source, kind) => {
 };
 
 const dead = [
-    ['::: note %% h\nbody\n:::', 'note'],
     ['::: %% h\nbody\n:::', '%%'],
 ];
 
@@ -53,6 +40,14 @@ for (const [source, kind] of dead) {
             );
         });
     }
+}
+
+for (const [name, tokenize] of surfaces) {
+    ok(`${name} keeps a named container with trailing comment metadata`, () => {
+        const source = '::: note %% h\nbody\n:::';
+        const scope = scopeOfKind(tokenize(source), source, 'note') ?? '';
+        assert.match(scope, /div|admonition|keyword/);
+    });
 }
 
 // The live opener must keep everything it had.

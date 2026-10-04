@@ -13,7 +13,27 @@
   },
   {
     "type": "text",
-    "text": "\n::: widget Custom Title\n"
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "widget"
+  },
+  {
+    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "text": " Custom Title"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "title>important>punctuation",
