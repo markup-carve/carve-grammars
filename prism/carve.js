@@ -274,7 +274,8 @@
                     else high = middle;
                 }
                 var range = ranges[low - 1];
-                if (!range || offset > range.end) return match;
+                if (!range || offset >= range.end) return match;
+                this.lastIndex = Math.max(match.index + 1, range.end);
             }
             return null;
         };
@@ -807,9 +808,9 @@
     // measure, so that case over-colours.
     var containerPattern = function (opener) {
         return RegExp(
-            '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
+            '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
             + '(?!\\n[^ \\t\\n])(?:\\n' + blankOrIndentedLine + '*?[ \\t]+\\2[ \\t]*$)?'
-            + '|^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^[ \\t]*\\3[ \\t]*$)?',
+            + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^[ \\t]*\\3[ \\t]*$)?',
             'm',
         );
     };
@@ -906,7 +907,7 @@
                 // INDENTED: a column-0 run is a different block (see
                 // `blankOrIndentedLine`).
                 pattern: RegExp(
-                    '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
+                    '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
                     + '(%{3,})(?!%)[^\\n]*\\n' + blankOrIndentedLine + '*?[ \\t]+\\2(?!%)[^\\n]*$',
                     'm',
                 ),

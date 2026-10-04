@@ -85,6 +85,16 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
         assert.equal(tokens.map(token => token.text).join(''), source);
         assert.ok(scopesAt(tokens, source, '{% comment %}').every(scope => /invalid-metadata/.test(scope)), 'prism: long metadata retains comments');
     }
+    if (name === 'prism') {
+        const source = '::: note {% unclosed\nBody {% actual %}\n:::\n';
+        assert.ok(scopesAt(tokenize(source), source, '{% actual %}').every(scope => /comment/.test(scope)), 'prism: rejected multiline metadata comment does not swallow a body comment');
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `text${separator}::: note %% comment\nBody.\n`;
+            const tokens = tokenize(source);
+            assert.ok(scopesAt(tokens, source, 'note').every(scope => !/div-delimiter/.test(scope)), 'prism: Unicode separators do not start a container');
+            assert.ok(scopesAt(tokens, source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode content retains comments');
+        }
+    }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
     const files = readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file));
     assert.ok(files.length >= 6, 'recovery corpus cases must be present');
