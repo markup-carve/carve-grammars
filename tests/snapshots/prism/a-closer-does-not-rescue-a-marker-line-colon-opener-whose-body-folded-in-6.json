@@ -5,15 +5,23 @@
   },
   {
     "type": "text",
-    "text": "x\n"
+    "text": "x\n  - "
   },
   {
-    "type": "list>punctuation",
-    "text": "  - "
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
-    "type": "text",
-    "text": "::: d\n   y\n"
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "div>tag",
+    "text": "\n   y\n"
   },
   {
     "type": "div>tag>div-delimiter",

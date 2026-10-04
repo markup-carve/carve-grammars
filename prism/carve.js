@@ -738,6 +738,29 @@
     // so no highlighting moves.
     var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^ \\t\\n][^\\n]*\\n)';
 
+    // A `:::` container opens at a line start, or on a LIST ITEM'S OWN MARKER
+    // LINE (`- ::: note`), which the spec nests inside the item (corpus
+    // 116-fence-opener-with-a-nested-list-body-inside-a-list-item-2). Without
+    // the second form the opener was prose and its indented closer opened a
+    // container running to the NEXT closer instead.
+    //
+    // The marker-line form keeps the marker in group 1, a Prism lookbehind, so
+    // the leftover `- ` has no content of its own and 'list' leaves it
+    // unscoped - the marker-line comment fence's trade. Its closer scan stops
+    // at a column-0 line, which ends the item, so it cannot pair with a later
+    // item's closer. A column-0 line straight after the opener is lazy text and
+    // demotes the opener (corpus 364-2); a next line indented but still below
+    // the content column demotes it too (corpus 161, 482), which a regex cannot
+    // measure, so that case over-colours.
+    var containerPattern = function (opener) {
+        return RegExp(
+            '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
+            + '(?!\\n[^ \\t\\n])(?:\\n' + blankOrIndentedLine + '*?[ \\t]+\\2[ \\t]*$)?'
+            + '|^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^[ \\t]*\\3[ \\t]*$)?',
+            'm',
+        );
+    };
+
     // A BLOCK-QUOTE marker run, as it appears before a block opener on the same
     // line. `> `, not `>+` and not `>\s`: the separator is a literal space and
     // nesting is written one marker per space (`> > x`), which is what the
@@ -1203,7 +1226,8 @@
         // generic container, which is what the `inside` composed after this
         // object literal arranges (the group's body holds no 'figure-group').
         'figure-group': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: containerPattern(' +figure[ \\t]*$'),
+            lookbehind: true,
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -1259,7 +1283,10 @@
         // inside a div body (headings - corpus 170, nested lists, blockquotes)
         // while suppressing only the one construct this fix targets.
         'div': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: containerPattern(
+                '(?: +(?:\\||\\\\|>)| +[a-zA-Z_][\\w-]*(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?| *\\[[^\\]\\n]*\\])?[ \\t]*$',
+            ),
+            lookbehind: true,
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
