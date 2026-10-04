@@ -224,8 +224,12 @@
     var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
     var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
     var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
+    var listMarkerBeforeBlock =
+        '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
+
     // A named container owns its whole opener tail, including percent runs.
-    var namedContainerComment = '(?<!^\\uFEFF?[ \\t]*:{3,} +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[\\u201C\\u201D])[^\\n]*)';
+    var namedContainerComment = '(?<!^\\uFEFF?(?:' + listMarkerBeforeBlock + '(?![^\\n]*\\n[^ \\t\\n])|[ \\t]*):{3,} +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[\\u201C\\u201D])[^\\n]*)';
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
@@ -718,9 +722,6 @@
     // marker-line fence, and once the quote rules started sharing the prefix it
     // would have coloured `-<TAB>> q` as a quote on a line the language renders
     // as prose (carve-grammars#259).
-    var listMarkerBeforeBlock =
-        '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
-        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
     // A line that is blank, or indented by at least one column. A COLUMN-0 line
     // is neither, and that is the point: it ends the container and with it an
@@ -1225,8 +1226,6 @@
         'figure-group': {
             pattern: containerPattern(' +figure[ \\t]*$(?![^\\r\\n])'),
             lookbehind: true,
-
-
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -1284,8 +1283,6 @@
                 '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
-
-
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as

@@ -31,14 +31,17 @@ function scopesAt(tokens, source, text) {
 for (const [name, tokenize, openerScope, invalidScope] of engines) {
     for (const kind of ['note', 'widget', 'figure', '123']) {
         for (const tail of [' Bare title', ' "Unclosed', ' [Unclosed', ' "Valid" [broken', '\t"Tabbed"', ' “Curly”', '{.inline}', '[label]', ' %% comment', ' "Valid" %% comment', ' "Valid"\t%% comment', ' [label] %% comment', ' x %%%', ' {% c %}', ' "Valid" {% c %}', '\u2028x', '\u2029x', '\u0085"Title"', '\ufeff"Title"', '\u00a0"Title"']) {
-            const source = `::: ${kind}${tail}\n# Heading\n\n- first\n- second\n:::\n\nAfter.`;
+            for (const marker of ['', '- ', '- [x] ', '1. ']) {
+                const indent = marker === '1. ' ? '   ' : marker ? '  ' : '';
+            const source = `${marker}::: ${kind}${tail}\n${indent}# Heading\n\n${indent}- first\n${indent}- second\n${indent}:::\n\nAfter.`;
             const tokens = tokenize(source);
             assert.equal(tokens.map(t => t.text).join(''), source, name);
-            assert.ok(scopesAt(tokens, source, kind).every(scope => openerScope.test(scope)), `${name}: ${kind}${tail}`);
+            assert.ok(scopesAt(tokens, source, kind).every(scope => openerScope.test(scope)), `${name}: ${marker}${kind}${tail}`);
             if (invalidScope) assert.ok(scopesAt(tokens, source, tail).every(scope => invalidScope.test(scope)), `${name}: invalid metadata ${tail}`);
-            assert.ok(scopesAt(tokens, source, '# Heading').some(scope => /title|heading|section/.test(scope)), `${name}: heading`);
+            assert.ok(scopesAt(tokens, source, '# Heading').some(scope => (marker && name.startsWith('textmate') ? /admonition/ : /title|heading|section/).test(scope)), `${name}: ${marker}${kind}${tail}: heading`);
             assert.ok(scopesAt(tokens, source, 'After.').every(scope => !/div|admonition|figure-group|keyword/.test(scope)), `${name}: following paragraph`);
             assert.ok(scopesAt(tokens, source, kind).every(scope => !/figure-group/.test(scope)), `${name}: recovered figure is generic`);
+            }
         }
     }
     for (const opener of [':::note', ':::\tnote', '::: \tnote', '::: {.x}', '::: note!junk', "::: note'Title'", '::: |\u2028x', '::: >\u2029x', ':::[label]\u2028x', ':::\u2028x']) {
@@ -63,6 +66,13 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             const tokens = tokenize(source);
             assert.equal(tokens.map(t => t.text).join(''), source);
             assert.ok(scopesAt(tokens, source, kind).every(scope => /div-delimiter|figure-group|keyword|section/.test(scope)), `${name}: CRLF opener`);
+        }
+    }
+    if (name === 'prism' || name === 'highlightjs') {
+        for (const tail of [' %% comment', ' "Valid" %% comment', ' {% comment %}']) {
+            const source = `- ::: note${tail}\nlazy\n`;
+            const tokens = tokenize(source);
+            assert.ok(scopesAt(tokens, source, 'comment').every(scope => /comment/.test(scope)), `${name}: folded opener comment`);
         }
     }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);

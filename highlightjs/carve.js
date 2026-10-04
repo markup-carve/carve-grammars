@@ -1426,9 +1426,9 @@
         };
         return [container, closer];
     };
-    const [FIGURE_GROUP_ON_MARKER_LINE, FIGURE_GROUP_MARKER_LINE_CLOSER] = markerLineContainer('section', ' +figure[ \\t]*$');
+    const [FIGURE_GROUP_ON_MARKER_LINE, FIGURE_GROUP_MARKER_LINE_CLOSER] = markerLineContainer('section', ' +figure[ \\t]*$(?![^\\r\\n])');
     const DIV_ON_MARKER_LINE_OPENER =
-        '(?: +(?:\\||\\\\|>)| +[a-zA-Z_][\\w-]*(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?| *\\[[^\\]\\n]*\\])?[ \\t]*$';
+        '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$(?![^\\r\\n])';
     const [DIV_ON_MARKER_LINE, DIV_MARKER_LINE_CLOSER] = markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
     // Inside a group, like DIV_BLOCK_IN_GROUP: its body must not offer a group.
     const [DIV_ON_MARKER_LINE_IN_GROUP, DIV_IN_GROUP_MARKER_LINE_CLOSER] =
