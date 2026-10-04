@@ -223,7 +223,7 @@
      */
     var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
     var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
-    var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
+    var commentAfterPrefix = '^(?<![^\\r\\n])(' + outsideSpans + '[ \\t])%%(?!%)';
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
         + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
@@ -1006,7 +1006,7 @@
                 // except in the metadata tail owned by a named container. Corpus
                 // `326-...-6` (`- %%%` / `c` / `%%%`) pins the opener keeping
                 // its comment scope.
-                pattern: outsideContainerMetadata(RegExp('([ \\t])%{3,}.*$', 'm')),
+                pattern: outsideContainerMetadata(RegExp('([ \\t])%{3,}[^\\r\\n]*$(?![^\\r\\n])', 'm')),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1033,7 +1033,7 @@
                 pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
                     + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
-                    + '.*$',
+                    + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
                 )),
                 lookbehind: true,
@@ -1059,7 +1059,7 @@
                 pattern: outsideContainerMetadata(RegExp(
                     '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
                     + '(?<!^(?<![^\\r\\n])[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
-                    + '.*$',
+                    + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
                 )),
                 lookbehind: true,

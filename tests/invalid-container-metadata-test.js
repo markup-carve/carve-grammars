@@ -111,6 +111,19 @@ for (const [name, tokenize, openerScope, invalidScope] of engines) {
             }
         }
     }
+    if (name === 'prism') {
+        for (const separator of ['\u2028', '\u2029']) {
+            const source = `::: note\nBody\n:::${separator}content\nMore.\n:::\nOutside.\n`;
+            assert.ok(scopesAt(tokenize(source), source, 'More.').every(scope => /div/.test(scope)), 'prism: text after a Unicode-separated closer keeps the container open');
+            for (const marker of ['#', '-']) {
+                const source = `text${separator}${marker} %% comment\n`;
+                assert.ok(scopesAt(tokenize(source), source, '%% comment').every(scope => /comment/.test(scope)), 'prism: Unicode text before a marker retains its comment');
+            }
+            const comment = `%% first${separator}second %% third`;
+            const commentSource = `text ${comment}\n`;
+            assert.ok(scopesAt(tokenize(commentSource), commentSource, comment).every(scope => /comment/.test(scope)), 'prism: Unicode separators stay inside a logical-line comment');
+        }
+    }
     const corpus = new URL('../spec/tests/corpus/', import.meta.url);
     const files = readdirSync(corpus).filter(file => /^(537-invalid-named-container|255-colon-fence-metadata).*\.crv$/.test(file));
     assert.ok(files.length >= 6, 'recovery corpus cases must be present');
