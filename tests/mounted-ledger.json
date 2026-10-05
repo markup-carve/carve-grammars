@@ -224,7 +224,6 @@
   "an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8",
   "an-unclosed-inline-literal-reaches-the-end-of-its-block-3",
   "an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3",
-  "an-unresolved-reference-s-literal-source-is-html-escaped-like-any-other-text",
   "an-unterminated-comment-fence-in-a-list-item-is-the-line-form-4",
   "any-character-is-content-of-the-combined-bold-italic-token-4",
   "any-character-is-content-of-the-combined-bold-italic-token-5",
