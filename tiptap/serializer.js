@@ -168,6 +168,15 @@ const MENTION_NAME = /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*$/;
 const MENTION_EDITOR_ATTRS = new Set(['id', 'label', 'mentionSuggestionChar']);
 const MENTION_LABEL_DROPPED = 'the mention name is its id, so a different display label is not carried';
 
+// The engine's label key (`normalizeRefLabel`): ASCII whitespace collapsed,
+// nothing case-folded, so `[plan][]` does not reach a `[Plan]:` definition.
+// A collapsed label cannot span lines, so multiline text keeps the full form.
+function sameReferenceLabel(label, text) {
+    if (/[\n\r]/.test(text)) return false;
+    const key = (value) => value.replace(/[ \t\n\f\r]+/g, ' ').replace(/^ | $/g, '');
+    return key(label) === key(text);
+}
+
 function isText(value) {
     return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
 }
@@ -1603,6 +1612,7 @@ export function serializeToCarve(doc, options = {}) {
                         // on the first run and close it on the last; wrapping
                         // every run independently turned `[*bold* heading][]`
                         // into two unrelated references.
+                        const runSource = t;
                         if (!continuesPrevious) t = '[' + t;
                         if (!continuesNext) {
                             const rawRef = link.attrs?.carveRawRef || '';
@@ -1611,7 +1621,7 @@ export function serializeToCarve(doc, options = {}) {
                                 replayedReferenceSource = true;
                             } else {
                                 const collapsed = rawRef.endsWith('[]')
-                                    || ref.toLowerCase() === t.trim().toLowerCase();
+                                    || (!continuesPrevious && sameReferenceLabel(ref, runSource));
                                 t += ']' + (collapsed ? '[]' : '[' + ref + ']');
                             }
                         }
@@ -1691,7 +1701,7 @@ export function serializeToCarve(doc, options = {}) {
                     // Collapsed where the label IS the alt text, full otherwise -
                     // the same two forms the link path writes, and the definition
                     // is emitted with the others at the end.
-                    const collapsed = ref.toLowerCase() === alt.trim().toLowerCase();
+                    const collapsed = sameReferenceLabel(ref, alt);
                     result += '![' + alt + ']' + (collapsed ? '[]' : '[' + ref + ']') + imgAttrs;
                     if (src && !referenceDefs.has(ref)) {
                         referenceDefs.set(ref, '[' + ref + ']: ' + src + title);

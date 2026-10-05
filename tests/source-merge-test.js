@@ -35,7 +35,7 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// The latest corpus and the payload writer leave 497 source envelopes: 495
+// The latest corpus and the payload writer leave 496 source envelopes: 494
 // preserve an authored append and two use canonical output. Sections 539-544
 // added the last eleven, all of them authored appends. Keep the exact remaining
 // conflict set below, not just its size: the AST models neither the authored
@@ -43,8 +43,8 @@ for (const file of listCorpusFiles()) {
 // marker (`***` re-emits as `---`), nor the over-indent column of a marker line
 // inside an opaque quote, so a document hitting one of those projects to
 // canonical spelling and the envelope carries the authored bytes back.
-assert.strictEqual(envelopes, 497, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 495, 'an append normalized authored layout in additional documents');
+assert.strictEqual(envelopes, 496, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 494, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 2, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',
