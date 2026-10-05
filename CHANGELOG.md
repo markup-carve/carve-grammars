@@ -4,6 +4,22 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-10-05
+
+This release fixes highlighting at logical line boundaries and inside list containers, and preserves named containers when their opener metadata is invalid.
+
+### Fixes
+
+- Use CR, LF and CRLF as logical line boundaries in Prism, highlight.js and raw tokenization. Unicode line and paragraph separators remain content. Nested list headings keep their container scope (#615).
+- Recover invalid metadata on named container openers and list marker lines while preserving their block content (#611, #613).
+- Scope containers opened on list marker lines and bound metadata scanning. Preserve contextual heading boundaries and handle the Shiki tokenizer retry (#610, #612, #614).
+- Parse heading titles and caption content as inline runs. Preserve percent comments in quoted headings and captions, and qualify quoted one-line blocks after checking their content (#600, #601, #603, #604).
+
+### Spec and CI
+
+- Update the pinned spec corpus to `05794807`, including table-body positional metadata coverage, and keep earlier corpus updates in this release (#608, #599, #598, #588).
+- Set timeouts on every CI job (#606).
+
 ## [0.1.11] - 2026-09-30
 
 0.1.10 was tagged and withdrawn before it reached npm. The tag was visible on
