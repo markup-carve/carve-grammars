@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#Plan}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Plan"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "</#Plan>"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "</#plan>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

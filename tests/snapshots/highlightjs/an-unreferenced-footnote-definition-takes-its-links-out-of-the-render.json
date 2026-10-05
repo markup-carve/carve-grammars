@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^u]: see [x](#nope)"
+  },
+  {
+    "scope": null,
+    "text": "\n\nBody.\n"
+  }
+]
