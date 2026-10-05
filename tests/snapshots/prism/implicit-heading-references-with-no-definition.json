@@ -17,6 +17,26 @@
   },
   {
     "type": "url",
+    "text": "Getting Started"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
     "text": "getting started"
   },
   {

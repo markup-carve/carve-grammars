@@ -9,6 +9,14 @@
   },
   {
     "scope": "link",
+    "text": "</#Getting-Started>"
+  },
+  {
+    "scope": null,
+    "text": ", not "
+  },
+  {
+    "scope": "link",
     "text": "</#getting-started>"
   },
   {

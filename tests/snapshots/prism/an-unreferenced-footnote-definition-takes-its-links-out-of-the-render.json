@@ -1,0 +1,34 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^u]"
+  },
+  {
+    "type": "text",
+    "text": ": see "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "#nope"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n\nBody.\n"
+  }
+]

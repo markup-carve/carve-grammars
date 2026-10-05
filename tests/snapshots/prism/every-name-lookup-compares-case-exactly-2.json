@@ -1,0 +1,90 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#Tip"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Upper"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#tip"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Lower"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "Tip"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "tip"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

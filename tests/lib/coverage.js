@@ -838,6 +838,28 @@ const TIPTAP_COVERED = [
     // An explicit body count covering rows whose cells are authored as native
     // header cells. 1 file.
     'explicit-body-counts-include-native-header-cells',
+
+    /*
+     * Spec corpus 545-546, the two categories the bump to carve `f25fb094`
+     * added. All five documents were measured file by file: parse -> PM with
+     * `unsupported: 'preserve'` -> serialize -> reparse. Every one projects to
+     * rich nodes, none produces a `carveUnsupported` atom, none rides the
+     * source envelope, and every one reparses to the same AST, so both are
+     * covered rather than fallback.
+     */
+    // An unreferenced footnote definition, whose links the render drops. The
+    // parse keeps the definition, and the projection is a `paragraph` plus a
+    // `carveFootnoteDefinition`. The writer emits the definition after the
+    // body rather than before it, which is the collected-definition order the
+    // AST already normalizes to, so the reparse is identical. 1 file.
+    'an-unreferenced-footnote-definition-takes-its-links-out-of-the-render',
+    // Case-exact name lookup: an explicit id and a crossref differing only in
+    // case, two ids differing only in case, an implicit heading reference, and
+    // a link reference label. Resolution is the renderer's decision; the parse
+    // keeps the inline nodes either way and the serializer re-emits every name
+    // with its authored case, so all four documents are write-identical. 4
+    // files.
+    'every-name-lookup-compares-case-exactly',
 ];
 
 // Categories that historically required the whole-document fallback. Their
