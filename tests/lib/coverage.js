@@ -860,6 +860,15 @@ const TIPTAP_COVERED = [
     // with its authored case, so all four documents are write-identical. 4
     // files.
     'every-name-lookup-compares-case-exactly',
+    // An info string decides nothing about a flush-left fence below a closed
+    // nested fence: with no closer ahead the line is content of the description
+    // body, and a terminated fence at that column ends the body instead. All 3
+    // files were run one at a time through the source-aware loader: they
+    // project to rich nodes (`definitionList`, plus a sibling `codeBlock` for
+    // the terminated variant), none produces a whole-document
+    // `carveUnsupported` atom, and each reparses to the same AST, so the
+    // category is covered rather than fallback. 3 files.
+    'an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body',
 ];
 
 // Categories that historically required the whole-document fallback. Their
