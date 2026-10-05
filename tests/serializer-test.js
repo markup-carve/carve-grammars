@@ -233,6 +233,26 @@ check('a reference label split by an inner mark stays one collapsed link',
     )),
     '[*bold* heading][]\n\n[*bold* heading]: /x');
 
+check('a reference label that differs from the text only in case stays a full reference',
+    doc(para({ type: 'text', text: 'plan', marks: [{ type: 'link', attrs: { href: '/x', carveRef: 'Plan' } }] })),
+    '[plan][Plan]\n\n[Plan]: /x');
+
+check('a reference label equal to the text collapses',
+    doc(para({ type: 'text', text: 'Plan', marks: [{ type: 'link', attrs: { href: '/x', carveRef: 'Plan' } }] })),
+    '[Plan][]\n\n[Plan]: /x');
+
+check('a reference label that differs from the text only by Unicode composition stays full',
+    doc(para({ type: 'text', text: 'e\u0301', marks: [{ type: 'link', attrs: { href: '/x', carveRef: '\u00e9' } }] })),
+    '[e\u0301][\u00e9]\n\n[\u00e9]: /x');
+
+check('multiline reference link text keeps the full form',
+    doc(para({ type: 'text', text: 'a\nb', marks: [{ type: 'link', attrs: { href: '/x', carveRef: 'a b' } }] })),
+    '[a\nb][a b]\n\n[a b]: /x');
+
+check('an image reference label that differs from the alt only in case stays full',
+    doc(para({ type: 'image', attrs: { alt: 'logo', src: '/l.png', carveRef: 'Logo' } })),
+    '![logo][Logo]\n\n[Logo]: /l.png');
+
 check('escapes edge delimiters that would pair across an inline mark boundary',
     doc(para(
         text('*'),
