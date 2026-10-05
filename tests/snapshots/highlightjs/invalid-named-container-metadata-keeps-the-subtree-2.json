@@ -1,7 +1,11 @@
 [
   {
+    "scope": "keyword",
+    "text": "::: note \"Unclosed"
+  },
+  {
     "scope": null,
-    "text": "::: note \"Unclosed\nBody one.\n"
+    "text": "\nBody one.\n"
   },
   {
     "scope": "keyword",
@@ -9,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": "\n\n::: widget [Unclosed\nBody two.\n"
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: widget [Unclosed"
+  },
+  {
+    "scope": null,
+    "text": "\nBody two.\n"
   },
   {
     "scope": "keyword",

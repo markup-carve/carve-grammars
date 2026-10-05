@@ -1,18 +1,30 @@
 [
   {
-    "type": "list>punctuation",
+    "type": "text",
     "text": "- "
   },
   {
-    "type": "text",
-    "text": "::: note\n"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
-    "type": "list>punctuation",
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag",
+    "text": "\n"
+  },
+  {
+    "type": "div>tag>list>punctuation",
     "text": " - "
   },
   {
-    "type": "text",
+    "type": "div>tag",
     "text": "para text\n"
   },
   {

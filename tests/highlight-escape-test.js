@@ -36,7 +36,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { carveToHtml } from '@markup-carve/carve';
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './lib/shiki.js';
 import { prismTokens } from './lib/engines.js';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');

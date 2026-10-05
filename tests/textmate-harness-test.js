@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './lib/shiki.js';
 
 import { textmateTokenizer } from './lib/textmate-engine.js';
 

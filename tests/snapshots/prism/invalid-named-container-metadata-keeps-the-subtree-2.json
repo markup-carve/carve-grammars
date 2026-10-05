@@ -1,15 +1,51 @@
 [
   {
-    "type": "text",
-    "text": "::: note \"Unclosed\nBody one.\n"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "text": " \"Unclosed"
+  },
+  {
+    "type": "div>tag",
+    "text": "\nBody one.\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",
     "text": ":::"
   },
   {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "widget"
+  },
+  {
+    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "text": " [Unclosed"
+  },
+  {
     "type": "div>tag",
-    "text": "\n\n::: widget [Unclosed\nBody two.\n"
+    "text": "\nBody two.\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

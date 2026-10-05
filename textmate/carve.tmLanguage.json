@@ -327,7 +327,7 @@
       "name": "comment.line.percent.carve"
     },
     "admonition": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -346,6 +346,12 @@
         },
         "6": {
           "name": "constant.other.label.admonition.carve"
+        },
+        "7": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "8": {
+          "name": "invalid.illegal.container-metadata.carve"
         }
       },
       "end": "^[ \\t]*\\1[ \\t]*$",
@@ -420,7 +426,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set - which incorrectly let `#abbreviation` fire inside a div (PART 9: abbreviation definitions are recognized at document level only; the sibling list-item and blockquote cases already read correctly, but only because their own line mechanics happen to block it, not because either detects the container). The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus `#abbreviation` (the one construct this fix targets); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before."
     },
     "admonition_in_group": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\]))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -439,6 +445,12 @@
         },
         "6": {
           "name": "constant.other.label.admonition.carve"
+        },
+        "7": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "8": {
+          "name": "invalid.illegal.container-metadata.carve"
         }
       },
       "end": "^[ \\t]*\\1[ \\t]*$",
@@ -869,7 +881,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "task_item": {
-      "comment": "A task item is a bullet whose content happens to start with a checkbox, and ITS CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest. That is measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). A definition two columns under `- [ ] a` is collected exactly as it is under `- a`, which is why the checkbox counts as CONTENT rather than as part of the marker, and why `end` asks for a fixed two columns here while `#list_item` reconstructs the separator width from the marker line. The rule is a container in its own right for the same reason: a one-line match would leave the following lines to the document level, where a definition must be flush-left, and `- [ ] a` would lose the indented definition that `- a` keeps.",
+      "comment": "A task item is a bullet whose content happens to start with a checkbox, and ITS CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest. That is measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). A definition two columns under `- [ ] a` is collected exactly as it is under `- a`, which is why the checkbox counts as CONTENT rather than as part of the marker, and why `while` asks for a fixed two columns here while `#list_item` reconstructs the separator width from the marker line. The rule is a container in its own right for the same reason: a one-line match would leave the following lines to the document level, where a definition must be flush-left, and `- [ ] a` would lose the indented definition that `- a` keeps.",
       "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*]) +(\\[)([ xX\\-_>?])(\\]) +(?![ \\t]*$)",
       "beginCaptures": {
         "2": {
@@ -885,7 +897,7 @@
           "name": "punctuation.definition.checkbox.carve"
         }
       },
-      "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2})",
+      "while": "^(?=[ \\t]*$|\\1[ \\t]{2})",
       "patterns": [
         {
           "include": "#container_blocks"
@@ -902,7 +914,7 @@
       }
     },
     "list_item": {
-      "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - which is the marker's actual width, `indent + marker + separator`, not a fixed two columns. That column test is what lets the block rules inside it (`#container_blocks`) fire on an indented line without also firing on a top-level indented line that the language reads as text: `- a` followed by `  [r]: /u` keeps the definition, while `- - a` followed by ` [r]: /u` sits below every open content column and is item text, which is what carve-php does with both. THE TEST IS EXACT FOR A BULLET at any indent and any separator width, because a bullet marker is always one column wide and the separator is captured as whitespace, so `\\1[ \\t]\\3` reconstructs the column count from the marker line itself rather than assuming one. Its limits: a TAB counts as one column here rather than advancing to the next tab stop, and the continuation line must repeat the marker line's own indent characters - the pre-existing `\\1` convention, unchanged. The ATTRIBUTE-GLUED FORM (`-{#x} item`) is the one bullet shape whose content column this cannot count, since the block's width is not whitespace; it uses the MINIMUM content column (indent plus two) instead, which keeps the container open across a range where an exact test would have closed it - deliberately the over-coloring side, the same side every block rule in this file already takes. A marker line may carry several markers (`- - A` opens nested list structure), so the opener still scopes a run of same-line bullet markers, not only the line-anchored first, and the column test uses the OUTERMOST marker's column so a line at the outer item's column stays in the list. A BULLET MAY ALSO BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (#126). The guard is that rule's, unchanged: content is still required past the block (`-{#x}` alone is a paragraph), and the block is spelled out rather than skipped with `\\{[^}]*\\}`, because a quoted value may hold a `}` and may escape its own quote. It is a LOOKAHEAD - consuming the block here would make this rule own those characters, so the attribute rule could no longer scope them. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence.",
+      "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - which is the marker's actual width, `indent + marker + separator`, not a fixed two columns. That column test is what lets the block rules inside it (`#container_blocks`) fire on an indented line without also firing on a top-level indented line that the language reads as text: `- a` followed by `  [r]: /u` keeps the definition, while `- - a` followed by ` [r]: /u` sits below every open content column and is item text, which is what carve-php does with both. THE TEST IS EXACT FOR A BULLET at any indent and any separator width, because a bullet marker is always one column wide and the separator is captured as whitespace, so `\\1[ \\t]\\3` reconstructs the column count from the marker line itself rather than assuming one. Its limits: a TAB counts as one column here rather than advancing to the next tab stop, and the continuation line must repeat the marker line's own indent characters - the pre-existing `\\1` convention, unchanged. The ATTRIBUTE-GLUED FORM (`-{#x} item`) is the one bullet shape whose content column this cannot count, since the block's width is not whitespace; it uses the MINIMUM content column (indent plus two) instead, which keeps the container open across a range where an exact test would have closed it - deliberately the over-coloring side, the same side every block rule in this file already takes. A marker line may carry several markers (`- - A` opens nested list structure), so the opener still scopes a run of same-line bullet markers, not only the line-anchored first, and the column test uses the OUTERMOST marker's column so a line at the outer item's column stays in the list. A BULLET MAY ALSO BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (#126). The guard is that rule's, unchanged: content is still required past the block (`-{#x}` alone is a paragraph), and the block is spelled out rather than skipped with `\\{[^}]*\\}`, because a quoted value may hold a `}` and may escape its own quote. It is a LOOKAHEAD - consuming the block here would make this rule own those characters, so the attribute rule could no longer scope them. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence. A zero-width while condition checks the content column before child rules run, so an unclosed container cannot retain scopes over a sibling item.",
       "patterns": [
         {
           "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*])( +)(?![ \\t]*$)((?:[-*] +)*)",
@@ -914,7 +926,7 @@
               "name": "punctuation.definition.list.unnumbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -928,7 +940,7 @@
               "name": "punctuation.definition.list.unnumbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -938,7 +950,7 @@
       ]
     },
     "numbered_item": {
-      "comment": "AN ORDERED ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94), on the same content-column rule as `#list_item`: it closes on the first nonblank line indented below `indent + marker + separator`. An ordered marker is not one column wide though, and Oniguruma cannot count the width of a captured run - vscode-textmate splices a begin capture into the `end` pattern as literal TEXT, so a backreference reproduces the marker's characters, never its length. The width is therefore spelled out: one variant per marker width, each consuming exactly that many characters and asking its `end` for exactly that many columns. EXACT for marker widths 1 to 5 - `.`, `1.`, `10.`, `iii.`, `1000.` - which covers every ordered marker in the corpus; the width-5 variant also accepts anything WIDER (`10000.`, `civil.`) and under-counts those by the extra characters, keeping the container open a column or two too long rather than closing it too early. APPROXIMATE for the attribute-glued form (`1.{#x} item`), whose block width is not whitespace either: it uses the minimum content column, indent plus two. Both approximations err toward over-coloring, the same side every block rule in this file already takes. Every ordered marker the language accepts is still here, not only `1.`: decimal, single-letter and roman, with `.` or `)`, plus the BARE DOT (carve#472) - `.` alone continues the ordered sequence, and is the only marker allowed to drop its value. The bare form is also recognised glued to an attribute block (`.{#x}`), which is how corpus 174-bare-dot-ordered-markers-3 writes it. MARKER REQUIRES CONTENT, AND SO DOES THE ATTRIBUTE FORM: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it - a quoted run may contain `}` (`{title=\"a}b\"} x` is a valid item) and may escape its own quote, so a `\\{[^}]*\\}` run stops in the wrong place. Anything less was tried and each attempt traded one broken shape for another (#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence.",
+      "comment": "AN ORDERED ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94), on the same content-column rule as `#list_item`: it closes on the first nonblank line indented below `indent + marker + separator`. An ordered marker is not one column wide though, and Oniguruma cannot count the width of a captured run - vscode-textmate splices a begin capture into the `while` pattern as literal TEXT, so a backreference reproduces the marker's characters, never its length. The width is therefore spelled out: one variant per marker width, each consuming exactly that many characters and asking its `while` for exactly that many columns. EXACT for marker widths 1 to 5 - `.`, `1.`, `10.`, `iii.`, `1000.` - which covers every ordered marker in the corpus; the width-5 variant also accepts anything WIDER (`10000.`, `civil.`) and under-counts those by the extra characters, keeping the container open a column or two too long rather than closing it too early. APPROXIMATE for the attribute-glued form (`1.{#x} item`), whose block width is not whitespace either: it uses the minimum content column, indent plus two. Both approximations err toward over-coloring, the same side every block rule in this file already takes. Every ordered marker the language accepts is still here, not only `1.`: decimal, single-letter and roman, with `.` or `)`, plus the BARE DOT (carve#472) - `.` alone continues the ordered sequence, and is the only marker allowed to drop its value. The bare form is also recognised glued to an attribute block (`.{#x}`), which is how corpus 174-bare-dot-ordered-markers-3 writes it. MARKER REQUIRES CONTENT, AND SO DOES THE ATTRIBUTE FORM: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it - a quoted run may contain `}` (`{title=\"a}b\"} x` is a valid item) and may escape its own quote, so a `\\{[^}]*\\}` run stops in the wrong place. Anything less was tried and each attempt traded one broken shape for another (#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence. A zero-width while condition checks the content column before child rules run, so an unclosed container cannot retain scopes over a sibling item.",
       "patterns": [
         {
           "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\.)( +)(?![ \\t]*$)",
@@ -947,7 +959,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -961,7 +973,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -975,7 +987,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -989,7 +1001,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -1003,7 +1015,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -1017,7 +1029,7 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "end": "^(?![ \\t]*$)(?!\\1[ \\t]{2,})",
+          "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
             {
               "include": "#container_blocks"
@@ -2828,8 +2840,455 @@
       "end": "^[ \\t]+\\1(?!%)[^\\n]*$|^(?=[^ \\t\\n])",
       "name": "comment.block.carve"
     },
+    "figure_group_on_marker_line": {
+      "begin": "\\G(?<=[ \\t])(:{3,}) +(figure)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.figure-group.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.figure-group.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$|^(?=[^ \\t\\n])",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.figure-group.carve"
+        }
+      },
+      "name": "meta.figure-group.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading_in_container"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group_in_list"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
+    },
+    "admonition_on_marker_line": {
+      "begin": "\\G(?<=[ \\t])(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "3": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.admonition.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "6": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "7": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "8": {
+          "name": "invalid.illegal.container-metadata.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$|^(?=[^ \\t\\n])",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading_in_container"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#figure_group_in_list"
+        },
+        {
+          "include": "#admonition_in_list"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
+    },
+    "admonition_in_list": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "3": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.admonition.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "6": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "7": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "8": {
+          "name": "invalid.illegal.container-metadata.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading_in_container"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#figure_group_in_list"
+        },
+        {
+          "include": "#admonition_in_list"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
+    "admonition_in_group_in_list": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "3": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "4": {
+          "name": "string.quoted.double.admonition.title.carve"
+        },
+        "5": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "6": {
+          "name": "constant.other.label.admonition.carve"
+        },
+        "7": {
+          "name": "entity.name.tag.admonition.carve"
+        },
+        "8": {
+          "name": "invalid.illegal.container-metadata.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading_in_container"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group_in_list"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
+    "figure_group_in_list": {
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,}) +(figure)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.figure-group.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.figure-group.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.figure-group.carve"
+        }
+      },
+      "name": "meta.figure-group.carve",
+      "patterns": [
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#heading_in_container"
+        },
+        {
+          "include": "#hr"
+        },
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#admonition_in_group_in_list"
+        },
+        {
+          "include": "#block_comment_on_quote_marker_line"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#link_ref_def_in_container"
+        },
+        {
+          "include": "#caption"
+        },
+        {
+          "include": "#definition_list"
+        },
+        {
+          "include": "#table_row"
+        },
+        {
+          "include": "#list_continuation"
+        },
+        {
+          "include": "#multiline_cell"
+        },
+        {
+          "include": "#callout_annotation"
+        },
+        {
+          "include": "#task_item"
+        },
+        {
+          "include": "#list_item"
+        },
+        {
+          "include": "#numbered_item"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
     "container_blocks": {
-      "comment": "The block pattern set a container's body reaches, shared by every list-item rule so the three of them cannot drift apart. It is the top-level list minus `#frontmatter`, which is document-start only. `#link_ref_def_in_container` stands in for `#link_ref_def`: a definition is flush-left at document level and indented here, and the container's `end` has already established that an indented line inside it sits at or beyond the item's content column. `#block_comment_on_marker_line` leads, and is reachable ONLY from here: it is the one rule that has to fire mid-line, on the container's own opening line.",
+      "comment": "Block patterns shared by list-item bodies. Frontmatter remains document-start only. The list item's zero-width while condition checks its content column before child rules run. Marker-line variants recognize comment fences, quotes, generic containers, and composite figures at the scan position after a list marker. Indented link-reference definitions use the container variant.",
       "patterns": [
         {
           "include": "#block_comment_on_marker_line"
@@ -2839,6 +3298,12 @@
         },
         {
           "include": "#blockquote_on_marker_line"
+        },
+        {
+          "include": "#figure_group_on_marker_line"
+        },
+        {
+          "include": "#admonition_on_marker_line"
         },
         {
           "include": "#fenced_code_in_container"
@@ -2856,10 +3321,16 @@
           "include": "#line_comment"
         },
         {
-          "include": "#figure_group"
+          "include": "#figure_group_on_marker_line"
         },
         {
-          "include": "#admonition"
+          "include": "#admonition_on_marker_line"
+        },
+        {
+          "include": "#figure_group_in_list"
+        },
+        {
+          "include": "#admonition_in_list"
         },
         {
           "include": "#block_comment_on_quote_marker_line_in_container"

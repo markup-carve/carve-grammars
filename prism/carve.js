@@ -150,7 +150,7 @@
     // An escaped opener is text: `\[x](u)` is not a link (carve-grammars#460).
     // The lookbehind sits after the opener, so it only runs where one matched.
     var unescaped = function (opener) {
-        return opener + '(?<!(?:^|[^\\\\])(?:\\\\\\\\)*\\\\' + opener + ')';
+        return opener + '(?<!(?:^(?<![^\\r\\n])|[^\\\\])(?:\\\\\\\\)*\\\\' + opener + ')';
     };
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
@@ -182,10 +182,10 @@
         // so `^` matches at a chunk boundary rather than a real line start.
         pattern: RegExp(
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
-            '(?<=(?:^|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$))'
+            '(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?<=[*/_~=`>}:)\\]$<|])' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$))',
+            + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
         greedy: true,
         alias: 'attr-value',
@@ -195,7 +195,7 @@
             'attr-name': /[A-Za-z_][\w-]*(?==)/,
             'string': /"[^"]*"|'[^']*'/,
             'language': {
-                pattern: /(^|[\s{]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?/,
+                pattern: /(^(?<![^\r\n])|[\s{]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?/,
                 lookbehind: true,
             },
             'punctuation': /[{}=]/,
@@ -223,7 +223,64 @@
      */
     var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
     var outsideSpans = '(?:[^\\n`\\\\]|\\\\[^\\n]|' + codeSpanRun + ')*?';
-    var commentAfterPrefix = '^(' + outsideSpans + '[ \\t])%%(?!%)';
+    var commentAfterPrefix = '^(?<![^\\r\\n])(' + outsideSpans + '[ \\t])%%(?!%)';
+    var listMarkerBeforeBlock =
+        '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
+
+    var namedContainerRanges = { source: null, ranges: [] };
+    var namedContainerPrefix = ':{3,} +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[\\u201C\\u201D])';
+    var namedContainerLine = RegExp('^(?<![^\\r\\n])\\uFEFF?[ \\t]*' + namedContainerPrefix);
+    var markerNamedContainerLine = RegExp('^\\uFEFF?' + listMarkerBeforeBlock + namedContainerPrefix);
+
+    function metadataRanges(source) {
+        if (namedContainerRanges.source === source) return namedContainerRanges.ranges;
+        var lines = [];
+        var linePattern = /[^\r\n]*(?:\r\n|\r|\n|$(?![^\r\n]))/g;
+        var match;
+        while ((match = linePattern.exec(source)) && match[0].length) {
+            var text = match[0].replace(/[\r\n]+$(?![^\r\n])/, '');
+            lines.push({ text: text, start: match.index, end: match.index + text.length });
+        }
+        var ranges = [];
+        for (var index = 0; index < lines.length; ++index) {
+            var line = lines[index];
+            var opener = namedContainerLine.exec(line.text);
+            if (!opener) {
+                opener = markerNamedContainerLine.exec(line.text);
+                var next = lines[index + 1];
+                if (opener && next && next.text && !/^(?<![^\r\n])[ \t]/.test(next.text)) opener = null;
+            }
+            if (opener) ranges.push({ start: line.start + opener[0].length, end: line.end });
+        }
+        namedContainerRanges = { source: source, ranges: ranges };
+        return ranges;
+    }
+
+    // Cache opener tails in one forward pass. Looking backward to the start
+    // of the line at every comment opener makes long comment runs quadratic.
+    function outsideContainerMetadata(pattern) {
+        var filtered = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        filtered.exec = function (source) {
+            var ranges = metadataRanges(source);
+            var match;
+            while ((match = RegExp.prototype.exec.call(this, source))) {
+                var offset = match.index + (match[1] ? match[1].length : 0);
+                var low = 0;
+                var high = ranges.length;
+                while (low < high) {
+                    var middle = (low + high) >>> 1;
+                    if (ranges[middle].start <= offset) low = middle + 1;
+                    else high = middle;
+                }
+                var range = ranges[low - 1];
+                if (!range || offset >= range.end) return match;
+                this.lastIndex = Math.max(match.index + 1, range.end);
+            }
+            return null;
+        };
+        return filtered;
+    }
 
     var bracedCommentPattern = /\{%(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}(?:%(?!\})(?:[^%\n]|\n(?![ \t\r]*\n)){0,4096}){0,32}%\}/;
 
@@ -280,7 +337,7 @@
         '(?![\\u{110BD}\\u{110CD}\\u{13430}-\\u{1343F}\\u{1BCA0}-\\u{1BCA3}\\u{1D173}-\\u{1D17A}\\u{E0001}\\u{E0020}-\\u{E007F}])');
     var linkTail = '\\]\\(' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)';
     // Only a title directly before the closing `)` is a string.
-    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$)/;
+    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$(?![^\r\n]))/;
     var opaqueInline = '(?:' + opaqueBracedInline
         + '|\\[' + opaqueLabel + linkTail
         + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
@@ -437,12 +494,12 @@
         },
         'italic': {
             // The leading guard avoids URLs and paths.
-            pattern: new RegExp('(^|[^\\w/])/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(^(?<![^\\r\\n])|[^\\w/])/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
             lookbehind: true,
             alias: 'italic',
         },
         'underline': {
-            pattern: new RegExp('(^|[^\\w_/])_(?![\\s_])' + bareRun('_') + '(?<=\\S)_(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(^(?<![^\\r\\n])|[^\\w_/])_(?![\\s_])' + bareRun('_') + '(?<=\\S)_(?![\\p{L}\\p{N}])', 'u'),
             lookbehind: true,
             alias: 'underline',
         },
@@ -547,7 +604,7 @@
             // a bound, at the same 4096 the rest of the file uses.
             pattern: new RegExp(
                 '\\{=(?!=\\})' + forcedBody('=') + '=\\}|'
-                + /(?:(?<=(?:^|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
+                + /(?:(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
                 + bareRun('=')
                 + /(?<=\S)=(?![\p{L}\p{N}])/.source,
                 'u',
@@ -586,10 +643,10 @@
     // 'definition-list' has already decided is inside a real entry.
     var definitionTerm = {
         // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-        pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$).*$/m,
+        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
         alias: 'title',
         inside: Object.assign({
-            'punctuation': /^\uFEFF?[ \t]*::/,
+            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*::/,
         }, inline),
     };
 
@@ -600,7 +657,7 @@
     // a folded term line (`term_continuation_line`, corpus
     // 25-definition-lists-6) and a definition separated from its term by one
     // blank line (corpus 25-definition-lists-7) scoped correctly.
-    var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$|\*{3,}[ \t]*$|_{3,}[ \t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+[.)][ \t]|\.[ \t])/.source;
+    var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$(?![^\r\n])|\*{3,}[ \t]*$(?![^\r\n])|_{3,}[ \t]*$(?![^\r\n])|`{3,}|~{3,}|:{3,}|>(?: |$(?![^\r\n]))|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+[.)][ \t]|\.[ \t])/.source;
 
     /*
      * THE PIECES OF AN UNPARTNERED VERBATIM RUN (carve-grammars#312).
@@ -646,7 +703,7 @@
     var maximalRun = '(?<!`)`+(?!`)';
     var narrowRun = '(?<!`)`{1,2}(?!`)';
     var unpartneredTail =
-        '[^\\n]{0,4096}(?:\\n(?![ \\t\\r]*$)(?!' + otherBlockOpener + ')[^\\n]{0,4096}){0,64}';
+        '[^\\n]{0,4096}(?:\\n(?![ \\t\\r]*$(?![^\\r\\n]))(?!' + otherBlockOpener + ')[^\\n]{0,4096}){0,64}';
 
     /**
      * An unpartnered verbatim run behind `sigil`, to the end of its paragraph.
@@ -703,7 +760,7 @@
     // A definition-list entry: the opening term line plus every following
     // line that is not some OTHER block opener (see above).
     var definitionListPattern = RegExp(
-        '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*:: +(?![ \\t]*$)[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
+        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*:: +(?![ \\t]*$(?![^\\r\\n]))[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
         'm',
     );
 
@@ -716,9 +773,6 @@
     // marker-line fence, and once the quote rules started sharing the prefix it
     // would have coloured `-<TAB>> q` as a quote on a line the language renders
     // as prose (carve-grammars#259).
-    var listMarkerBeforeBlock =
-        '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
-        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
     // A line that is blank, or indented by at least one column. A COLUMN-0 line
     // is neither, and that is the point: it ends the container and with it an
@@ -737,6 +791,29 @@
     // unchanged - a whitespace-only indented line is still the blank branch -
     // so no highlighting moves.
     var blankOrIndentedLine = '(?:[ \\t]*\\n|[ \\t]+[^ \\t\\n][^\\n]*\\n)';
+
+    // A `:::` container opens at a line start, or on a LIST ITEM'S OWN MARKER
+    // LINE (`- ::: note`), which the spec nests inside the item (corpus
+    // 116-fence-opener-with-a-nested-list-body-inside-a-list-item-2). Without
+    // the second form the opener was prose and its indented closer opened a
+    // container running to the NEXT closer instead.
+    //
+    // The marker-line form keeps the marker in group 1, a Prism lookbehind, so
+    // the leftover `- ` has no content of its own and 'list' leaves it
+    // unscoped - the marker-line comment fence's trade. Its closer scan stops
+    // at a column-0 line, which ends the item, so it cannot pair with a later
+    // item's closer. A column-0 line straight after the opener is lazy text and
+    // demotes the opener (corpus 364-2); a next line indented but still below
+    // the content column demotes it too (corpus 161, 482), which a regex cannot
+    // measure, so that case over-colours.
+    var containerPattern = function (opener) {
+        return RegExp(
+            '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
+            + '(?!\\n[^ \\t\\n])(?:\\n' + blankOrIndentedLine + '*?[ \\t]+\\2[ \\t]*$(?![^\\r\\n]))?'
+            + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,})' + opener + '(?:\\n[\\s\\S]*?^(?<![^\\r\\n])[ \\t]*\\3[ \\t]*$(?![^\\r\\n]))?',
+            'm',
+        );
+    };
 
     // A BLOCK-QUOTE marker run, as it appears before a block opener on the same
     // line. `> `, not `>+` and not `>\s`: the separator is a literal space and
@@ -806,7 +883,7 @@
                 // `\n(?![ \t]*\n)` are disjoint, so each character is still
                 // matched by exactly one branch and an unclosed `{%` still
                 // gives up at the next `%` rather than scanning ahead.
-                pattern: bracedCommentPattern,
+                pattern: outsideContainerMetadata(bracedCommentPattern),
                 greedy: true,
             },
             {
@@ -830,8 +907,8 @@
                 // INDENTED: a column-0 run is a different block (see
                 // `blankOrIndentedLine`).
                 pattern: RegExp(
-                    '^((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
-                    + '(%{3,})(?!%)[^\\n]*\\n' + blankOrIndentedLine + '*?[ \\t]+\\2(?!%)[^\\n]*$',
+                    '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + ')'
+                    + '(%{3,})(?!%)[^\\n]*\\n' + blankOrIndentedLine + '*?[ \\t]+\\2(?!%)[^\\n]*$(?![^\\r\\n])',
                     'm',
                 ),
                 lookbehind: true,
@@ -861,8 +938,8 @@
                 // fence that closes later; refusing it here costs a mis-scope
                 // on that shape and buys never hiding a visible block.
                 pattern: RegExp(
-                    '^((?:(?<![\\s\\S])\\uFEFF)?' + quoteMarkerBeforeBlock + ')'
-                    + '(%{3,})(?!%)[^\\n]*\\n' + quoteMarkedLine + '*?[ \\t]*\\2\\3(?!%)[^\\n]*$',
+                    '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + quoteMarkerBeforeBlock + ')'
+                    + '(%{3,})(?!%)[^\\n]*\\n' + quoteMarkedLine + '*?[ \\t]*\\2\\3(?!%)[^\\n]*$(?![^\\r\\n])',
                     'm',
                 ),
                 lookbehind: true,
@@ -885,18 +962,18 @@
                 // found and the run degrades to the unterminated pattern below,
                 // which is the SAFE direction: a run that opens nothing leaves
                 // the text under it VISIBLE.
-                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]{0,8000}?^[ \t]*\1(?!%)[^\n]*$/m,
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*\n[\s\S]{0,8000}?^(?<![^\r\n])[ \t]*\1(?!%)[^\n]*$(?![^\r\n])/m,
                 greedy: true,
             },
             {
-                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*%%(?!%).*$/m,
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*%%(?!%)[^\r\n]*$(?![^\r\n])/m,
                 greedy: true,
             },
             {
                 // An UNTERMINATED `%%%` run opens nothing (PART 9 §28); it
                 // degrades to a line comment, so it must still scope as one.
                 // Placed after the block form, which consumes matched fences.
-                pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*%{3,}.*$/m,
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*%{3,}[^\r\n]*$(?![^\r\n])/m,
                 greedy: true,
             },
             {
@@ -918,19 +995,18 @@
                 // prefix scan; the performance sweep measures that residual.
                 // Consume internal whitespace runs together so the closing
                 // lookahead does not rescan a long whitespace body at each byte.
-                pattern: /([ \t])%{2,}(?<=^[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n\u2028\u2029 \t]|[ \t]+(?![ \t]|\||$))*(?=[ \t]*(?:\||$))/m,
+                pattern: /([ \t])%{2,}(?<=^(?<![^\r\n])[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n \t]|[ \t]+(?![ \t]|\||$(?![^\r\n])))*(?=[ \t]*(?:\||$(?![^\r\n])))/m,
                 lookbehind: true,
                 greedy: true,
             },
             {
                 // trailing comment after whitespace (Prism lookbehind, no JS
                 // lookbehind: the leading space is captured and excluded).
-                // A trailing `%%%` RUN is untouched by the exclusion below: it
-                // is not a shape any block rule can take, and an unterminated
-                // run degrades to a line comment wherever it sits. Corpus
+                // An unterminated percent run degrades to a line comment,
+                // except in the metadata tail owned by a named container. Corpus
                 // `326-...-6` (`- %%%` / `c` / `%%%`) pins the opener keeping
                 // its comment scope.
-                pattern: /([ \t])%{3,}.*$/m,
+                pattern: outsideContainerMetadata(RegExp('([ \\t])%{3,}[^\\r\\n]*$(?![^\\r\\n])', 'm')),
                 lookbehind: true,
                 greedy: true,
             },
@@ -946,26 +1022,20 @@
                 // SEPARATORS), so no block rule would claim `#<TAB>%% h` and the
                 // comment has to stay a comment here.
                 //
-                // A COLON-FENCE OPENER is in the list for the opposite reason
-                // (carve-grammars#579). Trailing junk makes such a line a
-                // paragraph, and the 'div' rule already refuses it - but only if
-                // it can SEE the junk. With the comment carved out first the rule
-                // saw a clean `::: note` and painted a container the engine does
-                // not open (oracle: `<p>::: note body :::</p>`). Left in the line,
-                // the comment keeps the opener from matching at all, which is the
-                // reading the ruling asks for. The line then colours as the prose
-                // it is, comment included.
+                // A named container owns its complete metadata tail. Leaving
+                // percent runs in place lets valid labels retain their scope
+                // and marks a rejected title or label as invalid metadata.
                 // THE MARKER EXCLUSION SITS BEHIND THE `%%`. As a leading
                 // lookbehind it would run at every space in the line, the
                 // quadratic shape carve-grammars#576 took out of the row rule next
                 // door. Same question either way - a marker, a LITERAL SPACE, then
                 // the run - so the tab form is untouched.
-                pattern: RegExp(
+                pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
-                    + '(?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
-                    + '.*$',
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
-                ),
+                )),
                 lookbehind: true,
                 greedy: true,
             },
@@ -986,12 +1056,12 @@
                  * before the test: `> y` + backtick continues a paragraph, while
                  * `> # a` behind the same marker opens a block.
                  */
-                pattern: RegExp(
-                    '((?<!^[ \\t]*(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + '(?<!^[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
-                    + '.*$',
+                pattern: outsideContainerMetadata(RegExp(
+                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
+                    + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
-                ),
+                )),
                 lookbehind: true,
                 greedy: true,
             },
@@ -1003,13 +1073,13 @@
         // highlighting. Unknown format tokens remain opaque metadata.
         'front-matter': [
             {
-                pattern: /^\uFEFF?--- ?json[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
-                    'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?json|^---[ \t]*$/m, alias: 'punctuation' },
+                    'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?json|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
                 }, Prism.languages.json || {
-                    property: { pattern: /(^|[^\\])"(?:\\.|[^"\\])*"(?=\s*:)/, lookbehind: true },
-                    string: { pattern: /(^|[^\\])"(?:\\.|[^"\\])*"/, lookbehind: true },
+                    property: { pattern: /(^(?<![^\r\n])|[^\\])"(?:\\.|[^"\\])*"(?=\s*:)/, lookbehind: true },
+                    string: { pattern: /(^(?<![^\r\n])|[^\\])"(?:\\.|[^"\\])*"/, lookbehind: true },
                     comment: /\/\*[\s\S]*?\*\/|\/\/.*/,
                     number: /\b-?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/,
                     punctuation: /[{}[\],]/,
@@ -1019,14 +1089,14 @@
                 }),
             },
             {
-                pattern: /^\uFEFF?--- ?toml[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
-                    'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?toml|^---[ \t]*$/m, alias: 'punctuation' },
+                    'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?toml|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
                 }, Prism.languages.toml || {
                     comment: /#.*/,
-                    table: { pattern: /^\s*\[\[?.*?\]\]?\s*$/m, alias: 'class-name' },
-                    key: { pattern: /^[ \t]*[A-Za-z0-9_-]+(?=\s*=)/m, alias: 'property' },
+                    table: { pattern: /^(?<![^\r\n])\s*\[\[?.*?\]\]?\s*$(?![^\r\n])/m, alias: 'class-name' },
+                    key: { pattern: /^(?<![^\r\n])[ \t]*[A-Za-z0-9_-]+(?=\s*=)/m, alias: 'property' },
                     string: /"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'[^']*'/,
                     number: /\b[+-]?(?:0x[\dA-Fa-f_]+|0o[0-7_]+|0b[01_]+|\d[\d_]*(?:\.\d[\d_]*)?(?:[Ee][+-]?\d[\d_]*)?)\b/,
                     boolean: /\b(?:false|true)\b/,
@@ -1034,13 +1104,13 @@
                 }),
             },
             {
-                pattern: /^\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
-                    'frontmatter-delimiter': { pattern: /^\uFEFF?---(?: ?(?:yaml|yml))?|^---[ \t]*$/m, alias: 'punctuation' },
+                    'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
                 }, Prism.languages.yaml || {
                     comment: /#.*/,
-                    key: { pattern: /(^|\n)[ \t]*[\w.-]+(?=\s*:)/, lookbehind: true, alias: 'property' },
+                    key: { pattern: /(^(?<![^\r\n])|\n)[ \t]*[\w.-]+(?=\s*:)/, lookbehind: true, alias: 'property' },
                     string: /"(?:\\.|[^"\\])*"|'(?:''|[^'])*'/,
                     number: /\b[+-]?(?:0x[\dA-Fa-f]+|\d*\.?\d+(?:[Ee][+-]?\d+)?)\b/,
                     boolean: /\b(?:false|true|null)\b/,
@@ -1048,10 +1118,10 @@
                 }),
             },
             {
-                pattern: /^\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$)/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
                 alias: 'comment',
                 greedy: true,
-                inside: { 'frontmatter-delimiter': { pattern: /^\uFEFF?--- ?[A-Za-z0-9_-]+|^---[ \t]*$/m, alias: 'punctuation' } },
+                inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
             },
         ],
 
@@ -1081,7 +1151,7 @@
             // The width rule is the code fence's and not the colon fence's,
             // which wants an exact length (§12) - the same distinction
             // `fencedVerbatim` states next to highlight.js's copy of this rule.
-            pattern: /^(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\n]{0,512}\n[\s\S]*?^\1\2\3*[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\n]{0,512}\n[\s\S]*?^(?<![^\r\n])\1\2\3*[ \t]*$(?![^\r\n])/m,
             greedy: true,
             inside: {
                 // BEFORE `punctuation`, which consumes the opening fence this
@@ -1090,11 +1160,11 @@
                 // while TextMate names it `fenced_code.block.language` and
                 // highlight.js scopes the opener `keyword` (#523).
                 'language': {
-                    pattern: /(^\uFEFF?(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
+                    pattern: /(^(?<![^\r\n])\uFEFF?(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
                     lookbehind: true,
                     alias: 'class-name',
                 },
-                'punctuation': /^\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$/,
+                'punctuation': /^(?<![^\r\n])\uFEFF?(?:`{3,}|~{3,})|(?:`{3,}|~{3,})$(?![^\r\n])/,
             },
         },
 
@@ -1107,7 +1177,7 @@
         // the document's opening delimiters. A table delimiter row (`|---|`)
         // is not a whole-line run, so the anchors exclude it.
         'thematic-break': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$(?![^\r\n])/m,
             alias: 'punctuation',
         },
 
@@ -1124,10 +1194,10 @@
             // heading text, which is why the run stays optional behind it.
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} [ \t]*(?![ \t]*$).+$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} [ \t]*(?![ \t]*$(?![^\r\n]))[^\r\n]+$(?![^\r\n])/m,
             alias: 'important',
             inside: Object.assign({
-                'punctuation': /^\uFEFF?#{1,6}/,
+                'punctuation': /^(?<![^\r\n])\uFEFF?#{1,6}/,
                 // A heading's inline run holds a trailing comment, and the
                 // top-level comment rule steps aside when the comment is all
                 // that follows the marker (carve-grammars#578). First in the
@@ -1139,7 +1209,7 @@
                 // is where the walk has to begin. No marker exclusion: the
                 // top-level rule owns that case, and a marker-only comment is
                 // meant to land here (carve-grammars#578).
-                'comment': { pattern: RegExp(commentAfterPrefix + '.*$'), lookbehind: true, greedy: true },
+                'comment': { pattern: RegExp(commentAfterPrefix + '[^\\r\\n]*$(?![^\\r\\n])'), lookbehind: true, greedy: true },
                 // A tag is still a tag even inside a heading's literal
                 // trailing brace run (carve-grammars#125, corpus 213): a
                 // heading takes no trailing attribute block, so `{#id .cls}`
@@ -1167,7 +1237,7 @@
                 // trick, because the exclusion needs to see two characters
                 // back.
                 'tag': {
-                    pattern: /(^|[^\w])(?<!<\/)#[A-Za-z0-9_][\w-]*/,
+                    pattern: /(^(?<![^\r\n])|[^\w])(?<!<\/)#[A-Za-z0-9_][\w-]*/,
                     lookbehind: true,
                     alias: 'variable',
                 },
@@ -1203,7 +1273,8 @@
         // generic container, which is what the `inside` composed after this
         // object literal arranges (the group's body holds no 'figure-group').
         'figure-group': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: containerPattern(' +figure[ \\t]*$(?![^\\r\\n])'),
+            lookbehind: true,
             alias: 'tag',
             inside: {
                 // THIS container's own two delimiter lines, each claimed whole
@@ -1224,7 +1295,7 @@
                 // to its end (`$` with no `m` is the end of the token, and an
                 // unclosed group has no closer line to match).
                 'figure-group-delimiter': {
-                    pattern: /^\uFEFF?[ \t]*:{3,} +figure[ \t]*(?=\n|$)|(?<=\n)[ \t]*:{3,}[ \t]*$/,
+                    pattern: /^(?<![^\r\n])\uFEFF?[ \t]*:{3,} +figure[ \t]*(?=\n|$(?![^\r\n]))|(?<=\n)[ \t]*:{3,}[ \t]*$(?![^\r\n])/,
                     inside: {
                         'punctuation': /:{3,}/,
                         'class-name': /figure/,
@@ -1234,10 +1305,8 @@
         },
 
         // Container divs ::: class  /  :::
-        // Strict opener shapes only: type word, optional "title" (straight
-        // quotes), optional [label], the | / \ layout tokens, or a typeless
-        // [label]. Trailing junk makes the line a paragraph, so it must not
-        // highlight as a fence.
+        // A separated kind word opens a container even when its metadata is
+        // invalid (carve#2693). Sigil and typeless forms keep strict syntax.
         //
         // The pattern spans the WHOLE container (opener through its matching
         // closer), not just the opener line (carve-grammars#125): a per-line
@@ -1259,7 +1328,10 @@
         // inside a div body (headings - corpus 170, nested lists, blockquotes)
         // while suppressing only the one construct this fix targets.
         'div': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?:\n[\s\S]*?^[ \t]*\1[ \t]*$)?/m,
+            pattern: containerPattern(
+                '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
+            ),
+            lookbehind: true,
             alias: 'tag',
             inside: {
                 // Any delimiter line (opener OR closer - the same shape as
@@ -1276,22 +1348,36 @@
                 // line start - `::: |` mis-scoped its own `|` layout token
                 // as a table row. Leaving nothing ungrabbed on a delimiter
                 // line closes that gap.
-                'div-delimiter': {
-                    pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$/m,
-                    inside: {
-                        'punctuation': /:{3,}/,
-                        'string': /"[^"\n]*"/,
-                        'symbol': /\[[^\]\n]*\]/,
-                        'class-name': /[a-zA-Z_][\w-]*|\||\\|>/,
+                'div-delimiter': [
+                    {
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\n]*")?(?: +\[[^\]\n]*\])?| *\[[^\]\n]*\])?[ \t]*$(?![^\r\n])/m,
+                        inside: {
+                            'punctuation': /:{3,}/,
+                            'string': /"[^"\n]*"/,
+                            'symbol': /\[[^\]\n]*\]/,
+                            'class-name': /[a-zA-Z0-9_][\w-]*|\||\\|>/,
+                        },
                     },
-                },
+                    {
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*$(?![^\r\n])/m,
+                        inside: {
+                            'invalid-metadata': {
+                                pattern: /(^(?<![^\r\n])\uFEFF?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*)(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]+/,
+                                lookbehind: true,
+                                alias: 'error',
+                            },
+                            'punctuation': /:{3,}/,
+                            'class-name': /[a-zA-Z0-9_][\w-]*/,
+                        },
+                    },
+                ],
             },
         },
 
         // A delimiter row has no inline content, so recognize the whole line
         // before the general table rule splits it around code and escapes.
         'table-separator': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$(?![^\r\n])/m,
             inside: {
                 'table-operator': /:?-+:?/,
                 'table-boundary': /\|/,
@@ -1300,7 +1386,7 @@
 
         // Table rows: | a | b |   (plus header `|=`, caption `^`, span markers)
         'table': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\|.*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|[^\r\n]*$(?![^\r\n])/m,
             inside: Object.assign({
                 'code': /(?!)/,
                 'escape': /(?!)/,
@@ -1331,7 +1417,7 @@
         // block to a list item, quote, footnote or description; it is not
         // table syntax (#523).
         'continuation-marker': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$(?![^\r\n])/m,
             inside: {
                 'punctuation': /\+/,
             },
@@ -1341,11 +1427,11 @@
         // 63-table-multi-line-cell-continuation). It has to end in `|`, so
         // `one + two` in prose stays literal.
         'table-continuation': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\+[^\n]*\|[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[^\n]*\|[ \t]*$(?![^\r\n])/m,
             inside: Object.assign({
                 'code': /(?!)/,
                 'escape': /(?!)/,
-                'table-operator': /^\uFEFF?[ \t]*\+/,
+                'table-operator': /^(?<![^\r\n])\uFEFF?[ \t]*\+/,
                 'table-boundary': /\|/,
             }, inline),
         },
@@ -1365,10 +1451,10 @@
             // strict about this, so the two engines now agree.
             // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
             // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\^ +(?![ \t]*$).*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\^ +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
             alias: 'title',
             inside: Object.assign({
-                'punctuation': /^\uFEFF?\^/,
+                'punctuation': /^(?<![^\r\n])\uFEFF?\^/,
             }, inline),
         },
 
@@ -1407,20 +1493,20 @@
             // place: a quoted value may contain `}` and may escape its own
             // quote, and `{title="a}b"} x` is a valid item (#85).
             pattern: RegExp(
-                '^(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
-                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$)|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
-                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$))'
+                '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
+                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$(?![^\\r\\n]))|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
+                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$(?![^\\r\\n])))'
                 // A marker whose whole content is a comment takes the comment
                 // with it, so the marker keeps its scope and the comment is
                 // coloured by the set below. The top-level comment rule steps
                 // aside for exactly this shape (carve-grammars#578); without the
                 // tail the comment would be left unscoped instead.
-                + '(?:%{2}(?!%)[^\\r\\n]*$)?',
+                + '(?:%{2}(?!%)[^\\r\\n]*$(?![^\\r\\n]))?',
                 'm',
             ),
             alias: 'punctuation',
             inside: {
-                'comment': { pattern: /%%(?!%).*$/, greedy: true },
+                'comment': { pattern: /%%(?!%)[^\r\n]*$(?![^\r\n])/, greedy: true },
                 'constant': /\[[ xX\-_>?]\]/,
             },
         },
@@ -1456,9 +1542,9 @@
         'blockquote': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: .*)?$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: [^\r\n]*)?$(?![^\r\n])/m,
             inside: Object.assign({
-                'punctuation': /^\uFEFF?[ \t]*>/,
+                'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>/,
             }, inline),
         },
 
@@ -1484,7 +1570,7 @@
                 // The description marker itself; the body text is left for
                 // the inline rules to tokenize as ordinary content, same as
                 // it was when this lived in 'list'.
-                'punctuation': /^[ \t]*: +(?![ \t]*$)/m,
+                'punctuation': /^(?<![^\r\n])[ \t]*: +(?![ \t]*$(?![^\r\n]))/m,
             },
         },
 
@@ -1492,14 +1578,14 @@
         // Anchored at end of line (grammar.ebnf `reference_definition`):
         // `[a]: /u zzz` is prose, not a definition (#533).
         'reference-definition': {
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$(?![^\r\n])/m,
             alias: 'url',
             inside: {
-                'constant': /^\uFEFF?[ \t]*\[[^\]]+\]:/,
+                'constant': /^(?<![^\r\n])\uFEFF?[ \t]*\[[^\]]+\]:/,
                 // `link_title`, one space after the destination, scoped as an
                 // inline link's title is rather than as part of the URL (#523).
                 'string': {
-                    pattern: /(^ [^\S\n]*(?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$)/,
+                    pattern: /(^(?<![^\r\n]) [^\S\n]*(?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$(?![^\r\n]))/,
                     lookbehind: true,
                 },
             },
@@ -1511,7 +1597,7 @@
         'abbreviation-definition': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +.*$/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +[^\r\n]*$(?![^\r\n])/m,
             inside: {
                 // BEFORE punctuation, and anchored to the brackets. Prism
                 // applies these in order, so a punctuation rule that eats `*[`
@@ -1520,7 +1606,7 @@
                 // uppercase-only class that showed up as the `H` of `HyperText`
                 // carrying `symbol`, which the goldens pinned.
                 'symbol': {
-                    pattern: /(^\uFEFF?[ \t]*\*\[)[A-Za-z0-9]+(?=\]:)/,
+                    pattern: /(^(?<![^\r\n])\uFEFF?[ \t]*\*\[)[A-Za-z0-9]+(?=\]:)/,
                     lookbehind: true,
                 },
                 // The expansion is the abbreviation's TITLE, not more markup.
@@ -1528,10 +1614,10 @@
                 // and this grammar left it to whatever the term rule spilled
                 // onto it.
                 'string': {
-                    pattern: /(\]:[ \t]+).+$/,
+                    pattern: /(\]:[ \t]+)[^\r\n]+$(?![^\r\n])/,
                     lookbehind: true,
                 },
-                'punctuation': /^\uFEFF?[ \t]*\*|\[|\]|:/,
+                'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*\*|\[|\]|:/,
             },
         },
 
@@ -1753,7 +1839,7 @@
                     lookbehind: true,
                     alias: 'url',
                 },
-                'punctuation': /^\{\{|\}\}$/,
+                'punctuation': /^(?<![^\r\n])\{\{|\}\}$(?![^\r\n])/,
                 // The value is an `attribute_value`, so it may be quoted and
                 // then carries spaces. An unterminated quote falls back to the
                 // unquoted run rather than pairing with a later one.
@@ -1762,12 +1848,12 @@
                     lookbehind: true,
                     inside: {
                         'include-option-name': {
-                            pattern: /^@[A-Za-z_][\w-]*/,
+                            pattern: /^(?<![^\r\n])@[A-Za-z_][\w-]*/,
                             alias: 'keyword',
                         },
-                        'punctuation': /^:/,
+                        'punctuation': /^(?<![^\r\n]):/,
                         'include-option-value': {
-                            pattern: /(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)$/,
+                            pattern: /(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)$(?![^\r\n])/,
                             alias: 'string',
                         },
                     },
@@ -1783,7 +1869,7 @@
             alias: 'url',
             inside: {
                 'string': linkTitle,
-                'punctuation': /^!\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
+                'punctuation': /^(?<![^\r\n])!\[|\]\((?=(?:[^\]]|\](?!\())*$(?![^\r\n]))|\)$(?![^\r\n])/,
             },
         },
 
@@ -1825,7 +1911,7 @@
             greedy: true,
             alias: 'url',
             inside: {
-                'constant': /(?<=\]\[)[^\]\n]+(?=\]$)/,
+                'constant': /(?<=\]\[)[^\]\n]+(?=\]$(?![^\r\n]))/,
                 'punctuation': /!\[|\]\[|\]/,
             },
         },
@@ -1839,7 +1925,7 @@
             // The body is ordinary inline content - `^[see *later*]` keeps its
             // bold - so the shared inline rules apply inside it.
             inside: Object.assign({
-                'punctuation': /^\^\[|\]$/,
+                'punctuation': /^(?<![^\r\n])\^\[|\]$(?![^\r\n])/,
             }, inline),
         },
 
@@ -1859,7 +1945,7 @@
             alias: 'string',
             inside: {
                 // Integral marker `+` and suppress-author `-`
-                'operator': /(?<=^\[)\+|(?<=[@;]\s*)-(?=@)/,
+                'operator': /(?<=^(?<![^\r\n])\[)\+|(?<=[@;]\s*)-(?=@)/,
                 // The `@key` itself
                 'function': /@[A-Za-z0-9_][A-Za-z0-9_.:#$%&+?<>~\/-]*/,
                 // Separators and locator punctuation
@@ -1891,7 +1977,7 @@
             greedy: true,
             alias: 'url',
             inside: {
-                'punctuation': /^<\/#|>$/,
+                'punctuation': /^(?<![^\r\n])<\/#|>$(?![^\r\n])/,
             },
         },
 
@@ -1905,7 +1991,7 @@
                 greedy: true,
                 inside: {
                     'string': linkTitle,
-                    'punctuation': /^\[|\]\((?=(?:[^\]]|\](?!\())*$)|\)$/,
+                    'punctuation': /^(?<![^\r\n])\[|\]\((?=(?:[^\]]|\](?!\())*$(?![^\r\n]))|\)$(?![^\r\n])/,
                 },
             },
             {
@@ -1982,19 +2068,19 @@
 
         // Mentions @name, tags #tag, symbols :name:
         'mention': {
-            pattern: /(^|[^\w.])@[A-Za-z0-9_][\w-]*/,
+            pattern: /(^(?<![^\r\n])|[^\w.])@[A-Za-z0-9_][\w-]*/,
             lookbehind: true,
             alias: 'variable',
         },
         'tag': {
-            pattern: /(^|[^\w])#[A-Za-z0-9_][\w-]*/,
+            pattern: /(^(?<![^\r\n])|[^\w])#[A-Za-z0-9_][\w-]*/,
             lookbehind: true,
             alias: 'variable',
         },
         'symbol': {
             // Symbol shortcode (e.g. emoji). Parser shape: name starts
             // alphanumeric, then word chars, `+` or `-` (`:+1:` stays literal).
-            pattern: /(^|[^\w]):[A-Za-z0-9+-][\w+-]*:/,
+            pattern: /(^(?<![^\r\n])|[^\w]):[A-Za-z0-9+-][\w+-]*:/,
             lookbehind: true,
             alias: 'constant',
         },
@@ -2070,12 +2156,12 @@
     });
     inline['changed'].inside = {
         'deleted': {
-            pattern: RegExp('^(\\{~)(?!~>)' + substitutionHalf('>}') + '(?=~>)'),
+            pattern: RegExp('^(?<![^\\r\\n])(\\{~)(?!~>)' + substitutionHalf('>}') + '(?=~>)'),
             lookbehind: true,
             inside: substitutionContent,
         },
         'inserted': {
-            pattern: /(~>)[\s\S]+(?=~\}$)/,
+            pattern: /(~>)[\s\S]+(?=~\}$(?![^\r\n]))/,
             lookbehind: true,
             inside: substitutionContent,
         },

@@ -1,7 +1,23 @@
 [
   {
-    "type": "text",
-    "text": "::: note \"Title\" \t[First]\nx\n"
+    "type": "div>tag>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>tag>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>tag>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "text": " \"Title\" \t[First]"
+  },
+  {
+    "type": "div>tag",
+    "text": "\nx\n"
   },
   {
     "type": "div>tag>div-delimiter>punctuation",

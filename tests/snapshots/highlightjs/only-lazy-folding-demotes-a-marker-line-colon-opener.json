@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " ::: d\n\ntail\n"
+    "text": " "
+  },
+  {
+    "scope": "keyword",
+    "text": "::: d"
+  },
+  {
+    "scope": null,
+    "text": "\n\ntail\n"
   }
 ]

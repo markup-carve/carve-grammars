@@ -24,7 +24,7 @@
  * @module tests/lib/textmate-engine
  */
 import { readFileSync } from 'node:fs';
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './shiki.js';
 import { textmateLineTokenizer } from './textmate-lines.js';
 
 function hasBlankLine(source) {

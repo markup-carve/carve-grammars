@@ -28,7 +28,7 @@
  * engines it stays as paragraph text.
  */
 import { prismTokens, hljsTokens } from './lib/engines.js';
-import { createHighlighter } from 'shiki';
+import { createHighlighter } from './lib/shiki.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
