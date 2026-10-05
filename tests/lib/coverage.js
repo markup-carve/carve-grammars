@@ -800,6 +800,44 @@ const TIPTAP_COVERED = [
     // which is what keeps this classification valid across the engine bump
     // the spec declares pending in `resources/engine-pin-drift.txt`. 2 files.
     'invalid-named-container-metadata-keeps-the-subtree',
+
+    /*
+     * Spec corpus 538-544, the seven categories the bump to carve `0579480`
+     * added for a table's explicit body metadata. All twelve documents were
+     * measured file by file: parse -> PM with `unsupported: 'preserve'` ->
+     * serialize -> reparse. Every one projects to rich table nodes, none
+     * produces the whole-document `carveUnsupported` atom, and every one
+     * reparses to the same AST, so all seven are covered rather than fallback.
+     *
+     * 538 carries no source envelope: the table's attribute block survives the
+     * editable projection because `widths` and the caption are modeled, and the
+     * writer re-emits the rest with quoted values that render the same. The
+     * other six categories do ride the envelope, because the schema models no
+     * body-grouping attribute and the editable projection drops the block
+     * whole - the loss class 376, 494 and 495 already record for
+     * `{header-rows}` and `{footer-rows}`.
+     */
+    // A table carrying head, foot, two explicit bodies, per-body header rows
+    // and columns, widths and a caption. 1 file.
+    'multiple-table-bodies-have-positional-source-metadata',
+    // A zero-length leading body, so the boundary is kept with no rows in it.
+    // 1 file.
+    'empty-table-bodies-keep-their-source-boundaries',
+    // `body-rows=""`, which leaves head and foot with no implicit body between
+    // them. 1 file.
+    'a-table-with-no-bodies-keeps-its-head-and-foot',
+    // Body metadata the engine refuses: a non-numeric count, a count list that
+    // disagrees with the row total, a short list, a header-row count with no
+    // body list, a non-numeric column entry, and a count past the safe integer
+    // range. Each stays an ordinary table. 6 files.
+    'invalid-table-body-metadata-stays-ordinary',
+    // A rowspan reaching across a body boundary. 1 file.
+    'a-span-across-bodies-keeps-their-header-semantics',
+    // Head and foot consuming every row. 1 file.
+    'a-head-and-foot-consuming-all-rows-leave-no-implicit-body',
+    // An explicit body count covering rows whose cells are authored as native
+    // header cells. 1 file.
+    'explicit-body-counts-include-native-header-cells',
 ];
 
 // Categories that historically required the whole-document fallback. Their

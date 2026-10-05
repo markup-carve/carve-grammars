@@ -35,17 +35,16 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Carve JS 0.1.9, the latest corpus and the payload writer leave 486 source
-// envelopes: 484 preserve an authored append and two use canonical output.
-// The former EOF fence conflicts (291-2 and 291-4) now preserve authored appends.
-// Section 535 added the last ten. The AST models neither the authored fence
-// character (`~~~` re-emits as a backtick fence), the authored thematic marker
-// (`***` re-emits as `---`), nor the over-indent column of a marker line inside
-// an opaque quote, so each of the ten projects to canonical spelling and the
-// envelope carries the authored bytes back. Keep the exact remaining conflict
-// set below, not just its size.
-assert.strictEqual(envelopes, 486, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 484, 'an append normalized authored layout in additional documents');
+// The latest corpus and the payload writer leave 497 source envelopes: 495
+// preserve an authored append and two use canonical output. Sections 539-544
+// added the last eleven, all of them authored appends. Keep the exact remaining
+// conflict set below, not just its size: the AST models neither the authored
+// fence character (`~~~` re-emits as a backtick fence), the authored thematic
+// marker (`***` re-emits as `---`), nor the over-indent column of a marker line
+// inside an opaque quote, so a document hitting one of those projects to
+// canonical spelling and the envelope carries the authored bytes back.
+assert.strictEqual(envelopes, 497, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 495, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 2, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

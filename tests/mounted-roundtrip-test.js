@@ -542,5 +542,14 @@ imported.destroy();
 // loses a trailing form feed, 491 fills a collapsed reference label in, 492
 // merges two adjacent forced strong spans, and 494 and 495 drop the table's
 // `{header-rows}` / `{footer-rows}` block exactly as 376 already does.
+//
+// 308 -> 319 with the bump to carve 0579480 (sections 538-544). All eleven are
+// new documents and land in that same last loss class: the editable projection
+// drops the table's `{...}` block, so the authored side renders body grouping
+// (or, at the published `^0.1.9`, echoes the body keys as raw table attributes)
+// and the written side renders a bare table. Rendered both ways and compared by
+// hand; cell text, rowspans and column counts match in every one. 538 is the
+// family's only render-equivalent document, because its keys survive the
+// projection as quoted values.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);
