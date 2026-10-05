@@ -33,6 +33,24 @@ for (const [name, tokenize] of engines) {
             assert.ok(scopesAt(tokens, source, 'Outside').every(scope => !/markup.heading|admonition|figure-group/.test(scope)), `${name}: outside`);
         }
     }
+    for (const [marker, indent] of [['- ', '  '], ['- [x] ', '  '], ['1. ', '   ']]) {
+        for (const kind of ['note', 'figure']) {
+            for (const ending of ['\n', '\r\n']) {
+                const source = `${marker}item${ending}${ending}${indent}::: ${kind}${ending}${indent}# Later${ending}${indent}:::${ending}${ending}After${ending}`;
+                const tokens = tokenize(source);
+                const projection = tokens.map(t => t.text).join('');
+                assert.equal(projection.replaceAll('\r\n', '\n'), source.replaceAll('\r\n', '\n'));
+                assert.ok(scopesAt(tokens, projection, 'Later').every(scope => /markup.heading/.test(scope)), `${name}: later ${marker}${kind}`);
+                assert.ok(scopesAt(tokens, projection, 'After').every(scope => !/markup.heading|admonition|figure-group/.test(scope)), `${name}: later outside`);
+            }
+        }
+    }
+    for (const outer of ['note', 'figure']) {
+        for (const opener of [`- ::: ${outer}\n`, `- item\n\n  ::: ${outer}\n`]) {
+            const source = `${opener}  ::: tip\n  # Inner\n  :::\n  :::\n\nAfter\n`;
+            assert.ok(scopesAt(tokenize(source), source, 'Inner').every(scope => /markup.heading/.test(scope)), `${name}: nested ${outer}`);
+        }
+    }
     const nested = '::: figure\n::: note\n  # Nested\n:::\n:::\n';
     assert.ok(scopesAt(tokenize(nested), nested, 'Nested').every(scope => !/markup.heading/.test(scope)), `${name}: top-level indented heading stays literal`);
 }

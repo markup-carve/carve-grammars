@@ -6,7 +6,7 @@ globalThis.Prism = Prism;
 await import('../prism/carve.js');
 delete globalThis.Prism;
 const current = Prism.languages.carve;
-const previous = /(?<=^[ \t]*\|[^\n]*?)([ \t])%{2,}(?:\\.|[^\\|\r\n])*?(?=[ \t]*(?:\||$))/m;
+const previous = /(?<=^(?<![^\r\n])[ \t]*\|[^\n]*?)([ \t])%{2,}(?:\\.|[^\\|\r\n])*?(?=[ \t]*(?:\||$(?![^\r\n])))/m;
 const rule = current.comment.find(r => r.pattern.source.includes('%{2,}') && r.pattern.source.includes('(?<=^'));
 assert.ok(rule, 'table-cell comment rule must be exercised');
 assert.ok(rule.pattern.source.indexOf('%{2,}') < rule.pattern.source.indexOf('(?<=^'),
