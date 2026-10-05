@@ -687,6 +687,27 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * 476. Eleven newly exposed mounted rendering gaps are separately recorded in
  * mounted-ledger.json, including below-column list continuations (277), a
  * definition-term continuation (504-4) and an empty comment label (518-10).
+ *
+ * 486 -> 497 with the bump to carve 0579480 (sections 538-544, the table-body
+ * positional metadata of carve#2708). All eleven are new documents, nothing
+ * came back, and each was rendered both ways and compared by hand. Every one
+ * drops the table's whole `{...}` block - `body-rows`, `body-header-rows`,
+ * `body-header-cols`, and `header-rows` / `footer-rows` where the document
+ * carries them - which is the no-model loss 376, 494 and 495 already record,
+ * now reached by six more keys. Cell text, rowspans and column counts survive
+ * in all eleven, so the envelope is the only thing carrying the grouping back.
+ *
+ * 538 is the one document in the family that does NOT need the envelope: its
+ * `widths` and caption are modeled, and the writer re-emits the body keys with
+ * quoted values that reparse identically.
+ *
+ * These readings are taken at the published engine `^0.1.9`, which does not
+ * implement the family and echoes the three body keys as raw table attributes
+ * while grouping every row into one implicit body. They are stable across the
+ * pending engine bump anyway, because the projection has lost the keys from
+ * the SOURCE: an engine that reads them renders the authored side with real
+ * body grouping and the written side without, so the divergence widens rather
+ * than closing.
  */
 assertLedger(
     'enveloped-ledger.json',
