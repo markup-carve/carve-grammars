@@ -1,0 +1,146 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#Fig}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![upper](upper.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: upper"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#fig}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![lower](lower.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Figure #: lower"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#Eq}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "$$`x`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Equation #: upper"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#eq}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "string",
+    "text": "$$`y`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Equation #: lower"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "</#Fig>"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#fig>"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#FIG>"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#Eq>"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#eq>"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "</#EQ>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

@@ -1,0 +1,274 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#Fig"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "upper"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "upper.png"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Figure #: upper"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#fig"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "lower"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "lower.png"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Figure #: lower"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#Eq"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "math>string",
+    "text": "$$`x`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Equation #: upper"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#eq"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "math>string",
+    "text": "$$`y`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Equation #: lower"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "Fig"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "fig"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "FIG"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "Eq"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "eq"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "EQ"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
+  }
+]
