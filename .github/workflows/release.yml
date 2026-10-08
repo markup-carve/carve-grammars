@@ -1,4 +1,4 @@
-name: Release packages and assets
+name: Release
 
 # THE TAG IS CREATED BY THIS WORKFLOW, AFTER THE GATES PASS AND AFTER A HUMAN
 # APPROVES. It used to be the trigger, and that ordering is what broke v0.1.12.
@@ -25,32 +25,18 @@ name: Release packages and assets
 # inheriting the 360-minute GitHub default.
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      publish:
-        required: true
-        type: boolean
-      tag:
-        required: true
-        type: string
       version:
+        description: 'Version to release, without a leading v (e.g. 0.1.13)'
         required: true
         type: string
-      release_tag:
-        required: true
-        type: string
-      source_sha:
-        required: true
-        type: string
-      release_id:
-        required: true
-        type: string
-      release_body:
-        required: true
-        type: string
-      notes_digest:
-        required: true
-        type: string
+
+concurrency:
+  # Two runs creating the same tag is a race with an irreversible loser.
+  group: release-${{ inputs.version }}
+  cancel-in-progress: false
+
 jobs:
   guard:
     name: The manifests and the changelog agree
@@ -67,14 +53,15 @@ jobs:
       # tag-triggered workflow this was impossible by construction; now it is the
       # first thing that can go wrong, and the failure mode it guards against is
       # the expensive one.
-          ref: ${{ inputs.source_sha }}
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
+      - name: The tag does not exist yet
         run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
+          VER="${{ inputs.version }}"
+          if git rev-parse -q --verify "refs/tags/v${VER}" >/dev/null; then
+            echo "::error::Tag v${VER} already exists. A published version cannot be" \
+                 "moved on Packagist; supersede it with a new version instead."
+            exit 1
+          fi
+
       - name: package.json declares this version
         run: |
           VER="${{ inputs.version }}"
@@ -121,7 +108,6 @@ jobs:
       # reports "no release" for a draft sitting right there with notes in it.
       # See markup-carve/carve-wasm#80.
       contents: write
-      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
@@ -135,14 +121,6 @@ jobs:
       # Found by listing rather than `gh release view <tag>`: a draft's tag is not
       # a git ref, so addressing one by tag can match nothing, change nothing and
       # still exit 0.
-          ref: ${{ inputs.source_sha }}
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
-        run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - name: The draft exists and has notes
         env:
           GH_TOKEN: ${{ github.token }}
@@ -175,16 +153,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-        with:
-          ref: ${{ inputs.source_sha }}
-          fetch-depth: 0
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
-        run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -294,22 +262,33 @@ jobs:
     environment: release
     permissions:
       contents: write
-      actions: read
     outputs:
-      sha: ${{ inputs.source_sha }}
+      sha: ${{ steps.push.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
 
-        with:
-          ref: ${{ inputs.source_sha }}
-          fetch-depth: 0
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
+      - name: Push the tag
+        id: push
         run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
+          VER="${{ inputs.version }}"
+          # Re-check under the approval: main can move while a run waits for a
+          # reviewer, and the gates measured the commit that was current then.
+          GOT="$(node -p "require('./package.json').version")"
+          if [ "$VER" != "$GOT" ]; then
+            echo "::error::package.json now declares $GOT. main moved while this run" \
+                 "waited for approval, so the gate result no longer describes it." \
+                 "Re-run the workflow."
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/v${VER}" >/dev/null; then
+            echo "::error::Tag v${VER} appeared while this run waited. Stopping."
+            exit 1
+          fi
+          git tag "v${VER}" "$GITHUB_SHA"
+          git push origin "refs/tags/v${VER}"
+          echo "sha=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+          echo "tagged v${VER} at $GITHUB_SHA"
+
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -323,34 +302,12 @@ jobs:
     permissions:
       contents: write
       id-token: write
-      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_sha }}
+          ref: v${{ inputs.version }}
           submodules: recursive # spec corpus submodule; npm test needs it
 
-          fetch-depth: 0
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-      - name: Verify approval and checked tag before publishing
-        working-directory: ${{ github.workspace }}
-        if: ${{ inputs.publish }}
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ inputs.tag }}
-          RELEASE_SHA: ${{ inputs.source_sha }}
-          RELEASE_NOTES_DIGEST: ${{ inputs.notes_digest }}
-        run: python .github/scripts/release-lane.py permit
-      - name: Expose the candidate tag locally
-        if: ${{ !inputs.publish }}
-        shell: bash
-        env:
-          CANDIDATE_TAG: ${{ inputs.tag }}
-        run: |
-          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -361,12 +318,7 @@ jobs:
       - run: npm test
 
       - name: Publish to npm
-        run: |
-          if [ "$LANE_PUBLISH" = true ]; then
-            npm publish --access public --provenance
-          else
-            npm publish --dry-run --access public
-          fi
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -376,13 +328,23 @@ jobs:
       #
       # Last, deliberately: a draft that stays a draft is recoverable, and one
       # published beside a failed publish is not.
-        shell: bash
-permissions:
-  contents: write
-  actions: read
-  id-token: write
-env:
-  LANE_TAG: ${{ inputs.tag }}
-  LANE_REF: ${{ format('refs/tags/{0}', inputs.tag) }}
-  LANE_REF_TYPE: tag
-  LANE_PUBLISH: ${{ inputs.publish }}
+      - name: Publish the release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"v${{ inputs.version }}\" and .draft)] | first | .id // empty")"
+          if [ -z "$id" ]; then
+            echo "No draft release for v${{ inputs.version }}; nothing to publish."
+            exit 0
+          fi
+          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT and
+          # GitHub replaces the tag with a generated `untagged-*` placeholder,
+          # because a draft's tag is a string on the object rather than a git ref.
+          # `-F` (not `-f`) for draft, so it is sent as a boolean: the string
+          # "false" is truthy and publishes.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
+            -f tag_name="v${{ inputs.version }}" -F draft=false --jq '"published \(.tag_name)"'
+          # Read it back: exit status does not tell you whether the tag survived.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
+            --jq '"draft=\(.draft) tag=\(.tag_name)"'
