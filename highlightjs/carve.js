@@ -1782,7 +1782,7 @@
         // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
         begin: RegExp(
             `\\{\\{(?=[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)`
-            + `(?:#[A-Za-z_][\\w-]*)?(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
+            + `(?:#[A-Za-z0-9_][\\w-]*)?(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
         ),
         end: /\}\}|$(?![^\r\n])/,
         relevance: 10,
@@ -1798,7 +1798,7 @@
             },
             {
                 className: 'symbol',
-                begin: /#[A-Za-z_][\w-]*/,
+                begin: /#[A-Za-z0-9_][\w-]*/,
             },
             {
                 // NOT `attr`: that class is this grammar's attribute BLOCK
