@@ -333,6 +333,27 @@ ok('the release workflow gates before the tag exists, behind an approval', () =>
         /environment:\s*release/.test(tagJob),
         'the tag job does not declare environment: release, so the tag would be created without an approval',
     );
+    assert.ok(
+        /needs:\s*\[[^\]]*npm-credential[^\]]*\]/.test(tagJob),
+        'the tag job does not declare needs: [..., npm-credential], so a tag can be created with a credential that cannot publish',
+    );
+
+    // The credential gate must stay a gate rather than a report. `npm whoami` is
+    // the one probe whose failure is unambiguous, so it is the one that exits.
+    // The scope read next to it is deliberately NOT fatal: measured on carve-wasm
+    // run 32156381782, this organization's token answers 403 on the org endpoint
+    // while an anonymous reader is served the whole scope, so failing on it would
+    // refuse every release here.
+    const credentialJob = /\n {2}npm-credential:\n(?: {4}.*\n| *\n)*/.exec(workflow)?.[0] ?? '';
+    assert.ok(credentialJob, 'release.yml has no npm-credential job');
+    assert.ok(
+        /npm whoami/.test(credentialJob) && /exit 1/.test(credentialJob),
+        'the npm-credential job does not fail on a token npm rejects, so it cannot stop a release',
+    );
+    assert.ok(
+        !/npm access list packages[^\n]*\n\s*exit 1/.test(credentialJob),
+        'the npm-credential job exits on the org scope read, which 403s for this organization token and would refuse every release',
+    );
 
     // And the publish stays behind the tag, so it cannot run on an untagged tree.
     const publishJob = /\n {2}publish:\n(?: {4}.*\n| *\n)*/.exec(workflow)?.[0] ?? '';
