@@ -189,7 +189,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: [tag]
-    environment: release
+    # NO `environment:` here. GitHub asks for an approval once per gated JOB, so
+    # declaring the environment on both tag and publish asked twice for one
+    # decision - measured on run 37767870312, where the second prompt arrived
+    # after the tag already existed and so could not withhold anything. The
+    # approval belongs on the first irreversible step, and `needs: [tag]` already
+    # makes this unreachable without it.
     permissions:
       contents: write
       id-token: write
