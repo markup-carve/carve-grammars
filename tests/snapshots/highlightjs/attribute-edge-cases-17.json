@@ -4,7 +4,11 @@
     "text": "[x]"
   },
   {
+    "scope": "attr",
+    "text": "{.ok .1}"
+  },
+  {
     "scope": null,
-    "text": "{.ok .1}\n"
+    "text": "\n"
   }
 ]

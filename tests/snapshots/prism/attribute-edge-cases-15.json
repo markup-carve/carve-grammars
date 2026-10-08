@@ -4,24 +4,40 @@
     "text": "[x]"
   },
   {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".123"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
-    "text": "{.123} "
+    "text": " "
   },
   {
     "type": "span>string",
     "text": "[y]"
   },
   {
-    "type": "text",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "tag>variable",
+    "type": "attributes>attr-value>id",
     "text": "#7-x"
   },
   {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
-    "text": "} and "
+    "text": " and "
   },
   {
     "type": "span>string",

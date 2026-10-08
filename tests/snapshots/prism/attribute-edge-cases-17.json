@@ -4,7 +4,27 @@
     "text": "[x]"
   },
   {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".ok"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".1"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
-    "text": "{.ok .1}\n"
+    "text": "\n"
   }
 ]

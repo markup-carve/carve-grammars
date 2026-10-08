@@ -17,11 +17,7 @@
   },
   {
     "type": "attributes>attr-value",
-    "text": "v"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".w"
+    "text": "v.w"
   },
   {
     "type": "attributes>attr-value>punctuation",

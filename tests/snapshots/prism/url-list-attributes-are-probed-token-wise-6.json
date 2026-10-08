@@ -32,16 +32,8 @@
     "text": "="
   },
   {
-    "type": "attributes>attr-value",
-    "text": "\"https://example"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".com"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "/s javascript:alert(1)\""
+    "type": "attributes>attr-value>string",
+    "text": "\"https://example.com/s javascript:alert(1)\""
   },
   {
     "type": "attributes>attr-value>punctuation",

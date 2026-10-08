@@ -32,16 +32,8 @@
     "text": "="
   },
   {
-    "type": "attributes>attr-value",
-    "text": "\"See: RFC 3986, http://example"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".com"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\""
+    "type": "attributes>attr-value>string",
+    "text": "\"See: RFC 3986, http://example.com\""
   },
   {
     "type": "attributes>attr-value>punctuation",
