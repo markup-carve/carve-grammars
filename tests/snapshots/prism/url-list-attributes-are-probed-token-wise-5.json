@@ -32,16 +32,8 @@
     "text": "="
   },
   {
-    "type": "attributes>attr-value",
-    "text": "\"safe"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".html"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": " javascript:alert(1)\""
+    "type": "attributes>attr-value>string",
+    "text": "\"safe.html javascript:alert(1)\""
   },
   {
     "type": "attributes>attr-value>punctuation",

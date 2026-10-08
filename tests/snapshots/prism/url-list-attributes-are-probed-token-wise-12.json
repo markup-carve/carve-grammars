@@ -32,16 +32,8 @@
     "text": "="
   },
   {
-    "type": "attributes>attr-value",
-    "text": "\"java script:alert(1) 1x, safe"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".png"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": " 2x\""
+    "type": "attributes>attr-value>string",
+    "text": "\"java script:alert(1) 1x, safe.png 2x\""
   },
   {
     "type": "attributes>attr-value>punctuation",
