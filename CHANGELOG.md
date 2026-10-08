@@ -4,6 +4,14 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-10-09
+
+### Fixes
+
+- Read an include option that butts directly onto the path or the section
+  selector, so `{{ frag.crv#sec fmt=raw }}` and `{{ frag.crv fmt=raw }}`
+  scope their options in all three grammars (#637).
+
 ## [0.1.13] - 2026-10-08
 
 0.1.12 reached Packagist but never reached npm: the release gate refused the tag
