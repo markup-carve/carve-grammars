@@ -857,8 +857,7 @@ const TIPTAP_COVERED = [
     // case, two ids differing only in case, an implicit heading reference, and
     // a link reference label. Resolution is the renderer's decision; the parse
     // keeps the inline nodes either way and the serializer re-emits every name
-    // with its authored case, so all four documents are write-identical. 4
-    // files.
+    // with its authored case, so every document is write-identical. 5 files.
     'every-name-lookup-compares-case-exactly',
     // An info string decides nothing about a flush-left fence below a closed
     // nested fence: with no closer ahead the line is content of the description
@@ -869,6 +868,12 @@ const TIPTAP_COVERED = [
     // `carveUnsupported` atom, and each reparses to the same AST, so the
     // category is covered rather than fallback. 3 files.
     'an-info-string-does-not-change-how-a-flush-left-fence-folds-into-a-description-body',
+    // A description body whose own block is a fence keeps no line below its
+    // column. The single file was run through the source-aware loader and
+    // again with its source envelope removed: it projects to rich nodes, emits
+    // no whole-document `carveUnsupported` atom, and reparses to the same AST,
+    // so the category is covered rather than fallback. 1 file.
+    'a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column',
 ];
 
 // Categories that historically required the whole-document fallback. Their
