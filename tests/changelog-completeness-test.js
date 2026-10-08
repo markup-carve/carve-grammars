@@ -292,76 +292,24 @@ ok('every file npm would pack is either shipped source or named as behavior-free
 });
 
 ok('the release workflow gates before the tag exists, behind an approval', () => {
-    const workflow = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
-    assert.ok(
-        workflow.includes('node scripts/changelog-completeness.mjs'),
-        'release.yml does not call scripts/changelog-completeness.mjs',
-    );
-
-    // The tag must NOT be the trigger. Packagist is pull-based: it reads this
-    // repository's tags and serves the new stable version within minutes, with no
-    // approval in that path. So on a tag-triggered workflow every gate runs after
-    // the only irreversible act. v0.1.12 was tagged, Packagist served it in two
-    // minutes, the gates then refused it over four uncited merges, the npm publish
-    // was skipped, and the version could not be corrected because a published
-    // source reference is immutable - 0.1.13 had to supersede identical code.
-    assert.ok(
-        !/\n {2}push:\n(?: {4}.*\n| *\n)*? {4}tags:/.test(workflow),
-        'release.yml is triggered by a tag push, so its gates run after Packagist has already published',
-    );
-    assert.ok(
-        /\n {2}workflow_dispatch:/.test(workflow),
-        'release.yml is not dispatchable, so there is no way to gate before the tag',
-    );
-
-    // `needs:` is what makes a job unreachable rather than merely later. A check
-    // ahead of a publish STEP in the same job is the shape that shipped a
-    // vulnerable carve-py: the check failed, the step was skipped, the job went
-    // green. So the tag job, which is the first irreversible step now, carries
-    // both gates and the approval environment.
-    const tagJob = /\n {2}tag:\n(?: {4}.*\n| *\n)*/.exec(workflow)?.[0] ?? '';
-    assert.ok(tagJob, 'release.yml has no tag job');
-    assert.ok(
-        /needs:\s*\[[^\]]*guard[^\]]*\]/.test(tagJob),
-        'the tag job does not declare needs: [guard, ...], so a tag can be created without the manifest gate',
-    );
-    assert.ok(
-        /needs:\s*\[[^\]]*release-notes[^\]]*\]/.test(tagJob),
-        'the tag job does not declare needs: [..., release-notes], so a tag can be created without the notes gate',
-    );
-    assert.ok(
-        /environment:\s*release/.test(tagJob),
-        'the tag job does not declare environment: release, so the tag would be created without an approval',
-    );
-    assert.ok(
-        /needs:\s*\[[^\]]*npm-credential[^\]]*\]/.test(tagJob),
-        'the tag job does not declare needs: [..., npm-credential], so a tag can be created with a credential that cannot publish',
-    );
-
-    // The credential gate must stay a gate rather than a report. `npm whoami` is
-    // the one probe whose failure is unambiguous, so it is the one that exits.
-    // The scope read next to it is deliberately NOT fatal: measured on carve-wasm
-    // run 32156381782, this organization's token answers 403 on the org endpoint
-    // while an anonymous reader is served the whole scope, so failing on it would
-    // refuse every release here.
-    const credentialJob = /\n {2}npm-credential:\n(?: {4}.*\n| *\n)*/.exec(workflow)?.[0] ?? '';
-    assert.ok(credentialJob, 'release.yml has no npm-credential job');
-    assert.ok(
-        /npm whoami/.test(credentialJob) && /exit 1/.test(credentialJob),
-        'the npm-credential job does not fail on a token npm rejects, so it cannot stop a release',
-    );
-    assert.ok(
-        !/npm access list packages[^\n]*\n\s*exit 1/.test(credentialJob),
-        'the npm-credential job exits on the org scope read, which 403s for this organization token and would refuse every release',
-    );
-
-    // And the publish stays behind the tag, so it cannot run on an untagged tree.
-    const publishJob = /\n {2}publish:\n(?: {4}.*\n| *\n)*/.exec(workflow)?.[0] ?? '';
-    assert.ok(publishJob, 'release.yml has no publish job');
-    assert.ok(
-        /needs:\s*\[[^\]]*tag[^\]]*\]/.test(publishJob),
-        'the publish job does not declare needs: [tag, ...]',
-    );
+    const lane = readFileSync(resolve(root, '.github/workflows/release-lane.yml'), 'utf8');
+    const publisher = readFileSync(resolve(root, '.github/workflows/release.yml'), 'utf8');
+    assert.ok(publisher.includes('node scripts/changelog-completeness.mjs'));
+    assert.ok(!lane.includes('tags:'));
+    assert.ok(lane.includes('workflow_dispatch:'));
+    const approval = /\n {2}approve:\n(?: {4}.*\n| *\n)*/.exec(lane)?.[0] ?? '';
+    assert.ok(approval.includes('environment: release-approval'));
+    assert.ok(approval.includes('- candidate') && approval.includes('- preflight'));
+    assert.ok(approval.includes('release-lane.py approve'));
+    const preflight = /\n {2}preflight:\n(?: {4}.*\n| *\n)*/.exec(lane)?.[0] ?? '';
+    assert.ok(preflight.includes('uses: ./.github/workflows/release.yml'));
+    assert.ok(preflight.includes('publish: false'));
+    const publication = /\n {2}publish:\n(?: {4}.*\n| *\n)*/.exec(lane)?.[0] ?? '';
+    assert.ok(publication.includes('- approve'));
+    assert.ok(publication.includes('publish: true'));
+    const credential = /\n {2}npm-credential:\n(?: {4}.*\n| *\n)*/.exec(publisher)?.[0] ?? '';
+    assert.ok(credential.includes('npm whoami') && credential.includes('exit 1'));
+    assert.ok(!/npm access list packages[^\n]*\n\s*exit 1/.test(credential));
 });
 
 ok('this file is part of the suite npm test runs', () => {

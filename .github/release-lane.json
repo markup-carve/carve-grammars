@@ -1,0 +1,20 @@
+{
+  "workflow": ".github/workflows/release-lane.yml",
+  "publisher": ".github/workflows/release.yml",
+  "publisher_environments": [
+    "release"
+  ],
+  "registries": {
+    "npm": "@markup-carve/carve-grammars",
+    "packagist": "markup-carve/carve-grammars"
+  },
+  "assets": [],
+  "versions": [
+    {
+      "path": "package.json",
+      "field": [
+        "version"
+      ]
+    }
+  ]
+}
