@@ -190,11 +190,12 @@
         greedy: true,
         alias: 'attr-value',
         inside: {
+            // FIRST, so nothing inside a quoted value reads as an item.
+            'string': /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/,
             // Anchored on an item start, so `.3` in `widths=33.3` stays value.
             'id': { pattern: /(^(?<![^\r\n])|[\s{])#[A-Za-z0-9_][\w-]*/, lookbehind: true },
             'class-name': { pattern: /(^(?<![^\r\n])|[\s{])\.[A-Za-z0-9_][\w-]*/, lookbehind: true },
             'attr-name': /[A-Za-z_][\w-]*(?==)/,
-            'string': /"[^"]*"|'[^']*'/,
             'language': {
                 pattern: /(^(?<![^\r\n])|[\s{]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?/,
                 lookbehind: true,
