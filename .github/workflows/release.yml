@@ -331,6 +331,9 @@ jobs:
           submodules: recursive # spec corpus submodule; npm test needs it
 
           fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
       - name: Verify approval and checked tag before publishing
         working-directory: ${{ github.workspace }}
         if: ${{ inputs.publish }}
