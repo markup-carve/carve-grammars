@@ -4,6 +4,14 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-10-08
+
+0.1.12 reached Packagist but never reached npm: the release gate refused the tag
+because four merged fixes were cited nowhere, so the publish job did not run. A
+version's source reference on Packagist cannot be moved, so this republishes the
+same grammars under a new version rather than re-tagging. The code is identical to
+0.1.12; only the changelog citations differ.
+
 ## [0.1.12] - 2026-10-05
 
 This release fixes highlighting at logical line boundaries and inside list containers, and preserves named containers when their opener metadata is invalid.
