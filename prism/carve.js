@@ -1808,7 +1808,7 @@
         'include-directive': {
             pattern: RegExp(
                 '\\{\\{[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)'
-                + '(?:#[A-Za-z_][\\w-]*)?'
+                + '(?:#[A-Za-z0-9_][\\w-]*)?'
                 + '(?:[ \\t]+' + includePart + '+)*'
                 + '[ \\t]+\\}\\}',
             ),
@@ -1825,7 +1825,7 @@
             // painted everything between as directive (carve-grammars#409).
             inside: {
                 'include-section': {
-                    pattern: /((?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*))#[A-Za-z_][\w-]*/,
+                    pattern: /(^(?<![^\r\n])\{\{[ \t]+(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)[ \t]*)#[A-Za-z0-9_][\w-]*/,
                     lookbehind: true,
                     alias: 'symbol',
                 },
