@@ -14,6 +14,10 @@ This release fixes highlighting at logical line boundaries and inside list conta
 - Recover invalid metadata on named container openers and list marker lines while preserving their block content (#611, #613).
 - Scope containers opened on list marker lines and bound metadata scanning. Preserve contextual heading boundaries (#610, #612, #614).
 - Parse heading titles and caption content as inline runs. Preserve percent comments in quoted headings and captions, qualify quoted one-line blocks after checking their content, and keep Prism from rescanning verbatim spans after escapes in headings and captions (#600, #601, #602, #603, #604).
+- Admit a digit-leading include section selector. Since carve 0.1.8 an include section is an `id_attribute`, so `{{ frag.crv #2024 }}` scopes as a selector in all three grammars (#625).
+- Admit a digit-leading shorthand attribute id or class, which the spec spells as an `explicit_identifier`, so `{#2024}` and `{.2col}` scope as an attribute block (#627).
+- Keep a quoted attribute value whole in Prism instead of tokenizing its contents as id, class or attribute names (#629).
+- Write a collapsed Tiptap reference only when the label matches exactly, so an image with alt `logo` and a `[Logo]:` definition no longer serializes to an unresolvable `![logo][]` (#619).
 
 ### Spec and CI
 
