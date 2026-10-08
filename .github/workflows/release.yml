@@ -146,11 +146,57 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: node scripts/changelog-completeness.mjs "v${{ inputs.version }}" --body-file /tmp/release-notes.md
 
+  npm-credential:
+    name: The npm credential can publish this package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # GATE: a dead credential used to be discovered AFTER the tag. On
+      # 2026-10-08 v0.1.13 passed every gate, was approved, tagged, and served by
+      # Packagist within minutes - and then `npm publish` answered
+      # "404 Not Found - PUT .../@markup-carve%2fcarve-grammars". npm returns 404
+      # rather than 403 on a scoped package so it does not leak existence, so that
+      # is an AUTH failure, not a missing package: 0.1.11 was serving fine at the
+      # time. The result was 0.1.13 on Packagist and 0.1.11 on npm, which is the
+      # same split the gate-before-tag work exists to prevent.
+      #
+      # `npm whoami` proves the token is live; `npm access list packages` proves it
+      # can write THIS scope, which whoami alone does not. Neither publishes
+      # anything.
+      - name: The token is live and can write this scope
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::NPM_TOKEN is not set in this repository, so the publish would fail after the tag exists."
+            exit 1
+          fi
+          who="$(npm whoami 2>&1)" || {
+            echo "::error::npm rejected the token: $who"
+            echo "::error::rotate NPM_TOKEN before releasing; a 404 on PUT is an auth failure, not a missing package."
+            exit 1
+          }
+          echo "authenticated as $who"
+          pkg="$(node -p "require('./package.json').name")"
+          if ! npm access list packages --json 2>/dev/null | jq -e --arg p "$pkg" 'has($p)' >/dev/null; then
+            echo "::error::the token authenticates but does not list write access to $pkg."
+            echo "::error::a scope-limited or read-only token publishes nothing; rotate it before releasing."
+            exit 1
+          fi
+          echo "token can write $pkg"
+
   tag:
     name: Create the tag
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [guard, release-notes]
+    needs: [guard, release-notes, npm-credential]
     # THE APPROVAL GATE. `needs:` makes this unreachable until both gate jobs
     # pass, and the environment holds it until a required reviewer approves, so
     # whoever approves is looking at a green gate rather than at nothing. This is
