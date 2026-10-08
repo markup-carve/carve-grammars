@@ -1782,7 +1782,15 @@
         // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
         begin: RegExp(
             `\\{\\{(?=[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)`
-            + `(?:#[A-Za-z0-9_][\\w-]*)?(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
+            + `(?:#[A-Za-z0-9_][\\w-]*)?`
+            // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@` (spec
+            // `include_options`): the bare path stops at `@` and a section
+            // name holds none, so an option may butt onto either slot. Its own
+            // optional run, gated on a `@` lookahead, so the separator stays a
+            // required whitespace run and two adjacent runs cannot split a
+            // part in more than one way.
+            + `(?:(?=@)${INCLUDE_PART_UNIT}+)?`
+            + `(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
         ),
         end: /\}\}|$(?![^\r\n])/,
         relevance: 10,
@@ -1806,7 +1814,10 @@
                 // scope on a non-attribute construct as a misreading. An option
                 // name is a reserved word in a slot, which is what `keyword` is.
                 className: 'keyword',
-                begin: /(?<=\s)@[A-Za-z_][\w-]*/,
+                // NO WHITESPACE REQUIRED before the `@`: the slot admits a
+                // glued option. The `:` lookahead is what keeps the name
+                // shape, now that the preceding character no longer does.
+                begin: /@[A-Za-z_][\w-]*(?=:)/,
             },
             {
                 // An `attribute_value`, so it may be quoted and then carries
@@ -1822,7 +1833,11 @@
                 // The unquoted alternative is LAST, so an unterminated quote
                 // falls back to it and the closer stays at the first pair.
                 className: 'literal',
-                begin: /(?<=:)(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
+                // AN UNQUOTED VALUE ENDS AT THE NEXT MARKER:
+                // `include_unquoted_value` is `unquoted_value` less the `@`,
+                // so `@shift:1@lines:1-8` is two options and never one whose
+                // value is `1@lines:1-8`.
+                begin: /(?<=:)(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}@]+)/,
             },
         ],
     };

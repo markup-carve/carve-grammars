@@ -1811,6 +1811,15 @@
             pattern: RegExp(
                 '\\{\\{[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)'
                 + '(?:#[A-Za-z0-9_][\\w-]*)?'
+                // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@`, in every
+                // position (spec `include_options`): the bare path stops at
+                // `@` and a section name holds none, so an option may butt
+                // onto either slot. Spelled as its OWN optional run, gated on
+                // a `@` lookahead, rather than relaxing the run separator to
+                // `[ \\t]*`: that would let two adjacent runs split a part in
+                // more than one way and make the scan backtrack
+                // exponentially on a line with no closer.
+                + '(?:(?=@)' + includePart + '+)?'
                 + '(?:[ \\t]+' + includePart + '+)*'
                 + '[ \\t]+\\}\\}',
             ),
@@ -1846,8 +1855,16 @@
                 // then carries spaces. An unterminated quote falls back to the
                 // unquoted run rather than pairing with a later one.
                 'include-option': {
-                    pattern: /(\s)@[A-Za-z_][\w-]*:(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)/,
-                    lookbehind: true,
+                    // NO WHITESPACE REQUIRED before the `@`: the slot admits a
+                    // glued option, and `inside` has already tokenized the
+                    // path and the section, so what is left to scan starts at
+                    // the `@` itself.
+                    // AN UNQUOTED VALUE ENDS AT THE NEXT MARKER:
+                    // `include_unquoted_value` is `unquoted_value` less the
+                    // `@`, so `@shift:1@lines:1-8` is two options and never
+                    // one whose value is `1@lines:1-8`. A value that needs an
+                    // `@` takes the quoted form.
+                    pattern: /@[A-Za-z_][\w-]*:(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}@]+)/,
                     inside: {
                         'include-option-name': {
                             pattern: /^(?<![^\r\n])@[A-Za-z_][\w-]*/,
@@ -1855,7 +1872,7 @@
                         },
                         'punctuation': /^(?<![^\r\n]):/,
                         'include-option-value': {
-                            pattern: /(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}]+)$(?![^\r\n])/,
+                            pattern: /(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}@]+)$(?![^\r\n])/,
                             alias: 'string',
                         },
                     },
