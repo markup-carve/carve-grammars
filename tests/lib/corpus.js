@@ -25,13 +25,49 @@ const CATEGORY_RE = /^(\d+-[a-z][a-z0-9-]*?)(-\d+)?\.crv$/;
 
 const byNatural = (a, b) => String(a).localeCompare(String(b), undefined, { numeric: true });
 
-// The pages spec/tests/corpus is generated from, and the opener that marks one
-// example pair. A `compare` line INSIDE an already-open block is content, not a
-// second pair, and a block closes on a bare marker line of the same width - so
-// the scan tracks the opener rather than counting matches.
+// The pages spec/tests/corpus is generated from. Each `carve` fence inside a
+// `::: compare` block is one corpus pair; a block may hold several.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md'];
-const COMPARE_OPEN = /^:{3,}\s+compare(\s+\S.*)?$/;
 const EXAMPLES_DIR = fileURLToPath(new URL('../../spec/resources/examples', import.meta.url));
+
+const leadingRun = (s, ch) => {
+    let n = 0;
+    while (n < s.length && s[n] === ch) n++;
+    return n;
+};
+
+/**
+ * Count the corpus pairs one example page declares, mirroring the spec's
+ * scripts/lib/example-pair-census.mjs: nothing inside a fence is markup.
+ * @param {string} text
+ * @returns {number}
+ */
+export function declaredPairsIn(text) {
+    let pairs = 0;
+    let marker = null;
+    let fence = null;
+    for (const line of text.split('\n')) {
+        if (fence !== null) {
+            if (line.startsWith(fence) && line.slice(fence.length).trim() === '') fence = null;
+            continue;
+        }
+        const ticks = leadingRun(line, '`');
+        if (ticks >= 3) {
+            fence = line.slice(0, ticks);
+            if (marker !== null && line.slice(ticks).trim() === 'carve') pairs += 1;
+            continue;
+        }
+        const trimmed = line.trim();
+        const colons = leadingRun(trimmed, ':');
+        if (colons < 3) continue;
+        if (marker === null) {
+            if (/^[ \t]+compare(?:[ \t]|$)/.test(trimmed.slice(colons))) marker = trimmed.slice(0, colons);
+        } else if (trimmed === marker) {
+            marker = null;
+        }
+    }
+    return pairs;
+}
 
 /**
  * How many corpus documents the pinned spec DECLARES.
@@ -50,18 +86,7 @@ export function declaredCorpusSize() {
                 'check the corpus size against.',
             );
         }
-        let marker = null;
-        for (const rawLine of text.split('\n')) {
-            const line = rawLine.trim();
-            if (marker !== null) {
-                if (line === marker) marker = null;
-                continue;
-            }
-            if (COMPARE_OPEN.test(line)) {
-                declared += 1;
-                marker = line.match(/^:{3,}/)[0];
-            }
-        }
+        declared += declaredPairsIn(text);
     }
     return declared;
 }
@@ -93,9 +118,9 @@ export function listCorpusFiles() {
     //
     // The expectation is DERIVED rather than written down, so it moves with the
     // submodule and cannot go stale: spec/tests/corpus is generated from the
-    // `::: compare` blocks in spec/resources/examples/{core,extensions,
-    // edge-cases}.md, so counting those blocks says how many documents the pin
-    // declares. A literal here would be one more number to forget on a bump,
+    // `carve` fences in the `::: compare` blocks of spec/resources/examples/
+    // {core,extensions,edge-cases}.md, so counting them says how many documents
+    // the pin declares. A literal here would be one more number to forget on a bump,
     // and a floor cannot tell a whole corpus from a truncated one - which is
     // the only question worth asking.
     const declared = declaredCorpusSize();
