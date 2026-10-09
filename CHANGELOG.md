@@ -11,6 +11,8 @@ All notable changes to `carve-grammars` are documented here.
 - Read an include option that butts directly onto the path or the section
   selector, so `{{ frag.crv#sec fmt=raw }}` and `{{ frag.crv fmt=raw }}`
   scope their options in all three grammars (#637).
+- Editable quotes in the Tiptap editor render at document text contrast and
+  keep the gap between their paragraphs (#639).
 
 ## [0.1.13] - 2026-10-08
 
