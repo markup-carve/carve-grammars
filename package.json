@@ -48,6 +48,7 @@
     "shiki/",
     "diff/",
     "textmate/",
+    "fence-languages/",
     "README.md",
     "LICENSE"
   ],
@@ -91,6 +92,7 @@
     },
     "./diff/carve-diff.css": "./diff/carve-diff.css",
     "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
+    "./fence-languages.json": "./fence-languages/fence-languages.json",
     "./tiptap/schema-map.json": "./tiptap/schema-map.json",
     "./package.json": "./package.json"
   },
