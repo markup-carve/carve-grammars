@@ -129,13 +129,16 @@
 /* Match the reader surface while keeping the editable boundary legible. */
 .ProseMirror blockquote {
   margin: 0 0 var(--carve-space-4, 1rem);
-  padding-inline-start: var(--carve-space-4, 1rem);
-  border-inline-start: var(--carve-accent-width, 3px) solid var(--carve-border, #cfd4da);
-  color: var(--carve-ink-soft, #5a626d);
+  padding-inline-start: var(--carve-quote-padding, var(--carve-space-4, 1rem));
+  padding-block: var(--carve-space-1, .25rem);
+  border-inline-start: var(--carve-quote-border-width, var(--carve-accent-width, 3px)) solid
+    var(--carve-quote-border, color-mix(in srgb, currentColor 50%, transparent));
+  color: var(--carve-quote-ink, var(--carve-ink, inherit));
 }
 .ProseMirror blockquote:focus-within {
   border-inline-start-color: var(--carve-accent, #14607f);
 }
+.ProseMirror blockquote > p { margin-block: 0 var(--carve-quote-gap, var(--carve-space-3, .75rem)); }
 .ProseMirror blockquote > :first-child { margin-block-start: 0; }
 .ProseMirror blockquote > :last-child { margin-block-end: 0; }
 
