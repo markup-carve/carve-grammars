@@ -473,8 +473,20 @@ export function serializeToCarve(doc, options = {}) {
                 break;
 
             case 'blockquote':
-                const quoteAttrs = serializeAttributes(node.attrs);
+                const quoteAttrs = serializeAttributes(node.attrs, ['carveFenced']);
                 if (quoteAttrs) output += quoteAttrs + '\n';
+                if (node.attrs?.carveFenced) {
+                    const quoteFence = ':'.repeat(carveDivFenceLength(fenceDepth));
+                    output += quoteFence + ' >\n';
+                    (node.content || []).forEach((child, i) => {
+                        serializeNode(child, indent, fenceDepth + 1);
+                        if (i < node.content.length - 1 && !isTightPair(child, node.content[i + 1])) {
+                            output += '\n';
+                        }
+                    });
+                    output += quoteFence + '\n';
+                    break;
+                }
                 // Serialize each child block with proper blank line separation
                 (node.content || []).forEach((child, i) => {
                     const childText = serializeNodeToString(child);

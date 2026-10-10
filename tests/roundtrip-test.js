@@ -711,6 +711,11 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *
  * 496 -> 495: `line-blocks-2` left once a line block's leading spaces loaded
  * as ASCII spaces instead of the U+00A0 the engine resolves them to.
+ *
+ * 495 -> 485: the quote fence kept its `::: >` form and a block quote's
+ * attribute run started loading. Six documents left for the fence (four of
+ * `a-fenced-block-quote-...`, `empty-containers-...-2`, `an-authored-base-...-3`)
+ * and four for the attribute run on a `>` quote.
  */
 assertLedger(
     'enveloped-ledger.json',
