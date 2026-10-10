@@ -696,5 +696,10 @@ imported.destroy();
 // hand; cell text, rowspans and column counts match in every one. 538 is the
 // family's only render-equivalent document, because its keys survive the
 // projection as quoted values.
+//
+// 318 -> 301 when paragraph text that opens a block or an inline construct
+// started being escaped (`# T`, `- T`, `%% T`, `x =hi= T`, `x ^[n] y`). All 17
+// went out and none came in. Each holds a paragraph whose text starts with an
+// opener (`## H`, `> q`, `{.gallery}`, `- b`) that came back as that block.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

@@ -9,7 +9,7 @@
  *   strike ~..~ (<s>)  subscript ,,..,, (<sub>)  superscript ^..^  insert {+..+}
  */
 import assert from 'node:assert';
-import { parse, renderHtml } from '@markup-carve/carve';
+import { carveToHtml, parse, renderHtml } from '@markup-carve/carve';
 import { astToProseMirror, carveToProseMirror } from '../tiptap/index.js';
 import { serializeToCarve } from '../tiptap/serializer.js';
 
@@ -1009,5 +1009,32 @@ checkEmptyItems('an item whose nested list held only empty items is skipped too'
     ] }),
     '- a\n- c',
     [{ list: [['a'], ['c']] }]);
+
+// Paragraph text shaped like Carve syntax is written so it reloads as that text.
+const htmlText = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+for (const literal of [
+    'x =hi= T', '=hi=', '(=hi=)', 'x ^[n] y', 'x^[n] y',
+    '- T', '* T', '# T', '### T', '> T', ':: T', '::: T', '. T', '1. T', '2) T', 'a. T', 'i) T',
+    '%% T', 'x %% y', 'x %%% y', '***', '___', '| a |', '{.c}', '~~~ T',
+]) {
+    for (const [where, pmDoc, wrap] of [
+        ['paragraph', doc(para(text(literal))), (h) => `<p>${h}</p>`],
+        ['list item', doc({ type: 'bulletList', content: [{ type: 'listItem', content: [para(text(literal))] }] }), (h) => `<ul><li>${h}</li></ul>`],
+    ]) {
+        const written = serializeToCarve(pmDoc);
+        assert.strictEqual(carveToHtml(written).replace(/\s+/g, ''), wrap(htmlText(literal)).replace(/\s+/g, ''),
+            `${where} text ${JSON.stringify(literal)} was written as ${JSON.stringify(written)}`);
+        passed++;
+    }
+}
+// Marked text escapes every delimiter itself; the note caret is escaped once.
+check('a note-shaped run inside bold', doc(para(text('x ^[n] y', 'bold'))), '*x \\^[n] y*');
+assert.strictEqual(carveToHtml('*x \\^[n] y*').trim(), '<p><strong>x ^[n] y</strong></p>');
+// Smart typography still dashes `---`, but it is no longer a thematic break.
+assert.ok(!carveToHtml(serializeToCarve(doc(para(text('---'))))).includes('<hr'));
+// Text that cannot open a construct is left alone.
+for (const plain of ['x = 5 =', 'a=b= c', 'x ^[] y', 'x%% y', '+ T', '-- T', '^ T', '{.c} T', '|a']) {
+    check(`no escape in ${JSON.stringify(plain)}`, doc(para(text(plain))), plain);
+}
 
 console.log(`\n${passed} passed`);
