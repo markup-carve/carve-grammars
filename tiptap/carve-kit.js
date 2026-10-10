@@ -398,6 +398,11 @@ export const CarveKit = Extension.create({
         if (this.options.starterKit !== false) {
             // StarterKit's Bold, Italic and Strike type Markdown spellings.
             const CarveStarterKit = StarterKit.extend({
+                // Tiptap 2's StarterKit has no addOptions, and without one here
+                // its extend() leaves options undefined, so configure() drops them.
+                addOptions() {
+                    return this.parent?.() ?? {};
+                },
                 addExtensions() {
                     return (this.parent?.() ?? []).map((extension) => (CARVE_RULED_MARKS.includes(extension.name)
                         ? extension.extend(carveMarkRules(extension.name))
