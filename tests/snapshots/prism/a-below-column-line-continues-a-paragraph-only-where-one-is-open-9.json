@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "    >"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\nlazy\n"
+  }
+]

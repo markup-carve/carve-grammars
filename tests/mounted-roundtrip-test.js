@@ -802,5 +802,15 @@ imported.destroy();
 // 301 -> 297 when a block quote's attribute run started loading: the four
 // documents put `{.x}` or `{:de}` on a `>` quote, which the projection
 // dropped, so the written side rendered a bare `<blockquote>`.
+//
+// The bump to carve efc1e98 adds no document. `a-dash-run-...-3` (`___` twice
+// then a paragraph) would have written `---` / `---` back, which opens
+// frontmatter and swallows both rules. A rule keeps its `*` or `_` marker now,
+// and a dash rule that opens the document is written `***`.
+//
+// 297 -> 307 with the bump to 8fb5e11: the same ten `a-below-column-line-...`
+// documents the enveloped ledger records. Both sides render through the pinned
+// `^0.1.9` engine, which predates the ruling, so the comparison measures the
+// old reading; they should leave once the engine pin implements it.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

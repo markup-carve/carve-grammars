@@ -1,0 +1,34 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[X]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "upper\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[x]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "lower\n"
+  }
+]

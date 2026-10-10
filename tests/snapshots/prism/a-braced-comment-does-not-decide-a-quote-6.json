@@ -1,0 +1,26 @@
+[
+  {
+    "type": "span>string",
+    "text": "[x]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "comment",
+    "text": "{%%}"
+  },
+  {
+    "type": "text",
+    "text": "\"q\"\n"
+  }
+]

@@ -334,6 +334,8 @@ export function serializeToCarve(doc, options = {}) {
 
     doc = pruneEmptyListItems(doc);
     let output = '';
+    // Above zero while a block is rendered into a detached buffer.
+    let detached = 0;
 
     // Reference links write their LABEL, so the definitions they point at have
     // to be written too - otherwise the round trip turns a link into literal
@@ -531,9 +533,14 @@ export function serializeToCarve(doc, options = {}) {
             }
 
             case 'horizontalRule':
-                const ruleAttrs = serializeAttributes(node.attrs);
+                const ruleAttrs = serializeAttributes(node.attrs, ['carveMarker']);
                 if (ruleAttrs) output += ruleAttrs + '\n';
-                output += '---\n';
+                const ruleMarker = node.attrs?.carveMarker === '*' || node.attrs?.carveMarker === '_'
+                    ? node.attrs.carveMarker
+                    : '-';
+                // A dash run on the first line opens frontmatter when a later
+                // `---` closes it, so a dash rule that starts the document is `***`.
+                output += (ruleMarker === '-' && output === '' && detached === 0 ? '*' : ruleMarker).repeat(3) + '\n';
                 break;
 
             case 'hardBreak':
@@ -1041,7 +1048,9 @@ export function serializeToCarve(doc, options = {}) {
     function serializeNodeToString(node) {
         const oldOutput = output;
         output = '';
+        detached++;
         serializeNode(node);
+        detached--;
         const result = output;
         output = oldOutput;
         return trimSource(result);

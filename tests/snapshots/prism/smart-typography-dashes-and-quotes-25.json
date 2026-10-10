@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "say '"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "text",
+    "text": " text\n"
+  }
+]

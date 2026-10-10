@@ -1,0 +1,10 @@
+[
+  {
+    "type": "escape>constant",
+    "text": "\\{"
+  },
+  {
+    "type": "text",
+    "text": "\"q\"\n"
+  }
+]

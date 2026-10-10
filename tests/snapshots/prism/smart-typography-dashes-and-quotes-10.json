@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "He paused, then said\n\"I will not go,\" and left."
+  },
+  {
+    "type": "hard-break>constant",
+    "text": "\\"
+  },
+  {
+    "type": "text",
+    "text": "\n'Fine,' she said.\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " She said"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " \"no\" twice."
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "He said\n  \"no\" twice.\n\nBack in the\n'90s it was rare.\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "v "
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".attr"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "1) "
+  },
+  {
+    "type": "text",
+    "text": "first\n"
+  }
+]

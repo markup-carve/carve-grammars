@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  },
+  {
+    "type": "title>important",
+    "text": "    # N"
+  },
+  {
+    "type": "text",
+    "text": "\n\nlazy\n"
+  }
+]

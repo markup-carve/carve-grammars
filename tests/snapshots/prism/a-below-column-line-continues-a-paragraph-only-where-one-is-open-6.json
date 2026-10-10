@@ -1,0 +1,86 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  },
+  {
+    "type": "table",
+    "text": "    "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " h "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-separator",
+    "text": "    "
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-separator",
+    "text": " "
+  },
+  {
+    "type": "table-separator>table-operator",
+    "text": "-"
+  },
+  {
+    "type": "table-separator",
+    "text": " "
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table",
+    "text": "    "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\nlazy\n"
+  }
+]

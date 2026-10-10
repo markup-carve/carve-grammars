@@ -1,0 +1,18 @@
+[
+  {
+    "type": "thematic-break>punctuation",
+    "text": "___"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "thematic-break>punctuation",
+    "text": "___"
+  },
+  {
+    "type": "text",
+    "text": "\n\nbody\n"
+  }
+]

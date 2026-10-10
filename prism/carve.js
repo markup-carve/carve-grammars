@@ -1075,7 +1075,7 @@
         // highlighting. Unknown format tokens remain opaque metadata.
         'front-matter': [
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*\n(?:[\s\S]*?\n)?---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?json|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1091,7 +1091,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*\n(?:[\s\S]*?\n)?---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?toml|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1106,7 +1106,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*\n(?:[\s\S]*?\n)?---[ \t]*(?:\n|$(?![^\r\n]))/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1120,7 +1120,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*\n[\s\S]*?\n---[ \t]*(?:\n|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*\n(?:[\s\S]*?\n)?---[ \t]*(?:\n|$(?![^\r\n]))/,
                 alias: 'comment',
                 greedy: true,
                 inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },

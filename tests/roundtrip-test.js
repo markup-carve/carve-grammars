@@ -716,6 +716,20 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * attribute run started loading. Six documents left for the fence (four of
  * `a-fenced-block-quote-...`, `empty-containers-...-2`, `an-authored-base-...-3`)
  * and four for the attribute run on a `>` quote.
+ *
+ * 485 -> 486 with the bump to carve efc1e98. Five new documents joined, all
+ * render-equivalent through a mount: three `a-braced-comment-...` drop a `\{`
+ * escape the parse does not need, `a-link-destination-...-10` drops the escapes
+ * inside a link's text, and the lone `---` of `a-dash-run-...` is written
+ * `***`, because a leading dash rule opens frontmatter when a later `---`
+ * closes it. Four left once a rule's `*` or `_` marker loaded: `thematic-breaks`,
+ * `thematic-break-...-4`, `a-marker-line-opaque-quote-...-33` and
+ * `an-opener-at-or-past-a-description-body-s-column-...-5`.
+ *
+ * 486 -> 496 with the bump to carve 8fb5e11: ten of the fourteen
+ * `a-below-column-line-continues-...` documents. The pinned `^0.1.9` engine
+ * predates that ruling and folds the column-0 line into the outer item, and
+ * the projection writes it back at that item's column, which respells it.
  */
 assertLedger(
     'enveloped-ledger.json',

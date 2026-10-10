@@ -1,0 +1,14 @@
+[
+  {
+    "type": "escape>constant",
+    "text": "\\{"
+  },
+  {
+    "type": "comment",
+    "text": "{%%}"
+  },
+  {
+    "type": "text",
+    "text": "\"q\"\n"
+  }
+]

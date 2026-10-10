@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "a [b "
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "x"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "http://u/]"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " c\n"
+  }
+]

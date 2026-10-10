@@ -67,6 +67,12 @@ check('checking an extended-state item in the editor serializes as [x]', () => {
     assert.strictEqual(serializeToCarve(doc), '- [x] dropped');
 });
 
+check('an attribute run on a task list survives', () => {
+    for (const src of ['{#i}\n- [ ] a', '{k="v" .c}\n- [x] a']) {
+        assert.strictEqual(roundTrip(src), src);
+    }
+});
+
 check('a plain bullet item stays plain (no checkbox)', () => {
     const src = '- just a bullet';
     assert.strictEqual(roundTrip(src), src);

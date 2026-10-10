@@ -874,6 +874,10 @@ const TIPTAP_COVERED = [
     // no whole-document `carveUnsupported` atom, and reparses to the same AST,
     // so the category is covered rather than fallback. 1 file.
     'a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column',
+    // Spec corpus 549 (bump to carve efc1e98). `1)` and `1.` load as the
+    // list's `carveDelim`; all 5 files reparse to the same AST with the
+    // envelope removed. 5 files.
+    'an-ordered-list-carries-its-authored-delimiter',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -881,6 +885,15 @@ const TIPTAP_COVERED = [
 // which projection/layout gaps motivated the editable source merge. They are
 // all covered now, and `fallback` below is deliberately empty.
 const TIPTAP_SKIP = new Map([
+    // Added with the spec bump to efc1e98, measured the same way. Each is a
+    // spelling loss: the mounted render is unchanged.
+    ['a-braced-comment-does-not-decide-a-quote', 'a `\\{` escape the parse does not need is written as a bare `{`, so 3 of 7 files reparse to `text` where the source has `escaped_text`'],
+    ['a-dash-run-opens-frontmatter-only-at-the-start-and-only-a-dash-run', 'a dash rule that opens the document is written `***` so a later `---` cannot close it as frontmatter, which changes the reparsed marker of the lone `---` file'],
+    // Spec corpus 553 (bump to carve 8fb5e11). The pinned engine predates the
+    // ruling and reads the column-0 line as part of the outer item, so the
+    // projection is built from the old reading; revisit with the engine bump.
+    ['a-below-column-line-continues-a-paragraph-only-where-one-is-open', 'the pinned `^0.1.9` engine predates the ruling, so 10 of 14 files reparse with a different tightness or nesting once the projection writes the lazy line back at an item column'],
+    ['a-link-destination-is-opaque-to-the-bracket-scan', 'escapes inside a link text are dropped where the reparse does not need them, so file 10 reparses to plain `text` where the source has `escaped_text`'],
     // Added with the spec bump to b5b603d. These reasons were measured by
     // serializing the rich projection with its lossless source envelope
     // removed; at least one file in every category reparses to a different AST.
