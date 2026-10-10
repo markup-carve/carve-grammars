@@ -2,7 +2,7 @@
 
 All notable changes to `carve-grammars` are documented here.
 
-## [Unreleased]
+## [0.1.14] - 2026-10-10
 
 ### Added
 
@@ -10,8 +10,6 @@ All notable changes to `carve-grammars` are documented here.
   block embeds for each info-string word, with the TextMate and sublime-syntax
   targets. Editor grammars that embed by a fixed list read it instead of keeping
   their own (#646).
-
-## [0.1.14] - 2026-10-09
 
 ### Fixes
 
