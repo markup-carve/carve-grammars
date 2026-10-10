@@ -144,10 +144,13 @@ const CODE_LANGS = [
  * ```
  */
 // Classes that are PRESENTATION HOOKS in rendered task-list HTML, not authored
-// Carve attributes. No Carve engine emits them - they come from GitHub-flavored
-// HTML and from editors - and capturing them as a marker attribute invents
+// Carve attributes: `task-list` is the engines' own list class (carve#2887), the
+// other two come from GitHub-flavored HTML and editors. Capturing them invents
 // source the author never wrote: `-{.task-list-item} [ ] x`.
-const STRUCTURAL_LIST_CLASSES = new Set(['task-list-item', 'contains-task-list']);
+const STRUCTURAL_LIST_CLASSES = new Set(['task-list', 'task-list-item', 'contains-task-list']);
+
+// `data-task-state` values that are `checked`'s job, not an extended state.
+const DONE_TASK_STATES = new Set(['x', 'X']);
 
 // Items here take `block*`, so `wrapInList` succeeds inside a list of another
 // type: stock `toggleList` and the `[ ] ` input rule nest a new list instead of
@@ -368,7 +371,14 @@ export const CarveKit = Extension.create({
                     ]),
                 }, {
                     types: ['taskList'],
-                    attributes: attributeSlots(['carveTight', 'data-type']),
+                    attributes: {
+                        ...attributeSlots(['carveTight', 'data-type']),
+                        class: {
+                            default: null,
+                            parseHTML: authoredClasses,
+                            renderHTML: attributes => (attributes.class ? { class: attributes.class } : {}),
+                        },
+                    },
                 }, {
                     // `` `code`{.cls} `` is an attribute run on INLINE CODE. The
                     // stock Code mark declares no attributes at all, so the run
@@ -908,7 +918,10 @@ export const CarveKit = Extension.create({
                         carveTaskState: {
                             default: null,
                             keepOnSplit: false,
-                            parseHTML: element => element.getAttribute('data-task-state') || null,
+                            parseHTML: (element) => {
+                                const state = element.getAttribute('data-task-state');
+                                return state && !DONE_TASK_STATES.has(state) ? state : null;
+                            },
                             renderHTML: attributes => (
                                 attributes.carveTaskState ? { 'data-task-state': attributes.carveTaskState } : {}
                             ),
