@@ -267,25 +267,43 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
         };
         if (!blocks.some(({ node }) => holdsList(node))) return false;
 
+        // Each rebuilt block keeps its content, only shifted: `moved` records
+        // by how much, so a text selection keeps its endpoints.
         const nodes = [];
+        const moved = [];
+        let at = blocks[0].pos;
+        const keep = (start, size, shift) => moved.push({ start, end: start + size, by: at + shift - start });
         if (blocks.every((block) => block.node.type === listType || empty(block))) {
-            for (const { node } of blocks) {
+            for (const { node, pos } of blocks) {
                 if (node.type !== listType) {
+                    keep(pos, node.nodeSize, 0);
                     nodes.push(node);
+                    at += node.nodeSize;
                     continue;
                 }
-                node.forEach((item) => {
-                    if (item.childCount) item.forEach((child) => nodes.push(child));
-                    else nodes.push(schema.nodes.paragraph.create());
+                node.forEach((item, offset) => {
+                    const start = pos + 1 + offset + 1;
+                    if (item.childCount) {
+                        keep(start, item.content.size, 0);
+                        item.forEach((child) => nodes.push(child));
+                        at += item.content.size;
+                    } else {
+                        keep(start, 0, 1);
+                        nodes.push(schema.nodes.paragraph.create());
+                        at += 2;
+                    }
                 });
             }
         } else {
-            for (const { node } of blocks) {
-                const converted = isList(node.type.name, lists)
+            for (const { node, pos } of blocks) {
+                const list = isList(node.type.name, lists);
+                const converted = list
                     ? (node.type === listType ? node : convertedList(node, listType, itemType, listAttrs))
                     : itemType.validContent(Fragment.from(node)) && listType.create(listAttrs, itemType.create(null, node));
                 if (!converted) return false;
+                keep(pos, node.nodeSize, list ? 0 : 2);
                 nodes.push(converted);
+                at += converted.nodeSize;
             }
         }
         const first = blocks[0];
@@ -294,18 +312,29 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
         if (!dispatch) return true;
 
         const from = first.pos;
-        tr.replaceWith(from, last.pos + last.node.nodeSize, nodes);
+        const to = last.pos + last.node.nodeSize;
+        const grown = at - to;
+        const map = (pos) => {
+            if (pos <= from) return pos;
+            if (pos >= to) return pos + grown;
+            const hit = moved.find(({ start, end }) => pos >= start && pos <= end);
+            return hit ? pos + hit.by : null;
+        };
+        tr.replaceWith(from, to, nodes);
         const boundaries = [];
-        let size = 0;
-        for (const node of nodes) {
-            boundaries.push(from + size);
-            size += node.nodeSize;
+        for (let index = 0, pos = from; index < nodes.length; pos += nodes[index].nodeSize, index++) {
+            boundaries.push(pos);
         }
-        tr.setSelection(selection instanceof AllSelection
-            ? new AllSelection(tr.doc)
-            : TextSelection.between(tr.doc.resolve(from), tr.doc.resolve(from + size)));
+        const [anchor, head] = [map(selection.anchor), map(selection.head)];
+        if (selection instanceof AllSelection) {
+            tr.setSelection(new AllSelection(tr.doc));
+        } else if (selection instanceof TextSelection && anchor !== null && head !== null) {
+            tr.setSelection(TextSelection.create(tr.doc, anchor, head));
+        } else {
+            tr.setSelection(TextSelection.between(tr.doc.resolve(from), tr.doc.resolve(at)));
+        }
         // Back to front, so each join leaves the earlier positions valid.
-        for (const pos of [from + size, ...boundaries.reverse()]) joinListsAt(tr, pos, listType);
+        for (const pos of [at, ...boundaries.reverse()]) joinListsAt(tr, pos, listType);
         return true;
     };
 }

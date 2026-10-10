@@ -337,6 +337,25 @@ for (const [source, toggle, select, expected] of [
     editor.destroy();
 }
 
+// The toggle keeps a partial text selection's endpoints and direction, on and off.
+const partial = new Editor({ extensions: [CarveKit], content: carveToProseMirror('- first\n- second\n\nAfter text', { unsupported: 'throw' }) });
+const selectedText = () => partial.state.doc.textBetween(partial.state.selection.from, partial.state.selection.to, '|');
+let ondAt = 0;
+let afterAt = 0;
+partial.state.doc.descendants((node, at) => {
+    if (node.text === 'second') ondAt = at + 3;
+    if (node.text === 'After text') afterAt = at + 2;
+});
+partial.commands.setTextSelection({ from: afterAt, to: ondAt });
+partial.commands.toggleOrderedList();
+assert.strictEqual(serializeToCarve(partial.getJSON()), '. first\n. second\n. After text');
+assert.strictEqual(selectedText(), 'ond|Af');
+assert.ok(partial.state.selection.anchor > partial.state.selection.head, 'selection direction kept');
+partial.commands.setTextSelection({ from: partial.state.selection.head, to: partial.state.selection.anchor });
+partial.commands.toggleOrderedList();
+assert.strictEqual(selectedText(), 'ond|Af');
+partial.destroy();
+
 const imported = new Editor({
     extensions: [CarveKit],
     content: carveToProseMirror('1. one\n2. two', { unsupported: 'throw' }),
