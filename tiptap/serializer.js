@@ -73,6 +73,8 @@ const FENCE_CONTAINERS = new Set(['carveDiv', 'carveTabSet', 'carveTab']);
 // need to know its own maximum depth before it could emit its opening line.
 const CARVE_MIN_FENCE = 3;
 
+const MAX_NESTING_DEPTH = 200;
+
 function carveDivFenceLength(depth) {
     return CARVE_MIN_FENCE + depth;
 }
@@ -365,7 +367,7 @@ export function serializeToCarve(doc, options = {}) {
             case 'paragraph': {
                 const paragraphAttrs = serializeAttributes(node.attrs);
                 if (paragraphAttrs) output += paragraphAttrs + '\n';
-                output += serializeParagraphText(node.content) + '\n';
+                output += serializeParagraphText(node.content, fenceDepth) + '\n';
                 break;
             }
 
@@ -1048,7 +1050,7 @@ export function serializeToCarve(doc, options = {}) {
                 // only its FIRST line does. A soft break puts every later line
                 // at column 0, where a block opener stops being text
                 // (carve-grammars#145).
-                output += escapeContinuationOpeners(serializeInline(child.content)) + '\n';
+                output += escapeContinuationOpeners(escapeLeadingOpener(child.content, serializeInline(child.content), true)) + '\n';
             } else if (i === 0) {
                 // The caller has already written this item's marker and one
                 // separating space. A block authored on that marker line must
@@ -1181,8 +1183,31 @@ export function serializeToCarve(doc, options = {}) {
         return text.replace(CONTINUATION_BLOCK_OPENER, '\n ');
     }
 
-    function serializeParagraphText(content) {
-        const text = serializeInline(content);
+    // A block opener at the START of a paragraph, where the line sits at column
+    // 0 or right after a container marker. Each alternative was measured to
+    // turn `opener + T` into a block in carve-js and to stay text when it is
+    // not one (a tab separator, an all-blank row, an attribute run that is not
+    // valid). The escape goes on the punctuation, since a backslash before a
+    // letter or digit is literal.
+    const LEADING_BLOCK_OPENER =
+        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|(?=[^\n]*[^\s|=:-])[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=[.)] ))/;
+    // On a list item's marker line, a following lazy line folds a colon
+    // opener back into the paragraph, so only a one-line paragraph needs it.
+    const LEADING_COLON_FENCE = /^(?=:{3,}(?: +(?:[A-Za-z0-9_][\w-]*|\|))? *(?:\n|$))/;
+
+    function escapeLeadingOpener(content, text, onMarkerLine = false) {
+        const first = content?.[0];
+        if (first?.type !== 'text' || first.marks?.length) return text;
+        const match = LEADING_BLOCK_OPENER.exec(text)
+            ?? (onMarkerLine && text.includes('\n') ? null : LEADING_COLON_FENCE.exec(text));
+        return match ? `${match[0]}\\${text.slice(match[0].length)}` : text;
+    }
+
+    // Past the spec's MAX_NESTING_DEPTH an opener is literal text already
+    // (PART 9 §25 resource bounds), so the escape would only respell it.
+    function serializeParagraphText(content, fenceDepth = 0) {
+        const inline = serializeInline(content);
+        const text = fenceDepth >= MAX_NESTING_DEPTH ? inline : escapeLeadingOpener(content, inline);
         if (LEADING_DEFINITION_ESCAPE.test(text)) {
             // A real leading space is safe here UNLESS this paragraph is
             // about to be the first thing written to `output` at all - only
@@ -1297,9 +1322,9 @@ export function serializeToCarve(doc, options = {}) {
             if (node.type === 'carveInlineNote') {
                 // A note's content recognizes NO note (carve corpus 309), so a
                 // `[^label]` inside the body is literal text there and the
-                // structural escaper's `\\[^` is not only unnecessary but
+                // structural escaper's `\\[^` and `\\^[` are not only unnecessary but
                 // wrong - it re-spells text the author wrote plain.
-                const body = serializeInline(node.content, false).replace(/\\\[(?=\^)/g, '[');
+                const body = serializeInline(node.content, false).replace(/\\\[(?=\^)/g, '[').replace(/\\\^(?=\[)/g, '^');
                 result += '^[' + body + ']' + serializeAttributes(node.attrs, []);
                 return;
             }
@@ -1518,7 +1543,8 @@ export function serializeToCarve(doc, options = {}) {
                     // (Bare `=x=` IS a single-char delimiter at a word
                     // boundary; a bare `^` / `,` is literal text - sup/sub are
                     // the braced `{^ ^}` / `{, ,}` forms only.)
-                    t = escapeStructural(text).replace(/[*/_~^]/g, '\\$&');
+                    // Skip a delimiter escapeStructural already escaped (`\^[`).
+                    t = escapeStructural(text).replace(/(?<!(?:^|[^\\])(?:\\\\)*\\)[*/_~^]/g, '\\$&');
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
                     // More inline content after this run means a trailing
@@ -1828,6 +1854,10 @@ function escapeStructural(text, trailingSafe = false) {
         .replace(/\\(?=[\\`*_/~^=,{}[\]()<>@#%!|.+-])/g, '\\\\')
         .replace(/`/g, '\\`')
         .replace(/\[(?=\^)/g, '\\[')
+        // `^[note]` is an inline note anywhere, intraword too; `^[]` stays text.
+        .replace(/\^(?=\[\s*[^\s\]][^\n]*\])/g, '\\^')
+        // `%%` after whitespace or at a line start comments out the rest of the line.
+        .replace(/(^|[ \t\n])%%/g, '$1\\%%')
         .replace(/\[(?=[^\]\n]*\][([{:])/g, '\\[')
         // An EMPTY doubled pair is text since carve-js 0.1.5, so escaping the
         // brace there does not protect a construct - it creates a difference.
@@ -1866,9 +1896,11 @@ function escapeEmphasisOpeners(text) {
     return text
         .replace(/(?<!\*)\*(?=[^*\s\n](?:[^*\n]*[^*\s\n])?\*(?!\*))/g, '\\*')
         .replace(/(?<!~)~(?=[^~\s\n](?:[^~\n]*[^~\s\n])?~(?!~))/g, '\\~')
-        .replace(/(?<!\^)\^(?=[^^\s\n](?:[^^\n]*[^^\s\n])?\^(?!\^))/g, '\\^')
+        .replace(/(?<![\^\\])\^(?=[^^\s\n](?:[^^\n]*[^^\s\n])?\^(?!\^))/g, '\\^')
         .replace(/(^|[\s([{<"'])(?<!\/)\/(?=[^/\s\n](?:[^/\n]*[^/\s\n])?\/(?!\/))/g, '$1\\/')
-        .replace(/(^|[\s([{<"'])(?<!_)_(?=[^_\s\n](?:[^_\n]*[^_\s\n])?_(?!_))/g, '$1\\_');
+        .replace(/(^|[\s([{<"'])(?<!_)_(?=[^_\s\n](?:[^_\n]*[^_\s\n])?_(?!_))/g, '$1\\_')
+        // `=>` and `<=` are arrows and comparisons, never a highlight edge.
+        .replace(/(?<![A-Za-z0-9_=\\])=(?=[^=\s>](?:[^=\n]*[^=\s<])?=(?![=A-Za-z0-9]))/g, '\\=');
 }
 
 /** Escape a lone emphasis delimiter at the start of a run (cross-node closer). */
