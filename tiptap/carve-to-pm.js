@@ -462,9 +462,13 @@ function convertBlock(node, ctx) {
                 // Mixed task/non-task items in one list are not a thing the
                 // serializer reconstructs cleanly; require the whole list.
                 if (checkedItems.length !== (node.items || []).length) return unsupported('mixed-task-list', node, ctx);
+                const taskListAttrs = {
+                    ...(convertAttrs(node.attrs) || {}),
+                    ...(typeof node.tight === 'boolean' ? { carveTight: node.tight } : {}),
+                };
                 return {
                     type: 'taskList',
-                    ...(typeof node.tight === 'boolean' ? { attrs: { carveTight: node.tight } } : {}),
+                    ...(Object.keys(taskListAttrs).length ? { attrs: taskListAttrs } : {}),
                     content: (node.items || []).map((it) => ({
                         type: 'taskItem',
                         attrs: {
