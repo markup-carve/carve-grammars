@@ -118,6 +118,92 @@ created.commands.toggleOrderedList();
 assert.strictEqual(serializeToCarve(created.getJSON()), '. one\n. two');
 created.destroy();
 
+// Items take `block*`, so switching list type used to nest a new list inside
+// the old one (`- - [ ] - one`) instead of converting it.
+const switched = new Editor({ extensions: [CarveKit], content: carveToProseMirror('- one\n  - deep\n- two', { unsupported: 'throw' }) });
+const selectItemText = () => {
+    let from = 0;
+    let to = 0;
+    switched.state.doc.descendants((node, pos) => {
+        if (node.isText && node.text !== 'deep') {
+            from ||= pos;
+            to = pos + node.nodeSize;
+        }
+    });
+    switched.commands.setTextSelection({ from, to });
+};
+selectItemText();
+switched.commands.toggleTaskList();
+assert.strictEqual(serializeToCarve(switched.getJSON()), '- [ ] one\n  - deep\n- [ ] two');
+selectItemText();
+switched.commands.toggleOrderedList();
+assert.strictEqual(serializeToCarve(switched.getJSON()), '. one\n  - deep\n. two');
+selectItemText();
+switched.commands.toggleBulletList();
+assert.strictEqual(serializeToCarve(switched.getJSON()), '- one\n  - deep\n- two');
+selectItemText();
+switched.commands.toggleBulletList();
+assert.strictEqual(serializeToCarve(switched.getJSON()), 'one\n\n- deep\n\ntwo');
+switched.destroy();
+
+// A selection past the list falls back to stock wrapping; a converted list joins
+// a same-type neighbor.
+for (const [source, select, expected, lists] of [
+    ['- one\n\ntwo', (pos) => ({ from: pos[0], to: pos[1] + 3 }), '. one\n. two', 1],
+    ['. before\n\n- one', (pos) => pos[1], '. before\n. one', 1],
+    ['a. before\n\n- one', (pos) => pos[1], 'a. before\n. one', 2],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });
+    const pos = [];
+    editor.state.doc.descendants((node, at) => { if (node.isText) pos.push(at); });
+    editor.commands.setTextSelection(select(pos));
+    editor.commands.toggleOrderedList();
+    assert.strictEqual(serializeToCarve(editor.getJSON()), expected);
+    assert.strictEqual(editor.getJSON().content.filter((node) => node.type === 'orderedList').length, lists);
+    editor.destroy();
+}
+
+// Typing `[ ] ` at the start of a bullet item used to wrap a task list inside it.
+const typed = new Editor({ extensions: [CarveKit], content: carveToProseMirror('- one\n- two', { unsupported: 'throw' }) });
+const typeAt = (text) => {
+    const { from } = typed.state.selection;
+    const view = typed.view;
+    const handled = view.someProp('handleTextInput', (f) => f(view, from, from, text));
+    if (!handled) view.dispatch(view.state.tr.insertText(text, from));
+};
+typed.commands.setTextSelection(3);
+for (const ch of '[x] ') typeAt(ch);
+assert.strictEqual(serializeToCarve(typed.getJSON()), '- [x] one\n- [ ] two');
+assert.strictEqual(typed.state.selection.from, 3);
+typed.destroy();
+
+// The marker goes before a preceding task list joins, so no item text is lost.
+const joined = new Editor({ extensions: [CarveKit], content: carveToProseMirror('- [ ] before\n\n- one\n- two', { unsupported: 'throw' }) });
+let oneAt = 0;
+joined.state.doc.descendants((node, at) => { if (node.text === 'one') oneAt = at; });
+joined.commands.setTextSelection(oneAt);
+for (const ch of '[x] ') {
+    const { from } = joined.state.selection;
+    if (!joined.view.someProp('handleTextInput', (f) => f(joined.view, from, from, ch))) {
+        joined.view.dispatch(joined.view.state.tr.insertText(ch, from));
+    }
+}
+assert.strictEqual(serializeToCarve(joined.getJSON()), '- [ ] before\n- [x] one\n- [ ] two');
+joined.destroy();
+
+// Select-all over a document that is one list toggles it off or converts it.
+for (const [source, toggle, expected] of [
+    ['- one\n- two', 'toggleBulletList', 'one\n\ntwo'],
+    ['- [x] one\n- [ ] two', 'toggleTaskList', 'one\n\ntwo'],
+    ['- [x] one\n- [ ] two', 'toggleOrderedList', '. one\n. two'],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });
+    editor.commands.selectAll();
+    editor.commands[toggle]();
+    assert.strictEqual(serializeToCarve(editor.getJSON()), expected, `${toggle} on ${source}`);
+    editor.destroy();
+}
+
 const imported = new Editor({
     extensions: [CarveKit],
     content: carveToProseMirror('1. one\n2. two', { unsupported: 'throw' }),
