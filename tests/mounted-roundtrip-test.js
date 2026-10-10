@@ -280,6 +280,7 @@ for (const [source, toggle, expected] of [
 
 // A selection mixing a list with other blocks used to clear everything to
 // paragraphs first: nested items flattened and headings became paragraphs.
+// Now lists convert in place, paragraphs join, and other blocks split the list.
 // The editor keeps an empty trailing paragraph the source never holds.
 const blockShape = (node) => (node.type === 'text' || (node.type === 'paragraph' && !node.content) ? null
     : [node.type, ...(node.content ?? []).map(blockShape).filter(Boolean)]);
@@ -292,16 +293,15 @@ const assertReparses = (editor, message) => {
 };
 const mixed = '# Title\n\nIntro\n\n. one\n  - deep\n    - deeper\n. two\n\n## Next\n\nOutro';
 for (const [toggle, on] of [
-    ['toggleBulletList', '- # Title\n- Intro\n- one\n  - deep\n    - deeper\n- two\n- ## Next\n- Outro'],
-    ['toggleOrderedList', '. # Title\n. Intro\n. one\n  - deep\n    - deeper\n. two\n. ## Next\n. Outro'],
-    ['toggleTaskList', '- [ ] # Title\n- [ ] Intro\n- [ ] one\n  - deep\n    - deeper\n- [ ] two\n- [ ] ## Next\n- [ ] Outro'],
+    ['toggleBulletList', '# Title\n\n- Intro\n- one\n  - deep\n    - deeper\n- two\n\n## Next\n\n- Outro'],
+    ['toggleOrderedList', '# Title\n\n. Intro\n. one\n  - deep\n    - deeper\n. two\n\n## Next\n\n. Outro'],
+    ['toggleTaskList', '# Title\n\n- [ ] Intro\n- [ ] one\n  - deep\n    - deeper\n- [ ] two\n\n## Next\n\n- [ ] Outro'],
 ]) {
     const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(mixed, { unsupported: 'throw' }) });
     editor.commands.selectAll();
     editor.commands[toggle]();
     assert.strictEqual(assertReparses(editor, toggle), on, `${toggle} over a mixed selection`);
-    assert.strictEqual(blockShape(editor.getJSON()).length, 2, `${toggle} builds one list`);
-    // Off again unwraps one level: headings stay, the nested list stays nested.
+    // Off again unwraps the lists one level; headings stay, the nested list stays nested.
     editor.commands.selectAll();
     editor.commands[toggle]();
     assert.strictEqual(
@@ -312,17 +312,21 @@ for (const [toggle, on] of [
     editor.destroy();
 }
 
-// A text selection from inside a list to a block after it, a list held in
-// another block, lists of the target type around a heading, an authored marker
-// style that stays its own list, and lists that are all the target type, which
-// toggle off.
+// Only paragraphs and lists join: any other block stays as it is and splits
+// the list. A quote holding a list is left alone unless the selection is inside
+// it, an authored marker style stays its own list, and lists that are all the
+// target type toggle off.
+const code = '```\ncode\n```';
 for (const [source, toggle, select, expected] of [
-    ['- a\n  - deep\n\n## After', 'toggleOrderedList', (pos) => ({ from: pos[0] + 1, to: pos[2] + 2 }), '. a\n  - deep\n. ## After'],
-    ['> - q\n>   - deep\n\npara', 'toggleBulletList', 'all', '- > - q\n  >   - deep\n- para'],
-    ['- a\n\n## H\n\n- b', 'toggleBulletList', 'all', '- a\n- ## H\n- b'],
-    ['# H\n\na. one\n   1) deep\n\npara', 'toggleOrderedList', 'all', '. # H\na. one\n   1) deep\n. para'],
+    [`a\n\n${code}\n\nb\n\n> quote\n\nc\n\n- d`, 'toggleBulletList', 'all', `- a\n\n${code}\n\n- b\n\n> quote\n\n- c\n- d`],
+    [`- a\n\n${code}\n\n> quote\n\n- b`, 'toggleBulletList', 'all', `a\n\n${code}\n\n> quote\n\nb`],
+    ['- a\n  - deep\n\n## After\n\nb', 'toggleOrderedList', (pos) => ({ from: pos[0] + 1, to: pos[3] }), '. a\n  - deep\n\n## After\n\n. b'],
+    ['> - q\n>   - deep\n\npara', 'toggleOrderedList', 'all', '> - q\n>   - deep\n\n. para'],
+    ['> - q\n>   - deep\n\npara', 'toggleOrderedList', (pos) => ({ from: pos[0], to: pos[1] + 2 }), '> . q\n>   - deep\n\npara'],
+    ['# H\n\n> - q', 'toggleOrderedList', 'all', '# H\n\n> - q'],
+    ['- a\n\n## H\n\n- b', 'toggleBulletList', 'all', 'a\n\n## H\n\nb'],
+    ['# H\n\na. one\n   1) deep\n\npara', 'toggleOrderedList', 'all', '# H\n\na. one\n   1) deep\n. para'],
     ['1. a\n   - deep\n\na) b', 'toggleOrderedList', 'all', 'a\n\n- deep\n\nb'],
-    ['# H\n\npara', 'toggleBulletList', 'all', '- # H\n- para'],
 ]) {
     const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });
     if (select === 'all') {

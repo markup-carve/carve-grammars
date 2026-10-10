@@ -236,10 +236,11 @@ function convertListType(listName, itemName, listAttrs = {}) {
     };
 }
 
-// A range mixing lists with other blocks: each list converts in place, and
-// every other block becomes an item of its own, keeping its type. Where every
-// block is already this type of list, they unwrap one level. Empty textblocks
-// at the edges stay out, as in `selectedList`.
+// A range mixing lists with other blocks: each list converts in place and each
+// paragraph becomes an item. Every other block (heading, code, quote, ...) stays
+// as it is and splits the list. Where nothing is left to convert, the lists
+// unwrap one level. Empty textblocks at the edges stay out, as in
+// `selectedList`. Null means the range is not this command's to take.
 function toggleMixedRange(listName, itemName, listAttrs = {}) {
     return ({ state, tr, dispatch, editor }) => {
         const { selection, schema } = state;
@@ -247,7 +248,7 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
         const listType = schema.nodes[listName];
         const itemType = schema.nodes[itemName];
         const range = selection.$from.blockRange(selection.$to);
-        if (!range || !listType || !itemType || isList(range.parent.type.name, lists)) return false;
+        if (!range || !listType || !itemType || isList(range.parent.type.name, lists)) return null;
         const blocks = [];
         for (let index = range.startIndex, pos = range.start; index < range.endIndex; index++) {
             const node = range.parent.child(index);
@@ -265,7 +266,11 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
             });
             return found;
         };
-        if (!blocks.some(({ node }) => holdsList(node))) return false;
+        if (!blocks.some(({ node }) => holdsList(node))) return null;
+        const paragraph = schema.nodes.paragraph;
+        const changes = ({ node }) => (isList(node.type.name, lists) ? node.type !== listType
+            : node.type === paragraph && node.content.size > 0);
+        if (!blocks.some(({ node }) => node.type === listType) && !blocks.some(changes)) return false;
 
         // Each rebuilt block keeps its content, only shifted: `moved` records
         // by how much, so a text selection keeps its endpoints.
@@ -273,7 +278,7 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
         const moved = [];
         let at = blocks[0].pos;
         const keep = (start, size, shift) => moved.push({ start, end: start + size, by: at + shift - start });
-        if (blocks.every((block) => block.node.type === listType || empty(block))) {
+        if (!blocks.some(changes)) {
             for (const { node, pos } of blocks) {
                 if (node.type !== listType) {
                     keep(pos, node.nodeSize, 0);
@@ -289,7 +294,7 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
                         at += item.content.size;
                     } else {
                         keep(start, 0, 1);
-                        nodes.push(schema.nodes.paragraph.create());
+                        nodes.push(paragraph.create());
                         at += 2;
                     }
                 });
@@ -297,18 +302,23 @@ function toggleMixedRange(listName, itemName, listAttrs = {}) {
         } else {
             for (const { node, pos } of blocks) {
                 const list = isList(node.type.name, lists);
-                const converted = list
-                    ? (node.type === listType ? node : convertedList(node, listType, itemType, listAttrs))
-                    : itemType.validContent(Fragment.from(node)) && listType.create(listAttrs, itemType.create(null, node));
-                if (!converted) return false;
-                keep(pos, node.nodeSize, list ? 0 : 2);
+                const wrapped = !list && node.type === paragraph;
+                let converted = node;
+                if (list && node.type !== listType) {
+                    converted = convertedList(node, listType, itemType, listAttrs);
+                } else if (wrapped) {
+                    converted = itemType.validContent(Fragment.from(node))
+                        && listType.create(listAttrs, itemType.create(null, node));
+                }
+                if (!converted) return null;
+                keep(pos, node.nodeSize, wrapped ? 2 : 0);
                 nodes.push(converted);
                 at += converted.nodeSize;
             }
         }
         const first = blocks[0];
         const last = blocks[blocks.length - 1];
-        if (!range.parent.canReplace(first.index, last.index + 1, Fragment.from(nodes))) return false;
+        if (!range.parent.canReplace(first.index, last.index + 1, Fragment.from(nodes))) return null;
         if (!dispatch) return true;
 
         const from = first.pos;
@@ -367,7 +377,8 @@ function toggleCarveList(listName, itemName, fallback, listAttrs) {
             }).liftListItem(itemName).run();
         }
         if (togglingOff || !touchesList) return fallback(props);
-        if (toggleMixedRange(listName, itemName, listAttrs)(props)) return true;
+        const mixed = toggleMixedRange(listName, itemName, listAttrs)(props);
+        if (mixed !== null) return mixed;
         return chain().clearNodes().command(fallback).run();
     };
 }
