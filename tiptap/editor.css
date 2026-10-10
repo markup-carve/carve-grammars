@@ -159,6 +159,13 @@
   margin-block-start: .2em;
   line-height: inherit;
 }
+.ProseMirror ul[data-type="taskList"] > li[data-checked] > label input[type="checkbox"] {
+  accent-color: var(--carve-accent, #14607f);
+}
+/* Muted, not struck through: carve-css strikes a cancelled `[-]` item. */
+.ProseMirror ul[data-type="taskList"] > li[data-checked="true"] > div {
+  color: var(--carve-ink-soft, #5a626d);
+}
 .ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :first-child { margin-block-start: 0; }
 .ProseMirror ul[data-type="taskList"] > li[data-checked] > div > :last-child { margin-block-end: 0; }
 
