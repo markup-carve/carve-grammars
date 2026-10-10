@@ -1,5 +1,6 @@
 import { Extension, InputRule, findParentNode, isList, isNodeActive } from '@tiptap/core';
-import { Plugin, Selection, TextSelection } from '@tiptap/pm/state';
+import { Fragment } from '@tiptap/pm/model';
+import { AllSelection, Plugin, Selection, TextSelection } from '@tiptap/pm/state';
 import { canJoin } from '@tiptap/pm/transform';
 import StarterKit from '@tiptap/starter-kit';
 import Code from '@tiptap/extension-code';
@@ -158,32 +159,47 @@ const DONE_TASK_STATES = new Set(['x', 'X']);
 // `tr` only checks that the swap is possible.
 const LIST_MARKER_ATTRS = ['type', 'carveOlType', 'carveDelim', 'carveBareMarker'];
 
-function swapListType(tr, pos, list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
+// The list rebuilt as `listType`, or null when an item's content does not fit.
+function convertedList(list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
     const items = [];
     list.forEach((item) => items.push(item));
     if (!items.every((item) => itemType.validContent(item.content))) {
-        return false;
-    }
-    if (!tr) {
-        return true;
+        return null;
     }
     const carry = (type, attrs) => Object.fromEntries(Object.entries(attrs).filter(([key]) => key in type.attrs));
-    const selection = tr.selection.toJSON();
-    const swapped = listType.create(
+    return listType.create(
         { ...carry(listType, list.attrs), ...listAttrs },
         items.map((item, index) => itemType.create(
             { ...carry(itemType, item.attrs), ...itemAttrs(index) }, item.content, item.marks,
         )),
         list.marks,
     );
+}
+
+// Join the two `listType` lists meeting at `pos` when their marker style
+// matches, as stock `toggleList` does.
+function joinListsAt(tr, pos, listType) {
+    const $pos = tr.doc.resolve(pos);
+    const [before, after] = [$pos.nodeBefore, $pos.nodeAfter];
+    if (before?.type === listType && after?.type === listType
+        && LIST_MARKER_ATTRS.every((key) => before.attrs[key] === after.attrs[key]) && canJoin(tr.doc, pos)) {
+        tr.join(pos);
+    }
+}
+
+function swapListType(tr, pos, list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
+    const swapped = convertedList(list, listType, itemType, listAttrs, itemAttrs);
+    if (!swapped) {
+        return false;
+    }
+    if (!tr) {
+        return true;
+    }
+    const selection = tr.selection.toJSON();
     tr.replaceWith(pos, pos + list.nodeSize, swapped);
     tr.setSelection(Selection.fromJSON(tr.doc, selection));
-    // Join a same-type neighbor with the same marker style, as stock `toggleList` does.
-    const joinable = (node) => node?.type === listType
-        && LIST_MARKER_ATTRS.every((key) => node.attrs[key] === swapped.attrs[key]);
-    const end = pos + swapped.nodeSize;
-    if (joinable(tr.doc.resolve(end).nodeAfter) && canJoin(tr.doc, end)) tr.join(end);
-    if (joinable(tr.doc.resolve(pos).nodeBefore) && canJoin(tr.doc, pos)) tr.join(pos);
+    joinListsAt(tr, pos + swapped.nodeSize, listType);
+    joinListsAt(tr, pos, listType);
     return true;
 }
 
@@ -223,8 +239,122 @@ function convertListType(listName, itemName, listAttrs = {}) {
     };
 }
 
-// The stock command for everything else, but a range touching another list is
-// cleared to paragraphs first: under `block*` wrapping it would nest instead.
+// A range mixing lists with other blocks: each list converts in place and each
+// paragraph becomes an item. Every other block (heading, code, quote, ...) stays
+// as it is and splits the list. Where nothing is left to convert, the lists
+// unwrap one level. Empty textblocks at the edges stay out, as in
+// `selectedList`. Null means the range is not this command's to take.
+function toggleMixedRange(listName, itemName, listAttrs = {}) {
+    return ({ state, tr, dispatch, editor }) => {
+        const { selection, schema } = state;
+        const lists = editor.extensionManager.extensions;
+        const listType = schema.nodes[listName];
+        const itemType = schema.nodes[itemName];
+        const range = selection.$from.blockRange(selection.$to);
+        if (!range || !listType || !itemType || isList(range.parent.type.name, lists)) return null;
+        const blocks = [];
+        for (let index = range.startIndex, pos = range.start; index < range.endIndex; index++) {
+            const node = range.parent.child(index);
+            blocks.push({ node, pos, index });
+            pos += node.nodeSize;
+        }
+        const empty = ({ node }) => node.isTextblock && node.content.size === 0;
+        while (blocks.length && empty(blocks[0])) blocks.shift();
+        while (blocks.length && empty(blocks[blocks.length - 1])) blocks.pop();
+        const holdsList = (node) => {
+            let found = isList(node.type.name, lists);
+            node.descendants((child) => {
+                found ||= isList(child.type.name, lists);
+                return !found;
+            });
+            return found;
+        };
+        if (!blocks.some(({ node }) => holdsList(node))) return null;
+        const paragraph = schema.nodes.paragraph;
+        const changes = ({ node }) => (isList(node.type.name, lists) ? node.type !== listType
+            : node.type === paragraph && node.content.size > 0);
+        if (!blocks.some(({ node }) => node.type === listType) && !blocks.some(changes)) return false;
+
+        // Each rebuilt block keeps its content, only shifted: `moved` records
+        // by how much, so a text selection keeps its endpoints.
+        const nodes = [];
+        const moved = [];
+        let at = blocks[0].pos;
+        const keep = (start, size, shift) => moved.push({ start, end: start + size, by: at + shift - start });
+        if (!blocks.some(changes)) {
+            for (const { node, pos } of blocks) {
+                if (node.type !== listType) {
+                    keep(pos, node.nodeSize, 0);
+                    nodes.push(node);
+                    at += node.nodeSize;
+                    continue;
+                }
+                node.forEach((item, offset) => {
+                    const start = pos + 1 + offset + 1;
+                    if (item.childCount) {
+                        keep(start, item.content.size, 0);
+                        item.forEach((child) => nodes.push(child));
+                        at += item.content.size;
+                    } else {
+                        keep(start, 0, 1);
+                        nodes.push(paragraph.create());
+                        at += 2;
+                    }
+                });
+            }
+        } else {
+            for (const { node, pos } of blocks) {
+                const list = isList(node.type.name, lists);
+                const wrapped = !list && node.type === paragraph;
+                let converted = node;
+                if (list && node.type !== listType) {
+                    converted = convertedList(node, listType, itemType, listAttrs);
+                } else if (wrapped) {
+                    converted = itemType.validContent(Fragment.from(node))
+                        && listType.create(listAttrs, itemType.create(null, node));
+                }
+                if (!converted) return null;
+                keep(pos, node.nodeSize, wrapped ? 2 : 0);
+                nodes.push(converted);
+                at += converted.nodeSize;
+            }
+        }
+        const first = blocks[0];
+        const last = blocks[blocks.length - 1];
+        if (!range.parent.canReplace(first.index, last.index + 1, Fragment.from(nodes))) return null;
+        if (!dispatch) return true;
+
+        const from = first.pos;
+        const to = last.pos + last.node.nodeSize;
+        const grown = at - to;
+        const map = (pos) => {
+            if (pos <= from) return pos;
+            if (pos >= to) return pos + grown;
+            const hit = moved.find(({ start, end }) => pos >= start && pos <= end);
+            return hit ? pos + hit.by : null;
+        };
+        tr.replaceWith(from, to, nodes);
+        const boundaries = [];
+        for (let index = 0, pos = from; index < nodes.length; pos += nodes[index].nodeSize, index++) {
+            boundaries.push(pos);
+        }
+        const [anchor, head] = [map(selection.anchor), map(selection.head)];
+        if (selection instanceof AllSelection) {
+            tr.setSelection(new AllSelection(tr.doc));
+        } else if (selection instanceof TextSelection && anchor !== null && head !== null) {
+            tr.setSelection(TextSelection.create(tr.doc, anchor, head));
+        } else {
+            tr.setSelection(TextSelection.between(tr.doc.resolve(from), tr.doc.resolve(at)));
+        }
+        // Back to front, so each join leaves the earlier positions valid.
+        for (const pos of [at, ...boundaries.reverse()]) joinListsAt(tr, pos, listType);
+        return true;
+    };
+}
+
+// The stock command for everything else. A range touching a list that
+// `toggleMixedRange` cannot take is cleared to paragraphs first: under `block*`
+// wrapping it would nest instead.
 function toggleCarveList(listName, itemName, fallback, listAttrs) {
     return (props) => {
         if (convertListType(listName, itemName, listAttrs)(props)) return true;
@@ -250,6 +380,8 @@ function toggleCarveList(listName, itemName, fallback, listAttrs) {
             }).liftListItem(itemName).run();
         }
         if (togglingOff || !touchesList) return fallback(props);
+        const mixed = toggleMixedRange(listName, itemName, listAttrs)(props);
+        if (mixed !== null) return mixed;
         return chain().clearNodes().command(fallback).run();
     };
 }
