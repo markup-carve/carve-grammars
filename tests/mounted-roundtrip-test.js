@@ -278,6 +278,65 @@ for (const [source, toggle, expected] of [
     editor.destroy();
 }
 
+// A selection mixing a list with other blocks used to clear everything to
+// paragraphs first: nested items flattened and headings became paragraphs.
+// The editor keeps an empty trailing paragraph the source never holds.
+const blockShape = (node) => (node.type === 'text' || (node.type === 'paragraph' && !node.content) ? null
+    : [node.type, ...(node.content ?? []).map(blockShape).filter(Boolean)]);
+const assertReparses = (editor, message) => {
+    const written = serializeToCarve(editor.getJSON());
+    const reparsed = new Editor({ extensions: [CarveKit], content: carveToProseMirror(written, { unsupported: 'throw' }) });
+    assert.deepStrictEqual(blockShape(reparsed.getJSON()), blockShape(editor.getJSON()), `${message} reparses: ${written}`);
+    reparsed.destroy();
+    return written;
+};
+const mixed = '# Title\n\nIntro\n\n. one\n  - deep\n    - deeper\n. two\n\n## Next\n\nOutro';
+for (const [toggle, on] of [
+    ['toggleBulletList', '- # Title\n- Intro\n- one\n  - deep\n    - deeper\n- two\n- ## Next\n- Outro'],
+    ['toggleOrderedList', '. # Title\n. Intro\n. one\n  - deep\n    - deeper\n. two\n. ## Next\n. Outro'],
+    ['toggleTaskList', '- [ ] # Title\n- [ ] Intro\n- [ ] one\n  - deep\n    - deeper\n- [ ] two\n- [ ] ## Next\n- [ ] Outro'],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(mixed, { unsupported: 'throw' }) });
+    editor.commands.selectAll();
+    editor.commands[toggle]();
+    assert.strictEqual(assertReparses(editor, toggle), on, `${toggle} over a mixed selection`);
+    assert.strictEqual(blockShape(editor.getJSON()).length, 2, `${toggle} builds one list`);
+    // Off again unwraps one level: headings stay, the nested list stays nested.
+    editor.commands.selectAll();
+    editor.commands[toggle]();
+    assert.strictEqual(
+        assertReparses(editor, `${toggle} off`),
+        '# Title\n\nIntro\n\none\n\n- deep\n  - deeper\n\ntwo\n\n## Next\n\nOutro',
+        `${toggle} toggled off`,
+    );
+    editor.destroy();
+}
+
+// A text selection from inside a list to a block after it, a list held in
+// another block, lists of the target type around a heading, an authored marker
+// style that stays its own list, and lists that are all the target type, which
+// toggle off.
+for (const [source, toggle, select, expected] of [
+    ['- a\n  - deep\n\n## After', 'toggleOrderedList', (pos) => ({ from: pos[0] + 1, to: pos[2] + 2 }), '. a\n  - deep\n. ## After'],
+    ['> - q\n>   - deep\n\npara', 'toggleBulletList', 'all', '- > - q\n  >   - deep\n- para'],
+    ['- a\n\n## H\n\n- b', 'toggleBulletList', 'all', '- a\n- ## H\n- b'],
+    ['# H\n\na. one\n   1) deep\n\npara', 'toggleOrderedList', 'all', '. # H\na. one\n   1) deep\n. para'],
+    ['1. a\n   - deep\n\na) b', 'toggleOrderedList', 'all', 'a\n\n- deep\n\nb'],
+    ['# H\n\npara', 'toggleBulletList', 'all', '- # H\n- para'],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });
+    if (select === 'all') {
+        editor.commands.selectAll();
+    } else {
+        const pos = [];
+        editor.state.doc.descendants((node, at) => { if (node.isText) pos.push(at); });
+        editor.commands.setTextSelection(select(pos));
+    }
+    editor.commands[toggle]();
+    assert.strictEqual(assertReparses(editor, `${toggle} on ${source}`), expected, `${toggle} on ${source}`);
+    editor.destroy();
+}
+
 const imported = new Editor({
     extensions: [CarveKit],
     content: carveToProseMirror('1. one\n2. two', { unsupported: 'throw' }),

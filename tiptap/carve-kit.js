@@ -1,5 +1,6 @@
 import { Extension, InputRule, findParentNode, isList, isNodeActive } from '@tiptap/core';
-import { Plugin, Selection, TextSelection } from '@tiptap/pm/state';
+import { Fragment } from '@tiptap/pm/model';
+import { AllSelection, Plugin, Selection, TextSelection } from '@tiptap/pm/state';
 import { canJoin } from '@tiptap/pm/transform';
 import StarterKit from '@tiptap/starter-kit';
 import Code from '@tiptap/extension-code';
@@ -155,32 +156,47 @@ const STRUCTURAL_LIST_CLASSES = new Set(['task-list-item', 'contains-task-list']
 // `tr` only checks that the swap is possible.
 const LIST_MARKER_ATTRS = ['type', 'carveOlType', 'carveDelim', 'carveBareMarker'];
 
-function swapListType(tr, pos, list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
+// The list rebuilt as `listType`, or null when an item's content does not fit.
+function convertedList(list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
     const items = [];
     list.forEach((item) => items.push(item));
     if (!items.every((item) => itemType.validContent(item.content))) {
-        return false;
-    }
-    if (!tr) {
-        return true;
+        return null;
     }
     const carry = (type, attrs) => Object.fromEntries(Object.entries(attrs).filter(([key]) => key in type.attrs));
-    const selection = tr.selection.toJSON();
-    const swapped = listType.create(
+    return listType.create(
         { ...carry(listType, list.attrs), ...listAttrs },
         items.map((item, index) => itemType.create(
             { ...carry(itemType, item.attrs), ...itemAttrs(index) }, item.content, item.marks,
         )),
         list.marks,
     );
+}
+
+// Join the two `listType` lists meeting at `pos` when their marker style
+// matches, as stock `toggleList` does.
+function joinListsAt(tr, pos, listType) {
+    const $pos = tr.doc.resolve(pos);
+    const [before, after] = [$pos.nodeBefore, $pos.nodeAfter];
+    if (before?.type === listType && after?.type === listType
+        && LIST_MARKER_ATTRS.every((key) => before.attrs[key] === after.attrs[key]) && canJoin(tr.doc, pos)) {
+        tr.join(pos);
+    }
+}
+
+function swapListType(tr, pos, list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
+    const swapped = convertedList(list, listType, itemType, listAttrs, itemAttrs);
+    if (!swapped) {
+        return false;
+    }
+    if (!tr) {
+        return true;
+    }
+    const selection = tr.selection.toJSON();
     tr.replaceWith(pos, pos + list.nodeSize, swapped);
     tr.setSelection(Selection.fromJSON(tr.doc, selection));
-    // Join a same-type neighbor with the same marker style, as stock `toggleList` does.
-    const joinable = (node) => node?.type === listType
-        && LIST_MARKER_ATTRS.every((key) => node.attrs[key] === swapped.attrs[key]);
-    const end = pos + swapped.nodeSize;
-    if (joinable(tr.doc.resolve(end).nodeAfter) && canJoin(tr.doc, end)) tr.join(end);
-    if (joinable(tr.doc.resolve(pos).nodeBefore) && canJoin(tr.doc, pos)) tr.join(pos);
+    joinListsAt(tr, pos + swapped.nodeSize, listType);
+    joinListsAt(tr, pos, listType);
     return true;
 }
 
@@ -220,8 +236,83 @@ function convertListType(listName, itemName, listAttrs = {}) {
     };
 }
 
-// The stock command for everything else, but a range touching another list is
-// cleared to paragraphs first: under `block*` wrapping it would nest instead.
+// A range mixing lists with other blocks: each list converts in place, and
+// every other block becomes an item of its own, keeping its type. Where every
+// block is already this type of list, they unwrap one level. Empty textblocks
+// at the edges stay out, as in `selectedList`.
+function toggleMixedRange(listName, itemName, listAttrs = {}) {
+    return ({ state, tr, dispatch, editor }) => {
+        const { selection, schema } = state;
+        const lists = editor.extensionManager.extensions;
+        const listType = schema.nodes[listName];
+        const itemType = schema.nodes[itemName];
+        const range = selection.$from.blockRange(selection.$to);
+        if (!range || !listType || !itemType || isList(range.parent.type.name, lists)) return false;
+        const blocks = [];
+        for (let index = range.startIndex, pos = range.start; index < range.endIndex; index++) {
+            const node = range.parent.child(index);
+            blocks.push({ node, pos, index });
+            pos += node.nodeSize;
+        }
+        const empty = ({ node }) => node.isTextblock && node.content.size === 0;
+        while (blocks.length && empty(blocks[0])) blocks.shift();
+        while (blocks.length && empty(blocks[blocks.length - 1])) blocks.pop();
+        const holdsList = (node) => {
+            let found = isList(node.type.name, lists);
+            node.descendants((child) => {
+                found ||= isList(child.type.name, lists);
+                return !found;
+            });
+            return found;
+        };
+        if (!blocks.some(({ node }) => holdsList(node))) return false;
+
+        const nodes = [];
+        if (blocks.every((block) => block.node.type === listType || empty(block))) {
+            for (const { node } of blocks) {
+                if (node.type !== listType) {
+                    nodes.push(node);
+                    continue;
+                }
+                node.forEach((item) => {
+                    if (item.childCount) item.forEach((child) => nodes.push(child));
+                    else nodes.push(schema.nodes.paragraph.create());
+                });
+            }
+        } else {
+            for (const { node } of blocks) {
+                const converted = isList(node.type.name, lists)
+                    ? (node.type === listType ? node : convertedList(node, listType, itemType, listAttrs))
+                    : itemType.validContent(Fragment.from(node)) && listType.create(listAttrs, itemType.create(null, node));
+                if (!converted) return false;
+                nodes.push(converted);
+            }
+        }
+        const first = blocks[0];
+        const last = blocks[blocks.length - 1];
+        if (!range.parent.canReplace(first.index, last.index + 1, Fragment.from(nodes))) return false;
+        if (!dispatch) return true;
+
+        const from = first.pos;
+        tr.replaceWith(from, last.pos + last.node.nodeSize, nodes);
+        const boundaries = [];
+        let size = 0;
+        for (const node of nodes) {
+            boundaries.push(from + size);
+            size += node.nodeSize;
+        }
+        tr.setSelection(selection instanceof AllSelection
+            ? new AllSelection(tr.doc)
+            : TextSelection.between(tr.doc.resolve(from), tr.doc.resolve(from + size)));
+        // Back to front, so each join leaves the earlier positions valid.
+        for (const pos of [from + size, ...boundaries.reverse()]) joinListsAt(tr, pos, listType);
+        return true;
+    };
+}
+
+// The stock command for everything else. A range touching a list that
+// `toggleMixedRange` cannot take is cleared to paragraphs first: under `block*`
+// wrapping it would nest instead.
 function toggleCarveList(listName, itemName, fallback, listAttrs) {
     return (props) => {
         if (convertListType(listName, itemName, listAttrs)(props)) return true;
@@ -247,6 +338,7 @@ function toggleCarveList(listName, itemName, fallback, listAttrs) {
             }).liftListItem(itemName).run();
         }
         if (togglingOff || !touchesList) return fallback(props);
+        if (toggleMixedRange(listName, itemName, listAttrs)(props)) return true;
         return chain().clearNodes().command(fallback).run();
     };
 }
