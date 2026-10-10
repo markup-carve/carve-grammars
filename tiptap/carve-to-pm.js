@@ -326,6 +326,21 @@ function authoredReferenceAttrs(rawRef) {
     }
 }
 
+// A line block keeps each line's leading spaces by resolving them to
+// no-break spaces, the same node `\ ` produces. Read back as U+00A0 text, the
+// first edit wrote that character into the source, so the run at a line start
+// is the ASCII indentation the author typed. A typed U+00A0 is a text node.
+function lineBlockIndentation(paragraph) {
+    if (paragraph.type !== 'paragraph') return paragraph;
+    let lineStart = true;
+    const children = (paragraph.children || []).map((child) => {
+        if (lineStart && child.type === 'non_breaking_space') return { type: 'text', value: ' ' };
+        lineStart = child.type === 'hard_break' || child.type === 'hard-break';
+        return child;
+    });
+    return { ...paragraph, children };
+}
+
 function convertBlocks(nodes, ctx, localizeLossy = false) {
     return nodes.map((node) => {
         try {
@@ -548,7 +563,11 @@ function convertBlock(node, ctx) {
 
         case 'line-block':
         case 'line_block':
-            return { type: 'carveLineBlock', attrs: { mode: '|' }, content: convertBlocks(node.children || [], ctx) };
+            return {
+                type: 'carveLineBlock',
+                attrs: { mode: '|' },
+                content: convertBlocks((node.children || []).map(lineBlockIndentation), ctx),
+            };
 
         case 'admonition':
             return convertAdmonition(node, ctx);
