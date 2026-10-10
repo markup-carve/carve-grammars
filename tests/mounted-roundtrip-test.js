@@ -11,7 +11,7 @@ import { assertLedger } from './lib/ledger.js';
 const win = new Window({ url: 'http://localhost/' });
 globalThis.window = win;
 globalThis.document = win.document;
-for (const key of ['DOMParser', 'Node', 'Element', 'HTMLElement', 'navigator', 'getComputedStyle', 'MutationObserver']) {
+for (const key of ['DOMParser', 'Node', 'Element', 'HTMLElement', 'navigator', 'getComputedStyle', 'MutationObserver', 'ClipboardEvent', 'DataTransfer']) {
     if (globalThis[key] === undefined && win[key] !== undefined) {
         try { globalThis[key] = win[key]; } catch { /* read-only global */ }
     }
@@ -190,6 +190,65 @@ for (const ch of '[x] ') {
 }
 assert.strictEqual(serializeToCarve(joined.getJSON()), '- [ ] before\n- [x] one\n- [ ] two');
 joined.destroy();
+
+// Typed and pasted mark spellings are Carve's, not Markdown's.
+const marksOf = (editor) => {
+    const runs = [];
+    editor.state.doc.descendants((node) => {
+        if (node.isText) runs.push([node.text, node.marks.map((mark) => mark.type.name).join('+')]);
+    });
+    return runs;
+};
+for (const [typed, expected] of [
+    ['*x*', [['x', 'bold']]],
+    ['/x/', [['x', 'italic']]],
+    ['_x_', [['x', 'underline']]],
+    ['~x~', [['x', 'strike']]],
+    ['=x=', [['x', 'highlight']]],
+    ['{^x^}', [['x', 'superscript']]],
+    ['{,x,}', [['x', 'subscript']]],
+    ['a (/x y/', [['a (', ''], ['x y', 'italic']]],
+    ['**x**', [['**x**', '']]],
+    ['__x__', [['__x__', '']]],
+    ['~~x~~', [['~~x~~', '']]],
+    ['==x==', [['==x==', '']]],
+    ['a/b/c', [['a/b/c', '']]],
+    ['a*b*', [['a*b*', '']]],
+    ['snake_case_', [['snake_case_', '']]],
+    ['x = 5 =', [['x = 5 =', '']]],
+    ['https://a.com/b/', [['https://a.com/b/', '']]],
+    ['a * x*', [['a * x*', '']]],
+    ['*x *', [['*x *', '']]],
+    ['\\*x*', [['\\*x*', '']]],
+    ['*x\\*', [['*x\\*', '']]],
+    ['`*x*', [['`*x*', '']]],
+    ['{^^x^}', [['^x', 'superscript']]],
+    ['{,x y,}', [['x y', 'subscript']]],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: '<p></p>' });
+    for (const ch of typed) {
+        const { from } = editor.state.selection;
+        if (!editor.view.someProp('handleTextInput', (f) => f(editor.view, from, from, ch))) {
+            editor.view.dispatch(editor.view.state.tr.insertText(ch, from));
+        }
+    }
+    assert.deepStrictEqual(marksOf(editor), expected, `typing ${typed}`);
+    editor.destroy();
+}
+for (const [pasted, expected] of [
+    ['a *b* /c/ d', [['a ', ''], ['b', 'bold'], [' ', ''], ['c', 'italic'], [' d', '']]],
+    ['/usr/local/ x', [['usr/local', 'italic'], [' x', '']]],
+    ['see /etc/hosts and a/b/c', [['see /etc/hosts and a/b/c', '']]],
+    ['**a** __b__ ~~c~~ ==d==', [['**a** __b__ ~~c~~ ==d==', '']]],
+    ['H{,2,}O', [['H', ''], ['2', 'subscript'], ['O', '']]],
+    ['\\*x* {^^x^}', [['\\*x* ', ''], ['^x', 'superscript']]],
+    ['`*x*` *y*', [['*x*', 'code'], [' ', ''], ['y', 'bold']]],
+]) {
+    const editor = new Editor({ extensions: [CarveKit], content: '<p></p>' });
+    editor.view.pasteText(pasted);
+    assert.deepStrictEqual(marksOf(editor), expected, `pasting ${pasted}`);
+    editor.destroy();
+}
 
 // Select-all over a document that is one list toggles it off or converts it.
 for (const [source, toggle, expected] of [

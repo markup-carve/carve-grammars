@@ -61,6 +61,7 @@ import { CarveDirective } from './extensions/carve-directive.js';
 import { CarveBlockExtension } from './extensions/carve-block-extension.js';
 import { CarveRuby } from './extensions/carve-ruby.js';
 import { CarveSmallCaps } from './extensions/carve-small-caps.js';
+import { CARVE_RULED_MARKS, carveMarkRules } from './extensions/carve-mark-rules.js';
 
 // Tiptap 3 dropped the default export from @tiptap/extension-table - it now
 // exports Table (plus TableRow/TableCell/TableHeader/TableKit) by name. Tiptap 2
@@ -395,7 +396,15 @@ export const CarveKit = Extension.create({
         // CodeBlock, Blockquote, BulletList, OrderedList, ListItem, Heading,
         // HardBreak, HorizontalRule, Dropcursor, Gapcursor, History
         if (this.options.starterKit !== false) {
-            extensions.push(StarterKit.configure({
+            // StarterKit's Bold, Italic and Strike type Markdown spellings.
+            const CarveStarterKit = StarterKit.extend({
+                addExtensions() {
+                    return (this.parent?.() ?? []).map((extension) => (CARVE_RULED_MARKS.includes(extension.name)
+                        ? extension.extend(carveMarkRules(extension.name))
+                        : extension));
+                },
+            });
+            extensions.push(CarveStarterKit.configure({
                 // Disable CodeBlock from StarterKit, we add a custom one below
                 codeBlock: false,
                 // Disable default lists - we add custom ones that handle task-list
@@ -681,24 +690,24 @@ export const CarveKit = Extension.create({
             extensions.push(CustomListItem.configure(this.options.listItem ?? {}));
         }
 
-        // Highlight mark (built-in, maps to ==text==)
+        // Highlight mark (built-in, maps to =text=)
         if (this.options.highlight !== false) {
-            extensions.push(Highlight.configure(this.options.highlight ?? {}));
+            extensions.push(Highlight.extend(carveMarkRules('highlight')).configure(this.options.highlight ?? {}));
         }
 
         // Subscript mark (maps to the braced {,text,})
         if (this.options.subscript !== false) {
-            extensions.push(Subscript.configure(this.options.subscript ?? {}));
+            extensions.push(Subscript.extend(carveMarkRules('subscript')).configure(this.options.subscript ?? {}));
         }
 
         // Superscript mark (maps to the braced {^text^})
         if (this.options.superscript !== false) {
-            extensions.push(Superscript.configure(this.options.superscript ?? {}));
+            extensions.push(Superscript.extend(carveMarkRules('superscript')).configure(this.options.superscript ?? {}));
         }
 
         // Underline mark (maps to _text_)
         if (this.options.underline !== false) {
-            extensions.push(Underline.configure(this.options.underline ?? {}));
+            extensions.push(Underline.extend(carveMarkRules('underline')).configure(this.options.underline ?? {}));
         }
 
         // Link extension with keyboard shortcut
