@@ -716,5 +716,9 @@ imported.destroy();
 // started being escaped (`# T`, `- T`, `%% T`, `x =hi= T`, `x ^[n] y`). All 17
 // went out and none came in. Each holds a paragraph whose text starts with an
 // opener (`## H`, `> q`, `{.gallery}`, `- b`) that came back as that block.
+//
+// 301 -> 297 when a block quote's attribute run started loading: the four
+// documents put `{.x}` or `{:de}` on a `>` quote, which the projection
+// dropped, so the written side rendered a bare `<blockquote>`.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

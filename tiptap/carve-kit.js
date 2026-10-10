@@ -357,7 +357,17 @@ export const CarveKit = Extension.create({
                     // carve-php and carve-js write an authored `{align=right}`
                     // out as `style="text-align: right;"`, and reading that
                     // back as a key/value respells the author's run.
-                    attributes: attributeSlots(['style']),
+                    attributes: attributeSlots(['style', 'data-carve-fenced']),
+                }, {
+                    // A `::: >` quote fence, kept so it is not respelled as `>`.
+                    types: ['blockquote'],
+                    attributes: {
+                        carveFenced: {
+                            default: null,
+                            parseHTML: element => (element.hasAttribute('data-carve-fenced') ? true : null),
+                            renderHTML: attributes => (attributes.carveFenced ? { 'data-carve-fenced': '' } : {}),
+                        },
+                    },
                 }, {
                     types: ['bulletList'],
                     attributes: attributeSlots(['carveTight']),

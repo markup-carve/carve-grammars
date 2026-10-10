@@ -521,7 +521,12 @@ function convertBlock(node, ctx) {
             // `block+`: an empty quote holds an empty paragraph, as HTML
             // parsing already gives it (#537).
             const content = convertBlocks(node.children || [], ctx);
-            return { type: 'blockquote', content: content.length ? content : [{ type: 'paragraph' }] };
+            const quote = { type: 'blockquote', content: content.length ? content : [{ type: 'paragraph' }] };
+            const attrs = { ...(convertAttrs(node.attrs) || {}) };
+            // `::: >` and `>` build the same quote; only the spelling differs.
+            if (node.fenced === true) attrs.carveFenced = true;
+            if (Object.keys(attrs).length) quote.attrs = attrs;
+            return quote;
         }
 
         case 'code-block':
