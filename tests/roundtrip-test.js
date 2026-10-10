@@ -708,6 +708,9 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * the SOURCE: an engine that reads them renders the authored side with real
  * body grouping and the written side without, so the divergence widens rather
  * than closing.
+ *
+ * 496 -> 495: `line-blocks-2` left once a line block's leading spaces loaded
+ * as ASCII spaces instead of the U+00A0 the engine resolves them to.
  */
 assertLedger(
     'enveloped-ledger.json',

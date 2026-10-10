@@ -250,6 +250,21 @@ for (const [pasted, expected] of [
     editor.destroy();
 }
 
+// A line block's leading spaces are authored ASCII, not the U+00A0 they render as.
+const lineBlock = new Editor({
+    extensions: [CarveKit],
+    content: carveToProseMirror('::: |\n  indented\nplain\n   *deep*\n:::\n\nend', { unsupported: 'throw' }),
+});
+lineBlock.commands.setTextSelection(lineBlock.state.doc.content.size - 1);
+lineBlock.commands.insertContent('!');
+assert.strictEqual(serializeToCarve(lineBlock.getJSON()), '::: |\n  indented\nplain\n   *deep*\n:::\n\nend!');
+lineBlock.destroy();
+assert.strictEqual(
+    serializeToCarve(carveToProseMirror('::: |\n typed\n:::', { unsupported: 'throw' })),
+    '::: |\n typed\n:::',
+    'a no-break space the author typed stays one',
+);
+
 // Select-all over a document that is one list toggles it off or converts it.
 for (const [source, toggle, expected] of [
     ['- one\n- two', 'toggleBulletList', 'one\n\ntwo'],
