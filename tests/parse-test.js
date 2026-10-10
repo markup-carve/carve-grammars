@@ -190,6 +190,49 @@ check('an authored class alongside it still survives',
     '<ul><li class="task-list-item c"><input type="checkbox" disabled> x</li></ul>',
     '-{.c} [ ] x');
 
+// carve#2887: `task-list` on the list and `data-task-state="x"` on a done item
+// are engine presentation hooks, consumed rather than read as authored.
+const RULED_TASK_LIST = '<ul class="task-list">'
+    + '<li data-task-state="x"><input type="checkbox" checked disabled aria-label="done"> done</li></ul>';
+
+check('the ruled task-list class and done state import as structure',
+    RULED_TASK_LIST,
+    '- [x] done');
+
+check('an authored class after task-list still survives',
+    '<ul class="task-list c"><li><input type="checkbox" disabled> x</li></ul>',
+    '{.c}\n- [ ] x');
+
+check('an uppercase X done state is the same state',
+    '<ul class="task-list"><li data-task-state="X"><input type="checkbox" checked disabled> d</li></ul>',
+    '- [x] d');
+
+check('an extended state is still kept from data-task-state',
+    '<ul class="task-list"><li data-task-state="?"><input type="checkbox" disabled> m</li></ul>',
+    '- [?] m');
+
+{
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    const editor = new Editor({ element: el, extensions: [CarveKit], content: RULED_TASK_LIST });
+    let itemPos = null;
+    editor.state.doc.descendants((node, pos) => {
+        if (itemPos === null && node.type.name === 'taskItem') itemPos = pos;
+    });
+    editor.view.dispatch(editor.state.tr.setNodeAttribute(itemPos, 'checked', false));
+    const got = serializeToCarve(editor.getJSON()).trim();
+    editor.destroy();
+    el.remove();
+    if (got === '- [ ] done') {
+        pass++;
+        console.log('  ✓ unchecking an imported done item serializes [ ]');
+    } else {
+        fail++;
+        console.log('  ✗ unchecking an imported done item serializes [ ]');
+        console.log(`    got:      ${JSON.stringify(got)}`);
+    }
+}
+
 // Tiptap fills `target`/`rel` in on every link it parses, and those defaults
 // must not come back as an authored attribute run.
 check('a plain link keeps no attribute run through the editor',
