@@ -1,5 +1,6 @@
-import { Extension } from '@tiptap/core';
-import { Plugin } from '@tiptap/pm/state';
+import { Extension, InputRule, findParentNode, isList, isNodeActive } from '@tiptap/core';
+import { Plugin, Selection, TextSelection } from '@tiptap/pm/state';
+import { canJoin } from '@tiptap/pm/transform';
 import StarterKit from '@tiptap/starter-kit';
 import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block';
@@ -146,6 +147,132 @@ const CODE_LANGS = [
 // HTML and from editors - and capturing them as a marker attribute invents
 // source the author never wrote: `-{.task-list-item} [ ] x`.
 const STRUCTURAL_LIST_CLASSES = new Set(['task-list-item', 'contains-task-list']);
+
+// Items here take `block*`, so `wrapInList` succeeds inside a list of another
+// type: stock `toggleList` and the `[ ] ` input rule nest a new list instead of
+// converting. These swap the innermost list in place, keeping nesting; a null
+// `tr` only checks that the swap is possible.
+const LIST_MARKER_ATTRS = ['type', 'carveOlType', 'carveDelim', 'carveBareMarker'];
+
+function swapListType(tr, pos, list, listType, itemType, listAttrs = {}, itemAttrs = () => ({})) {
+    const items = [];
+    list.forEach((item) => items.push(item));
+    if (!items.every((item) => itemType.validContent(item.content))) {
+        return false;
+    }
+    if (!tr) {
+        return true;
+    }
+    const carry = (type, attrs) => Object.fromEntries(Object.entries(attrs).filter(([key]) => key in type.attrs));
+    const selection = tr.selection.toJSON();
+    const swapped = listType.create(
+        { ...carry(listType, list.attrs), ...listAttrs },
+        items.map((item, index) => itemType.create(
+            { ...carry(itemType, item.attrs), ...itemAttrs(index) }, item.content, item.marks,
+        )),
+        list.marks,
+    );
+    tr.replaceWith(pos, pos + list.nodeSize, swapped);
+    tr.setSelection(Selection.fromJSON(tr.doc, selection));
+    // Join a same-type neighbor with the same marker style, as stock `toggleList` does.
+    const joinable = (node) => node?.type === listType
+        && LIST_MARKER_ATTRS.every((key) => node.attrs[key] === swapped.attrs[key]);
+    const end = pos + swapped.nodeSize;
+    if (joinable(tr.doc.resolve(end).nodeAfter) && canJoin(tr.doc, end)) tr.join(end);
+    if (joinable(tr.doc.resolve(pos).nodeBefore) && canJoin(tr.doc, pos)) tr.join(pos);
+    return true;
+}
+
+// The innermost list around the selection, or the one list a selection covers
+// from outside, flagged `around`. Empty textblocks do not count, so select-all
+// over a list and the invisible trailing paragraph still finds it.
+function selectedList(state, lists) {
+    const { selection } = state;
+    const parent = findParentNode((node) => isList(node.type.name, lists))(selection);
+    if (parent) return parent;
+    const range = selection.$from.blockRange(selection.$to);
+    if (!range) return null;
+    const covered = [];
+    for (let index = range.startIndex, pos = range.start; index < range.endIndex; index++) {
+        const node = range.parent.child(index);
+        if (!(node.isTextblock && node.content.size === 0)) covered.push({ node, pos });
+        pos += node.nodeSize;
+    }
+    const [only] = covered;
+    return covered.length === 1 && isList(only.node.type.name, lists)
+        ? { ...only, depth: range.depth, around: true } : null;
+}
+
+function convertListType(listName, itemName, listAttrs = {}) {
+    return ({ state, tr, dispatch, editor }) => {
+        const { selection, schema } = state;
+        const parent = selectedList(state, editor.extensionManager.extensions);
+        const range = selection.$from.blockRange(selection.$to);
+        const listType = schema.nodes[listName];
+        const itemType = schema.nodes[itemName];
+        // A selection reaching past this list is left to stock `toggleList`.
+        if (!parent || !range || range.depth < parent.depth || range.depth - parent.depth > 1
+            || parent.node.type === listType || !listType || !itemType) {
+            return false;
+        }
+        return swapListType(dispatch ? tr : null, parent.pos, parent.node, listType, itemType, listAttrs);
+    };
+}
+
+// The stock command for everything else, but a range touching another list is
+// cleared to paragraphs first: under `block*` wrapping it would nest instead.
+function toggleCarveList(listName, itemName, fallback, listAttrs) {
+    return (props) => {
+        if (convertListType(listName, itemName, listAttrs)(props)) return true;
+        const { state, editor, chain } = props;
+        const { selection } = state;
+        const lists = editor.extensionManager.extensions;
+        const parent = selectedList(state, lists);
+        const range = selection.$from.blockRange(selection.$to);
+        const togglingOff = parent && range && parent.node.type.name === listName && range.depth >= parent.depth;
+        let touchesList = false;
+        state.doc.nodesBetween(selection.from, selection.to, (node) => {
+            touchesList ||= isList(node.type.name, lists);
+            return !touchesList;
+        });
+        if (togglingOff && parent.around) {
+            // Stock lifting needs a selection inside the list.
+            return chain().command(({ tr }) => {
+                const inner = TextSelection.between(
+                    tr.doc.resolve(parent.pos + 1), tr.doc.resolve(parent.pos + parent.node.nodeSize - 1),
+                );
+                tr.setSelection(inner);
+                return true;
+            }).liftListItem(itemName).run();
+        }
+        if (togglingOff || !touchesList) return fallback(props);
+        return chain().clearNodes().command(fallback).run();
+    };
+}
+
+// `- [ ] ` typed at the start of a bullet item turns that list into a task list.
+function taskMarkerInBulletItem(find, taskItemName) {
+    return new InputRule({
+        find,
+        handler: ({ state, range, match }) => {
+            const $from = state.doc.resolve(range.from);
+            const depth = $from.depth;
+            if (depth < 3 || $from.index(depth - 1) !== 0 || $from.node(depth - 1).type.name !== 'listItem'
+                || $from.node(depth - 2).type.name !== 'bulletList') {
+                return null;
+            }
+            const { tr, schema } = state;
+            const listPos = $from.before(depth - 2);
+            const [taskList, taskItem] = [schema.nodes.taskList, schema.nodes[taskItemName]];
+            if (!swapListType(null, listPos, $from.node(depth - 2), taskList, taskItem)) return null;
+            const checked = match[match.length - 1] === 'x';
+            const index = $from.index(depth - 2);
+            // Delete first: joining a neighbor list shifts the marker's range.
+            tr.delete(range.from, range.to);
+            swapListType(tr, listPos, tr.doc.nodeAt(listPos), taskList, taskItem, {}, (i) => ({ checked: i === index && checked }));
+        },
+    });
+}
 
 function authoredClasses(element) {
     const kept = (element.getAttribute('class') || '')
@@ -444,6 +571,15 @@ export const CarveKit = Extension.create({
         // Custom BulletList that excludes task-list class
         if (this.options.bulletList !== false) {
             const CustomBulletList = BulletList.extend({
+                addCommands() {
+                    const parent = this.parent?.();
+                    return {
+                        ...parent,
+                        toggleBulletList: () => toggleCarveList(
+                            this.name, this.options.itemTypeName, (props) => parent.toggleBulletList()(props),
+                        ),
+                    };
+                },
                 parseHTML() {
                     return [
                         {
@@ -494,8 +630,8 @@ export const CarveKit = Extension.create({
                         // preserve. Prefer Carve's constant-width automatic
                         // marker without changing the schema default: keeping
                         // that nullable preserves older persisted PM JSON.
-                        toggleOrderedList: () => ({ chain, editor }) => {
-                            const wasActive = editor.isActive(this.name);
+                        toggleOrderedList: () => toggleCarveList(this.name, this.options.itemTypeName, ({ chain, state }) => {
+                            const wasActive = isNodeActive(state, this.name);
                             const command = chain().toggleList(
                                 this.name, this.options.itemTypeName, this.options.keepMarks,
                             );
@@ -503,7 +639,7 @@ export const CarveKit = Extension.create({
                             return command.updateAttributes(this.name, {
                                 carveBareMarker: true, carveDelim: '.',
                             }).run();
-                        },
+                        }, { carveBareMarker: true, carveDelim: '.' }),
                     };
                 },
             });
@@ -697,6 +833,15 @@ export const CarveKit = Extension.create({
         if (this.options.taskList !== false) {
             // Extend TaskList to also match ul.task-list with high priority
             const CustomTaskList = TaskList.extend({
+                addCommands() {
+                    const parent = this.parent?.();
+                    return {
+                        ...parent,
+                        toggleTaskList: () => toggleCarveList(
+                            this.name, this.options.itemTypeName, (props) => parent.toggleTaskList()(props),
+                        ),
+                    };
+                },
                 parseHTML() {
                     return [
                         { tag: 'ul[data-type="taskList"]', priority: 60 },
@@ -717,6 +862,10 @@ export const CarveKit = Extension.create({
             // Extend TaskItem to also match li with checkbox input with high priority
             const CustomTaskItem = TaskItem.extend({
                 content: 'block*',
+                addInputRules() {
+                    const parent = this.parent?.() ?? [];
+                    return [...parent.map((rule) => taskMarkerInBulletItem(rule.find, this.name)), ...parent];
+                },
                 addAttributes() {
                     return {
                         ...this.parent?.(),
