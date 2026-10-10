@@ -274,6 +274,35 @@ function isTightPair(prev, next) {
     return isLineComment(prev) && isLineComment(next);
 }
 
+const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+
+// An empty list item means nothing (divergence-from-djot §2), and a bare
+// marker reparses as a different document, so empty items and lists left with
+// no items never reach the source. The editor model keeps them.
+function isEmptyListItem(item) {
+    return (item.content || []).every((child) => child.type === 'paragraph' && !child.content?.length);
+}
+
+function pruneEmptyListItems(node) {
+    if (!Array.isArray(node?.content)) return node;
+    let changed = false;
+    const content = [];
+    for (const child of node.content) {
+        const pruned = pruneEmptyListItems(child);
+        if (pruned !== child) changed = true;
+        if (LIST_TYPES.includes(node.type) && isEmptyListItem(pruned)) {
+            changed = true;
+            continue;
+        }
+        if (LIST_TYPES.includes(pruned?.type) && !pruned.content?.length) {
+            changed = true;
+            continue;
+        }
+        content.push(pruned);
+    }
+    return changed ? { ...node, content } : node;
+}
+
 export function serializeToCarve(doc, options = {}) {
     const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
@@ -301,6 +330,7 @@ export function serializeToCarve(doc, options = {}) {
         return doc.content[0].attrs?.carveSource || '';
     }
 
+    doc = pruneEmptyListItems(doc);
     let output = '';
 
     // Reference links write their LABEL, so the definitions they point at have

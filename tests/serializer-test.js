@@ -922,4 +922,92 @@ check('a hard break written as a block keeps its backslash',
 check('an image written as a block keeps its title',
     doc({ type: 'image', attrs: { src: 'u', alt: 'a', title: 't' } }), '![a](u "t")');
 
+// An item the editor holds with no children, or with only an empty paragraph,
+// is what Enter at the end of an item produces. Its bare marker reparsed as a
+// nested list or folded into a neighbor, so it is skipped, and a list left
+// with no items is skipped with it.
+function shapeOf(block) {
+    if (block.type === 'list') {
+        return { list: block.items.map((item) => item.children.map(shapeOf)) };
+    }
+    return (block.children || []).map((c) => c.value ?? '').join('');
+}
+
+function checkEmptyItems(name, pmDoc, expected, expectedShape) {
+    check(name, pmDoc, expected);
+    const got = parse(expected).children.map(shapeOf);
+    assert.deepStrictEqual(got, expectedShape, `${name}: reparse\n${JSON.stringify(got)}`);
+    passed++;
+    console.log(`  ✓ ${name} (reparse)`);
+}
+
+const li = (...content) => ({ type: 'listItem', content });
+const ti = (checked, ...content) => ({ type: 'taskItem', attrs: { checked }, content });
+const emptyPara = { type: 'paragraph', content: [] };
+
+checkEmptyItems('a bullet item with no children is skipped',
+    doc({ type: 'bulletList', content: [li(para(text('a'))), li(), li(para(text('c')))] }),
+    '- a\n- c',
+    [{ list: [['a'], ['c']] }]);
+
+checkEmptyItems('a bullet item holding an empty paragraph is skipped',
+    doc({ type: 'bulletList', content: [li(para(text('a'))), li(emptyPara), li(para(text('c')))] }),
+    '- a\n- c',
+    [{ list: [['a'], ['c']] }]);
+
+checkEmptyItems('an item holding only empty paragraphs is skipped',
+    doc({ type: 'bulletList', content: [li(para(text('a'))), li(emptyPara, emptyPara)] }),
+    '- a',
+    [{ list: [['a']] }]);
+
+// The written numbers stay consecutive: an ordinal is start + position, and
+// the item that held the skipped number is not in the document.
+checkEmptyItems('an empty ordered item is skipped without a gap in the numbers',
+    doc({ type: 'orderedList', attrs: { start: 1 }, content: [
+        li(para(text('a'))), li(), li(para(text('c'))), li(emptyPara), li(para(text('e'))),
+    ] }),
+    '1. a\n2. c\n3. e',
+    [{ list: [['a'], ['c'], ['e']] }]);
+
+check('an ordered list keeps its start when an item is skipped',
+    doc({ type: 'orderedList', attrs: { start: 4 }, content: [li(emptyPara), li(para(text('a'))), li(para(text('b')))] }),
+    '4. a\n5. b');
+
+checkEmptyItems('an empty task item is skipped',
+    doc({ type: 'taskList', content: [ti(false, para(text('a'))), ti(true), ti(true, para(text('c')))] }),
+    '- [ ] a\n- [x] c',
+    [{ list: [['a'], ['c']] }]);
+
+checkEmptyItems('an empty last item keeps the blank line before the next block',
+    doc({ type: 'bulletList', content: [li(para(text('a'))), li(emptyPara)] }, para(text('after'))),
+    '- a\n\nafter',
+    [{ list: [['a']] }, 'after']);
+
+checkEmptyItems('a list whose items are all empty is skipped',
+    doc(para(text('before')), { type: 'bulletList', content: [li(emptyPara), li()] }, para(text('after'))),
+    'before\n\nafter',
+    ['before', 'after']);
+
+checkEmptyItems('a list whose only item is empty is skipped before a paragraph',
+    doc({ type: 'orderedList', attrs: { start: 1 }, content: [li(emptyPara)] }, para(text('after'))),
+    'after',
+    ['after']);
+
+checkEmptyItems('an item whose only child is a nested list stays',
+    doc({ type: 'bulletList', content: [
+        li(para(text('a'))),
+        li({ type: 'bulletList', content: [li(para(text('b')))] }),
+    ] }),
+    '- a\n- - b',
+    [{ list: [['a'], [{ list: [['b']] }]] }]);
+
+checkEmptyItems('an item whose nested list held only empty items is skipped too',
+    doc({ type: 'bulletList', content: [
+        li(para(text('a'))),
+        li({ type: 'bulletList', content: [li(emptyPara)] }),
+        li(para(text('c'))),
+    ] }),
+    '- a\n- c',
+    [{ list: [['a'], ['c']] }]);
+
 console.log(`\n${passed} passed`);
