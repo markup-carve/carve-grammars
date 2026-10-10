@@ -1,0 +1,22 @@
+[
+  {
+    "type": "front-matter>frontmatter-delimiter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "text",
+    "text": "\nbody\n"
+  }
+]

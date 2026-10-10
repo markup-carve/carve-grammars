@@ -61,7 +61,12 @@ const MINIMUM_LOSSLESS = 12;
 // The seven that were already here are unchanged, and every one of the nine
 // still passes the load/save equality above, which is the promise `preserve`
 // makes - the ceiling counts constructs still owed a node, not breakage.
-const MAXIMUM_ENVELOPED = 9;
+//
+// 9 -> 10 with the bump to efc1e98: the four `66-smart-typography-quotes-off-*`
+// documents set a parse option the bridge does not model, the reason
+// `29-smart-typography-off` already needs the envelope. The ceiling had sat at
+// 9 over 6 measured since the tabs selection documents stopped needing it.
+const MAXIMUM_ENVELOPED = 10;
 
 console.log('optional corpus through the bridge:');
 

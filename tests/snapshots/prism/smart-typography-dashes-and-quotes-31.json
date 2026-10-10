@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "\"Wait"
+  },
+  {
+    "type": "typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "comment",
+    "text": "{%%}"
+  },
+  {
+    "type": "text",
+    "text": "\" he said.\n"
+  }
+]

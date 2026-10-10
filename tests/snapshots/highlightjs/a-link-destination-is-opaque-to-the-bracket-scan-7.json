@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "a [b "
+  },
+  {
+    "scope": "link",
+    "text": "[x](http://u/])"
+  },
+  {
+    "scope": null,
+    "text": " c\n"
+  }
+]

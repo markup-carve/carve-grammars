@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "'I "
+  },
+  {
+    "scope": "strong",
+    "text": "*said 'hello*"
+  },
+  {
+    "scope": null,
+    "text": " there,' she replied.\n"
+  }
+]

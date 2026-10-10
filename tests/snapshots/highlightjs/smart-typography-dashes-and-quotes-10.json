@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "He paused, then said\n\"I will not go,\" and left."
+  },
+  {
+    "scope": "meta",
+    "text": "\\"
+  },
+  {
+    "scope": null,
+    "text": "\n'Fine,' she said.\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> She said"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> \"no\" twice."
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " He said\n  \"no\" twice.\n\nBack in the\n'90s it was rare.\n"
+  }
+]

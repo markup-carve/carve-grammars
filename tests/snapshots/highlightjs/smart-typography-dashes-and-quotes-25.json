@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "say '"
+  },
+  {
+    "scope": "strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": null,
+    "text": " text\n"
+  }
+]

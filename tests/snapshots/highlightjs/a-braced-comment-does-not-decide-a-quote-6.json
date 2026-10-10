@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": "comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": null,
+    "text": "\"q\"\n"
+  }
+]

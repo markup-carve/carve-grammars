@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "'one "
+  },
+  {
+    "scope": "symbol",
+    "text": "^[say 'note]"
+  },
+  {
+    "scope": null,
+    "text": " 'two'\n"
+  }
+]

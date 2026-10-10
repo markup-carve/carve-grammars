@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "say "
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "'note"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " 'two'\n"
+  }
+]

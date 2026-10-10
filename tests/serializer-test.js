@@ -450,6 +450,19 @@ check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
     'a\n\n---\n\nb');
 
+check('a rule keeps its authored star or underscore marker',
+    doc(para(text('a')), { type: 'horizontalRule', attrs: { carveMarker: '_' } }, { type: 'horizontalRule', attrs: { carveMarker: '*' } }),
+    'a\n\n___\n\n***');
+
+// A leading `---` with a later `---` opens frontmatter and swallows both.
+check('a dash rule that opens the document is written with stars',
+    doc({ type: 'horizontalRule' }, { type: 'horizontalRule' }, para(text('b'))),
+    '***\n\n---\n\nb');
+
+check('a rule marker survives the AST bridge',
+    carveToProseMirror('___\n\nx\n\n***\n'),
+    '___\n\nx\n\n***');
+
 // Tables: header cells use `|=`; colspan/rowspan rebuild Carve filler cells.
 const cell = (t, type = 'tableCell', attrs = {}) => ({ type, attrs, content: [para(text(t))] });
 const row = (...cells) => ({ type: 'tableRow', content: cells });
