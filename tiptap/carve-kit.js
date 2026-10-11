@@ -962,7 +962,19 @@ export const CarveKit = Extension.create({
 
         // Table extensions
         if (this.options.table !== false) {
-            extensions.push(Table.configure({
+            const CarveTable = Table.extend({
+                addAttributes() {
+                    return {
+                        ...this.parent?.(),
+                        carveSeparatorWidths: {
+                            default: null,
+                            parseHTML: () => null,
+                            renderHTML: () => ({}),
+                        },
+                    };
+                },
+            });
+            extensions.push(CarveTable.configure({
                 resizable: true,
                 ...this.options.table,
             }));

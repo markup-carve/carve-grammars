@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { getExtensionField, getSchema } from '@tiptap/core';
+import { Window } from 'happy-dom';
+import { DOMParser, DOMSerializer } from '@tiptap/pm/model';
 import { CarveKit } from '../tiptap/carve-kit.js';
 import { assertSchemaAttributes } from './lib/schema-attributes.js';
 
@@ -28,6 +30,50 @@ assert.throws(
     () => assertSchemaAttributes(map, owners, getSchema(withoutInlineBlock)),
     /comment -> carveCommentInline\.block/,
 );
+
+const withoutSeparatorWidths = extensions.map(extension => extension.name === 'table'
+    ? extension.extend({
+        addAttributes() {
+            const { carveSeparatorWidths, ...attrs } = this.parent();
+            return attrs;
+        },
+    })
+    : extension);
+const oldTableSchema = getSchema(withoutSeparatorWidths);
+assert.throws(
+    () => assertSchemaAttributes(map, owners, oldTableSchema),
+    /table -> table\.carveSeparatorWidths/,
+);
+const tableJson = {
+    type: 'doc',
+    content: [{
+        type: 'table',
+        attrs: { carveSeparatorWidths: [3, 17], undeclaredWidth: [99] },
+        content: [{
+            type: 'tableRow',
+            content: [3, 17].map(() => ({ type: 'tableHeader', content: [{ type: 'paragraph' }] })),
+        }],
+    }],
+};
+const mounted = schema.nodeFromJSON(tableJson);
+mounted.check();
+const mountedJson = mounted.toJSON();
+assert.deepEqual(mountedJson.content[0].attrs.carveSeparatorWidths, [3, 17]);
+assert.equal(Object.hasOwn(mountedJson.content[0].attrs, 'undeclaredWidth'), false);
+assert.equal(Object.hasOwn(oldTableSchema.nodeFromJSON(tableJson).toJSON().content[0].attrs, 'carveSeparatorWidths'), false);
+const nativeTableJson = structuredClone(tableJson);
+delete nativeTableJson.content[0].attrs.carveSeparatorWidths;
+assert.equal(schema.nodeFromJSON(nativeTableJson).toJSON().content[0].attrs.carveSeparatorWidths, null);
+
+const win = new Window();
+const html = win.document.createElement('div');
+html.appendChild(DOMSerializer.fromSchema(schema).serializeFragment(mounted.content, { document: win.document }));
+assert.doesNotMatch(html.innerHTML, /carveseparatorwidths/i);
+for (const value of ['5', 'abc']) {
+    html.innerHTML = `<table carveSeparatorWidths="${value}"><tbody><tr><th><p>x</p></th></tr></tbody></table>`;
+    assert.equal(DOMParser.fromSchema(schema).parse(html).toJSON().content[0].attrs.carveSeparatorWidths, null);
+}
+win.happyDOM.abort();
 
 function rejects(change, pattern) {
     const changedMap = structuredClone(map);
