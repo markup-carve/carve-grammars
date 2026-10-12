@@ -730,6 +730,20 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  * `a-below-column-line-continues-...` documents. The pinned `^0.1.9` engine
  * predates that ruling and folds the column-0 line into the outer item, and
  * the projection writes it back at that item's column, which respells it.
+ *
+ * 496 -> 511 with the bump to carve 2d473af.
+ *
+ * - Seven more of section 553 (15, 16, 18, 19, 21, 22, 23; carve#2922), for
+ *   the reason above: they are exactly the seven of the fifteen new documents
+ *   the pinned engine renders differently from the corpus.
+ * - Four of 321, `delimited-comments-9` to `-12` (carve#2932). An attribute
+ *   block after a `{% %}` comment is text. The pinned engine drops it, so the
+ *   projection never sees it.
+ * - 471 was renamed to `braced-emphasis-can-nest-its-own-kind` (carve#2904).
+ *   Its eight old entries moved to the new slugs with unchanged sources, and
+ *   four of the five new documents joined (10 to 13). The writer spells a
+ *   forced run without its braces and escapes what it held; 1, 2, 4, 10 and 13
+ *   also load through an engine that predates same-kind nesting.
  */
 assertLedger(
     'enveloped-ledger.json',

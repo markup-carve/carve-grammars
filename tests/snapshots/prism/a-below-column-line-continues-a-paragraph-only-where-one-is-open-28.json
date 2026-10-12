@@ -1,0 +1,50 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "- | a |\n"
+  },
+  {
+    "type": "table-separator",
+    "text": "    "
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-separator",
+    "text": " "
+  },
+  {
+    "type": "table-separator>table-operator",
+    "text": "-"
+  },
+  {
+    "type": "table-separator",
+    "text": " "
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n"
+  }
+]

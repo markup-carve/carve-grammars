@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "\\"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*x*}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\{"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\*"
+  },
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\*"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

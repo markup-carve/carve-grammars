@@ -812,5 +812,13 @@ imported.destroy();
 // documents the enveloped ledger records. Both sides render through the pinned
 // `^0.1.9` engine, which predates the ruling, so the comparison measures the
 // old reading; they should leave once the engine pin implements it.
+//
+// 307 -> 316 with the bump to carve 2d473af. Seven more of section 553 (15,
+// 16, 18, 19, 21, 22, 23; carve#2922) enter for that same reason. 471 was
+// renamed by carve#2904, so its entries 5, 7 and 8 moved to the
+// `braced-emphasis-can-nest-its-own-kind` slugs with unchanged sources. Two of
+// its new documents are writer losses the envelope covers: 11 writes `\{*x*}`
+// back as `{*x*}`, which reads as forced strong, and 12 leaves the `~` of a
+// literal `{~` bare, which then opens a strike.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a "
+  },
+  {
+    "scope": "deletion>strong",
+    "text": "{*x ~>y~} z*}"
+  },
+  {
+    "scope": "deletion",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- -"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "code",
+    "text": "```=html\n    ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```rust"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "before\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```=markdown"
+  },
+  {
+    "scope": null,
+    "text": "\nx\n"
+  }
+]

@@ -101,9 +101,9 @@ const TIPTAP_COVERED = [
     'a-run-of-asterisks-inside-a-combined-token-is-content',
     'glued-attribute-blocks-on-an-inline-element-merge',
     'footnote-references-take-an-attribute-run-editorial-substitution-and-comment-take-none',
-    // Spec corpus 471-472, measured by the round-trip gate: structured, no
-    // whole-document fallback.
-    'a-forced-opener-of-an-open-kind-is-literal',
+    // Spec corpus 472, measured by the round-trip gate: structured, no
+    // whole-document fallback. 471 was renamed by carve#2904 and is classified
+    // in TIPTAP_SKIP below.
     'substitution-content-is-inline-and-only-a-top-level-arrow-splits-it',
     // Classified against spec corpus 463-470. The round-trip gate verifies
     // every file in each category and will reject a category that needs the
@@ -878,6 +878,10 @@ const TIPTAP_COVERED = [
     // list's `carveDelim`; all 5 files reparse to the same AST with the
     // envelope removed. 5 files.
     'an-ordered-list-carries-its-authored-delimiter',
+    // Spec corpus 554 and 555 (bump to carve 2d473af), measured with the
+    // envelope removed: all 6 files reparse to the same AST.
+    'a-caption-scope-resets-at-a-structural-only-line',
+    'an-unterminated-raw-fence-keeps-literal-payload-termination',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -885,6 +889,10 @@ const TIPTAP_COVERED = [
 // which projection/layout gaps motivated the editable source merge. They are
 // all covered now, and `fallback` below is deliberately empty.
 const TIPTAP_SKIP = new Map([
+    // Spec corpus 471 (bump to carve 2d473af), renamed from
+    // `a-forced-opener-of-an-open-kind-is-literal` by carve#2904, which lets a
+    // braced run nest its own kind. Measured with the envelope removed.
+    ['braced-emphasis-can-nest-its-own-kind', 'the writer drops a forced run\'s braces and escapes what they held, so 12 of 13 files reparse to a different AST; 5 of them (1, 2, 4, 10, 13) also load through the pinned `^0.1.9` engine, which predates the nesting ruling'],
     // Added with the spec bump to efc1e98, measured the same way. Each is a
     // spelling loss: the mounted render is unchanged.
     ['a-braced-comment-does-not-decide-a-quote', 'a `\\{` escape the parse does not need is written as a bare `{`, so 3 of 7 files reparse to `text` where the source has `escaped_text`'],
