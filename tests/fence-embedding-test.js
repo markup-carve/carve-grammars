@@ -8,14 +8,15 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { carveDarkExtras, carveLightExtras, carveLightTheme } from '../shiki/themes.js';
 import { LANGUAGES, RAW_FORMATS, grammarPath } from '../scripts/generate-fence-languages.mjs';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
 import { createHighlighter } from './lib/shiki.js';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const grammar = JSON.parse(readFileSync(grammarPath, 'utf8'));
 let count = 0;
 
