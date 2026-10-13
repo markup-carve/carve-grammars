@@ -9,6 +9,9 @@ All notable changes to `carve-grammars` are documented here.
 - A braced emphasis span nests its own kind in all three grammars, so
   `*a {*b*} c*` scopes one bold run holding a nested one, and an empty `{**}`
   inside a run stays text instead of closing it (#673).
+- Leave an attribute block glued after a delimited comment as text, so
+  `*x*{% c %}{.k}` no longer scopes `{.k}` as attributes in any of the three
+  grammars (#674).
 
 ### Added
 

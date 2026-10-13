@@ -8,11 +8,7 @@
     "text": "{% c %}"
   },
   {
-    "scope": "attr",
-    "text": "{.k}"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "{.k}\n"
   }
 ]

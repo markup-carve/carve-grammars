@@ -8,19 +8,7 @@
     "text": "{% b %}"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".c"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": " d\n"
+    "text": "{.c} d\n"
   }
 ]

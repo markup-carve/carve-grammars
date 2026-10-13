@@ -313,10 +313,16 @@
       "name": "comment.block.carve"
     },
     "braced_comment": {
-      "comment": "THE PAYLOAD IS NOT CARVE AND MAY SPAN A LINE BREAK. This was a single-line `match`, so a comment written across a break was not recognized at all and the markup inside it coloured - `a {% *b*` over ` %} z` scoped a strong run inside a comment, which is markup-carve/carve#1239 on the surface it was first reported on. 144 of 469 generated documents leaked before this (carve-grammars#320). Prism and highlight.js were given the multi-line reading in carve-grammars#312; this is the same fix on the TextMate side. The region carries the scope and offers no patterns, so everything between the delimiters is comment. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too.",
+      "comment": "THE PAYLOAD IS NOT CARVE AND MAY SPAN A LINE BREAK. This was a single-line `match`, so a comment written across a break was not recognized at all and the markup inside it coloured - `a {% *b*` over ` %} z` scoped a strong run inside a comment, which is markup-carve/carve#1239 on the surface it was first reported on. 144 of 469 generated documents leaked before this (carve-grammars#320). Prism and highlight.js were given the multi-line reading in carve-grammars#312; this is the same fix on the TextMate side. The region carries the scope and offers no patterns, so everything between the delimiters is comment. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too. The closer also takes any attribute run glued after it, unscoped: a delimited comment joins no attribute run, so that run is text (carve#2932). `contentName` plus delimiter captures keep the comment scopes as they were while leaving that run outside them.",
       "begin": "\\{%",
-      "end": "%\\}|^(?=[ \\t]*$)",
-      "name": "comment.block.inline.carve"
+      "end": "(%\\})([ \\t]*(?:\\{(?!_[^{}\\n]*_\\})(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)\\})+)?|^(?=[ \\t]*$)",
+      "beginCaptures": {
+        "0": { "name": "comment.block.inline.carve" }
+      },
+      "endCaptures": {
+        "1": { "name": "comment.block.inline.carve" }
+      },
+      "contentName": "comment.block.inline.carve"
     },
     "line_comment": {
       "match": "^(?:\\A\\x{FEFF})?\\s*%%(?!%).*$",
@@ -2211,10 +2217,16 @@
       "name": "comment.block.critic.carve"
     },
     "braced_comment_in_strong": {
-      "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461).",
+      "comment": "Inside a `*` run, an opener with no closer on its line does not open while a closer-shaped `*` follows: the run ends there (carve-grammars#461). The closer takes a glued attribute run as text, as in #braced_comment.",
       "begin": "\\{%(?:(?=.*?%\\})|(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
-      "end": "%\\}|^(?=[ \\t]*$)",
-      "name": "comment.block.inline.carve"
+      "end": "(%\\})([ \\t]*(?:\\{(?!_[^{}\\n]*_\\})(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)\\})+)?|^(?=[ \\t]*$)",
+      "beginCaptures": {
+        "0": { "name": "comment.block.inline.carve" }
+      },
+      "endCaptures": {
+        "1": { "name": "comment.block.inline.carve" }
+      },
+      "contentName": "comment.block.inline.carve"
     },
     "strong": {
       "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
