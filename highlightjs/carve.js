@@ -112,6 +112,10 @@
     // rules, and they cannot drift apart again.
     const GLUED_ATTR_BLOCK =
         '(?=\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
+    // A list marker glued to an attribute block, the block consumed.
+    const GLUED_MARKER =
+        '(?:[-*] +)*(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)'
+        + '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\} +';
     // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
     // bracketed span. See the long note on Prism's `bracketText`, which this
     // mirrors; the short version is that the spec closes a label at the
@@ -1014,7 +1018,8 @@
         {
             className: 'punctuation',
             begin: RegExp('(?=\\+)' + QUOTED.slice(0, -1)
-                + '(?:[-*] \\[[ xX\\-_>?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.) +))\\+[ \\t]*$(?![^\\r\\n])'),
+                + '(?:[-*] \\[[ xX\\-_>?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.) +|'
+                + GLUED_MARKER + '))\\+[ \\t]*$(?![^\\r\\n])'),
         },
         {
             className: 'punctuation',
@@ -1075,7 +1080,8 @@
     // marker, like a lone `+` line.
     const MARKER_LINE_CONTINUATION = {
         className: 'punctuation',
-        begin: RegExp('(?=\\+)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')\\+[ \\t]*$(?![^\\r\\n])'),
+        begin: RegExp('(?=\\+)(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+            + GLUED_MARKER + ')\\+[ \\t]*$(?![^\\r\\n])'),
         relevance: 0,
     };
 

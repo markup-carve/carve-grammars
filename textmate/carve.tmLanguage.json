@@ -642,7 +642,7 @@
       "patterns": [
         {
           "comment": "A `+` as the whole rest of a quoted marker line is the continuation marker: after a list marker always, and as the quote's own first line (`> +`) when a flush-left block follows (markup-carve/carve#3105). The next line is out of reach here, so the bare form is scoped regardless.",
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +))?(\\+)[ \\t]*$",
+          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))?(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -669,6 +669,26 @@
               "name": "punctuation.definition.list.numbered.carve"
             },
             "13": {
+              "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "14": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "16": {
+              "name": "punctuation.definition.list.numbered.carve"
+            },
+            "17": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "19": {
               "name": "punctuation.definition.list.continuation.carve"
             }
           },
@@ -748,7 +768,7 @@
       "patterns": [
         {
           "comment": "The quoted list-marker form of the `+` continuation marker, as in `#blockquote`.",
-          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +))(\\+)[ \\t]*$",
+          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -775,6 +795,26 @@
               "name": "punctuation.definition.list.numbered.carve"
             },
             "13": {
+              "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "14": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "16": {
+              "name": "punctuation.definition.list.numbered.carve"
+            },
+            "17": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "19": {
               "name": "punctuation.definition.list.continuation.carve"
             }
           },
@@ -1152,9 +1192,16 @@
     },
     "marker_line_continuation": {
       "comment": "A `+` that is the whole rest of a list item's or footnote's marker line is the continuation marker too (`- +`, `1. +`, `- [ ] +`, `[^a]: +`). `\\G` is where the container's opener stopped: a list opener has consumed its separator, a footnote opener stops before it. A footnote's `+` is a marker only when a flush-left line follows, which a line grammar cannot see, so it is scoped regardless.",
-      "match": "\\G(?:(?<=[ \\t])| +)(\\+)[ \\t]*$",
+      "match": "\\G(?:(?<=[ \\t])| +|(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}) +)(\\+)[ \\t]*$",
       "captures": {
         "1": {
+          "patterns": [
+            {
+              "include": "#attributes"
+            }
+          ]
+        },
+        "2": {
           "name": "punctuation.definition.list.continuation.carve"
         }
       }

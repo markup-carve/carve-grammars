@@ -109,6 +109,7 @@
     // from the attribute rule again.
     var gluedAttrBlock =
         '(?=\\{\\s*(?:' + attrItem + '(?:\\s+' + attrItem + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
+    var gluedAttrRun = '\\{\\s*(?:' + attrItem + '(?:\\s+' + attrItem + ')*\\s*)?\\}';
     // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
     // bracketed span.
     //
@@ -1542,6 +1543,16 @@
                 pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$(?![^\r\n])/m,
                 inside: continuationInside,
             },
+            // After a marker glued to an attribute block (`-{.c} +`): 'list'
+            // took only the marker, so the fragment opens on the block, which
+            // stays in the lookbehind group for 'attributes'. `(?<![\s\S])`
+            // is the fragment start, so a line merely beginning with a block
+            // does not match - except as the document's first line.
+            {
+                pattern: RegExp('(^(?<![\\s\\S])' + gluedAttrRun + ' +)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
+                lookbehind: true,
+                inside: continuationInside,
+            },
             {
                 // Greedy so the lookahead reads the next line even when an
                 // earlier rule (a table, a fence) has already tokenized it.
@@ -2391,10 +2402,17 @@
             'list': Prism.languages.carve.list,
             // Only right after a marker 'list' took: a bare `> +` is decided
             // at the top level, where the next line is in view.
-            'continuation-marker': {
-                pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
-                inside: continuationInside,
-            },
+            'continuation-marker': [
+                {
+                    pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
+                    inside: continuationInside,
+                },
+                {
+                    pattern: RegExp('(^(?<![\\s\\S])' + gluedAttrRun + ' +)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
+                    lookbehind: true,
+                    inside: continuationInside,
+                },
+            ],
         }, rest);
     }
 

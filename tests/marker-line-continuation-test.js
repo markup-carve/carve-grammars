@@ -54,7 +54,24 @@ const MARKER = [
     '[^a]: +\nx',
     '[^a]: +\n```\nx\n```',
     '[^a]: +\n> q',
+    '-{.c} +\n| a |',
+    '1.{.c} +\n| a |',
+    '*{.c} +\nx',
+    '.{.c} +\nx',
+    'a){.c} +\nx',
+    '-{#id .c} +\nx',
+    '-{title="a}b"} +\nx',
+    '-{} +\nx',
+    '-{.c}  +\nx',
+    '-{.c} +  \nx',
+    '- a\n  -{.c} +\n  x',
+    '> -{.c} +\n> x',
+    '> 1.{.c} +\n> x',
 ];
+
+// The glued attribute block keeps its own scope in front of the marker.
+const ATTRS = { textmate: 'meta.attributes', prism: 'attributes', highlightjs: 'attr' };
+const GLUED = ['-{.c} +\nx', '1.{.c} +\nx', '-{#id .c} +\nx'];
 
 // Rows where the `+` is text, or a marker a grammar cannot reach. The names
 // list the grammars that scope it.
@@ -73,14 +90,25 @@ const TEXT = [
     ['[^a]: +\n\nx', ['textmate']],
     ['[^a]: +', ['textmate']],
     ['[^a]: +\n  x', ['textmate']],
+    ['-{.c} + x'],
+    ['-{.c} +x'],
+    ['-{.c}+\nx'],
+    ['-{+a+} +\nx'],
+    ['x\n{.c} +\nx'],
+    // Prism reads the `+` after a glued block from where 'list' left the
+    // fragment, and a document's first line is a fragment start too.
+    ['{.c} +\nx', ['prism']],
     // carve-js reads these `+` as markers too. A grammar scopes the `+` only
-    // where it also scopes the marker before it: Prism reaches a second marker
-    // of another kind, the others do not, and none reaches a glued attribute
-    // block or a quoted description.
+    // where it also scopes the marker before it: a second marker of another
+    // kind (Prism) or after a bullet and before a glued block (Prism and
+    // highlight.js). None reaches a marker or task box after a glued block,
+    // or a quoted description.
     ['- 1. +\nx', ['prism']],
     ['1. - +\nx', ['prism']],
     ['- [ ] - +\nx', ['prism']],
-    ['-{.c} +\nx'],
+    ['- -{.c} +\nx', ['prism', 'highlightjs']],
+    ['-{.c} [ ] +\nx'],
+    ['-{.c} - +\nx'],
     ['> :: t\n> : +\n> x'],
 ];
 
@@ -100,6 +128,15 @@ for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
         if (scoped !== residual.includes(name)) {
             failures++;
             console.error(`${name}: ${JSON.stringify(source)} - expected the + ${residual.includes(name) ? 'scoped' : 'unscoped'}`);
+        }
+    }
+}
+for (const [name, { tokenize }] of Object.entries(ENGINES)) {
+    for (const source of GLUED) {
+        const block = tokenize(source).filter((t) => /[{}]/.test(t.text));
+        if (!block.length || !block.every((t) => (t.scope ?? '').includes(ATTRS[name]))) {
+            failures++;
+            console.error(`${name}: ${JSON.stringify(source)} - the attribute block lost its scope: ${JSON.stringify(block)}`);
         }
     }
 }
