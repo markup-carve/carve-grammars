@@ -1,7 +1,23 @@
 [
   {
-    "type": "span>string",
-    "text": "[a /b/ c]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "a "
+  },
+  {
+    "type": "span>string>span-text>italic>italic",
+    "text": "/b/"
+  },
+  {
+    "type": "span>string>span-text",
+    "text": " c"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",
@@ -24,7 +40,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "t"
   },
   {

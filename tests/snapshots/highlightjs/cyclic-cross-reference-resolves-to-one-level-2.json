@@ -1,7 +1,11 @@
 [
   {
     "scope": "section",
-    "text": "# A </#B>"
+    "text": "# A "
+  },
+  {
+    "scope": "section>link",
+    "text": "</#B>"
   },
   {
     "scope": null,
@@ -9,7 +13,11 @@
   },
   {
     "scope": "section",
-    "text": "# B </#A>"
+    "text": "# B "
+  },
+  {
+    "scope": "section>link",
+    "text": "</#A>"
   },
   {
     "scope": null,

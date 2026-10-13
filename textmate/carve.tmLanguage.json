@@ -13,6 +13,12 @@
       "include": "#frontmatter"
     },
     {
+      "include": "#fenced_code_diff_attribute"
+    },
+    {
+      "include": "#fenced_code_languages"
+    },
+    {
       "include": "#fenced_code"
     },
     {
@@ -217,7 +223,7 @@
           "name": "constant.other.label.fenced.carve"
         }
       },
-      "end": "^\\1\\2\\s*$",
+      "end": "^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.fenced.carve"
@@ -248,7 +254,7 @@
           "name": "constant.other.label.fenced.carve"
         }
       },
-      "end": "^\\1\\2\\s*$",
+      "end": "^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$",
       "endCaptures": {
         "0": {
           "name": "punctuation.definition.fenced.carve"
@@ -263,6 +269,160 @@
       ],
       "comment": "The in-container fence: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the leading-whitespace capture stays load-bearing twice over, since `end` closes on the SAME indentation via \\1 and a fence inside a list item is indented. Reached only after the container's `end` has established that the line sits at or beyond the item's content column, which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137)."
     },
+    "fenced_code_diff_attribute_in_container": {
+      "patterns": [
+        {"begin":"^(?:\\A\\x{FEFF})?[ \\t]*(\\{(?=[^{}\\n]*(?<=[{\\s])\\.diff(?![\\w-]))[^{}\\n]*\\})[ \\t]*$","beginCaptures":{"1":{"patterns":[{"include":"#attributes"}]}},"end":"^(?![ \\t]*(?:`{3,}|~{3,})[ \\t]*(?:\"[^\"\\n]*\"[ \\t]*)?(?:\\[[^\\]\\n]*\\][ \\t]*)?$)|(?<=[`~])$|(?<=[`~][ \\t])$","patterns":[{"begin":"^(\\s*)(`{3,}|~{3,})\\s*()\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*[ \\t]*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.diff","patterns":[{"include":"#callout_marker"},{"include":"source.diff"}]}]}]}
+      ]
+    },
+    "fenced_code_diff_attribute": {
+      "patterns": [
+        {"begin":"^(?:\\A\\x{FEFF})?(\\{(?=[^{}\\n]*(?<=[{\\s])\\.diff(?![\\w-]))[^{}\\n]*\\})[ \\t]*$","beginCaptures":{"1":{"patterns":[{"include":"#attributes"}]}},"end":"^(?!(?:`{3,}|~{3,})[ \\t]*(?:\"[^\"\\n]*\"[ \\t]*)?(?:\\[[^\\]\\n]*\\][ \\t]*)?$)|(?<=[`~])$|(?<=[`~][ \\t])$","patterns":[{"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*()\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*[ \\t]*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.diff","patterns":[{"include":"#callout_marker"},{"include":"source.diff"}]}]}]}
+      ]
+    },
+    "fenced_code_languages_in_container": {
+      "patterns": [
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:carve|crv))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve meta.embedded.block.carve","patterns":[{"include":"#callout_marker"},{"include":"source.carve"}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:js|javascript|mjs|cjs|node))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.javascript","patterns":[{"include":"#callout_marker"},{"include":"source.js"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:jsx))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.javascriptreact","patterns":[{"include":"#callout_marker"},{"include":"source.js.jsx"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:ts|typescript|mts|cts))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.typescript","patterns":[{"include":"#callout_marker"},{"include":"source.ts"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:tsx))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.typescriptreact","patterns":[{"include":"#callout_marker"},{"include":"source.tsx"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:json|json5))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.json","patterns":[{"include":"#callout_marker"},{"include":"source.json"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:jsonc))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jsonc","patterns":[{"include":"#callout_marker"},{"include":"source.json.comments"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:jsonl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jsonl","patterns":[{"include":"#callout_marker"},{"include":"source.json.lines"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:yaml|yml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.yaml","patterns":[{"include":"#callout_marker"},{"include":"source.yaml"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:toml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.toml","patterns":[{"include":"#callout_marker"},{"include":"source.toml"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:html|htm|xhtml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.html","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:xml|svg|xsd))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.xml","patterns":[{"include":"#callout_marker"},{"include":"text.xml"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:xsl|xslt))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.xsl","patterns":[{"include":"#callout_marker"},{"include":"text.xml.xsl"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:css))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.css","patterns":[{"include":"#callout_marker"},{"include":"source.css"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:scss))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.scss","patterns":[{"include":"#callout_marker"},{"include":"source.css.scss"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:less))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.less","patterns":[{"include":"#callout_marker"},{"include":"source.css.less"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:php))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.php","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"},{"include":"source.php"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:python|py|py3))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.python","patterns":[{"include":"#callout_marker"},{"include":"source.python"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:ruby|rb))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.ruby","patterns":[{"include":"#callout_marker"},{"include":"source.ruby"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:rust|rs))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.rust","patterns":[{"include":"#callout_marker"},{"include":"source.rust"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:go|golang))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.go","patterns":[{"include":"#callout_marker"},{"include":"source.go"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:java))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.java","patterns":[{"include":"#callout_marker"},{"include":"source.java"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:kotlin|kt|kts))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.kotlin","patterns":[{"include":"#callout_marker"},{"include":"source.kotlin"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:swift))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.swift","patterns":[{"include":"#callout_marker"},{"include":"source.swift"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:dart))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dart","patterns":[{"include":"#callout_marker"},{"include":"source.dart"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:c|h))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.c","patterns":[{"include":"#callout_marker"},{"include":"source.c"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:cpp|c\\+\\+|cxx|cc|hpp))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.cpp","patterns":[{"include":"#callout_marker"},{"include":"source.cpp"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:cuda|cu))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.cuda-cpp","patterns":[{"include":"#callout_marker"},{"include":"source.cuda-cpp"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:cs|csharp|c#))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.csharp","patterns":[{"include":"#callout_marker"},{"include":"source.cs"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:fsharp|fs|f#))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.fsharp","patterns":[{"include":"#callout_marker"},{"include":"source.fsharp"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:vb|vbnet))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.vb","patterns":[{"include":"#callout_marker"},{"include":"source.asp.vb.net"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:razor|cshtml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.razor","patterns":[{"include":"#callout_marker"},{"include":"text.html.cshtml"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:objc|objectivec|objective-c))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.objective-c","patterns":[{"include":"#callout_marker"},{"include":"source.objc"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:objcpp|objective-cpp))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.objective-cpp","patterns":[{"include":"#callout_marker"},{"include":"source.objcpp"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:sh|bash|shell|zsh))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.shellscript","patterns":[{"include":"#callout_marker"},{"include":"source.shell"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:powershell|ps1|pwsh))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.powershell","patterns":[{"include":"#callout_marker"},{"include":"source.powershell"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:bat|batch|cmd|dosbatch))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.bat","patterns":[{"include":"#callout_marker"},{"include":"source.batchfile"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:dotenv|env))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dotenv","patterns":[{"include":"#callout_marker"},{"include":"source.dotenv"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:sql))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.sql","patterns":[{"include":"#callout_marker"},{"include":"source.sql"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:lua))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.lua","patterns":[{"include":"#callout_marker"},{"include":"source.lua"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:perl|pl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.perl","patterns":[{"include":"#callout_marker"},{"include":"source.perl"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:raku))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.raku","patterns":[{"include":"#callout_marker"},{"include":"source.perl.6"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:r))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.r","patterns":[{"include":"#callout_marker"},{"include":"source.r"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:julia|jl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.julia","patterns":[{"include":"#callout_marker"},{"include":"source.julia"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:clojure|clj|cljs|edn))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.clojure","patterns":[{"include":"#callout_marker"},{"include":"source.clojure"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:coffeescript|coffee))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.coffeescript","patterns":[{"include":"#callout_marker"},{"include":"source.coffee"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:groovy|gradle))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.groovy","patterns":[{"include":"#callout_marker"},{"include":"source.groovy"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:hlsl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.hlsl","patterns":[{"include":"#callout_marker"},{"include":"source.hlsl"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:shaderlab))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.shaderlab","patterns":[{"include":"#callout_marker"},{"include":"source.shaderlab"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:wat))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.wat","patterns":[{"include":"#callout_marker"},{"include":"text.wat"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:markdown|md))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.markdown","patterns":[{"include":"#callout_marker"},{"include":"text.html.markdown"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:rst|restructuredtext))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.restructuredtext","patterns":[{"include":"#callout_marker"},{"include":"source.rst"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:latex|tex))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.latex","patterns":[{"include":"#callout_marker"},{"include":"text.tex.latex"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:bibtex|bib))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.bibtex","patterns":[{"include":"#callout_marker"},{"include":"text.bibtex"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:pug|jade))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jade","patterns":[{"include":"#callout_marker"},{"include":"text.pug"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:handlebars|hbs))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.handlebars","patterns":[{"include":"#callout_marker"},{"include":"text.html.handlebars"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:diff|patch))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.diff","patterns":[{"include":"#callout_marker"},{"include":"source.diff"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:dockerfile|docker))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dockerfile","patterns":[{"include":"#callout_marker"},{"include":"source.dockerfile"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:makefile|make))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.makefile","patterns":[{"include":"#callout_marker"},{"include":"source.makefile"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:ini|cfg))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.ini","patterns":[{"include":"#callout_marker"},{"include":"source.ini"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:log))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.log","patterns":[{"include":"#callout_marker"},{"include":"text.log"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:blade))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.blade","patterns":[{"include":"#callout_marker"},{"include":"text.html.php.blade"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:twig))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.twig","patterns":[{"include":"#callout_marker"},{"include":"text.html.twig"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:vue))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.vue","patterns":[{"include":"#callout_marker"},{"include":"text.html.vue"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:svelte))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.svelte","patterns":[{"include":"#callout_marker"},{"include":"source.svelte"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*((?i:graphql|gql))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.graphql","patterns":[{"include":"#callout_marker"},{"include":"source.graphql"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*(=(?i:html))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.html","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"}]}]},
+        {"begin":"^(\\s*)(`{3,}|~{3,})\\s*(=(?i:latex|tex))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.latex","patterns":[{"include":"#callout_marker"},{"include":"text.tex.latex"}]}]}
+      ]
+    },
+    "fenced_code_languages": {
+      "patterns": [
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:carve|crv))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve meta.embedded.block.carve","patterns":[{"include":"#callout_marker"},{"include":"source.carve"}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:js|javascript|mjs|cjs|node))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.javascript","patterns":[{"include":"#callout_marker"},{"include":"source.js"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:jsx))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.javascriptreact","patterns":[{"include":"#callout_marker"},{"include":"source.js.jsx"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:ts|typescript|mts|cts))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.typescript","patterns":[{"include":"#callout_marker"},{"include":"source.ts"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:tsx))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.typescriptreact","patterns":[{"include":"#callout_marker"},{"include":"source.tsx"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:json|json5))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.json","patterns":[{"include":"#callout_marker"},{"include":"source.json"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:jsonc))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jsonc","patterns":[{"include":"#callout_marker"},{"include":"source.json.comments"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:jsonl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jsonl","patterns":[{"include":"#callout_marker"},{"include":"source.json.lines"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:yaml|yml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.yaml","patterns":[{"include":"#callout_marker"},{"include":"source.yaml"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:toml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.toml","patterns":[{"include":"#callout_marker"},{"include":"source.toml"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:html|htm|xhtml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.html","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:xml|svg|xsd))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.xml","patterns":[{"include":"#callout_marker"},{"include":"text.xml"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:xsl|xslt))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.xsl","patterns":[{"include":"#callout_marker"},{"include":"text.xml.xsl"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:css))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.css","patterns":[{"include":"#callout_marker"},{"include":"source.css"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:scss))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.scss","patterns":[{"include":"#callout_marker"},{"include":"source.css.scss"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:less))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.less","patterns":[{"include":"#callout_marker"},{"include":"source.css.less"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:php))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.php","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"},{"include":"source.php"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:python|py|py3))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.python","patterns":[{"include":"#callout_marker"},{"include":"source.python"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:ruby|rb))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.ruby","patterns":[{"include":"#callout_marker"},{"include":"source.ruby"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:rust|rs))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.rust","patterns":[{"include":"#callout_marker"},{"include":"source.rust"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:go|golang))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.go","patterns":[{"include":"#callout_marker"},{"include":"source.go"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:java))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.java","patterns":[{"include":"#callout_marker"},{"include":"source.java"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:kotlin|kt|kts))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.kotlin","patterns":[{"include":"#callout_marker"},{"include":"source.kotlin"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:swift))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.swift","patterns":[{"include":"#callout_marker"},{"include":"source.swift"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:dart))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dart","patterns":[{"include":"#callout_marker"},{"include":"source.dart"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:c|h))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.c","patterns":[{"include":"#callout_marker"},{"include":"source.c"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:cpp|c\\+\\+|cxx|cc|hpp))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.cpp","patterns":[{"include":"#callout_marker"},{"include":"source.cpp"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:cuda|cu))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.cuda-cpp","patterns":[{"include":"#callout_marker"},{"include":"source.cuda-cpp"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:cs|csharp|c#))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.csharp","patterns":[{"include":"#callout_marker"},{"include":"source.cs"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:fsharp|fs|f#))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.fsharp","patterns":[{"include":"#callout_marker"},{"include":"source.fsharp"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:vb|vbnet))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.vb","patterns":[{"include":"#callout_marker"},{"include":"source.asp.vb.net"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:razor|cshtml))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.razor","patterns":[{"include":"#callout_marker"},{"include":"text.html.cshtml"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:objc|objectivec|objective-c))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.objective-c","patterns":[{"include":"#callout_marker"},{"include":"source.objc"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:objcpp|objective-cpp))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.objective-cpp","patterns":[{"include":"#callout_marker"},{"include":"source.objcpp"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:sh|bash|shell|zsh))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.shellscript","patterns":[{"include":"#callout_marker"},{"include":"source.shell"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:powershell|ps1|pwsh))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.powershell","patterns":[{"include":"#callout_marker"},{"include":"source.powershell"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:bat|batch|cmd|dosbatch))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.bat","patterns":[{"include":"#callout_marker"},{"include":"source.batchfile"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:dotenv|env))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dotenv","patterns":[{"include":"#callout_marker"},{"include":"source.dotenv"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:sql))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.sql","patterns":[{"include":"#callout_marker"},{"include":"source.sql"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:lua))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.lua","patterns":[{"include":"#callout_marker"},{"include":"source.lua"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:perl|pl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.perl","patterns":[{"include":"#callout_marker"},{"include":"source.perl"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:raku))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.raku","patterns":[{"include":"#callout_marker"},{"include":"source.perl.6"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:r))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.r","patterns":[{"include":"#callout_marker"},{"include":"source.r"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:julia|jl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.julia","patterns":[{"include":"#callout_marker"},{"include":"source.julia"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:clojure|clj|cljs|edn))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.clojure","patterns":[{"include":"#callout_marker"},{"include":"source.clojure"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:coffeescript|coffee))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.coffeescript","patterns":[{"include":"#callout_marker"},{"include":"source.coffee"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:groovy|gradle))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.groovy","patterns":[{"include":"#callout_marker"},{"include":"source.groovy"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:hlsl))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.hlsl","patterns":[{"include":"#callout_marker"},{"include":"source.hlsl"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:shaderlab))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.shaderlab","patterns":[{"include":"#callout_marker"},{"include":"source.shaderlab"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:wat))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.wat","patterns":[{"include":"#callout_marker"},{"include":"text.wat"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:markdown|md))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.markdown","patterns":[{"include":"#callout_marker"},{"include":"text.html.markdown"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:rst|restructuredtext))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.restructuredtext","patterns":[{"include":"#callout_marker"},{"include":"source.rst"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:latex|tex))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.latex","patterns":[{"include":"#callout_marker"},{"include":"text.tex.latex"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:bibtex|bib))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.bibtex","patterns":[{"include":"#callout_marker"},{"include":"text.bibtex"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:pug|jade))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.jade","patterns":[{"include":"#callout_marker"},{"include":"text.pug"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:handlebars|hbs))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.handlebars","patterns":[{"include":"#callout_marker"},{"include":"text.html.handlebars"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:diff|patch))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.diff","patterns":[{"include":"#callout_marker"},{"include":"source.diff"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:dockerfile|docker))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.dockerfile","patterns":[{"include":"#callout_marker"},{"include":"source.dockerfile"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:makefile|make))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.makefile","patterns":[{"include":"#callout_marker"},{"include":"source.makefile"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:ini|cfg))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.ini","patterns":[{"include":"#callout_marker"},{"include":"source.ini"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:log))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.log","patterns":[{"include":"#callout_marker"},{"include":"text.log"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:blade))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.blade","patterns":[{"include":"#callout_marker"},{"include":"text.html.php.blade"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:twig))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.twig","patterns":[{"include":"#callout_marker"},{"include":"text.html.twig"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:vue))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.vue","patterns":[{"include":"#callout_marker"},{"include":"text.html.vue"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:svelte))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.svelte","patterns":[{"include":"#callout_marker"},{"include":"source.svelte"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*((?i:graphql|gql))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.graphql","patterns":[{"include":"#callout_marker"},{"include":"source.graphql"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*(=(?i:html))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.html","patterns":[{"include":"#callout_marker"},{"include":"text.html.basic"}]}]},
+        {"begin":"^(?:\\A\\x{FEFF})?()(`{3,}|~{3,})\\s*(=(?i:latex|tex))\\s*(\"[^\"\\n]*\")?\\s*(\\[[^\\]\\n]*\\])?\\s*$","beginCaptures":{"2":{"name":"punctuation.definition.fenced.carve"},"3":{"name":"fenced_code.block.language.carve"},"4":{"name":"string.quoted.double.fenced.title.carve"},"5":{"name":"constant.other.label.fenced.carve"}},"end":"^\\1\\2(?:(?<=`)`|(?<=~)~)*\\s*$","endCaptures":{"0":{"name":"punctuation.definition.fenced.carve"}},"name":"markup.fenced_code.block.carve","contentName":"markup.raw.code.carve","patterns":[{"begin":"\\G","while":"(^|\\G)(?![ \\t]*[`~]{3,}[ \\t]*$)","contentName":"meta.embedded.block.latex","patterns":[{"include":"#callout_marker"},{"include":"text.tex.latex"}]}]}
+      ]
+    },
     "heading": {
       "begin": "^(?:\\A\\x{FEFF})?(#{1,6}) +(?![ \\t]*$)",
       "beginCaptures": {
@@ -275,8 +435,14 @@
       "contentName": "entity.name.section.carve",
       "patterns": [
         {
-          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways.",
+          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
           "include": "#escape"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#math_inline_multi"
         },
         {
           "include": "#math_inline"
@@ -294,6 +460,12 @@
           "include": "#code_inline"
         },
         {
+          "include": "#math_inline_unpartnered_line"
+        },
+        {
+          "include": "#literal_inline_unpartnered_line"
+        },
+        {
           "include": "#code_inline_unpartnered_line"
         },
         {
@@ -301,6 +473,12 @@
         },
         {
           "include": "#heading_tag"
+        },
+        {
+          "include": "#line_bounded_openers"
+        },
+        {
+          "include": "#inline"
         }
       ],
       "comment": "A heading opens at COLUMN 0 at document level. Leading whitespace used to be allowed here (carve-grammars#71) because a line-based grammar could not tell an opener at a list item's content column from an indented one at the top level - it over-coloured the rare invalid case rather than under-colour the common valid one. The container split (carve-grammars#137) removed that constraint: `#heading_in_container` is the permissive variant, reachable only through `#container_blocks`, so the document-level rule can be strict. Corpus 178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6 pins the case this fixes: ` # H` below a nested item's content column is paragraph text, and this grammar coloured it a heading (carve-grammars#138)."
@@ -348,13 +526,73 @@
           "name": "entity.name.tag.admonition.carve"
         },
         "4": {
-          "name": "string.quoted.double.admonition.title.carve"
+          "name": "string.quoted.double.admonition.title.carve",
+          "patterns": [
+            {
+              "match": "(\")(.*)(\")$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.string.end.carve"
+                }
+              }
+            }
+          ]
         },
         "5": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "6": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "7": {
           "name": "entity.name.tag.admonition.carve"
@@ -371,6 +609,12 @@
       },
       "name": "meta.admonition.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -447,13 +691,73 @@
           "name": "entity.name.tag.admonition.carve"
         },
         "4": {
-          "name": "string.quoted.double.admonition.title.carve"
+          "name": "string.quoted.double.admonition.title.carve",
+          "patterns": [
+            {
+              "match": "(\")(.*)(\")$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.string.end.carve"
+                }
+              }
+            }
+          ]
         },
         "5": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "6": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "7": {
           "name": "entity.name.tag.admonition.carve"
@@ -470,6 +774,12 @@
       },
       "name": "meta.admonition.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -548,6 +858,12 @@
       },
       "name": "meta.figure-group.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -901,8 +1217,14 @@
       "contentName": "markup.caption.carve",
       "patterns": [
         {
-          "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to.",
+          "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
           "include": "#escape"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#math_inline_multi"
         },
         {
           "include": "#math_inline"
@@ -920,10 +1242,22 @@
           "include": "#code_inline"
         },
         {
+          "include": "#math_inline_unpartnered_line"
+        },
+        {
+          "include": "#literal_inline_unpartnered_line"
+        },
+        {
           "include": "#code_inline_unpartnered_line"
         },
         {
           "include": "#trailing_comment"
+        },
+        {
+          "include": "#line_bounded_openers"
+        },
+        {
+          "include": "#inline"
         }
       ],
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
@@ -1334,6 +1668,9 @@
     "inline": {
       "patterns": [
         {
+          "include": "#math_inline_multi"
+        },
+        {
           "include": "#math_inline"
         },
         {
@@ -1346,10 +1683,19 @@
           "include": "#footnote_inline"
         },
         {
+          "include": "#raw_inline"
+        },
+        {
           "include": "#code_inline_multi"
         },
         {
           "include": "#code_inline"
+        },
+        {
+          "include": "#math_inline_unpartnered"
+        },
+        {
+          "include": "#literal_inline_unpartnered"
         },
         {
           "include": "#code_inline_unpartnered"
@@ -1511,7 +1857,7 @@
           "name": "punctuation.definition.raw.carve"
         }
       },
-      "end": "^(?=[ \\t]*$)",
+      "end": "^(?=[ \\t]*$|[ \\t]*:{3,})",
       "name": "markup.raw.inline.carve",
       "contentName": "markup.raw.inline.carve"
     },
@@ -1530,6 +1876,59 @@
         }
       },
       "name": "markup.raw.inline.carve"
+    },
+    "raw_inline": {
+      "comment": "A code span glued to `{=format}` is raw output for that format (grammar.ebnf `raw_inline`).",
+      "patterns": [
+        {
+          "match": "(?<!`)(`{2,})(?!`)(.+?)(?<!`)(\\1)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+          "name": "markup.other.raw.inline.carve",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.raw.carve"
+            },
+            "2": {
+              "name": "markup.raw.inline.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.raw.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.raw.format.carve"
+            },
+            "5": {
+              "name": "constant.other.raw.format.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.raw.format.carve"
+            }
+          }
+        },
+        {
+          "match": "(?<!`)(`)([^`\\n]+)(`)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+          "name": "markup.other.raw.inline.carve",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.raw.carve"
+            },
+            "2": {
+              "name": "markup.raw.inline.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.raw.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.raw.format.carve"
+            },
+            "5": {
+              "name": "constant.other.raw.format.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.raw.format.carve"
+            }
+          }
+        }
+      ]
     },
     "image": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
@@ -1569,7 +1968,12 @@
           "name": "punctuation.definition.link.carve"
         },
         "2": {
-          "name": "string.other.link.title.carve"
+          "name": "string.other.link.title.carve",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
         },
         "3": {
           "name": "punctuation.definition.link.carve"
@@ -1623,7 +2027,12 @@
           "name": "punctuation.definition.link.carve"
         },
         "2": {
-          "name": "string.other.link.title.carve"
+          "name": "string.other.link.title.carve",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
         },
         "3": {
           "name": "punctuation.definition.link.carve"
@@ -1652,7 +2061,12 @@
           "name": "punctuation.definition.extension.carve"
         },
         "4": {
-          "name": "string.unquoted.extension.carve"
+          "name": "string.unquoted.extension.carve",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
         },
         "5": {
           "name": "punctuation.definition.extension.carve"
@@ -2140,7 +2554,7 @@
       "match": "(\\{~)(?!~\\})((?>\\{~~\\}|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(~\\})",
       "captures": {
         "1": {
-          "name": "punctuation.definition.strikethrough.carve"
+          "name": "punctuation.definition.strike.carve"
         },
         "2": {
           "name": "markup.strikethrough.carve",
@@ -2166,7 +2580,7 @@
           ]
         },
         "4": {
-          "name": "punctuation.definition.strikethrough.carve"
+          "name": "punctuation.definition.strike.carve"
         }
       }
     },
@@ -2214,12 +2628,29 @@
       "comment": "Balanced bracketed span text followed by a valid attribute block. Kept ahead of links so its text receives a stable span scope rather than only the trailing attributes being visible.",
       "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
       "captures": {
-        "1": { "name": "punctuation.definition.span.carve" },
-        "2": { "name": "string.other.link.title.carve" },
-        "3": { "name": "punctuation.definition.span.carve" },
-        "4": { "name": "punctuation.definition.attributes.carve" },
-        "5": { "name": "meta.attributes.carve" },
-        "6": { "name": "punctuation.definition.attributes.carve" }
+        "1": {
+          "name": "punctuation.definition.span.carve"
+        },
+        "2": {
+          "name": "string.other.link.title.carve",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        "3": {
+          "name": "punctuation.definition.span.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.attributes.carve"
+        },
+        "5": {
+          "name": "meta.attributes.carve"
+        },
+        "6": {
+          "name": "punctuation.definition.attributes.carve"
+        }
       }
     },
     "forced_span_content": {
@@ -2232,13 +2663,25 @@
           "include": "#literal_inline"
         },
         {
+          "include": "#math_inline_multi"
+        },
+        {
           "include": "#math_inline"
+        },
+        {
+          "include": "#raw_inline"
         },
         {
           "include": "#code_inline_multi"
         },
         {
           "include": "#code_inline"
+        },
+        {
+          "include": "#math_inline_unpartnered"
+        },
+        {
+          "include": "#literal_inline_unpartnered"
         },
         {
           "include": "#code_inline_unpartnered"
@@ -2385,7 +2828,7 @@
       "contentName": "comment.block.inline.carve"
     },
     "strong": {
-      "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))",
+      "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))(?!(?:(?!(?<=\\S)\\*(?![\\p{L}\\p{N}]))[^\\n])*?(?<=[ \\t])%%)",
       "end": "(?<=\\S)(\\*)(?![\\p{L}\\p{N}])|^[ \\t]*$",
       "beginCaptures": {
         "1": {
@@ -2402,6 +2845,9 @@
       "patterns": [
         {
           "include": "#escape"
+        },
+        {
+          "include": "#trailing_comment"
         },
         {
           "include": "#link_inline"
@@ -2435,7 +2881,13 @@
           "include": "#literal_inline"
         },
         {
+          "include": "#math_inline_multi"
+        },
+        {
           "include": "#math_inline"
+        },
+        {
+          "include": "#raw_inline"
         },
         {
           "include": "#code_inline_multi"
@@ -2829,6 +3281,17 @@
         }
       }
     },
+    "line_bounded_openers": {
+      "comment": "Openers in a one-line block whose closer is not on the line, consumed as text: a `*`, and a `{` that would open an attribute block, a `{#` or `{%` comment. A heading or caption takes no attribute block, so `{#id}` stays text with its `#id` a tag (corpus 213).",
+      "patterns": [
+        {
+          "match": "(?<![\\w*])\\*(?![\\s*}])(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}]))"
+        },
+        {
+          "match": "\\{(?=[.A-Za-z:}]|#(?![^\\n]*#\\})|%(?![^\\n]*%\\}))"
+        }
+      ]
+    },
     "opaque_destination": {
       "comment": "A link destination or an autolink, consumed whole so a delimiter inside it cannot close the enclosing run (PART 9 section 9 E2a). Same atom as the bare `match` rules.",
       "match": "(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?![ \\t\\r\\n)])(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)"
@@ -2905,6 +3368,52 @@
         }
       }
     },
+    "math_inline_multi": {
+      "comment": "A widened run: the sigil owns the whole backtick run, which a longer run inside does not close (corpus 168).",
+      "match": "(\\$\\$?)(`{2,})(?!`)(.+?)(?<!`)(\\2)(?!`)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.math.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.math.carve"
+        },
+        "3": {
+          "name": "markup.math.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.math.carve"
+        }
+      }
+    },
+    "math_inline_unpartnered": {
+      "comment": "An unclosed math run still renders as math, to the end of the paragraph (corpus 331).",
+      "begin": "(\\$\\$?)(`+)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.math.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.math.carve"
+        }
+      },
+      "end": "^(?=[ \\t]*$|[ \\t]*:{3,})",
+      "contentName": "markup.math.carve"
+    },
+    "math_inline_unpartnered_line": {
+      "match": "(\\$\\$?)(`+)([^\\n]*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.math.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.math.carve"
+        },
+        "3": {
+          "name": "markup.math.carve"
+        }
+      }
+    },
     "literal_inline_multi": {
       "comment": "A WHOLE RUN CLOSES IT, the guard #code_inline_multi carries and for the same reason (carve-grammars#601): without it a two-backtick literal closed on the first two characters of a three-backtick run, the leftover backtick opened an unpartnered span, and the trailing comment after it scoped as code. A `!` prefix on two or more backticks: an inline literal that may itself contain single backticks; closed by the same run length (\\2).",
       "match": "(!)(`{2,})(?!`)(.+?)(?<!`)(\\2)(?!`)",
@@ -2920,6 +3429,34 @@
         },
         "4": {
           "name": "punctuation.definition.raw.carve"
+        }
+      }
+    },
+    "literal_inline_unpartnered": {
+      "comment": "An unclosed literal run is still prose, to the end of the paragraph.",
+      "begin": "(!)(`+)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.literal.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.raw.carve"
+        }
+      },
+      "end": "^(?=[ \\t]*$|[ \\t]*:{3,})",
+      "contentName": "markup.raw.inline.content.carve"
+    },
+    "literal_inline_unpartnered_line": {
+      "match": "(!)(`+)([^\\n]*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.literal.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.raw.carve"
+        },
+        "3": {
+          "name": "markup.raw.inline.content.carve"
         }
       }
     },
@@ -2986,7 +3523,12 @@
               "name": "punctuation.definition.list.definition.carve"
             },
             "4": {
-              "name": "entity.name.tag.definition.term.carve"
+              "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
             }
           },
           "end": "^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))",
@@ -2998,7 +3540,12 @@
                   "name": "punctuation.definition.list.definition.carve"
                 },
                 "4": {
-                  "name": "entity.name.tag.definition.term.carve"
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
                 }
               }
             },
@@ -3169,6 +3716,12 @@
       "name": "meta.figure-group.carve",
       "patterns": [
         {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
+        {
           "include": "#fenced_code"
         },
         {
@@ -3241,13 +3794,73 @@
           "name": "entity.name.tag.admonition.carve"
         },
         "4": {
-          "name": "string.quoted.double.admonition.title.carve"
+          "name": "string.quoted.double.admonition.title.carve",
+          "patterns": [
+            {
+              "match": "(\")(.*)(\")$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.string.end.carve"
+                }
+              }
+            }
+          ]
         },
         "5": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "6": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "7": {
           "name": "entity.name.tag.admonition.carve"
@@ -3264,6 +3877,12 @@
       },
       "name": "meta.admonition.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -3340,13 +3959,73 @@
           "name": "entity.name.tag.admonition.carve"
         },
         "4": {
-          "name": "string.quoted.double.admonition.title.carve"
+          "name": "string.quoted.double.admonition.title.carve",
+          "patterns": [
+            {
+              "match": "(\")(.*)(\")$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.string.end.carve"
+                }
+              }
+            }
+          ]
         },
         "5": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "6": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "7": {
           "name": "entity.name.tag.admonition.carve"
@@ -3363,6 +4042,12 @@
       },
       "name": "meta.admonition.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -3438,13 +4123,73 @@
           "name": "entity.name.tag.admonition.carve"
         },
         "4": {
-          "name": "string.quoted.double.admonition.title.carve"
+          "name": "string.quoted.double.admonition.title.carve",
+          "patterns": [
+            {
+              "match": "(\")(.*)(\")$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.string.end.carve"
+                }
+              }
+            }
+          ]
         },
         "5": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "6": {
-          "name": "constant.other.label.admonition.carve"
+          "name": "constant.other.label.admonition.carve",
+          "patterns": [
+            {
+              "match": "(\\[)(.*)(\\])$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.label.carve"
+                },
+                "2": {
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "punctuation.definition.label.carve"
+                }
+              }
+            }
+          ]
         },
         "7": {
           "name": "entity.name.tag.admonition.carve"
@@ -3461,6 +4206,12 @@
       },
       "name": "meta.admonition.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -3538,6 +4289,12 @@
       },
       "name": "meta.figure-group.carve",
       "patterns": [
+        {
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
         {
           "include": "#fenced_code"
         },
@@ -3617,6 +4374,12 @@
         },
         {
           "include": "#admonition_on_marker_line"
+        },
+        {
+          "include": "#fenced_code_diff_attribute_in_container"
+        },
+        {
+          "include": "#fenced_code_languages_in_container"
         },
         {
           "include": "#fenced_code_in_container"
@@ -3728,8 +4491,14 @@
       "contentName": "entity.name.section.carve",
       "patterns": [
         {
-          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways.",
+          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
           "include": "#escape"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#math_inline_multi"
         },
         {
           "include": "#math_inline"
@@ -3747,6 +4516,12 @@
           "include": "#code_inline"
         },
         {
+          "include": "#math_inline_unpartnered_line"
+        },
+        {
+          "include": "#literal_inline_unpartnered_line"
+        },
+        {
           "include": "#code_inline_unpartnered_line"
         },
         {
@@ -3754,6 +4529,12 @@
         },
         {
           "include": "#heading_tag"
+        },
+        {
+          "include": "#line_bounded_openers"
+        },
+        {
+          "include": "#inline"
         }
       ],
       "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138)."

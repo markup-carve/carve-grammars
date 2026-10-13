@@ -4,7 +4,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "x"
   },
   {
@@ -28,7 +28,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "y"
   },
   {

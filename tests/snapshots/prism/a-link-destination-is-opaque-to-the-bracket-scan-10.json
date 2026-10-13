@@ -8,8 +8,28 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "http\\:\\/\\/u\\/\\]"
+    "type": "url>link-text",
+    "text": "http\\:"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\/"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\/"
+  },
+  {
+    "type": "url>link-text",
+    "text": "u"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\/"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\]"
   },
   {
     "type": "url>punctuation",

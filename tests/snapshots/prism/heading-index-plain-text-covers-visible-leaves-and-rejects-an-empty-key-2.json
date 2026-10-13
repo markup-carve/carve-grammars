@@ -5,7 +5,31 @@
   },
   {
     "type": "title>important",
-    "text": " a ![alt](/i.png) b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "title>important>image>url",
+    "text": "alt"
+  },
+  {
+    "type": "title>important>image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "title>important>image>url",
+    "text": "/i.png"
+  },
+  {
+    "type": "title>important>image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",
@@ -16,24 +40,32 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a !"
+    "type": "url>link-text",
+    "text": "a "
   },
   {
-    "type": "url>punctuation",
-    "text": "["
+    "type": "url>link-text>image>url>punctuation",
+    "text": "!["
   },
   {
-    "type": "url",
+    "type": "url>link-text>image>url",
     "text": "alt"
   },
   {
-    "type": "url>punctuation",
-    "text": "]"
+    "type": "url>link-text>image>url>punctuation",
+    "text": "]("
   },
   {
-    "type": "url",
-    "text": "(/i.png) b"
+    "type": "url>link-text>image>url",
+    "text": "/i.png"
+  },
+  {
+    "type": "url>link-text>image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "url>link-text",
+    "text": " b"
   },
   {
     "type": "url>punctuation",

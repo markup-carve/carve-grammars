@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a :smile: "
+    "text": " a "
+  },
+  {
+    "type": "title>important>symbol>constant",
+    "text": ":smile:"
+  },
+  {
+    "type": "title>important",
+    "text": " "
   },
   {
     "type": "title>important>italic>italic",
@@ -24,8 +32,24 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a :smile: /b/ c"
+    "type": "url>link-text",
+    "text": "a "
+  },
+  {
+    "type": "url>link-text>symbol>constant",
+    "text": ":smile:"
+  },
+  {
+    "type": "url>link-text",
+    "text": " "
+  },
+  {
+    "type": "url>link-text>italic>italic",
+    "text": "/b/"
+  },
+  {
+    "type": "url>link-text",
+    "text": " c"
   },
   {
     "type": "url>punctuation",

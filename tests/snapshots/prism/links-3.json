@@ -4,7 +4,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "A"
   },
   {
@@ -32,7 +32,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "B"
   },
   {

@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a ![alt](i.png) b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>link",
+    "text": "![alt](i.png)"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,

@@ -4,8 +4,16 @@
     "text": "Press "
   },
   {
-    "type": "span>string",
-    "text": "[Ctrl+C]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "Ctrl+C"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

@@ -9,7 +9,15 @@
   },
   {
     "scope": "title",
-    "text": "^ a *# x* b"
+    "text": "^ a "
+  },
+  {
+    "scope": "title>strong",
+    "text": "*# x*"
+  },
+  {
+    "scope": "title",
+    "text": " b"
   },
   {
     "scope": null,

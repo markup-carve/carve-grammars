@@ -1,7 +1,15 @@
 [
   {
-    "type": "span>string",
-    "text": "[note]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "note"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

@@ -4,8 +4,12 @@
     "text": "["
   },
   {
+    "type": "url>link-text",
+    "text": "![a"
+  },
+  {
     "type": "url",
-    "text": "![a](/i)"
+    "text": "](/i)"
   },
   {
     "type": "url>punctuation",

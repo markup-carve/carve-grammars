@@ -16,7 +16,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "Getting Started"
   },
   {
@@ -36,7 +36,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "getting started"
   },
   {
@@ -56,7 +56,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "Missing"
   },
   {
@@ -96,7 +96,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "Quoted"
   },
   {
@@ -124,7 +124,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "In an item"
   },
   {
@@ -168,7 +168,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "Defined"
   },
   {

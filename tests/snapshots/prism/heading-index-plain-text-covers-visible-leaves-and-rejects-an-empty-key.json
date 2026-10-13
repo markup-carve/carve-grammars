@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a <https://e.com> b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>url",
+    "text": "<https://e.com>"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",
@@ -16,8 +24,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a <https://e.com> b"
+    "type": "url>link-text",
+    "text": "a "
+  },
+  {
+    "type": "url>link-text>url",
+    "text": "<https://e.com>"
+  },
+  {
+    "type": "url>link-text",
+    "text": " b"
   },
   {
     "type": "url>punctuation",

@@ -144,7 +144,7 @@
         },
         "raw_inline": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.raw.inline.carve",
+          "evidence": "raw_inline",
           "payload": "inert"
         },
         "literal_inline": {

@@ -32,8 +32,16 @@
     "text": "\n\n"
   },
   {
-    "type": "span>string",
-    "text": "[HTML]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "HTML"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

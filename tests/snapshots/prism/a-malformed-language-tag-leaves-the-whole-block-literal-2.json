@@ -1,7 +1,15 @@
 [
   {
-    "type": "span>string",
-    "text": "[a]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "a"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",
@@ -20,8 +28,16 @@
     "text": " "
   },
   {
-    "type": "span>string",
-    "text": "[b]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "b"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "text",

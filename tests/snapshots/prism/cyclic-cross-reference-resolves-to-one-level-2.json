@@ -5,7 +5,19 @@
   },
   {
     "type": "title>important",
-    "text": " A </#B>"
+    "text": " A "
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "title>important>cross-ref>url",
+    "text": "B"
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "text",
@@ -17,7 +29,19 @@
   },
   {
     "type": "title>important",
-    "text": " B </#A>"
+    "text": " B "
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "title>important>cross-ref>url",
+    "text": "A"
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "text",

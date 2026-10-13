@@ -1,7 +1,19 @@
 [
   {
-    "type": "span>string",
-    "text": "[*Ctrl*+C]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text>bold>bold",
+    "text": "*Ctrl*"
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "+C"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",
@@ -60,8 +72,16 @@
     "text": "\n"
   },
   {
-    "type": "span>string",
-    "text": "[x]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "x"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

@@ -36,8 +36,12 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "*bold* heading"
+    "type": "url>link-text>bold>bold",
+    "text": "*bold*"
+  },
+  {
+    "type": "url>link-text",
+    "text": " heading"
   },
   {
     "type": "url>punctuation",

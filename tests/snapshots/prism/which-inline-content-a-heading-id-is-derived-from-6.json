@@ -5,7 +5,31 @@
   },
   {
     "type": "title>important",
-    "text": " a [link](/u) b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "link"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "title>important>url",
+    "text": "/u"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",

@@ -16,8 +16,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[/i/]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text>italic>italic",
+    "text": "/i/"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a ^[note] b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>symbol",
+    "text": "^[note]"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,

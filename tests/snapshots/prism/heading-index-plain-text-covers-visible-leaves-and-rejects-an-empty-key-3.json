@@ -24,8 +24,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a &#65; b"
+    "type": "url>link-text",
+    "text": "a &"
+  },
+  {
+    "type": "url>link-text>tag>variable",
+    "text": "#65"
+  },
+  {
+    "type": "url>link-text",
+    "text": "; b"
   },
   {
     "type": "url>punctuation",

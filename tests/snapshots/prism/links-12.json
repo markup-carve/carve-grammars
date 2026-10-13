@@ -4,8 +4,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "pre <http://h> post"
+    "type": "url>link-text",
+    "text": "pre "
+  },
+  {
+    "type": "url>link-text>url",
+    "text": "<http://h>"
+  },
+  {
+    "type": "url>link-text",
+    "text": " post"
   },
   {
     "type": "url>punctuation",

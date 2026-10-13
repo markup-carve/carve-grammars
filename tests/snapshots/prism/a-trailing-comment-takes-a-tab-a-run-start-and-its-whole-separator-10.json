@@ -16,8 +16,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[%% hidden]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text",
+    "text": "%% hidden"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

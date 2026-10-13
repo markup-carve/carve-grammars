@@ -16,8 +16,16 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>span>string",
-    "text": "[Roses are red,\nViolets are blue.]"
+    "type": "div>tag>span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>span>string>span-text",
+    "text": "Roses are red,\nViolets are blue."
+  },
+  {
+    "type": "div>tag>span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag>attributes>attr-value>punctuation",

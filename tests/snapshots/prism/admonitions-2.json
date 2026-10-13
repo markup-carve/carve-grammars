@@ -16,8 +16,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"Pro Tip\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "Pro Tip"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",

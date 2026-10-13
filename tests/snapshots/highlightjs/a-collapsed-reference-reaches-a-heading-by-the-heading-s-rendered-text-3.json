@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# an /em/ heading"
+    "text": "# an "
+  },
+  {
+    "scope": "section>emphasis",
+    "text": "/em/"
+  },
+  {
+    "scope": "section",
+    "text": " heading"
   },
   {
     "scope": null,

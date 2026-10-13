@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a {^up^} b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>built_in",
+    "text": "{^up^}"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,

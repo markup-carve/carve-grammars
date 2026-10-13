@@ -8,8 +8,20 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "t</#}>"
+    "type": "url>link-text",
+    "text": "t"
+  },
+  {
+    "type": "url>link-text>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "url>link-text>cross-ref>url",
+    "text": "}"
+  },
+  {
+    "type": "url>link-text>cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "url>punctuation",

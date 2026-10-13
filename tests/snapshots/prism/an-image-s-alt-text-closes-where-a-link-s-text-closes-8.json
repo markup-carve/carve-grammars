@@ -8,8 +8,36 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "x ![t[z]][r] y"
+    "type": "url>link-text",
+    "text": "x "
+  },
+  {
+    "type": "url>link-text>reference-image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "url>link-text>reference-image>url",
+    "text": "t[z"
+  },
+  {
+    "type": "url>link-text>reference-image>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url>link-text>reference-image>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>link-text>reference-image>url>constant",
+    "text": "r"
+  },
+  {
+    "type": "url>link-text>reference-image>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url>link-text",
+    "text": " y"
   },
   {
     "type": "url>punctuation",

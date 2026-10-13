@@ -279,9 +279,10 @@ const CONTEXTS = [
  * that starts working fails this row and comes out of the list with the fix.
  */
 const UNREACHED = {
-    highlightjs: ['heading', 'blockquote', 'table cell'],
-    // Quotes reach the inline family since carve-grammars#683.
-    textmate: ['heading'],
+    highlightjs: ['blockquote', 'table cell'],
+    // Quotes reach the inline family since carve-grammars#683, headings since the
+    // title became a full inline run.
+    textmate: [],
     /*
      * Measured when the intellij checkout was first named here
      * (carve-grammars#329). It is a separate lineage from this repository's

@@ -5,7 +5,15 @@
   },
   {
     "type": "title>important",
-    "text": " a :smile: b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>symbol>constant",
+    "text": ":smile:"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",
@@ -16,7 +24,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "a b"
   },
   {

@@ -8,16 +8,8 @@
     "text": "["
   },
   {
-    "type": "extension>function",
-    "text": "a "
-  },
-  {
-    "type": "extension>function>punctuation",
-    "text": "["
-  },
-  {
-    "type": "extension>function",
-    "text": "b"
+    "type": "extension>function>extension-content",
+    "text": "a [b"
   },
   {
     "type": "extension>function>punctuation",

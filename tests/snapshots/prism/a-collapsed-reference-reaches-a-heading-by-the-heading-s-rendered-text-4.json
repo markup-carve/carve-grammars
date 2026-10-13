@@ -24,8 +24,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a\\_b heading"
+    "type": "url>link-text",
+    "text": "a"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\_"
+  },
+  {
+    "type": "url>link-text",
+    "text": "b heading"
   },
   {
     "type": "url>punctuation",

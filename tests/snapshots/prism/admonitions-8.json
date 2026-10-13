@@ -4,8 +4,16 @@
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[First]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text",
+    "text": "First"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

@@ -40,8 +40,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"Careful\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "Careful"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",

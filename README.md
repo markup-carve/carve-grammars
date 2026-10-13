@@ -102,6 +102,10 @@ For a dark Prism or highlight.js theme, set `.dark` or
 TextMate consumers can load `textmate/carve.tmLanguage.json`. Shiki and
 VitePress users can call `carveMarkdown()` from
 `@markup-carve/carve-grammars/shiki`; it registers both `carve` and `crv`.
+A fenced code block highlights its body with the grammar its language word
+names in [`fence-languages.json`](fence-languages/README.md), a `=html` raw block
+as HTML, and a bare fence under a `{.diff}` line as a diff. The host has to have
+those grammars loaded; a fence whose grammar is missing keeps its plain body.
 
 The implementations deliberately differ where their host engines have
 different capabilities. The [syntax-highlighting reference](docs/reference.md#syntax-highlighting)

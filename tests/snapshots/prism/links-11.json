@@ -4,12 +4,12 @@
     "text": "["
   },
   {
-    "type": "url>punctuation",
-    "text": "["
+    "type": "url>link-text",
+    "text": "[x"
   },
   {
     "type": "url",
-    "text": "x](y)"
+    "text": "](y)"
   },
   {
     "type": "url>punctuation",

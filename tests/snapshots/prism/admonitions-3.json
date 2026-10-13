@@ -16,8 +16,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"Heads up\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "Heads up"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",

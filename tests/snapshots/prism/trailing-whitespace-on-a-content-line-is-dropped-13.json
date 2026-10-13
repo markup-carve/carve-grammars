@@ -5,7 +5,11 @@
   },
   {
     "type": "definition-list>definition-term>title",
-    "text": " `a"
+    "text": " "
+  },
+  {
+    "type": "definition-list>definition-term>title>code",
+    "text": "`a"
   },
   {
     "type": "definition-list",

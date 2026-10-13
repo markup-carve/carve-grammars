@@ -8,8 +8,12 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "t[^1]"
+    "type": "url>link-text",
+    "text": "t"
+  },
+  {
+    "type": "url>link-text>footnote>symbol",
+    "text": "[^1]"
   },
   {
     "type": "url>punctuation",

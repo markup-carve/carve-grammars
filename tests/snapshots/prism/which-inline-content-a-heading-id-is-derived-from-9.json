@@ -5,7 +5,23 @@
   },
   {
     "type": "title>important",
-    "text": " a ^[note] b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "title>important>inline-footnote>symbol",
+    "text": "note"
+  },
+  {
+    "type": "title>important>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",

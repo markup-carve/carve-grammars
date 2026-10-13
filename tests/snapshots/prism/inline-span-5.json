@@ -1,7 +1,15 @@
 [
   {
-    "type": "span>string",
-    "text": "[*x*]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text>bold>bold",
+    "text": "*x*"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "text",

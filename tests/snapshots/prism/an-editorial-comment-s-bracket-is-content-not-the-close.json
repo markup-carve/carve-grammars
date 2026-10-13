@@ -8,8 +8,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "t{# n #}z"
+    "type": "url>link-text",
+    "text": "t"
+  },
+  {
+    "type": "url>link-text>critic-comment>comment",
+    "text": "{# n #}"
+  },
+  {
+    "type": "url>link-text",
+    "text": "z"
   },
   {
     "type": "url>punctuation",

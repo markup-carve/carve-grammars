@@ -4,8 +4,16 @@
     "text": "The title is "
   },
   {
-    "type": "span>string",
-    "text": "[Le Bon Usage]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "Le Bon Usage"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

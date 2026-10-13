@@ -5,7 +5,31 @@
   },
   {
     "type": "title>important",
-    "text": " a [x](/y) b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "x"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "title>important>url",
+    "text": "/y"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",
@@ -16,24 +40,32 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text",
     "text": "a "
   },
   {
-    "type": "url>punctuation",
+    "type": "url>link-text>url>punctuation",
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text>url>link-text",
     "text": "x"
   },
   {
-    "type": "url>punctuation",
-    "text": "]"
+    "type": "url>link-text>url>punctuation",
+    "text": "]("
   },
   {
-    "type": "url",
-    "text": "(/y) b"
+    "type": "url>link-text>url",
+    "text": "/y"
+  },
+  {
+    "type": "url>link-text>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "url>link-text",
+    "text": " b"
   },
   {
     "type": "url>punctuation",

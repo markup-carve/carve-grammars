@@ -8,7 +8,7 @@
     "text": "["
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>extension-content>bold>bold",
     "text": "*b*"
   },
   {
@@ -28,7 +28,7 @@
     "text": "["
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>extension-content>bold>bold",
     "text": "*b*"
   },
   {

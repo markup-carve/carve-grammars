@@ -4,8 +4,16 @@
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[*b*]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text>bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

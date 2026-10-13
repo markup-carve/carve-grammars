@@ -8,7 +8,7 @@
     "text": "["
   },
   {
-    "type": "extension>function",
+    "type": "extension>function>extension-content",
     "text": "a\nb"
   },
   {

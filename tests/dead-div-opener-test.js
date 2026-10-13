@@ -59,8 +59,8 @@ ok('prism still paints a real opener', () => {
 
 ok('prism still paints an opener carrying a quoted title', () => {
     const source = '::: note "T"\nbody\n:::';
-    const scope = scopeOfKind(prismTokens(source), source, '"T"');
-    assert.equal(scope, 'div>tag>div-delimiter>string');
+    const scope = scopeOfKind(prismTokens(source), source, 'T"');
+    assert.equal(scope, 'div>tag>div-delimiter>string>title-text');
 });
 
 console.log(`\n${passed} passed`);

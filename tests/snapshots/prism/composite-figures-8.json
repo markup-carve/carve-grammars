@@ -16,8 +16,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"A titled figure div\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "A titled figure div"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",
@@ -96,8 +104,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[g]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text",
+    "text": "g"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

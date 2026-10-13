@@ -4,8 +4,16 @@
     "text": "A "
   },
   {
-    "type": "span>string",
-    "text": "[span]"
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text",
+    "text": "span"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
   },
   {
     "type": "attributes>attr-value>punctuation",

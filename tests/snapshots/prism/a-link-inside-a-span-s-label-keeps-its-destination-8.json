@@ -4,16 +4,12 @@
     "text": "["
   },
   {
-    "type": "url>punctuation",
-    "text": "["
-  },
-  {
-    "type": "url>punctuation",
-    "text": "["
+    "type": "url>link-text",
+    "text": "[[t"
   },
   {
     "type": "url",
-    "text": "t](/v)]{.d}"
+    "text": "](/v)]{.d}"
   },
   {
     "type": "url>punctuation",

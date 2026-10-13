@@ -24,8 +24,16 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "a !`Cat` b"
+    "type": "url>link-text",
+    "text": "a "
+  },
+  {
+    "type": "url>link-text>literal>string",
+    "text": "!`Cat`"
+  },
+  {
+    "type": "url>link-text",
+    "text": " b"
   },
   {
     "type": "url>punctuation",

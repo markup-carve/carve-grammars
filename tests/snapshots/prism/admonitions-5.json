@@ -40,8 +40,16 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"opener title\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "opener title"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",

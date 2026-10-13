@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# *bold* heading"
+    "text": "# "
+  },
+  {
+    "scope": "section>strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": "section",
+    "text": " heading"
   },
   {
     "scope": null,

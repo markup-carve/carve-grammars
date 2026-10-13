@@ -1988,12 +1988,27 @@
     });
     const ONE_LINE_VERBATIM = [MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE, INLINE_CODE].map(lineBounded);
 
-    HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG];
+    /*
+     * The rest of the inline set, since the engine renders every inline
+     * construct in a title or caption. An opener whose closer is not on the
+     * line is text there, so the two sinks in front keep a mode that may span
+     * lines from opening at all.
+     */
+    const LINE_INLINE = [
+        { begin: /([*/_~=])(?![^\n]*?(?<=\S)\1)/, relevance: 0 },
+        // Only the brace: a heading's `{#id}` is text whose `#id` is still a tag (corpus 213).
+        { begin: /\{(?=([*/_~=^,+\-#%])(?![^\n]*?\1\}))/, relevance: 0 },
+        INLINE_FOOTNOTE, FOOTNOTE_REF, IMAGE, REFERENCE_IMAGE, SPAN, REFERENCE_LINK, CITATION, INLINE_EXTENSION,
+        LINK, AUTOLINK, EMAIL_AUTOLINK, INSERT, DELETE, CRITIC_SUB, CRITIC_COMMENT, MENTION, CROSS_REF,
+        HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, STRIKETHROUGH,
+        FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, TYPOGRAPHY,
+    ];
+    HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG, ...LINE_INLINE];
     // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
     // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
-    CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT];
+    CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
     /*
      * THE LINE TEST RUNS AFTER THE CANDIDATE, NEVER AS A LEADING LOOKBEHIND
      * (carve-grammars#604). Spelled `(?<=^[ \t]*(?:> )+(?:#{1,6} |\^ )[^\n]*)`

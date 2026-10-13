@@ -24,8 +24,12 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "`code()` heading"
+    "type": "url>link-text>code",
+    "text": "`code()`"
+  },
+  {
+    "type": "url>link-text",
+    "text": " heading"
   },
   {
     "type": "url>punctuation",

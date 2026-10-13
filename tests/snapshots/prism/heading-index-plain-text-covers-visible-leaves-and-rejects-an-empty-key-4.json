@@ -5,7 +5,11 @@
   },
   {
     "type": "title>important",
-    "text": " :smile:"
+    "text": " "
+  },
+  {
+    "type": "title>important>symbol>constant",
+    "text": ":smile:"
   },
   {
     "type": "text",
@@ -16,7 +20,7 @@
     "text": "["
   },
   {
-    "type": "url",
+    "type": "url>link-text>symbol>constant",
     "text": ":smile:"
   },
   {

@@ -17,7 +17,19 @@
   },
   {
     "type": "title>important",
-    "text": " Step 1 -> done..."
+    "text": " Step 1 "
+  },
+  {
+    "type": "title>important>typography>constant",
+    "text": "->"
+  },
+  {
+    "type": "title>important",
+    "text": " done"
+  },
+  {
+    "type": "title>important>typography>constant",
+    "text": "..."
   },
   {
     "type": "text",

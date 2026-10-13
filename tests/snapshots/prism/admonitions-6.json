@@ -16,8 +16,28 @@
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string",
-    "text": "\"Install *now* via `npm`\""
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": "Install "
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text>bold>bold",
+    "text": "*now*"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text",
+    "text": " via "
+  },
+  {
+    "type": "div>tag>div-delimiter>string>title-text>code",
+    "text": "`npm`"
+  },
+  {
+    "type": "div>tag>div-delimiter>string>punctuation",
+    "text": "\""
   },
   {
     "type": "div>tag",

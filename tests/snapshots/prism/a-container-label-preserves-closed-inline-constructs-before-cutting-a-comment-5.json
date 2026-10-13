@@ -4,8 +4,16 @@
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter>symbol",
-    "text": "[`a %% secret`]"
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>label-text>code",
+    "text": "`a %% secret`"
+  },
+  {
+    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "text": "]"
   },
   {
     "type": "div>tag",

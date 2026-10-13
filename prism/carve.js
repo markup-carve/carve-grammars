@@ -2357,6 +2357,9 @@
         return Array.isArray(token) ? token.map(bind) : bind(token);
     }
 
+    // The inline constructs beyond emphasis that a title or caption holds too.
+    var linkFamily = ['image', 'reference-image', 'inline-footnote', 'footnote', 'citation', 'cross-ref', 'url',
+        'span-empty-attrs', 'extension', 'span', 'critic-comment', 'inserted', 'deleted', 'changed'];
     for (const block of ['title', 'caption']) {
         const own = Prism.languages.carve[block].inside;
         /*
@@ -2372,15 +2375,51 @@
         Prism.languages.carve[block].inside = Object.assign(
             own['comment'] ? { 'comment': own['comment'] } : {},
             { 'punctuation': own['punctuation'] },
-            ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
-                set[name] = blockVerbatim(Prism.languages.carve[name]);
-
-                return set;
-            }, {}),
+            lineVerbatim(),
             { 'escape': Prism.languages.carve['escape'] },
-            own
+            pick(linkFamily),
+            own,
+            pick(['mention', 'symbol', 'typography'])
         );
     }
+
+    /*
+     * A link's text, a span's text, an extension's content, a definition term
+     * and a container's title or label are inline runs as well: the engine
+     * renders `[a *b* `c`](u)` and `::: note "a *b*"` with the markup inside.
+     * Each sits on one line, so the verbatim tails are line-bound here too.
+     */
+    function lineVerbatim() {
+        return ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+            set[name] = blockVerbatim(Prism.languages.carve[name]);
+
+            return set;
+        }, {});
+    }
+    function pick(names) {
+        return names.reduce(function (set, name) {
+            set[name] = Prism.languages.carve[name];
+
+            return set;
+        }, {});
+    }
+    var inlineRun = Object.assign(lineVerbatim(), { 'escape': Prism.languages.carve['escape'] },
+        pick(linkFamily), inline, pick(['mention', 'tag', 'symbol', 'typography']));
+    var runBetween = function (open, close) {
+        return { pattern: RegExp('(' + open + ')[\\s\\S]+?(?=' + close + ')'), lookbehind: true, inside: inlineRun };
+    };
+    var url = Prism.languages.carve['url'];
+    url[0].inside = Object.assign({ 'link-text': runBetween('^\\[', '\\]\\(') }, url[0].inside);
+    url[1].inside = Object.assign({ 'link-text': runBetween('^\\[', '\\]\\[') }, url[1].inside);
+    Prism.languages.carve['span'].inside = { 'span-text': runBetween('^\\[', '\\]$'), 'punctuation': /\[|\]/ };
+    Prism.languages.carve['extension'].inside = Object.assign(
+        { 'extension-content': runBetween('\\[', '\\]$') },
+        Prism.languages.carve['extension'].inside
+    );
+    definitionTerm.inside = Object.assign({ 'punctuation': definitionTerm.inside['punctuation'] }, inlineRun);
+    var delimiterInside = Prism.languages.carve['div'].inside['div-delimiter'][0].inside;
+    delimiterInside['string'] = { pattern: /"[^"\n]*"/, inside: { 'title-text': runBetween('^"', '"$'), 'punctuation': /"/ } };
+    delimiterInside['symbol'] = { pattern: /\[[^\]\n]*\]/, inside: { 'label-text': runBetween('^\\[', '\\]$'), 'punctuation': /\[|\]/ } };
 
     // A quoted line's heading and list markers scope as they do outside a quote
     // (carve-grammars#683), matching what follows the `> ` prefix once

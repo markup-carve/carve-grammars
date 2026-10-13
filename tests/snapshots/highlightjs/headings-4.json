@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "## Why /Carve/?"
+    "text": "## Why "
+  },
+  {
+    "scope": "section>emphasis",
+    "text": "/Carve/"
+  },
+  {
+    "scope": "section",
+    "text": "?"
   },
   {
     "scope": null,

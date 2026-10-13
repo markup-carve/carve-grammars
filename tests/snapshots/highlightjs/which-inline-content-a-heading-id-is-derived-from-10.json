@@ -9,7 +9,15 @@
   },
   {
     "scope": "section",
-    "text": "# a </#Target> b"
+    "text": "# a "
+  },
+  {
+    "scope": "section>link",
+    "text": "</#Target>"
+  },
+  {
+    "scope": "section",
+    "text": " b"
   },
   {
     "scope": null,

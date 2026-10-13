@@ -16,8 +16,20 @@
     "text": "["
   },
   {
-    "type": "url",
-    "text": "see </#H>"
+    "type": "url>link-text",
+    "text": "see "
+  },
+  {
+    "type": "url>link-text>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "url>link-text>cross-ref>url",
+    "text": "H"
+  },
+  {
+    "type": "url>link-text>cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "url>punctuation",

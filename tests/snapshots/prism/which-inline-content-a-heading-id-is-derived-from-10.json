@@ -17,7 +17,23 @@
   },
   {
     "type": "title>important",
-    "text": " a </#Target> b"
+    "text": " a "
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "title>important>cross-ref>url",
+    "text": "Target"
+  },
+  {
+    "type": "title>important>cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "title>important",
+    "text": " b"
   },
   {
     "type": "text",

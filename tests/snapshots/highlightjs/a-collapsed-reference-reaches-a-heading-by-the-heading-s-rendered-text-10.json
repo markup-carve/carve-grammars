@@ -1,7 +1,15 @@
 [
   {
     "scope": "section",
-    "text": "# a :smile: /b/ c"
+    "text": "# a :smile: "
+  },
+  {
+    "scope": "section>emphasis",
+    "text": "/b/"
+  },
+  {
+    "scope": "section",
+    "text": " c"
   },
   {
     "scope": null,
