@@ -16,6 +16,9 @@ All notable changes to `carve-grammars` are documented here.
   run: a literal `{` before one (`\{*x*}`), a lone delimiter a later mark's
   delimiter would close (`\~a *x* b~`), and a literal `{,` that would open a
   subscript (#676).
+- A `^ ` line below a quote made only of bare `>` lines is a paragraph, not a
+  caption, in all three grammars, when the quote opens at the document start or
+  after a blank line (#675).
 
 ### Added
 
@@ -23,12 +26,6 @@ All notable changes to `carve-grammars` are documented here.
   block embeds for each info-string word, with the TextMate and sublime-syntax
   targets. Editor grammars that embed by a fixed list read it instead of keeping
   their own (#646).
-
-### Fixes
-
-- A `^ ` line below a quote made only of bare `>` lines is a paragraph, not a
-  caption, in all three grammars, when the quote opens at the document start or
-  after a blank line (#675).
 
 ## [0.1.14] - 2026-10-09
 
