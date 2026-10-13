@@ -972,6 +972,23 @@
         contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE, UNTERMINATED_BLOCK_COMMENT],
         relevance: 0,
     };
+    /*
+     * The block markers of a quoted line scope as they do outside a quote
+     * (carve-grammars#683): a heading run, a task box, a bullet or an ordered
+     * marker right after the `> ` prefix, nested prefixes included. Each rule
+     * checks a one-character sentinel before its prefix lookbehind (#440). The
+     * heading takes only its `#` run, so the quoted-heading comment rules
+     * below still see the text. Inline formatting stays out: those modes may
+     * span lines and would carry the next line's `>` into their run.
+     */
+    const QUOTED = '(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*>(?: >)* )';
+    const NO_EMPTY = '(?![ \\t]*$(?![^\\r\\n]))';
+    BLOCKQUOTE.contains.push(
+        { className: 'section', begin: RegExp('(?=#)' + QUOTED + '#{1,6}(?= )' + NO_EMPTY) },
+        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>?]\\](?= )' + NO_EMPTY) },
+        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
+        { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
+    );
 
     // Horizontal rules: --- or *** or ___
     const HORIZONTAL_RULE = {

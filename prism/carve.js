@@ -2299,6 +2299,27 @@
         );
     }
 
+    // A quoted line's heading and list markers scope as they do outside a quote
+    // (carve-grammars#683), matching what follows the `> ` prefix once
+    // 'punctuation' has taken it, nested prefixes included. They go ahead of
+    // the inline rules, as at the top level.
+    {
+        const rest = { ...Prism.languages.carve.blockquote.inside };
+        delete rest.punctuation;
+        Prism.languages.carve.blockquote.inside = Object.assign({
+            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+            // A heading opens only right after the prefix (`>  # h` is prose),
+            // while a list marker may stand further in, as at the top level.
+            'title': {
+                pattern: /(^ )#{1,6} [ \t]*(?![ \t]*$(?![^\r\n]))[^\r\n]+$(?![^\r\n])/m,
+                lookbehind: true,
+                alias: 'important',
+                inside: Prism.languages.carve.title.inside,
+            },
+            'list': Prism.languages.carve.list,
+        }, rest);
+    }
+
     // Reuse the full code and escape rules before looking for cell pipes.
     for (const table of ['table', 'table-continuation']) {
         Prism.languages.carve[table].inside.code = Prism.languages.carve.code;

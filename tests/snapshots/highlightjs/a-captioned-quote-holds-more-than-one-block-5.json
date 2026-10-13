@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> ## Terms"
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "##"
+  },
+  {
+    "scope": "quote",
+    "text": " Terms"
   },
   {
     "scope": null,

@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> # a "
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " a "
   },
   {
     "scope": "quote>code",

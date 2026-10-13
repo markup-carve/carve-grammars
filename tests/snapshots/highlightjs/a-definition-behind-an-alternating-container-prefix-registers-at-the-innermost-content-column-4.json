@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> - - x"
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "- -"
+  },
+  {
+    "scope": "quote",
+    "text": " x"
   },
   {
     "scope": null,

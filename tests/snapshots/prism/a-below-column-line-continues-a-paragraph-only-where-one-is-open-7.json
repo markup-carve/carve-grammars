@@ -21,7 +21,15 @@
   },
   {
     "type": "blockquote",
-    "text": " # H"
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " H"
   },
   {
     "type": "text",

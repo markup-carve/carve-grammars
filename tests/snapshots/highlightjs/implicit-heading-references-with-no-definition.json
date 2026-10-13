@@ -33,7 +33,15 @@
   },
   {
     "scope": "quote",
-    "text": "> # Quoted"
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " Quoted"
   },
   {
     "scope": null,

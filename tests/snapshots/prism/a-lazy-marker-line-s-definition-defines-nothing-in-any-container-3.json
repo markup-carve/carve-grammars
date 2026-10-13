@@ -16,8 +16,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
     "type": "blockquote",
-    "text": " - [^f]: t"
+    "text": "[^f]: t"
   },
   {
     "type": "text",

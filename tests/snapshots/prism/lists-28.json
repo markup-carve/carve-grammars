@@ -1,67 +1,55 @@
 [
   {
     "type": "blockquote>punctuation",
-    "text": ">"
+    "text": "> >"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": " >"
-  },
-  {
-    "type": "blockquote",
-    "text": " - a"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "type": "blockquote>list>punctuation",
+    "text": " - "
   },
   {
     "type": "blockquote",
-    "text": " - b"
+    "text": "a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "b"
   },
   {
     "type": "text",

@@ -5,7 +5,23 @@
   },
   {
     "type": "blockquote",
-    "text": " # a `x %% b` c"
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " a "
+  },
+  {
+    "type": "blockquote>title>important>code",
+    "text": "`x %% b`"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " c"
   },
   {
     "type": "text",

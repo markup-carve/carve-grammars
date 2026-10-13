@@ -4,8 +4,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
     "type": "blockquote",
-    "text": " - Be skeptical."
+    "text": "Be skeptical."
   },
   {
     "type": "text",
@@ -16,8 +20,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
     "type": "blockquote",
-    "text": " - Be kind."
+    "text": "Be kind."
   },
   {
     "type": "text",

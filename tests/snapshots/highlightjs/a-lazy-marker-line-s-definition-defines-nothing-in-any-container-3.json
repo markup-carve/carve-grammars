@@ -9,7 +9,15 @@
   },
   {
     "scope": "quote",
-    "text": "> - [^f]: t"
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " [^f]: t"
   },
   {
     "scope": null,

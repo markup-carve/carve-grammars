@@ -9,7 +9,15 @@
   },
   {
     "scope": "quote",
-    "text": "> # Auto"
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " Auto"
   },
   {
     "scope": null,
@@ -25,7 +33,15 @@
   },
   {
     "scope": "quote",
-    "text": "> # Written"
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " Written"
   },
   {
     "scope": null,

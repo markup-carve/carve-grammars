@@ -17,7 +17,15 @@
   },
   {
     "scope": "quote",
-    "text": "    > # H"
+    "text": "    > "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " H"
   },
   {
     "scope": null,

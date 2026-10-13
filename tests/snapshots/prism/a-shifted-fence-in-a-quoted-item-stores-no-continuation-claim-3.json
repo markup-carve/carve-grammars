@@ -1,15 +1,15 @@
 [
   {
     "type": "blockquote>punctuation",
-    "text": ">"
+    "text": "> >"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "type": "blockquote>list>punctuation",
+    "text": " - "
   },
   {
     "type": "blockquote",
-    "text": " - a"
+    "text": "a"
   },
   {
     "type": "text",
@@ -17,11 +17,7 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "text",
@@ -29,11 +25,7 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "blockquote",
@@ -45,11 +37,7 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "blockquote",

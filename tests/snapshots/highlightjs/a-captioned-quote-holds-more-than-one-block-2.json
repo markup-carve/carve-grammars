@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> - Be skeptical."
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " Be skeptical."
   },
   {
     "scope": null,
@@ -9,7 +17,15 @@
   },
   {
     "scope": "quote",
-    "text": "> - Be kind."
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " Be kind."
   },
   {
     "scope": null,

@@ -5,7 +5,15 @@
   },
   {
     "type": "blockquote",
-    "text": " # h"
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " h"
   },
   {
     "type": "text",

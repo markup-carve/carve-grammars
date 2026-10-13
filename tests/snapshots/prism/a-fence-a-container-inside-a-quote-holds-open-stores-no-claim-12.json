@@ -28,8 +28,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": "    - "
+  },
+  {
     "type": "blockquote",
-    "text": "    - ```"
+    "text": "```"
   },
   {
     "type": "text",

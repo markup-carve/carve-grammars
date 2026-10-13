@@ -13,15 +13,19 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "blockquote",
-    "text": " # H"
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " H"
   },
   {
     "type": "text",

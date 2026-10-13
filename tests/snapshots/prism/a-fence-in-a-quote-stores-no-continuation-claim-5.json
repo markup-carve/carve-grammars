@@ -1,11 +1,7 @@
 [
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "blockquote",
@@ -17,11 +13,7 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": " >"
+    "text": "> >"
   },
   {
     "type": "blockquote",

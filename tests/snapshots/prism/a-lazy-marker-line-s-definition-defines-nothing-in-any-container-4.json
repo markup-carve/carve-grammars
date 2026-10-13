@@ -4,8 +4,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
     "type": "blockquote",
-    "text": " - [d]: u"
+    "text": "[d]: u"
   },
   {
     "type": "text",

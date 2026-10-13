@@ -280,7 +280,8 @@ const CONTEXTS = [
  */
 const UNREACHED = {
     highlightjs: ['heading', 'blockquote', 'table cell'],
-    textmate: ['heading', 'blockquote'],
+    // Quotes reach the inline family since carve-grammars#683.
+    textmate: ['heading'],
     /*
      * Measured when the intellij checkout was first named here
      * (carve-grammars#329). It is a separate lineage from this repository's
