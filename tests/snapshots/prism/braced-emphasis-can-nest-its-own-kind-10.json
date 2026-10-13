@@ -1,10 +1,10 @@
 [
   {
     "type": "forced-bold>bold",
-    "text": "{*a {**}"
+    "text": "{*a {**} b*}"
   },
   {
     "type": "text",
-    "text": " b*}\n"
+    "text": "\n"
   }
 ]

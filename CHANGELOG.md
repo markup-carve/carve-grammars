@@ -4,6 +4,12 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixes
+
+- A braced emphasis span nests its own kind in all three grammars, so
+  `*a {*b*} c*` scopes one bold run holding a nested one, and an empty `{**}`
+  inside a run stays text instead of closing it (#673).
+
 ### Added
 
 - The `fence-languages.json` export: one table of which grammar a fenced code

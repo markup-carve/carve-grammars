@@ -5,10 +5,18 @@
   },
   {
     "type": "forced-bold>bold",
-    "text": "{*{*x*}"
+    "text": "{*"
+  },
+  {
+    "type": "forced-bold>bold>forced-bold>bold",
+    "text": "{*x*}"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "*}"
   },
   {
     "type": "text",
-    "text": "*}b\n"
+    "text": "b\n"
   }
 ]

@@ -63,9 +63,9 @@ for (const [name, tokenize, strongScope] of surfaces) {
         assert(tokens.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: ${JSON.stringify(braced)} exposed its inner closer`);
     }
 
-    // A same-kind forced opener inside a bare run is text, so the run closes at `b~`.
+    // A same-kind braced span nests inside a bare run (carve#2904), so the run reaches ` d~`.
     const sameKind = await tokenize('~a {~b~ c~} d~');
-    assert(!sameKind.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: a same-kind forced opener hid the bare closer`);
+    assert(sameKind.some((token) => token.text.includes(' d') && token.scope?.includes(strikeScope)), `${name}: a nested same-kind braced span ended the bare run`);
 
     const literalBracePair = await tokenize('*a {--} b*');
     assert(literalBracePair.some((token) => token.text.includes(' b') && token.scope?.includes(strongScope)), `${name}: a literal braced en dash stopped a bare run`);

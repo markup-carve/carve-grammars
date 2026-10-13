@@ -5,10 +5,18 @@
   },
   {
     "scope": "strong",
-    "text": "{*{*x*}"
+    "text": "{*"
+  },
+  {
+    "scope": "strong>strong",
+    "text": "{*x*}"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
   },
   {
     "scope": null,
-    "text": "*}b\n"
+    "text": "b\n"
   }
 ]

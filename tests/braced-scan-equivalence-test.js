@@ -116,7 +116,10 @@ const PRISM = prismPatterns();
  * @returns {RegExp} the pattern.
  */
 const prismRule = (token, marker) => {
-    const candidates = [...(PRISM.get(token) || [])].filter((r) => r.source.includes(marker));
+    // A nested span of the same kind (carve#2904) is registered under the
+    // token's name too; it is the rule below with a lookbehind in front.
+    const candidates = [...(PRISM.get(token) || [])]
+        .filter((r) => r.source.includes(marker) && !r.source.startsWith('(?<=[\\s\\S])'));
     assert.strictEqual(
         candidates.length,
         1,

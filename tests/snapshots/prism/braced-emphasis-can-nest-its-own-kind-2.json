@@ -1,10 +1,18 @@
 [
   {
     "type": "bold>bold",
-    "text": "*a {*b*"
+    "text": "*a "
+  },
+  {
+    "type": "bold>bold>forced-bold>bold",
+    "text": "{*b*}"
+  },
+  {
+    "type": "bold>bold",
+    "text": " c*"
   },
   {
     "type": "text",
-    "text": "} c*\n"
+    "text": "\n"
   }
 ]

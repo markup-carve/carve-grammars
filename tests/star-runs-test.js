@@ -22,7 +22,7 @@ const rows = [
     ['*a {% b**c', 'dBBBBBBd..'],
     ['*a {# b**c', 'dBBBBBBd..'],
     ['a *}b', '.....'],
-    ['a{*{*x*}*}b', '.ddBBBdd...'],
+    ['a{*{*x*}*}b', '.ddBBBBBdd.'],
     ['a *}b* c', '..dBBd..'],
     ['a ** b', '......'],
     ['a **b** c', '.........'],
