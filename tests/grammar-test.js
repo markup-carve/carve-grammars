@@ -580,7 +580,7 @@ if (realHljs) {
     realHljs.registerLanguage('carve', hljsDef);
     ok('hljs: table borders differ from operators and stay out of code', () => {
         const { value } = realHljs.highlight('|= Name | `a|b` | ^ |\n| a\\|b | c |', { language: 'carve' });
-        assert.match(value, /class="hljs-table-operator">\|=<\/span>/);
+        assert.match(value, /class="hljs-table-header">\|=<\/span>/);
         assert.match(value, /class="hljs-table-boundary">\|<\/span>/);
         assert.match(value, /class="hljs-table-operator"> \^<\/span>/);
         assert.match(value, /class="hljs-code">`a\|b`<\/span>/);
@@ -588,7 +588,7 @@ if (realHljs) {
     });
     ok('hljs: vertical table alignment is an operator', () => {
         const value = realHljs.highlight('|=?^ Heading |= Other |\n|?v Value | Plain |', { language: 'carve' }).value;
-        assert.match(value, /class="hljs-table-operator">\|=\?\^<\/span>/);
+        assert.match(value, /class="hljs-table-header">\|=\?\^<\/span>/);
         assert.match(value, /class="hljs-table-operator">\?v<\/span>/);
     });
     ok('hljs: an unclosed pipe-led line does not swallow later markup', () => {

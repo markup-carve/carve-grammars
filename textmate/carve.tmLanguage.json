@@ -807,15 +807,27 @@
           "name": "comment.line.percent.carve"
         },
         {
-          "match": "(\\|=)((?:[<~>][\\^~v]|\\?[\\^~v]|[<~>]))(?= |\\{[^}]*\\} )",
-          "captures": {
+          "comment": "A header cell's text is bold, so the header row reads as one (carve-grammars#685). The cell ends at the next unescaped separator; an escaped pipe is claimed by #escape first because it starts one character earlier.",
+          "begin": "(\\|=)((?:[<~>][\\^~v]|\\?[\\^~v]|[<~>]))?(?= |\\{[^}]*\\} )",
+          "beginCaptures": {
             "1": {
               "name": "keyword.operator.table.header.carve"
             },
             "2": {
               "name": "keyword.operator.table.alignment.carve"
             }
-          }
+          },
+          "end": "(?=\\|)|$",
+          "contentName": "markup.bold.table.header.carve",
+          "patterns": [
+            {
+              "match": "(?<=[ \\t])%{2,}(?:\\\\.|[^\\\\|\\r\\n])*",
+              "name": "comment.line.percent.carve"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
           "match": "(\\|=)",

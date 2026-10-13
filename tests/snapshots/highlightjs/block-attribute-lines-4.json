@@ -8,7 +8,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " A "
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {

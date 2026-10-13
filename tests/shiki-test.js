@@ -33,16 +33,18 @@ ok('light and dark extras cover the same scopes', () => {
     assert.deepStrictEqual(scopes(carveLightExtras), scopes(carveDarkExtras));
 });
 
-ok('table separators have a distinct color from cell content and operators', () => {
-    for (const [extras, boundaryColor, operatorColor] of [
-        [carveLightExtras, '#4f7f8d', '#cf222e'],
-        [carveDarkExtras, '#79a8b5', '#ff7b72'],
+ok('table separators recede and header, span and continuation markers differ', () => {
+    for (const [extras, boundaryColor, headerColor, spanColor] of [
+        [carveLightExtras, '#959da5', '#005cc5', '#e36209'],
+        [carveDarkExtras, '#6a737d', '#79b8ff', '#ffab70'],
     ]) {
         const rule = (scope) => extras.find((entry) => entry.scope === scope
             || Array.isArray(entry.scope) && entry.scope.includes(scope));
         assert.strictEqual(rule('punctuation.separator.table').settings.foreground, boundaryColor);
-        assert.strictEqual(rule('keyword.operator.table.header').settings.foreground, operatorColor);
-        assert.strictEqual(rule('keyword.operator.table.colspan').settings.foreground, operatorColor);
+        assert.strictEqual(rule('keyword.operator.table.header').settings.foreground, headerColor);
+        for (const marker of ['colspan', 'rowspan', 'continuation']) {
+            assert.strictEqual(rule(`keyword.operator.table.${marker}`).settings.foreground, spanColor);
+        }
     }
 });
 

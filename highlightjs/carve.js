@@ -1693,7 +1693,7 @@
         begin: header
             ? /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?|\?[\^~v])?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/
             : /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/,
-        beginScope: header ? 'table-operator' : 'table-boundary',
+        beginScope: header ? 'table-header' : 'table-boundary',
         end: [/\||(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n])))/, /(?:\{[^}\n]*\})?/, /[ \t]*$(?![^\r\n])/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
@@ -1708,7 +1708,7 @@
              * reaches inside this mode.
              */
             { className: 'comment', begin: /(?<=[ \t])%{2,}(?:\\.|[^\\|\r\n])*/ },
-            { className: 'table-operator', begin: /\|=(?= |\{)/ },
+            { className: 'table-header', begin: /\|=(?= |\{)/ },
             { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-operator', begin: /(?<=\|)[=]?(?:[<~>](?:[\^~v])?|\?[\^~v])(?= |\{)/ },
             { className: 'table-boundary', begin: /\|(?!(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))(?=[^\n]*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/ },

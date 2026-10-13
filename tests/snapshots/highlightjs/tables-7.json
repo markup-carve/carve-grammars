@@ -1,6 +1,6 @@
 [
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": "         "
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -16,7 +16,7 @@
     "text": " Diameter (km) "
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -32,7 +32,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -64,7 +64,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {

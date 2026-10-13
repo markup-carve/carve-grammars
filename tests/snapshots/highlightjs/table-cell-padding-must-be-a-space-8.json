@@ -1,6 +1,6 @@
 [
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {
@@ -8,7 +8,7 @@
     "text": " h\t"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-header",
     "text": "|="
   },
   {

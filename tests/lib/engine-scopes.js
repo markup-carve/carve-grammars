@@ -674,7 +674,7 @@ export const ENGINE_SCOPES = {
     ],
     "highlightjs": [
       [
-        "table-operator"
+        "table-header"
       ]
     ]
   },
@@ -946,6 +946,9 @@ export const ENGINE_SCOPES = {
       ]
     ],
     "highlightjs": [
+      [
+        "table-header"
+      ],
       [
         "table-operator"
       ]
