@@ -1752,7 +1752,11 @@
     // Captions: ^ caption text
     const CAPTION = {
         className: 'title',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\^ (?![ \t]*$(?![^\r\n]))/,
+        // A quote of bare `>` lines is no caption host (CARVE-P9-080); the
+        // lookbehind is Prism's, see there. Not an `on:begin` veto: an ignored
+        // top-level begin rescans with the later rules only, which can run to
+        // the end of the document each time.
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?=[ \t]*\^ )(?<!(?:(?<![\s\S])\uFEFF?|(?:\r\n|\r(?!\n)|\n)[ \t]*(?:\r\n|\r(?!\n)|\n))(?:>[ \t]*(?:\r\n|\r(?!\n)|\n))+(?:[ \t]*(?:\r\n|\r(?!\n)|\n))*)[ \t]*\^ (?![ \t]*$(?![^\r\n]))/,
         end: /$(?![^\r\n])/,
         relevance: 5,
     };

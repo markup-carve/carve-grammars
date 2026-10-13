@@ -368,6 +368,14 @@ construct inside a list item or a block quote, which is a common valid shape,
 in exchange for correcting a rare invalid one. So both keep their `^[ \t]*`
 anchors and knowingly over-colour the indented-at-document-level case.
 
+The same limit decides when a caption is a caption. A quote whose every line is
+a bare `>` is no caption host (CARVE-P9-080), so the `^ ` line below it is a
+paragraph. All three grammars see that when the quote opens at the document
+start or after a blank line. Below a prose line they cannot: there the bare `>`
+may close a quote that the prose line continues lazily (`> q`, `lazy`, `>` still
+captions), and telling the two apart means reading back to the start of the
+paragraph. `text`, `>`, `^ cap` therefore keeps its caption scope.
+
 The practical consequence: a document that indents a heading, fence, blockquote
 or abbreviation definition by one or two columns at top level is highlighted by
 Prism and highlight.js and left as plain text by the TextMate grammar (Shiki,

@@ -37,6 +37,9 @@
       "include": "#block_comment_on_quote_marker_line"
     },
     {
+      "include": "#empty_quote_after_break"
+    },
+    {
       "include": "#blockquote"
     },
     {
@@ -604,6 +607,35 @@
         }
       ],
       "comment": "Composite figure (PART 9 §4c, markup-carve/carve#1215). The kind word `figure` is RESERVED among the `:::` types: a BARE opener - the fence, its separator, the word `figure`, and NOTHING else - is ONE figure of ordered panels, not an admonition, so it carries its own scope and this rule sits BEFORE `#admonition` everywhere the generic container is reachable. The `[ \\t]*$` tail is the whole distinction: an opener carrying a quoted title or a `[label]` (`::: figure \"T\"`, `::: figure [g]`) does not match here at all and falls through to `#admonition`, which is the generic Tier-2 container the clause says it stays. GROUPS DO NOT NEST: a bare `::: figure` at ANY depth inside an open group is a generic container, so this rule's body reaches `#admonition_in_group` rather than `#admonition` - that variant is the same generic container with `#figure_group` removed from its own body, which is what carries the rule down a chain of `:::` containers. RESIDUAL, written down rather than left to be rediscovered: a bare opener reached through a LIST ITEM or a BLOCKQUOTE inside a group goes through `#container_blocks`, which still offers `#figure_group`, so it over-colours as a group there. That is the same block-context limit every line-based rule in this file has (carve-grammars#71); tree-sitter-carve is where a real container model lives. THE SEPARATOR IS A SPACE RUN, never a tab (grammar.ebnf PART 7, MARKER SEPARATORS; corpus 254): `:::<TAB>figure` is a paragraph, so this rule does not claim it and the line falls to `#admonition`, which over-colours it exactly as it does today - a pre-existing trade this rule neither widens nor fixes. Trailing whitespace after the kind word is insignificant and may be a tab. The closer backreferences the opener's colon run (`\\1`), the exact-length rule `#admonition` already follows. THE CAPTION AFTER THE CLOSER needs no rule here: the group caption is an ordinary `^ ` line one line below the closing fence, which `#caption` already claims at the document level."
+    },
+    "empty_quote_after_break": {
+      "comment": "A quote whose every line is a bare `>` is no caption host (CARVE-P9-080, corpus 554), so the caret line below it is a paragraph. A line rule cannot see the lines above, so this rule opens on a blank line or at the document start and lives until the next line that is neither blank nor a bare `>`; only a bare `>` run inside it reaches `#empty_quote`. Below a prose line the bare `>` may close a quote that line continues lazily, so that shape stays out of reach and keeps its caption scope.",
+      "begin": "^[ \\t]*$|\\A(?=\\x{FEFF}?>[ \\t]*$)",
+      "end": "^(?!(?:\\A\\x{FEFF})?>[ \\t]*$|[ \\t]*$)",
+      "patterns": [
+        {
+          "include": "#empty_quote"
+        }
+      ]
+    },
+    "empty_quote": {
+      "comment": "The bare `>` run itself, past any blank lines, up to and including a caret line, which it scopes as paragraph text instead of `#caption`. It ends at the first other line, and `#empty_quote_after_break` ends there with it.",
+      "begin": "^(?=(?:\\A\\x{FEFF})?>[ \\t]*$)",
+      "end": "^(?!(?:\\A\\x{FEFF})?>[ \\t]*$|[ \\t]*$|[ \\t]*\\^ +(?![ \\t]*$))",
+      "patterns": [
+        {
+          "include": "#blockquote"
+        },
+        {
+          "begin": "^(?=[ \\t]*\\^ +(?![ \\t]*$))",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        }
+      ]
     },
     "blockquote": {
       "comment": "The DOCUMENT-LEVEL blockquote, anchored at column 0 (carve-grammars#138). An indented marker at the top level is literal text - verified against the pinned engine, ` > q` renders `<p>&gt; q</p>` - so this rule refuses it and `#blockquote_in_container` takes over inside a container. A quoted line's own heading, task, bullet or ordered marker scopes as it does outside a quote, nested prefixes included, and its inline run is scoped (carve-grammars#683); one match per line keeps every inline span on its line.",

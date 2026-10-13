@@ -1470,7 +1470,15 @@
             // strict about this, so the two engines now agree.
             // MARKER REQUIRES CONTENT: `^` followed by whitespace only is prose,
             // the same as every other marker - carve-rs renders `^ ` as `<p>^</p>`.
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\^ +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+            // AN EMPTY QUOTE IS NO HOST (CARVE-P9-080): below a run of bare `>`
+            // lines opened at the start or after a blank line, the caret line is
+            // a paragraph. The sentinel lookahead keeps the lookbehind off every
+            // other line start, and each caret line reads back only over its own
+            // run, so the lookbehind needs no bound. Below a prose line the run may close a quote
+            // that line continues lazily, which a pattern cannot see; and the
+            // start alternative is a token boundary too, so it needs the `>`
+            // right there (a quote line can end in a comment token).
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?=[ \t]*\^ )(?<!(?:(?<![\s\S])\uFEFF?|(?:\r\n|\r(?!\n)|\n)[ \t]*(?:\r\n|\r(?!\n)|\n))(?:>[ \t]*(?:\r\n|\r(?!\n)|\n))+(?:[ \t]*(?:\r\n|\r(?!\n)|\n))*)[ \t]*\^ +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
             alias: 'title',
             inside: Object.assign({
                 'punctuation': /^(?<![^\r\n])\uFEFF?\^/,

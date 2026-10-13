@@ -21,18 +21,6 @@
   },
   {
     "type": "text",
-    "text": "\n\n"
-  },
-  {
-    "type": "caption>title>punctuation",
-    "text": "^"
-  },
-  {
-    "type": "caption>title",
-    "text": " cap"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "\n\n^ cap\n"
   }
 ]
