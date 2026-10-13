@@ -3,6 +3,7 @@
  * Runs without shiki installed; @shikijs/themes is a dev dependency.
  */
 import assert from 'node:assert';
+import { readFileSync } from 'node:fs';
 import {
     carveGrammar,
     carveLightExtras,
@@ -85,6 +86,15 @@ ok('carveMarkdown returns a spreadable vitepress markdown config', () => {
     assert.strictEqual(md.codeTransformers[0].name, 'carve-extras');
     const extraLang = { name: 'other' };
     assert.strictEqual(carveMarkdown({ languages: [extraLang] }).languages[1], extraLang);
+});
+
+const browser = await import('../shiki/themes.js');
+ok('the browser entry carries the same themes and needs no Node.js module', () => {
+    assert.strictEqual(browser.carveLightTheme, carveLightTheme);
+    assert.strictEqual(browser.carveDarkTheme, carveDarkTheme);
+    assert.strictEqual(browser.carveStylingTransformer, carveStylingTransformer);
+    const source = readFileSync(new URL('../shiki/themes.js', import.meta.url), 'utf8');
+    assert.doesNotMatch(source, /from ['"]node:/);
 });
 
 console.log(`${passed} shiki-kit tests passed`);

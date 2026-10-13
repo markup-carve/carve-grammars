@@ -559,6 +559,18 @@ Named exports for other setups: `carveGrammar`, `carveLightExtras` /
 `carveDarkExtras`, `carveLightTheme` / `carveDarkTheme`, `extendTheme`,
 `carveStylingTransformer`.
 
+`@markup-carve/carve-grammars/shiki/themes` exports the theme rules and the
+transformer without the Node.js-only grammar loader, for a highlighter that
+runs in the browser:
+
+```ts
+import { createHighlighter } from 'shiki'
+import { carveLightTheme, carveDarkTheme } from '@markup-carve/carve-grammars/shiki/themes'
+import carveGrammar from '@markup-carve/carve-grammars/textmate/carve.tmLanguage.json'
+
+const highlighter = await createHighlighter({ themes: [carveLightTheme, carveDarkTheme], langs: [carveGrammar] })
+```
+
 #### Diff presentation with an underlying language
 
 Carve keeps a code block's presentation hooks separate from its language. The

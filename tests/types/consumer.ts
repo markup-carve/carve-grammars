@@ -10,6 +10,7 @@ import {
   CarveEditorElement,
   defineCarveEditor,
 } from '@markup-carve/carve-grammars/editor';
+import { carveLightTheme, carveStylingTransformer, extendTheme, carveDarkExtras } from '@markup-carve/carve-grammars/shiki/themes';
 
 const loaded: JSONContent = carveToProseMirror('# Typed', {
   unsupported: 'preserve',
@@ -44,3 +45,7 @@ try {
     void nodeType;
   }
 }
+
+const themed = extendTheme(carveLightTheme, carveDarkExtras);
+void themed;
+void carveStylingTransformer;
