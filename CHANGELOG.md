@@ -25,20 +25,20 @@ All notable changes to `carve-grammars` are documented here.
   footnote, Prism and highlight.js require a flush-left line below it (#691).
 - A heading title and a caption scope the full inline set (links, spans,
   footnotes, mentions, critic marks and more) in all three grammars, not only
-  emphasis and code (#PR).
+  emphasis and code (#693).
 - Link text, span text, extension content, definition terms and container titles
-  and labels scope their inline markup in TextMate and Prism (#PR).
+  and labels scope their inline markup in TextMate and Prism (#693).
 - TextMate scopes the `{=format}` of a raw inline span, a math or literal sigil on
   a widened or unclosed backtick run, and an unclosed run inside a forced span; an
-  unclosed run no longer swallows a `:::` closer line (#PR).
+  unclosed run no longer swallows a `:::` closer line (#693).
 - TextMate: a strong run cut by an inline comment (`*a %% c*`) stays text, and the
-  forced strike's delimiters are named like the bare strike's (#PR).
+  forced strike's delimiters are named like the bare strike's (#693).
 - TextMate: a fence closes on a longer run of its own character, as the engine
-  reads it (#PR).
+  reads it (#693).
 - The Shiki themes color footnote, span, abbreviation, directive, extension,
   citation, literal, callout, label and front matter punctuation like other
   punctuation, and give citation keys, raw formats and figure-group fences their
-  own colors (#PR).
+  own colors (#693).
 
 ### Added
 
@@ -48,7 +48,7 @@ All notable changes to `carve-grammars` are documented here.
   their own (#646).
 - The TextMate grammar highlights a fenced code body with its language's grammar
   from `fence-languages.json`, a `=html` or `=latex` raw block with its format's,
-  and a bare fence under `{.diff}` as a diff (#PR).
+  and a bare fence under `{.diff}` as a diff (#693).
 
 ## [0.1.14] - 2026-10-09
 
