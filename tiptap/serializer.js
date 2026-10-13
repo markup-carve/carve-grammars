@@ -1894,6 +1894,7 @@ function mergeAuthoredSource(authored, baseline, edited) {
  *   emoji `:name:` (not modeled by CarveKit)
  */
 function escapeStructural(text, trailingSafe = false) {
+    let subscripts;
     return resolvedSpaces(text, trailingSafe)
         // A backslash that would otherwise escape a following escapable char.
         .replace(/\\(?=[\\`*_/~^=,{}[\]()<>@#%!|.+-])/g, '\\\\')
@@ -1914,7 +1915,7 @@ function escapeStructural(text, trailingSafe = false) {
         // `%` is NOT among them: `{%%}` is an empty COMMENT and renders to
         // nothing, so its brace still has a construct to protect.
         .replace(/\{(?!([+\-~#=])\1\})(?=[+\-~#=%])/g, '\\{')
-        .replace(/\{(?=,)/g, (brace, at, all) => (closesSubscript(all, at) ? '\\{' : brace))
+        .replace(/\{(?=,)/g, (brace, at, all) => ((subscripts ??= subscriptOpeners(all)).has(at) ? '\\{' : brace))
         .replace(/(^|[^\w.])@(?=[A-Za-z0-9_])/g, '$1\\@')
         .replace(/(^|[^\w])#(?=[A-Za-z0-9_])/g, '$1\\#')
         // A `:name:` symbol only opens at a word boundary, and its name starts
@@ -1950,27 +1951,43 @@ function escapeEmphasisOpeners(text) {
 }
 
 /**
- * Whether the `{,` at `at` opens a subscript: a `,}` closes it later in the run,
- * after some content and without leaving a bracket run it sits in (`[{,a],}`
- * is text). `{,,}` is text too.
+ * The offsets of every `{,` that opens a subscript: a `,}` closes it later in
+ * the run, after some content and without leaving a bracket run it sits in
+ * (`[{,a],}` is text). `{,,}` is text too. One pass: each opener waits at its
+ * bracket depth for the first `,}` or enclosing `]` at that depth.
  */
-function closesSubscript(text, at) {
-    let open = 0;
-    for (let i = 0; i < at; i++) {
-        if (text[i] === '\\') i++;
-        else if (text[i] === '[') open++;
-        else if (text[i] === ']' && open > 0) open--;
-    }
+function subscriptOpeners(text) {
+    const opens = new Set();
+    const waiting = new Map();
     let depth = 0;
-    for (let i = at + 2; i < text.length - 1; i++) {
+    const park = (at) => {
+        if (!waiting.has(depth)) waiting.set(depth, []);
+        waiting.get(depth).push(at);
+    };
+    const settle = (level, at, closes) => {
+        const queue = waiting.get(level);
+        if (!queue) return;
+        // An opener sees only events from two past its own `{`.
+        const keep = queue.filter((open) => at < open + 2);
+        for (const open of queue) if (at >= open + 2 && closes(open)) opens.add(open);
+        if (keep.length) waiting.set(level, keep);
+        else waiting.delete(level);
+    };
+    for (let i = 0; i < text.length; i++) {
         const ch = text[i];
-        if (ch === '\\') { i++; continue; }
+        if (ch === '{' && text[i + 1] === ',') park(i);
+        if (ch === '\\') {
+            if (text[i + 1] === '{' && text[i + 2] === ',') park(i + 1);
+            i++;
+            continue;
+        }
         if (ch === '[') depth++;
-        else if (ch === ']' && depth > 0) depth--;
-        else if (ch === ']' && open > 0) return false;
-        else if (ch === ',' && text[i + 1] === '}' && depth === 0) return i > at + 2;
+        else if (ch === ']' && depth > 0) {
+            settle(depth, i, () => false);
+            depth--;
+        } else if (ch === ',' && text[i + 1] === '}') settle(depth, i, (open) => i > open + 2);
     }
-    return false;
+    return opens;
 }
 
 const MARK_DELIMITERS = { bold: '*', italic: '/', underline: '_', strike: '~', highlight: '=' };
