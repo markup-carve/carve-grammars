@@ -856,6 +856,10 @@
     // the engine renders (see the note on the quote branch below).
     var quoteMarkedLine = '(?:[ \\t]*>[^\\n]*\\n)';
 
+    var continuationInside = {
+        'punctuation': /\+/,
+    };
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -1432,16 +1436,6 @@
             }, inline),
         },
 
-        // A lone `+` is grammar.ebnf `continuation_marker`, which attaches a
-        // block to a list item, quote, footnote or description; it is not
-        // table syntax (#523).
-        'continuation-marker': {
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$(?![^\r\n])/m,
-            inside: {
-                'punctuation': /\+/,
-            },
-        },
-
         // A continuation ROW carrying cells (`continuation_row`, corpus
         // 63-table-multi-line-cell-continuation). It has to end in `|`, so
         // `one + two` in prose stays literal.
@@ -1537,6 +1531,32 @@
                 'constant': /\[[ xX\-_>?]\]/,
             },
         },
+        // A lone `+` is grammar.ebnf `continuation_marker`, which attaches a
+        // block to a list item, quote, footnote or description; it is not
+        // table syntax (#523). AFTER 'list', so the same pattern also takes a
+        // `+` left alone on a marker line once 'list' has the marker (`- +`).
+        // A quote's or footnote's own first line takes it only when a
+        // non-blank flush-left line follows (markup-carve/carve#3105).
+        'continuation-marker': [
+            {
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$(?![^\r\n])/m,
+                inside: continuationInside,
+            },
+            {
+                // Greedy so the lookahead reads the next line even when an
+                // earlier rule (a table, a fence) has already tokenized it.
+                pattern: /(^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?:> )+)\+[ \t]*(?=\r?\n[^ \t\r\n>])/m,
+                lookbehind: true,
+                greedy: true,
+                inside: continuationInside,
+            },
+            {
+                pattern: /(^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n[^ \t\r\n])/m,
+                lookbehind: true,
+                greedy: true,
+                inside: continuationInside,
+            },
+        ],
         // AFTER 'list', deliberately, and that placement is the whole of the
         // marker-line fix (carve-grammars#259).
         //
@@ -1598,6 +1618,10 @@
                 // the inline rules to tokenize as ordinary content, same as
                 // it was when this lived in 'list'.
                 'punctuation': /^(?<![^\r\n])[ \t]*: +(?![ \t]*$(?![^\r\n]))/m,
+                'continuation-marker': {
+                    pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
+                    inside: continuationInside,
+                },
             },
         },
 
@@ -2365,6 +2389,12 @@
                 inside: Prism.languages.carve.title.inside,
             },
             'list': Prism.languages.carve.list,
+            // Only right after a marker 'list' took: a bare `> +` is decided
+            // at the top level, where the next line is in view.
+            'continuation-marker': {
+                pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
+                inside: continuationInside,
+            },
         }, rest);
     }
 

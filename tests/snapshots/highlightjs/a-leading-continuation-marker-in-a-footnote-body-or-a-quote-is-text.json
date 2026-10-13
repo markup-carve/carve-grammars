@@ -1,7 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[^a]: +"
+    "text": "[^a]: "
+  },
+  {
+    "scope": "symbol>punctuation",
+    "text": "+"
   },
   {
     "scope": null,

@@ -9,7 +9,11 @@
   },
   {
     "scope": "title",
-    "text": ":  +"
+    "text": ":  "
+  },
+  {
+    "scope": "title>punctuation",
+    "text": "+"
   },
   {
     "scope": null,

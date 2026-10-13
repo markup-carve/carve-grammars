@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " +\n"
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "table-boundary",

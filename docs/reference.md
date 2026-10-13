@@ -481,7 +481,7 @@ attribute block.
 ### TextMate limits
 
 A TextMate rule sees one line at a time, so a few shapes color differently from
-how Carve reads them. vscode-carve declares the same three.
+how Carve reads them. vscode-carve declares the first three.
 
 - A bare bold run can cross a soft line break, so its opener can't check for a
   closer first. When the only closer-shaped `*` sits inside a code span, or
@@ -490,6 +490,9 @@ how Carve reads them. vscode-carve declares the same three.
 - A braced span whose closer is on a later line is not scoped as a span.
 - A bare italic, underline, strikethrough or highlight run is scoped only when
   its closer is on the same line.
+- A `+` alone on a quote's or footnote's first line (`> +`, `[^a]: +`) is
+  scoped as the continuation marker even when nothing follows it or the next
+  line is blank or indented, where Carve reads it as the text `+`.
 
 ### Prism and highlight.js limits
 

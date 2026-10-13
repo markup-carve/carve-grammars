@@ -16,7 +16,11 @@
     "text": ":  "
   },
   {
+    "type": "definition-list>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
     "type": "definition-list",
-    "text": "+\nflush\n"
+    "text": "\nflush\n"
   }
 ]

@@ -641,6 +641,40 @@
       "comment": "The DOCUMENT-LEVEL blockquote, anchored at column 0 (carve-grammars#138). An indented marker at the top level is literal text - verified against the pinned engine, ` > q` renders `<p>&gt; q</p>` - so this rule refuses it and `#blockquote_in_container` takes over inside a container. A quoted line's own heading, task, bullet or ordered marker scopes as it does outside a quote, nested prefixes included, and its inline run is scoped (carve-grammars#683); one match per line keeps every inline span on its line.",
       "patterns": [
         {
+          "comment": "A `+` as the whole rest of a quoted marker line is the continuation marker: after a list marker always, and as the quote's own first line (`> +`) when a flush-left block follows (markup-carve/carve#3105). The next line is out of reach here, so the bare form is scoped regardless.",
+          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +))?(\\+)[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.list.carve"
+            },
+            "5": {
+              "name": "punctuation.definition.checkbox.carve"
+            },
+            "6": {
+              "name": "constant.language.checkbox.carve"
+            },
+            "7": {
+              "name": "punctuation.definition.checkbox.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.list.numbered.carve"
+            },
+            "13": {
+              "name": "punctuation.definition.list.continuation.carve"
+            }
+          },
+          "name": "markup.quote.carve"
+        },
+        {
           "match": "^(?:\\A\\x{FEFF})?(>)(?= |$) ?((?:>(?= |$) ?)*)(#{1,6})( )(?![ \\t]*$)(.*)$",
           "captures": {
             "1": {
@@ -712,6 +746,40 @@
     "blockquote_in_container": {
       "comment": "The in-container blockquote: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this, and only after the container's `end` has established that the line sits at or beyond the item's content column - which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137). A quoted line's own heading, task, bullet or ordered marker scopes as it does outside a quote, nested prefixes included, and its inline run is scoped (carve-grammars#683); one match per line keeps every inline span on its line.",
       "patterns": [
+        {
+          "comment": "The quoted list-marker form of the `+` continuation marker, as in `#blockquote`.",
+          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +))(\\+)[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.list.carve"
+            },
+            "5": {
+              "name": "punctuation.definition.checkbox.carve"
+            },
+            "6": {
+              "name": "constant.language.checkbox.carve"
+            },
+            "7": {
+              "name": "punctuation.definition.checkbox.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.list.numbered.carve"
+            },
+            "13": {
+              "name": "punctuation.definition.list.continuation.carve"
+            }
+          },
+          "name": "markup.quote.carve"
+        },
         {
           "match": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(#{1,6})( )(?![ \\t]*$)(.*)$",
           "captures": {
@@ -1078,6 +1146,15 @@
       "match": "^(?:\\A\\x{FEFF})?(\\s*)(\\+)(\\s*)$",
       "captures": {
         "2": {
+          "name": "punctuation.definition.list.continuation.carve"
+        }
+      }
+    },
+    "marker_line_continuation": {
+      "comment": "A `+` that is the whole rest of a list item's or footnote's marker line is the continuation marker too (`- +`, `1. +`, `- [ ] +`, `[^a]: +`). `\\G` is where the container's opener stopped: a list opener has consumed its separator, a footnote opener stops before it. A footnote's `+` is a marker only when a flush-left line follows, which a line grammar cannot see, so it is scoped regardless.",
+      "match": "\\G(?:(?<=[ \\t])| +)(\\+)[ \\t]*$",
+      "captures": {
+        "1": {
           "name": "punctuation.definition.list.continuation.carve"
         }
       }
@@ -2879,6 +2956,17 @@
               }
             },
             {
+              "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
+              "captures": {
+                "2": {
+                  "name": "punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "punctuation.definition.list.continuation.carve"
+                }
+              }
+            },
+            {
               "match": "^([ \\t]*)(:)(?=[ ])",
               "captures": {
                 "2": {
@@ -3465,6 +3553,9 @@
     "container_blocks": {
       "comment": "Block patterns shared by list-item bodies. Frontmatter remains document-start only. The list item's zero-width while condition checks its content column before child rules run. Marker-line variants recognize comment fences, quotes, generic containers, and composite figures at the scan position after a list marker. Indented link-reference definitions use the container variant.",
       "patterns": [
+        {
+          "include": "#marker_line_continuation"
+        },
         {
           "include": "#block_comment_on_marker_line"
         },

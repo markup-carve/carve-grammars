@@ -19,6 +19,10 @@ All notable changes to `carve-grammars` are documented here.
 - A `^ ` line below a quote made only of bare `>` lines is a paragraph, not a
   caption, in all three grammars, when the quote opens at the document start or
   after a blank line (#675).
+- A `+` that is the whole content of a list item's, description's, quote's or
+  footnote's first line (`- +`, `1. +`, `- [ ] +`, `: +`, `> +`, `[^a]: +`) is
+  scoped as the continuation marker in all three grammars. For a quote or a
+  footnote, Prism and highlight.js require a flush-left line below it (#691).
 
 ### Added
 

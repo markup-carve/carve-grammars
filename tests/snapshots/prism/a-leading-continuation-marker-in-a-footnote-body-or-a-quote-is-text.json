@@ -5,7 +5,15 @@
   },
   {
     "type": "text",
-    "text": ": +\nflush\n\nsee"
+    "text": ": "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nflush\n\nsee"
   },
   {
     "type": "footnote>symbol",

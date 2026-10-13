@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " +\npara\n"
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
   },
   {
     "scope": "punctuation",

@@ -16,8 +16,12 @@
     "text": ": "
   },
   {
+    "type": "definition-list>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
     "type": "definition-list",
-    "text": "+\n"
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",
