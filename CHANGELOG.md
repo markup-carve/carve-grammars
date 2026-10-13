@@ -12,6 +12,10 @@ All notable changes to `carve-grammars` are documented here.
 - Leave an attribute block glued after a delimited comment as text, so
   `*x*{% c %}{.k}` no longer scopes `{.k}` as attributes in any of the three
   grammars (#674).
+- The Tiptap writer keeps the escapes an edited paragraph needs next to a marked
+  run: a literal `{` before one (`\{*x*}`), a lone delimiter a later mark's
+  delimiter would close (`\~a *x* b~`), and a literal `{,` that would open a
+  subscript (#676).
 
 ### Added
 

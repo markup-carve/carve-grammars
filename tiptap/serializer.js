@@ -1318,6 +1318,18 @@ export function serializeToCarve(doc, options = {}) {
         if (!content) return '';
         let result = '';
         let resumeDelimitedBold = false;
+        let laterSets = null;
+        const laterDelimiters = (index) => {
+            if (!laterSets) {
+                laterSets = [];
+                let found = new Set();
+                for (let at = content.length - 1; at >= 0; at--) {
+                    laterSets[at] = found;
+                    found = delimitersIn(content[at], new Set(found));
+                }
+            }
+            return laterSets[index];
+        };
 
         const referenceLinkAt = (index) => {
             const candidate = content[index];
@@ -1575,7 +1587,12 @@ export function serializeToCarve(doc, options = {}) {
                     // one in an adjacent inline node across the mark boundary
                     // (`*` + linked `bold` + `*` -> `*[bold](u)*`). Escape an
                     // unescaped, non-doubled edge delimiter when a sibling abuts it.
-                    if (idx < content.length - 1) t = escapeTrailingDelimiter(t);
+                    if (idx < content.length - 1) {
+                        t = escapeTrailingDelimiter(t);
+                        // A lone opener away from the edge pairs with a later
+                        // sibling's delimiter too (`~a *x ~>y~}` opens at `~a`).
+                        t = escapeCrossRunOpeners(t, laterDelimiters(idx));
+                    }
                     if (idx > 0) t = escapeLeadingDelimiter(t);
                 }
                 // If this run will be wrapped in a bracket label (link / span /
@@ -1765,6 +1782,13 @@ export function serializeToCarve(doc, options = {}) {
                     t = '[' + t + ']' + serializeAttributes(attrs, ['title', 'resolved'], true);
                 }
 
+                // A literal `{` ahead of a delimiter-led run spells a braced
+                // opener with it (`{` + `*x*` is a forced strong run).
+                const before = content[idx - 1];
+                if (/^[*/_~=^,+\-#%]/.test(t) && /(?:^|[^\\])(?:\\\\)*\{$/.test(result)
+                    && before?.type === 'text' && !(before.marks || []).length && !before.carveVerbatim) {
+                    result = result.slice(0, -1) + '\\{';
+                }
                 result += t;
             } else if (node.type === 'hardBreak') {
                 result += '\\\n';
@@ -1890,6 +1914,7 @@ function escapeStructural(text, trailingSafe = false) {
         // `%` is NOT among them: `{%%}` is an empty COMMENT and renders to
         // nothing, so its brace still has a construct to protect.
         .replace(/\{(?!([+\-~#=])\1\})(?=[+\-~#=%])/g, '\\{')
+        .replace(/\{(?=,)/g, (brace, at, all) => (closesSubscript(all, at) ? '\\{' : brace))
         .replace(/(^|[^\w.])@(?=[A-Za-z0-9_])/g, '$1\\@')
         .replace(/(^|[^\w])#(?=[A-Za-z0-9_])/g, '$1\\#')
         // A `:name:` symbol only opens at a word boundary, and its name starts
@@ -1922,6 +1947,73 @@ function escapeEmphasisOpeners(text) {
         .replace(/(^|[\s([{<"'])(?<!_)_(?=[^_\s\n](?:[^_\n]*[^_\s\n])?_(?!_))/g, '$1\\_')
         // `=>` and `<=` are arrows and comparisons, never a highlight edge.
         .replace(/(?<![A-Za-z0-9_=\\])=(?=[^=\s>](?:[^=\n]*[^=\s<])?=(?![=A-Za-z0-9]))/g, '\\=');
+}
+
+/**
+ * Whether the `{,` at `at` opens a subscript: a `,}` closes it later in the run,
+ * after some content and without leaving a bracket run it sits in (`[{,a],}`
+ * is text). `{,,}` is text too.
+ */
+function closesSubscript(text, at) {
+    let open = 0;
+    for (let i = 0; i < at; i++) {
+        if (text[i] === '\\') i++;
+        else if (text[i] === '[') open++;
+        else if (text[i] === ']' && open > 0) open--;
+    }
+    let depth = 0;
+    for (let i = at + 2; i < text.length - 1; i++) {
+        const ch = text[i];
+        if (ch === '\\') { i++; continue; }
+        if (ch === '[') depth++;
+        else if (ch === ']' && depth > 0) depth--;
+        else if (ch === ']' && open > 0) return false;
+        else if (ch === ',' && text[i + 1] === '}' && depth === 0) return i > at + 2;
+    }
+    return false;
+}
+
+const MARK_DELIMITERS = { bold: '*', italic: '/', underline: '_', strike: '~', highlight: '=' };
+
+/** Collect the emphasis delimiters an inline node, or anything inside it, can write. */
+function delimitersIn(value, found) {
+    if (Array.isArray(value)) {
+        for (const item of value) delimitersIn(item, found);
+        return found;
+    }
+    if (!value || typeof value !== 'object') return found;
+    // Code content is literal, so its delimiters close nothing outside it.
+    const literal = (value.marks || []).some((mark) => mark.type === 'code' || mark.type === 'carveCriticComment');
+    if (typeof value.text === 'string' && !literal) {
+        for (const ch of value.text) if ('*/_~='.includes(ch)) found.add(ch);
+    }
+    for (const mark of value.marks || []) if (MARK_DELIMITERS[mark.type]) found.add(MARK_DELIMITERS[mark.type]);
+    if (value.type === 'carveSubstitution') found.add('~');
+    delimitersIn(value.content, found);
+    delimitersIn(value.attrs?.old, found);
+    delimitersIn(value.attrs?.new, found);
+    return found;
+}
+
+const UNESCAPED = String.raw`(?<!(?:^|[^\\])(?:\\\\)*\\)`;
+const CROSS_RUN_OPENERS = {
+    '*': new RegExp(UNESCAPED + String.raw`(?<!\*)\*(?=[^*\s])`, 'g'),
+    '~': new RegExp(UNESCAPED + String.raw`(?<!~)~(?=[^~\s])`, 'g'),
+    '/': /(?<=^|[\s([{<"'])(?<!\/)\/(?=[^/\s])/g,
+    '_': /(?<=^|[\s([{<"'])(?<!_)_(?=[^_\s])/g,
+    '=': /(?<![A-Za-z0-9_=\\])=(?=[^=\s>])/g,
+};
+
+/**
+ * Escape each still-bare delimiter in a run that could OPEN a span whose closer
+ * a later sibling writes. `later` holds the delimiters the rest of the
+ * paragraph can write; a delimiter none of them repeats stays bare.
+ */
+function escapeCrossRunOpeners(s, later) {
+    for (const [delimiter, pattern] of Object.entries(CROSS_RUN_OPENERS)) {
+        if (later.has(delimiter)) s = s.replace(pattern, '\\$&');
+    }
+    return s;
 }
 
 /** Escape a lone emphasis delimiter at the start of a run (cross-node closer). */
