@@ -200,11 +200,13 @@
         // hard-break rule - Prism applies a pattern to the remaining text chunk,
         // so `^` matches at a chunk boundary rather than a real line start.
         pattern: RegExp(
+            // `(?=\{)` first: every branch starts at `{`, and checking it before the
+            // line-prefix lookbehinds keeps a long run of spaces linear.
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
-            '(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
+            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?<=[*/_~=`>}:)\\]$<|])' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
             + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
+            + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))' + ')',
         ),
         greedy: true,
         alias: 'attr-value',
@@ -226,7 +228,7 @@
     // A block-attribute line as a whole body, such as the `{empty}` sentinel.
     var bodyAttributes = function (marker) {
         return {
-            pattern: RegExp('(?<=(?:^(?<![^\\r\\n])|\\n)(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + marker + '[ \\t]+)'
+            pattern: RegExp('(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + marker + '[ \\t]+)'
                 + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?=[ \\t]*(?:\\r?\\n|$(?![^\\r\\n])))'),
             greedy: true,
             alias: 'attr-value',

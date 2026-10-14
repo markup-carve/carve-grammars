@@ -8,6 +8,8 @@ All notable changes to `carve-grammars` are documented here.
 
 - highlight.js: a closed code fence longer than 32 KB ends at its closer
   instead of painting the rest of the document as code (#711).
+- Prism: a long run of spaces in a table cell or before an attribute block no
+  longer takes quadratic time.
 
 ## [0.1.15] - 2026-10-14
 

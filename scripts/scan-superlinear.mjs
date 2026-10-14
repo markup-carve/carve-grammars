@@ -324,6 +324,7 @@ const lineBaits = [
     ['row, repeated comments', (n) => `| ${'a %%c |'.repeat(Math.ceil(n / 8))}\n`],
     ['table row, no comment', (n) => `| ${'a'.repeat(n)} | b |\n`],
     ['table cell comment, spaces', (n) => `| a %% ${' '.repeat(n)}h | b |\n`],
+    ['spaces, then a block', (n) => `x${' '.repeat(n)}{.c}\n`],
     // A HEADING'S COMMENT RULE WALKS ITS LINE PREFIX (carve-grammars#601). The
     // walk matches span widths with a backreference and skips backslash
     // escapes, so its cost lives in one long line and no repeated opener above
