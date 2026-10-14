@@ -10,7 +10,7 @@ const grammar = fileURLToPath(new URL('../textmate/carve.tmLanguage.json', impor
 const textmate = await textmateLineTokenizer(grammar);
 
 const EXPECT = {
-    textmate: { bullet: /punctuation\.definition\.list\.unnumbered/, ordered: /punctuation\.definition\.list\.numbered/, task: /punctuation\.definition\.list\.carve/, heading: /punctuation\.definition\.heading/ },
+    textmate: { bullet: /punctuation\.definition\.list\.unnumbered/, ordered: /punctuation\.definition\.list\.numbered/, task: /punctuation\.definition\.list\.unnumbered/, heading: /punctuation\.definition\.heading/ },
     prism: { bullet: /blockquote>list>punctuation/, ordered: /blockquote>list>punctuation/, task: /blockquote>list>punctuation/, heading: /blockquote>title/ },
     highlightjs: { bullet: /^bullet$/, ordered: /^bullet$/, task: /^bullet$/, heading: /^section$/ },
 };

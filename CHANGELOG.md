@@ -6,6 +6,23 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixes
 
+- TextMate: a leading `---` with no closer no longer turns the rest of the
+  document into YAML; a column-0 line no YAML mapping starts ends the block.
+- TextMate: an unpartnered code span, inline math or literal closes on a
+  matching backtick run on a later line instead of running to the paragraph end.
+- TextMate: a fenced code block inside a quote keeps its body verbatim, and
+  quoted table rows, container fences and definition lists are scoped.
+- TextMate: list markers and `^ ` lines that continue a paragraph stay text.
+- TextMate: a quote opened on a list marker line and an inline footnote scope
+  their inline markup, and an inline footnote may hold brackets.
+- TextMate: a `|` line without a closing pipe is a paragraph, not a table row.
+- TextMate: attribute blocks name their class, id, key, value and language parts
+  without a nested `meta.attributes`, task markers carry `.unnumbered`, and a
+  checkbox after `-{.c}` and a list opening a description body are scoped.
+- TextMate: an emphasis, highlight, strike, superscript, subscript or critic
+  opener checks for a closer before scanning its body, so long lines of unclosed
+  openers tokenize several times faster.
+
 - A braced emphasis span nests its own kind in all three grammars, so
   `*a {*b*} c*` scopes one bold run holding a nested one, and an empty `{**}`
   inside a run stays text instead of closing it (#673).
