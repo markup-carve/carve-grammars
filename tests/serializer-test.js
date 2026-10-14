@@ -482,6 +482,14 @@ check('span marker continuation keeps the next cell text',
     ] }),
     '| a | b |\n| < | c y |\n+ x |  |');
 
+{
+    const source = '| a | b |\n| < | c |\n+ x | y |\n';
+    const edited = carveToProseMirror(source);
+    edited.content[0].content[1].content[1].content[0].content[0].text = 'c edited';
+    check('edited span continuation keeps next cell text', edited,
+        '| a | b |\n| < | c edited |\n+ x |  |');
+}
+
 check('table header row uses |=',
     doc({ type: 'table', content: [
         row(cell('H1', 'tableHeader'), cell('H2', 'tableHeader')),
