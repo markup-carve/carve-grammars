@@ -1000,8 +1000,14 @@ export function serializeToCarve(doc, options = {}) {
             (cell.content || []).forEach((paragraph, index) => {
                 if (index > 0) segments.at(-1).nodes.push(PARAGRAPH_JOIN);
                 for (const inline of paragraph.content || []) {
-                    if (inline.type === 'carveCellWrap') segments.push({ line: inline.attrs?.line || 1, nodes: [] });
-                    else segments.at(-1).nodes.push(inline);
+                    if (inline.type === 'carveCellWrap') {
+                        segments.push({
+                            line: inline.attrs?.line || 1,
+                            row: inline.attrs?.row ?? null,
+                            col: inline.attrs?.col ?? null,
+                            nodes: [],
+                        });
+                    } else segments.at(-1).nodes.push(inline);
                 }
             });
             return segments;
@@ -1074,11 +1080,21 @@ export function serializeToCarve(doc, options = {}) {
         for (const owner of owners) {
             const pieces = owner.segments.map((segment, index) => ({
                 line: index === 0 ? (owner.marker ? 1 : null) : segment.line,
+                row: segment.row, col: segment.col,
                 text: cellText(segment.nodes),
             }));
             let cursor = { row: owner.row, line: 0, col: owner.col };
             for (const piece of pieces) {
                 if (piece.line === null || piece.text === '') continue;
+                // The engine names the row and column a join came from.
+                const r = owner.row + (piece.row || 0);
+                const c = owner.col + (piece.col || 0);
+                if ((piece.row || piece.col) && r < rows.length && continuationLines[r] >= piece.line
+                    && c < owner.col + owner.colspan && continued[r][piece.line][c] === undefined) {
+                    continued[r][piece.line][c] = piece.text;
+                    cursor = { row: r, line: piece.line, col: c };
+                    continue;
+                }
                 let placed = false;
                 for (let r = cursor.row; r < owner.row + owner.rowspan && r < rows.length && !placed; r++) {
                     if (continuationLines[r] < piece.line) continue;

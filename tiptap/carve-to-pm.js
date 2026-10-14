@@ -1119,7 +1119,13 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
 
         case 'cell_wrap':
             // Kept as a node, so the writer can put a `+` continuation row back.
-            return [{ type: 'carveCellWrap', attrs: { line: node.line || 1 } }];
+            // `row` and `col` place a join that came from a later row or a
+            // later column of a spanning cell; both are omitted when 0.
+            return [{ type: 'carveCellWrap', attrs: {
+                line: node.line || 1,
+                ...(node.row ? { row: node.row } : {}),
+                ...(node.col ? { col: node.col } : {}),
+            } }];
 
         case 'hard-break':
         case 'hard_break':

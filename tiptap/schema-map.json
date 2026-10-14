@@ -137,7 +137,9 @@
       "pm": "carveCellWrap",
       "notes": "inline atom rendered as the space it joins; the text after it was written on continuation line `line`",
       "attrs": {
-        "line": "the 1-based continuation line the text after the join was written on"
+        "col": "for a cell spanning columns, the column offset the text after the join came from; omitted when 0",
+        "line": "the 1-based continuation line the text after the join was written on",
+        "row": "for a cell spanning rows, the row offset the text after the join came from; omitted when 0"
       }
     },
     "image": {
