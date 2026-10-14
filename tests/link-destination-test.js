@@ -72,3 +72,10 @@ for (const [name, tokenize, is] of surfaces) {
 }
 
 console.log(`link destinations: ${checked} rows across ${surfaces.length} surfaces`);
+
+for (const [name, tokenize] of await textmateEngines()) {
+    for (const source of ['[x](u) (c )', '![a](u) b (c )', '[x](u "a )")', '[x](u "t") x )']) {
+        const tokens = await tokenize(`${source}\n`);
+        assert.equal(tokens.some((token) => /markup\.underline\.link/.test(token.scope ?? '') && token.text === 'u'), true, `${name}: ${source}`);
+    }
+}

@@ -1802,6 +1802,9 @@
           "include": "#include_directive"
         },
         {
+          "include": "#image_empty"
+        },
+        {
           "include": "#image"
         },
         {
@@ -1812,6 +1815,9 @@
         },
         {
           "include": "#span"
+        },
+        {
+          "include": "#link_inline_empty"
         },
         {
           "include": "#link_inline"
@@ -2027,9 +2033,9 @@
         }
       ]
     },
-    "image": {
+    "image_empty": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()(?![^ \\t\\r\\n][^\\r\\n]*[ \\t]+\\))((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?[ \\t]*(\\))",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()()(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?[ \\t]*(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.image.carve"
@@ -2057,9 +2063,74 @@
         }
       }
     },
+    "image": {
+      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.image.carve"
+        },
+        "2": {
+          "name": "string.other.image.alt.carve"
+        },
+        "3": {
+          "name": "punctuation.definition.image.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.link.carve"
+        },
+        "5": {
+          "name": "markup.underline.link.image.carve"
+        },
+        "6": {
+          "name": "string.other.link.title.carve"
+        },
+        "7": {
+          "name": "string.other.link.title.carve"
+        },
+        "8": {
+          "name": "punctuation.definition.link.carve"
+        }
+      }
+    },
+    "link_inline_empty": {
+      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()()(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?[ \\t]*(\\))",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.link.carve"
+        },
+        "2": {
+          "name": "string.other.link.title.carve",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        "3": {
+          "name": "punctuation.definition.link.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.link.carve"
+        },
+        "5": {
+          "name": "markup.underline.link.carve"
+        },
+        "6": {
+          "name": "string.other.link.description.carve"
+        },
+        "7": {
+          "name": "string.other.link.description.carve"
+        },
+        "8": {
+          "name": "punctuation.definition.link.carve"
+        }
+      }
+    },
     "link_inline": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()(?![^ \\t\\r\\n][^\\r\\n]*[ \\t]+\\))((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?[ \\t]*(\\))",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"
@@ -2327,10 +2398,16 @@
               }
             },
             {
+              "include": "#link_inline_empty"
+            },
+            {
               "include": "#link_inline"
             },
             {
               "include": "#link_ref"
+            },
+            {
+              "include": "#image_empty"
             },
             {
               "include": "#image"
@@ -2462,10 +2539,16 @@
               }
             },
             {
+              "include": "#link_inline_empty"
+            },
+            {
               "include": "#link_inline"
             },
             {
               "include": "#link_ref"
+            },
+            {
+              "include": "#image_empty"
             },
             {
               "include": "#image"
@@ -2797,10 +2880,16 @@
           "include": "#code_inline_unpartnered"
         },
         {
+          "include": "#link_inline_empty"
+        },
+        {
           "include": "#link_inline"
         },
         {
           "include": "#link_ref"
+        },
+        {
+          "include": "#image_empty"
         },
         {
           "include": "#image"
@@ -2967,10 +3056,16 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#link_inline_empty"
+        },
+        {
           "include": "#link_inline"
         },
         {
           "include": "#link_ref"
+        },
+        {
+          "include": "#image_empty"
         },
         {
           "include": "#image"
