@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "link",
+    "text": "[t[^1]{.x}](/u)"
+  },
+  {
+    "scope": null,
+    "text": " c "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

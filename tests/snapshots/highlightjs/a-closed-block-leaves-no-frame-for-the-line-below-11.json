@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ": text\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [^b]: inner"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n      one\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n      two\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\nbelow\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

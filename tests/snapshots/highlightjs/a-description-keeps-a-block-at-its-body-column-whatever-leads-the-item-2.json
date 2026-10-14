@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: term\n  : desc\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n      code\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n"
+  }
+]

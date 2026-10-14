@@ -322,7 +322,8 @@ export function serializeToCarve(doc, options = {}) {
             // changed the same characters, the editor wins: the user changed
             // that construct and canonical Carve is safer than stale source.
             const currentProjection = serializeToCarve(clean, options);
-            return mergeAuthoredSource(preservedSource, projectedSource, currentProjection);
+            return mergeAuthoredSource(preservedSource, projectedSource, currentProjection,
+                doc.attrs.carveSourceAppendable);
         }
     }
     // A whole-document fallback is already exact Carve source. Sending it
@@ -810,7 +811,7 @@ export function serializeToCarve(doc, options = {}) {
                 const raw = (node.content || []).map(child => child.text || '').join('');
                 const longest = (raw.match(/`+/g) || []).reduce((max, run) => Math.max(max, run.length), 0);
                 const fence = '`'.repeat(Math.max(3, longest + 1));
-                output += `${fence}=${node.attrs?.format || ''}\n${raw}${raw && !/^\n+$/.test(raw) ? '\n' : ''}${fence}\n`;
+                output += `${fence}=${node.attrs?.format || ''}\n${raw}${raw && !raw.endsWith('\n') ? '\n' : ''}${fence}\n`;
                 break;
             }
 
@@ -981,7 +982,8 @@ export function serializeToCarve(doc, options = {}) {
         // a cell node for grid positions covered by a span, so we rebuild the grid
         // row by row, carrying rowspans forward per column.
         const rowspanCarry = []; // rowspanCarry[col] = remaining rows to fill with `^`
-        rows.forEach(row => {
+        const separatorWidths = table.attrs?.carveSeparatorWidths;
+        rows.forEach((row, rowIndex) => {
             const cells = row.content || [];
             const out = []; // { header, content } per grid column, incl. `^`/`<` fillers
             let col = 0;
@@ -1033,14 +1035,37 @@ export function serializeToCarve(doc, options = {}) {
                     col++;
                 }
             }
+            const rowAttrs = serializeAttributes(row.attrs, ['textAlign']);
+            const cellAttrsOf = c => serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker']);
+            // The author's separator row: the head row is written plain and its
+            // alignment moves into the separator's colons. Any shape the form
+            // cannot spell keeps the `|=` cells.
+            // A ragged table's separator may count fewer or more cells than
+            // its head row; a head cell past the separator has no alignment.
+            const separatorForm = rowIndex === 0 && Array.isArray(separatorWidths)
+                && separatorWidths.length > 0
+                && separatorWidths.every(width => Number.isInteger(width) && width > 0)
+                && out.every((c, i) => c.header && c.content !== '<' && c.content !== '^'
+                    && (i < separatorWidths.length || !c.align))
+                && rows.slice(1).every(other => !(other.content || []).some(cell => cell.type === 'tableHeader'));
+            if (separatorForm) {
+                output += out.map(c => '|' + cellAttrsOf(c) + ' ' + c.content + ' ').join('') + '|' + rowAttrs + '\n';
+                output += separatorWidths.map((width, i) => {
+                    const dashes = '-'.repeat(width);
+                    const align = out[i]?.align;
+                    if (align === 'left') return '|:' + dashes;
+                    if (align === 'right') return '|' + dashes + ':';
+                    if (align === 'center') return '|:' + dashes + ':';
+                    return '|' + dashes;
+                }).join('') + '|\n';
+                return;
+            }
             let line = '';
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
-                const cellAttrs = serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker']);
                 // Cell attributes bind after the kind/alignment markers.
-                line += '|' + (c.header ? '=' : '') + align + cellAttrs + ' ' + c.content + ' ';
+                line += '|' + (c.header ? '=' : '') + align + cellAttrsOf(c) + ' ' + c.content + ' ';
             }
-            const rowAttrs = serializeAttributes(row.attrs, ['textAlign']);
             output += line + '|' + rowAttrs + '\n';
         });
     }
@@ -1854,14 +1879,18 @@ export function serializeToCarve(doc, options = {}) {
     return result;
 }
 
-function mergeAuthoredSource(authored, baseline, edited) {
+function mergeAuthoredSource(authored, baseline, edited, appendable = null) {
     // Appending and prepending blocks are the most common editor operations.
     // Handle them without diff alignment: repeated punctuation can otherwise
     // make a character diff align an untouched delimiter with the new text and
     // needlessly replace the author's spelling in the original document.
     const appended = edited.startsWith(baseline) ? edited.slice(baseline.length) : null;
     const baselineClose = baseline.match(/(?:^|\n)([ \t]*(?:`{3,}|~{3,}|:{3,}))$/)?.[1];
-    const authoredHasClose = !baselineClose || authored.trimEnd().endsWith(baselineClose);
+    // The loader measured this against the engine when it could; the closing
+    // fence comparison is the fallback for a document built without it.
+    const authoredHasClose = typeof appendable === 'boolean'
+        ? appendable
+        : !baselineClose || authored.trimEnd().endsWith(baselineClose);
     if (appended?.startsWith('\n\n') && authoredHasClose) return authored.trimEnd() + appended;
     if (edited.endsWith(baseline)) return edited.slice(0, -baseline.length) + authored;
 

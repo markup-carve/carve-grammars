@@ -1,0 +1,50 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "box"
+  },
+  {
+    "type": "div",
+    "text": "\n    "
+  },
+  {
+    "type": "div>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "div>attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "div>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "div",
+    "text": "\n    para\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

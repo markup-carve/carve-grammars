@@ -108,9 +108,11 @@ export function carveToProseMirror(source, options = {}) {
         }
         try {
             const reparsed = parse(serializeToCarve(doc), options.parse);
-            if (stableAst(ast) !== stableAst(reparsed)) return sourceEnvelope(doc, sourceLayout, reporting);
+            if (stableAst(ast) !== stableAst(reparsed)) {
+                return sourceEnvelope(doc, sourceLayout, reporting, appendable(source, ast, options.parse));
+            }
         } catch {
-            return sourceEnvelope(doc, sourceLayout, reporting);
+            return sourceEnvelope(doc, sourceLayout, reporting, appendable(source, ast, options.parse));
         }
     }
 
@@ -127,7 +129,25 @@ function opaqueDocument(source, ctx = null) {
     };
 }
 
-function sourceEnvelope(doc, sourceLayout, ctx = null) {
+// Whether a block appended after the authored source stays a block of its own.
+// The projection can move blocks (a footnote body written on a list marker
+// line ends up last), so its closing line says nothing about the source's.
+function appendable(source, ast, parseOptions) {
+    try {
+        const probe = parse(`${source.replace(/[ \t\r\n]+$/, '')}\n\nprobe`, parseOptions);
+        // Hoisted definitions follow the last block in `children`, so the probe
+        // is found rather than assumed last.
+        const children = probe.children || [];
+        const at = children.findLastIndex(block => block.type === 'paragraph' && block.children?.length === 1
+            && block.children[0].type === 'text' && block.children[0].value === 'probe');
+        if (at < 0) return false;
+        return stableAst({ ...probe, children: children.filter((_, i) => i !== at) }) === stableAst(ast);
+    } catch {
+        return false;
+    }
+}
+
+function sourceEnvelope(doc, sourceLayout, ctx = null, canAppend = null) {
     // The rich projection is kept, but writing it back would not reproduce the
     // document, so the source and canonical projection ride along as the two
     // merge bases. Edits are applied to the authored branch, preserving layout
@@ -145,6 +165,7 @@ function sourceEnvelope(doc, sourceLayout, ctx = null) {
             carveFingerprint: pmFingerprint(clean),
             carveSourceLayout: JSON.stringify(sourceLayout),
             carveProjectedSource: projectedSource,
+            ...(typeof canAppend === 'boolean' ? { carveSourceAppendable: canAppend } : {}),
         },
     };
 }
@@ -511,7 +532,8 @@ function convertBlock(node, ctx) {
                 // The MARKER STYLE: `1.` / `1)` / `a.` / `iv.` / the bare `.`.
                 // Dropping it rewrote every alpha and roman list as `1.`.
                 if (node.olType) listNode.attrs.carveOlType = node.olType;
-                if (node.delim) listNode.attrs.carveDelim = node.delim;
+                // carve-js 0.1.11 omits the default `.`; 0.1.9 always wrote it.
+                listNode.attrs.carveDelim = node.delim || '.';
                 // Spell this out in both directions. The schema default is
                 // `true` for newly authored Tiptap lists, while an imported
                 // explicit `1.` list must override that default with `false`.
@@ -833,7 +855,7 @@ function inlinePlainText(nodes) {
 }
 
 function convertTable(node, ctx) {
-    const table = convertTableCore(node, ctx);
+    const table = withSeparatorWidths(convertTableCore(node, ctx), node);
     if (node.caption) {
         return {
             type: 'carveFigure',
@@ -843,6 +865,14 @@ function convertTable(node, ctx) {
     }
     const attrs = convertAttrs(node.attrs);
     if (attrs) table.attrs = attrs;
+    return table;
+}
+
+// The separator-row form and the `|=` form build the same cells; only
+// `separatorWidths` (carve-js 0.1.11) says which one the author wrote.
+function withSeparatorWidths(table, node) {
+    if (!Array.isArray(node.separatorWidths)) return table;
+    table.attrs = { ...(table.attrs || {}), carveSeparatorWidths: [...node.separatorWidths] };
     return table;
 }
 
@@ -1121,7 +1151,8 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
         case 'footnote_ref':
             return [{
                 type: 'carveFootnote',
-                attrs: { label: node.id || 'note' },
+                // carve-js 0.1.11 names the field `label`; 0.1.9 named it `id`.
+                attrs: { label: node.label || node.id || 'note' },
                 ...(marks.length ? { marks } : {}),
             }];
 

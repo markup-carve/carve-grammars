@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " intro\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " definition\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n    code\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ```"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n"
+  }
+]

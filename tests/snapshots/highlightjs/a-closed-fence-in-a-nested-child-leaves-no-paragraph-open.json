@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "    -"
+  },
+  {
+    "scope": null,
+    "text": " child\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n      x\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n"
+  }
+]

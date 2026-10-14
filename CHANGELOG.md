@@ -6,6 +6,21 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixes
 
+- The Tiptap bridge works with carve-js 0.1.11, which the `^0.1.9` range
+  already installs: footnote references keep their labels instead of all
+  becoming `note`, a raw block no longer gains a blank line on every save, and
+  an ordered list keeps its default `.` delimiter so a converted list joins it
+  (#680).
+- The Tiptap writer keeps a table's separator row (`|---|:--:|`) instead of
+  rewriting it as `|=` header cells (#680).
+- Appending a block to a document whose footnote or link definitions sit on a
+  list marker line no longer corrupts the authored source on save (#680).
+- TextMate: `|< |` is an alignment marker on an empty cell, not a colspan; an
+  editorial comment `{# ... #}` opened by `{# ` spans a line break even when its
+  first line holds a `}` (#680).
+- An include directive's padding is spaces only, in all three grammars: a tab
+  next to `{{` or `}}` leaves the text literal, as the engine reads it (#680).
+
 - TextMate: a leading `---` with no closer no longer turns the rest of the
   document into YAML; a column-0 line no YAML mapping starts ends the block (#698).
 - TextMate: an unpartnered code span, inline math or literal closes on a

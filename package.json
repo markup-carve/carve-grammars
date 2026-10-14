@@ -102,7 +102,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@markup-carve/carve": "^0.1.9",
+    "@markup-carve/carve": "^0.1.11",
     "node-diff3": "^3.2.1"
   },
   "peerDependencies": {

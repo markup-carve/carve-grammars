@@ -2152,7 +2152,7 @@
         // The lookahead is Prism's outer pattern, so a path is required and no
         // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
         begin: RegExp(
-            `\\{\\{(?=[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)`
+            `\\{\\{(?= +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)`
             + `(?:#[A-Za-z0-9_][\\w-]*)?`
             // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@` (spec
             // `include_options`): the bare path stops at `@` and a section
@@ -2161,7 +2161,7 @@
             // required whitespace run and two adjacent runs cannot split a
             // part in more than one way.
             + `(?:(?=@)${INCLUDE_PART_UNIT}+)?`
-            + `(?:[ \\t]+${INCLUDE_PART_UNIT}+)*[ \\t]+\\}\\})`,
+            + `(?: +${INCLUDE_PART_UNIT}+)* +\\}\\})`,
         ),
         end: /\}\}|$(?![^\r\n])/,
         relevance: 10,
@@ -2173,7 +2173,7 @@
         contains: [
             {
                 className: 'string',
-                begin: /(?=[^#@}\s])(?<=\{\{[ \t]+)(?:"(?:\\.|[^"\\\n])*"|[^#@}\s"][^#@}\s]*)/,
+                begin: /(?=[^#@} \r\n])(?<=\{\{ +)(?:"(?:\\.|[^"\\\n])*"|[^#@} \r\n"][^#@} \r\n]*)/,
             },
             {
                 className: 'symbol',

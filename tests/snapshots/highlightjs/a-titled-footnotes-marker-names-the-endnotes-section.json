@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: footnotes \"Notes\" [End]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": ":: t"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

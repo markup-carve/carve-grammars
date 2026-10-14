@@ -49,7 +49,9 @@ const directiveText = (g, source) => g.leaves(source)
 
 const ROWS = [
     { why: 'a padded closer - the control', source: 'See {{ ch.crv }} end', directive: '{{ ch.crv }}' },
-    { why: 'a tab pads the closer', source: 'See {{ ch.crv\t}} end', directive: '{{ ch.crv\t}}' },
+    { why: 'a tab is content, not a pad (CARVE-P7-001)', source: 'See {{ ch.crv\t}} end', directive: '' },
+    { why: 'a tab after the opener is no pad either', source: 'See {{\tch.crv }} end', directive: '' },
+    { why: 'a space before the closer pads it after a tab', source: 'See {{ ch.crv\t }} end', directive: '{{ ch.crv\t }}' },
     { why: 'the pad is a run', source: 'See {{ ch.crv   }} end', directive: '{{ ch.crv   }}' },
     { why: 'a third brace after a padded closer is prose', source: 'See {{ ch.crv }}} end', directive: '{{ ch.crv }}' },
 

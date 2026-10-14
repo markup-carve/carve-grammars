@@ -30,6 +30,7 @@ export const CarveSourcePreservation = Extension.create({
                     carveFingerprint: { default: null, rendered: false },
                     carveSourceLayout: { default: null, rendered: false },
                     carveProjectedSource: { default: null, rendered: false },
+                    carveSourceAppendable: { default: null, rendered: false },
                 },
             },
             {

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "Text.\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[x]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[y]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " javascript:alert(3)"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

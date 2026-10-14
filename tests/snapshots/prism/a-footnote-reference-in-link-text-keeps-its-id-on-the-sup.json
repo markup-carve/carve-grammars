@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "t"
+  },
+  {
+    "type": "url>link-text>footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "url>link-text",
+    "text": "{.x}"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "/u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": " c "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": " b\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ": n\n"
+  }
+]

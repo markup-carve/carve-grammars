@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "section",
+    "text": "# A\tB"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee "
+  },
+  {
+    "scope": "link",
+    "text": "[A B][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -882,6 +882,29 @@ const TIPTAP_COVERED = [
     // envelope removed: all 6 files reparse to the same AST.
     'a-caption-scope-resets-at-a-structural-only-line',
     'an-unterminated-raw-fence-keeps-literal-payload-termination',
+    // Spec 0.1.9 (bump to carve 5484177), measured with the envelope removed
+    // against carve-js 0.1.11: all 57 files reparse to the same AST.
+    'a-closed-fence-in-a-nested-child-leaves-no-paragraph-open',
+    'a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph',
+    'a-comment-between-a-heading-and-a-colon-fence-leaves-the-fence-an-opener',
+    'a-container-boundary-is-read-at-the-container-s-own-column',
+    'a-description-marker-followed-by-a-no-break-space-has-content',
+    'a-fence-closer-below-the-authored-base-is-measured-as-its-payload',
+    'a-fence-past-the-column-after-an-attribute-line-opens-on-its-authored-base',
+    'a-footnote-definition-past-a-box-s-column-is-hoisted',
+    'a-head-row-alignment-marker-sets-the-whole-column',
+    'a-line-block-takes-a-lazy-line-whatever-its-last-payload-line',
+    'a-line-final-run-of-spaces-and-tabs-is-dropped-before-the-line-is-read',
+    'a-link-definition-or-an-attribute-line-past-a-box-s-column-opens-on-its-authored-base',
+    'a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph',
+    'a-quoted-term-takes-a-lazy-line',
+    'a-shifted-fence-in-a-quoted-container-s-body-stores-no-continuation-claim',
+    'a-tab-is-content-in-a-heading-key-and-in-a-cross-reference-id',
+    'a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term',
+    'a-titled-footnotes-marker-names-the-endnotes-section',
+    'an-at-column-comment-retains-nothing',
+    'an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph',
+    'an-opener-past-a-hosted-container-s-column-opens-there',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -1013,6 +1036,25 @@ const TIPTAP_SKIP = new Map([
     ['a-footnote-body-whose-every-block-renders-nothing-is-an-empty-body', 'with the source envelope removed `[^1]: %% n` comes back as `[^1]:`, so the reparse differs'],
     ['a-fence-after-a-footnote-quote-has-its-own-base', 'with the source envelope removed `[^1]: > q` comes back as `[^1]:`, so the reparse differs'],
     ['an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only', 'with the source envelope removed `  > q` comes back as ``, so the reparse differs'],
+    // Spec 0.1.9 (bump to carve 5484177), measured against carve-js 0.1.11.
+    ['a-block-quote-and-a-footnote-body-take-the-first-block-form', 'with the source envelope removed `[^a]: +` comes back as `see[^a]`, so the reparse differs'],
+    ['a-closed-block-leaves-no-frame-for-the-line-below', 'with the source envelope removed `- [^a]: text` comes back as `below`, so the reparse differs'],
+    ['a-closed-fence-at-a-marker-line-note-s-body-column-opens-in-the-note', 'with the source envelope removed `- [^n]: %% c` comes back as `after [^n]`, so the reparse differs'],
+    ['a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base', 'with the source envelope removed ` x` comes back as `  ````, so the reparse differs'],
+    ['a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
+    ['a-comment-in-a-marker-line-note-changes-nothing', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
+    ['a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into', 'with the source envelope removed `| ^ | b |` comes back as `| ^ | b y |`, so the reparse differs'],
+    ['a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item', 'with the source envelope removed `  :: term` comes back as ``, so the reparse differs'],
+    ['a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in', 'with the source envelope removed `>   -   ::: |` comes back as `>   - ::: |`, so the reparse differs'],
+    ['a-footnote-reference-in-link-text-keeps-its-id-on-the-sup', 'with the source envelope removed `a [t[^named]{data-carve-footnote-label=\\"named\\"}][r] b` comes back as `a [t[^named\\\\]][r] b`, so the reparse differs'],
+    ['a-line-block-payload-span-pairs-past-the-content-column', 'with the source envelope removed `    ```` comes back as `    ``, so the reparse differs'],
+    ['a-line-retained-after-a-comment-opens-a-paragraph', 'with the source envelope removed `    %% c` comes back as ``, so the reparse differs'],
+    ['a-paragraph-in-a-held-container-does-not-loosen-the-item', 'with the source envelope removed `  :: term` comes back as ``, so the reparse differs'],
+    ['a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
+    ['a-span-never-covers-another-cell', 'with the source envelope removed `| ^ | b |` comes back as `| ^ | ^ | b |`, so the reparse differs'],
+    ['a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker', 'with the source envelope removed a reference whose label holds a tab gains a second, space-spelled definition, so the reparse differs'],
+    ['an-at-sign-before-a-space-and-a-doubled-delimiter-inside-bold-italic-are-text', 'with the source envelope removed `/*a // b*/` comes back as `*/a \\\\/\\\\/ b/*`, so the reparse differs'],
+    ['an-explicitly-delimited-row-of-blank-cells-is-a-table', 'with the source envelope removed `\\\\| |` comes back as `| |`, so the reparse differs'],
 ]);
 
 export const COVERAGE = {

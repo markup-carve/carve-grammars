@@ -229,7 +229,7 @@ const CONSTRUCTS = [
     { name: 'code_block with a language', wrap: (b) => ['```js\n', b + '\n', '```\n'], alphabet: ['`', '*', '/', '\n', ' '] },
     { name: 'code_block on a tilde fence', wrap: (b) => ['~~~\n', b + '\n', '~~~\n'], alphabet: ['~', '`', '*', '\n'] },
     { name: 'code_block on a wide fence', wrap: (b) => ['````\n', b + '\n', '````\n'], alphabet: ['`', '*', '\n'] },
-    { name: 'raw_block', wrap: (b) => ['```=html\n', b, '\n```\n'], alphabet: ['`', '*', '<', '\n'] },
+    { name: 'raw_block', wrap: (b) => ['```=html\n', b + '\n', '```\n'], alphabet: ['`', '*', '<', '\n'] },
     { name: 'code_span', wrap: (b) => ['a `', b, '` z\n'], alphabet: ['`', '*', '/', ' '] },
     { name: 'code_span on a wide fence', wrap: (b) => ['a ``', b, '`` z\n'], alphabet: ['`', '*', ' '] },
     { name: 'raw_inline', wrap: (b) => ['a `', b, '`{=html} z\n'], alphabet: ['`', '*', '{', '}'] },

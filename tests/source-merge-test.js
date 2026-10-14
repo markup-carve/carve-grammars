@@ -35,7 +35,7 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// The latest corpus and the payload writer leave 511 source envelopes: 509
+// The corpus at carve 2d473af and the payload writer left 511 source envelopes: 509
 // preserve an authored append and two use canonical output. Sections 539-544
 // added eleven, all of them authored appends; `line-blocks-2` left once a
 // line block's indentation loaded as ASCII spaces, ten left once the quote
@@ -43,17 +43,21 @@ for (const file of listCorpusFiles()) {
 // added five, keeping a rule's `*` or `_` marker retired four, and section
 // 553 added ten, and the bump to carve 2d473af added fifteen: seven more of
 // section 553, four of 321 and four net of 471 (see the enveloped ledger
-// accounting). Keep the exact remaining conflict set below, not just
+// accounting). The spec 0.1.9 bump (carve 5484177, carve-js 0.1.11) added 48
+// net; one of them, 559-3, writes a second space-spelled reference definition
+// after the appended block, so the editor wins there. Keep the exact remaining
+// conflict set below, not just
 // its size: the AST models neither the authored fence character (`~~~`
 // re-emits as a backtick fence), nor the over-indent column of a marker line
 // inside an opaque quote, so a document hitting one of those projects to
 // canonical spelling and the envelope carries the authored bytes back.
-assert.strictEqual(envelopes, 511, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 509, 'an append normalized authored layout in additional documents');
-assert.strictEqual(canonicalAppend, 2, 'the set of structurally unterminated append conflicts changed');
+assert.strictEqual(envelopes, 559, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 556, 'an append normalized authored layout in additional documents');
+assert.strictEqual(canonicalAppend, 3, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',
     '268-trailing-whitespace-on-a-content-line-is-dropped-8',
+    '559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-3',
 ]);
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });

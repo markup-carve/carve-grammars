@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": text\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "    ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "    : "
+  },
+  {
+    "type": "definition-list",
+    "text": "d\nafter "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "::: box"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": "   - "
+  },
+  {
+    "type": "blockquote",
+    "text": "inner"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote",
+    "text": "     "
+  },
+  {
+    "type": "comment",
+    "text": "%% c"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote",
+    "text": "    ```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote",
+    "text": "    code"
+  },
+  {
+    "type": "text",
+    "text": "\n- tail\n"
+  }
+]

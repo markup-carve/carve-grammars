@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n    ```\n\n"
+  },
+  {
+    "type": "code-block",
+    "text": "  ~~~\n  code\n  "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\n  more\nafter\n"
+  }
+]

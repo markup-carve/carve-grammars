@@ -1,0 +1,26 @@
+[
+  {
+    "type": "table-continuation>table-operator",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

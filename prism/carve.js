@@ -1979,7 +1979,7 @@
          */
         'include-directive': {
             pattern: RegExp(
-                '\\{\\{[ \\t]+(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@}\\s"][^#@}\\s]*)'
+                '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
                 + '(?:#[A-Za-z0-9_][\\w-]*)?'
                 // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@`, in every
                 // position (spec `include_options`): the bare path stops at
@@ -1990,8 +1990,8 @@
                 // more than one way and make the scan backtrack
                 // exponentially on a line with no closer.
                 + '(?:(?=@)' + includePart + '+)?'
-                + '(?:[ \\t]+' + includePart + '+)*'
-                + '[ \\t]+\\}\\}',
+                + '(?: +' + includePart + '+)*'
+                + ' +\\}\\}',
             ),
             greedy: true,
             alias: 'important',

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " x\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "     ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n    a\n     b\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "     ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "Text.\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[x]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[y]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "javascript:alert(3)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

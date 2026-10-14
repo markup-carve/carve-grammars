@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: term\n  : definition\n\n    para\nafter\n"
+  }
+]

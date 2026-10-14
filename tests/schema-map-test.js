@@ -52,7 +52,7 @@ const IMPLEMENTATION_TYPES = new Set([
  * retired `non_breaking_space` here: carve#2337 landed, the bump to `312001f`
  * brought the vocabulary in, and the schema map already carries the type.
  */
-const AHEAD_OF_PIN = new Set(['cell_wrap']);
+const AHEAD_OF_PIN = new Set([]);
 
 /** Every node type the pinned AST schema declares: the wire vocabulary a bridge meets. */
 function schemaNodeTypes() {

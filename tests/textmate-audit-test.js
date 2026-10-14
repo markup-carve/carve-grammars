@@ -262,7 +262,8 @@ ok('a container inside the item ends at the lazy line', () => {
 
 for (const source of ['- a\n^ cap', '- a\n\n^ cap', '- a\nlazy\n^ cap', '- | a |\n^ cap']) {
     ok(`a caption line after a list is text: ${JSON.stringify(source)}`, () => {
-        assert.match(html(source), /<p>\^ cap<\/p>/);
+        // Text either way: a lazy line in the item or a paragraph below the list.
+        assert.match(html(source), /\^ cap<\/(?:p|li)>/);
         refuteScope(source, 'cap', 'meta.caption');
     });
 }
@@ -329,7 +330,7 @@ ok('a task marker is an unnumbered list marker', () => {
 
 ok('a checkbox after a glued attribute block', () => {
     const source = '-{.c} [x] done';
-    assert.match(html(source), /<li class="c"><input type="checkbox" checked/);
+    assert.match(html(source), /<li[^>]* class="c"><input type="checkbox" checked/);
     assertScope(source, '[', 'punctuation.definition.checkbox');
     assertScope(source, 'x]', 'constant.language.checkbox');
     refuteScope(source, 'done', 'constant.language.checkbox');

@@ -1,0 +1,50 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-operator",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " x "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " y "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "outer\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "para\n\n"
+  },
+  {
+    "type": "thematic-break>punctuation",
+    "text": "  ---"
+  },
+  {
+    "type": "text",
+    "text": "\n    ```\n"
+  }
+]

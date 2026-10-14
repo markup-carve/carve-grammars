@@ -77,7 +77,7 @@ row('item after a lazy line', '- a\nlazy\n- b\n', '<li>b</li>', (source) => {
 row('item after a heading', '# H\n- x\n', '<li>x</li>', expect('- ', has(/list/)));
 
 // A caption needs a host.
-for (const [host, html] of [['para text\n', '<p>para text^'], ['- item\n', '<p>^'], ['# H\n', '<p>^'], ['::: note\nx\n:::\n', '<p>^']]) {
+for (const [host, html] of [['para text\n', '<p>para text^'], ['- item\n', '<li>item^'], ['# H\n', '<p>^'], ['::: note\nx\n:::\n', '<p>^']]) {
     row(`no caption after ${JSON.stringify(host)}`, `${host}^ not caption\n`, html, expect('not caption', lacks(/caption/)));
 }
 for (const [host, html] of [['![a](u)\n', '<figcaption>'], ['| a |\n\n', '<caption>'], ['```\nx\n```\n', '<figcaption>'], ['> q\n', '<figcaption>'], ['::: figure\n![a](u)\n:::\n', '<figcaption>']]) {

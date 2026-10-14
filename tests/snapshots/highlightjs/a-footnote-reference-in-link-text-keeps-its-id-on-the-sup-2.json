@@ -1,0 +1,34 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "link",
+    "text": "[t[^named]{data-carve-footnote-label=\"named\"}][r]"
+  },
+  {
+    "scope": null,
+    "text": " b\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^named]: n"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

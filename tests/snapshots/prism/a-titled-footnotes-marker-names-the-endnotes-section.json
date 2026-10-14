@@ -1,0 +1,74 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "footnotes"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>div-delimiter>string>title-text",
+    "text": "Notes"
+  },
+  {
+    "type": "div>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>symbol>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>div-delimiter>symbol>label-text",
+    "text": "End"
+  },
+  {
+    "type": "div>div-delimiter>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\nA"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ": n\n"
+  }
+]
