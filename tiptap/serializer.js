@@ -995,7 +995,8 @@ export function serializeToCarve(doc, options = {}) {
         const owners = []; // { cell, row, col, colspan, rowspan, marker, segments }
 
         const PARAGRAPH_JOIN = {};
-        // A cell's text, split where a `+` continuation row joined it.
+        // A cell's text stays together. A span marker may need a continuation
+        // line to place text in the cell it resolves into.
         const segmentsOf = (cell) => {
             const segments = [{ line: null, nodes: [] }];
             (cell.content || []).forEach((paragraph, index) => {

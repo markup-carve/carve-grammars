@@ -35,9 +35,9 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Mapping continuation joins to spaces adds 29 source envelopes. These keep
-// authored plus rows on unchanged saves while edited cells use the projection. Sections 539-544
-// added eleven, all of them authored appends; `line-blocks-2` left once a
+// The previous projection left 486 source envelopes: 483 authored appends and
+// three editor-wins conflicts. Mapping joins to spaces adds 29 envelopes, all
+// authored appends. Earlier, sections 539-544 added eleven, all of them authored appends; `line-blocks-2` left once a
 // line block's indentation loaded as ASCII spaces, ten left once the quote
 // fence kept its form and a quote's attribute run loaded, sections 550-552
 // added five, keeping a rule's `*` or `_` marker retired four, and section
