@@ -888,7 +888,7 @@ function convertTableCore(node, ctx) {
             const converted = {
                 type: cell.header ? 'tableHeader' : 'tableCell',
                 attrs,
-                content: [{ type: 'paragraph', content: convertInline(cell.children || [], ctx) }],
+                content: [{ type: 'paragraph', content: convertInline(cell.children || [], ctx, true) }],
             };
             cells.push(converted);
             grid[col] = converted;
@@ -910,11 +910,11 @@ function orphanSpanCell(cell, marker) {
     };
 }
 
-function convertInline(nodes, ctx) {
+function convertInline(nodes, ctx, tableCell = false) {
     const out = [];
-    for (const node of nodes) {
+    for (const [index, node] of nodes.entries()) {
         try {
-            out.push(...convertInlineNode(node, [], ctx));
+            out.push(...convertInlineNode(node, [], ctx, tableCell && index === 0));
         } catch (error) {
             if (ctx.unsupported === 'preserve' && error instanceof UnsupportedNodeError) {
                 const carveSource = sourceFor(node, ctx);
@@ -991,7 +991,7 @@ function convertCitationItem(item, ctx) {
  * @param {{type: string, attrs?: object}[]} marks
  * @returns {object[]}
  */
-function convertInlineNode(node, marks, ctx) {
+function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
     switch (node.type) {
         case 'text':
         // An ESCAPED character is literal text and nothing else: the backslash
@@ -1056,11 +1056,17 @@ function convertInlineNode(node, marks, ctx) {
 
             return [{ type: 'text', text: '\n' }];
 
+        case 'cell_wrap':
+            record(ctx, 'degraded', 'cell_wrap',
+                'a continuation join is the space it replaced in the ProseMirror model');
+            return leadingCellWrap ? [] : [{ type: 'text', text: ' ', ...(marks.length ? { marks } : {}) }];
+
         case 'hard-break':
         case 'hard_break':
             return [{ type: 'hardBreak' }];
 
         case 'code': {
+            recordCellWraps(node, ctx);
             // An attribute run on inline code (`` `x`{.cls} ``) belongs to the
             // code mark. The stock mark declares no attributes, so the run used
             // to be dropped on the way in with nothing reporting it - the
@@ -1088,6 +1094,7 @@ function convertInlineNode(node, marks, ctx) {
         }
 
         case 'math': {
+            recordCellWraps(node, ctx);
             const attrs = { src: node.content || '', display: !!node.display, ...(convertAttrs(node.attrs) || {}) };
 
             return [{ type: 'carveMath', attrs, ...(marks.length ? { marks } : {}) }];
@@ -1204,6 +1211,7 @@ function convertInlineNode(node, marks, ctx) {
             }];
 
         case 'raw_inline':
+            recordCellWraps(node, ctx);
             return [{
                 type: 'carveRawInline',
                 attrs: {
@@ -1318,6 +1326,13 @@ function convertInlineNode(node, marks, ctx) {
             }
             throw new UnsupportedNodeError(node.type, node);
         }
+    }
+}
+
+function recordCellWraps(node, ctx) {
+    if (Array.isArray(node.cellWraps) && node.cellWraps.length) {
+        record(ctx, 'degraded', 'cell_wrap',
+            'a continuation join is the space it replaced in the ProseMirror model');
     }
 }
 

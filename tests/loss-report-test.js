@@ -10,7 +10,7 @@
  * fully editable document from one carrying blobs of unparsed source.
  */
 import assert from 'node:assert';
-import { carveToProseMirror, carveToProseMirrorWithReport } from '../tiptap/index.js';
+import { astToProseMirror, carveToProseMirror, carveToProseMirrorWithReport } from '../tiptap/index.js';
 
 let passed = 0;
 function ok(name, fn) {
@@ -48,6 +48,34 @@ ok('a degraded construct is reported apart from a preserved one', () => {
 ok('an escape is degraded, not silently normal text', () => {
     const { degraded } = carveToProseMirrorWithReport('a \\* b\n', { unsupported: 'preserve' });
     assert.ok('escaped_text' in degraded, JSON.stringify(degraded));
+});
+
+ok('cell joins keep their space, except at the start of a cell', () => {
+    const report = {};
+    const cell = (children) => ({ type: 'table_cell', children });
+    const doc = astToProseMirror({ type: 'document', children: [{ type: 'table', rows: [
+        { cells: [
+            cell([{ type: 'text', value: 'a' }, { type: 'cell_wrap' }, { type: 'text', value: 'x' }]),
+            cell([{ type: 'cell_wrap' }, { type: 'text', value: 'y' }]),
+        ] },
+    ] }] }, { report });
+    const cells = doc.content[0].content[0].content;
+    assert.deepStrictEqual(cells[0].content[0].content, [{ type: 'text', text: 'a x' }]);
+    assert.deepStrictEqual(cells[1].content[0].content, [{ type: 'text', text: 'y' }]);
+    assert.strictEqual(report.degraded.cell_wrap,
+        'a continuation join is the space it replaced in the ProseMirror model');
+});
+
+ok('inline payload offsets are reported without changing their values', () => {
+    const report = {};
+    const children = ['code', 'raw_inline', 'math'].map((type) => ({
+        type, value: 'a b', content: 'a b', format: 'html', cellWraps: [{ offset: 1, line: 2 }],
+    }));
+    const doc = astToProseMirror({ type: 'document', children: [{ type: 'paragraph', children }] }, { report });
+    assert.strictEqual(doc.content[0].content[0].text, 'a b');
+    assert.strictEqual(doc.content[0].content[1].content[0].text, 'a b');
+    assert.strictEqual(doc.content[0].content[2].attrs.src, 'a b');
+    assert.ok('cell_wrap' in report.degraded);
 });
 
 ok('a merge-backed source envelope is reported', () => {
