@@ -403,8 +403,10 @@
             + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlCharUnicode + '{1,2048}>'
             + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
             + ')';
+        // The whitespace and letter cases must be disjoint: repeated `*a`
+        // otherwise gives the closer search exponentially many partitions.
         return '(?:\\\\[^\\n]|' + bareCode + '|' + opaque
-            + '|(?<=\\s)' + delimiter + '|' + delimiter + '(?=[\\p{L}\\p{N}])'
+            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|' + delimiter + '(?=[\\p{L}\\p{N}])'
             + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\n`]){1,4096}?';
     }
 
