@@ -10,20 +10,19 @@ All notable changes to `carve-grammars` are documented here.
 
 - Editor JSON from 0.1.14 containing `carveCellWrap` nodes: re-import from
   Carve source.
+- Direct imports of `CarveCellWrap` and the CarveKit `carveCellWrap` option are
+  removed (#709).
 
 ### Fixes
 
 - The editor model maps table continuation joins back to a space, as 0.1.13
   did; the 0.1.14 `carveCellWrap` node is removed (#709).
-- Escaped punctuation stays literal, and an unclosed code fence stops at its
-  container's closer (#707, #708).
-
 - TextMate: an unclosed code fence inside a `:::` container ends at the
-  container's closer instead of running to the end of the document.
+  container's closer instead of running to the end of the document (#708).
 - An escaped character keeps the next construct closed: `\$` before a code
   span, `\:` before a symbol, `\{` before `{{` and an escaped closer before an
   attribute block stay text in all three grammars, and Prism and TextMate scope
-  every ASCII punctuation escape.
+  every ASCII punctuation escape (#707).
 - highlight.js: a footnote definition's body gets inline highlighting instead
   of one symbol scope over the whole line.
 - Prism and highlight.js: the `{empty}` sentinel of a footnote or description
