@@ -41,7 +41,7 @@ All notable changes to `carve-grammars` are documented here.
   own colors (#693).
 - A definition term and description body scope their inline markup in all three
   grammars, and the list ends at a paragraph after a blank line instead of
-  swallowing it (#PRNUM).
+  swallowing it (#695).
 
 ### Added
 
