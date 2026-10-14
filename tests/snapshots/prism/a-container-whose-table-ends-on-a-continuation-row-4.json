@@ -5,7 +5,19 @@
   },
   {
     "type": "blockquote",
-    "text": " | a |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "blockquote>table",
+    "text": " a "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",
@@ -17,7 +29,19 @@
   },
   {
     "type": "blockquote",
-    "text": " | b |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "blockquote>table",
+    "text": " b "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",

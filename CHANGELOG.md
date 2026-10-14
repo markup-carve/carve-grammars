@@ -75,6 +75,20 @@ All notable changes to `carve-grammars` are documented here.
   fence info string scopes its title and label (#699).
 - Prism: a container body and superscript or subscript no longer carry the
   `tag` or `important` alias, which stock themes painted purple or bold (#699).
+- TextMate: a list stays open across a lazy line, so the marker after it is a
+  list item again and an unclosed container inside the item ends there (#702).
+- TextMate: a `^ ` line after a heading, a list, a `:::` container closer or at
+  the document start is paragraph text, as the engine renders it (#702).
+- TextMate: a code span, inline math or literal left open on a quote line runs
+  on over the next quote lines to its closer or the paragraph end (#702).
+- TextMate: a bare front matter block holding only a boolean, null or number
+  stays front matter (#702).
+- TextMate: a long line of unclosed `*` openers no longer rescans the line for a
+  comment from every star (#702).
+- Prism: tables, closed `:::` containers and definition lists inside a quote are
+  scoped at any quote depth (#702).
+- Prism: a closer candidate inside a code span, an escape, a link destination or
+  an autolink no longer makes alternating unclosed openers slow (#702).
 
 ### Added
 

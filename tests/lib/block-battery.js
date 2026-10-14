@@ -29,7 +29,7 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-/** @typedef {{ src: string, want: 'heading'|'list'|'deflist'|'caption'|'quote'|'none', why?: string }} Shape */
+/** @typedef {{ src: string, want: 'heading'|'list'|'deflist'|'caption'|'quote'|'none', why?: string, skip?: Record<string, string> }} Shape */
 
 /** @type {Shape[]} */
 export const BLOCK_BATTERY = JSON.parse(

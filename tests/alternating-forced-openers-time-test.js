@@ -12,6 +12,14 @@ const script = `
         if (tokens.map((token) => token.text).join('') !== source) process.exit(1);
         if (tokens.some((token) => /bold|italic|underline|strike|highlight/.test(token.scope ?? ''))) process.exit(2);
     }
+    // A closer candidate the run cannot reach: inside a code span, behind an
+    // escape, in a link destination or an autolink.
+    for (const tail of [' \`x/\`', ' x\\\\/', ' [a](u/)', ' <https://a/>']) {
+        const source = '{*a {/b '.repeat(800).trim() + tail;
+        const tokens = prismTokens(source);
+        if (tokens.map((token) => token.text).join('') !== source) process.exit(4);
+        if (tokens.some((token) => /^(?:bold|italic)/.test(token.scope ?? ''))) process.exit(5);
+    }
     const closed = '{*a {/b '.repeat(20) + '\\n\\n*x* {/y/}';
     const scopes = prismTokens(closed).map((token) => token.scope ?? '');
     if (!scopes.some((scope) => scope.startsWith('bold')) || !scopes.some((scope) => scope.startsWith('forced-italic'))) process.exit(3);

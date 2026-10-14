@@ -33,6 +33,29 @@ row('quote fence body is code', '> ```\n> a *b* /i/ %% c\n> ```\n', '<blockquote
 row('quote fence keeps its language', '> ```js\n> x\n> ```\n', 'language-js',
     expect('js', has(/language/)));
 
+// Tables, containers and definition lists inside a quote, at any depth.
+row('quoted table row', '> > | a | *b* |\n', '<td><strong>b</strong></td>', (source) => {
+    assert.match(scopeOf(source, '|'), /^blockquote>table>table-boundary$/);
+    assert.match(scopeOf(source, '*b*'), /^blockquote>table>bold/);
+});
+row('quoted container with its closer', '> ::: note\n> x\n> :::\n', '<blockquote><aside class="admonition note"', (source) => {
+    assert.match(scopeOf(source, ':::'), /^blockquote>div-delimiter>punctuation$/);
+    assert.match(scopeOf(source, 'note'), /div-delimiter>class-name/);
+});
+row('an absorbed colon run in a quote stays text', '> quote\n> :::note\n> body\n> :::\ntail\n', '<p>quote:::notebody:::tail</p>', (source) => {
+    assert.ok(!prismTokens(source).some((t) => /div/.test(t.scope ?? '')));
+});
+row('quoted definition list', '> :: t\n> : d *e*\n', '<dt>t</dt><dd>d <strong>e</strong>', (source) => {
+    assert.match(scopeOf(source, '::'), /^blockquote>definition-term/);
+    assert.equal(prismTokens(source).filter((t) => t.text === ':' && /punctuation/.test(t.scope ?? '')).length, 1);
+});
+row('quoted description after a lazy term line', '> :: term\n> lazy\n> : desc\n', '<dt>termlazy</dt><dd>desc</dd>', (source) => {
+    assert.equal(prismTokens(source).filter((t) => t.text === ':' && /punctuation/.test(t.scope ?? '')).length, 1);
+});
+row('a quoted description with no term', '> : lone\n', '<p>: lone</p>', (source) => {
+    assert.ok(!prismTokens(source).some((t) => t.text === ':' && t.scope));
+});
+
 // An escape wins over the opener it precedes.
 for (const [text, html] of [['`no', '`no`'], ['#tag', ' #tag '], ['@user', '@user'], ['<https://a>', '&lt;https://a&gt;']]) {
     row(`escaped ${text} is text`, '\\`no\\` \\#tag \\@user \\<https://a> x', html,

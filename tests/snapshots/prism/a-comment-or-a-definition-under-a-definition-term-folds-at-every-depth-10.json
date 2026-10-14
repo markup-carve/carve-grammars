@@ -29,10 +29,18 @@
   },
   {
     "type": "blockquote",
-    "text": " :: c"
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " c"
+  },
+  {
+    "type": "blockquote",
     "text": "\n"
   },
   {

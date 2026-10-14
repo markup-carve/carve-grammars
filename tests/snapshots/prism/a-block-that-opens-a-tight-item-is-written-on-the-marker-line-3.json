@@ -45,7 +45,19 @@
   },
   {
     "type": "blockquote",
-    "text": " | c |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "blockquote>table",
+    "text": " c "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",
@@ -57,7 +69,19 @@
   },
   {
     "type": "blockquote",
-    "text": " | d |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "blockquote>table",
+    "text": " d "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",
