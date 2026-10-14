@@ -66,6 +66,14 @@ ok('a closed block stays front matter, comments and nested values included', () 
     refuteScope(source, 'Body', 'meta.frontmatter');
 });
 
+// RESIDUAL: a bare block whose first line is a plain scalar is front matter in the
+// engine, but here that line ends the block, since begin cannot see the closer.
+ok('residual: a scalar-only bare block reads as document text', () => {
+    const source = '---\ntrue\n---\nBody';
+    assert.equal(html(source).trim(), '<p>Body</p>');
+    refuteScope(source, 'true', 'meta.frontmatter');
+});
+
 console.log('\nan unpartnered verbatim run closes on a later line:');
 
 for (const [source, opener] of [
@@ -95,6 +103,12 @@ ok('a fenced code block keeps its body verbatim', () => {
     assertScope(source, '>', 'punctuation.definition.quote', source.indexOf('\n> a'));
     assertScope(source, '```', 'punctuation.definition.fenced', source.lastIndexOf('> ```'));
     assertScope(source, 'b*', 'markup.bold', source.indexOf('after'));
+});
+
+ok('a deeper quote marker before a fence run does not close the fence', () => {
+    const source = '> ```\n> a\n> > ```\n> b\n> ```';
+    assert.match(html(source), /<code>a\n&gt; ```/);
+    assertScope(source, 'b', 'markup.raw.code', source.indexOf('> b'));
 });
 
 ok('a fence ends with its quote when no closer comes', () => {

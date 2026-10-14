@@ -4696,7 +4696,7 @@
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?!>)|^(>)(?= |$) ?((?:>(?= |$) ?)*)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?!>)|^(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -4839,7 +4839,7 @@
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?![ \\t]*>)|^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
