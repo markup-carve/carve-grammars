@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  %%%"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n   x\n   %%%\n"
+    "text": "  %%%\n   x\n"
+  },
+  {
+    "scope": "comment",
+    "text": "   %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

@@ -16,12 +16,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "   :  definition"
+    "scope": "punctuation",
+    "text": "   :"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  definition\n"
   },
   {
     "scope": "quote",

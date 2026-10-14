@@ -17,6 +17,26 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n    [^n]: note text\n\nSee [^n].\n"
+    "text": "- a\n    "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": note text"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
   }
 ]

@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "head\n\n"
+    "text": "head"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
   },
   {
     "type": "comment",

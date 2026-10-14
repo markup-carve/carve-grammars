@@ -8,12 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": > q"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " > q\n"
   },
   {
     "scope": "code>keyword",

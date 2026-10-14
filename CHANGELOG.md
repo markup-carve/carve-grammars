@@ -39,6 +39,9 @@ All notable changes to `carve-grammars` are documented here.
   citation, literal, callout, label and front matter punctuation like other
   punctuation, and give citation keys, raw formats and figure-group fences their
   own colors (#693).
+- A definition term and description body scope their inline markup in all three
+  grammars, and the list ends at a paragraph after a blank line instead of
+  swallowing it (#PRNUM).
 
 ### Added
 

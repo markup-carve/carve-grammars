@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  def"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n[a]: /u {.c}\n\n[a][]\n"
+    "text": "  def\n[a]: /u {.c}\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[a][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

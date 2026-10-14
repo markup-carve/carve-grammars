@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  def "
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  def \n"
   }
 ]

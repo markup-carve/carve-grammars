@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": A definition wrapped"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\nonto the next line.\n"
+    "text": " A definition wrapped\nonto the next line.\n"
   }
 ]

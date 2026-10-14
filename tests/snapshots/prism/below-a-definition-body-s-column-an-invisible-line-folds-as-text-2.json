@@ -17,6 +17,26 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n  [^f]: n\ntail\n\nSee[^f]\n"
+    "text": "d\n  "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": n\ntail"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

@@ -16,8 +16,12 @@
     "text": ":  "
   },
   {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^f]"
+  },
+  {
     "type": "definition-list",
-    "text": "[^f]: note\n"
+    "text": ": note\n"
   },
   {
     "type": "list>punctuation",

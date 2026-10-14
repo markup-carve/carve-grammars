@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n    *[HTML]: HyperText\n\nHTML here.\n"
+    "text": "- a\n    *[HTML]: HyperText"
+  },
+  {
+    "type": "text",
+    "text": "\n\nHTML here.\n"
   }
 ]

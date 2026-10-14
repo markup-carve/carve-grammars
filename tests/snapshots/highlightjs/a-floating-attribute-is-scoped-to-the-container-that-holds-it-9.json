@@ -8,12 +8,20 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  d"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n   {.k}\n"
+    "text": "  d\n   "
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "section",

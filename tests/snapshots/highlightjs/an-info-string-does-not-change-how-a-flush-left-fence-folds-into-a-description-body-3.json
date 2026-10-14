@@ -8,32 +8,24 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  - ```"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "     ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "code>keyword",
-    "text": "```rust"
+    "text": "  - "
   },
   {
     "scope": "code",
-    "text": "\nc\n"
+    "text": "```\n     ```"
   },
   {
-    "scope": "code>keyword",
-    "text": "```"
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code",
+    "text": "```rust\nc\n```"
   },
   {
     "scope": null,

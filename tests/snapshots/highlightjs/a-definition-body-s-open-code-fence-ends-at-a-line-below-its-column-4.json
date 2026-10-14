@@ -8,16 +8,16 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": ```"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n  b\n"
+    "text": " "
   },
   {
-    "scope": "keyword",
-    "text": "  ```"
+    "scope": "code",
+    "text": "```\n  b\n  ```"
   },
   {
     "scope": null,

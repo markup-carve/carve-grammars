@@ -17,6 +17,26 @@
   },
   {
     "type": "definition-list",
-    "text": "a\n   [^f]: t\ntail\n\nx[^f]\n"
+    "text": "a\n   "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": t\ntail"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

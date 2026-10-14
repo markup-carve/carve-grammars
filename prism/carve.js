@@ -777,10 +777,19 @@
     var includePart =
         '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'])';
 
-    // A definition-list entry: the opening term line plus every following
-    // line that is not some OTHER block opener (see above).
+    // A definition list: entries of a term or a description line plus their
+    // lazy lines, with blank lines between entries. Past a blank line a
+    // description keeps only lines indented to its content column (`\1 \2`,
+    // captured per entry), as carve-js reads it; any other line ends the list.
+    var dlBlankEnd = '(?![ \\t]*$(?![^\\r\\n]))';
+    var dlMarker = '[ \\t]*::? +' + dlBlankEnd;
+    var dlLazy = '\\n(?![ \\t\\r]*(?:\\n|$))(?!' + otherBlockOpener + ')(?!' + dlMarker + ')[^\\n]*';
+    var dlTerm = '[ \\t]*:: +' + dlBlankEnd + '[^\\n]*(?:' + dlLazy + ')*';
+    var dlDescription = '([ \\t]*):( +)' + dlBlankEnd + '[^\\n]*(?:' + dlLazy
+        + '|(?:\\n[ \\t\\r]*(?=\\n))+\\n(?=\\1 \\2[ \\t]*[^\\s])(?!' + otherBlockOpener + ')[^\\n]*)*';
     var definitionListPattern = RegExp(
-        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*:: +(?![ \\t]*$(?![^\\r\\n]))[^\\n]*(?:\\n(?!' + otherBlockOpener + ')[^\\n]*)*',
+        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?' + dlTerm
+        + '(?:(?:\\n[ \\t\\r]*(?=\\n))*\\n(?:' + dlTerm + '|' + dlDescription + '))*(?:\\n(?![\\s\\S]))?',
         'm',
     );
 
@@ -1619,8 +1628,9 @@
         // tab-and-separator ruling on markup-carve/carve#698, a tab never
         // satisfies it) was scoped as a definition even though the engines
         // render it as a paragraph. The entry runs forward from the term
-        // through any number of lines that are not some OTHER block opener
-        // (see `otherBlockOpener` above `Prism.languages.carve`).
+        // through lines that are not some OTHER block opener (see
+        // `otherBlockOpener` above `Prism.languages.carve`), and past a blank
+        // line only into another entry or an indented description line.
         'definition-list': {
             pattern: definitionListPattern,
             inside: {
@@ -2459,6 +2469,17 @@
     for (const table of ['table', 'table-continuation']) {
         Prism.languages.carve[table].inside.code = Prism.languages.carve.code;
         Prism.languages.carve[table].inside.escape = Prism.languages.carve.escape;
+    }
+
+    // A term's lazy lines and a description's body are inline runs, read with
+    // the document-level inline rules, as a paragraph is.
+    {
+        const keys = Object.keys(Prism.languages.carve);
+        Prism.languages.carve['definition-list'].inside = Object.assign(
+            {},
+            Prism.languages.carve['definition-list'].inside,
+            pick(['comment'].concat(keys.slice(keys.indexOf('math'))))
+        );
     }
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).

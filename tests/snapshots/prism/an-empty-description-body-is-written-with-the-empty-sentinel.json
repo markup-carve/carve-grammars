@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "{empty}\n\nflush\n"
+    "text": "{empty}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nflush\n"
   }
 ]

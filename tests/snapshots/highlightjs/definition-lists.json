@@ -16,19 +16,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": The visual property of objects."
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " The visual property of objects.\n"
   },
   {
-    "scope": "title",
-    "text": ": A pigment or paint."
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " A pigment or paint.\n"
   }
 ]

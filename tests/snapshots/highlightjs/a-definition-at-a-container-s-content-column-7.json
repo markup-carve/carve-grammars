@@ -8,11 +8,27 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  a"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n   [^f]: t\ntail\n\nx[^f]\n"
+    "text": "  a\n   "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": ": t\ntail\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

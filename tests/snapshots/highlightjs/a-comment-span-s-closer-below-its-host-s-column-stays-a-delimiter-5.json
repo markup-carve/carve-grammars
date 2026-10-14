@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  head"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n\n     %%%\na\n%%%\n\n   tail\n"
+    "text": "  head\n\n"
+  },
+  {
+    "scope": "comment",
+    "text": "     %%%\na\n%%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\n   tail\n"
   }
 ]

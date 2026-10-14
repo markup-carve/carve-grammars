@@ -8,12 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  a"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n+\npara\n"
+    "text": "  a\n+\npara\n"
   },
   {
     "scope": "quote",

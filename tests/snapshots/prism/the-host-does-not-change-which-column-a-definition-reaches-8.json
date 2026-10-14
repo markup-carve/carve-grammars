@@ -25,6 +25,38 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n   [r]: /url\n\nSee [r][] and [^f].\n"
+    "text": "d\n   [r]: /url"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
   }
 ]

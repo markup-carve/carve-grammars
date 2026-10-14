@@ -8,12 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  body"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  body\n"
   },
   {
     "scope": "quote",

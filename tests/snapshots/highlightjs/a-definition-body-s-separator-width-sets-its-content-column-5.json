@@ -8,19 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": one"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " one\n"
   },
   {
-    "scope": "title",
-    "text": ":  two"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  two\n"
   }
 ]

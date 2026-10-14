@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": \ttext"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n\nflush\n"
+    "text": " \ttext\n\nflush\n"
   }
 ]

@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": "\n    %%%\n    hidden\n    %%%\n    more\n"
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "    %%%\n    hidden\n    %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n    more\n"
   }
 ]

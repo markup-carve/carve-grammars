@@ -17,6 +17,34 @@
   },
   {
     "type": "definition-list",
-    "text": "[r]: /u\n\nsee [t][r]\n"
+    "text": "[r]: /u"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "t"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

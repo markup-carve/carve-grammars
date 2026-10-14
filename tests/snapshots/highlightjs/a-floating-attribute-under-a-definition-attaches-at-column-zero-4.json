@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  d"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n[r]: /u\n\nSee [text][r].\n"
+    "text": "  d\n[r]: /u\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[text][r]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

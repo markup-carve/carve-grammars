@@ -8,27 +8,23 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  - ```"
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": "  - "
+  },
+  {
+    "scope": "code",
+    "text": "```\n     ```"
   },
   {
     "scope": null,
     "text": "\n"
   },
   {
-    "scope": "keyword",
-    "text": "     ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "```\n"
   }
 ]

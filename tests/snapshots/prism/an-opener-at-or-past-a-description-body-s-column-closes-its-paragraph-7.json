@@ -17,6 +17,22 @@
   },
   {
     "type": "definition-list",
-    "text": "definition\n    {.k}\ntail\n"
+    "text": "definition\n    "
+  },
+  {
+    "type": "definition-list>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "definition-list>attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "definition-list>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "definition-list",
+    "text": "\ntail\n"
   }
 ]

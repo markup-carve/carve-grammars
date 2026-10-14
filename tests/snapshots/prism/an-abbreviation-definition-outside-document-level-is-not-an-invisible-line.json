@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n   *[A]: a\n   tail\n\nA\n"
+    "text": "d\n   *[A]: a\n   tail"
+  },
+  {
+    "type": "text",
+    "text": "\n\nA\n"
   }
 ]

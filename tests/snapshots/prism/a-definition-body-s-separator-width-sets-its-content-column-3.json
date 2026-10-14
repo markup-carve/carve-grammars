@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "first\n\n second\n"
+    "text": "first"
+  },
+  {
+    "type": "text",
+    "text": "\n\n second\n"
   }
 ]

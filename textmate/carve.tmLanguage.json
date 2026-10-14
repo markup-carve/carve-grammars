@@ -3514,28 +3514,15 @@
       }
     },
     "definition_list": {
-      "comment": "A `:` description line scopes only INSIDE an entry a real `:: ` term opened (carve-grammars#91) - a bare `:` line at the top level (no preceding term, or a term the separator rule disqualified, e.g. `::\\tterm`) is prose and carries no scope. `begin` opens on a real term line (separator is a literal space per the tab-and-separator ruling on markup-carve/carve#698 - a tab never satisfies it); `end` closes on the next OTHER block opener (heading, list, quote, fence, hr, caption, table row) as a lookahead, so that opener still scopes (carve-grammars#682), tolerating blank lines and lazy-continuation prose in between so a folded term (`term_continuation_line`) or a definition separated from its term by one blank line (corpus 25-definition-lists-7) still scope.",
+      "comment": "A `:` description line scopes only inside an entry a real `:: ` term opened (carve-grammars#91); the separator is a literal space (markup-carve/carve#698). The list ends at another block opener, as a lookahead so the opener still scopes (carve-grammars#682), and at any line no entry holds. A term or description runs over its lazy lines to a blank line; after one, a description keeps only lines indented to its content column (`\\1 \\3`), as carve-js does. Blank lines between entries stay inside (corpus 25-definition-lists-7).",
       "patterns": [
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
-          "beginCaptures": {
-            "2": {
-              "name": "punctuation.definition.list.definition.carve"
-            },
-            "4": {
-              "name": "entity.name.tag.definition.term.carve",
-              "patterns": [
-                {
-                  "include": "#inline"
-                }
-              ]
-            }
-          },
-          "end": "^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))",
+          "begin": "^(?=(?:\\A\\x{FEFF})?[ \\t]*:: +(?![ \\t]*$))",
+          "end": "^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!(?:\\A\\x{FEFF})?[ \\t]*(?::: +(?![ \\t]*$)|: ))",
           "patterns": [
             {
-              "match": "^([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
-              "captures": {
+              "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
                 "2": {
                   "name": "punctuation.definition.list.definition.carve"
                 },
@@ -3547,7 +3534,13 @@
                     }
                   ]
                 }
-              }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
             },
             {
               "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
@@ -3561,12 +3554,24 @@
               }
             },
             {
-              "match": "^([ \\t]*)(:)(?=[ ])",
-              "captures": {
+              "begin": "^([ \\t]*)(:)( +)",
+              "beginCaptures": {
                 "2": {
                   "name": "punctuation.definition.list.definition.carve"
                 }
-              }
+              },
+              "end": "^(?=[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!\\1 \\3)",
+              "patterns": [
+                {
+                  "begin": "\\G(?=[ \\t]*\\S)|^[ \\t]*(?=\\S)",
+                  "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

@@ -768,7 +768,7 @@
     // DEFINITION_LIST_ENTRY has already decided is inside a real entry.
     // `:::` opens a div and DIV_BLOCK_START runs first, so the two do not
     // compete.
-    const DEFINITION_TERM_MARKER = {
+    const DEFINITION_TERM = {
         className: 'title',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$(?![^\r\n]))/,
         end: /$(?![^\r\n])/,
@@ -1086,36 +1086,57 @@
     };
 
     // Definition-list description marker: `:  def`. Reused as a nested mode
-    // inside DEFINITION_LIST_ENTRY - not registered as a top-level mode.
-    const DEFINITION_TERM = {
-        className: 'title',
-        begin: /^(?<![^\r\n])[ \t]*: (?![ \t]*$(?![^\r\n]))/,
-        end: /$(?![^\r\n])/,
-        contains: [{ className: 'punctuation', begin: /(?=\+)(?<=^(?<![^\r\n])[ \t]*: +)\+[ \t]*$(?![^\r\n])/ }],
+    // inside DEFINITION_LIST_ENTRY - not registered as a top-level mode. The
+    // body is an inline run, left to the entry's inline modes.
+    // The open description's content column, which DEFINITION_LIST_ENTRY's
+    // end reads; a term resets it, so no list inherits another's.
+    let descriptionColumn = Infinity;
+    const DESCRIPTION_MARKER = {
+        className: 'punctuation',
+        begin: /^(?<![^\r\n])[ \t]*:(?= +(?![ \t]*$(?![^\r\n])))/,
+        'on:begin': (match) => {
+            const separator = / */y;
+            separator.lastIndex = match.index + match[0].length;
+            separator.test(match.input);
+            descriptionColumn = separator.lastIndex - match.index;
+        },
         relevance: 5,
+    };
+    const DESCRIPTION_CONTINUATION = {
+        className: 'punctuation',
+        begin: /(?=\+)(?<=^(?<![^\r\n])[ \t]*: +)\+[ \t]*$(?![^\r\n])/,
+        relevance: 0,
     };
 
     // Definition-list entry: `:: term` through its `:  def` line(s)
     // (grammar.ebnf `definition_entry`).
     //
     // A `:` description line scopes only INSIDE an entry that a real `:: `
-    // term opened (carve-grammars#91) - DEFINITION_TERM used to be registered
-    // as its own top-level mode, matched unconditionally, so a bare `:  d`
+    // term opened (carve-grammars#91) - the description mode used to be
+    // registered as its own top-level mode, matched unconditionally, so a bare `:  d`
     // with no term above it (or a term the separator rule disqualified, e.g.
     // `::\tterm` - the marker separator is a literal space per the
     // tab-and-separator ruling on markup-carve/carve#698, a tab never
     // satisfies it) was scoped as a definition even though the engines render
     // it as a paragraph. The entry opens on a real term line and runs through
-    // any number of lines that are not some OTHER block opener (see
-    // OTHER_BLOCK_OPENER_SOURCE above). `begin`/`end` are zero-width
-    // lookaheads so DEFINITION_TERM_MARKER/DEFINITION_TERM (below, in
-    // `contains`) do the actual per-line matching and coloring themselves,
-    // exactly as they did as top-level modes.
+    // lines that are not some OTHER block opener (see
+    // OTHER_BLOCK_OPENER_SOURCE above). `begin` is a zero-width lookahead so
+    // DEFINITION_TERM/DESCRIPTION_MARKER (below, in `contains`) do the actual
+    // per-line matching and coloring themselves.
     const DEFINITION_LIST_ENTRY = {
         begin: /^(?<![^\r\n])(?=(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$(?![^\r\n])))/,
-        end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'),
+        // Also ends at blank lines followed by a line no entry holds: not a
+        // marker, and not indented to the open description's content column,
+        // as carve-js reads it. It consumes the blank lines, since highlight.js
+        // re-runs an end on the remainder, where a lookbehind sees nothing.
+        end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
+            + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'),
+        'on:end': (match, response) => {
+            if (match[0] !== '' && match[1].length >= descriptionColumn) response.ignoreMatch();
+        },
         relevance: 0,
-        contains: [DEFINITION_TERM_MARKER, DEFINITION_TERM],
+        // The inline modes are appended once CONTAINS exists.
+        contains: [DEFINITION_TERM, DESCRIPTION_MARKER, DESCRIPTION_CONTINUATION],
     };
 
     /*
@@ -2009,6 +2030,11 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
+    // A definition term is a one-line inline run like a title.
+    DEFINITION_TERM.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
+    DEFINITION_TERM['on:begin'] = () => {
+        descriptionColumn = Infinity;
+    };
     /*
      * THE LINE TEST RUNS AFTER THE CANDIDATE, NEVER AS A LEADING LOOKBEHIND
      * (carve-grammars#604). Spelled `(?<=^[ \t]*(?:> )+(?:#{1,6} |\^ )[^\n]*)`
@@ -2231,6 +2257,9 @@
         HARD_BREAK,
         TYPOGRAPHY,        // dashes/arrows - after the structural rules
     ];
+
+    // A term's lazy lines and a description's body read as a paragraph does.
+    DEFINITION_LIST_ENTRY.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
 
     // A div's body holds the full top-level mode list minus ABBREVIATION_DEF
     // (carve-grammars#125 - see the comment on DIV_BLOCK above), plus 'self'

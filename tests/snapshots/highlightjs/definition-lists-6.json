@@ -8,11 +8,11 @@
     "text": "\nwraps onto the next line\n"
   },
   {
-    "scope": "title",
-    "text": ": its definition"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " its definition\n"
   }
 ]

@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  intro"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n%% c\n  more\n"
+    "text": "  intro\n"
+  },
+  {
+    "scope": "comment",
+    "text": "%% c"
+  },
+  {
+    "scope": null,
+    "text": "\n  more\n"
   }
 ]

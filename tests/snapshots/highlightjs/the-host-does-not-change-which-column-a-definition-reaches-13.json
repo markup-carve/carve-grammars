@@ -8,11 +8,35 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": [^g]: b"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n   [r]: /url\n\nSee [r][] and [^g].\n"
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": ": b\n   [r]: /url\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
   }
 ]

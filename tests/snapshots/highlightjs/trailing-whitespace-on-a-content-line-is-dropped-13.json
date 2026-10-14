@@ -1,18 +1,22 @@
 [
   {
     "scope": "title",
-    "text": ":: `a"
+    "text": ":: "
+  },
+  {
+    "scope": "title>code",
+    "text": "`a"
   },
   {
     "scope": null,
     "text": "\nb \n"
   },
   {
-    "scope": "title",
-    "text": ":  d"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  d\n"
   }
 ]

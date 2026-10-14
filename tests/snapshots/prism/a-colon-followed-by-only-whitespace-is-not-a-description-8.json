@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "\ttext\n\nflush\n"
+    "text": "\ttext"
+  },
+  {
+    "type": "text",
+    "text": "\n\nflush\n"
   }
 ]

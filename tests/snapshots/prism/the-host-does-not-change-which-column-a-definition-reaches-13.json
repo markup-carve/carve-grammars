@@ -16,7 +16,43 @@
     "text": ": "
   },
   {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^g]"
+  },
+  {
     "type": "definition-list",
-    "text": "[^g]: b\n   [r]: /url\n\nSee [r][] and [^g].\n"
+    "text": ": b\n   [r]: /url"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ".\n"
   }
 ]

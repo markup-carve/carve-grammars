@@ -8,11 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  definition"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n    {.k}\ntail\n"
+    "text": "  definition\n    "
+  },
+  {
+    "scope": "attr",
+    "text": "{.k}"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
   }
 ]

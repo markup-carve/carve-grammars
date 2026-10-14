@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "+\f\n\nb\n"
+    "text": "+\f"
+  },
+  {
+    "type": "text",
+    "text": "\n\nb\n"
   }
 ]

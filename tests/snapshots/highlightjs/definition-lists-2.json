@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": A definition can now hold"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n\n  more than one paragraph.\n"
+    "text": " A definition can now hold\n\n  more than one paragraph.\n"
   }
 ]

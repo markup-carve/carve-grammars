@@ -25,7 +25,11 @@
   },
   {
     "type": "definition-list",
-    "text": "definition\n\n"
+    "text": "definition"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
   },
   {
     "type": "blockquote>punctuation",

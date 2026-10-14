@@ -8,12 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": :::"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n  a\n y\n"
+    "text": " :::\n  a\n y\n"
   },
   {
     "scope": "keyword",

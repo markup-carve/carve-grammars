@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": A first paragraph,"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n+\nthen a flush-left block joined with +.\n"
+    "text": " A first paragraph,\n+\nthen a flush-left block joined with +.\n"
   }
 ]

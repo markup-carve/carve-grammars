@@ -8,27 +8,15 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ": - ``` x"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\ncode\n\n"
+    "text": " - "
   },
   {
-    "scope": "title",
-    "text": ":: t2"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "title",
-    "text": ": plain"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "``` x\ncode\n\n:: t2\n: plain\n"
   }
 ]

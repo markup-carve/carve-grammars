@@ -8,11 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  definition"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n   [r]: /url\ntail\n"
+    "text": "  definition\n   [r]: /url\ntail\n"
   }
 ]

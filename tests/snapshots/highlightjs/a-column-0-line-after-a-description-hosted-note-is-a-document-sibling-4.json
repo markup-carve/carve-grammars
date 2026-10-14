@@ -8,12 +8,20 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": ":  [^f]: note"
+    "scope": "punctuation",
+    "text": ":"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": ": note\n"
   },
   {
     "scope": "bullet",

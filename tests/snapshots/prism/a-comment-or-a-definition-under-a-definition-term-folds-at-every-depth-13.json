@@ -21,6 +21,14 @@
   },
   {
     "type": "definition-list",
-    "text": "\n  [^n]: y\n"
+    "text": "\n  "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": y\n"
   }
 ]

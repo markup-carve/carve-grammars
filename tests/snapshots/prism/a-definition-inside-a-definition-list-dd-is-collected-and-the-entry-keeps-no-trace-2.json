@@ -16,7 +16,23 @@
     "text": ":  "
   },
   {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^f]"
+  },
+  {
     "type": "definition-list",
-    "text": "[^f]: x\n\nsee[^f]\n"
+    "text": ": x"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

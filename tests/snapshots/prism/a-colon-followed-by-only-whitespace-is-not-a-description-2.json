@@ -9,6 +9,10 @@
   },
   {
     "type": "definition-list",
-    "text": "\n:  \n\nflush\n"
+    "text": "\n:  "
+  },
+  {
+    "type": "text",
+    "text": "\n\nflush\n"
   }
 ]

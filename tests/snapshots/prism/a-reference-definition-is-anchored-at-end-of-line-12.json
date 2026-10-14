@@ -17,6 +17,30 @@
   },
   {
     "type": "definition-list",
-    "text": "def\n[a]: /u {.c}\n\n[a][]\n"
+    "text": "def\n[a]: /u {.c}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "a"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]
