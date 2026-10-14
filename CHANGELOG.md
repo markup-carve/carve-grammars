@@ -4,8 +4,15 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-10-14
+
 ### Fixes
 
+- Read an include option that butts directly onto the path or the section
+  selector, so `{{ frag.crv#sec fmt=raw }}` and `{{ frag.crv fmt=raw }}`
+  scope their options in all three grammars (#637).
+- Editable quotes in the Tiptap editor render at document text contrast and
+  keep the gap between their paragraphs (#639).
 - The Tiptap bridge works with carve-js 0.1.11, which the `^0.1.9` range
   already installs: footnote references keep their labels instead of all
   becoming `note`, a raw block no longer gains a blank line on every save, and
@@ -106,21 +113,40 @@ All notable changes to `carve-grammars` are documented here.
   an autolink no longer makes alternating unclosed openers slow (#702).
 - highlight.js: a leading `---` with no closing dash line is a thematic break,
   not front matter running to the end of the document, and the closing `---` of
-  typed front matter is scoped `meta` instead of as payload.
+  typed front matter is scoped `meta` instead of as payload (#703).
 - highlight.js: alternating forced openers with no closer (`{*a {/b ...`) no
-  longer take seconds per line; the bare run checks for any closer first.
+  longer take seconds per line; the bare run checks for any closer first (#703).
 - highlight.js: a list marker on a paragraph's continuation line outside a list
-  item is text, and a `^ ` line is a caption only below a captionable host.
+  item is text, and a `^ ` line is a caption only below a captionable host (#703).
 - highlight.js: a bare colon fence closes only a container of its own width and
   opens a nested one otherwise, so a div's closer no longer leaves the rest of
-  the document inside it.
+  the document inside it (#703).
 - highlight.js: a pipe-led line without a closing pipe is a paragraph with its
-  inline markup, and table cells scope their inline markup.
+  inline markup, and table cells scope their inline markup (#703).
 - highlight.js: link, span and reference text, extension content and inline
-  footnotes scope their inline markup.
+  footnotes scope their inline markup (#703).
 - highlight.js: no rule refuses a match with `ignoreMatch()` in `on:begin` any
   more, which could make highlight.js skip text or loop; a `- ::: note` opener
-  that folds into its item keeps its trailing comment as a comment.
+  that folds into its item keeps its trailing comment as a comment (#703).
+- The Tiptap bridge loads and writes a document's leading `***` or `___`
+  rule with its marker, so two rules and a paragraph no longer come back as
+  empty front matter; a task list keeps its attribute run on load, and Prism
+  highlights an empty `---` / `---` front matter block (#650).
+- The Tiptap writer drops empty list items (#654), escapes paragraph text that
+  would read back as Carve syntax (#661), and keeps a line block's leading
+  spaces ASCII after an edit (#666).
+- Tiptap list commands convert a list's type in place instead of nesting it
+  (#655), and toggling a list over mixed blocks keeps headings and nesting
+  (#667).
+- Typing `*x*`, `/x/`, `_x_`, `~x~`, `=x=`, `{^x^}` or `{,x,}` in the editor
+  applies the Carve mark instead of the Markdown one (#659).
+- The Tiptap loader reads the task-list class and the done task state (#668).
+- The editor bridge loads a table `+` continuation row, mapping `cell_wrap`
+  to the space it replaced instead of refusing the table (#701).
+- TextMate: the block that closes a definition list keeps its scopes, and a
+  table continuation row scopes its pipes and inline markup (#686).
+- Prism and highlight.js no longer take exponential time on a line of
+  unclosed bare delimiters (#696).
 
 ### Added
 
@@ -134,17 +160,18 @@ All notable changes to `carve-grammars` are documented here.
 - The highlight.js grammar highlights a fenced code body in the language its
   info string names when highlight.js has that language registered (inert text
   otherwise), the same for `=html`/`=latex` raw blocks and `{.diff}`, and scopes
-  the language, title and label of the info string apart.
-
-## [0.1.14] - 2026-10-09
-
-### Fixes
-
-- Read an include option that butts directly onto the path or the section
-  selector, so `{{ frag.crv#sec fmt=raw }}` and `{{ frag.crv fmt=raw }}`
-  scope their options in all three grammars (#637).
-- Editable quotes in the Tiptap editor render at document text contrast and
-  keep the gap between their paragraphs (#639).
+  the language, title and label of the info string apart (#703).
+- Done task items are muted in the editor and the checkbox takes the accent
+  color (#665).
+- A `::: >` quote fence keeps its form through the editor bridge, and a
+  quote's attribute run loads (#669).
+- The editor schema keeps a table's separator widths (#672).
+- `./shiki/themes` exports the Shiki theme rules for browser highlighters
+  (#687).
+- Table markers are colored by meaning (header, span, separator) and TextMate
+  scopes header-cell text as bold (#688).
+- Heading, list and task markers inside a quote are scoped in all three
+  grammars (#689).
 
 ## [0.1.13] - 2026-10-08
 
