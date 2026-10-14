@@ -199,9 +199,9 @@ for (const [name, tokenize] of surfaces) {
 
 console.log('\nthe control: a bare ^ line with no figure is prose, and stays as it reads:');
 
-// A bare `^ cap` is a PARAGRAPH on the engines - these grammars have no block
-// context and scope it as a caption anyway, which is a known and accepted
-// limitation, not this ticket. The control is that the fix does not CHANGE that
+// A bare `^ cap` is a PARAGRAPH on the engines - Prism reads it so, the other
+// grammars have no block context and scope it as a caption anyway, which is a
+// known and accepted limitation, not this ticket. The control is that the fix does not CHANGE that
 // reading: the trailing comment is a comment either way, as a caption's trailing
 // run or as a paragraph's.
 for (const [name, tokenize] of surfaces) {
@@ -211,7 +211,7 @@ for (const [name, tokenize] of surfaces) {
         const scope = scopeOver(tokens, source, '%%');
         assert.ok(scope && /comment/.test(scope), `expected a comment scope, got ${JSON.stringify(scope)}`);
         const text = scopeOver(tokens, source, 'cap');
-        assert.ok(text && !/comment/.test(text), `the text before it is not comment, got ${JSON.stringify(text)}`);
+        assert.ok(!/comment/.test(text ?? ''), `the text before it is not comment, got ${JSON.stringify(text)}`);
     });
 }
 

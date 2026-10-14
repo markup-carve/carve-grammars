@@ -24,39 +24,39 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string>punctuation",
+    "type": "div>div-delimiter>string>punctuation",
     "text": "\""
   },
   {
-    "type": "div>tag>div-delimiter>string>title-text",
+    "type": "div>div-delimiter>string>title-text",
     "text": "opener title"
   },
   {
-    "type": "div>tag>div-delimiter>string>punctuation",
+    "type": "div>div-delimiter>string>punctuation",
     "text": "\""
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nBody.\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

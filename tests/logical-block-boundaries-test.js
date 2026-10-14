@@ -18,7 +18,7 @@ for (const [name, tokenize] of [['prism', prismTokens], ['highlightjs', hljsToke
         }
         const fence = `\`\`\`\ncode${separator}\`\`\`\n# Hidden\n\`\`\`\n`;
         assert.ok(tokenize(fence).filter(t => t.text.includes('Hidden')).every(t => !/title|section/.test(t.scope ?? '')), `${name}: opaque fence closer`);
-        for (const block of ['> First', '^ First', ':: First', '*[ABC]: First', '%% First', '%%% First', '- %% First', '# First %% Comment']) {
+        for (const block of ['> First', '![i](u)\n^ First', ':: First', '*[ABC]: First', '%% First', '%%% First', '- %% First', '# First %% Comment']) {
             const source = `${block}${separator}Second\n`;
             assert.ok(tokenize(source).filter(t => t.text.includes('Second')).every(t => /%%/.test(block) ? /comment/.test(t.scope ?? '') : block.startsWith('*[') && name === 'prism' ? /string/.test(t.scope ?? '') : t.scope), `${name}: full payload ${JSON.stringify(source)}`);
         }

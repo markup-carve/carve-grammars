@@ -9,7 +9,23 @@
   },
   {
     "type": "inline-footnote>symbol",
-    "text": "see [h"
+    "text": "see "
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "inline-footnote>symbol>url>link-text",
+    "text": "h"
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": "]"
   },
   {
     "type": "inline-footnote>symbol>punctuation",
@@ -17,7 +33,7 @@
   },
   {
     "type": "text",
-    "text": "[]] b\n\n"
+    "text": " b\n\n"
   },
   {
     "type": "title>important>punctuation",

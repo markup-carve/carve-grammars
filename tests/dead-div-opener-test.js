@@ -54,13 +54,13 @@ for (const [name, tokenize] of surfaces) {
 ok('prism still paints a real opener', () => {
     const source = '::: note\nbody\n:::';
     const scope = scopeOfKind(prismTokens(source), source, 'note');
-    assert.equal(scope, 'div>tag>div-delimiter>class-name');
+    assert.equal(scope, 'div>div-delimiter>class-name');
 });
 
 ok('prism still paints an opener carrying a quoted title', () => {
     const source = '::: note "T"\nbody\n:::';
     const scope = scopeOfKind(prismTokens(source), source, 'T"');
-    assert.equal(scope, 'div>tag>div-delimiter>string>title-text');
+    assert.equal(scope, 'div>div-delimiter>string>title-text');
 });
 
 console.log(`\n${passed} passed`);

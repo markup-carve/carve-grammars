@@ -9,7 +9,15 @@
   },
   {
     "type": "code-block",
-    "text": " [NPM]\nnpm install x\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>symbol",
+    "text": "[NPM]"
+  },
+  {
+    "type": "code-block",
+    "text": "\nnpm install x\n"
   },
   {
     "type": "code-block>punctuation",

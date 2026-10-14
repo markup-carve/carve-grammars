@@ -9,7 +9,15 @@
   },
   {
     "type": "code-block",
-    "text": " title=\"x\"\ncode\n"
+    "text": " title="
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"x\""
+  },
+  {
+    "type": "code-block",
+    "text": "\ncode\n"
   },
   {
     "type": "code-block>punctuation",

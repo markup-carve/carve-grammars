@@ -1,126 +1,114 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>string>punctuation",
+    "type": "div>div-delimiter>string>punctuation",
     "text": "\""
   },
   {
-    "type": "div>tag>div-delimiter>string>title-text",
+    "type": "div>div-delimiter>string>title-text",
     "text": "A titled figure div"
   },
   {
-    "type": "div>tag>div-delimiter>string>punctuation",
+    "type": "div>div-delimiter>string>punctuation",
     "text": "\""
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "div>tag>image>url>punctuation",
+    "type": "div>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "div>tag>image>url",
+    "type": "div>image>url",
     "text": "one"
   },
   {
-    "type": "div>tag>image>url>punctuation",
+    "type": "div>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "div>tag>image>url",
+    "type": "div>image>url",
     "text": "a.png"
   },
   {
-    "type": "div>tag>image>url>punctuation",
+    "type": "div>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "div>tag>caption>title>punctuation",
+    "type": "div>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "div>tag>caption>title",
+    "type": "div>caption>title",
     "text": " (a) One"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "\n^ Not a group caption\n\n"
   },
   {
-    "type": "caption>title>punctuation",
-    "text": "^"
-  },
-  {
-    "type": "caption>title",
-    "text": " Not a group caption"
-  },
-  {
-    "type": "text",
-    "text": "\n\n"
-  },
-  {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "type": "div>div-delimiter>symbol>punctuation",
     "text": "["
   },
   {
-    "type": "div>tag>div-delimiter>symbol>label-text",
+    "type": "div>div-delimiter>symbol>label-text",
     "text": "g"
   },
   {
-    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "type": "div>div-delimiter>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nBody.\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

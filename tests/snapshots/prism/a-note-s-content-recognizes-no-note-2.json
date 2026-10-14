@@ -9,7 +9,7 @@
   },
   {
     "type": "inline-footnote>symbol",
-    "text": "a [^1"
+    "text": "a [^1] c"
   },
   {
     "type": "inline-footnote>symbol>punctuation",
@@ -17,7 +17,7 @@
   },
   {
     "type": "text",
-    "text": " c]\n\n"
+    "text": "\n\n"
   },
   {
     "type": "footnote>symbol",

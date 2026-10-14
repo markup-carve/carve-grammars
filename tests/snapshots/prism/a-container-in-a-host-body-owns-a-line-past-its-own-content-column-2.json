@@ -20,43 +20,43 @@
     "text": "a\n"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": "   "
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "div>tag>reference-definition>url>constant",
+    "type": "div>reference-definition>url>constant",
     "text": "    [r]:"
   },
   {
-    "type": "div>tag>reference-definition>url",
+    "type": "div>reference-definition>url",
     "text": " /url"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": "   "
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -1,15 +1,15 @@
 [
   {
-    "type": "text",
-    "text": "\\"
+    "type": "escape>constant",
+    "text": "\\{"
   },
   {
-    "type": "forced-bold>bold",
-    "text": "{*x*}"
+    "type": "bold>bold",
+    "text": "*x*"
   },
   {
     "type": "text",
-    "text": "\n\n"
+    "text": "}\n\n"
   },
   {
     "type": "escape>constant",

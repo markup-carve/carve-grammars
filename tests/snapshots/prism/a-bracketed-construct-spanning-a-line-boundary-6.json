@@ -1,6 +1,22 @@
 [
   {
     "type": "text",
-    "text": "A note ^[a\nb] here.\n"
+    "text": "A note "
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "a\nb"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " here.\n"
   }
 ]

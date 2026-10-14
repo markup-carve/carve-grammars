@@ -1,15 +1,7 @@
 [
   {
-    "type": "table>table-boundary",
-    "text": "|"
-  },
-  {
-    "type": "table",
-    "text": " a"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "| a\n"
   },
   {
     "type": "table>table-boundary",

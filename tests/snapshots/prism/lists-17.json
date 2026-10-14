@@ -1,22 +1,6 @@
 [
   {
     "type": "text",
-    "text": "Liste:\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "eins\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "zwei\n"
+    "text": "Liste:\n- eins\n- zwei\n"
   }
 ]

@@ -9,7 +9,23 @@
   },
   {
     "type": "code-block",
-    "text": " [Composer] \"x\"\ncode\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>symbol",
+    "text": "[Composer]"
+  },
+  {
+    "type": "code-block",
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"x\""
+  },
+  {
+    "type": "code-block",
+    "text": "\ncode\n"
   },
   {
     "type": "code-block>punctuation",

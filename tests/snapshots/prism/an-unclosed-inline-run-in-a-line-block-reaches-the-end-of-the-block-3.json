@@ -1,30 +1,30 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\na "
   },
   {
-    "type": "div>tag>code",
+    "type": "div>code",
     "text": "`b`"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nc d\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

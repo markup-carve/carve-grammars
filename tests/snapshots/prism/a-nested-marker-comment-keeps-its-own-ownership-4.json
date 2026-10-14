@@ -5,7 +5,11 @@
   },
   {
     "type": "text",
-    "text": "a\n   1. "
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   1. "
   },
   {
     "type": "comment",

@@ -1,94 +1,94 @@
 [
   {
-    "type": "figure-group>tag>figure-group-delimiter>punctuation",
+    "type": "figure-group>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter",
+    "type": "figure-group>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter>class-name",
+    "type": "figure-group>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
-    "type": "figure-group>tag",
+    "type": "figure-group",
     "text": "\n"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>tag>image>url",
+    "type": "figure-group>image>url",
     "text": "one"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>tag>image>url",
+    "type": "figure-group>image>url",
     "text": "a.png"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group>tag",
+    "type": "figure-group",
     "text": "\n"
   },
   {
-    "type": "figure-group>tag>caption>title>punctuation",
+    "type": "figure-group>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>tag>caption>title",
+    "type": "figure-group>caption>title",
     "text": " (a) One"
   },
   {
-    "type": "figure-group>tag",
+    "type": "figure-group",
     "text": "\n\n"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": "!["
   },
   {
-    "type": "figure-group>tag>image>url",
+    "type": "figure-group>image>url",
     "text": "two"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": "]("
   },
   {
-    "type": "figure-group>tag>image>url",
+    "type": "figure-group>image>url",
     "text": "b.png"
   },
   {
-    "type": "figure-group>tag>image>url>punctuation",
+    "type": "figure-group>image>url>punctuation",
     "text": ")"
   },
   {
-    "type": "figure-group>tag",
+    "type": "figure-group",
     "text": "\n"
   },
   {
-    "type": "figure-group>tag>caption>title>punctuation",
+    "type": "figure-group>caption>title>punctuation",
     "text": "^"
   },
   {
-    "type": "figure-group>tag>caption>title",
+    "type": "figure-group>caption>title",
     "text": " (b) Two"
   },
   {
-    "type": "figure-group>tag",
+    "type": "figure-group",
     "text": "\n"
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter>punctuation",
+    "type": "figure-group>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {

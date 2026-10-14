@@ -1,14 +1,14 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": "::::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "outer"
   },
   {
@@ -16,19 +16,19 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "widget"
   },
   {
-    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "type": "div>div-delimiter>invalid-metadata>error",
     "text": " Custom Title"
   },
   {
@@ -64,7 +64,7 @@
     "text": "second\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
@@ -72,7 +72,7 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": "::::"
   },
   {

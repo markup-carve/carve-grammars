@@ -20,23 +20,23 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\na\n"
   },
   {
-    "type": "div>tag>footnote>symbol",
+    "type": "div>footnote>symbol",
     "text": "[^z]"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": ": zz\nb\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

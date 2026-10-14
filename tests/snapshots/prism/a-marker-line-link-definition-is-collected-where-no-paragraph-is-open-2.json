@@ -1,22 +1,6 @@
 [
   {
     "type": "text",
-    "text": "para\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "* "
-  },
-  {
-    "type": "reference-definition>url>constant",
-    "text": "[d]:"
-  },
-  {
-    "type": "reference-definition>url",
-    "text": " u"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "para\n* [d]: u\n"
   }
 ]

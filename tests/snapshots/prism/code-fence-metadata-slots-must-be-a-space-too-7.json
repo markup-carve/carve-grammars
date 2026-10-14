@@ -9,7 +9,23 @@
   },
   {
     "type": "code-block",
-    "text": " \"T\"\t[L]\nx\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"T\""
+  },
+  {
+    "type": "code-block",
+    "text": "\t"
+  },
+  {
+    "type": "code-block>symbol",
+    "text": "[L]"
+  },
+  {
+    "type": "code-block",
+    "text": "\nx\n"
   },
   {
     "type": "code-block>punctuation",

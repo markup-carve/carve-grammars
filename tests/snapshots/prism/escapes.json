@@ -29,22 +29,22 @@
   },
   {
     "type": "text",
-    "text": " \\"
+    "text": " "
   },
   {
-    "type": "tag>variable",
-    "text": "#h"
-  },
-  {
-    "type": "text",
-    "text": " \\"
-  },
-  {
-    "type": "mention>variable",
-    "text": "@u"
+    "type": "escape>constant",
+    "text": "\\#"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "h "
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\@"
+  },
+  {
+    "type": "text",
+    "text": "u\n"
   }
 ]

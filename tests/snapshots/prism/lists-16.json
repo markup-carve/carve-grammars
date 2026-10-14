@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "Die Frage ist x = 5\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "* "
-  },
-  {
-    "type": "text",
-    "text": "3 + 17 wahr.\n"
+    "text": "Die Frage ist x = 5\n* 3 + 17 wahr.\n"
   }
 ]

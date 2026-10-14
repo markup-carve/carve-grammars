@@ -44,11 +44,11 @@
     "text": "  >"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": " ~~~"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -56,11 +56,11 @@
     "text": "  >"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": " z"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -68,8 +68,12 @@
     "text": "  >"
   },
   {
-    "type": "blockquote",
-    "text": " ~~~"
+    "type": "blockquote>code-block",
+    "text": " "
+  },
+  {
+    "type": "blockquote>code-block>punctuation",
+    "text": "~~~"
   },
   {
     "type": "text",

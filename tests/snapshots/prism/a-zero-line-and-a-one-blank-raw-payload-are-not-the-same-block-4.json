@@ -24,28 +24,36 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
-    "text": " ```=html"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": " ```"
+  },
+  {
+    "type": "blockquote>code-block>language>class-name",
+    "text": "=html"
+  },
+  {
+    "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code-block",
+    "text": " "
+  },
+  {
+    "type": "blockquote>code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

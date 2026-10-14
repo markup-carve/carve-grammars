@@ -42,6 +42,22 @@ All notable changes to `carve-grammars` are documented here.
 - A definition term and description body scope their inline markup in all three
   grammars, and the list ends at a paragraph after a blank line instead of
   swallowing it (#695).
+- Prism: alternating unclosed braced openers on one line (`{*a {/b ...`) no
+  longer take cubic time (#699).
+- Prism: a closed code fence inside a quote keeps its body verbatim and scopes
+  its fence and language (#699).
+- Prism: an escape wins over the code span, tag, mention, autolink,
+  cross-reference and braced opener it precedes (`\#tag`, `\{*a*}`) (#699).
+- Prism: a list marker on a paragraph's continuation line, and a `^ ` line
+  with no image, table, code, math, quote or figure group above it, stay text
+  (#699).
+- Prism: bare emphasis crosses one soft line break, a `|` line needs its
+  closing pipe to be a table row, and a longer bare colon run inside an open
+  container opens a nested one instead of closing the outer (#699).
+- Prism: an inline note holds nested brackets, links and a soft line break; a
+  fence info string scopes its title and label (#699).
+- Prism: a container body and superscript or subscript no longer carry the
+  `tag` or `important` alias, which stock themes painted purple or bold (#699).
 
 ### Added
 

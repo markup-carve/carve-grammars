@@ -1,22 +1,6 @@
 [
   {
     "type": "text",
-    "text": "text\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "2. "
-  },
-  {
-    "type": "text",
-    "text": "y\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "3. "
-  },
-  {
-    "type": "text",
-    "text": "z\n"
+    "text": "text\n2. y\n3. z\n"
   }
 ]

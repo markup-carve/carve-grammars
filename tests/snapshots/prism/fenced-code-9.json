@@ -9,7 +9,15 @@
   },
   {
     "type": "code-block",
-    "text": " \"*.config.js\"\nexport default {}\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"*.config.js\""
+  },
+  {
+    "type": "code-block",
+    "text": "\nexport default {}\n"
   },
   {
     "type": "code-block>punctuation",

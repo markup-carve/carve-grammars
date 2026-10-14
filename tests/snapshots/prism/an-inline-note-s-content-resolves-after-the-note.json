@@ -9,7 +9,19 @@
   },
   {
     "type": "inline-footnote>symbol",
-    "text": "see </#h>"
+    "text": "see "
+  },
+  {
+    "type": "inline-footnote>symbol>cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "inline-footnote>symbol>cross-ref>url",
+    "text": "h"
+  },
+  {
+    "type": "inline-footnote>symbol>cross-ref>url>punctuation",
+    "text": ">"
   },
   {
     "type": "inline-footnote>symbol>punctuation",

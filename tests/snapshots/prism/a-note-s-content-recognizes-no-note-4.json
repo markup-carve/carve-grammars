@@ -9,27 +9,15 @@
   },
   {
     "type": "inline-footnote>symbol",
-    "text": "a [^1"
+    "text": "a [^1]{.k} c"
   },
   {
     "type": "inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".k"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": " c]\n\n"
+    "text": "\n\n"
   },
   {
     "type": "footnote>symbol",

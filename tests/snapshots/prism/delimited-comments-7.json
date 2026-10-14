@@ -1,14 +1,14 @@
 [
   {
     "type": "text",
-    "text": "a \\"
+    "text": "a "
   },
   {
-    "type": "comment",
-    "text": "{% not a comment %}"
+    "type": "escape>constant",
+    "text": "\\{"
   },
   {
     "type": "text",
-    "text": " b\n"
+    "text": "% not a comment %} b\n"
   }
 ]

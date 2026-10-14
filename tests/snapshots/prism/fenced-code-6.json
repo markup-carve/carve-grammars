@@ -9,7 +9,15 @@
   },
   {
     "type": "code-block",
-    "text": " \"src/Auth.php\"\n$ok = true;\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"src/Auth.php\""
+  },
+  {
+    "type": "code-block",
+    "text": "\n$ok = true;\n"
   },
   {
     "type": "code-block>punctuation",

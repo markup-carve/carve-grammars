@@ -21,10 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\n^ "
+    "text": "\n"
   },
   {
-    "type": "comment",
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " "
+  },
+  {
+    "type": "caption>title>comment",
     "text": "%% hidden"
   },
   {

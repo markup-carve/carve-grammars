@@ -1,38 +1,38 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "tip"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nQuick steps:\n\n"
   },
   {
-    "type": "div>tag>list>punctuation",
+    "type": "div>list>punctuation",
     "text": "- "
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "read the docs\n"
   },
   {
-    "type": "div>tag>list>punctuation",
+    "type": "div>list>punctuation",
     "text": "- "
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "run the demo\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -33,7 +33,15 @@
   },
   {
     "type": "code-block",
-    "text": " \"from the header\"\ncode\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"from the header\""
+  },
+  {
+    "type": "code-block",
+    "text": "\ncode\n"
   },
   {
     "type": "code-block>punctuation",

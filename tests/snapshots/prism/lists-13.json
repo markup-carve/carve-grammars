@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "text\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "  - "
-  },
-  {
-    "type": "text",
-    "text": "item\n"
+    "text": "text\n  - item\n"
   }
 ]

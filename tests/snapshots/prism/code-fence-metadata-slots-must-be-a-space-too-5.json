@@ -9,7 +9,15 @@
   },
   {
     "type": "code-block",
-    "text": " \t\"T\"\nx\n"
+    "text": " \t"
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"T\""
+  },
+  {
+    "type": "code-block",
+    "text": "\nx\n"
   },
   {
     "type": "code-block>punctuation",

@@ -13,7 +13,15 @@
   },
   {
     "type": "code-block",
-    "text": " [/i/]\nc\n"
+    "text": " "
+  },
+  {
+    "type": "code-block>symbol",
+    "text": "[/i/]"
+  },
+  {
+    "type": "code-block",
+    "text": "\nc\n"
   },
   {
     "type": "code-block>punctuation",

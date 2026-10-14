@@ -131,7 +131,7 @@ export const ENGINE_SCOPES = {
   "markup.superscript": {
     "prism": [
       [
-        "superscript>important"
+        "superscript>symbol"
       ]
     ],
     "highlightjs": [
@@ -143,7 +143,7 @@ export const ENGINE_SCOPES = {
   "markup.subscript": {
     "prism": [
       [
-        "subscript>important"
+        "subscript>symbol"
       ]
     ],
     "highlightjs": [
@@ -681,7 +681,7 @@ export const ENGINE_SCOPES = {
   "admonition": {
     "prism": [
       [
-        "div>tag>div-delimiter>class-name"
+        "div>div-delimiter>class-name"
       ]
     ],
     "highlightjs": [
@@ -900,7 +900,7 @@ export const ENGINE_SCOPES = {
   "string.quoted.double.admonition.title": {
     "prism": [
       [
-        "div>tag>div-delimiter>string"
+        "div>div-delimiter>string"
       ]
     ],
     "highlightjs": [
@@ -912,7 +912,7 @@ export const ENGINE_SCOPES = {
   "constant.other.label.admonition": {
     "prism": [
       [
-        "div>tag>div-delimiter>symbol"
+        "div>div-delimiter>symbol"
       ]
     ],
     "highlightjs": [
@@ -924,7 +924,7 @@ export const ENGINE_SCOPES = {
   "entity.name.tag.figure-group": {
     "prism": [
       [
-        "figure-group>tag>figure-group-delimiter>class-name"
+        "figure-group>figure-group-delimiter>class-name"
       ]
     ],
     "highlightjs": [

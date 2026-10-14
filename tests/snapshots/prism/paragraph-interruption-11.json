@@ -1,14 +1,6 @@
 [
   {
     "type": "text",
-    "text": "text\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "1985. "
-  },
-  {
-    "type": "text",
-    "text": "was the year\n"
+    "text": "text\n1985. was the year\n"
   }
 ]

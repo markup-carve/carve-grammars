@@ -13,7 +13,23 @@
   },
   {
     "type": "code-block",
-    "text": "   \"src/Auth.php\"    [Composer]\ncomposer require x\n"
+    "text": "   "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"src/Auth.php\""
+  },
+  {
+    "type": "code-block",
+    "text": "    "
+  },
+  {
+    "type": "code-block>symbol",
+    "text": "[Composer]"
+  },
+  {
+    "type": "code-block",
+    "text": "\ncomposer require x\n"
   },
   {
     "type": "code-block>punctuation",

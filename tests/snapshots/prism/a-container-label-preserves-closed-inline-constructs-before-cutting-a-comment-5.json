@@ -1,26 +1,26 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "type": "div>div-delimiter>symbol>punctuation",
     "text": "["
   },
   {
-    "type": "div>tag>div-delimiter>symbol>label-text>code",
+    "type": "div>div-delimiter>symbol>label-text>code",
     "text": "`a %% secret`"
   },
   {
-    "type": "div>tag>div-delimiter>symbol>punctuation",
+    "type": "div>div-delimiter>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nbody\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

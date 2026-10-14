@@ -8,12 +8,28 @@
     "text": " a "
   },
   {
-    "type": "comment",
+    "type": "table>comment",
     "text": "{% hidden %}"
   },
   {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "text",
-    "text": " b | c |\n"
+    "text": "\n"
   },
   {
     "type": "table-separator>table-boundary",
@@ -48,7 +64,7 @@
     "text": " d "
   },
   {
-    "type": "comment",
+    "type": "table>comment",
     "text": "%% tail"
   },
   {

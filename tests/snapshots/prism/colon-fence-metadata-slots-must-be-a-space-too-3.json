@@ -1,26 +1,26 @@
 [
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>tag>div-delimiter",
+    "type": "div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>tag>div-delimiter>class-name",
+    "type": "div>div-delimiter>class-name",
     "text": "note"
   },
   {
-    "type": "div>tag>div-delimiter>invalid-metadata>error",
+    "type": "div>div-delimiter>invalid-metadata>error",
     "text": " \"Title\"\t[First]"
   },
   {
-    "type": "div>tag",
+    "type": "div",
     "text": "\nx\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

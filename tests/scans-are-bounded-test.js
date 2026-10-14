@@ -47,9 +47,9 @@ const BOUNDED = {
     'prism/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
         ['footnote reference', "unescaped('\\\\[') + /\\^[^\\]]", 1],
-        ['inline footnote', "unescaped('\\\\^') + /\\[[^\\]\\n]", 1],
+        ['inline footnote', "var noteText = noteChar + '{0,512}'", 1],
         ['autolink', 'a-zA-Z0-9+.-]*:[^>', 3],
-        ['critic comment', 'pattern: /\\{#(?!#\\})(?=', 3],
+        ['critic comment', 'pattern: RegExp(notEscaped + /\\{#(?!#\\})(?=', 3],
         ['inline code', "(?<!`)(`{3,16})(?:[^`]|[^`][\\\\s\\\\S]", 2],
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],

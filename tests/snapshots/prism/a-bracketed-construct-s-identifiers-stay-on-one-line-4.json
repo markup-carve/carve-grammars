@@ -1,18 +1,6 @@
 [
   {
     "type": "text",
-    "text": "![a](/i\nq)\n"
-  },
-  {
-    "type": "caption>title>punctuation",
-    "text": "^"
-  },
-  {
-    "type": "caption>title",
-    "text": " cap"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "![a](/i\nq)\n^ cap\n"
   }
 ]

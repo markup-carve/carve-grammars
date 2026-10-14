@@ -16,15 +16,15 @@
     "text": "\n"
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter>punctuation",
+    "type": "figure-group>figure-group-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter",
+    "type": "figure-group>figure-group-delimiter",
     "text": " "
   },
   {
-    "type": "figure-group>tag>figure-group-delimiter>class-name",
+    "type": "figure-group>figure-group-delimiter>class-name",
     "text": "figure"
   },
   {
@@ -192,7 +192,7 @@
     "text": "\n"
   },
   {
-    "type": "div>tag>div-delimiter>punctuation",
+    "type": "div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

@@ -24,11 +24,15 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
-    "text": " ```=html"
+    "type": "blockquote>code-block>punctuation",
+    "text": " ```"
   },
   {
-    "type": "text",
+    "type": "blockquote>code-block>language>class-name",
+    "text": "=html"
+  },
+  {
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -36,8 +40,12 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
-    "text": " ```"
+    "type": "blockquote>code-block",
+    "text": " "
+  },
+  {
+    "type": "blockquote>code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

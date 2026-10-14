@@ -48,15 +48,11 @@
     "text": "- "
   },
   {
-    "type": "text",
-    "text": "\\"
-  },
-  {
-    "type": "tag>variable",
-    "text": "#tag"
+    "type": "escape>constant",
+    "text": "\\#"
   },
   {
     "type": "text",
-    "text": " rest\n"
+    "text": "tag rest\n"
   }
 ]
