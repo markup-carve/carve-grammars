@@ -92,17 +92,18 @@ for (const [lines, needle, bold] of fences) {
     }
 }
 
-// TextMate also keeps a colon line of another width inside the fence.
-const textmate = surfaces.filter(([name]) => name !== 'prism' && name !== 'highlightjs');
+// A colon line of another width stays inside the fence, as does everything after an unclosed one.
 const kept = [
     [[':::: note', FENCE, 'code', ':::', 'more', '::::'], 'more'],
     [['::: note', FENCE, 'code', '::::', '*after*'], 'after'],
+    [[FENCE, 'code', ':::', '*after*'], 'after'],
+    [[FENCE, 'code', ':::'], ':::'],
 ];
 for (const [lines, needle] of kept) {
     const source = `${lines.join('\n')}\n`;
     assert.ok(html(source).includes(`${needle}`) && html(source).includes('<pre><code>'), `parser: ${JSON.stringify(source)}`);
     assert.ok(new RegExp(`<code>[^<]*${needle}`).test(html(source)), `parser keeps ${needle} in the code block`);
-    for (const [name, tokenize] of textmate) {
+    for (const [name, tokenize] of surfaces) {
         const token = await tokenAt(tokenize, source, needle);
         assert.ok(matches('code', name, token.scope), `${name}: ${JSON.stringify(source)} keeps ${needle} as code (scope ${token.scope})`);
         checked++;
@@ -116,6 +117,8 @@ const bodies = [
     [':: term\n: {empty}\n', 'empty', 'attributes', true, (s) => assert.ok(html(s).includes('<dd></dd>'))],
     ['a[^1]\n\n[^1]: {.c} text\n', '.c', 'attributes', false, (s) => assert.ok(html(s).includes('<p>{.c} text'))],
     [':: term\n: {.c} text\n', '.c', 'attributes', false, (s) => assert.ok(html(s).includes('<dd>{.c} text</dd>'))],
+    [': {.c}\n', '.c', 'attributes', false, (s) => assert.equal(html(s), '<p>: {.c}</p>')],
+    ['  : {.c}\n', '.c', 'attributes', false, (s) => assert.equal(html(s), '<p>: {.c}</p>')],
 ];
 for (const [source, needle, kind, scoped, parser] of bodies) {
     parser(source);

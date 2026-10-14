@@ -4,11 +4,11 @@
     "text": "before\n\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```=markdown"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nx\n"
   }
 ]

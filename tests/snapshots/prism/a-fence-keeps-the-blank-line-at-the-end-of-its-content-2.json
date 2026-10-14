@@ -1,6 +1,10 @@
 [
   {
-    "type": "text",
-    "text": "```\nx\n\n"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nx\n\n"
   }
 ]

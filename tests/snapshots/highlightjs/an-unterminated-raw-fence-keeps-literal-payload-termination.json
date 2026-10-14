@@ -1,10 +1,10 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```=html"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\n<b>raw</b>\n"
   }
 ]

@@ -1,10 +1,10 @@
 [
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\nx\n\n"
   }
 ]

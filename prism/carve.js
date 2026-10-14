@@ -175,6 +175,8 @@
             'string': new RegExp('\\[' + bracketText + '\\]'),
         },
     };
+    // A fence's info string (grammar.ebnf `code_fence_info`), or a raw format.
+    var codeFenceInfo = '[A-Za-z0-9_+#./-]+(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?|"[^"\\n]*"(?: +\\[[^\\]\\n]*\\])?|\\[[^\\]\\n]*\\]|=[A-Za-z_][\\w-]*';
     // A delimited comment joins no attribute run (carve#2932), so a glued block
     // fails when its run starts right after a comment's `%}`; the opener is
     // required because `{k=a%}` ends an attribute block the same way. Checked
@@ -272,6 +274,10 @@
         + '|(?![ \\t]*\\+[ \\t\\r]*\\n)(?!(?<=(?<![^\\n])[ \\t]*\\+[ \\t\\r]*\\n)[ \\t]*\\{)(?=' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n)'
         + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + ')(?<![^\\n])[^\\n]+\\n'
         + '(?:(?![ \\t\\r]*\\n)(?!' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n){0,16})';
+
+    // A fence does not interrupt a paragraph: one at column 0 opens a block only
+    // at the start, after a blank line or after a one-line block.
+    var fenceAfterBlock = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|' + oneLineBlock + '[^\\n]{0,4096})\\n))';
 
     // A caption needs a host above it, past any blank lines: an image alone on
     // its line, a table row, a code fence, a `$$` math line, a quote line, or
@@ -905,8 +911,15 @@
     // An inner body past 512 lines leaves the outer unclosed; unbounded, a run
     // of unclosable inner openers goes quadratic.
     var colonFenceLine = '[ \\t]*(:{3,})(?=[ \\t]*$(?![^\\r\\n])| +[^ \\t\\n]| *\\[)';
+    // A column-0 code fence in a body is skipped whole, so a colon line inside it
+    // neither nests nor closes: a closed fence through its own closer, an
+    // unclosed one up to the container's closer (group 3). Both atomic, and a
+    // fence line takes no other branch, so a failing scan tries each fence twice.
+    var bodyFenceOpener = '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*\\n';
     var containerBody = '(?:(?=(^(?<![^\\r\\n])' + colonFenceLine + '[^\\n]*\\n(?:[^\\n]*\\n){0,512}?[ \\t]*\\5[ \\t]*$(?![^\\r\\n])\\n))\\4'
-        + '|(?!' + colonFenceLine.replace('(:{3,})', ':{3,}') + ')[^\\n]*\\n)*?';
+        + '|(?=(((`|~)\\8{2,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*\\n(?:[^\\n]*\\n){0,512}?\\7\\8*[ \\t]*\\n))\\6'
+        + '|(?=(' + bodyFenceOpener + '(?:(?![ \\t]*\\3[ \\t]*$(?![^\\r\\n]))[^\\n]*\\n){0,512}))\\9'
+        + '|(?!' + colonFenceLine.replace('(:{3,})', ':{3,}') + '|' + bodyFenceOpener + ')[^\\n]*\\n)*?';
     var containerPattern = function (opener) {
         return RegExp(
             '^(?<![^\\r\\n])((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,})' + opener
@@ -1483,6 +1496,21 @@
 
         // A delimiter row has no inline content, so recognize the whole line
         // before the general table rule splits it around code and escapes.
+        // An unclosed fence at column 0 runs to the end of the document, or of
+        // the div it sits in: a text that opens and ends on the same colon run (grammar.ebnf,
+        // A CLOSER IS REQUIRED). Greedy, so it runs over the bare colon lines the
+        // div rule took as openers. An indented or quoted fence may sit in a list
+        // or quote, so it is left alone.
+        'code-block-unclosed': {
+            pattern: RegExp(fenceAfterBlock + '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])'
+                + '[\\s\\S]*?(?=\\n[ \\t]*(:{3,})[ \\t]*$(?![\\s\\S])(?<=^(?<![\\s\\S])[^\\n]*?(?<!:)\\1(?!:)[^\\n]*\\n[\\s\\S]*)|$(?![\\s\\S]))', 'm'),
+            greedy: true,
+            alias: 'code-block',
+            inside: {
+                'language': { pattern: /^(\uFEFF?(?:`{3,}|~{3,}) ?)[A-Za-z0-9_+#.\/=-]+/, lookbehind: true, alias: 'class-name' },
+                'punctuation': /^\uFEFF?(?:`{3,}|~{3,})/,
+            },
+        },
         'table-separator': {
             pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$(?![^\r\n])/m,
             inside: {

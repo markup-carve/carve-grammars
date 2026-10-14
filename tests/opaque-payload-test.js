@@ -426,38 +426,9 @@ function sweep(row, tokenize) {
  */
 const VISITED = new Map();
 
-const KNOWN_LEAKS = {
-    /*
-     * THE UNTERMINATED FENCE, on the two grammars that run a mode past it.
-     *
-     * This shape used to be pinned by ONE hand-written document in the residual
-     * table at the end of this file. carve-grammars#332 gave it a generated row,
-     * and the population it turned up is the argument for the change: what read
-     * as one leaking document is 246 of 312 on Prism and 257 of 312 on
-     * highlight.js. The residual row is gone with it - two hand-kept records of
-     * one fact is what this file exists to avoid.
-     *
-     * IT IS A TRADE ON THESE TWO AND A DEFECT NOWHERE ELSE, which is why they
-     * carry the ticket they do rather than a surface ticket. The write-up lives
-     * on `fencedVerbatim` in `highlightjs/carve.js`: a mode that opens on a
-     * fence with no closer ahead runs to end of file, and inside a container it
-     * would then swallow the container's own closer and every block after it -
-     * which the spec says explicitly does not happen (grammar.ebnf, A CLOSER IS
-     * REQUIRED). textmate, tree-sitter-carve and emacs-carve are all inert over
-     * the same generated space; emacs-carve became so at
-     * markup-carve/emacs-carve#29, and before that it was a defect rather than
-     * this trade - its fence rule painted delimiter LINES, so the body was
-     * never claimed at all.
-     */
-    prism: {
-        'code_block with no closing fence':
-            { construct: 'code_block', ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js' },
-    },
-    highlightjs: {
-        'code_block with no closing fence':
-            { construct: 'code_block', ticket: 'the trade named on fencedVerbatim in highlightjs/carve.js' },
-    },
-};
+// The unterminated fence left this table when Prism and highlight.js began
+// running it to the end of the document or of its container.
+const KNOWN_LEAKS = {};
 
 /**
  * Assert what one row found, against what this surface is known to leak.

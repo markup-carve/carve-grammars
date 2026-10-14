@@ -16,6 +16,11 @@ All notable changes to `carve-grammars` are documented here.
   of one symbol scope over the whole line.
 - Prism and highlight.js: the `{empty}` sentinel of a footnote or description
   body is scoped as an attribute block.
+- Prism and highlight.js: an unclosed code fence at column 0 is code to the end
+  of the document or to its container's closer; a colon line of another width
+  inside it stays code.
+- TextMate: `: {.c}` outside a description list is text, not an attribute
+  block.
 
 ## [0.1.14] - 2026-10-14
 

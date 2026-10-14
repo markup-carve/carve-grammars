@@ -2715,7 +2715,7 @@
       "comment": "A standalone attribute line may span physical lines. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
     },
     "attributes": {
-      "match": "(?<![\\w\"'])(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
+      "match": "(?<![\\w\"'])(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<!^(?:\\A\\x{FEFF})?[ \\t]{0,64}:[ \\t]{1,64})(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
       "captures": {
         "1": {
           "name": "punctuation.definition.attributes.carve"
@@ -3744,6 +3744,9 @@
                       }
                     },
                     {
+                      "include": "#description_attributes"
+                    },
+                    {
                       "include": "#inline"
                     }
                   ]
@@ -3753,6 +3756,26 @@
           ]
         }
       ]
+    },
+    "description_attributes": {
+      "match": "(?<![\\w\"'])(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<=^(?:\\A\\x{FEFF})?[ \\t]{0,64}:[ \\t]{1,64})(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.attributes.carve"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#attribute_parts"
+            }
+          ]
+        },
+        "3": {
+          "name": "punctuation.definition.attributes.carve"
+        }
+      },
+      "name": "meta.attributes.carve",
+      "comment": "An attribute block filling a description body, such as the `{empty}` sentinel. Outside a description list `: {.c}` is text, so `attributes` refuses it."
     },
     "citation": {
       "comment": "Citation group [@key]; ported from intellij-carve. Citation group: a bracket whose content contains at least one @key and has no (url)/[ref]/{attrs} tail. A leading + signals an integral/in-text citation. Items are ;-separated; each may carry a -/+ prefix and an optional , locator. The @key and the -/+ per-item markers are scoped distinctly, analogous to @mention but inside the citation bracket.",

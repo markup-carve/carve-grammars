@@ -1,6 +1,14 @@
 [
   {
-    "type": "text",
-    "text": "```=html\n<b>raw</b>\n"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block>language>class-name",
+    "text": "=html"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\n<b>raw</b>\n"
   }
 ]

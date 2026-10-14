@@ -1,6 +1,18 @@
 [
   {
     "type": "text",
-    "text": "before\n\n```=latex\nx\n"
+    "text": "before\n\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block>language>class-name",
+    "text": "=latex"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nx\n"
   }
 ]

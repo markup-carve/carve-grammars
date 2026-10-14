@@ -1301,16 +1301,12 @@
      * opener at the next line; leaving N openers unmatched needs strictly
      * DECREASING widths, which costs O(N^2) characters to write down.
      *
-     * WHAT THAT TRADES AWAY, written down rather than left to be rediscovered:
-     * an unterminated fence at DOCUMENT level really does open a block that
-     * runs to the end (grammar.ebnf, A CLOSER IS REQUIRED: "``` alone ... still
-     * opens a code block that runs to the end"), and here it does not - it
-     * falls to `LONE_CODE_FENCE` below, which colours the delimiter
-     * line and leaves the lines under it as prose. That is the reading this
-     * file had for every fence before #309, kept for the one shape it is still
-     * right about: inside a container an opener with no closer opens NOTHING,
-     * and a mode that ran to end of file there would swallow the container's
-     * own closer and every block after it.
+     * AN UNTERMINATED FENCE runs to the end of the document (grammar.ebnf, A
+     * CLOSER IS REQUIRED), or to its container's closer. `UNCLOSED_CODE_BLOCK`
+     * below takes that shape at column 0, where the colon-fence stack knows the
+     * container; an indented one falls to `LONE_CODE_FENCE`, which colours the
+     * delimiter line only, since this grammar cannot see the list item or quote
+     * that would end it.
      *
      * THE CLOSER MATCHES ITS OPENER, and the rule is not the colon fence's.
      * A code fence closes on the SAME fence character at a length >= the
@@ -1605,6 +1601,28 @@
         }
         state.stack.pop();
         state.closed = { at: m.index, kind: top.kind };
+    };
+
+    // A fence does not interrupt a paragraph: one at column 0 opens a block only
+    // at the start, after a blank line or after a one-line block (Prism's `oneLineBlock`).
+    const FENCE_AFTER_BLOCK = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|[ \\t]*(?:> ?)*(?:#{1,6} |\\+[ \\t\\r]*(?=\\n)|(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )[^\\n]{0,4096})\\n))';
+    // An unclosed fence at column 0: code to the end of the document, or to the
+    // closer of the innermost open colon fence, whose width must match exactly.
+    const UNCLOSED_CODE_BLOCK = {
+        className: 'code',
+        beginScope: 'keyword',
+        begin: new RegExp(
+            FENCE_AFTER_BLOCK + '(?:`{3,}|~{3,})'
+            + '(?: ?(?:' + CODE_FENCE_INFO + '|' + RAW_FENCE_INFO + '))?[ \\t]*$(?![^\\r\\n])',
+        ),
+        end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            const stack = docState(COLON_FENCES, m).stack;
+            if (stack[stack.length - 1]?.width !== m[1].length) resp.ignoreMatch();
+        },
+        contains: [],
+        relevance: 0,
     };
 
     const DIV_BLOCK = {
@@ -2462,6 +2480,7 @@
         HEADING,
         CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
         RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string
+        UNCLOSED_CODE_BLOCK,  // an unpaired fence at column 0: to its container's end
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,

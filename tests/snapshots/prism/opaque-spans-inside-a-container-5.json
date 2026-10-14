@@ -13,7 +13,19 @@
   },
   {
     "type": "div",
-    "text": "\n```\nx\n"
+    "text": "\n"
+  },
+  {
+    "type": "div>code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "div>code-block-unclosed>code-block",
+    "text": "\nx"
+  },
+  {
+    "type": "div",
+    "text": "\n"
   },
   {
     "type": "div>div-delimiter>punctuation",

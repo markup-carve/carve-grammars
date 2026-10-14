@@ -408,8 +408,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "code-block",
-          "payload": "leaks",
-          "payloadNote": "an UNTERMINATED fence runs its mode to end of document, so the body of a code block with no closer is live markup - 246 of 312 generated documents. Every CLOSED shape is inert. The trade is written up on `fencedVerbatim` in highlightjs/carve.js: a mode that opened on a fence with no closer ahead would, inside a container, swallow the container's own closer and every block after it, which the spec says explicitly does not happen."
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
@@ -782,8 +781,7 @@
         "code_block": {
           "status": "IMPLEMENTED",
           "evidence": "CODE_BLOCK",
-          "payload": "leaks",
-          "payloadNote": "an UNTERMINATED fence runs its mode to end of document, so the body of a code block with no closer is live markup - 257 of 312 generated documents. Every CLOSED shape is inert. The trade is written up on `fencedVerbatim` in highlightjs/carve.js: a mode that opened on a fence with no closer ahead would, inside a container, swallow the container's own closer and every block after it, which the spec says explicitly does not happen."
+          "payload": "inert"
         },
         "blockquote": {
           "status": "IMPLEMENTED",
