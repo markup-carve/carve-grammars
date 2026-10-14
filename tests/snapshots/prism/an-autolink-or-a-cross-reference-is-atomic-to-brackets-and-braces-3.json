@@ -1,0 +1,26 @@
+[
+  {
+    "type": "forced-bold>bold",
+    "text": "{*a </"
+  },
+  {
+    "type": "forced-bold>bold>tag>variable",
+    "text": "#x"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "*}"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " b*}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,6 +1,22 @@
 [
   {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
     "type": "text",
-    "text": "[x]()\n"
+    "text": "\n"
   }
 ]

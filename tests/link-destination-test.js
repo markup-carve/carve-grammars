@@ -16,9 +16,14 @@ const rows = [
     ["![x](a 't')", 'a', 't'],
     ['[x](a(b)c)', 'a(b)c', null],
     [String.raw`[x](a\)b)`, String.raw`a\)b`, null],
-    ['[x]()', null, null],
-    ['![x]()', null, null],
-    ['[x]( "t")', null, null],
+    ['[x]()', '', null],
+    ['![x]()', '', null],
+    ['[]( )', '', null],
+    ['[x]( "t")', '', 't'],
+    ['[x]( "t" )', '', 't'],
+    ['[x](/u )', null, null],
+    ['[x](/u "t" )', null, null],
+    ['![x](a.png\t)', null, null],
     ['[x](/u  "T")', null, null],
 ];
 
@@ -54,7 +59,7 @@ for (const [name, tokenize, is] of surfaces) {
             checked++;
             continue;
         }
-        assert.deepEqual(tokens.filter(is.dest).map((t) => t.text.trim()), [dest], `${label} destination`);
+        assert.deepEqual(tokens.filter(is.dest).map((t) => t.text.trim()), dest === '' ? [] : [dest], `${label} destination`);
         const titles = tokens.filter(is.title);
         if (title === null) {
             assert.deepEqual(titles.map((t) => t.text), [], `${label} has no title`);

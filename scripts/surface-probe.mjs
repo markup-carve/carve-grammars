@@ -391,7 +391,8 @@ export const SIGNATURES = {
      */
     comment_line: ['commentline', 'linecomment', 'commentlinepercent'],
     raw_block: ['rawblock'],
-    reference_definition: ['referencedefinition', 'linkreferencedefinition', 'refdef', 'referencedef'],
+    nonempty_reference_definition: ['referencedefinition', 'linkreferencedefinition', 'refdef', 'referencedef'],
+    empty_reference_definition: ['referencedefinition', 'linkreferencedefinition', 'refdef', 'referencedef'],
     footnote_definition: ['footnotedefinition', 'footdef', 'footnotedef', 'footnotecontent'],
     abbreviation_definition: ['abbreviation', 'abbr'],
     /*
