@@ -1,0 +1,34 @@
+name: Legacy Node
+
+# Node 20 is EOL and left the PR matrix, but package.json declares no engines
+# range, so consumers may still run it. Keep a daily full-suite signal for it.
+on:
+  schedule:
+    # 05:00 UTC daily, alongside the drift runs.
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout (with carve corpus submodule)
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate spec citations
+        run: npm run test:citations
+
+      - name: Run tests
+        run: npm test

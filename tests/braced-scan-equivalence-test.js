@@ -447,9 +447,11 @@ const CASES = [
  * an interleaved subset of the rows, so `scripts/run-tests.mjs` schedules them
  * as separate processes beside every other file.
  *
- * Interleaved (`index % total === index of this slice`) rather than contiguous:
- * the rows are grouped by surface, prism first and hljs last, and their cost
- * varies with the alphabet, so contiguous blocks would be lopsided.
+ * Rows are dealt by WEIGHT, not by index. A row's cost tracks the number of
+ * strings it generates (`alphabet ** length`), and that varies sixfold between
+ * rows: the old interleaved split ran 178/161/137/58 seconds across four slices
+ * (run 38550257816). Each row goes, heaviest first, to the slice with the least
+ * weight so far, so the slowest slice is close to the ideal share.
  *
  * The default is the whole space, so `node tests/braced-scan-equivalence-test.js`
  * still runs everything, and every slice runs the rejection probes and the
@@ -467,7 +469,30 @@ assert.ok(
     `--slice wants <index>/<total> with 0 <= index < total, got ${JSON.stringify(process.argv[sliceArg + 1])}`,
 );
 
-const SLICE = CASES.filter((_, index) => index % sliceTotal === sliceIndex);
+const rowWeight = (c) => {
+    let total = 0;
+    for (let length = 1; length <= c.maxLength; length++) {
+        total += c.alphabet.length ** length;
+    }
+    return total;
+};
+
+/** Slice number per row: longest-processing-time-first, deterministic on ties. */
+function dealRows(total) {
+    const load = new Array(total).fill(0);
+    const owner = new Array(CASES.length);
+    const order = CASES.map((c, index) => ({ index, weight: rowWeight(c) }))
+        .sort((a, b) => b.weight - a.weight || a.index - b.index);
+    for (const { index, weight } of order) {
+        const target = load.indexOf(Math.min(...load));
+        owner[index] = target;
+        load[target] += weight;
+    }
+    return owner;
+}
+
+const owner = dealRows(sliceTotal);
+const SLICE = CASES.filter((_, index) => owner[index] === sliceIndex);
 
 // A slice that selected nothing would pass in silence, which is the whole
 // failure mode of splitting a sweep up.

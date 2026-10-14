@@ -43,12 +43,16 @@ export function testFiles() {
  * it starved instead, so spreading the OTHER files around it could not help
  * (carve-grammars#549). Slicing it is what makes the pool worth having.
  *
+ * CI runs it in its own job, two shards of four slices each on the lowest
+ * supported Node, and excludes it from every other leg (`--exclude`), so each
+ * row still runs once per PR without being repeated in every matrix leg.
+ *
  * A file absent from here simply runs whole, so this table going stale costs
  * speed and never correctness - and `tests/slices-test.js` refuses an entry
  * that names a file which is gone or that does not take `--slice`.
  */
 export const SLICED = {
-    'braced-scan-equivalence-test.js': 4,
+    'braced-scan-equivalence-test.js': 8,
 };
 
 /**
@@ -71,23 +75,38 @@ export function testUnits() {
     });
 }
 
+/** Flags that take the next argument as their value. */
+export const VALUE_FLAGS = ['--jobs', '--exclude', '--shard'];
+
 /**
- * The substring filters a command line asks for, with the value of `--jobs`
+ * The substring filters a command line asks for, with flags and their values
  * excluded.
  *
  * It lives here, next to the selection it narrows, because the runner had it
  * inline and nothing could reach it: `indexOf` answers `-1` for an absent
  * `--jobs`, so `jobsFlag + 1` was `0` and the FIRST positional was dropped as
- * though it were the flag's value. `run-tests.mjs roundtrip` therefore filtered
- * on nothing and ran all of it, and the header's own example,
- * `run-tests.mjs roundtrip span`, filtered on `span` alone
- * (carve-grammars#591).
+ * though it were the flag's value (carve-grammars#591).
  *
  * @param {string[]} argv the arguments after the script name
  * @returns {string[]}
  */
 export function filtersFrom(argv) {
-    const jobsFlag = argv.indexOf('--jobs');
-    const jobsValueAt = jobsFlag === -1 ? -1 : jobsFlag + 1;
-    return argv.filter((a, i) => !a.startsWith('--') && i !== jobsValueAt);
+    const values = new Set();
+    argv.forEach((a, i) => {
+        if (VALUE_FLAGS.includes(a)) {
+            values.add(i + 1);
+        }
+    });
+    return argv.filter((a, i) => !a.startsWith('--') && !values.has(i));
+}
+
+/**
+ * Every value given for a repeatable flag, e.g. `--exclude a --exclude b`.
+ *
+ * @param {string[]} argv the arguments after the script name
+ * @param {string} flag the flag name, with its dashes
+ * @returns {string[]}
+ */
+export function flagValues(argv, flag) {
+    return argv.flatMap((a, i) => (a === flag && i + 1 < argv.length ? [argv[i + 1]] : []));
 }

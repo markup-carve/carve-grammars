@@ -24,7 +24,8 @@ vendored as the `spec/` git submodule (`git submodule update --init`).
   serializer cannot represent are skipped with a reason.
 
 `npm test` runs all of the above plus the structural grammar and serializer
-unit tests. CI runs the same on Node 18, 20 and 22.
+unit tests. CI runs the same on Node 22 (Node 20 nightly), with
+`braced-scan-equivalence-test.js` split into its own job.
 
 ### The construct ledger: ten surfaces, one derived list
 

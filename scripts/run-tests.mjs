@@ -37,13 +37,15 @@
  *   node scripts/run-tests.mjs --serial        # one at a time (clearer failures)
  *   node scripts/run-tests.mjs --jobs 4        # explicit width
  *   node scripts/run-tests.mjs roundtrip span  # only files matching a substring
+ *   node scripts/run-tests.mjs --exclude braced-scan   # skip files matching a substring
+ *   node scripts/run-tests.mjs braced-scan --shard 0/2 # every 2nd selected unit, from 0
  */
 
 import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
 
-import { filtersFrom, repoRoot, testDir, testUnits } from './test-files.mjs';
+import { filtersFrom, flagValues, repoRoot, testDir, testUnits } from './test-files.mjs';
 
 const argv = process.argv.slice(2);
 const serial = argv.includes('--serial');
@@ -61,15 +63,36 @@ if (!Number.isInteger(width) || width < 1) {
     process.exit(2);
 }
 
-const files = testUnits().filter(
-    (u) => filters.length === 0 || filters.some((needle) => u.file.includes(needle)),
-);
+for (const flag of ['--exclude', '--shard']) {
+    if (argv.filter((a) => a === flag).length !== flagValues(argv, flag).length) {
+        console.error(`run-tests: ${flag} needs a value`);
+        process.exit(2);
+    }
+}
+
+const excludes = flagValues(argv, '--exclude');
+const shardFlag = flagValues(argv, '--shard').at(-1);
+const [shardIndex, shardTotal] = shardFlag === undefined ? [0, 1] : shardFlag.split('/').map(Number);
+
+if (!(Number.isInteger(shardIndex) && Number.isInteger(shardTotal) && shardIndex >= 0 && shardIndex < shardTotal)) {
+    console.error(`run-tests: --shard wants <index>/<total> with 0 <= index < total, got ${JSON.stringify(shardFlag)}`);
+    process.exit(2);
+}
+
+// Sharding deals the selected units round-robin, so the shards of one
+// selection together run every unit exactly once.
+const files = testUnits()
+    .filter((u) => filters.length === 0 || filters.some((needle) => u.file.includes(needle)))
+    .filter((u) => !excludes.some((needle) => u.file.includes(needle)))
+    .filter((_, index) => index % shardTotal === shardIndex);
 
 // A glob that matches nothing would otherwise pass as a green run of no tests.
 if (files.length === 0) {
     console.error(
         filters.length
             ? `run-tests: no tests/*-test.js matched ${filters.join(', ')}`
+            : excludes.length || shardTotal > 1
+            ? 'run-tests: --exclude/--shard left no units to run'
             : 'run-tests: no tests/*-test.js found',
     );
     process.exit(2);

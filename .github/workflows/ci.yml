@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
 
+# A new push to a PR supersedes its running checks; main keeps every run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 # Every job declares timeout-minutes so a hung step fails in minutes
 # rather than inheriting the 360-minute GitHub default.
 
@@ -15,7 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['18', '20', '22']
+        # Node 18 and 20 are EOL; 20 still runs nightly in legacy-node.yml.
+        node-version: ['22']
     steps:
       - name: Checkout (with carve corpus submodule)
         uses: actions/checkout@v6
@@ -38,8 +44,37 @@ jobs:
       # Coverage matrix first (fails fast if a corpus category is unclassified
       # for any grammar), then the golden snapshot and round-trip suites, then
       # the existing structural grammar and serializer tests.
+      # braced-scan-equivalence runs once, in its own job below.
       - name: Run tests
-        run: npm test
+        run: npm test -- --exclude braced-scan-equivalence-test.js
+
+  # The regex language sweep over Prism and highlight.js patterns is ~530 CPU
+  # seconds and independent of Node, Tiptap and Shiki versions, so it runs once
+  # here instead of in every leg: eight weighted slices, four per shard.
+  braced-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
+    steps:
+      - name: Checkout (with carve corpus submodule)
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run braced-scan-equivalence (shard ${{ matrix.shard }} of 2)
+        run: node scripts/run-tests.mjs braced-scan-equivalence-test.js --shard ${{ matrix.shard }}/2
 
   # The Tiptap peer range is `^2 || ^3` and devDependencies pin 3.x, so the job
   # above only ever proves the newer major. Re-run the suite against 2.x on one
@@ -73,7 +108,7 @@ jobs:
           node -p "'tiptap core: ' + require('./node_modules/@tiptap/core/package.json').version"
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --exclude braced-scan-equivalence-test.js
 
   # Same idea for Shiki: devDependencies pin 4.x, the peer range still accepts 3.
   shiki-3:
@@ -100,4 +135,4 @@ jobs:
           node -p "'shiki: ' + require('./node_modules/shiki/package.json').version"
 
       - name: Run tests
-        run: npm test
+        run: npm test -- --exclude braced-scan-equivalence-test.js

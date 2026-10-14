@@ -16,7 +16,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { filtersFrom } from '../scripts/test-files.mjs';
+import { filtersFrom, flagValues } from '../scripts/test-files.mjs';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 let passed = 0;
@@ -44,6 +44,10 @@ const ROWS = [
     // A filter that looks like a number is still a filter when it is not the
     // value of `--jobs`.
     [['4'], ['4']],
+    // `--exclude` and `--shard` withhold their values the same way.
+    [['--exclude', 'braced-scan'], []],
+    [['--exclude', 'a', '--exclude', 'b', 'span'], ['span']],
+    [['braced-scan', '--shard', '1/2'], ['braced-scan']],
 ];
 
 for (const [argv, want] of ROWS) {
@@ -51,6 +55,12 @@ for (const [argv, want] of ROWS) {
         assert.deepStrictEqual(filtersFrom(argv), want);
     });
 }
+
+ok('a repeatable flag yields every value it was given', () => {
+    assert.deepStrictEqual(flagValues(['--exclude', 'a', 'x', '--exclude', 'b'], '--exclude'), ['a', 'b']);
+    assert.deepStrictEqual(flagValues(['--exclude'], '--exclude'), []);
+    assert.deepStrictEqual(flagValues(['span'], '--exclude'), []);
+});
 
 ok('the runner uses this function rather than its own copy of the rule', () => {
     // The fix is worth nothing if run-tests.mjs still carries the expression it
