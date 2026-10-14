@@ -1,10 +1,14 @@
 [
   {
     "scope": "symbol",
-    "text": "[^a]: "
+    "text": "[^a]:"
   },
   {
-    "scope": "symbol>punctuation",
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
     "text": "+"
   },
   {

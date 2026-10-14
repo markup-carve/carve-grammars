@@ -1,11 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[^n]: intro"
+    "text": "[^n]:"
   },
   {
     "scope": null,
-    "text": "\n\n    "
+    "text": " intro\n\n    "
   },
   {
     "scope": "link",

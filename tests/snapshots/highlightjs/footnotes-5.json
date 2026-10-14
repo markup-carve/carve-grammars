@@ -21,10 +21,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^m]: One note, two refs."
+    "text": "[^m]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " One note, two refs.\n"
   }
 ]

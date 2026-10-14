@@ -25,10 +25,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^named]: n"
+    "text": "[^named]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " n\n"
   }
 ]

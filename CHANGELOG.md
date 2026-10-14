@@ -4,6 +4,19 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixes
+
+- TextMate: an unclosed code fence inside a `:::` container ends at the
+  container's closer instead of running to the end of the document.
+- An escaped character keeps the next construct closed: `\$` before a code
+  span, `\:` before a symbol, `\{` before `{{` and an escaped closer before an
+  attribute block stay text in all three grammars, and Prism and TextMate scope
+  every ASCII punctuation escape.
+- highlight.js: a footnote definition's body gets inline highlighting instead
+  of one symbol scope over the whole line.
+- Prism and highlight.js: the `{empty}` sentinel of a footnote or description
+  body is scoped as an attribute block.
+
 ## [0.1.14] - 2026-10-14
 
 ### Fixes

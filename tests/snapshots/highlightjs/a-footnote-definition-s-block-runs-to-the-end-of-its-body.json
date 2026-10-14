@@ -9,11 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "  [^f]: t"
+    "text": "  [^f]:"
   },
   {
     "scope": null,
-    "text": "\n\n    more\ntail\n\nx"
+    "text": " t\n\n    more\ntail\n\nx"
   },
   {
     "scope": "symbol",

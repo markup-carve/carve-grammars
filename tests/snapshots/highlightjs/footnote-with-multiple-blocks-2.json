@@ -13,11 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^n]: First paragraph of the note."
+    "text": "[^n]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " First paragraph of the note.\n"
   },
   {
     "scope": "punctuation",

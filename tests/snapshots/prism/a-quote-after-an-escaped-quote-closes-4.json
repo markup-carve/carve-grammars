@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "\"\\\"'q'\"\n"
+    "text": "\""
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\\""
+  },
+  {
+    "type": "text",
+    "text": "'q'\"\n"
   }
 ]

@@ -1,7 +1,15 @@
 [
   {
     "scope": "symbol",
-    "text": "[^u]: see [x](#nope)"
+    "text": "[^u]:"
+  },
+  {
+    "scope": null,
+    "text": " see "
+  },
+  {
+    "scope": "link",
+    "text": "[x](#nope)"
   },
   {
     "scope": null,

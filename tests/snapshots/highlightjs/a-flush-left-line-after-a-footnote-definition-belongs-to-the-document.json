@@ -5,11 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: note"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\nb\n\nsee"
+    "text": " note\nb\n\nsee"
   },
   {
     "scope": "symbol",

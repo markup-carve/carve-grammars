@@ -13,7 +13,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: see [t[^2]][r]"
+    "text": "[^1]:"
+  },
+  {
+    "scope": null,
+    "text": " see "
+  },
+  {
+    "scope": "link",
+    "text": "[t[^2]][r]"
   },
   {
     "scope": null,
@@ -33,10 +41,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^2]: two"
+    "text": "[^2]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " two\n"
   }
 ]

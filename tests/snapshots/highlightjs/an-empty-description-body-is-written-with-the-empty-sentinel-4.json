@@ -13,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": " {empty}\n"
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{empty}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "title",

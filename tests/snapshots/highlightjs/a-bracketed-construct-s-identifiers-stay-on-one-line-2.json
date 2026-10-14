@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f g]: n"
+    "text": "[^f g]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " n\n"
   }
 ]

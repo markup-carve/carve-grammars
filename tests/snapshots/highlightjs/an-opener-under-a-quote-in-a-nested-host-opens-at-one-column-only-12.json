@@ -13,11 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: > q"
+    "text": "[^1]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " > q\n"
   },
   {
     "scope": "code>keyword",

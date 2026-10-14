@@ -17,11 +17,11 @@
   },
   {
     "scope": "symbol",
-    "text": "    [^n]: note"
+    "text": "    [^n]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " note\n"
   },
   {
     "scope": "keyword",

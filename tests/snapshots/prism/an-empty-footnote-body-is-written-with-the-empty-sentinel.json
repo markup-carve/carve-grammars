@@ -17,6 +17,22 @@
   },
   {
     "type": "text",
-    "text": ": {empty}\n"
+    "text": ": "
+  },
+  {
+    "type": "footnote-body-attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "footnote-body-attributes>attr-value",
+    "text": "empty"
+  },
+  {
+    "type": "footnote-body-attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

@@ -9,10 +9,10 @@
   },
   {
     "scope": "symbol",
-    "text": " [^f]: x"
+    "text": " [^f]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " x\n"
   }
 ]

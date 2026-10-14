@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^n]: First paragraph of the note."
+    "text": "[^n]:"
   },
   {
     "scope": null,
-    "text": "\n\n    Second paragraph, indented under the definition.\n"
+    "text": " First paragraph of the note.\n\n    Second paragraph, indented under the definition.\n"
   }
 ]

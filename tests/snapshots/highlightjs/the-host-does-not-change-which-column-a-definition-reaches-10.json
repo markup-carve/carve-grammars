@@ -9,11 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "  [^g]: b"
+    "text": "  [^g]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " b\n"
   },
   {
     "scope": "symbol",

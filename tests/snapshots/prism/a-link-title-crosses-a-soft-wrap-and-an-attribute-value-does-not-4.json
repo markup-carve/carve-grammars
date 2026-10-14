@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "[a](/u \"t\\\"\nu\")\n"
+    "text": "[a](/u \"t"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\\""
+  },
+  {
+    "type": "text",
+    "text": "\nu\")\n"
   }
 ]

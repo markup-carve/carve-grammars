@@ -13,11 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: head"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " head\n\n"
   },
   {
     "scope": "comment",

@@ -179,6 +179,8 @@
     // fails when its run starts right after a comment's `%}`; the opener is
     // required because `{k=a%}` ends an attribute block the same way. Checked
     // only after a block matched; bounded, so a run past 64 blocks scopes its tail.
+    // The closer a block glues to is not an escaped character: `x\]{.c}` is text.
+    var afterEscape = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\[^\\n])';
     var noCommentRun = '(?<!\\{%(?:[^%\\n]|%(?!\\})|\\n(?![ \\t\\r]*\\n)){0,4096}%\\}(?:[ \\t]{0,64}\\{[^{}\\n]{0,512}\\}){1,64})';
     var attributes = {
         // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
@@ -198,7 +200,7 @@
         pattern: RegExp(
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
             '(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
-            + '|(?<=[*/_~=`>}:)\\]$<|])' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
+            + '|(?<=[*/_~=`>}:)\\]$<|])' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
             + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
             + '|(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
@@ -217,6 +219,17 @@
             },
             'punctuation': /[{}=]/,
         },
+    };
+
+    // A block-attribute line as a whole body, such as the `{empty}` sentinel.
+    var bodyAttributes = function (marker) {
+        return {
+            pattern: RegExp('(?<=(?:^(?<![^\\r\\n])|\\n)(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + marker + '[ \\t]+)'
+                + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?=[ \\t]*(?:\\r?\\n|$(?![^\\r\\n])))'),
+            greedy: true,
+            alias: 'attr-value',
+            inside: attributes.inside,
+        };
     };
 
     /*
@@ -1739,6 +1752,7 @@
                 // the inline rules to tokenize as ordinary content, same as
                 // it was when this lived in 'list'.
                 'punctuation': /^(?<![^\r\n])[ \t]*: +(?![ \t]*$(?![^\r\n]))/m,
+                'description-attributes': bodyAttributes(':'),
                 'continuation-marker': {
                     pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
                     inside: continuationInside,
@@ -1811,12 +1825,12 @@
              * construction.
              */
             {
-                pattern: /\$\$(`+)[\s\S]*?(?<!`)\1(?!`)/,
+                pattern: RegExp(notEscaped + /\$\$(`+)[\s\S]*?(?<!`)\1(?!`)/.source),
                 greedy: true,
                 alias: 'string',
             },
             {
-                pattern: /\$(`+)[\s\S]*?(?<!`)\1(?!`)/,
+                pattern: RegExp(notEscaped + /\$(`+)[\s\S]*?(?<!`)\1(?!`)/.source),
                 greedy: true,
                 alias: 'string',
             },
@@ -1979,7 +1993,7 @@
          */
         'include-directive': {
             pattern: RegExp(
-                '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
+                notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
                 + '(?:#[A-Za-z0-9_][\\w-]*)?'
                 // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@`, in every
                 // position (spec `include_options`): the bare path stops at
@@ -2107,6 +2121,8 @@
                 'punctuation': /^(?<![^\r\n])\^\[|\]$(?![^\r\n])/,
             }, inline),
         },
+
+        'footnote-body-attributes': bodyAttributes('\\[\\^[^\\]\\r\\n]+\\]:'),
 
         // Footnote references: [^label]
         'footnote': {
@@ -2259,14 +2275,14 @@
         'symbol': {
             // Symbol shortcode (e.g. emoji). Parser shape: name starts
             // alphanumeric, then word chars, `+` or `-` (`:+1:` stays literal).
-            pattern: /(^(?<![^\r\n])|[^\w]):[A-Za-z0-9+-][\w+-]*:/,
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + /:[A-Za-z0-9+-][\w+-]*:/.source),
             lookbehind: true,
             alias: 'constant',
         },
 
         // Escapes and smart typography
         'escape': {
-            pattern: /\\[\\`*_{}[\]()#+\-.!~^/<>@%|=,]/,
+            pattern: /\\[!-\/:-@[-`{-~]/,
             alias: 'constant',
         },
         // Hard break: a backslash ending the line (highlight.js scopes this as

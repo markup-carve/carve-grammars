@@ -1,11 +1,11 @@
 [
   {
     "scope": "symbol",
-    "text": "[^a]: note"
+    "text": "[^a]:"
   },
   {
     "scope": null,
-    "text": "\n\tmore\n\nsee"
+    "text": " note\n\tmore\n\nsee"
   },
   {
     "scope": "symbol",

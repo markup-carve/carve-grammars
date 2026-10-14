@@ -29,10 +29,10 @@
   },
   {
     "scope": "symbol",
-    "text": "    [^n]: y"
+    "text": "    [^n]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " y\n"
   }
 ]

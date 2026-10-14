@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^fn]: Defined anywhere; resolved by label."
+    "text": "[^fn]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " Defined anywhere; resolved by label.\n"
   }
 ]

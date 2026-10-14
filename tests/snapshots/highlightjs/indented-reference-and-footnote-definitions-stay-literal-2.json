@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": " [^fn]: body."
+    "text": " [^fn]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " body.\n"
   }
 ]

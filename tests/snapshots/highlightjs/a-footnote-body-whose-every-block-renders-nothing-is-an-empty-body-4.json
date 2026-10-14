@@ -13,7 +13,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: %% n"
+    "text": "[^1]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "%% n"
   },
   {
     "scope": null,

@@ -9,10 +9,10 @@
   },
   {
     "scope": "symbol",
-    "text": "  [^g]: n"
+    "text": "  [^g]:"
   },
   {
     "scope": null,
-    "text": "\n   prose\n\nafter\n"
+    "text": " n\n   prose\n\nafter\n"
   }
 ]

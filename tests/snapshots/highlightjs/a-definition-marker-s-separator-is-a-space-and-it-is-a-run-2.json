@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]:  note"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "  note\n"
   }
 ]

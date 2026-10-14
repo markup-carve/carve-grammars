@@ -21,18 +21,18 @@
   },
   {
     "scope": "symbol",
-    "text": "[^b]: bee"
+    "text": "[^b]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " bee\n\n"
   },
   {
     "scope": "symbol",
-    "text": "[^a]: ay"
+    "text": "[^a]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " ay\n"
   }
 ]

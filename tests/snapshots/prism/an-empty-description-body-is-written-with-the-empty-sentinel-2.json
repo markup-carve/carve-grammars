@@ -16,7 +16,19 @@
     "text": ": "
   },
   {
+    "type": "definition-list>description-attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "definition-list>description-attributes>attr-value",
+    "text": "empty"
+  },
+  {
+    "type": "definition-list>description-attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "definition-list",
-    "text": "{empty}\n"
+    "text": "\n"
   }
 ]

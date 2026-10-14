@@ -9,7 +9,11 @@
   },
   {
     "type": "url>link-text",
-    "text": "http\\:"
+    "text": "http"
+  },
+  {
+    "type": "url>link-text>escape>constant",
+    "text": "\\:"
   },
   {
     "type": "url>link-text>escape>constant",

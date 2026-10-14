@@ -1,19 +1,19 @@
 [
   {
     "scope": "symbol",
-    "text": "[^outer]: intro"
+    "text": "[^outer]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " intro\n\n"
   },
   {
     "scope": "symbol",
-    "text": "     [^inner]: note"
+    "text": "     [^inner]:"
   },
   {
     "scope": null,
-    "text": "\n\n     see"
+    "text": " note\n\n     see"
   },
   {
     "scope": "symbol",

@@ -45,10 +45,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^a]: note"
+    "text": "[^a]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " note\n"
   }
 ]

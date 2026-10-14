@@ -21,10 +21,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: n"
+    "text": "[^1]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " n\n"
   }
 ]

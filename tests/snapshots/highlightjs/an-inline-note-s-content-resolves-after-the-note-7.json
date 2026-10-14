@@ -13,7 +13,23 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: see ^[</#h>]"
+    "text": "[^1]:"
+  },
+  {
+    "scope": null,
+    "text": " see "
+  },
+  {
+    "scope": "symbol",
+    "text": "^["
+  },
+  {
+    "scope": "symbol>link",
+    "text": "</#h>"
+  },
+  {
+    "scope": "symbol",
+    "text": "]"
   },
   {
     "scope": null,

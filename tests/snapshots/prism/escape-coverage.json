@@ -4,7 +4,7 @@
     "text": "\\!"
   },
   {
-    "type": "text",
+    "type": "escape>constant",
     "text": "\\\""
   },
   {
@@ -12,7 +12,7 @@
     "text": "\\#"
   },
   {
-    "type": "text",
+    "type": "escape>constant",
     "text": "\\$"
   },
   {
@@ -20,8 +20,12 @@
     "text": "\\%"
   },
   {
-    "type": "text",
-    "text": "\\&\\'"
+    "type": "escape>constant",
+    "text": "\\&"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\'"
   },
   {
     "type": "escape>constant",
@@ -56,8 +60,12 @@
     "text": "\\/"
   },
   {
-    "type": "text",
-    "text": "\\:\\;"
+    "type": "escape>constant",
+    "text": "\\:"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\;"
   },
   {
     "type": "escape>constant",
@@ -72,7 +80,7 @@
     "text": "\\>"
   },
   {
-    "type": "text",
+    "type": "escape>constant",
     "text": "\\?"
   },
   {

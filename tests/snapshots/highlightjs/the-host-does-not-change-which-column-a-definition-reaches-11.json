@@ -9,19 +9,19 @@
   },
   {
     "scope": "symbol",
-    "text": "  [^g]: b"
+    "text": "  [^g]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " b\n"
   },
   {
     "scope": "symbol",
-    "text": "   [^n]: note text"
+    "text": "   [^n]:"
   },
   {
     "scope": null,
-    "text": "\n\nSee "
+    "text": " note text\n\nSee "
   },
   {
     "scope": "symbol",

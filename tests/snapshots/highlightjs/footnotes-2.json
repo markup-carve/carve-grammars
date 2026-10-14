@@ -13,10 +13,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^m]: First line of the note"
+    "text": "[^m]:"
   },
   {
     "scope": null,
-    "text": "\n   and a continuation line.\n"
+    "text": " First line of the note\n   and a continuation line.\n"
   }
 ]

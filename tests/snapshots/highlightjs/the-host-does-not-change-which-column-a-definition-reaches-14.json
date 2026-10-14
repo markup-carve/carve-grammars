@@ -1,27 +1,27 @@
 [
   {
     "scope": "symbol",
-    "text": "[^f]: b"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " b\n\n"
   },
   {
     "scope": "symbol",
-    "text": "  [^g]: c"
+    "text": "  [^g]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " c\n"
   },
   {
     "scope": "symbol",
-    "text": "   [^n]: note text"
+    "text": "   [^n]:"
   },
   {
     "scope": null,
-    "text": "\n\nSee "
+    "text": " note text\n\nSee "
   },
   {
     "scope": "symbol",

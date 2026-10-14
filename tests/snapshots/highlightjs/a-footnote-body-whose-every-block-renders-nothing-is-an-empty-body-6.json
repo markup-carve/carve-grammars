@@ -13,15 +13,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: ```=html"
+    "text": "[^1]:"
   },
   {
     "scope": null,
-    "text": "\n  <b>x</b>\n"
+    "text": " "
   },
   {
-    "scope": "keyword",
-    "text": "  ```"
+    "scope": "code",
+    "text": "```=html\n  <b>x</b>\n  ```"
   },
   {
     "scope": null,

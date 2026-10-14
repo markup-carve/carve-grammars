@@ -29,10 +29,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^a]: only note"
+    "text": "[^a]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " only note\n"
   }
 ]

@@ -13,11 +13,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: a"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " a\n"
   },
   {
     "scope": "keyword",

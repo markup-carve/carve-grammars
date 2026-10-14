@@ -1,6 +1,22 @@
 [
   {
     "type": "text",
-    "text": "\"a\\''\n\n'a\\\"\"\n"
+    "text": "\"a"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\'"
+  },
+  {
+    "type": "text",
+    "text": "'\n\n'a"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\\""
+  },
+  {
+    "type": "text",
+    "text": "\"\n"
   }
 ]

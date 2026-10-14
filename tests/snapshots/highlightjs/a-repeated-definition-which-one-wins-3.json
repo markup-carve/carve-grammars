@@ -13,18 +13,18 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: one"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " one\n\n"
   },
   {
     "scope": "symbol",
-    "text": "[^f]: two"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " two\n"
   }
 ]

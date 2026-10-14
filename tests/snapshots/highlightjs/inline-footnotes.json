@@ -29,10 +29,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^a]: reference body."
+    "text": "[^a]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " reference body.\n"
   }
 ]

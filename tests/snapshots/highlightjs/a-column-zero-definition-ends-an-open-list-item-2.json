@@ -9,11 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: note"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\nafter"
+    "text": " note\nafter"
   },
   {
     "scope": "symbol",

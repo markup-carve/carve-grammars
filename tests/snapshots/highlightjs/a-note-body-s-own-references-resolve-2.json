@@ -13,7 +13,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^1]: see [^2]"
+    "text": "[^1]:"
+  },
+  {
+    "scope": null,
+    "text": " see "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^2]"
   },
   {
     "scope": null,
@@ -21,10 +29,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^2]: two"
+    "text": "[^2]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " two\n"
   }
 ]

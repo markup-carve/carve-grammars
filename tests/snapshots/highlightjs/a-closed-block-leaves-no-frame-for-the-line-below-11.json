@@ -17,11 +17,11 @@
   },
   {
     "scope": "symbol",
-    "text": "    [^b]: inner"
+    "text": "    [^b]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " inner\n"
   },
   {
     "scope": "code>keyword",

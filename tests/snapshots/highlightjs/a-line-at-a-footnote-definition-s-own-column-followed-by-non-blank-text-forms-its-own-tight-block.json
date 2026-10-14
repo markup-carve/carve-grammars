@@ -9,11 +9,11 @@
   },
   {
     "scope": "symbol",
-    "text": "  [^f]: x"
+    "text": "  [^f]:"
   },
   {
     "scope": null,
-    "text": "\n  more\n\nsee"
+    "text": " x\n  more\n\nsee"
   },
   {
     "scope": "symbol",

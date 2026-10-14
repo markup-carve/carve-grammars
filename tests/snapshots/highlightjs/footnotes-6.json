@@ -13,18 +13,18 @@
   },
   {
     "scope": "symbol",
-    "text": "[^two words]: This definition is not referenced."
+    "text": "[^two words]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " This definition is not referenced.\n\n"
   },
   {
     "scope": "symbol",
-    "text": "[^broken\nlabel]: This is not a definition."
+    "text": "[^broken\nlabel]:"
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": " This is not a definition.\n"
   }
 ]

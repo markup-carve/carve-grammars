@@ -1,19 +1,19 @@
 [
   {
     "scope": "symbol",
-    "text": "[^f]: outer"
+    "text": "[^f]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " outer\n\n"
   },
   {
     "scope": "symbol",
-    "text": "       [^g]: mid"
+    "text": "       [^g]:"
   },
   {
     "scope": null,
-    "text": "\n\n"
+    "text": " mid\n\n"
   },
   {
     "scope": "symbol",

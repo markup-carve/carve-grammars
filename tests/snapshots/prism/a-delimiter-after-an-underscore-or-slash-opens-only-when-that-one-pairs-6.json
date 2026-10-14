@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "_*x* \\\"'a' \"\n"
+    "text": "_*x* "
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\\""
+  },
+  {
+    "type": "text",
+    "text": "'a' \"\n"
   }
 ]

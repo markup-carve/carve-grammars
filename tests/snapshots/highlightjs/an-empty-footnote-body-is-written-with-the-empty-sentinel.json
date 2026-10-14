@@ -13,7 +13,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^f]: {empty}"
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{empty}"
   },
   {
     "scope": null,

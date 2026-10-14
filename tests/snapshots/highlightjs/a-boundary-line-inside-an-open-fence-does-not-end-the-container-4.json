@@ -25,11 +25,11 @@
   },
   {
     "scope": "symbol",
-    "text": "[^z]: zz"
+    "text": "[^z]:"
   },
   {
     "scope": null,
-    "text": "\nb\n"
+    "text": " zz\nb\n"
   },
   {
     "scope": "keyword",

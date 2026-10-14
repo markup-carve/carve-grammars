@@ -354,6 +354,8 @@
     // fails when its run starts right after a comment's `%}`; the opener is
     // required because `{k=a%}` ends an attribute block the same way. Checked
     // only after a block matched; bounded, so a run past 64 blocks scopes its tail.
+    // The closer a block glues to is not an escaped character: `x\]{.c}` is text.
+    const afterEscape = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\[^\\n])';
     const noCommentRun = '(?<!\\{%(?:[^%\\n]|%(?!\\})|\\n(?![ \\t\\r]*\\n)){0,4096}%\\}(?:[ \\t]{0,64}\\{[^{}\\n]{0,512}\\}){1,64})';
     const ATTRIBUTE = {
         className: 'attr',
@@ -364,7 +366,7 @@
         // the match still starts at the `{`.
         begin: new RegExp(
             '(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
-            + '|(?=\\{)(?<=[*/_~=`>}:)\\]$<|])' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
+            + '|(?=\\{)(?<=[*/_~=`>}:)\\]$<|])' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
@@ -863,17 +865,32 @@
         relevance: 5,
     };
 
-    // Footnote definitions: [^note]: content
+    // A block-attribute line as a whole body, such as the `{empty}` sentinel.
+    const bodyAttribute = (marker) => ({
+        className: 'attr',
+        begin: new RegExp('(?=\\{)(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + marker + '[ \\t]+)'
+            + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}(?=[ \\t]*(?:\\r?\\n|$(?![^\\r\\n])))'),
+        relevance: 0,
+    });
+
+    // Footnote definitions: [^note]: content. The label is scoped; the body is
+    // inline content, appended once CONTAINS exists.
     const FOOTNOTE_DEF = {
-        className: 'symbol',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[\^[^\]]+\]:(?= )/,
+        begin: /^(?<![^\r\n])(?=(?:(?<![\s\S])\uFEFF)?[ \t]*\[\^[^\]]+\]: )/,
         end: /$(?![^\r\n])/,
-        // A `+` as the whole first line is the continuation marker when a
-        // non-blank flush-left line follows (markup-carve/carve#3105).
-        contains: [{
-            className: 'punctuation',
-            begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n[^ \t\r\n])/,
-        }],
+        contains: [
+            {
+                className: 'symbol',
+                begin: /(?<=^(?<![^\r\n]))(?:(?<![\s\S])\uFEFF)?[ \t]*\[\^[^\]]+\]:/,
+            },
+            // A `+` as the whole first line is the continuation marker when a
+            // non-blank flush-left line follows (markup-carve/carve#3105).
+            {
+                className: 'punctuation',
+                begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n[^ \t\r\n])/,
+            },
+            bodyAttribute('\\[\\^[^\\]\\r\\n]+\\]:'),
+        ],
         relevance: 10,
     };
 
@@ -1230,7 +1247,7 @@
         },
         relevance: 0,
         // The inline modes are appended once CONTAINS exists.
-        contains: [DEFINITION_TERM, DESCRIPTION_MARKER, DESCRIPTION_CONTINUATION],
+        contains: [DEFINITION_TERM, DESCRIPTION_MARKER, DESCRIPTION_CONTINUATION, bodyAttribute(':')],
     };
 
     /*
@@ -2522,6 +2539,7 @@
 
     // A term's lazy lines and a description's body read as a paragraph does.
     DEFINITION_LIST_ENTRY.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
+    FOOTNOTE_DEF.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
 
     // A div's body holds the full top-level mode list minus ABBREVIATION_DEF
     // (carve-grammars#125 - see the comment on DIV_BLOCK above) and minus the

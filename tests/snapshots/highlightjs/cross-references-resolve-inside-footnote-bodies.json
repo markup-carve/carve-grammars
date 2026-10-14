@@ -17,7 +17,15 @@
   },
   {
     "scope": "symbol",
-    "text": "[^n]: see </#H>"
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " see "
+  },
+  {
+    "scope": "link",
+    "text": "</#H>"
   },
   {
     "scope": null,
