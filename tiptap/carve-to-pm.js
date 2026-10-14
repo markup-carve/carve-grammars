@@ -864,7 +864,7 @@ function convertTable(node, ctx) {
         };
     }
     const attrs = convertAttrs(node.attrs);
-    if (attrs) table.attrs = attrs;
+    if (attrs) table.attrs = { ...attrs, ...(table.attrs || {}) };
     return table;
 }
 
