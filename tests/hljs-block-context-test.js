@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 
 import { carveToHtml } from '@markup-carve/carve';
 
+import carveDefinition from '../highlightjs/carve.mjs';
 import { hljsTokens } from './lib/engines.js';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
@@ -125,6 +126,40 @@ check('link, span and extension labels are inline runs; image alt text is not', 
     assert.equal(scopeOf(':kbd[Ctrl *x*]\n', '*x*'), 'function>strong');
     assert.equal(scopeOf('![alt *b*](i.png)\n', '*b*'), 'link');
     assert.match(carveToHtml('![alt *b*](i.png)\n'), /alt="alt \*b\*"/);
+});
+
+console.log('no on:begin veto:');
+// highlight.js resumes a scan after `ignoreMatch()` at a rule position that its
+// cached slice matchers share, so once a mode has resumed from two places it
+// can skip text or loop. No `on:begin` may veto; a refused match keeps its text.
+check('no on:begin hook calls ignoreMatch()', () => {
+    const seen = new Set();
+    const vetoes = [];
+    const visit = (mode) => {
+        if (!mode || typeof mode !== 'object' || seen.has(mode)) return;
+        seen.add(mode);
+        if (/ignoreMatch/.test(String(mode['on:begin'] ?? ''))) vetoes.push(String(mode.begin).slice(0, 80));
+        for (const child of mode.contains || []) visit(child);
+        visit(mode.starts);
+    };
+    visit(carveDefinition());
+    assert.deepEqual(vetoes, []);
+});
+check('a folding marker-line opener keeps its comment, an inner fence of another width ends nothing', () => {
+    const folded = '- ::: note %% comment\nlazy *b*\n';
+    assert.equal(scopeOf(folded, '::: note'), null);
+    assert.equal(scopeOf(folded, '%% comment'), 'comment');
+    assert.equal(scopeOf(folded, '*b*'), 'strong');
+    const held = '- ::: note\n  body\n  ::::\n  :::\n*[A]: x\n';
+    assert.equal(scopeOf(held, '::: note'), 'keyword');
+    assert.equal(scopeOf(held, '::::'), 'keyword');
+    assert.equal(scopeOf(held, '*[A]'), 'symbol');
+});
+check('a quoted heading or caption line scopes code and comments, other quoted lines leave the comment', () => {
+    assert.equal(scopeOf('> # h `x` %% c\n', '`x`'), 'quote>code');
+    assert.equal(scopeOf('> # h `x` %% c\n', '%% c'), 'quote>comment');
+    assert.equal(scopeOf('> ^ cap %% c\n', '%% c'), 'quote>comment');
+    assert.equal(scopeOf('> a # b `x`\n', '`x`'), 'quote');
 });
 
 assertThisFileRuns(import.meta.url);

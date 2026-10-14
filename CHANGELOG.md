@@ -103,6 +103,9 @@ All notable changes to `carve-grammars` are documented here.
   inline markup, and table cells scope their inline markup.
 - highlight.js: link, span and reference text, extension content and inline
   footnotes scope their inline markup.
+- highlight.js: no rule refuses a match with `ignoreMatch()` in `on:begin` any
+  more, which could make highlight.js skip text or loop; a `- ::: note` opener
+  that folds into its item keeps its trailing comment as a comment.
 
 ### Added
 

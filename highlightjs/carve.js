@@ -1717,38 +1717,58 @@
         data.at = m.index;
         return data.stack;
     };
+    // Neither mode calls `ignoreMatch()` in `on:begin` (see BARE_FENCE_LINE):
+    // an indented bare fence of another width is a fence line that ends
+    // nothing, and a folding opener keeps its text, drops its scope and ends
+    // at its own line end.
     const markerLineContainer = (scope, opener) => {
         const data = {};
         const closer = {
             scope,
             data,
             begin: /^(?<![^\r\n])[ \t]+(:{3,})[ \t]*$(?![^\r\n])/,
-            'on:begin': (m, resp) => {
+            'on:begin': (m) => {
                 const open = fencesOf(data, m);
-                if (m[1].length !== open[open.length - 1]) resp.ignoreMatch();
-                else open.pop();
+                const top = open[open.length - 1];
+                closer.endsParent = top !== undefined && !top.folds && m[1].length === top.width;
+                m.rule.scope = closer.endsParent ? scope : 'keyword';
+                if (closer.endsParent) open.pop();
             },
-            endsParent: true,
         };
         const container = {
             beginScope: scope,
             data,
             begin: RegExp('(?=:)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(:{3,})' + opener),
-            'on:begin': (m, resp) => {
-                if (foldsIntoItem(m)) resp.ignoreMatch();
-                else fencesOf(data, m).push(m[1].length);
+            'on:begin': (m) => {
+                const folds = foldsIntoItem(m);
+                m.rule.beginScope = folds ? undefined : { _wrap: scope };
+                fencesOf(data, m).push({ width: m[1].length, folds });
             },
-            end: /(?=\n[^ \t\n])/,
-            'on:end': (m) => {
-                fencesOf(data, m).pop();
+            // Every line end is a candidate: a column-0 line ends the container,
+            // and a folding opener ends at its own line end. `returnEnd` leaves
+            // the newline to the parent; a refused candidate is plain text.
+            end: /\n/,
+            returnEnd: true,
+            'on:end': (m, resp) => {
+                const open = fencesOf(data, m);
+                const next = m.input[m.index + 1];
+                if (!open[open.length - 1]?.folds && (next === undefined || /[ \t\r\n]/.test(next))) {
+                    resp.ignoreMatch();
+                    return;
+                }
+                open.pop();
             },
             relevance: 10,
         };
         return [container, closer];
     };
     const [FIGURE_GROUP_ON_MARKER_LINE, FIGURE_GROUP_MARKER_LINE_CLOSER] = markerLineContainer('section', ' +figure[ \\t]*$(?![^\\r\\n])');
+    // A trailing comment is left to the container's own modes, so it stays a
+    // comment whether the opener holds or folds into the item as text.
+    const MARKER_LINE_TAIL_COMMENT = '[ \\t]+%%|[ \\t]*\\{%';
     const DIV_ON_MARKER_LINE_OPENER =
-        '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\n]*\\])?[ \\t]*$(?![^\\r\\n])';
+        '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| *\\[[^\\]\\n]*\\])?'
+        + '(?=(?:' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n]*$(?![^\\r\\n])|[ \\t]*$(?![^\\r\\n]))';
     const [DIV_ON_MARKER_LINE, DIV_MARKER_LINE_CLOSER] = markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
     // Inside a group, like DIV_BLOCK_IN_GROUP: its body must not offer a group.
     const [DIV_ON_MARKER_LINE_IN_GROUP, DIV_IN_GROUP_MARKER_LINE_CLOSER] =
@@ -2326,62 +2346,13 @@
     DEFINITION_TERM['on:begin'] = () => {
         descriptionColumn = Infinity;
     };
-    /*
-     * THE LINE TEST RUNS AFTER THE CANDIDATE, NEVER AS A LEADING LOOKBEHIND
-     * (carve-grammars#604). Spelled `(?<=^[ \t]*(?:> )+(?:#{1,6} |\^ )[^\n]*)`
-     * ahead of the rule, the test is a VARIABLE-LENGTH lookbehind: it walks back
-     * to the line start from every sentinel position, and the walk is at its
-     * most expensive exactly where it must FAIL - ordinary quoted prose carrying
-     * inline code. A 32 KB `> a ` line of backtick runs cost 2485 ms against
-     * 21 ms unprefixed, four times per doubling. The quoted-block rules below
-     * are reached once per CANDIDATE instead, and a sticky prefix test reads
-     * only the marker run rather than the span between it and the match. Same
-     * move as the table row's in #582 and the one-line blocks' in #603.
-     */
-    const QUOTED_LINE_BLOCK_PREFIX = /[ \t]*(?:> )+(?:#{1,6} |\^ )/y;
-    /*
-     * The line start is the last cost that still grew with the line: a plain
-     * `lastIndexOf('\n')` per candidate walks back over the whole line, which
-     * held the 32 KB row at 64 ms against 12 ms unprefixed and still doubled
-     * four times per doubling. So the line a candidate sits on is remembered,
-     * BOTH ENDS OF IT: caching only the start leaves `indexOf('\n')` rescanning
-     * the rest of the line on every candidate, which is the same quadratic
-     * wearing a different hat and cost 10.4 s on a 2 MB line. A candidate
-     * inside the cached line answers without reading the document at all, and
-     * one outside it pays a single backward walk to seed the next line.
-     */
-    let quotedLineSeen = { input: null, lineStart: 0, lineEnd: -1 };
-    const quotedLineStart = (input, index) => {
-        const stale = quotedLineSeen.input !== input
-            || index < quotedLineSeen.lineStart
-            || (quotedLineSeen.lineEnd !== -1 && index > quotedLineSeen.lineEnd);
-        if (stale) {
-            const lineStart = input.lastIndexOf('\n', index - 1) + 1;
-            quotedLineSeen = { input, lineStart, lineEnd: input.indexOf('\n', lineStart) };
-        }
-
-        return quotedLineSeen.lineStart;
-    };
-    const onQuotedLineBlock = (mode) => (match, response) => {
-        const lineStart = quotedLineStart(match.input, match.index);
-        QUOTED_LINE_BLOCK_PREFIX.lastIndex = lineStart;
-        // The marker must END at or before the candidate: `> # a` opens the
-        // block, `> a # b` does not, and `> # ` itself is the marker rather than
-        // content the rules may claim.
-        if (!QUOTED_LINE_BLOCK_PREFIX.test(match.input)
-            || QUOTED_LINE_BLOCK_PREFIX.lastIndex > match.index) {
-            response.ignoreMatch();
-
-            return;
-        }
-        if (mode['on:begin']) mode['on:begin'](match, response);
-    };
-    BLOCKQUOTE.contains.push(...[ESCAPE, ...ONE_LINE_VERBATIM].map((mode) => ({
-        ...mode, 'on:begin': onQuotedLineBlock(mode),
-    })), {
-        ...LINE_COMMENT,
-        begin: /(?<=[ \t])%%/,
-        'on:begin': onQuotedLineBlock(LINE_COMMENT),
+    // The content of a quoted heading or caption line: entered right after
+    // its marker, so no rule in it has to ask which line it is on. The fixed
+    // `[#^] ` test runs first, so the long lookbehind is paid at those spots only.
+    BLOCKQUOTE.contains.push({
+        begin: /(?<=[#^] )(?=[^\r\n])(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:> )+(?:#{1,6} |\^ ))(?![ \t]*$(?![^\r\n]))/,
+        end: /$(?![^\r\n])/,
+        contains: [ESCAPE, ...ONE_LINE_VERBATIM, { ...LINE_COMMENT, begin: /(?<=[ \t])%%/ }],
     });
 
 

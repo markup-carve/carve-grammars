@@ -539,6 +539,29 @@ the global `hljs`:
 <script>hljs.highlightAll();</script>
 ```
 
+A fenced code body is highlighted in the language its info string names, through
+highlight.js's `subLanguage`. The info-string words follow
+`fence-languages/fence-languages.json`, mapped to highlight.js language names
+(`py` reaches `python`, `html` and `svg` reach `xml`, `toml` reaches `ini`). A
+` ```=html ` or ` ```=latex ` raw block takes its format's language, and a bare
+fence under a `{.diff}` attribute line is a diff. The language is used only when
+it is registered with the highlight.js instance; otherwise, as for an unknown
+word, the body stays plain `hljs-code` text. The full `highlight.js` bundle
+registers every language, `highlight.js/lib/core` none, so register the ones
+your documents fence:
+
+```js
+import hljs from 'highlight.js/lib/core'
+import python from 'highlight.js/lib/languages/python'
+import carve from '@markup-carve/carve-grammars/highlightjs/carve.js'
+
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('carve', carve)
+```
+
+On the opener line the fence runs are `hljs-keyword`, the language word
+`hljs-title`, a quoted title `hljs-string` and a `[label]` `hljs-symbol`.
+
 ### Shiki / VitePress
 
 `@markup-carve/carve-grammars/shiki` is the shared kit every Carve docs site uses, so
