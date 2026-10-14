@@ -4,7 +4,19 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-10-14
+
+### Breaking
+
+- Editor JSON from 0.1.14 containing `carveCellWrap` nodes: re-import from
+  Carve source.
+
 ### Fixes
+
+- The editor model maps table continuation joins back to a space, as 0.1.13
+  did; the 0.1.14 `carveCellWrap` node is removed (#709).
+- Escaped punctuation stays literal, and an unclosed code fence stops at its
+  container's closer (#707, #708).
 
 - TextMate: an unclosed code fence inside a `:::` container ends at the
   container's closer instead of running to the end of the document.
