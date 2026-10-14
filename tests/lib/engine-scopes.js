@@ -626,6 +626,10 @@ export const ENGINE_SCOPES = {
     "highlightjs": [
       [
         "code",
+        "title"
+      ],
+      [
+        "code",
         "keyword"
       ]
     ]
@@ -724,6 +728,10 @@ export const ENGINE_SCOPES = {
       [
         "code",
         "keyword"
+      ],
+      [
+        "code",
+        "title"
       ]
     ]
   },
@@ -893,7 +901,7 @@ export const ENGINE_SCOPES = {
     "highlightjs": [
       [
         "code",
-        "keyword"
+        "string"
       ]
     ]
   },

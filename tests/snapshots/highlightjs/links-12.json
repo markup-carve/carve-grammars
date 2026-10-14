@@ -1,7 +1,15 @@
 [
   {
     "scope": "link",
-    "text": "[pre <http://h> post](/u)"
+    "text": "[pre "
+  },
+  {
+    "scope": "link>link",
+    "text": "<http://h>"
+  },
+  {
+    "scope": "link",
+    "text": " post](/u)"
   },
   {
     "scope": null,

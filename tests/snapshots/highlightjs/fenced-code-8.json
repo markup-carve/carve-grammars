@@ -1,7 +1,15 @@
 [
   {
     "scope": "code>keyword",
-    "text": "``` \"notes.txt\""
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"notes.txt\""
   },
   {
     "scope": "code",

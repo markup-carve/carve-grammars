@@ -9,11 +9,47 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```python"
+    "text": "```"
   },
   {
-    "scope": "code",
-    "text": "\ndef greet():\n    return 1\n"
+    "scope": "code>title",
+    "text": "python"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-python>keyword",
+    "text": "def"
+  },
+  {
+    "scope": "code>language-python",
+    "text": " "
+  },
+  {
+    "scope": "code>language-python>title function_",
+    "text": "greet"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "():\n    "
+  },
+  {
+    "scope": "code>language-python>keyword",
+    "text": "return"
+  },
+  {
+    "scope": "code>language-python",
+    "text": " "
+  },
+  {
+    "scope": "code>language-python>number",
+    "text": "1"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

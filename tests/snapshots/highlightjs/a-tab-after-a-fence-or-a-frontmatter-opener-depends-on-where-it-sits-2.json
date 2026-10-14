@@ -1,11 +1,11 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```\t"
+    "text": "```"
   },
   {
     "scope": "code",
-    "text": "\nx\n"
+    "text": "\t\nx\n"
   },
   {
     "scope": "code>keyword",

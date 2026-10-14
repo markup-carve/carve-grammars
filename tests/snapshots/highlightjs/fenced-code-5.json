@@ -1,10 +1,22 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```php [NPM]"
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "php"
   },
   {
     "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>symbol",
+    "text": "[NPM]"
+  },
+  {
+    "scope": "code>language-php",
     "text": "\nnpm install x\n"
   },
   {

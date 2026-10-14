@@ -1,7 +1,15 @@
 [
   {
     "scope": "function",
-    "text": ":code[*b*]"
+    "text": ":code["
+  },
+  {
+    "scope": "function>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "function",
+    "text": "]"
   },
   {
     "scope": null,
@@ -9,7 +17,15 @@
   },
   {
     "scope": "function",
-    "text": ":mark[*b*]"
+    "text": ":mark["
+  },
+  {
+    "scope": "function>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "function",
+    "text": "]"
   },
   {
     "scope": null,

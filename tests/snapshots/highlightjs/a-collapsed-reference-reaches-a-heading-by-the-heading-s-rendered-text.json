@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[*bold* heading][]"
+    "text": "["
+  },
+  {
+    "scope": "link>strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": "link",
+    "text": " heading][]"
   },
   {
     "scope": null,

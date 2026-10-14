@@ -5,7 +5,15 @@
   },
   {
     "scope": "symbol",
-    "text": "^[see *later*]"
+    "text": "^[see "
+  },
+  {
+    "scope": "symbol>strong",
+    "text": "*later*"
+  },
+  {
+    "scope": "symbol",
+    "text": "]"
   },
   {
     "scope": null,

@@ -279,7 +279,8 @@ const CONTEXTS = [
  * that starts working fails this row and comes out of the list with the fix.
  */
 const UNREACHED = {
-    highlightjs: ['blockquote', 'table cell'],
+    // Table cells reach it since a cell became an inline run.
+    highlightjs: ['blockquote'],
     // Quotes reach the inline family since carve-grammars#683, headings since the
     // title became a full inline run.
     textmate: [],

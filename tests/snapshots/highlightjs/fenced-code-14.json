@@ -1,11 +1,23 @@
 [
   {
     "scope": "code>keyword",
-    "text": "````markdown"
+    "text": "````"
   },
   {
-    "scope": "code",
-    "text": "\n```python\nprint(\"hi\")\n```\n"
+    "scope": "code>title",
+    "text": "markdown"
+  },
+  {
+    "scope": "code>language-markdown",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-markdown>code",
+    "text": "```python\nprint(\"hi\")\n```"
+  },
+  {
+    "scope": "code>language-markdown",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

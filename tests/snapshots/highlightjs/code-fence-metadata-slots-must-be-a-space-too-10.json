@@ -1,10 +1,30 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```js \"T\" [L]"
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "js"
   },
   {
     "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"T\""
+  },
+  {
+    "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>symbol",
+    "text": "[L]"
+  },
+  {
+    "scope": "code>language-javascript",
     "text": "\nx\n"
   },
   {

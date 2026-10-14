@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[a /b/ c]"
+    "text": "[a "
+  },
+  {
+    "scope": "string>emphasis",
+    "text": "/b/"
+  },
+  {
+    "scope": "string",
+    "text": " c]"
   },
   {
     "scope": "attr",

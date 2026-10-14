@@ -1,11 +1,39 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```c++"
+    "text": "```"
   },
   {
-    "scope": "code",
-    "text": "\nint main() {}\n"
+    "scope": "code>title",
+    "text": "c++"
+  },
+  {
+    "scope": "code>language-cpp",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-cpp>function>type",
+    "text": "int"
+  },
+  {
+    "scope": "code>language-cpp>function",
+    "text": " "
+  },
+  {
+    "scope": "code>language-cpp>function>title",
+    "text": "main"
+  },
+  {
+    "scope": "code>language-cpp>function>params",
+    "text": "()"
+  },
+  {
+    "scope": "code>language-cpp>function",
+    "text": " "
+  },
+  {
+    "scope": "code>language-cpp",
+    "text": "{}\n"
   },
   {
     "scope": "code>keyword",

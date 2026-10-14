@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": "\nr\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " [d]: u\n"
+    "text": "\nr\n- [d]: u\n"
   },
   {
     "scope": "keyword",

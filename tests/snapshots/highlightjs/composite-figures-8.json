@@ -29,15 +29,7 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "title",
-    "text": "^ Not a group caption"
-  },
-  {
-    "scope": null,
-    "text": "\n\n"
+    "text": "\n^ Not a group caption\n\n"
   },
   {
     "scope": "keyword",

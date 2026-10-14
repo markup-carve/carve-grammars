@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[`code()` heading][]"
+    "text": "["
+  },
+  {
+    "scope": "link>code",
+    "text": "`code()`"
+  },
+  {
+    "scope": "link",
+    "text": " heading][]"
   },
   {
     "scope": null,

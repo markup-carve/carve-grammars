@@ -1,11 +1,63 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```=html"
+    "text": "```"
   },
   {
-    "scope": "code",
-    "text": "\n<custom onclick=\"reveal()\">t</custom>\n"
+    "scope": "code>keyword",
+    "text": "=html"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "<"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "custom"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": " "
+  },
+  {
+    "scope": "code>language-xml>tag>attr",
+    "text": "onclick"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "="
+  },
+  {
+    "scope": "code>language-xml>tag>string",
+    "text": "\"reveal()\""
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "t"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "</"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "custom"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

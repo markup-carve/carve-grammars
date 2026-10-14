@@ -1,11 +1,39 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```php \"src/Auth.php\""
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "php"
   },
   {
     "scope": "code",
-    "text": "\n$ok = true;\n"
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"src/Auth.php\""
+  },
+  {
+    "scope": "code>language-php",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-php>variable",
+    "text": "$ok"
+  },
+  {
+    "scope": "code>language-php",
+    "text": " = "
+  },
+  {
+    "scope": "code>language-php>literal",
+    "text": "true"
+  },
+  {
+    "scope": "code>language-php",
+    "text": ";\n"
   },
   {
     "scope": "code>keyword",

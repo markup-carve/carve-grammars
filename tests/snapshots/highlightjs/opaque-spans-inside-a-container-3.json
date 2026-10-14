@@ -9,7 +9,11 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```text"
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "text"
   },
   {
     "scope": "code",

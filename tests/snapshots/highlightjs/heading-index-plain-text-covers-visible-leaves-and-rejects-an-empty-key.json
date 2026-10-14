@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[a <https://e.com> b][]"
+    "text": "[a "
+  },
+  {
+    "scope": "link>link",
+    "text": "<https://e.com>"
+  },
+  {
+    "scope": "link",
+    "text": " b][]"
   },
   {
     "scope": null,

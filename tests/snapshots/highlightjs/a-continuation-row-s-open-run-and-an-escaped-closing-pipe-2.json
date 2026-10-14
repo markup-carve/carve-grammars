@@ -1,7 +1,11 @@
 [
   {
-    "scope": "string",
-    "text": "| a b \\|"
+    "scope": null,
+    "text": "| a b "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\|"
   },
   {
     "scope": null,

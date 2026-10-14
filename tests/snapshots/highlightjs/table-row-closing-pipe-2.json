@@ -21,14 +21,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "string",
-    "text": "| c | d"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\n| c | d\n"
   }
 ]

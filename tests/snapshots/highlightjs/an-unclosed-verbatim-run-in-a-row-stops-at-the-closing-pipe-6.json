@@ -1,10 +1,6 @@
 [
   {
-    "scope": "string",
-    "text": "| a | b"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "| a | b\n"
   }
 ]

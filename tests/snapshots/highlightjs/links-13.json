@@ -9,7 +9,15 @@
   },
   {
     "scope": "link",
-    "text": "[see </#H>](/outer)"
+    "text": "[see "
+  },
+  {
+    "scope": "link>link",
+    "text": "</#H>"
+  },
+  {
+    "scope": "link",
+    "text": "](/outer)"
   },
   {
     "scope": null,

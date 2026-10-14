@@ -5,7 +5,15 @@
   },
   {
     "scope": "symbol",
-    "text": "^[see </#nope>]"
+    "text": "^[see "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "</#nope>"
+  },
+  {
+    "scope": "symbol",
+    "text": "]"
   },
   {
     "scope": null,

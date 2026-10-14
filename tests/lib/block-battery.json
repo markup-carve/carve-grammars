@@ -74,10 +74,7 @@
     {
       "src": "^ cap",
       "want": "none",
-      "why": "a caption needs a host above it; the engine renders a lone first-line `^ cap` as `<p>^ cap</p>`",
-      "skip": {
-        "highlightjs": "highlight.js still scopes a first-line caret line as a caption"
-      }
+      "why": "a caption needs a host above it; the engine renders a lone first-line `^ cap` as `<p>^ cap</p>`"
     },
     {
       "src": "#  Title",

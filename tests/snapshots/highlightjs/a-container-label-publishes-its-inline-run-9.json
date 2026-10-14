@@ -1,10 +1,26 @@
 [
   {
     "scope": "code>keyword",
-    "text": "``` js [/i/]"
+    "text": "```"
   },
   {
     "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>title",
+    "text": "js"
+  },
+  {
+    "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>symbol",
+    "text": "[/i/]"
+  },
+  {
+    "scope": "code>language-javascript",
     "text": "\nc\n"
   },
   {

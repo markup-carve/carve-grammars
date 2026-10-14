@@ -21,10 +21,14 @@
   },
   {
     "scope": "code>keyword",
-    "text": "        ```js"
+    "text": "        ```"
   },
   {
-    "scope": "code",
+    "scope": "code>title",
+    "text": "js"
+  },
+  {
+    "scope": "code>language-javascript",
     "text": "\n        c\n"
   },
   {

@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[*b*]"
+    "text": "["
+  },
+  {
+    "scope": "string>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "string",
+    "text": "]"
   },
   {
     "scope": "attr",
@@ -13,7 +21,15 @@
   },
   {
     "scope": "string",
-    "text": "[*b*]"
+    "text": "["
+  },
+  {
+    "scope": "string>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "string",
+    "text": "]"
   },
   {
     "scope": "attr",

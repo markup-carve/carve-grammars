@@ -21,10 +21,14 @@
   },
   {
     "scope": "code>keyword",
-    "text": "  ```=latex"
+    "text": "  ```"
   },
   {
-    "scope": "code",
+    "scope": "code>keyword",
+    "text": "=latex"
+  },
+  {
+    "scope": "code>language-latex",
     "text": "\n  c\n"
   },
   {

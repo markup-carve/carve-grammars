@@ -5,7 +5,15 @@
   },
   {
     "scope": "link",
-    "text": "[t</#}>][r]"
+    "text": "[t"
+  },
+  {
+    "scope": "link>link",
+    "text": "</#}>"
+  },
+  {
+    "scope": "link",
+    "text": "][r]"
   },
   {
     "scope": null,

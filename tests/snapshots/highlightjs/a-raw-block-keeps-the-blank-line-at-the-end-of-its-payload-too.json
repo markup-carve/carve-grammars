@@ -1,10 +1,14 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```=html"
+    "text": "```"
   },
   {
-    "scope": "code",
+    "scope": "code>keyword",
+    "text": "=html"
+  },
+  {
+    "scope": "code>language-xml",
     "text": "\nb\n\n"
   },
   {

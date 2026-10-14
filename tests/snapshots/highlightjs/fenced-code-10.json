@@ -9,10 +9,22 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```php \"from the header\""
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "php"
   },
   {
     "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"from the header\""
+  },
+  {
+    "scope": "code>language-php",
     "text": "\ncode\n"
   },
   {

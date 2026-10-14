@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[<https://e.com>]"
+    "text": "["
+  },
+  {
+    "scope": "string>link",
+    "text": "<https://e.com>"
+  },
+  {
+    "scope": "string",
+    "text": "]"
   },
   {
     "scope": "attr",

@@ -9,11 +9,47 @@
   },
   {
     "scope": "code>keyword",
-    "text": "  ```=html"
+    "text": "  ```"
   },
   {
-    "scope": "code",
-    "text": "\n  <b>x</b>\n"
+    "scope": "code>keyword",
+    "text": "=html"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n  "
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "<"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "b"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "x"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "</"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "b"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

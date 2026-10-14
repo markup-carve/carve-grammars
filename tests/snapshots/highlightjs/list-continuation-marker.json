@@ -17,10 +17,14 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```sh"
+    "text": "```"
   },
   {
-    "scope": "code",
+    "scope": "code>title",
+    "text": "sh"
+  },
+  {
+    "scope": "code>language-bash",
     "text": "\ndocker build -t app .\n"
   },
   {

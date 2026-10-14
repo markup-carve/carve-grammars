@@ -4,8 +4,12 @@
     "text": "|"
   },
   {
+    "scope": "addition",
+    "text": "=hot="
+  },
+  {
     "scope": null,
-    "text": "=hot= is the reading "
+    "text": " is the reading "
   },
   {
     "scope": "table-boundary",

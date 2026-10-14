@@ -1,11 +1,43 @@
 [
   {
     "scope": "code>keyword",
-    "text": "``` php   \"src/Auth.php\"    [Composer]"
+    "text": "```"
   },
   {
     "scope": "code",
-    "text": "\ncomposer require x\n"
+    "text": " "
+  },
+  {
+    "scope": "code>title",
+    "text": "php"
+  },
+  {
+    "scope": "code",
+    "text": "   "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"src/Auth.php\""
+  },
+  {
+    "scope": "code",
+    "text": "    "
+  },
+  {
+    "scope": "code>symbol",
+    "text": "[Composer]"
+  },
+  {
+    "scope": "code>language-php",
+    "text": "\ncomposer "
+  },
+  {
+    "scope": "code>language-php>keyword",
+    "text": "require"
+  },
+  {
+    "scope": "code>language-php",
+    "text": " x\n"
   },
   {
     "scope": "code>keyword",

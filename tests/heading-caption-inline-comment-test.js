@@ -199,11 +199,10 @@ for (const [name, tokenize] of surfaces) {
 
 console.log('\nthe control: a bare ^ line with no figure is prose, and stays as it reads:');
 
-// A bare `^ cap` is a PARAGRAPH on the engines - Prism reads it so, the other
-// grammars have no block context and scope it as a caption anyway, which is a
-// known and accepted limitation, not this ticket. The control is that the fix does not CHANGE that
-// reading: the trailing comment is a comment either way, as a caption's trailing
-// run or as a paragraph's.
+// A bare `^ cap` is a PARAGRAPH on the engines. Some grammars here scope it as
+// a caption anyway, highlight.js reads it as paragraph text. The control is that
+// the trailing comment is a comment either way, as a caption's trailing run or
+// as a paragraph's.
 for (const [name, tokenize] of surfaces) {
     ok(`${name} still reads a bare ^ line's trailing comment as a comment`, () => {
         const source = '^ cap %% hidden';

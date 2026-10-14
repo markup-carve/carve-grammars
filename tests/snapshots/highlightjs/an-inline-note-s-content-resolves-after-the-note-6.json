@@ -5,7 +5,15 @@
   },
   {
     "scope": "symbol",
-    "text": "^[</#h>]"
+    "text": "^["
+  },
+  {
+    "scope": "symbol>link",
+    "text": "</#h>"
+  },
+  {
+    "scope": "symbol",
+    "text": "]"
   },
   {
     "scope": "attr",

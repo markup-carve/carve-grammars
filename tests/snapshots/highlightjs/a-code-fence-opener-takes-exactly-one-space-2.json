@@ -1,11 +1,27 @@
 [
   {
     "scope": "code>keyword",
-    "text": "``` php"
+    "text": "```"
   },
   {
     "scope": "code",
-    "text": "\nx = 1\n"
+    "text": " "
+  },
+  {
+    "scope": "code>title",
+    "text": "php"
+  },
+  {
+    "scope": "code>language-php",
+    "text": "\nx = "
+  },
+  {
+    "scope": "code>language-php>number",
+    "text": "1"
+  },
+  {
+    "scope": "code>language-php",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

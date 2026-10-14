@@ -5,7 +5,35 @@
   },
   {
     "scope": "link",
-    "text": "[http\\:\\/\\/u\\/\\]](http://u/])"
+    "text": "[http"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\:"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": "link",
+    "text": "u"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\]"
+  },
+  {
+    "scope": "link",
+    "text": "](http://u/])"
   },
   {
     "scope": null,

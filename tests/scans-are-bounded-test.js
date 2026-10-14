@@ -80,7 +80,7 @@ const BOUNDED = {
     'highlightjs/carve.js': [
         ['citation', '@[A-Za-z0-9_]', 2],
         ['footnote reference', '/\\[\\^[^\\]]', 1],
-        ['inline footnote', '/\\^\\[[^\\]\\n]', 1],
+        ['inline footnote', '/\\^\\[(?=[^\\]\\n]', 1],
         ['autolink', 'https?:\\/\\/|mailto:', 1],
         // Matched on the opener alone for the reason the Prism row above gives:
         // the guard is `(?:[^}\n]|\n(?![ \t]*\n))` since carve-grammars#312,
@@ -99,6 +99,7 @@ const BOUNDED = {
         ['braced span precheck run', 'const run = `(?:[^${d}', 1],
         ['braced span precheck', 'const cheap = `${run}(?:${d}', 1],
         ['bare run guard', 'begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?', 1],
+        ['bare run precheck', 'const precheck = `(?:[^${d}', 1],
         // The substitution's arrow hunt.
         ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
         ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],

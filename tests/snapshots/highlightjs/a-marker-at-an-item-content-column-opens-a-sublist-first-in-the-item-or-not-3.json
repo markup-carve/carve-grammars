@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\npara\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " s1\n"
+    "text": "\npara\n- s1\n"
   }
 ]

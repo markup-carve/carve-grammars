@@ -9,10 +9,14 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```php"
+    "text": "```"
   },
   {
-    "scope": "code",
+    "scope": "code>title",
+    "text": "php"
+  },
+  {
+    "scope": "code>language-php",
     "text": "\ncode\n"
   },
   {

@@ -89,11 +89,31 @@
   },
   {
     "scope": "code>keyword",
-    "text": "```js"
+    "text": "```"
   },
   {
-    "scope": "code",
-    "text": "\nconst x = 1\n"
+    "scope": "code>title",
+    "text": "js"
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-javascript>keyword",
+    "text": "const"
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": " x = "
+  },
+  {
+    "scope": "code>language-javascript>number",
+    "text": "1"
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

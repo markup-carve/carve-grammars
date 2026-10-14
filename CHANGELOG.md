@@ -89,6 +89,20 @@ All notable changes to `carve-grammars` are documented here.
   scoped at any quote depth (#702).
 - Prism: a closer candidate inside a code span, an escape, a link destination or
   an autolink no longer makes alternating unclosed openers slow (#702).
+- highlight.js: a leading `---` with no closing dash line is a thematic break,
+  not front matter running to the end of the document, and the closing `---` of
+  typed front matter is scoped `meta` instead of as payload.
+- highlight.js: alternating forced openers with no closer (`{*a {/b ...`) no
+  longer take seconds per line; the bare run checks for any closer first.
+- highlight.js: a list marker on a paragraph's continuation line outside a list
+  item is text, and a `^ ` line is a caption only below a captionable host.
+- highlight.js: a bare colon fence closes only a container of its own width and
+  opens a nested one otherwise, so a div's closer no longer leaves the rest of
+  the document inside it.
+- highlight.js: a pipe-led line without a closing pipe is a paragraph with its
+  inline markup, and table cells scope their inline markup.
+- highlight.js: link, span and reference text, extension content and inline
+  footnotes scope their inline markup.
 
 ### Added
 
@@ -99,6 +113,10 @@ All notable changes to `carve-grammars` are documented here.
 - The TextMate grammar highlights a fenced code body with its language's grammar
   from `fence-languages.json`, a `=html` or `=latex` raw block with its format's,
   and a bare fence under `{.diff}` as a diff (#693).
+- The highlight.js grammar highlights a fenced code body in the language its
+  info string names when highlight.js has that language registered (inert text
+  otherwise), the same for `=html`/`=latex` raw blocks and `{.diff}`, and scopes
+  the language, title and label of the info string apart.
 
 ## [0.1.14] - 2026-10-09
 

@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "text\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "  -"
-  },
-  {
-    "scope": null,
-    "text": " item\n"
+    "text": "text\n  - item\n"
   }
 ]

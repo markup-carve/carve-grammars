@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "para\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "*"
-  },
-  {
-    "scope": null,
-    "text": " [d]: u\n"
+    "text": "para\n* [d]: u\n"
   }
 ]

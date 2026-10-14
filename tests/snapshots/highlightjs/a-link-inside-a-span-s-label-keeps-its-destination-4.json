@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[/[t](/v)/]"
+    "text": "[/[t]("
+  },
+  {
+    "scope": "string>emphasis",
+    "text": "/v)/"
+  },
+  {
+    "scope": "string",
+    "text": "]"
   },
   {
     "scope": "attr",

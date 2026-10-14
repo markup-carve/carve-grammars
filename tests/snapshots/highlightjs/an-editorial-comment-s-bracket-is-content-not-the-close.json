@@ -5,7 +5,15 @@
   },
   {
     "scope": "link",
-    "text": "[t{# n #}z](/u)"
+    "text": "[t"
+  },
+  {
+    "scope": "link>comment",
+    "text": "{# n #}"
+  },
+  {
+    "scope": "link",
+    "text": "z](/u)"
   },
   {
     "scope": null,

@@ -33,7 +33,11 @@
   },
   {
     "scope": "language-json",
-    "text": "\n---"
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
   },
   {
     "scope": null,

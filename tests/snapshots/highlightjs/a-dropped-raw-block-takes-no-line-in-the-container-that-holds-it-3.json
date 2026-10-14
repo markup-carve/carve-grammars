@@ -17,11 +17,23 @@
   },
   {
     "scope": "code>keyword",
-    "text": "    ```=latex"
+    "text": "    ```"
   },
   {
-    "scope": "code",
-    "text": "\n    \\x\n"
+    "scope": "code>keyword",
+    "text": "=latex"
+  },
+  {
+    "scope": "code>language-latex",
+    "text": "\n    "
+  },
+  {
+    "scope": "code>language-latex>keyword",
+    "text": "\\x"
+  },
+  {
+    "scope": "code>language-latex",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

@@ -13,7 +13,15 @@
   },
   {
     "scope": "link",
-    "text": "[*bold*][]"
+    "text": "["
+  },
+  {
+    "scope": "link>strong",
+    "text": "*bold*"
+  },
+  {
+    "scope": "link",
+    "text": "][]"
   },
   {
     "scope": null,

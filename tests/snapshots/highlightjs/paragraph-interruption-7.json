@@ -1,22 +1,6 @@
 [
   {
     "scope": null,
-    "text": "text\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "1."
-  },
-  {
-    "scope": null,
-    "text": " x\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "2."
-  },
-  {
-    "scope": null,
-    "text": " y\n"
+    "text": "text\n1. x\n2. y\n"
   }
 ]

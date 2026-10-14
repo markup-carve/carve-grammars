@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[a !`Cat` b][]"
+    "text": "[a "
+  },
+  {
+    "scope": "link>string",
+    "text": "!`Cat`"
+  },
+  {
+    "scope": "link",
+    "text": " b][]"
   },
   {
     "scope": null,

@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[an /em/ heading][]"
+    "text": "[an "
+  },
+  {
+    "scope": "link>emphasis",
+    "text": "/em/"
+  },
+  {
+    "scope": "link",
+    "text": " heading][]"
   },
   {
     "scope": null,

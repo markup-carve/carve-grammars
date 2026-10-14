@@ -949,9 +949,12 @@ const ENTITIES = { '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&#x27
 
 const leakyTokens = (() => {
     const definition = carveDefinition(hljs);
-    const inert = definition.contains.filter((mode) => Array.isArray(mode.contains) && mode.contains.length === 0);
+    // A fenced block's payload is a body mode inside it, inert when no
+    // language is named.
+    const inert = [...new Set(definition.contains.flatMap((mode) => [mode, ...(mode.contains ?? [])]))]
+        .filter((mode) => typeof mode === 'object' && Array.isArray(mode.contains) && mode.contains.length === 0 && !mode.subLanguage);
     assert.ok(
-        inert.length >= 2,
+        inert.length >= 1,
         'no mode in highlightjs/carve.js declares an inert payload (an empty `contains`), so this oracle '
             + 'has nothing to revert - if the suppression is spelled another way now, revert THAT here',
     );

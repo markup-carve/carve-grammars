@@ -21,7 +21,15 @@
   },
   {
     "scope": null,
-    "text": " {^2^} "
+    "text": " "
+  },
+  {
+    "scope": "built_in",
+    "text": "{^2^}"
+  },
+  {
+    "scope": null,
+    "text": " "
   },
   {
     "scope": "table-boundary",

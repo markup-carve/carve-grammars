@@ -17,7 +17,15 @@
   },
   {
     "scope": "link",
-    "text": "[a\\_b heading][]"
+    "text": "[a"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\_"
+  },
+  {
+    "scope": "link",
+    "text": "b heading][]"
   },
   {
     "scope": null,

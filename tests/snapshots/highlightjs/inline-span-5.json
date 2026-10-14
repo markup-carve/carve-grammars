@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[*x*]"
+    "text": "["
+  },
+  {
+    "scope": "string>strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "string",
+    "text": "]"
   },
   {
     "scope": null,

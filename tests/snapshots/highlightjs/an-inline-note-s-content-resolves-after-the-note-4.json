@@ -5,11 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "^[see ![z]"
+    "text": "^[see ![z][r]]"
   },
   {
     "scope": null,
-    "text": "[r]] b\n\n"
+    "text": " b\n\n"
   },
   {
     "scope": "symbol",

@@ -1,11 +1,7 @@
 [
   {
-    "scope": "string",
-    "text": "| a"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "| a\n"
   },
   {
     "scope": "table-boundary",

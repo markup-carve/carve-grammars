@@ -5,11 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "^[a [^1]"
+    "text": "^[a [^1] c]"
   },
   {
     "scope": null,
-    "text": " c]\n\n"
+    "text": "\n\n"
   },
   {
     "scope": "symbol",

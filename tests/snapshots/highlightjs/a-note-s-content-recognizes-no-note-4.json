@@ -5,15 +5,11 @@
   },
   {
     "scope": "symbol",
-    "text": "^[a [^1]"
-  },
-  {
-    "scope": "attr",
-    "text": "{.k}"
+    "text": "^[a [^1]{.k} c]"
   },
   {
     "scope": null,
-    "text": " c]\n\n"
+    "text": "\n\n"
   },
   {
     "scope": "symbol",

@@ -444,7 +444,7 @@ export const CONSTRUCTS = [
         // unscoped in Prism for as long as it did (#523).
         name: "fenced code", sample: "```php\ncode\n```", payload: "php",
         textmate: "fenced_code.block.language",
-        engineScopes: { prism: ['language'], highlightjs: ['keyword'] },
+        engineScopes: { prism: ['language'], highlightjs: ['title'] },
     },
     { name: "blockquote", sample: "> quoted", payload: "quoted", textmate: "quote" },
     { name: "list marker", sample: "- item", payload: "-", textmate: "punctuation.definition.list" },
@@ -672,7 +672,7 @@ export const CONSTRUCTS = [
     },
     { name: "byte order mark before a div", sample: "\uFEFF::: note\nbody\n:::", payload: "note", textmate: "admonition" },
     { name: "byte order mark before a table row", sample: "\uFEFF| a | b |", payload: "|", textmate: "punctuation.separator.table" },
-    { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption", skip: { prism: 'a caption at the document start has no host, so Prism reads it as a paragraph, as the engine does', textmate: 'a caption at the document start has no host, so TextMate reads it as a paragraph, as the engine does' } },
+    { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption", skip: { prism: 'a caption at the document start has no host, so Prism reads it as a paragraph, as the engine does', textmate: 'a caption at the document start has no host, so TextMate reads it as a paragraph, as the engine does', highlightjs: 'a caption at the document start has no host, so highlight.js reads it as a paragraph, as the engine does' } },
     { name: "byte order mark before a definition term", sample: "\uFEFF:: term\n:  definition", payload: "term", textmate: "entity.name.tag.definition.term" },
     { name: "byte order mark before an abbreviation", sample: "\uFEFF*[HTML]: HyperText", payload: "HTML", textmate: "abbreviation" },
     { name: "byte order mark before a reference definition", sample: "\uFEFF[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
@@ -1256,11 +1256,11 @@ export const MIN_LITERALS = 45
  */
 export const MIN_ASSERTABLE = {
     // One construct is skipped for TextMate (a first-line caption has no host),
-    // four are for Prism and four for highlight.js; each says why in its own
+    // four are for Prism and five for highlight.js; each says why in its own
     // `skip` entry, and every skip is subtracted here.
     textmate: 207,
     prism: 204,
-    highlightjs: 204,
+    highlightjs: 203,
 };
 
 /**

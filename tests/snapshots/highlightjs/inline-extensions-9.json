@@ -1,7 +1,15 @@
 [
   {
     "scope": "string",
-    "text": "[*Ctrl*+C]"
+    "text": "["
+  },
+  {
+    "scope": "string>strong",
+    "text": "*Ctrl*"
+  },
+  {
+    "scope": "string",
+    "text": "+C]"
   },
   {
     "scope": "attr",

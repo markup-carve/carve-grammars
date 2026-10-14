@@ -1,11 +1,31 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```python"
+    "text": "```"
   },
   {
-    "scope": "code",
-    "text": "\nprint(\"hi\")\n"
+    "scope": "code>title",
+    "text": "python"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-python>built_in",
+    "text": "print"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "("
+  },
+  {
+    "scope": "code>language-python>string",
+    "text": "\"hi\""
+  },
+  {
+    "scope": "code>language-python",
+    "text": ")\n"
   },
   {
     "scope": "code>keyword",

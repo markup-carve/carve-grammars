@@ -21,7 +21,11 @@
   },
   {
     "scope": "language-ini",
-    "text": "\n---"
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
   },
   {
     "scope": null,

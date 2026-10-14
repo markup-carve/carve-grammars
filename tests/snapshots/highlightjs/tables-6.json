@@ -37,7 +37,15 @@
   },
   {
     "scope": null,
-    "text": " /soft/        "
+    "text": " "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/soft/"
+  },
+  {
+    "scope": null,
+    "text": "        "
   },
   {
     "scope": "table-boundary",
@@ -61,7 +69,15 @@
   },
   {
     "scope": null,
-    "text": " *firm*        "
+    "text": " "
+  },
+  {
+    "scope": "strong",
+    "text": "*firm*"
+  },
+  {
+    "scope": null,
+    "text": "        "
   },
   {
     "scope": "table-boundary",

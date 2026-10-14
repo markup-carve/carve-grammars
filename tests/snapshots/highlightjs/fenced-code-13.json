@@ -1,11 +1,31 @@
 [
   {
     "scope": "code>keyword",
-    "text": "~~~yaml"
+    "text": "~~~"
   },
   {
-    "scope": "code",
-    "text": "\nkey: value\n"
+    "scope": "code>title",
+    "text": "yaml"
+  },
+  {
+    "scope": "code>language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-yaml>attr",
+    "text": "key:"
+  },
+  {
+    "scope": "code>language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "code>language-yaml>string",
+    "text": "value"
+  },
+  {
+    "scope": "code>language-yaml",
+    "text": "\n"
   },
   {
     "scope": "code>keyword",

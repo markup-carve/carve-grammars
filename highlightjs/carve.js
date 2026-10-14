@@ -220,6 +220,11 @@
         // Keep the whitespace and letter cases disjoint for repeated `*a`.
         const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}(?!${LETTER_OR_DIGIT})|${d}(?=${LETTER_OR_DIGIT})`
             + `|(?!${opaque})[^${d}\\\\\\n\`]|\\n(?![ \\t]*\\n))`;
+        // A plain scan for any closer runs first: the atom scan re-reads every
+        // braced span from each opener, so openers with no closer went cubic.
+        // Tempered on disjoint non-closer cases, so a failure costs one pass.
+        const precheck = `(?:[^${d}\\n]|\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})){0,4096}${bareCloser(d)}`;
+        opener = new RegExp(`${opener.source}(?=${precheck})`);
         return {
             begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?${bareCloser(d)})`),
             // A lookbehind in `end` never matches in highlight.js, so a delimiter
@@ -369,21 +374,26 @@
     // Front matter is valid only at byte offset zero. Unlike the historical
     // `^---$` rule, the negative lookbehind below cannot match a thematic break
     // on a later line even though highlight.js compiles modes with `m`.
+    // An opener with no closing dash line ahead is a thematic break, so the
+    // closer is required up front; the scan runs at offset zero only.
+    const FRONT_MATTER_CLOSER = /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/;
+    const frontMatterOpener = (format) => new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])'
+        + '(?=[\\s\\S]*?(?:\\r\\n|\\r|\\n)---[ \\t]*$(?![^\\r\\n]))');
     const frontMatter = (format) => ({
         className: 'meta',
-        begin: new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])'),
-        end: /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/,
+        begin: frontMatterOpener(format),
+        end: FRONT_MATTER_CLOSER,
         relevance: 10,
-        contains: [{ className: 'punctuation', begin: /---/ }],
     });
     const delegatedFrontMatter = (format, subLanguage) => ({
         className: 'meta',
-        begin: new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])'),
+        begin: frontMatterOpener(format),
         end: /$(?![^\r\n])/,
         relevance: 10,
-        contains: [{ className: 'punctuation', begin: /---/ }],
         starts: {
-            end: /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/,
+            end: FRONT_MATTER_CLOSER,
+            // The closing dash line is the envelope's, not the payload's.
+            endScope: 'meta',
             subLanguage,
         },
     });
@@ -393,7 +403,7 @@
         // `toml` is an alias, but subLanguage resolution requires the key.
         delegatedFrontMatter(' ?toml', 'ini'),
         delegatedFrontMatter('(?: ?(?:yaml|yml))?', 'yaml'),
-        frontMatter(' ?[A-Za-z0-9_-]+'),
+        frontMatter(' ?[A-Za-z0-9_]+'),
     ];
 
     // Headings: # to ######
@@ -659,9 +669,12 @@
     };
 
     // Inline links: [text](url) with optional trailing attributes
+    // The label is an inline run: the mode opens on the `[` once the whole
+    // link is ahead, and its content modes are given below.
     const LINK = {
         className: 'link',
-        begin: new RegExp('\\[' + BRACKET_TEXT + LINK_TAIL + '(\\{[^}]+\\})?'),
+        begin: new RegExp('\\[(?=' + BRACKET_TEXT + LINK_TAIL + ')'),
+        end: new RegExp(LINK_TAIL + '(?:\\{[^}]+\\})?'),
         relevance: 5,
     };
 
@@ -713,7 +726,8 @@
     // Reference links: [text][ref] with optional trailing attributes
     const REFERENCE_LINK = {
         className: 'link',
-        begin: new RegExp('\\[' + BRACKET_TEXT_NONEMPTY + '\\]\\[[^\\]]*\\](\\{[^}]+\\})?'),
+        begin: new RegExp('\\[(?=' + BRACKET_TEXT_NONEMPTY + '\\]\\[[^\\]]*\\])'),
+        end: /\]\[[^\]]*\](?:\{[^}]+\})?/,
         relevance: 5,
     };
 
@@ -722,7 +736,8 @@
         className: 'string',
         // Only the bracket run; the trailing `{...}` is left to ATTRIBUTE so it
         // scopes as an attribute block rather than vanishing into the span.
-        begin: new RegExp('\\[' + BRACKET_TEXT_NONEMPTY + '\\](?=\\{)'),
+        begin: new RegExp('\\[(?=' + BRACKET_TEXT_NONEMPTY + '\\]\\{)'),
+        end: /\](?=\{)/,
         relevance: 5,
     };
 
@@ -759,7 +774,8 @@
     // leads, which is what separates it from the reference above.
     const INLINE_FOOTNOTE = {
         className: 'symbol',
-        begin: /\^\[[^\]\n]{0,512}\]/,
+        begin: /\^\[(?=[^\]\n]{0,512}\])/,
+        end: /\]/,
         relevance: 5,
     };
 
@@ -1035,6 +1051,80 @@
         relevance: 10,
     };
 
+    /*
+     * WHAT THE LINE ABOVE LEAVES OPEN. A list marker does not interrupt a
+     * paragraph, and a caption attaches only to a few hosts, so both ask about
+     * the lines above. These are JavaScript, not lookbehinds: the answer is
+     * memoized per line, so a long paragraph is walked once rather than once
+     * per candidate. A rule that says no keeps its match and drops its scope
+     * for it, rather than calling `ignoreMatch()`: highlight.js resumes an
+     * ignored scan at a wrong rule once a mode has resumed from more than one
+     * place, and then skips text or loops.
+     */
+    const scopeUnless = (scope, refused) => (m) => {
+        m.rule.scope = refused(m) ? undefined : scope;
+    };
+    const lineAt = (input, start) => {
+        const end = input.indexOf('\n', start);
+        return input.slice(start, end === -1 ? undefined : end).replace(/\r$/, '');
+    };
+    const previousLineStart = (input, start) => (start === 0 ? -1 : input.lastIndexOf('\n', start - 2) + 1);
+    // A line after which a new block starts: it ends any paragraph above.
+    const BLOCK_BOUNDARY_LINE = /^\uFEFF?[ \t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\*{3,}|_{3,})[ \t]*$|\|.*\|(?:\{[^{}]*\})?[ \t]*$|\{[^{}]*\}[ \t]*$|%%|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|:: |\+[ \t]*$)/;
+    const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?: +[^ \t]|\{)/;
+    const lineKind = (line) => {
+        if (/^\uFEFF?[ \t]*$/.test(line)) return 'blank';
+        // So is one in a quote or a description (`> # h`, `:  [^n]: x`).
+        if (BLOCK_BOUNDARY_LINE.test(line.replace(/^\uFEFF?(?:(?:[ \t]*>(?: |$))+|[ \t]*: +)/, ''))) return 'boundary';
+        return LIST_ITEM_LINE.test(line) ? 'item' : 'text';
+    };
+    const LINE_MEMO = new Map();
+    const memoFor = (input) => {
+        let memo = LINE_MEMO.get(input);
+        if (!memo) {
+            memo = new Map();
+            LINE_MEMO.set(input, memo);
+            if (LINE_MEMO.size > 4) LINE_MEMO.delete(LINE_MEMO.keys().next().value);
+        }
+        return memo;
+    };
+    // Whether the paragraph holding line `start` sits outside any list item:
+    // it opens at column 0 on a line that is no item, and no `+` above it
+    // attaches it to one. Inside an item a marker interrupts a paragraph.
+    const outsideAnyItem = (input, start) => {
+        const memo = memoFor(input);
+        const path = [];
+        let at = start;
+        let kind;
+        for (;;) {
+            if (memo.has(at)) {
+                kind = memo.get(at);
+                break;
+            }
+            path.push(at);
+            const above = previousLineStart(input, at);
+            const aboveKind = above === -1 ? 'blank' : lineKind(lineAt(input, above));
+            if (aboveKind === 'blank' || aboveKind === 'boundary') {
+                const line = lineAt(input, at);
+                let attach = above;
+                while (attach !== -1 && /^[ \t]*\{[^{}]*\}[ \t]*$/.test(lineAt(input, attach))) attach = previousLineStart(input, attach);
+                kind = lineKind(line) === 'text' && !/^\uFEFF?[ \t]/.test(line)
+                    && !(attach !== -1 && /^[ \t]*\+[ \t]*$/.test(lineAt(input, attach)));
+                break;
+            }
+            at = above;
+        }
+        for (const line of path) memo.set(line, kind);
+        return kind;
+    };
+    // A marker line continues an open paragraph that no list item holds.
+    const markerIsParagraphText = (m) => {
+        const above = previousLineStart(m.input, m.index);
+        if (above === -1) return false;
+        const kind = lineKind(lineAt(m.input, above));
+        return kind !== 'blank' && kind !== 'boundary' && outsideAnyItem(m.input, above);
+    };
+
     // Bullet list items: - or *
     // A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space
     // comes after the block - `-{#x} item` went uncoloured while LIST_NUMBER
@@ -1046,6 +1136,7 @@
         begin: RegExp(
             '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$(?![^\\r\\n]))',
         ),
+        'on:begin': scopeUnless('bullet', markerIsParagraphText),
         relevance: 0,
     };
 
@@ -1064,6 +1155,7 @@
         begin: RegExp(
             '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$(?![^\\r\\n]))',
         ),
+        'on:begin': scopeUnless('bullet', markerIsParagraphText),
         relevance: 0,
     };
 
@@ -1074,6 +1166,7 @@
     const TASK_LIST = {
         className: 'bullet',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*[-*] \[[ xX\-_>?]\](?= )(?![ \t]*$(?![^\r\n]))/,
+        'on:begin': scopeUnless('bullet', markerIsParagraphText),
         relevance: 5,
     };
 
@@ -1161,9 +1254,9 @@
      *
      * A begin/end mode with an EMPTY `contains` is what makes a payload inert
      * in this engine: highlight.js offers a mode's `contains` and nothing else
-     * inside it, so an empty list is the whole suppression. The two delimiter
-     * lines keep the `keyword` scope they always had through `beginScope` /
-     * `endScope`, and the body carries `code`.
+     * inside it, so an empty list is the whole suppression. The fence runs
+     * keep the `keyword` scope through `beginScope` / `endScope`, and the body
+     * carries `code`: inert, or its named language's (see FENCE_LANGUAGES).
      *
      * THE CLOSER IS REQUIRED UP FRONT, the same guard `BLOCK_COMMENT` carries
      * below and for the same engine reason: highlight.js has no begin->end
@@ -1241,18 +1334,126 @@
     // grammar's `[space]`, singular and never a tab: ```` ```  js ```` and
     // ```` ```<TAB>js ```` are paragraphs in the engine, where ```` ``` js ````
     // is a fence. Trailing whitespace after the info string is not part of it.
+    // The opener consumes its indent and fence run only; the info string is
+    // checked here and scoped by the block's own modes below.
     const fenceOpener = (info) =>
-        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(([`~])\\3{2,})(?: ?' + info + ')?[ \\t]*$(?![^\\r\\n])'
+        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(([`~])\\3{2,})(?=(?: ?' + info + ')?[ \\t]*$(?![^\\r\\n]))'
         // The closer, required ahead, on a line of its own: the opener's own
         // indent (`\1`), then the same character (`\3`) at a length at least
         // the opener's (`\2`, then any number more of it).
         + '(?=[\\s\\S]{0,32768}?\\n\\1\\2\\3*[ \\t]*$(?![^\\r\\n]))';
 
+    /*
+     * THE BODY IS HIGHLIGHTED IN THE LANGUAGE ITS INFO STRING NAMES, when that
+     * language is registered with highlight.js; otherwise it stays inert text.
+     * Keys are highlight.js language names, words are the info-string words
+     * from fence-languages/fence-languages.json that highlight.js can resolve
+     * (tests/fence-embedding-hljs-test.js keeps the two in step). A raw block
+     * (```=html) takes its format's language, and a bare fence under a `.diff`
+     * attribute line is a diff.
+     */
+    const FENCE_LANGUAGES = {
+        carve: ['carve', 'crv'],
+        javascript: ['js', 'javascript', 'mjs', 'cjs', 'node', 'jsx'],
+        typescript: ['ts', 'typescript', 'mts', 'cts', 'tsx'],
+        json: ['json', 'json5', 'jsonc'],
+        yaml: ['yaml', 'yml'],
+        ini: ['toml', 'ini', 'cfg'],
+        xml: ['html', 'htm', 'xhtml', 'xml', 'svg', 'xsd', 'xsl', 'xslt'],
+        css: ['css'],
+        scss: ['scss'],
+        less: ['less'],
+        php: ['php'],
+        python: ['python', 'py', 'py3'],
+        ruby: ['ruby', 'rb'],
+        rust: ['rust', 'rs'],
+        go: ['go', 'golang'],
+        java: ['java'],
+        kotlin: ['kotlin', 'kt', 'kts'],
+        swift: ['swift'],
+        dart: ['dart'],
+        c: ['c', 'h'],
+        cpp: ['cpp', 'c++', 'cxx', 'cc', 'hpp'],
+        csharp: ['cs', 'csharp', 'c#'],
+        fsharp: ['fsharp', 'fs', 'f#'],
+        vbnet: ['vb', 'vbnet'],
+        objectivec: ['objc', 'objectivec', 'objective-c'],
+        bash: ['sh', 'bash', 'shell', 'zsh'],
+        powershell: ['powershell', 'ps1', 'pwsh'],
+        dos: ['bat', 'batch', 'cmd', 'dosbatch'],
+        sql: ['sql'],
+        lua: ['lua'],
+        perl: ['perl', 'pl'],
+        r: ['r'],
+        julia: ['julia', 'jl'],
+        clojure: ['clojure', 'clj', 'cljs', 'edn'],
+        coffeescript: ['coffeescript', 'coffee'],
+        groovy: ['groovy', 'gradle'],
+        markdown: ['markdown', 'md'],
+        latex: ['latex', 'tex'],
+        handlebars: ['handlebars', 'hbs'],
+        diff: ['diff', 'patch'],
+        dockerfile: ['dockerfile', 'docker'],
+        makefile: ['makefile', 'make'],
+        twig: ['twig'],
+        graphql: ['graphql', 'gql'],
+        haskell: ['haskell', 'hs'],
+        scala: ['scala'],
+        erlang: ['erlang', 'erl'],
+        ocaml: ['ocaml'],
+        lisp: ['lisp'],
+        d: ['d'],
+        matlab: ['matlab'],
+        delphi: ['pascal'],
+        tcl: ['tcl'],
+        applescript: ['applescript'],
+        erb: ['erb'],
+        haml: ['haml'],
+    };
+    const RAW_FENCE_LANGUAGES = { xml: ['html'], latex: ['latex', 'tex'] };
+    // The open block, shared by the block and its body modes, per document:
+    // a Carve body is highlighted as a second document inside the first.
+    const CODE_FENCES = {};
+    const codeFence = (m) => docState(CODE_FENCES, m);
+    const closesFence = (m) => {
+        const open = codeFence(m);
+        return m[1] === open.indent && m[2][0] === open.run[0] && m[2].length >= open.run.length;
+    };
+    // The opener line a body reads its language off, in a lookbehind checked
+    // only at that line's end. Words match case-insensitively.
+    const anyCase = (word) => [...word].map((c) => (/[a-z]/.test(c) ? `[${c}${c.toUpperCase()}]` : /[+#.\/-]/.test(c) ? '\\' + c : c)).join('');
+    const OPENER_LINE = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\uFEFF)?[ \\t]*(?:`{3,}|~{3,}) ?';
+    const languageOpener = (key) => [
+        ...(FENCE_LANGUAGES[key] ? [OPENER_LINE + '(?:' + FENCE_LANGUAGES[key].map(anyCase).join('|') + ')(?![A-Za-z0-9_+#./-])[^\\n]*'] : []),
+        ...(RAW_FENCE_LANGUAGES[key] ? [OPENER_LINE + '=(?:' + RAW_FENCE_LANGUAGES[key].map(anyCase).join('|') + ')(?![\\w-])[ \\t]*'] : []),
+        // A bare fence under a `.diff` attribute line.
+        ...(key === 'diff' ? ['^(?<![^\\r\\n])[ \\t]*\\{[^{}\\n]*\\.diff(?![\\w-])[^{}\\n]*\\}[ \\t]*\\r?\\n[ \\t]*(?:`{3,}|~{3,})[ \\t]*'] : []),
+    ].join('|');
+    // The body starts at the opener's line end and ends at the newline before
+    // the closer; an inner run that does not close it is payload.
+    const fenceBody = (subLanguage) => ({
+        begin: subLanguage ? new RegExp('(?=\\n)(?<=' + languageOpener(subLanguage) + ')') : /(?=\n)/,
+        end: /\n(?=([ \t]*)(`{3,}|~{3,})[ \t]*$(?![^\r\n]))/,
+        'on:end': (m, resp) => {
+            if (!closesFence(m)) resp.ignoreMatch();
+        },
+        // Without a language the payload is inert: it contains nothing.
+        ...(subLanguage ? { subLanguage } : { contains: [] }),
+    });
+    const FENCE_BODIES = [...Object.keys(FENCE_LANGUAGES).map(fenceBody), fenceBody(undefined)];
+    const FENCE_INFO_LEAD = '(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:`{3,}|~{3,}) ?)';
+    const FENCE_INFO = [
+        { className: 'title', begin: new RegExp('(?=[A-Za-z0-9_+#./-])' + FENCE_INFO_LEAD + FENCE_LANGUAGE) },
+        { className: 'keyword', begin: new RegExp('(?==)' + FENCE_INFO_LEAD + RAW_FENCE_INFO) },
+        { className: 'string', begin: new RegExp(FENCE_TITLE) },
+        { className: 'symbol', begin: new RegExp(FENCE_LABEL) },
+    ];
+
     /**
      * A fenced block whose payload is verbatim.
      *
      * @param {string} info - the info-string shape this fence carries.
-     * @returns {object} a highlight.js mode with an inert body.
+     * @returns {object} a highlight.js mode whose body is its language's.
      */
     const fencedVerbatim = (info) => ({
         className: 'code',
@@ -1260,8 +1461,8 @@
         // indented-block-openers note in the module docblock (carve-grammars#138).
         beginScope: 'keyword',
         begin: new RegExp(fenceOpener(info)),
-        'on:begin': (m, resp) => {
-            resp.data._codeFence = { indent: m[1], run: m[2] };
+        'on:begin': (m) => {
+            Object.assign(codeFence(m), { indent: m[1], run: m[2] });
         },
         endScope: 'keyword',
         // The closer is a HOMOGENEOUS run: ONE fence character repeated, not a
@@ -1285,15 +1486,11 @@
         // container model to tell the two apart - see the note in the module
         // docblock.
         'on:end': (m, resp) => {
-            const open = resp.data._codeFence;
-            const closes = open
-                && m[1] === open.indent
-                && m[2][0] === open.run[0]
-                && m[2].length >= open.run.length;
-            if (!closes) resp.ignoreMatch();
+            if (!closesFence(m)) resp.ignoreMatch();
         },
-        // THE PAYLOAD IS INERT, and this empty list is where that is said.
-        contains: [],
+        // The info line, then the body, which a catch-all always opens at the
+        // first line end so nothing else runs inside the payload.
+        contains: [...FENCE_INFO, ...FENCE_BODIES],
         relevance: 10,
     });
 
@@ -1345,17 +1542,61 @@
     // that already worked inside a div body (headings, nested lists,
     // blockquotes) keeps working; only the one construct this fix targets is
     // suppressed.
+    /*
+     * ONE STACK FOR EVERY LINE-START COLON FENCE. highlight.js tries a mode's
+     * `contains` before its `end`, so a bare fence line used to open a nested
+     * container instead of closing the open one, and every container ran to
+     * the end of the document. Inside a container a bare line is
+     * BARE_FENCE_LINE instead: it closes the container when it repeats the
+     * innermost width (PART 9 §12) and otherwise stands for a nested div,
+     * which the stack tracks without opening a mode for it. It never calls
+     * `ignoreMatch()`, because highlight.js resumes an ignored scan at a wrong
+     * rule once a mode has resumed from more than one place.
+     *
+     * The stack is kept per document (`docState`), because a mode's `data`
+     * outlives one highlight call and a sub-language call highlights a second
+     * document in the middle of the first.
+     */
+    const docState = (store, m) => {
+        store.docs ??= new Map();
+        let state = store.docs.get(m.input);
+        if (!state || m.index < state.at) {
+            state = { at: m.index, stack: [], closed: null };
+            store.docs.set(m.input, state);
+            // A few documents at once: the outer one and its sub-languages.
+            if (store.docs.size > 4) store.docs.delete(store.docs.keys().next().value);
+        }
+        state.at = m.index;
+        return state;
+    };
+    const COLON_FENCES = {};
+    const BARE_COLON_FENCE = /^\uFEFF?[ \t]*:{3,}[ \t]*$(?![^\r\n])/;
+    const colonFenceKind = (line) => {
+        if (/^\uFEFF?[ \t]*:{3,} +figure[ \t]*$(?![^\r\n])/.test(line)) return 'figure';
+        if (/^\uFEFF?[ \t]*:{3,} +>[ \t]*$(?![^\r\n])/.test(line)) return 'quote';
+        return 'div';
+    };
+    const openColonFence = (m, resp, kind = colonFenceKind(m[0])) => {
+        docState(COLON_FENCES, m).stack.push({ width: m[1].length, kind, mode: true });
+    };
+    const closeColonFence = (m, resp) => {
+        const state = docState(COLON_FENCES, m);
+        const top = state.stack[state.stack.length - 1];
+        if (!top || top.width !== m[1].length) {
+            resp.ignoreMatch();
+            return;
+        }
+        state.stack.pop();
+        state.closed = { at: m.index, kind: top.kind };
+    };
+
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])?[ \t]*$(?![^\r\n])/,
-        'on:begin': (m, resp) => {
-            resp.data._fenceWidth = m[1].length;
-        },
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\r\n])/,
+        'on:begin': openColonFence,
         endScope: 'keyword',
         end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
-        'on:end': (m, resp) => {
-            if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
-        },
+        'on:end': closeColonFence,
         relevance: 10,
     };
 
@@ -1385,33 +1626,15 @@
     // idiom DIV_BLOCK and BLOCK_COMMENT already use, so the closer matches the
     // opener's colon run EXACTLY. `contains` is assigned below, once the full
     // mode list is known.
-    // A STACK, where the modes above keep a single width. highlight.js hands
-    // every instance of a mode the SAME `resp.data` object, so one slot holds
-    // only the innermost fence: with `::: figure` > `:::: note` > `::::: x`,
-    // the width-5 opener overwrote the width-4 one, both outer closers then
-    // failed their check, and the group ran to end of input unscoped. These two
-    // modes nest inside each other by construction, so they push and pop
-    // instead. `container` names which stack, because the two modes are
-    // separate objects and each needs its own.
-    const pushFence = (container) => (m, resp) => {
-        (resp.data[container] ??= []).push(m[1].length);
-    };
-    const popFence = (container) => (m, resp) => {
-        const open = resp.data[container];
-        if (!open?.length || m[1].length !== open[open.length - 1]) {
-            resp.ignoreMatch();
-            return;
-        }
-        open.pop();
-    };
-
+    // The stack is DIV_BLOCK's, shared, so a group and the divs inside it
+    // close in order.
     const FIGURE_GROUP_BLOCK = {
         beginScope: 'section',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +figure[ \t]*$(?![^\r\n])/,
-        'on:begin': pushFence('_groupFences'),
+        'on:begin': openColonFence,
         endScope: 'section',
         end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
-        'on:end': popFence('_groupFences'),
+        'on:end': closeColonFence,
         relevance: 10,
     };
 
@@ -1422,27 +1645,38 @@
     // 318-composite-figures-9). The scope stays `keyword` - it IS a div, and a
     // consumer selecting that must keep seeing it.
     //
-    // Its `begin` also differs, in the one way that lets a group close at all.
-    // highlight.js tries a mode's CONTAINS before its own `end`, so DIV_BLOCK's
-    // optional tail - which makes a bare `:::` line a typeless div opener -
-    // matched the group's own closing fence and opened a phantom container
-    // instead of closing the group. Measured before this line existed: a second
-    // `::: figure` later in the same document scoped `keyword`, because the
-    // whole rest of the file was still inside that phantom.
-    //
-    // Requiring the tail here is not a narrowing of what Carve accepts, it is
-    // the colon-fence depth rule (PART 9 §12) written where highlight.js can
-    // act on it: a `:::` line inside a `:::` container CLOSES it, and a
-    // container nested inside one has to open with a LONGER run. So a bare
-    // fence line inside a group is a closer, and reaching `end` is the correct
-    // reading of it. A longer bare run (`::::` inside a `:::` group) fails the
-    // width check in `on:end` and is left unscoped, which is the one case this
-    // trades away.
+    // A `::: figure` it opens is a plain div, so its closer takes no caption.
     const DIV_BLOCK_IN_GROUP = {
         ...DIV_BLOCK,
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\r\n])/,
-        'on:begin': pushFence('_groupDivFences'),
-        'on:end': popFence('_groupDivFences'),
+        'on:begin': (m, resp) => openColonFence(m, resp, 'div'),
+    };
+
+    // A bare fence line opens a typeless div at document level.
+    const BARE_DIV_BLOCK = {
+        ...DIV_BLOCK,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
+    };
+    // Inside a container: the closer of the innermost fence, or a nested div's
+    // fence, which only the stack records. Whether it ends its container is
+    // set per match, right before highlight.js reads it at the line end.
+    const BARE_FENCE_LINE = {
+        className: 'keyword',
+        begin: BARE_DIV_BLOCK.begin,
+        'on:begin': (m) => {
+            const state = docState(COLON_FENCES, m);
+            const top = state.stack[state.stack.length - 1];
+            BARE_FENCE_LINE.endsParent = false;
+            // A figure group's closer keeps the group's own scope.
+            m.rule.scope = top?.width === m[1].length && top.kind === 'figure' && top.mode ? 'section' : 'keyword';
+            if (!top || top.width !== m[1].length) {
+                state.stack.push({ width: m[1].length, kind: 'div', mode: false });
+                return;
+            }
+            state.stack.pop();
+            state.closed = { at: m.index, kind: top.kind };
+            BARE_FENCE_LINE.endsParent = top.mode;
+        },
+        relevance: 0,
     };
 
     // A `:::` container may open on a LIST ITEM'S OWN MARKER LINE (`- ::: note`,
@@ -1749,30 +1983,8 @@
         ],
     };
 
-    /*
-     * A PIPE-LED LINE THAT IS NOT A TABLE ROW. TABLE_ROW runs first and claims
-     * lines with a closing pipe; this fallback only claims incomplete rows.
-     *
-     * It was named LINE_BLOCK, and the ledger cited it as the rule for
-     * `line_block`. It is not: a line block opens on a COLON FENCE
-     * (grammar.ebnf `line_block_open = colon_fence, space, "|"`), so `::: |` is
-     * the construct and DIV_BLOCK is the mode that scopes it. A bare `| verse`
-     * line at document level is neither - the engine renders it as a paragraph.
-     *
-     * The mode still earns its place, for the reason its old comment gave:
-     * TABLE_ROW closes on a line-final `|`, so its opener must check for that
-     * closer before claiming a line. This fallback scopes an unclosed pipe-led
-     * line and ends it at the newline. The rename is what stops the
-     * ledger reading a guard against that runaway as a construct's rule -
-     * evidence names a rule the vocabulary declares, and nothing checks that
-     * the named rule is about the construct.
-     */
-    const PIPE_LED_LINE = {
-        className: 'string',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\| /,
-        end: /$(?![^\r\n])/,
-        relevance: 3,
-    };
+    // A pipe-led line with no closing pipe is a paragraph (`::: |` is the line
+    // block), so nothing claims it: its text keeps the inline modes.
 
     // Table rows: | cell | cell |
     const tableRow = (header) => ({
@@ -1805,13 +2017,62 @@
     const TABLE_ROW = tableRow(false);
 
     // Captions: ^ caption text
+    //
+    // Only a captionable host takes one (PART 9 §4): an image paragraph, a
+    // block quote, a table, a fenced code block, a display-math block and the
+    // closer of a `::: figure` or `::: >`, adjacent or one blank line above.
+    // Any other `^ ` line is paragraph text.
+    // A paragraph that is one image, on an item's marker line or not.
+    const SOLE_IMAGE = /^\uFEFF?[ \t]*(?:(?:[-*]|\d{1,9}[.)]) +)?!\[[\s\S]*\](?:\([^()]*(?:\([^()]*\)[^()]*)*\)|\[[^\]]*\])(?:\{[^{}]*\})?[ \t]*$/;
+    const TABLE_LINE = /^\uFEFF?[ \t]*(?:\||\+).*\|(?:\{[^{}]*\})?[ \t]*$/;
+    const DISPLAY_MATH_LINE = /^\uFEFF?[ \t]*\$\$(`+)(?:(?!\1).)+\1[ \t]*$/;
+    const BARE_CODE_FENCE_LINE = /^\uFEFF?[ \t]*(?:`{3,}|~{3,})[ \t]*$/;
+    const QUOTE_LINE = /^\uFEFF?[ \t]*>(?: |$)/;
+    const captionHost = (input, start) => {
+        let host = previousLineStart(input, start);
+        if (host === -1) return false;
+        let line = lineAt(input, host);
+        if (lineKind(line) === 'blank') {
+            host = previousLineStart(input, host);
+            if (host === -1) return false;
+            line = lineAt(input, host);
+        }
+        if (TABLE_LINE.test(line) || BARE_CODE_FENCE_LINE.test(line)) return true;
+        // A display-math block is a paragraph holding that span alone.
+        if (DISPLAY_MATH_LINE.test(line)) {
+            const above = previousLineStart(input, host);
+            return above === -1 || lineKind(lineAt(input, above)) !== 'text';
+        }
+        if (/[)\]}][ \t]*$/.test(line)) {
+            // The host paragraph, read up to its first line (a few at most).
+            let first = host;
+            for (let n = 0; n < 8 && lineKind(lineAt(input, first)) === 'text'; n++) {
+                const above = previousLineStart(input, first);
+                if (above === -1 || ['blank', 'boundary'].includes(lineKind(lineAt(input, above)))) break;
+                first = above;
+            }
+            const end = input.indexOf('\n', host);
+            if (SOLE_IMAGE.test(input.slice(first, end === -1 ? undefined : end).replace(/\r(?=\n|$)/g, ''))) return true;
+        }
+        if (BARE_COLON_FENCE.test(line)) {
+            const closed = COLON_FENCES.docs?.get(input)?.closed;
+            return closed?.at === host && closed.kind !== 'div';
+        }
+        if (!QUOTE_LINE.test(line)) return false;
+        // A quote of bare `>` lines is no caption host (CARVE-P9-080). A
+        // text line above them may be a lazy line of a real quote, so it counts.
+        let at = host;
+        while (at !== -1 && QUOTE_LINE.test(lineAt(input, at))) {
+            if (!/^\uFEFF?[ \t]*>[ \t]*$/.test(lineAt(input, at))) return true;
+            at = previousLineStart(input, at);
+        }
+        return at !== -1 && lineKind(lineAt(input, at)) !== 'blank';
+    };
     const CAPTION = {
         className: 'title',
-        // A quote of bare `>` lines is no caption host (CARVE-P9-080); the
-        // lookbehind is Prism's, see there. Not an `on:begin` veto: an ignored
-        // top-level begin rescans with the later rules only, which can run to
-        // the end of the document each time.
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?=[ \t]*\^ )(?<!(?:(?<![\s\S])\uFEFF?|(?:\r\n|\r(?!\n)|\n)[ \t]*(?:\r\n|\r(?!\n)|\n))(?:>[ \t]*(?:\r\n|\r(?!\n)|\n))+(?:[ \t]*(?:\r\n|\r(?!\n)|\n))*)[ \t]*\^ (?![ \t]*$(?![^\r\n]))/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\^ (?![ \t]*$(?![^\r\n]))/,
+        // Without a host the line is paragraph text, inline runs and all.
+        'on:begin': scopeUnless('title', (m) => !captionHost(m.input, m.index)),
         end: /$(?![^\r\n])/,
         relevance: 5,
     };
@@ -1956,7 +2217,8 @@
     // matches it correctly as its own scope.
     const INLINE_EXTENSION = {
         className: 'function',
-        begin: /:[A-Za-z][\w-]*\[[^\]\n]*\]/,
+        begin: /:[A-Za-z][\w-]*\[(?=[^\]\n]*\])/,
+        end: /\]/,
         relevance: 5,
     };
 
@@ -2031,6 +2293,34 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
+    // A TABLE CELL IS AN INLINE RUN that ends at its pipe, so an opener whose
+    // closer is not in the same cell is text.
+    const CELL_INLINE = [
+        { begin: /([*/_~=])(?!(?:\\.|[^\\\n|])*?(?<=\S)\1)/, relevance: 0 },
+        { begin: /\{(?=([*/_~=^,+\-#%])(?!(?:\\.|[^\\\n|])*?\1\}))/, relevance: 0 },
+        ...LINE_INLINE.slice(2),
+    ];
+    for (const row of [TABLE_HEADER_ROW, TABLE_ROW, TABLE_CONTINUATION_ROW]) {
+        row.contains.splice(row.contains.length - 1, 0, ...CELL_INLINE);
+    }
+    // A LABEL IS AN INLINE RUN TOO (link and span text, an extension's content,
+    // an inline footnote), ending at its own `]`. A nested bracket pair is
+    // skipped whole, and an opener whose closer lies past the `]` is text.
+    const BRACKETED = [INLINE_FOOTNOTE, FOOTNOTE_REF, IMAGE, REFERENCE_IMAGE, SPAN, REFERENCE_LINK, CITATION, INLINE_EXTENSION, LINK];
+    const BRACKET_PAIR = { begin: /\[/, end: /\]/, relevance: 0 };
+    const LABEL_CONTENT = [
+        ESCAPE,
+        BRACKET_PAIR,
+        { begin: /([*/_~=])(?!(?:\\[\s\S]|[^\\\]]){0,512}?(?<=\S)\1)/, relevance: 0 },
+        { begin: /\{(?=([*/_~=^,+\-#%])(?!(?:\\[\s\S]|[^\\\]]){0,512}?\1\}))/, relevance: 0 },
+        { begin: /`+(?![^`\]\n]{0,512}`)/, relevance: 0 },
+        ...ONE_LINE_VERBATIM,
+        ...LINE_INLINE.slice(2).filter((mode) => !BRACKETED.includes(mode)),
+    ];
+    BRACKET_PAIR.contains = LABEL_CONTENT;
+    for (const mode of [LINK, REFERENCE_LINK, SPAN, INLINE_FOOTNOTE]) mode.contains = LABEL_CONTENT;
+    // An extension's content closes at its first `]` (`:foo[a [b] c]`).
+    INLINE_EXTENSION.contains = LABEL_CONTENT.filter((mode) => mode !== BRACKET_PAIR);
     // A definition term is a one-line inline run like a title.
     DEFINITION_TERM.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
     DEFINITION_TERM['on:begin'] = () => {
@@ -2187,6 +2477,7 @@
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,
+        BARE_DIV_BLOCK,    // document level only - every container list drops it
         FIGURE_GROUP_ON_MARKER_LINE,  // Must be before DIV_ON_MARKER_LINE, as above
         DIV_ON_MARKER_LINE,
         HORIZONTAL_RULE,
@@ -2195,7 +2486,6 @@
         TABLE_CONTINUATION_ROW,
         TABLE_HEADER_ROW,
         TABLE_ROW,
-        PIPE_LED_LINE,
         BLOCKQUOTE,
         CAPTION,
         TASK_LIST,         // Must be before LIST_BULLET
@@ -2263,21 +2553,13 @@
     DEFINITION_LIST_ENTRY.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
 
     // A div's body holds the full top-level mode list minus ABBREVIATION_DEF
-    // (carve-grammars#125 - see the comment on DIV_BLOCK above), plus 'self'
-    // so a nested div still scopes. highlight.js resolves the 'self' string
-    // to this same mode natively, so this does not need the width-tracking
-    // idiom above to also handle recursion.
-    // `'self'` sits LAST, not first. highlight.js takes the first mode in
-    // `contains` that matches at the earliest position, and DIV_BLOCK's own
-    // begin matches `::: figure` (its tail is optional), so a leading `'self'`
-    // out-ranked FIGURE_GROUP_BLOCK for every group nested inside a div - and
-    // because a div's closing fence opens a phantom `'self'` too, "inside a
-    // div" meant "anywhere after the first container in the document".
-    // Measured: `::: note` / `:::` / blank / `::: figure` scoped the group
-    // `keyword`. It is also redundant where it stands, since DIV_BLOCK is
-    // itself an entry in CONTAINS; it is kept, at the end, as the explicit
-    // statement that a div nests in a div.
-    DIV_BLOCK.contains = [...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF), 'self'];
+    // (carve-grammars#125 - see the comment on DIV_BLOCK above) and minus the
+    // bare opener, which BARE_FENCE_LINE stands in for. DIV_BLOCK is in that
+    // list, so a div nests in a div.
+    const IN_CONTAINER = CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)
+        .map((mode) => (mode === BARE_DIV_BLOCK ? BARE_FENCE_LINE : mode));
+    DIV_BLOCK.contains = IN_CONTAINER;
+    BARE_DIV_BLOCK.contains = IN_CONTAINER;
 
     // A composite figure's body is the div body MINUS FIGURE_GROUP_BLOCK (PART 9
     // §4c: GROUPS DO NOT NEST - a bare `::: figure` inside an open group is a
@@ -2289,10 +2571,7 @@
     // the exclusion survives a level of nesting: DIV_BLOCK still offers
     // FIGURE_GROUP_BLOCK (a bare opener inside a `::: note` IS a group - only a
     // group suppresses one), and this variant does not, so
-    // `::: figure` > `::: note` > `::: figure` reads generic too. `'self'` would
-    // not do here: inside DIV_BLOCK_IN_GROUP it resolves to that same div, which
-    // is what is wanted, but the mode has to be a distinct object for its
-    // `contains` to differ from DIV_BLOCK's at all.
+    // `::: figure` > `::: note` > `::: figure` reads generic too.
     //
     // RESIDUAL, written down rather than left to be rediscovered: a bare opener
     // reached through a LIST ITEM or a BLOCKQUOTE inside a group is matched by
@@ -2300,18 +2579,18 @@
     // the same block-context limit every mode in this file has (see the
     // indented-block-openers note in the module docblock); tree-sitter-carve is
     // where a real container model lives.
-    const IN_GROUP = CONTAINS
-        .filter((mode) => mode !== ABBREVIATION_DEF && mode !== FIGURE_GROUP_BLOCK && mode !== FIGURE_GROUP_ON_MARKER_LINE)
+    const IN_GROUP = IN_CONTAINER
+        .filter((mode) => mode !== FIGURE_GROUP_BLOCK && mode !== FIGURE_GROUP_ON_MARKER_LINE)
         .map((mode) => {
             if (mode === DIV_BLOCK) return DIV_BLOCK_IN_GROUP;
             if (mode === DIV_ON_MARKER_LINE) return DIV_ON_MARKER_LINE_IN_GROUP;
             return mode;
         });
     FIGURE_GROUP_BLOCK.contains = IN_GROUP;
-    DIV_BLOCK_IN_GROUP.contains = [...IN_GROUP.filter((mode) => mode !== DIV_BLOCK_IN_GROUP), 'self'];
+    DIV_BLOCK_IN_GROUP.contains = IN_GROUP;
 
     // A marker-line container's body is the line-start one's, led by its closer.
-    DIV_ON_MARKER_LINE.contains = [DIV_MARKER_LINE_CLOSER, ...CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)];
+    DIV_ON_MARKER_LINE.contains = [DIV_MARKER_LINE_CLOSER, ...IN_CONTAINER];
     FIGURE_GROUP_ON_MARKER_LINE.contains = [FIGURE_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
     DIV_ON_MARKER_LINE_IN_GROUP.contains = [DIV_IN_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
 

@@ -1,11 +1,39 @@
 [
   {
     "scope": "code>keyword",
-    "text": "```js \"*.config.js\""
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "js"
   },
   {
     "scope": "code",
-    "text": "\nexport default {}\n"
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"*.config.js\""
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-javascript>keyword",
+    "text": "export"
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": " "
+  },
+  {
+    "scope": "code>language-javascript>keyword",
+    "text": "default"
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": " {}\n"
   },
   {
     "scope": "code>keyword",
