@@ -147,6 +147,10 @@ All notable changes to `carve-grammars` are documented here.
   table continuation row scopes its pipes and inline markup (#686).
 - Prism and highlight.js no longer take exponential time on a line of
   unclosed bare delimiters (#696).
+- The Tiptap writer keeps a table's attribute line, blocked `^` and `<` span
+  markers, `+` continuation rows, a footnote reference's attributes inside link
+  text and the combined `/*...*/` delimiter, and escapes a paragraph that
+  starts like a row of blank cells (#706).
 
 ### Added
 
