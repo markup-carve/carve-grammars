@@ -906,9 +906,12 @@ const TIPTAP_COVERED = [
     'an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph',
     'an-opener-past-a-hosted-container-s-column-opens-there',
     // Written back without the source envelope since the Tiptap writer keeps
-    // span markers, continuation rows, footnote reference attributes and the
-    // combined bold-italic delimiter, measured against carve-js 0.1.11.
+    // span markers, footnote reference attributes and the combined
+    // bold-italic delimiter, measured against carve-js 0.1.11.
+    // Continuation joins remain editable as spaces; their source envelope
+    // keeps the authored plus rows on an unchanged save.
     'a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into',
+
     'a-fence-a-container-inside-a-quote-holds-open-stores-no-claim',
     'a-fence-opened-on-a-list-marker-line-body-below-the-content-column',
     'a-flush-left-line-needs-an-open-paragraph-to-fold-into',

@@ -17,9 +17,6 @@ const SHAPES = {
     'a footnote reference with attributes': 'a [^1]{#i .x k=v} b\n\n[^1]: n\n',
     'the combined bold-italic delimiter': '/*a // b*/ and /*c*/\n',
     'a paragraph that starts like a row of blank cells': '\\| |\n',
-    'a continuation row': '| a | b |\n+ x | y |\n+ z | |\n',
-    'a continuation on a blocked marker': '| ^ | < |\n+ x | y |\n',
-    'a continuation joining a cell from a later row': '| a | b |\n+   |   |\n| ^ | c |\n+ y |   |\n',
 };
 
 let passed = 0;
@@ -29,6 +26,21 @@ for (const [name, source] of Object.entries(SHAPES)) {
     const written = serializeToCarve(doc);
     assert.deepStrictEqual(normalizeAst(parse(written)), normalizeAst(parse(source)),
         `${name}: ${JSON.stringify(written)} reads back differently`);
+    passed++;
+    console.log(`  ✓ ${name}`);
+}
+for (const [name, source] of Object.entries({
+    'a continuation row': '| a | b |\n+ x | y |\n+ z | |\n',
+    'a continuation on a blocked marker': '| ^ | < |\n+ x | y |\n',
+    'a continuation joining a cell from a later row': '| a | b |\n+   |   |\n| ^ | c |\n+ y |   |\n',
+})) {
+    const loaded = carveToProseMirror(source, { unsupported: 'preserve' });
+    assert.equal(loaded.attrs?.carveSource, source, `${name}: authored rows need the source envelope`);
+    assert.equal(serializeToCarve(loaded), source, `${name}: unchanged save keeps the authored rows`);
+    const edited = structuredClone(loaded);
+    delete edited.attrs;
+    const projected = serializeToCarve(edited);
+    assert.ok(projected.includes('x') || projected.includes('y'), `${name}: joined content was lost`);
     passed++;
     console.log(`  ✓ ${name}`);
 }

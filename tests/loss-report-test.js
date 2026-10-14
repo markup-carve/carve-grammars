@@ -50,24 +50,20 @@ ok('an escape is degraded, not silently normal text', () => {
     assert.ok('escaped_text' in degraded, JSON.stringify(degraded));
 });
 
-ok('a cell join is a node that records its continuation line', () => {
+ok('cell joins keep their space, except at the start of a cell', () => {
     const report = {};
     const cell = (children) => ({ type: 'table_cell', children });
     const doc = astToProseMirror({ type: 'document', children: [{ type: 'table', rows: [
-        { continuationLines: 2, cells: [
-            cell([{ type: 'text', value: 'a' }, { type: 'cell_wrap', line: 1 }, { type: 'text', value: 'x' }]),
-            cell([{ type: 'text', value: 'b' }, { type: 'cell_wrap', line: 2 }, { type: 'text', value: 'y' }]),
+        { cells: [
+            cell([{ type: 'text', value: 'a' }, { type: 'cell_wrap' }, { type: 'text', value: 'x' }]),
+            cell([{ type: 'cell_wrap' }, { type: 'text', value: 'y' }]),
         ] },
     ] }] }, { report });
-    const row = doc.content[0].content[0];
-    assert.strictEqual(row.attrs.carveContinuationLines, 2);
-    assert.deepStrictEqual(row.content[0].content[0].content, [
-        { type: 'text', text: 'a' }, { type: 'carveCellWrap', attrs: { line: 1 } }, { type: 'text', text: 'x' },
-    ]);
-    assert.deepStrictEqual(row.content[1].content[0].content, [
-        { type: 'text', text: 'b' }, { type: 'carveCellWrap', attrs: { line: 2 } }, { type: 'text', text: 'y' },
-    ]);
-    assert.ok(!('cell_wrap' in (report.degraded || {})));
+    const cells = doc.content[0].content[0].content;
+    assert.deepStrictEqual(cells[0].content[0].content, [{ type: 'text', text: 'a x' }]);
+    assert.deepStrictEqual(cells[1].content[0].content, [{ type: 'text', text: 'y' }]);
+    assert.strictEqual(report.degraded.cell_wrap,
+        'a continuation join is the space it replaced in the ProseMirror model');
 });
 
 ok('inline payload offsets are reported without changing their values', () => {

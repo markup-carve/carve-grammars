@@ -132,16 +132,6 @@
         "textAlign": "left | center | right"
       }
     },
-    "cell_wrap": {
-      "kind": "node",
-      "pm": "carveCellWrap",
-      "notes": "inline atom rendered as the space it joins; the text after it was written on continuation line `line`",
-      "attrs": {
-        "col": "for a cell spanning columns, the column offset the text after the join came from; omitted when 0",
-        "line": "the 1-based continuation line the text after the join was written on",
-        "row": "for a cell spanning rows, the row offset the text after the join came from; omitted when 0"
-      }
-    },
     "image": {
       "kind": "node",
       "pm": "image",
@@ -598,6 +588,7 @@
     "escaped_text": "escaping is a source-level concern; the editor holds the escaped character as text",
     "smart_punctuation": "smart-typography output is lossy on reparse, so it is not modeled",
     "soft_break": "a soft break is whitespace in the ProseMirror model",
+    "cell_wrap": "a continuation join is the space it replaced in the ProseMirror model",
     "non_breaking_space": "a generated space becomes literal U+00A0 text; its source spelling is re-derived on write"
   },
   "preservationNodes": {

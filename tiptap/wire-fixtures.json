@@ -1535,17 +1535,7 @@
                         "content": [
                           {
                             "type": "text",
-                            "text": "a"
-                          },
-                          {
-                            "type": "carveCellWrap",
-                            "attrs": {
-                              "line": 1
-                            }
-                          },
-                          {
-                            "type": "text",
-                            "text": "x"
+                            "text": "a x"
                           }
                         ]
                       }
@@ -1560,17 +1550,7 @@
                         "content": [
                           {
                             "type": "text",
-                            "text": "b"
-                          },
-                          {
-                            "type": "carveCellWrap",
-                            "attrs": {
-                              "line": 1
-                            }
-                          },
-                          {
-                            "type": "text",
-                            "text": "y"
+                            "text": "b y"
                           }
                         ]
                       }
