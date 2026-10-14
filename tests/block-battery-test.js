@@ -116,7 +116,11 @@ const engines = {
 const NEGATIVES = BLOCK_BATTERY.filter((shape) => shape.want === 'none')
 let crossFailures = 0
 for (const [name, classifyWith] of Object.entries(engines)) {
-  for (const { src, why } of NEGATIVES) {
+  for (const { src, why, skip } of NEGATIVES) {
+    if (skip?.[name]) {
+      console.log(`    - skipped ${name} ${JSON.stringify(src)}: ${skip[name]}`)
+      continue
+    }
     const got = classifyWith(src)
     if (got !== 'none') {
       crossFailures += 1

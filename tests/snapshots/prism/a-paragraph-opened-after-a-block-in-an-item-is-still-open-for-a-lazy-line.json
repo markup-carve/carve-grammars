@@ -9,7 +9,19 @@
   },
   {
     "type": "blockquote",
-    "text": " | a |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "blockquote>table",
+    "text": " a "
+  },
+  {
+    "type": "blockquote>table>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",

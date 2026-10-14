@@ -672,7 +672,7 @@ export const CONSTRUCTS = [
     },
     { name: "byte order mark before a div", sample: "\uFEFF::: note\nbody\n:::", payload: "note", textmate: "admonition" },
     { name: "byte order mark before a table row", sample: "\uFEFF| a | b |", payload: "|", textmate: "punctuation.separator.table" },
-    { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption", skip: { prism: 'a caption at the document start has no host, so Prism reads it as a paragraph, as the engine does' } },
+    { name: "byte order mark before a caption", sample: "\uFEFF^ Attribution", payload: "Attribution", textmate: "caption", skip: { prism: 'a caption at the document start has no host, so Prism reads it as a paragraph, as the engine does', textmate: 'a caption at the document start has no host, so TextMate reads it as a paragraph, as the engine does' } },
     { name: "byte order mark before a definition term", sample: "\uFEFF:: term\n:  definition", payload: "term", textmate: "entity.name.tag.definition.term" },
     { name: "byte order mark before an abbreviation", sample: "\uFEFF*[HTML]: HyperText", payload: "HTML", textmate: "abbreviation" },
     { name: "byte order mark before a reference definition", sample: "\uFEFF[r]: https://ref.example", payload: "r", textmate: "constant.other.reference.link" },
@@ -1255,12 +1255,10 @@ export const MIN_LITERALS = 45
  * lowering one of these is the same decision made once more, in a diff.
  */
 export const MIN_ASSERTABLE = {
-    // No construct is skipped for TextMate any more, four are for Prism and
-    // four for highlight.js; each says why in its own `skip` entry, and every
-    // skip is subtracted here. TextMate's was six until carve-grammars#374 gave
-    // that grammar the five typography runs the other two already carried, and
-    // carve-grammars#375 took the last one.
-    textmate: 208,
+    // One construct is skipped for TextMate (a first-line caption has no host),
+    // four are for Prism and four for highlight.js; each says why in its own
+    // `skip` entry, and every skip is subtracted here.
+    textmate: 207,
     prism: 204,
     highlightjs: 204,
 };

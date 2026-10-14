@@ -5,10 +5,14 @@
   },
   {
     "type": "blockquote",
-    "text": " :::"
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -17,7 +21,11 @@
   },
   {
     "type": "blockquote",
-    "text": " :::"
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
     "type": "text",

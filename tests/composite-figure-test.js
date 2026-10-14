@@ -126,8 +126,8 @@ const CASES = [
         source: '::: figure "Panel set"\n![one](a.png)\n^ (a) One\n:::\n^ Not a group caption\n',
         openers: ['generic'],
         captions: 2,
-        // The engine renders the last line as a paragraph; Prism agrees.
-        engineCaptions: { prism: 1 },
+        // The engine renders the last line as a paragraph; Prism and TextMate agree.
+        engineCaptions: { prism: 1, textmate: 1 },
     },
     {
         name: 'a [label] makes it a generic container',

@@ -459,7 +459,12 @@
         // A cheap scan for a possible closer on this line or the next, so an
         // opener with none fails without walking the atoms (each braced one
         // scans its line).
-        var closerAhead = '(?=[^\\n]{0,8192}?(?:\\n(?![ \\t\\r]*(?:\\n|$))[^\\n]{0,8192}?)?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
+        // Escapes, code spans, links and autolinks are stepped over whole, so
+        // a delimiter inside one is not taken for a closer the run can reach.
+        var step = '(?:\\\\[^\\n]|\\\\(?![^\\n])|`[^`\\n]*`|`(?![^`\\n]*`)'
+            + '|\\[[^\\]\\n]*\\]\\([^\\s)]*\\)|\\[(?![^\\]\\n]*\\]\\([^\\s)]*\\))'
+            + '|<[a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>|<(?![a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>)|[^\\n\\\\`\\[<])';
+        var closerAhead = '(?=' + step + '{0,8192}?(?:\\n(?![ \\t\\r]*(?:\\n|$))' + step + '{0,8192}?)?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
         var line = atom + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\n`]){1,4096}?';
         return closerAhead + line + '(?:' + softBreak + line + ')??';
     }
@@ -2583,6 +2588,54 @@
             return entry.pattern.source === bracedCommentPattern.source || entry.pattern.source.indexOf('(?<=^(?<![^\\r\\n])[ \\t]*\\|') !== -1;
         }),
     }, Prism.languages.carve.table.inside);
+
+    // Tables, colon containers and definition lists inside a quote, read after
+    // the `> ` prefix at any quote depth. A container needs its closer at the
+    // same prefix, and a `: d` line counts only below a quoted `:: term`.
+    {
+        const quoteLine = Prism.languages.carve.blockquote[1];
+        const own = { ...quoteLine.inside };
+        const head = { 'punctuation': own.punctuation, 'title': own.title, 'list': own.list, 'continuation-marker': own['continuation-marker'] };
+        quoteLine.inside = Object.assign(head, {
+            'table': {
+                pattern: /(^ )\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$(?![^\r\n])/m,
+                lookbehind: true,
+                inside: Prism.languages.carve.table.inside,
+            },
+        }, own);
+        const fenceLine = '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\n]*")?(?: +\\[[^\\]\\n]*\\])?| *\\[[^\\]\\n]*\\])?[ \\t]*';
+        Prism.languages.carve.blockquote.splice(1, 0, {
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceLine
+                + '(?:\\r?\\n\\1(?: [^\\r\\n]*)?)*?\\r?\\n\\1 \\2[ \\t]*$(?![^\\r\\n])', 'm'),
+            greedy: true,
+            inside: Object.assign({
+                'punctuation': own.punctuation,
+                'div-delimiter': {
+                    pattern: RegExp('(^ ):{3,}' + fenceLine + '$(?![^\\r\\n])', 'm'),
+                    lookbehind: true,
+                    inside: delimiterInside,
+                },
+            }, quoteLine.inside),
+        });
+        Prism.languages.carve.blockquote.splice(1, 0, {
+            // Lines after the term are terms, descriptions or lazy lines that
+            // open no other block.
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) :: +(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*'
+                + '(?:\\r?\\n\\1 (?::{1,2} +|(?!' + otherBlockOpener + '))(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*', 'm'),
+            inside: Object.assign({
+                'definition-term': {
+                    pattern: /(^\uFEFF?[ \t]*(?:> )*> )::[^\r\n]*/m,
+                    lookbehind: true,
+                    alias: 'title',
+                    inside: Object.assign({ 'punctuation': /^::/ }, inline),
+                },
+                'punctuation': [
+                    { pattern: /(^\uFEFF?[ \t]*(?:> )*> ):(?= )/m, lookbehind: true },
+                    /^\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+                ],
+            }, inline),
+        });
+    }
 
     // A term's lazy lines and a description's body are inline runs, read with
     // the document-level inline rules, as a paragraph is.

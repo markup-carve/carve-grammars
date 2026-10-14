@@ -17,18 +17,22 @@
   },
   {
     "type": "blockquote",
-    "text": " ::: note"
+    "text": " "
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
-    "type": "blockquote>punctuation",
-    "text": ">"
+    "type": "blockquote>div-delimiter",
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "blockquote>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -37,7 +41,19 @@
   },
   {
     "type": "blockquote",
-    "text": " :::"
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
   },
   {
     "type": "text",

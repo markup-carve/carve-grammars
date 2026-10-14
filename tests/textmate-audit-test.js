@@ -66,12 +66,24 @@ ok('a closed block stays front matter, comments and nested values included', () 
     refuteScope(source, 'Body', 'meta.frontmatter');
 });
 
-// RESIDUAL: a bare block whose first line is a plain scalar is front matter in the
-// engine, but here that line ends the block, since begin cannot see the closer.
-ok('residual: a scalar-only bare block reads as document text', () => {
-    const source = '---\ntrue\n---\nBody';
-    assert.equal(html(source).trim(), '<p>Body</p>');
-    refuteScope(source, 'true', 'meta.frontmatter');
+ok('a block holding only a boolean, null or number stays front matter', () => {
+    for (const source of ['---\ntrue\n---\nBody', '---\n42\n---\nBody', '---\nnull\n---\nBody']) {
+        assert.equal(html(source).trim(), '<p>Body</p>');
+        assertScope(source, source.split('\n')[1], 'meta.embedded.block.yaml');
+        assertScope(source, '---', 'punctuation.definition.frontmatter.end', 4);
+        refuteScope(source, 'Body', 'meta.frontmatter');
+    }
+});
+
+// RESIDUAL: any other plain line ends the block, since begin cannot see the closer,
+// and a `# ` line before it reads as a YAML comment even when the block never closes.
+ok('residual: a plain-text bare block and an unclosed comment line', () => {
+    const plain = '---\nhello\n---\nBody';
+    assert.equal(html(plain).trim(), '<p>Body</p>');
+    refuteScope(plain, 'hello', 'meta.frontmatter');
+    const heading = '---\n# Heading\n\npara';
+    assert.match(html(heading), /<h1>Heading<\/h1>/);
+    assertScope(heading, 'Heading', 'meta.embedded.block.yaml');
 });
 
 console.log('\nan unpartnered verbatim run closes on a later line:');
@@ -134,6 +146,31 @@ ok('a table row, a container fence and a definition list are scoped', () => {
     assertScope(source, 'e*', 'markup.bold');
 });
 
+for (const [source, opener, scope] of [
+    ['> a `c\n> d` e *b*\n> more *b*', '`c', 'markup.raw'],
+    ['> a $`c\n> d` e *b*\n> more *b*', '$`c', 'markup.math'],
+    ['> a !``c\n> d`` e *b*\n> more *b*', '!``c', 'markup.raw'],
+]) {
+    ok(`a verbatim span carries over the quote prefix: ${JSON.stringify(source)}`, () => {
+        assert.equal((html(source).match(/<strong>/g) ?? []).length, 2);
+        assert.ok(has(source, 'd', scope, source.indexOf('\n')));
+        assertScope(source, '>', 'punctuation.definition.quote', source.indexOf('\n'));
+        refuteScope(source, ' e ', scope);
+        assertScope(source, 'b*', 'markup.bold');
+        assertScope(source, 'b*', 'markup.bold', source.indexOf('more'));
+        assert.ok(has(source, opener.slice(-1), scope, source.indexOf(opener) + opener.length - 1));
+    });
+}
+
+ok('the span ends with its paragraph, and an unclosed star after it stays on its line', () => {
+    const blank = '> a `c\n>\n> d';
+    assert.match(html(blank), /<code>c<\/code><\/p>\s*<p>d/);
+    refuteScope(blank, 'd', 'markup.raw', blank.lastIndexOf('d'));
+    const star = '> a `c\n> d` *e\n> f';
+    assertScope(star, '>', 'punctuation.definition.quote', star.lastIndexOf('>'));
+    refuteScope(star, 'f', 'markup.bold', star.lastIndexOf('f'));
+});
+
 ok('a lone quoted description with no term is quote text', () => {
     const source = '> : lone';
     assert.match(html(source), /<p>: lone<\/p>/);
@@ -183,14 +220,59 @@ for (const [source, why] of [
     });
 }
 
-/*
- * RESIDUAL: a lazy line keeps a list item open in the engine, but a list item
- * ends at it here, so the paragraph rule claims the sibling marker after it.
- */
-ok('residual: a sibling after a lazy line reads as paragraph text', () => {
-    const source = '- a\nlazy\n- b';
-    assert.match(html(source), /<li>b<\/li>/);
-    refuteScope(source, '- b', 'punctuation.definition.list');
+console.log('\na caption needs a host:');
+
+for (const source of ['# h\n^ cap', '# h\n\n^ cap', '# h\n^ cap\n- x', '::: note\nx\n:::\n^ cap', ':::\nx\n:::\n\n^ cap', '^ cap', '\uFEFF^ cap\nb']) {
+    ok(`a caret line with no host is text: ${JSON.stringify(source)}`, () => {
+        assert.doesNotMatch(html(source), /<figcaption>|<caption>/);
+        refuteScope(source, 'cap', 'meta.caption');
+        refuteScope(source, '^', 'punctuation.definition.caption');
+    });
+}
+
+ok('a marker after such a line stays paragraph text', () => {
+    const source = '# h\n^ cap\n- x';
+    assert.match(html(source), /<p>\^ cap\n- x<\/p>/);
+    refuteScope(source, '- x', 'punctuation.definition.list');
+});
+
+for (const source of ['::: >\nq\n:::\n^ cap', '::: figure\n![a](u)\n:::\n^ cap']) {
+    ok(`a quote or figure group closer still takes its caption: ${JSON.stringify(source)}`, () => {
+        assert.match(html(source), /<figcaption>cap<\/figcaption>/);
+        assertScope(source, 'cap', 'meta.caption');
+    });
+}
+
+console.log('\na lazy line keeps the list open:');
+
+for (const [source, marker] of [['- a\nlazy\n- b', '- b'], ['1. a\nlazy\n2. b', '2.'], ['- a\n  - b\nlazy\n- c', '- c']]) {
+    ok(`a sibling after a lazy line is a list item: ${JSON.stringify(source)}`, () => {
+        assert.match(html(source), new RegExp(`lazy</li>[^]*<li>${source.at(-1)}</li>`));
+        assertScope(source, marker, 'punctuation.definition.list');
+        refuteScope(source, 'lazy', 'punctuation.definition.list');
+    });
+}
+
+ok('a container inside the item ends at the lazy line', () => {
+    const source = '- ::: note\n  x\nlazy *b*\n\n# h';
+    refuteScope(source, 'lazy', 'meta.admonition');
+    assertScope(source, 'b*', 'markup.bold');
+    assertScope(source, 'h', 'markup.heading', source.indexOf('# h'));
+});
+
+for (const source of ['- a\n^ cap', '- a\n\n^ cap', '- a\nlazy\n^ cap', '- | a |\n^ cap']) {
+    ok(`a caption line after a list is text: ${JSON.stringify(source)}`, () => {
+        assert.match(html(source), /<p>\^ cap<\/p>/);
+        refuteScope(source, 'cap', 'meta.caption');
+    });
+}
+
+// RESIDUAL: the list stays open across a paragraph after a blank line, so a
+// marker straight after that paragraph reads as an item, not paragraph text.
+ok('residual: a marker after a paragraph that follows a list', () => {
+    const source = '- a\n\npara\n- x';
+    assert.match(html(source), /<p>para\n- x<\/p>/);
+    assertScope(source, '- x', 'punctuation.definition.list');
 });
 
 console.log('\ninline runs that had no inline patterns:');
