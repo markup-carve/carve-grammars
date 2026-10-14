@@ -326,12 +326,68 @@
 
     // Cache opener tails in one forward pass. Looking backward to the start
     // of the line at every comment opener makes long comment runs quadratic.
+    /*
+     * A candidate (`head`, group 1 its lookbehind) taken through to its line end
+     * unless its line opens a block. The regex form tested that with a
+     * lookbehind walking back to the line start at every candidate, which is
+     * quadratic on a line of many `%%` runs; here the prefix is read once per
+     * line. A line holding a bare `\r` keeps the exact per-candidate test.
+     */
+    var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)';
+    function toLineEndOutsideBlockOpeners(head) {
+        var opener = RegExp(BLOCK_OPENER_PREFIX, 'y');
+        var exact = RegExp('(?<!^(?<![^\\r\\n])' + BLOCK_OPENER_PREFIX + '[^\\n]*)', 'my');
+        var line = { source: null, start: 0, end: -1, stop: -1, bareReturn: false, openerEnd: -1 };
+        var gated = RegExp(head.source, head.flags.includes('g') ? head.flags : head.flags + 'g');
+        gated.exec = function (source) {
+            var match;
+            while ((match = RegExp.prototype.exec.call(this, source))) {
+                var at = match.index + match[1].length;
+                if (line.source !== source || at < line.start || at > line.end) {
+                    line.source = source;
+                    line.start = source.lastIndexOf('\n', at - 1) + 1;
+                    line.end = source.indexOf('\n', at);
+                    if (line.end === -1) line.end = source.length;
+                    // A CRLF line's own `\r` ends the run, as the regex's `[^\r\n]*` did.
+                    line.stop = source[line.end - 1] === '\r' && source[line.end] === '\n' ? line.end - 1 : line.end;
+                    line.bareReturn = source.slice(line.start, line.stop).indexOf('\r') !== -1;
+                    opener.lastIndex = line.start;
+                    line.openerEnd = opener.test(source) ? opener.lastIndex : -1;
+                }
+                var blocked;
+                if (!line.bareReturn && line.openerEnd === -1) blocked = false;
+                else if (!line.bareReturn && at >= line.openerEnd) blocked = true;
+                else {
+                    exact.lastIndex = at;
+                    blocked = !exact.test(source);
+                }
+                if (blocked) {
+                    this.lastIndex = match.index + 1;
+                    continue;
+                }
+                var end = line.stop;
+                if (line.bareReturn) {
+                    var cr = source.indexOf('\r', at);
+                    if (cr !== -1 && cr < end) end = cr;
+                }
+                var result = [source.slice(match.index, end), match[1]];
+                result.index = match.index;
+                result.input = source;
+                this.lastIndex = end;
+                return result;
+            }
+            return null;
+        };
+        return gated;
+    }
+
     function outsideContainerMetadata(pattern) {
         var filtered = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        var baseExec = Object.prototype.hasOwnProperty.call(pattern, 'exec') ? pattern.exec : RegExp.prototype.exec;
         filtered.exec = function (source) {
             var ranges = metadataRanges(source);
             var match;
-            while ((match = RegExp.prototype.exec.call(this, source))) {
+            while ((match = baseExec.call(this, source))) {
                 var offset = match.index + (match[1] ? match[1].length : 0);
                 var low = 0;
                 var high = ranges.length;
@@ -1097,29 +1153,6 @@
                 greedy: true,
             },
             {
-                // IN A TABLE ROW THE RUN ENDS AT THE CELL. A cell is an inline
-                // run of its own (`CARVE-P9-041`), so `| a %% h | b |` keeps two
-                // cells - corpus
-                // `518-a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator-6`
-                // pins it. Reaching the line end swallowed every later boundary
-                // and the row lost its structure (carve-grammars#576).
-                //
-                // ANY run width, not just `%%`: the engine keeps both cells for
-                // `| a %%% h | b |` as well, and a `%%%` fence cannot open here
-                // because the fence rules need the run at the line start.
-                // THE ROW TEST SITS AFTER THE RUN, not before it. As a leading
-                // lookbehind the assertion runs at EVERY space in the line and
-                // walks back to the line start each time, making ordinary long
-                // lines quadratic. Behind the percent run it checks only
-                // possible comments. Dense comment openers still repeat the
-                // prefix scan; the performance sweep measures that residual.
-                // Consume internal whitespace runs together so the closing
-                // lookahead does not rescan a long whitespace body at each byte.
-                pattern: /([ \t])%{2,}(?<=^(?<![^\r\n])[ \t]*\|[^\n]*)(?:\\.|[^\\|\r\n \t]|[ \t]+(?![ \t]|\||$(?![^\r\n])))*(?=[ \t]*(?:\||$(?![^\r\n])))/m,
-                lookbehind: true,
-                greedy: true,
-            },
-            {
                 // trailing comment after whitespace (Prism lookbehind, no JS
                 // lookbehind: the leading space is captured and excluded).
                 // An unterminated percent run degrades to a line comment,
@@ -1176,12 +1209,10 @@
                  * before the test: `> y` + backtick continues a paragraph, while
                  * `> # a` behind the same marker opens a block.
                  */
-                pattern: outsideContainerMetadata(RegExp(
-                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)'
-                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)[^\\n]*)'
-                    + '[^\\r\\n]*$(?![^\\r\\n])',
+                pattern: outsideContainerMetadata(toLineEndOutsideBlockOpeners(RegExp(
+                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)',
                     'm',
-                )),
+                ))),
                 lookbehind: true,
                 greedy: true,
             },
@@ -2631,8 +2662,18 @@
     // comments it then covers are restored first.
     Prism.languages.carve.table.inside = Object.assign({
         'comment': Prism.languages.carve.comment.filter(function (entry) {
-            return entry.pattern.source === bracedCommentPattern.source || entry.pattern.source.indexOf('(?<=^(?<![^\\r\\n])[ \\t]*\\|') !== -1;
-        }),
+            return entry.pattern.source === bracedCommentPattern.source;
+        }).concat([{
+            // IN A TABLE ROW THE RUN ENDS AT THE CELL. A cell is an inline run
+            // of its own (`CARVE-P9-041`), so `| a %% h | b |` keeps two cells
+            // (corpus 518-...-6, carve-grammars#576). Any run width: `%%%`
+            // cannot open a fence here. Only the row's own text reaches this
+            // rule, so it needs no line-prefix test; internal whitespace runs
+            // are consumed together so the closing lookahead stays linear.
+            pattern: /([ \t])%{2,}(?:\\.|[^\\|\r\n \t]|[ \t]+(?![ \t]|\||$(?![^\r\n])))*(?=[ \t]*(?:\||$(?![^\r\n])))/m,
+            lookbehind: true,
+            greedy: true,
+        }]),
     }, Prism.languages.carve.table.inside);
 
     // Tables, colon containers and definition lists inside a quote, read after

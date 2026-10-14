@@ -10,6 +10,10 @@ All notable changes to `carve-grammars` are documented here.
   instead of painting the rest of the document as code (#711).
 - Prism: a long run of spaces in a table cell or before an attribute block no
   longer takes quadratic time.
+- Prism: a line holding many `%%` runs is read once per line instead of once
+  per run, so it no longer takes quadratic time. A table row starting with a
+  byte order mark keeps its cell comments, and a `|` line that is not a table
+  row ends its comment at the line end, as the parser does.
 
 ## [0.1.15] - 2026-10-14
 
