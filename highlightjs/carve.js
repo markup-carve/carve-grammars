@@ -1608,18 +1608,34 @@
     const FENCE_AFTER_BLOCK = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|[ \\t]*(?:> ?)*(?:#{1,6} |\\+[ \\t\\r]*(?=\\n)|(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )[^\\n]{0,4096})\\n))';
     // An unclosed fence at column 0: code to the end of the document, or to the
     // closer of the innermost open colon fence, whose width must match exactly.
+    // A fence whose closer lies past the bounded lookahead above lands here
+    // too, so its own closer still ends it.
     const UNCLOSED_CODE_BLOCK = {
         className: 'code',
         beginScope: 'keyword',
         begin: new RegExp(
-            FENCE_AFTER_BLOCK + '(?:`{3,}|~{3,})'
+            FENCE_AFTER_BLOCK + '(`{3,}|~{3,})'
             + '(?: ?(?:' + CODE_FENCE_INFO + '|' + RAW_FENCE_INFO + '))?[ \\t]*$(?![^\\r\\n])',
         ),
-        end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
+        'on:begin': (m) => {
+            Object.assign(codeFence(m), { indent: '', run: m[1] });
+        },
+        end: /^(?<![^\r\n])(?:[ \t]*(:{3,})|([ \t]*)(`{3,}|~{3,}))[ \t]*$(?![^\r\n])/,
         returnEnd: true,
         'on:end': (m, resp) => {
+            if (m[1] === undefined) {
+                const open = codeFence(m);
+                if (m[2] !== open.indent || m[3][0] !== open.run[0] || m[3].length < open.run.length) resp.ignoreMatch();
+                return;
+            }
             const stack = docState(COLON_FENCES, m).stack;
             if (stack[stack.length - 1]?.width !== m[1].length) resp.ignoreMatch();
+        },
+        // Left in place by `returnEnd`, a code closer is taken here, so it
+        // cannot open a fence; a colon closer is left to its container.
+        starts: {
+            endScope: 'keyword',
+            end: /[ \t]*(?:`{3,}|~{3,})[ \t]*$(?![^\r\n])|(?=[ \t]*:)/,
         },
         contains: [],
         relevance: 0,
