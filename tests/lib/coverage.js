@@ -905,6 +905,26 @@ const TIPTAP_COVERED = [
     'an-at-column-comment-retains-nothing',
     'an-opener-past-a-hosted-container-s-column-interrupts-its-open-paragraph',
     'an-opener-past-a-hosted-container-s-column-opens-there',
+    // Written back without the source envelope since the Tiptap writer keeps
+    // span markers, continuation rows, footnote reference attributes and the
+    // combined bold-italic delimiter, measured against carve-js 0.1.11.
+    'a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into',
+    'a-fence-a-container-inside-a-quote-holds-open-stores-no-claim',
+    'a-fence-opened-on-a-list-marker-line-body-below-the-content-column',
+    'a-flush-left-line-needs-an-open-paragraph-to-fold-into',
+    'a-footnote-reference-in-link-text-keeps-its-id-on-the-sup',
+    'a-nested-marker-comment-keeps-its-own-ownership',
+    'a-quoted-value-and-a-quoted-title-escape-different-sets',
+    'a-span-never-covers-another-cell',
+    'a-zero-line-and-a-one-blank-raw-payload-are-not-the-same-block',
+    'an-at-sign-before-a-space-and-a-doubled-delimiter-inside-bold-italic-are-text',
+    'an-explicitly-delimited-row-of-blank-cells-is-a-table',
+    'an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth',
+    'block-attribute-lines',
+    'blocked-span-marker-renders-as-empty-cell',
+    'blockquote-lazy-continuation',
+    'colspan-marker-scans-left-past-a-consumed-cell',
+    'unresolved-footnote-reference-with-a-trailing-attribute-stays-literal',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -930,7 +950,6 @@ const TIPTAP_SKIP = new Map([
     // removed; at least one file in every category reparses to a different AST.
     ['below-a-definition-body-s-column-an-invisible-line-folds-as-text', 'the projection loses the authored column of folded definitions, attributes, and abbreviation-shaped text inside a definition body'],
     ['an-abbreviation-definition-outside-document-level-is-not-an-invisible-line', 'abbreviation-shaped lines outside document level are normalized and reparse to a different AST'],
-    ['an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth', 'the unresolved image nested in a list loses the source relationship that gives its caption slot back'],
     ['an-empty-description-body-claims-no-line-below-column-0', 'empty definition descriptions are omitted, allowing following flush-left content to bind differently'],
     ['a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text', 'the footnote form loses that its leading plus was text and serializes it at the definition marker column'],
     ['374-a-collected-definition-closes-the-item-paragraph', 'collected definitions are not represented in the structured editor tree, so all four forms require the source envelope'],
@@ -939,7 +958,6 @@ const TIPTAP_SKIP = new Map([
     ['273-the-inline-attribute-interior-is-space-only-the-attribute-line-is-not', 'the whitespace-sensitive attribute form is normalized and reparses to a different AST'],
     ['274-a-quoted-attribute-value-stops-at-the-newline', 'the unterminated quoted attribute forms are respelled and reparse to a different AST'],
     ['275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text', 'collapsed heading references are not preserved faithfully and reparse to a different AST'],
-    ['276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column', 'list/fence indentation is normalized and all variants reparse to a different AST'],
     ['277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open', 'comments are unsupported, and the non-comment variant reparses differently'],
     ['246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it', 'the `+` continuation marker is not re-emitted, so the block it attached comes back as ordinary item content and the reparse differs'],
     ['248-an-attribute-name-admits-no-colon', 'a colon-bearing name is literal text, and the serializer either re-spells it as a smart_punctuation node it cannot convert or writes it back in a form that reparses differently'],
@@ -951,7 +969,6 @@ const TIPTAP_SKIP = new Map([
 
     // Added when the corpus submodule was refreshed. Each reason was measured
     // by running the round trip, not guessed - the same rule the header states.
-    ['178-a-flush-left-line-needs-an-open-paragraph-to-fold-into', 'an empty block quote in a list item is not reconstructed and the paragraph after it folds onto the marker line, so `. >` + `X` comes back as `. > X`'],
     ['179-an-abbreviation-definition-is-recognized-only-at-document-level', 'the converter has no node type for `abbreviation-def` and throws, the same gap as 177-two-abbreviation-definitions'],
     ['180-a-list-item-does-not-define-an-abbreviation-either', 'same `abbreviation-def` gap - the definition that does NOT define is still an `abbreviation-def` node in the tree, so the converter throws before the case can be exercised'],
     ['181-openers-past-the-nesting-cap-are-one-paragraph', 'past the cap the over-cap openers degrade to ONE paragraph whose text is the raw source lines, and the serializer rewrites fence widths per nesting level, so that paragraph comes back holding different text (`:::: note` vs `:::: note x`) even though the tree shape is identical'],
@@ -983,14 +1000,10 @@ const TIPTAP_SKIP = new Map([
     ['73-list-nesting-and-looseness', 'nested-list looseness differs on reparse'],
     ['75-nested-brackets-in-link-text', 'nested brackets in link text are lossy through the serializer'],
     ['78-trailing-attribute-block-edge-cases', 'trailing attribute-block edge cases are lossy'],
-    ['80-blockquote-lazy-continuation', 'blockquote lazy continuation differs on reparse'],
     ['85-compact-list-blocks', 'a blockquote nested in a list item is dropped on serialize'],
     ['86-list-continuation-marker', 'list continuation markers differ on reparse'],
-    ['87-block-attribute-lines', 'standalone block attribute lines are not modeled'],
     ['96-table-span-marker-in-first-column', 'rowspan/colspan filler cells are not reconstructed'],
     ['101-heading-marker-column-zero', 'an indented (literal) # is re-emitted column-0 as a heading on reparse'],
-    ['104-blocked-span-marker-renders-as-empty-cell', 'table span-marker cells are not modeled'],
-    ['105-colspan-marker-scans-left-past-a-consumed-cell', 'table span-marker cells are not modeled'],
     ['107-link-destination-parentheses-balance', 'round-trips to a different AST'],
     ['108-empty-link-and-image-titles-are-preserved', 'empty link/image titles are dropped on serialize'],
     ['115-footnote-definition-inside-a-container-is-collected', 'footnote definitions inside containers are lossy on reparse'],
@@ -1009,7 +1022,6 @@ const TIPTAP_SKIP = new Map([
     ['156-indented-image-and-caption-stay-literal', 'the converter does not model the `soft_break` node'],
     ['157-indented-reference-and-footnote-definitions-stay-literal', 'the converter does not model the `smart_punctuation` node'],
     ['158-indented-colon-fence-blocks-stay-literal', 'the converter does not model the `soft_break` node'],
-    ['161-unresolved-footnote-reference-with-a-trailing-attribute-stays-literal', 'round-trips to a different AST'],
     ['162-tight-list-item-keeps-trailing-text-after-a-block-bare', 'the converter does not model the `code_block` node'],
 
     // Added with the bump to carve `312001f`. Each reason was measured the way
@@ -1023,15 +1035,11 @@ const TIPTAP_SKIP = new Map([
     ['a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner', 'with the source envelope removed ````` comes back as `    ````, so the reparse differs'],
     ['a-comment-span-s-closer-column-does-not-move-the-item-s-ownership', 'with the source envelope removed `  %%%` comes back as ``, so the reparse differs'],
     ['a-comment-span-opened-below-every-content-column-is-located-there', 'with the source envelope removed ` %%%` comes back as ``, so the reparse differs'],
-    ['a-fence-a-container-inside-a-quote-holds-open-stores-no-claim', 'with the source envelope removed `>` comes back as `> `, so the reparse differs'],
-    ['a-nested-marker-comment-keeps-its-own-ownership', 'with the source envelope removed `  - %%%` comes back as `  - %% %`, so the reparse differs'],
     ['a-band-paragraph-after-an-invisible-line-leaves-the-item-loose', 'with the source envelope removed ` - b` comes back as `  - b`, so the reparse differs'],
     ['a-trailing-comment-takes-a-tab-a-run-start-and-its-whole-separator', 'with the source envelope removed `| a\\t%% hidden | b |` comes back as `|= a%% hidden |= b |`, so the reparse differs'],
-    ['a-zero-line-and-a-one-blank-raw-payload-are-not-the-same-block', 'with the source envelope removed `  ```` comes back as ``, so the reparse differs'],
     ['an-emphasis-marker-does-not-pair-across-a-link-bracket', 'with the source envelope removed `/[a](/u)/` comes back as `[/a/](/u)`, so the reparse differs'],
     ['a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not', 'with the source envelope removed `[a]{k=\\"t` comes back as `\\\\[a]{k=\\"t`, so the reparse differs'],
     ['a-link-inside-a-span-s-label-keeps-its-destination', 'with the source envelope removed `[/[t](/v)/]{.c}` comes back as `[[/t/](/v)]{.c}`, so the reparse differs'],
-    ['a-quoted-value-and-a-quoted-title-escape-different-sets', 'with the source envelope removed `![a](/i \'t\\\\\'u\')` comes back as `![a](/i \\"t\'u\\")`, so the reparse differs'],
     ['a-tab-does-not-open-the-title-slot', 'with the source envelope removed `[a](/u\\t\\"t\\")` comes back as `\\\\[a](/u\\t\\"t\\")`, so the reparse differs'],
     ['a-footnote-body-whose-every-block-renders-nothing-is-an-empty-body', 'with the source envelope removed `[^1]: %% n` comes back as `[^1]:`, so the reparse differs'],
     ['a-fence-after-a-footnote-quote-has-its-own-base', 'with the source envelope removed `[^1]: > q` comes back as `[^1]:`, so the reparse differs'],
@@ -1043,18 +1051,13 @@ const TIPTAP_SKIP = new Map([
     ['a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base', 'with the source envelope removed ` x` comes back as `  ````, so the reparse differs'],
     ['a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
     ['a-comment-in-a-marker-line-note-changes-nothing', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
-    ['a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into', 'with the source envelope removed `| ^ | b |` comes back as `| ^ | b y |`, so the reparse differs'],
     ['a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item', 'with the source envelope removed `  :: term` comes back as ``, so the reparse differs'],
     ['a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in', 'with the source envelope removed `>   -   ::: |` comes back as `>   - ::: |`, so the reparse differs'],
-    ['a-footnote-reference-in-link-text-keeps-its-id-on-the-sup', 'with the source envelope removed `a [t[^named]{data-carve-footnote-label=\\"named\\"}][r] b` comes back as `a [t[^named\\\\]][r] b`, so the reparse differs'],
     ['a-line-block-payload-span-pairs-past-the-content-column', 'with the source envelope removed `    ```` comes back as `    ``, so the reparse differs'],
     ['a-line-retained-after-a-comment-opens-a-paragraph', 'with the source envelope removed `    %% c` comes back as ``, so the reparse differs'],
     ['a-paragraph-in-a-held-container-does-not-loosen-the-item', 'with the source envelope removed `  :: term` comes back as ``, so the reparse differs'],
     ['a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
-    ['a-span-never-covers-another-cell', 'with the source envelope removed `| ^ | b |` comes back as `| ^ | ^ | b |`, so the reparse differs'],
     ['a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker', 'with the source envelope removed a reference whose label holds a tab gains a second, space-spelled definition, so the reparse differs'],
-    ['an-at-sign-before-a-space-and-a-doubled-delimiter-inside-bold-italic-are-text', 'with the source envelope removed `/*a // b*/` comes back as `*/a \\\\/\\\\/ b/*`, so the reparse differs'],
-    ['an-explicitly-delimited-row-of-blank-cells-is-a-table', 'with the source envelope removed `\\\\| |` comes back as `| |`, so the reparse differs'],
 ]);
 
 export const COVERAGE = {

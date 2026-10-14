@@ -507,7 +507,7 @@ check('table cell escapes a literal pipe',
     passed++;
     console.log('  ✓ column alignment is inherited by every editor cell');
     check('inherited editor alignment does not become explicit cell markers',
-        { ...projected, attrs: undefined }, '| A | B | C |\n| D | E | F |');
+        { ...projected, attrs: undefined }, '{aligns="right,,center"}\n| A | B | C |\n| D | E | F |');
 }
 
 {

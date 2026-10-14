@@ -1,5 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { createInlinePickerView, documentValues } from './editable-atom-view.js';
+import { attributeSlots } from './carve-attribute-slots.js';
 
 /**
  * Carve Footnote node extension for Tiptap
@@ -28,7 +29,23 @@ export const CarveFootnote = Node.create({
     atom: true,
 
     addAttributes() {
+        // The reference's own attribute run (`[^1]{.x}`). Read back only from
+        // the editor's own element: an engine `<a role="doc-noteref">` carries
+        // generated ids and roles, not authored ones.
+        const slots = attributeSlots(['data-footnote-label', 'contenteditable']);
+        const own = element => element.classList?.contains('carve-footnote');
+        const authored = Object.fromEntries(Object.entries(slots).map(([name, slot]) => [name, {
+            ...slot,
+            parseHTML: element => {
+                if (!own(element)) return null;
+                if (name !== 'class') return slot.parseHTML(element);
+                const classes = String(element.getAttribute('class') || '').split(/\s+/)
+                    .filter(c => c && c !== 'carve-footnote');
+                return classes.length ? classes.join(' ') : null;
+            },
+        }]));
         return {
+            ...authored,
             carveSource: { default: null, rendered: false },
             label: {
                 default: 'note',

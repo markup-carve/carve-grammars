@@ -883,29 +883,54 @@ function convertTableCore(node, ctx) {
     (headingRow?.cells || []).forEach((cell, col) => {
         if (cell.header && cell.align) inheritedColumnAligns[col] = cell.align;
     });
+    // A span marker extends its cell only where the grown rectangle covers no
+    // other cell; a blocked one stays an empty cell, as the engine renders it.
+    const startCol = new Map(); // origin cell -> its first column
     const rows = (node.rows || []).map((row) => {
         const cells = [];
         const grid = [];
-        for (let col = 0; col < (row.cells || []).length; col++) {
-            const cell = row.cells[col];
+        const startedHere = new Set();
+        const rowCells = row.cells || [];
+        // A blocked marker is an empty cell of its own, which later markers
+        // may extend, and which takes the text of a continuation row.
+        const blocked = (cell, marker, col) => {
+            const orphan = orphanSpanCell(cell, marker, ctx);
+            cells.push(orphan);
+            grid[col] = orphan;
+            startCol.set(orphan, col);
+            startedHere.add(orphan);
+        };
+        for (let col = 0; col < rowCells.length; col++) {
+            const cell = rowCells[col];
+            if (grid[col]) continue; // consumed by a rowspan to its left
             if (cell.span === 'rowspan') {
                 const origin = previousGrid[col];
-                if (!origin) {
-                    const orphan = orphanSpanCell(cell, '^');
-                    cells.push(orphan);
-                    grid[col] = orphan;
+                if (!origin || startCol.get(origin) !== col) {
+                    blocked(cell, '^', col);
                     continue;
                 }
+                const width = origin.attrs.colspan || 1;
+                const covered = rowCells.slice(col + 1, col + width);
+                if (covered.length !== width - 1 || covered.some(other => !other.span)) {
+                    blocked(cell, '^', col);
+                    continue;
+                }
+                // `^` and `<` both continue a covered column; keep the spelling
+                // when it is not the canonical all-`<`.
+                const markers = covered.map(other => (other.span === 'rowspan' ? '^' : '<')).join('');
+                if (markers.includes('^') || origin.attrs.carveCoverMarkers) {
+                    const before = (origin.attrs.rowspan || 1) - 1;
+                    origin.attrs.carveCoverMarkers ||= Array(before).fill('<'.repeat(width - 1));
+                    origin.attrs.carveCoverMarkers.push(markers);
+                }
                 origin.attrs.rowspan = (origin.attrs.rowspan || 1) + 1;
-                grid[col] = origin;
+                for (let k = 0; k < width; k++) grid[col + k] = origin;
                 continue;
             }
             if (cell.span === 'colspan') {
                 const origin = grid[col - 1];
-                if (!origin) {
-                    const orphan = orphanSpanCell(cell, '<');
-                    cells.push(orphan);
-                    grid[col] = orphan;
+                if (!origin || !startedHere.has(origin)) {
+                    blocked(cell, '<', col);
                     continue;
                 }
                 origin.attrs.colspan = (origin.attrs.colspan || 1) + 1;
@@ -922,21 +947,27 @@ function convertTableCore(node, ctx) {
             };
             cells.push(converted);
             grid[col] = converted;
+            startCol.set(converted, col);
+            startedHere.add(converted);
         }
         previousGrid = grid;
         const convertedRow = { type: 'tableRow', content: cells };
         const rowAttrs = convertAttrs(row.attrs);
         if (rowAttrs) convertedRow.attrs = rowAttrs;
+        if (row.continuationLines > 0) {
+            convertedRow.attrs = { ...(convertedRow.attrs || {}), carveContinuationLines: row.continuationLines };
+        }
         return convertedRow;
     });
     return { type: 'table', content: rows };
 }
 
-function orphanSpanCell(cell, marker) {
+function orphanSpanCell(cell, marker, ctx) {
+    const content = (cell.children || []).length ? convertInline(cell.children, ctx, true) : [];
     return {
         type: cell.header ? 'tableHeader' : 'tableCell',
         attrs: { carveSpanMarker: marker },
-        content: [{ type: 'paragraph' }],
+        content: [content.length ? { type: 'paragraph', content } : { type: 'paragraph' }],
     };
 }
 
@@ -1087,9 +1118,8 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
             return [{ type: 'text', text: '\n' }];
 
         case 'cell_wrap':
-            record(ctx, 'degraded', 'cell_wrap',
-                'a continuation join is the space it replaced in the ProseMirror model');
-            return leadingCellWrap ? [] : [{ type: 'text', text: ' ', ...(marks.length ? { marks } : {}) }];
+            // Kept as a node, so the writer can put a `+` continuation row back.
+            return [{ type: 'carveCellWrap', attrs: { line: node.line || 1 } }];
 
         case 'hard-break':
         case 'hard_break':
@@ -1152,7 +1182,7 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
             return [{
                 type: 'carveFootnote',
                 // carve-js 0.1.11 names the field `label`; 0.1.9 named it `id`.
-                attrs: { label: node.label || node.id || 'note' },
+                attrs: { label: node.label || node.id || 'note', ...(convertAttrs(node.attrs) || {}) },
                 ...(marks.length ? { marks } : {}),
             }];
 
@@ -1353,7 +1383,12 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
                 // A mark cannot hold itself; `{*a {*b*}*}` renders the same
                 // without the inner run (#537).
                 if (marks.some((mark) => mark.type === markType)) return descend(node, marks, ctx);
-                return descend(node, [...marks, { type: markType }], ctx);
+                // `/*a*/` and `*/a/*` build the same marks; `boldItalic` says
+                // the author wrote the combined delimiter.
+                const mark = node.type === 'strong' && node.boldItalic
+                    ? { type: markType, attrs: { carveBoldItalic: true } }
+                    : { type: markType };
+                return descend(node, [...marks, mark], ctx);
             }
             throw new UnsupportedNodeError(node.type, node);
         }

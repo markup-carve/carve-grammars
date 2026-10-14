@@ -102,12 +102,19 @@
       "kind": "node",
       "pm": "table",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes",
+        "id": "authored id",
         "carveSeparatorWidths": "authored separator-row dash widths, colons excluded; its PRESENCE says the author wrote a separator row rather than `|=` header cells"
       }
     },
     "table_row": {
       "kind": "node",
-      "pm": "tableRow"
+      "pm": "tableRow",
+      "attrs": {
+        "carveContinuationLines": "how many `+` continuation lines the row was written with; omitted when 0"
+      }
     },
     "table_cell": {
       "kind": "node",
@@ -117,11 +124,20 @@
       ],
       "notes": "tableHeader for `|=` cells",
       "attrs": {
+        "carveCoverMarkers": "per row a cell spanning rows and columns covers below its first, the markers written right of its `^`; present only where one of them is `^`",
         "carveInheritedTextAlign": "effective alignment inherited from table column metadata; editor presentation only and never serialized as a cell override",
         "carveSpanMarker": "the span marker as written, where a cell carries one",
         "colspan": "omitted when 1",
         "rowspan": "omitted when 1",
         "textAlign": "left | center | right"
+      }
+    },
+    "cell_wrap": {
+      "kind": "node",
+      "pm": "carveCellWrap",
+      "notes": "inline atom rendered as the space it joins; the text after it was written on continuation line `line`",
+      "attrs": {
+        "line": "the 1-based continuation line the text after the join was written on"
       }
     },
     "image": {
@@ -148,6 +164,10 @@
       "kind": "node",
       "pm": "carveFootnote",
       "attrs": {
+        "carveAttrOrder": "the order the run's slots were WRITTEN in, as the AST records it: `#id`, `.class`, and each key by name",
+        "carveKeyValues": "authored key=values",
+        "class": "authored classes",
+        "id": "authored id",
         "label": "the label as written"
       }
     },
@@ -450,7 +470,10 @@
     },
     "strong": {
       "kind": "mark",
-      "pm": "bold"
+      "pm": "bold",
+      "attrs": {
+        "carveBoldItalic": "true where the author wrote the combined `/*...*/` delimiter"
+      }
     },
     "emphasis": {
       "kind": "mark",
@@ -573,7 +596,6 @@
     "escaped_text": "escaping is a source-level concern; the editor holds the escaped character as text",
     "smart_punctuation": "smart-typography output is lossy on reparse, so it is not modeled",
     "soft_break": "a soft break is whitespace in the ProseMirror model",
-    "cell_wrap": "a continuation join is the space it replaced in the ProseMirror model",
     "non_breaking_space": "a generated space becomes literal U+00A0 text; its source spelling is re-derived on write"
   },
   "preservationNodes": {

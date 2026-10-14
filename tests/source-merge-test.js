@@ -45,14 +45,16 @@ for (const file of listCorpusFiles()) {
 // section 553, four of 321 and four net of 471 (see the enveloped ledger
 // accounting). The spec 0.1.9 bump (carve 5484177, carve-js 0.1.11) added 48
 // net; one of them, 559-3, writes a second space-spelled reference definition
-// after the appended block, so the editor wins there. Keep the exact remaining
+// after the appended block, so the editor wins there. Writing span markers,
+// continuation rows, footnote reference attributes, table attribute lines and
+// the combined bold-italic delimiter back retired 73. Keep the exact remaining
 // conflict set below, not just
 // its size: the AST models neither the authored fence character (`~~~`
 // re-emits as a backtick fence), nor the over-indent column of a marker line
 // inside an opaque quote, so a document hitting one of those projects to
 // canonical spelling and the envelope carries the authored bytes back.
-assert.strictEqual(envelopes, 559, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 556, 'an append normalized authored layout in additional documents');
+assert.strictEqual(envelopes, 486, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 483, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 3, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

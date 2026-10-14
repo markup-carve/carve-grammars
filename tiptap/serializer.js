@@ -557,9 +557,14 @@ export function serializeToCarve(doc, options = {}) {
                 break;
             }
 
-            case 'table':
+            case 'table': {
+                // Only the authored run: the table node also carries editor state.
+                const { id, class: cls, carveKeyValues, carveAttrOrder } = node.attrs || {};
+                const tableAttrs = serializeAttributes({ id, class: cls, carveKeyValues, carveAttrOrder });
+                if (tableAttrs) output += tableAttrs + '\n';
                 serializeTable(node);
                 break;
+            }
 
             // A directive is SPELLED like a typed container, so it is written by
             // the carveDiv branch with its `kind` as the opener's word. The type
@@ -982,68 +987,135 @@ export function serializeToCarve(doc, options = {}) {
         // a cell node for grid positions covered by a span, so we rebuild the grid
         // row by row, carrying rowspans forward per column.
         const rowspanCarry = []; // rowspanCarry[col] = remaining rows to fill with `^`
+        const carryMarker = [];
         const separatorWidths = table.attrs?.carveSeparatorWidths;
+        const continuationLines = rows.map(row => Math.max(0, Number(row.attrs?.carveContinuationLines) || 0));
+        const grid = []; // per row: { header, content, align, attrs } per grid column
+        const owners = []; // { cell, row, col, colspan, rowspan, marker, segments }
+
+        const PARAGRAPH_JOIN = {};
+        // A cell's text, split where a `+` continuation row joined it.
+        const segmentsOf = (cell) => {
+            const segments = [{ line: null, nodes: [] }];
+            (cell.content || []).forEach((paragraph, index) => {
+                if (index > 0) segments.at(-1).nodes.push(PARAGRAPH_JOIN);
+                for (const inline of paragraph.content || []) {
+                    if (inline.type === 'carveCellWrap') segments.push({ line: inline.attrs?.line || 1, nodes: [] });
+                    else segments.at(-1).nodes.push(inline);
+                }
+            });
+            return segments;
+        };
+        const cellText = (nodes) => nodes.map(inline => {
+            if (inline === PARAGRAPH_JOIN) return ' ';
+            let rendered = serializeInline([inline], false);
+            // Pipes inside code spans are literal already: escaping
+            // one there adds a real backslash to the code payload.
+            // Every other inline form still needs table-delimiter
+            // protection.
+            const isCode = inline.type === 'text'
+                && (inline.marks || []).some(mark => mark.type === 'code');
+            // Bare superscript-looking text (`^2^`) is literal in
+            // Carve; only the braced `{^2^}` form is a mark. The
+            // generic prose escaper is intentionally conservative,
+            // but retaining that escape changes the parsed AST.
+            if (inline.type === 'text' && !(inline.marks || []).length) {
+                rendered = rendered.replace(/\\\^/g, '^');
+            }
+            return isCode ? rendered : rendered.replace(/\|/g, '\\|');
+        }).join('')
+            // A table cell occupies one physical line.
+            .replace(/\n/g, ' ');
+
         rows.forEach((row, rowIndex) => {
             const cells = row.content || [];
-            const out = []; // { header, content } per grid column, incl. `^`/`<` fillers
+            const out = [];
             let col = 0;
             let ci = 0;
             while (ci < cells.length || rowspanCarry.slice(col).some(c => c > 0)) {
                 if (rowspanCarry[col] > 0) {
-                    out.push({ header: false, content: '^' });
+                    // `^` under the cell's first column, `<` under the rest.
+                    const { cell: spanning, offset } = carryMarker[col];
+                    const spanRow = (spanning.attrs?.rowspan || 1) - 1 - rowspanCarry[col];
+                    out.push({
+                        header: false,
+                        content: offset === 0 ? '^' : spanning.attrs?.carveCoverMarkers?.[spanRow]?.[offset - 1] || '<',
+                    });
                     rowspanCarry[col]--;
                     col++;
                     continue;
                 }
                 if (ci >= cells.length) break;
                 const cell = cells[ci++];
-                if (cell.attrs?.carveSpanMarker) {
-                    out.push({ header: Boolean(cell.type === 'tableHeader'), content: cell.attrs.carveSpanMarker });
-                    col++;
-                    continue;
-                }
                 const colspan = cell.attrs?.colspan || 1;
                 const rowspan = cell.attrs?.rowspan || 1;
                 const header = cell.type === 'tableHeader';
-                const content = (cell.content || [])
-                    .map(p => (p.content || []).map(inline => {
-                        let rendered = serializeInline([inline], false);
-                        // Pipes inside code spans are literal already: escaping
-                        // one there adds a real backslash to the code payload.
-                        // Every other inline form still needs table-delimiter
-                        // protection.
-                        const isCode = inline.type === 'text'
-                            && (inline.marks || []).some(mark => mark.type === 'code');
-                        // Bare superscript-looking text (`^2^`) is literal in
-                        // Carve; only the braced `{^2^}` form is a mark. The
-                        // generic prose escaper is intentionally conservative,
-                        // but retaining that escape changes the parsed AST.
-                        if (inline.type === 'text' && !(inline.marks || []).length) {
-                            rendered = rendered.replace(/\\\^/g, '^');
-                        }
-                        return isCode ? rendered : rendered.replace(/\|/g, '\\|');
-                    }).join(''))
-                    .join(' ')
-                    // A table cell occupies one physical line.
-                    .replace(/\n/g, ' ');
-                out.push({ header, content, align: cell.attrs?.textAlign || null, attrs: cell.attrs });
-                if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                const marker = cell.attrs?.carveSpanMarker || null;
+                const segments = segmentsOf(cell);
+                owners.push({ row: rowIndex, col, colspan, rowspan, marker, segments });
+                if (marker) out.push({ header, content: marker });
+                else out.push({ header, content: cellText(segments[0].nodes), align: cell.attrs?.textAlign || null, attrs: cell.attrs });
+                if (rowspan > 1) { rowspanCarry[col] = rowspan - 1; carryMarker[col] = { cell, offset: 0 }; }
                 col++;
                 for (let k = 1; k < colspan; k++) {
                     out.push({ header: false, content: '<' });
-                    if (rowspan > 1) rowspanCarry[col] = rowspan - 1;
+                    if (rowspan > 1) { rowspanCarry[col] = rowspan - 1; carryMarker[col] = { cell, offset: k }; }
                     col++;
                 }
             }
-            const rowAttrs = serializeAttributes(row.attrs, ['textAlign']);
-            const cellAttrsOf = c => serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker']);
+            grid.push(out);
+        });
+
+        // Put each joined piece back on a continuation line: the first row in
+        // the cell's span that has that line, and the next column of the cell
+        // when one line holds several pieces. A marker cell has no text of its
+        // own, so its first piece came from a continuation line too.
+        const continued = rows.map((_, r) => Array.from({ length: continuationLines[r] + 1 }, () => []));
+        for (const owner of owners) {
+            const pieces = owner.segments.map((segment, index) => ({
+                line: index === 0 ? (owner.marker ? 1 : null) : segment.line,
+                text: cellText(segment.nodes),
+            }));
+            let cursor = { row: owner.row, line: 0, col: owner.col };
+            for (const piece of pieces) {
+                if (piece.line === null || piece.text === '') continue;
+                let placed = false;
+                for (let r = cursor.row; r < owner.row + owner.rowspan && r < rows.length && !placed; r++) {
+                    if (continuationLines[r] < piece.line) continue;
+                    let column = owner.col;
+                    if (r === cursor.row && piece.line < cursor.line) continue;
+                    if (r === cursor.row && piece.line === cursor.line) {
+                        column = cursor.col + 1;
+                        if (column >= owner.col + owner.colspan) continue;
+                    }
+                    continued[r][piece.line][column] = piece.text;
+                    cursor = { row: r, line: piece.line, col: column };
+                    placed = true;
+                }
+                if (!placed && piece.text !== '') {
+                    const { row: r, line, col: c } = cursor;
+                    if (line > 0) continued[r][line][c] = `${continued[r][line][c] || ''} ${piece.text}`.trim();
+                }
+            }
+        }
+
+        const cellAttrsOf = c => serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker', 'carveCoverMarkers']);
+        rows.forEach((row, rowIndex) => {
+            const out = grid[rowIndex];
+            const rowAttrs = serializeAttributes(row.attrs, ['textAlign', 'carveContinuationLines']);
+            const continuation = () => {
+                for (let line = 1; line <= continuationLines[rowIndex]; line++) {
+                    const pieces = out.map((_, column) => continued[rowIndex][line][column] || '');
+                    output += '+ ' + pieces.join(' | ') + ' |\n';
+                }
+            };
             // The author's separator row: the head row is written plain and its
             // alignment moves into the separator's colons. Any shape the form
             // cannot spell keeps the `|=` cells.
             // A ragged table's separator may count fewer or more cells than
             // its head row; a head cell past the separator has no alignment.
             const separatorForm = rowIndex === 0 && Array.isArray(separatorWidths)
-                && separatorWidths.length > 0
+                && separatorWidths.length > 0 && continuationLines[0] === 0
                 && separatorWidths.every(width => Number.isInteger(width) && width > 0)
                 && out.every((c, i) => c.header && c.content !== '<' && c.content !== '^'
                     && (i < separatorWidths.length || !c.align))
@@ -1067,6 +1139,7 @@ export function serializeToCarve(doc, options = {}) {
                 line += '|' + (c.header ? '=' : '') + align + cellAttrsOf(c) + ' ' + c.content + ' ';
             }
             output += line + '|' + rowAttrs + '\n';
+            continuation();
         });
     }
 
@@ -1236,7 +1309,7 @@ export function serializeToCarve(doc, options = {}) {
     // valid). The escape goes on the punctuation, since a backslash before a
     // letter or digit is literal.
     const LEADING_BLOCK_OPENER =
-        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|(?=[^\n]*[^\s|=:-])[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=[.)] ))/;
+        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=[.)] ))/;
     // On a list item's marker line, a following lazy line folds a colon
     // opener back into the paragraph, so only a one-line paragraph needs it.
     const LEADING_COLON_FENCE = /^(?=:{3,}(?: +(?:[A-Za-z0-9_][\w-]*|\|))? *(?:\n|$))/;
@@ -1561,6 +1634,20 @@ export function serializeToCarve(doc, options = {}) {
                     && (autoRaw === autoTarget || 'mailto:' + autoRaw === autoTarget)
                     // `>` would close the form early and whitespace ends it.
                     && autoRaw !== '' && !/[>\s]/.test(autoRaw);
+                const previous = result.slice(-1);
+                const beforePrevious = result.slice(-2, -1);
+                // A marked neighbor starts with its own delimiter or bracket.
+                const next = content[idx + 1];
+                const following = next?.type === 'text' && !(next.marks || []).length ? (next.text || '')[0] || '' : '';
+                const glued = (delim) => WORD_CHARACTER.test(previous) || previous === delim
+                    || ((delim === '/' || delim === '_') && (previous === '/' || previous === '_')
+                        && beforePrevious !== '' && !/\s/.test(beforePrevious))
+                    || WORD_CHARACTER.test(following);
+                // `/*a*/`: the combined delimiter the author wrote, where the
+                // neighbors let it open and close.
+                const boldItalic = hasBold && hasItalic
+                    && marks.find(m => m.type === 'bold')?.attrs?.carveBoldItalic
+                    && !node.carveOpenRun && !glued('*') && !glued('/');
                 let t;
                 if (writeAutolink) {
                     t = '<' + autoRaw + '>';
@@ -1602,7 +1689,14 @@ export function serializeToCarve(doc, options = {}) {
                     // boundary; a bare `^` / `,` is literal text - sup/sub are
                     // the braced `{^ ^}` / `{, ,}` forms only.)
                     // Skip a delimiter escapeStructural already escaped (`\^[`).
-                    t = escapeStructural(text).replace(/(?<!(?:^|[^\\])(?:\\\\)*\\)[*/_~^]/g, '\\$&');
+                    // Inside `/*...*/` a doubled delimiter is literal and needs no
+                    // escape, unless it touches the run's edge, where it would
+                    // merge with the mark's own delimiter.
+                    const escaped = escapeStructural(text);
+                    t = escaped.replace(/(?<!(?:^|[^\\])(?:\\\\)*\\)([*/_~^])\1*/g, (run, _char, at) => (
+                        boldItalic && run.length > 1 && at > 0 && at + run.length < escaped.length
+                            ? run
+                            : run.replace(/./g, '\\$&')));
                 } else {
                     // Plain text: structural + pair-aware emphasis-opener escaping.
                     // More inline content after this run means a trailing
@@ -1638,7 +1732,7 @@ export function serializeToCarve(doc, options = {}) {
                 // such dilemma - the engines skip code spans when scanning for
                 // a label's closing bracket, and skipping editorial comments
                 // the same way is the real fix (markup-carve/carve#403).
-                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment && !writeAutolink) {
+                if ((link || carveSpan || abbr) && !hasCode && !hasCriticComment && !writeAutolink && !node.carveVerbatim) {
                     t = t.replace(/]/g, '\\]');
                 }
                 const bareable = (delim) => {
@@ -1681,15 +1775,6 @@ export function serializeToCarve(doc, options = {}) {
                 // only the forced form keeps the mark.
                 const outermost = link || carveSpan || abbr ? null
                     : hasBold ? '*' : hasItalic ? '/' : hasUnderline ? '_' : hasStrike && !hasDelete ? '~' : null;
-                const previous = result.slice(-1);
-                const beforePrevious = result.slice(-2, -1);
-                // A marked neighbor starts with its own delimiter or bracket.
-                const next = content[idx + 1];
-                const following = next?.type === 'text' && !(next.marks || []).length ? (next.text || '')[0] || '' : '';
-                const glued = (delim) => WORD_CHARACTER.test(previous) || previous === delim
-                    || ((delim === '/' || delim === '_') && (previous === '/' || previous === '_')
-                        && beforePrevious !== '' && !/\s/.test(beforePrevious))
-                    || WORD_CHARACTER.test(following);
                 const wrap = (delim) => {
                     const forced = runOpen || (delim === outermost && glued(delim));
                     runOpen = false;
@@ -1702,8 +1787,12 @@ export function serializeToCarve(doc, options = {}) {
                     t = forced ? '{=' + t + '=}' : '=' + t + '=';
                 }
                 if (hasUnderline) t = wrap('_');
-                if (hasItalic) t = wrap('/');
-                if (hasBold) t = wrap('*');
+                if (boldItalic) {
+                    t = '/*' + t + '*/';
+                } else {
+                    if (hasItalic) t = wrap('/');
+                    if (hasBold) t = wrap('*');
+                }
                 if (resumeDelimitedBold && hasBold && t.startsWith('*')) {
                     t = t.slice(1);
                     resumeDelimitedBold = false;
@@ -1842,7 +1931,7 @@ export function serializeToCarve(doc, options = {}) {
                     result += node.attrs.carveSource;
                 } else {
                     const label = node.attrs?.label || 'note';
-                    result += '[^' + label + ']';
+                    result += '[^' + label + ']' + serializeAttributes(node.attrs, ['label']);
                 }
             } else if (node.type === 'carveMath') {
                 // Math source is raw; widen the backtick fence past any internal

@@ -41,6 +41,7 @@
   },
   "table_cell": {
     "tableCell": [
+      "carveCoverMarkers",
       "carveInheritedTextAlign",
       "carveSpanMarker",
       "colspan",
@@ -48,6 +49,7 @@
       "textAlign"
     ],
     "tableHeader": [
+      "carveCoverMarkers",
       "carveInheritedTextAlign",
       "carveSpanMarker",
       "colspan",

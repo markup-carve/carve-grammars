@@ -56,6 +56,7 @@ import { CarveRawInline } from './extensions/carve-raw-inline.js';
 import { CarveSection } from './extensions/carve-section.js';
 import { CarveSubstitution } from './extensions/carve-substitution.js';
 import { CarveSymbol } from './extensions/carve-symbol.js';
+import { CarveCellWrap } from './extensions/carve-cell-wrap.js';
 import { CarveSourcePreservation } from './extensions/carve-source-preservation.js';
 import { CarveLineBlock } from './extensions/carve-line-block.js';
 import { CarveDirective } from './extensions/carve-directive.js';
@@ -966,6 +967,8 @@ export const CarveKit = Extension.create({
                 addAttributes() {
                     return {
                         ...this.parent?.(),
+                        // The table's own attribute line (`{.wide}` above it).
+                        ...attributeSlots(['style', 'data-carve-separator-widths']),
                         carveSeparatorWidths: {
                             default: null,
                             parseHTML: () => null,
@@ -1011,7 +1014,7 @@ export const CarveKit = Extension.create({
             const withoutStockAlign = (parent) => (parent?.align
                 ? { ...parent, align: { ...parent.align, parseHTML: () => null } }
                 : parent);
-            const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs() }; } });
+            const CustomTableRow = TableRow.extend({ addAttributes() { return { ...this.parent?.(), ...tableAttrs(['data-carve-continuation-lines']) }; } });
             const CustomTableCell = TableCell.extend({ addAttributes() { return { ...withoutStockAlign(this.parent?.()), ...tableAttrs() }; } });
             const CustomTableHeader = TableHeader.extend({ addAttributes() { return { ...withoutStockAlign(this.parent?.()), ...tableAttrs(['scope']) }; } });
             extensions.push(CustomTableRow.configure(this.options.tableRow ?? {}));
@@ -1237,6 +1240,9 @@ export const CarveKit = Extension.create({
         }
         if (this.options.carveSymbol !== false) {
             extensions.push(CarveSymbol.configure(this.options.carveSymbol ?? {}));
+        }
+        if (this.options.carveCellWrap !== false) {
+            extensions.push(CarveCellWrap.configure(this.options.carveCellWrap ?? {}));
         }
         if (this.options.carveCitation !== false) {
             extensions.push(CarveCitation.configure(this.options.carveCitation ?? {}));

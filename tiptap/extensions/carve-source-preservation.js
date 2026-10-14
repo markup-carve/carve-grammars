@@ -34,8 +34,32 @@ export const CarveSourcePreservation = Extension.create({
                 },
             },
             {
+                types: ['tableRow'],
+                attributes: {
+                    carveContinuationLines: {
+                        default: null,
+                        parseHTML: element => Number.parseInt(element.getAttribute('data-carve-continuation-lines'), 10) || null,
+                        renderHTML: attributes => (attributes.carveContinuationLines
+                            ? { 'data-carve-continuation-lines': String(attributes.carveContinuationLines) } : {}),
+                    },
+                },
+            },
+            {
+                types: ['bold'],
+                attributes: {
+                    carveBoldItalic: {
+                        default: null,
+                        parseHTML: element => (element.hasAttribute('data-carve-bold-italic') ? true : null),
+                        renderHTML: attributes => (attributes.carveBoldItalic ? { 'data-carve-bold-italic': '' } : {}),
+                    },
+                },
+            },
+            {
                 types: ['tableCell', 'tableHeader'],
-                attributes: { carveSpanMarker: { default: null, rendered: false } },
+                attributes: {
+                    carveSpanMarker: { default: null, rendered: false },
+                    carveCoverMarkers: { default: null, rendered: false },
+                },
             },
         ];
     },

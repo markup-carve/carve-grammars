@@ -1473,6 +1473,7 @@
             "rows": [
               {
                 "type": "table_row",
+                "continuationLines": 1,
                 "cells": [
                   {
                     "type": "table_cell",
@@ -1483,7 +1484,8 @@
                         "value": "a"
                       },
                       {
-                        "type": "cell_wrap"
+                        "type": "cell_wrap",
+                        "line": 1
                       },
                       {
                         "type": "text",
@@ -1500,7 +1502,8 @@
                         "value": "b"
                       },
                       {
-                        "type": "cell_wrap"
+                        "type": "cell_wrap",
+                        "line": 1
                       },
                       {
                         "type": "text",
@@ -1532,7 +1535,17 @@
                         "content": [
                           {
                             "type": "text",
-                            "text": "a x"
+                            "text": "a"
+                          },
+                          {
+                            "type": "carveCellWrap",
+                            "attrs": {
+                              "line": 1
+                            }
+                          },
+                          {
+                            "type": "text",
+                            "text": "x"
                           }
                         ]
                       }
@@ -1547,13 +1560,26 @@
                         "content": [
                           {
                             "type": "text",
-                            "text": "b y"
+                            "text": "b"
+                          },
+                          {
+                            "type": "carveCellWrap",
+                            "attrs": {
+                              "line": 1
+                            }
+                          },
+                          {
+                            "type": "text",
+                            "text": "y"
                           }
                         ]
                       }
                     ]
                   }
-                ]
+                ],
+                "attrs": {
+                  "carveContinuationLines": 1
+                }
               }
             ]
           }
@@ -1571,6 +1597,7 @@
             "rows": [
               {
                 "type": "table_row",
+                "continuationLines": 1,
                 "cells": [
                   {
                     "type": "table_cell",
@@ -1581,25 +1608,10 @@
                         "value": "a | b x",
                         "cellWraps": [
                           {
-                            "offset": 6,
-                            "line": 2,
-                            "row": 0,
-                            "col": 0
+                            "offset": 5,
+                            "line": 1
                           }
                         ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "table_cell",
-                    "header": false,
-                    "children": [
-                      {
-                        "type": "cell_wrap"
-                      },
-                      {
-                        "type": "text",
-                        "value": "y"
                       }
                     ]
                   }
@@ -1637,23 +1649,11 @@
                         ]
                       }
                     ]
-                  },
-                  {
-                    "type": "tableCell",
-                    "attrs": {},
-                    "content": [
-                      {
-                        "type": "paragraph",
-                        "content": [
-                          {
-                            "type": "text",
-                            "text": "y"
-                          }
-                        ]
-                      }
-                    ]
                   }
-                ]
+                ],
+                "attrs": {
+                  "carveContinuationLines": 1
+                }
               }
             ]
           }
