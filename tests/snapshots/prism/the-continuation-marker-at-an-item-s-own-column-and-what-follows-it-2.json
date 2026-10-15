@@ -5,18 +5,6 @@
   },
   {
     "type": "text",
-    "text": "a\n"
-  },
-  {
-    "type": "continuation-marker",
-    "text": "  "
-  },
-  {
-    "type": "continuation-marker>punctuation",
-    "text": "+"
-  },
-  {
-    "type": "text",
-    "text": "\n\nx\n"
+    "text": "a\n  +\n\nx\n"
   }
 ]

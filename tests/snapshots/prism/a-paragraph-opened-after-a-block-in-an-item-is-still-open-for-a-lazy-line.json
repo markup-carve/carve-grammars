@@ -25,22 +25,6 @@
   },
   {
     "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "table-continuation>table-operator",
-    "text": "  +"
-  },
-  {
-    "type": "table-continuation",
-    "text": " b "
-  },
-  {
-    "type": "table-continuation>table-boundary",
-    "text": "|"
-  },
-  {
-    "type": "text",
-    "text": "\ntail\n"
+    "text": "\n  + b |\ntail\n"
   }
 ]

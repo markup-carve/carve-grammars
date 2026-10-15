@@ -426,7 +426,8 @@ export const CONSTRUCTS = [
     },
     { name: "definition term", sample: ":: term\n:  definition", payload: "term", textmate: "entity.name.tag.definition.term" },
     {
-        name: "table continuation row", sample: "+ cont cell |", payload: "+",
+        // carve reads a `+ ... |` line as a row only directly under one.
+        name: "table continuation row", sample: "| a |\n+ cont cell |", payload: "+",
         textmate: "keyword.operator.table.continuation", engineScopes: { prism: ['table-continuation'] },
     },
     {

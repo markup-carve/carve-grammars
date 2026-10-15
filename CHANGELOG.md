@@ -20,6 +20,11 @@ All notable changes to `carve-grammars` are documented here.
   per run, so it no longer takes quadratic time. A table row starting with a
   byte order mark keeps its cell comments, and a `|` line that is not a table
   row ends its comment at the line end, as the parser does.
+- Prism: a lone `+` line is a continuation marker only under an open list
+  item, footnote, quote or description, and a `+ ... |` line is a table row
+  only directly under a row, as carve reads them. Elsewhere, such as at the
+  start of a document, under a heading or table, or after a paragraph, both
+  stay text.
 
 ## [0.1.15] - 2026-10-14
 

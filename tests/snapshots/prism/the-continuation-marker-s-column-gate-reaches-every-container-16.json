@@ -17,11 +17,7 @@
   },
   {
     "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "continuation-marker",
-    "text": "  "
+    "text": "\n  "
   },
   {
     "type": "continuation-marker>punctuation",

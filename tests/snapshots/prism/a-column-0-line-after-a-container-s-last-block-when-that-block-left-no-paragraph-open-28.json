@@ -17,22 +17,6 @@
   },
   {
     "type": "definition-list",
-    "text": "a\n"
-  },
-  {
-    "type": "table-continuation>table-operator",
-    "text": "   +"
-  },
-  {
-    "type": "table-continuation",
-    "text": " b "
-  },
-  {
-    "type": "table-continuation>table-boundary",
-    "text": "|"
-  },
-  {
-    "type": "text",
-    "text": "\ntail\n"
+    "text": "a\n   + b |\ntail\n"
   }
 ]

@@ -13,11 +13,7 @@
   },
   {
     "type": "text",
-    "text": "b\n"
-  },
-  {
-    "type": "continuation-marker",
-    "text": "  "
+    "text": "b\n  "
   },
   {
     "type": "continuation-marker>punctuation",

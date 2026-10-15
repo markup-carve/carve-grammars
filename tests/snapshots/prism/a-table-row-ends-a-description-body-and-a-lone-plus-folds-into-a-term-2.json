@@ -9,14 +9,14 @@
   },
   {
     "type": "definition-list",
-    "text": "\n"
+    "text": "\n+\n"
   },
   {
-    "type": "continuation-marker>punctuation",
-    "text": "+"
+    "type": "definition-list>punctuation",
+    "text": ": "
   },
   {
-    "type": "text",
-    "text": "\n: d\n"
+    "type": "definition-list",
+    "text": "d\n"
   }
 ]

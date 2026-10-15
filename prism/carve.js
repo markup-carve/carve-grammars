@@ -1013,6 +1013,44 @@
         'punctuation': /\+/,
     };
 
+    // A lone `+` at column 0 attaches only while a list item, footnote, quote or
+    // description is open; elsewhere carve renders it as text. A list item or
+    // footnote stays open across blank lines, where only an indented line or a
+    // `+` reopens it; a lazy or `%%` line right under a blank closes it. A quote
+    // or description takes no blank line and no `%%` line. Whatever follows a
+    // `+` up to the next blank line is the block it attached, so it keeps the
+    // container open. Each class is one line, asserted from its start.
+    var plusLineAt = function (body) { return '(?<![^\\n])(?:' + body + ')\\n'; };
+    var plusLone = '\\+[ \\t\\r]*';
+    var plusIndented = '[ \\t]+[^ \\t\\r\\n][^\\n]*';
+    // Paragraph text, which the open block takes as a lazy line.
+    var plusLazy = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
+    var plusListOpener = notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?'
+        + '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:[ \\t]+[^ \\t\\r\\n]|' + gluedAttrBlock + ')[^\\n]*';
+    var plusFootnote = '(?:(?<![\\s\\S])\\uFEFF)?\\[\\^[^\\]\\r\\n]+\\]:[ \\t][^\\n]*';
+    var plusHolder = '(?:(?<![\\s\\S])\\uFEFF)?(?:>(?![^ \\t\\r\\n])|:[ \\t]+[^ \\t\\r\\n])[^\\n]*';
+    var plusLines = function (body) { return '(?:' + plusLineAt(body) + ')*'; };
+    var plusBlank = plusLineAt('[ \\t\\r]*');
+    // A `+` and the block it attached run to the next blank line.
+    // Bounded: this run can cross earlier `+` lines, so a document of them would
+    // otherwise cost a lookback over the whole document at every line.
+    var plusAttached = plusLineAt(plusLone) + '(?:' + plusLineAt('[ \\t]*[^ \\t\\r\\n][^\\n]*') + '){0,64}';
+    var plusListRun = plusLines(plusLazy + '|%%(?!%)[^\\n]*|' + plusIndented) + '(?:' + plusAttached + ')?';
+    var plusAttaches = '(?<='
+        + plusLineAt(plusListOpener + '|' + plusFootnote) + plusListRun
+        + '(?:(?:' + plusBlank + ')+(?:' + plusLineAt(plusIndented) + plusListRun + '|' + plusAttached + ')){0,32}'
+        + '(?:' + plusBlank + '){0,64}'
+        + '|' + plusLineAt(plusHolder) + plusLines(plusLazy + '|' + plusIndented) + '(?:' + plusAttached + ')?'
+        + ')';
+    // A `+ ... |` line is a row only directly under a row at its indent: a
+    // table row, not the separator under a header, or a `+` row continuing one.
+    var plusRowSeparator = '[ \\t]*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t\\r]*\\n';
+    var plusRowAbove = '(?<=(?<![^\\n])(?!' + plusRowSeparator + '(?<=\\|[ \\t\\r]*\\n[^\\n]*\\n))'
+        + '([ \\t]*)\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n)';
+    var plusRowOnMarker = '(?<=(?<![^\\n])[ \\t]*(?:(?:[-*:]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) +)+'
+        + '\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n)';
+    var plusRowTail = '\\+[^\\r\\n]*\\|[ \\t]*(?![^\\r\\n])';
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -1587,11 +1625,14 @@
         // 63-table-multi-line-cell-continuation). It has to end in `|`, so
         // `one + two` in prose stays literal.
         'table-continuation': {
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[^\n]*\|[ \t]*$(?![^\r\n])/m,
+            pattern: RegExp('^(?<![^\\r\\n])(?=[ \\t]*\\+[^\\r\\n]*\\|[ \\t]*$(?![^\\r\\n]))(?:'
+                + plusRowAbove + '\\1' + plusRowTail + '(?:\\r?\\n\\1' + plusRowTail + ')*'
+                + '|' + plusRowOnMarker + '([ \\t]+)' + plusRowTail + '(?:\\r?\\n\\2' + plusRowTail + ')*)', 'm'),
+            greedy: true,
             inside: Object.assign({
                 'code': /(?!)/,
                 'escape': /(?!)/,
-                'table-operator': /^(?<![^\r\n])\uFEFF?[ \t]*\+/,
+                'table-operator': /^(?<![^\r\n])\uFEFF?[ \t]*\+/m,
                 'table-boundary': /\|/,
             }, inline),
         },
@@ -1692,7 +1733,26 @@
         // non-blank flush-left line follows (markup-carve/carve#3105).
         'continuation-marker': [
             {
-                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\+[ \t]*$(?![^\r\n])/m,
+                // A run of `+` lines is one token, so the lookbehind runs once per run.
+                pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?=\\+[ \\t]*$(?![^\\r\\n]))' + plusAttaches
+                    + '\\+[ \\t]*(?:\\r?\\n\\+[ \\t]*(?![^\\r\\n]))*$(?![^\\r\\n])', 'm'),
+                greedy: true,
+                inside: continuationInside,
+            },
+            // An indented `+` attaches only at the column of a nested item or
+            // quote opened above it, with nothing but deeper lines between.
+            {
+                pattern: RegExp('^(?<![^\\r\\n])([ \\t]+)(?=\\+[ \\t]*$(?![^\\r\\n]))'
+                    + '(?<=(?<![^\\n])\\1(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)[ \\t]+[^ \\t\\r\\n]|>(?![^ \\t\\r\\n]))[^\\n]*\\n'
+                    + '(?:(?<![^\\n])\\1[ \\t]+[^ \\t\\r\\n][^\\n]*\\n)*\\1)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
+                lookbehind: true,
+                greedy: true,
+                inside: continuationInside,
+            },
+            // On a list marker line once 'list' has the marker (`- +`).
+            {
+                pattern: /(?=\+)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.) +(?:\[[ xX\-_>?]\] +)?)+)\+[ \t]*$(?![^\r\n])/m,
+                greedy: true,
                 inside: continuationInside,
             },
             // After a marker glued to an attribute block (`-{.c} +`): 'list'
@@ -1815,7 +1875,9 @@
                 'punctuation': /^(?<![^\r\n])[ \t]*: +(?![ \t]*$(?![^\r\n]))/m,
                 'description-attributes': bodyAttributes(':'),
                 'continuation-marker': {
-                    pattern: /^(?<![^\r\n])\+[ \t]*$(?![^\r\n])/m,
+                    // Before the first description under a `::` term, a `+` is the term's text.
+                    pattern: /(?=\+)(?:(?<![^\r\n])(?<!(?<![^\n])[ \t]*::[^\n]*\n(?:(?<![^\n])(?![ \t]*:[ \t])[^\n]*\n)*)|(?<=(?<![^\r\n])[ \t]*: +))\+[ \t]*$(?![^\r\n])/m,
+                    greedy: true,
                     inside: continuationInside,
                 },
             },
