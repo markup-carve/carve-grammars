@@ -1587,9 +1587,23 @@
         // A CLOSER IS REQUIRED). Greedy, so it runs over the bare colon lines the
         // div rule took as openers. An indented or quoted fence may sit in a list
         // or quote, so it is left alone.
+        //
+        // Nested containers are flat here, so a div's body string can hold the
+        // fence's real host further down. The first branch finds that host: the
+        // nearest opener (typed, or the string's first line) with only closed
+        // containers and non-colon lines between it and the fence, and ends the
+        // fence at the host's own width (corpus 597). The lookbehind runs right
+        // to left, so a nested pair captures its closer (group 2) before its
+        // opener refers back to it, and it is tried only where a fence starts.
+        // Where no host is found, the second branch runs to the string's final
+        // closer of its first line's width.
         'code-block-unclosed': {
-            pattern: RegExp(fenceAfterBlock + '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])'
-                + '[\\s\\S]*?(?=\\n[ \\t]*(:{3,})[ \\t]*$(?![\\s\\S])(?<=^(?<![\\s\\S])[^\\n]*?(?<!:)\\1(?!:)[^\\n]*\\n[\\s\\S]*)|$(?![\\s\\S]))', 'm'),
+            pattern: RegExp(fenceAfterBlock + '(?<=(?:^(?<![\\s\\S])|^(?=[ \\t]*:{3,}(?: +[^ \\t\\n]| *\\[)))[ \\t]*(:{3,})(?!:)[^\\n]*\\n'
+                + '(?:[ \\t]*\\2(?!:)[^\\n]*\\n(?:(?![ \\t]*\\2[ \\t]*\\n)[^\\n]*\\n){0,512}?[ \\t]*(:{3,})[ \\t]*\\n|(?![ \\t]*:{3})[^\\n]*\\n){0,512})'
+                + '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])'
+                + '[\\s\\S]*?(?=\\n[ \\t]*\\1[ \\t]*$(?![^\\r\\n])|$(?![\\s\\S]))'
+                + '|' + fenceAfterBlock + '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])'
+                + '[\\s\\S]*?(?=\\n[ \\t]*(:{3,})[ \\t]*$(?![\\s\\S])(?<=^(?<![\\s\\S])[^\\n]*?(?<!:)\\3(?!:)[^\\n]*\\n[\\s\\S]*)|$(?![\\s\\S]))', 'm'),
             greedy: true,
             alias: 'code-block',
             inside: {
