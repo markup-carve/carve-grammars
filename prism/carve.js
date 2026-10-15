@@ -456,7 +456,6 @@
     };
     var destChar = '\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]';
     var destination = '(?:' + destChar + '|\\((?:' + destChar + '|\\((?:' + destChar + '){0,256}\\)){0,256}\\)){0,2048}';
-    // A destination is never empty (carve#2070): `[x]()` and `[x]( "t")` are text.
     var nonEmptyDestination = '(?![ \\t\\r\\n)])' + destination;
     var titled = function (quote) {
         return quote + '(?:\\\\' + quote + '|\\\\(?!' + quote + ')|[^' + quote + '\\\\\\r\\n]){0,512}' + quote;
@@ -470,9 +469,10 @@
     // character is one code point rather than a surrogate pair.
     var urlCharUnicode = urlChar.replace(/\(\?!\\uD804.*?\)(?=\[\^)/,
         '(?![\\u{110BD}\\u{110CD}\\u{13430}-\\u{1343F}\\u{1BCA0}-\\u{1BCA3}\\u{1D173}-\\u{1D17A}\\u{E0001}\\u{E0020}-\\u{E007F}])');
-    var linkTail = '\\]\\(' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?\\)';
+    var linkTail = '\\]\\((?:' + nonEmptyDestination + '(?: (?:' + titled('"') + '|' + titled('\'') + '))?'
+        + '|[ \\t]*(?=\\))| (?:' + titled('"') + '|' + titled('\'') + ')[ \\t]*)\\)';
     // Only a title directly before the closing `)` is a string.
-    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=\)$(?![^\r\n]))/;
+    var linkTitle = /(?<= )(?:"(?:\\"|\\(?!")|[^"\\\r\n])*"|'(?:\\'|\\(?!')|[^'\\\r\n])*')(?=[ \t]*\)$(?![^\r\n]))/;
     var opaqueInline = '(?:' + opaqueBracedInline
         + '|\\[' + opaqueLabel + linkTail
         + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:' + urlChar + '{1,2048}>'
@@ -1902,7 +1902,7 @@
         // Anchored at end of line (grammar.ebnf `reference_definition`):
         // `[a]: /u zzz` is prose, not a definition (#533).
         'reference-definition': {
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$(?![^\r\n])/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])(?!\^\]:[ \t]*$)[^\]]+\]:(?: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?)?[ \t]*$(?![^\r\n])/m,
             alias: 'url',
             inside: {
                 'constant': /^(?<![^\r\n])\uFEFF?[ \t]*\[[^\]]+\]:/,

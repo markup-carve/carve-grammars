@@ -1,0 +1,42 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#intro"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Intro"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx "
+  },
+  {
+    "type": "italic>italic",
+    "text": "/a </"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#intro"
+  },
+  {
+    "type": "text",
+    "text": "> y\n"
+  }
+]

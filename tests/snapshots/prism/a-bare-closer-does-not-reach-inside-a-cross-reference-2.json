@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "italic>italic",
+    "text": "/a </"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#nothing"
+  },
+  {
+    "type": "text",
+    "text": "> y\n"
+  }
+]

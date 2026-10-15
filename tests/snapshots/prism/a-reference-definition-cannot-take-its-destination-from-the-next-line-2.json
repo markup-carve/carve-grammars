@@ -4,7 +4,15 @@
     "text": "* "
   },
   {
+    "type": "reference-definition>url>constant",
+    "text": "[d]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " "
+  },
+  {
     "type": "text",
-    "text": "[d]: \n text\n"
+    "text": "\n text\n"
   }
 ]

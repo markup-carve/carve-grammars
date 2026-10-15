@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-30",
+      "measured": "2026-10-14",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -107,7 +107,12 @@
           "evidence": "fenced_code",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
+          "status": "IMPLEMENTED",
+          "evidence": "link_ref_def",
+          "payload": "parsed"
+        },
+        "empty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "link_ref_def",
           "payload": "parsed"
@@ -392,7 +397,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-30",
+      "measured": "2026-10-14",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -480,7 +485,12 @@
           "evidence": "code-block",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
+          "status": "IMPLEMENTED",
+          "evidence": "reference-definition",
+          "payload": "parsed"
+        },
+        "empty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "reference-definition",
           "payload": "parsed"
@@ -765,7 +775,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-30",
+      "measured": "2026-10-14",
       "gapTicket": "#317",
       "constructs": {
         "heading": {
@@ -853,7 +863,12 @@
           "evidence": "RAW_BLOCK",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
+          "status": "IMPLEMENTED",
+          "evidence": "REFERENCE_DEF",
+          "payload": "parsed"
+        },
+        "empty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "REFERENCE_DEF",
           "payload": "parsed"
@@ -1138,7 +1153,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-09-30",
+      "measured": "2026-10-14",
       "gapTicket": "#310",
       "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
@@ -1227,7 +1242,12 @@
           "evidence": "raw_block",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
+          "status": "IMPLEMENTED",
+          "evidence": "link_reference_definition",
+          "payload": "parsed"
+        },
+        "empty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "link_reference_definition",
           "payload": "parsed"
@@ -1511,8 +1531,8 @@
     },
     "tree-sitter-carve": {
       "repo": "markup-carve/tree-sitter-carve",
-      "commit": "d61ab29",
-      "measured": "2026-08-23",
+      "commit": "54289cd",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/tree-sitter-carve#245",
       "note": "BOTH AXES ARE NOW READ AT THE SAME COMMIT, d61ab29, which is what this surface's `commit` field says; the payload column used to be ahead of it and the note used to say so. The recognition axis moved because markup-carve/tree-sitter-carve#252 named the admonition and the composite figure group, which were the last two GAP rows on this surface (carve-grammars#334). The payload column is measured through the grammar's own native addon plus queries/highlights.scm, resolved the way Neovim and Helix resolve it (highest (#set! priority) wins, later patterns take a tie), so a low-priority pattern nobody paints is not reported as a leak. The four leaks this column carried at 3d12600 are all closed: markup-carve/tree-sitter-carve#249 and #251 took the two `code_block` shapes and the braced comment, #254 the editorial comment across a line break. Every generated document of all four rows now measures inert - 0 of 164 fence shapes, 0 of 469 and 0 of 286. The single-sample column said inert while they leaked, which is why the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_TREE_SITTER_CARVE) is what this column is read from. ONE CAUTION ABOUT THE EVIDENCE ON THIS SURFACE: before #252 the `admonition` row was not merely unnamed - the nearest word in that grammar was `class_name`, a real rule implementing the dotted class inside an attribute block, so a probe that had scored it would have read the row covered while it was false. The row cites `admonition_type` today, but the evidence for a surface in another repository is re-checked by nobody on a pull request here (tests/construct-ledger-test.js re-probes the four local surfaces only), which is what scripts/surface-drift.mjs reports on.",
       "constructs": {
@@ -1601,7 +1621,12 @@
           "evidence": "raw_block",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
+          "status": "IMPLEMENTED",
+          "evidence": "link_reference_definition",
+          "payload": "parsed"
+        },
+        "empty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "link_reference_definition",
           "payload": "parsed"
@@ -1885,8 +1910,8 @@
     },
     "vscode-carve": {
       "repo": "markup-carve/vscode-carve",
-      "commit": "96cc9ea",
-      "measured": "2026-08-23",
+      "commit": "bafffd4",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/vscode-carve#150",
       "note": "WHAT THE PAYLOAD COLUMN DOES NOT COVER. Every row here is measured, one sample per construct, the same instrument Prism and highlight.js are held to. The GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_VSCODE_CARVE) agrees on all eighteen payload rows and still reports one thing this column cannot: a code fence closes on a delimiter line of the OTHER fence character, so a tilde block holding a backtick line ends early and the rest of its body goes back to the mode list - 10 of 74 fence shapes, markup-carve/vscode-carve#152. The construct is recognized and the payloads it recognizes are inert; where the block ENDS is a different question, and the row cannot say it.",
       "constructs": {
@@ -1911,9 +1936,9 @@
           "payload": "parsed"
         },
         "quote_block": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "unordered_list": {
           "status": "IMPLEMENTED",
@@ -1926,14 +1951,14 @@
           "payload": "parsed"
         },
         "definition_list": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.list.definition.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "tables",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -1975,10 +2000,15 @@
           "evidence": "markup.raw.block.fenced.code.carve",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "meta.link.reference.definition.carve",
           "payload": "parsed"
+        },
+        "empty_reference_definition": {
+          "status": "GAP",
+          "ticket": "markup-carve/carve#2878",
+          "payload": "none"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -1991,9 +2021,9 @@
           "payload": "parsed"
         },
         "paragraph": {
-          "status": "UNSUPPORTED",
-          "reason": "a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather than their absence - prose that matches no rule is already the default",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "caption-paragraph",
+          "payload": "parsed"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -2006,9 +2036,9 @@
           "payload": "none"
         },
         "escaped_char": {
-          "status": "IMPLEMENTED",
-          "evidence": "constant.character.escape.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "raw_inline": {
           "status": "IMPLEMENTED",
@@ -2051,9 +2081,9 @@
           "payload": "parsed"
         },
         "inline_span": {
-          "status": "IMPLEMENTED",
-          "evidence": "meta.span.inline.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "inline_image": {
           "status": "IMPLEMENTED",
@@ -2096,9 +2126,9 @@
           "payload": "parsed"
         },
         "underline": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.underline.link.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         },
         "strikethrough": {
           "status": "IMPLEMENTED",
@@ -2259,8 +2289,8 @@
     },
     "intellij-carve": {
       "repo": "markup-carve/intellij-carve",
-      "commit": "b909d07",
-      "measured": "2026-08-27",
+      "commit": "4b1135c",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/intellij-carve#97",
       "note": "Both axes were re-measured against the IntelliJ fix for markup-carve/intellij-carve#97. The per-surface naming table now records the grammar's intentional folds, closing the former 8 GAP and 5 UNMEASURED recognition rows without inventing rules. Reference images and footnote definitions were real attribution gaps and were fixed on the surface. The generated payload sweep now reports every IntelliJ verbatim construct inert: the four former leak rows (353 generated documents across code blocks, code spans, editorial comments and braced comments) are closed rather than inferred from one sample. `paragraph` remains UNSUPPORTED for the reason shared by every TextMate surface: it is the absence of a block marker, so there is nothing to scope.",
       "constructs": {
@@ -2285,9 +2315,9 @@
           "payload": "parsed"
         },
         "quote_block": {
-          "status": "UNMEASURED",
-          "ticket": "markup-carve/intellij-carve#97",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "divs",
+          "payload": "parsed"
         },
         "unordered_list": {
           "status": "IMPLEMENTED",
@@ -2300,9 +2330,9 @@
           "payload": "parsed"
         },
         "definition_list": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.list.definition.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
         },
         "table": {
           "status": "IMPLEMENTED",
@@ -2349,10 +2379,15 @@
           "evidence": "markup.raw.block.fenced.code.carve",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "meta.link.reference.definition.carve",
           "payload": "parsed"
+        },
+        "empty_reference_definition": {
+          "status": "GAP",
+          "ticket": "markup-carve/carve#2878",
+          "payload": "none"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -2461,7 +2496,7 @@
         },
         "strong": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.bold.carve",
+          "evidence": "bold-in-run",
           "payload": "parsed"
         },
         "bold_italic": {
@@ -2471,17 +2506,17 @@
         },
         "underline": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.underline.link.carve",
+          "evidence": "underline-in-run",
           "payload": "parsed"
         },
         "strikethrough": {
           "status": "IMPLEMENTED",
-          "evidence": "keyword.control.strike.carve",
+          "evidence": "strike-in-run",
           "payload": "parsed"
         },
         "highlight": {
           "status": "IMPLEMENTED",
-          "evidence": "keyword.control.highlight.carve",
+          "evidence": "highlight-in-run",
           "payload": "parsed"
         },
         "forced_emphasis": {
@@ -2520,13 +2555,13 @@
           "payload": "parsed"
         },
         "reference_footnote": {
-          "status": "IMPLEMENTED",
-          "evidence": "string.other.footnote.inline.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
         },
         "inline_footnote": {
           "status": "IMPLEMENTED",
-          "evidence": "meta.footnote.inline.carve",
+          "evidence": "line-inline-footnotes",
           "payload": "parsed"
         },
         "extension_inline": {
@@ -2545,9 +2580,9 @@
           "payload": "parsed"
         },
         "substitution": {
-          "status": "IMPLEMENTED",
-          "evidence": "markup.changed.carve",
-          "payload": "parsed"
+          "status": "GAP",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
         },
         "editorial_comment": {
           "status": "IMPLEMENTED",
@@ -2610,9 +2645,9 @@
           "payload": "parsed"
         },
         "inline_comment": {
-          "status": "IMPLEMENTED",
-          "evidence": "inline-comment",
-          "payload": "inert"
+          "status": "GAP",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
         },
         "braced_comment": {
           "status": "IMPLEMENTED",
@@ -2633,8 +2668,8 @@
     },
     "sublime-carve": {
       "repo": "markup-carve/sublime-carve",
-      "commit": "034a7e9",
-      "measured": "2026-08-22",
+      "commit": "fc7f8c7",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/sublime-carve#31",
       "constructs": {
         "heading": {
@@ -2722,10 +2757,15 @@
           "evidence": "raw-blocks",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "meta.link.reference.definition.carve",
           "payload": "parsed"
+        },
+        "empty_reference_definition": {
+          "status": "GAP",
+          "ticket": "markup-carve/carve#2878",
+          "payload": "none"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -2824,7 +2864,7 @@
         },
         "math_display": {
           "status": "IMPLEMENTED",
-          "evidence": "math-blocks",
+          "evidence": "markup.other.math.display.carve",
           "payload": "inert"
         },
         "emphasis": {
@@ -3006,8 +3046,8 @@
     },
     "vim-carve": {
       "repo": "markup-carve/vim-carve",
-      "commit": "442b2ba",
-      "measured": "2026-08-22",
+      "commit": "c447b3b",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/vim-carve#26",
       "constructs": {
         "heading": {
@@ -3095,10 +3135,15 @@
           "evidence": "carveRawBlock",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "carveRefDef",
           "payload": "parsed"
+        },
+        "empty_reference_definition": {
+          "status": "GAP",
+          "ticket": "markup-carve/carve#2878",
+          "payload": "none"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -3379,8 +3424,8 @@
     },
     "emacs-carve": {
       "repo": "markup-carve/emacs-carve",
-      "commit": "db1796b",
-      "measured": "2026-08-23",
+      "commit": "9cdb998",
+      "measured": "2026-10-14",
       "gapTicket": "markup-carve/emacs-carve#19",
       "note": "BOTH AXES ARE NOW READ AT THE SAME COMMIT, db1796b, and the reading before this one described a checkout five merges old (carve-grammars#332). What moved, and why the old note is gone rather than amended: markup-carve/emacs-carve#24 named 28 constructs that had no row and fixed the ATTRIBUTION defect the old note was mostly about - the row for the braced comment cited the delimited comment's own header, so a rule that existed read as a gap under another construct's name. Both `braced_comment` and `editorial_comment` now read IMPLEMENTED, each citing its own rule, and the surface has no GAP rows left. The payload column is measured by fontifying a buffer in batch Emacs and reading back the `face` text property, through the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_EMACS_CARVE) rather than through one sample per construct - which is the distinction that mattered here, since the single-sample column called every row inert while six leaked. All six recorded leaks are closed: markup-carve/emacs-carve#28 bounded a verbatim payload by its paragraph rather than by its line, taking the two comment rows and the three code-span rows, and `comment_block` had already been inert since #24. markup-carve/emacs-carve#29 additionally closed the UNTERMINATED fence, which was a residual rather than a ledger row. ONE SHAPE STILL LEAKS AND IS NOT A LEDGER CELL: a comment whose continuation line opens a block is broken by the block rule, pinned in the RESIDUALS table of that file alongside prism and intellij-carve, because it needs a container model rather than a wider rule.",
       "constructs": {
@@ -3411,7 +3456,7 @@
         },
         "unordered_list": {
           "status": "IMPLEMENTED",
-          "evidence": "Bullet list markers: - * + followed by a space and content.",
+          "evidence": "Bullet list markers: - and * followed by a space and content.",
           "payload": "parsed"
         },
         "ordered_list": {
@@ -3469,10 +3514,15 @@
           "evidence": "Code block, raw block, math block.",
           "payload": "inert"
         },
-        "reference_definition": {
+        "nonempty_reference_definition": {
           "status": "IMPLEMENTED",
           "evidence": "Reference definition: [label]: url",
           "payload": "parsed"
+        },
+        "empty_reference_definition": {
+          "status": "GAP",
+          "ticket": "markup-carve/carve#2878",
+          "payload": "none"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",

@@ -178,7 +178,9 @@
     const DESTINATION = '(?:' + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`|\((?:` + DEST_CHAR + String.raw`){0,256}\)){0,256}\)){0,2048}`;
     const titled = (quote) => quote + String.raw`(?:\\` + quote + String.raw`|\\(?!` + quote + ')|[^' + quote + String.raw`\\\r\n]){0,512}` + quote;
     // A destination is never empty (carve#2070): `[x]()` and `[x]( "t")` are text.
-    const LINK_TAIL = String.raw`\]\((?![ \t\r\n)])` + DESTINATION + '(?: (?:' + titled('"') + '|' + titled("'") + String.raw`))?\)`;
+    const LINK_TAIL = String.raw`\]\((?:` + String.raw`(?![ \t\r\n)])` + DESTINATION
+        + '(?: (?:' + titled('"') + '|' + titled("'") + '))?'
+        + '|[ \\t]*(?=\\))| (?:' + titled('"') + '|' + titled("'") + ')[ \\t]*)\\)';
     // `url_char` outside ASCII excludes C1 controls, White_Space and format
     // characters; a format character above the BMP is caught at its surrogates.
     const URL_CHAR = String.raw`(?:[A-Za-z0-9\-._~:/?#\[\]@!$&'()*+,;=%]`
@@ -748,7 +750,7 @@
     const REFERENCE_DEF = {
         className: 'symbol',
         // Anchored at end of line, so `[a]: /u zzz` stays prose (#533).
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])[^\]]+\]:(?= [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?[ \t]*$(?![^\r\n]))/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])(?!\^\]:[ \t]*$)[^\]]+\]:(?=(?: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?)?[ \t]*$(?![^\r\n]))/,
         end: /$(?![^\r\n])/,
         relevance: 10,
         contains: [

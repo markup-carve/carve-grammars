@@ -1,6 +1,34 @@
 [
   {
+    "type": "reference-definition>url>constant",
+    "text": "[r]:"
+  },
+  {
     "type": "text",
-    "text": "[r]:\n"
+    "text": "\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]
