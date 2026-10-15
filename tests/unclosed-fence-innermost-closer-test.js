@@ -23,6 +23,9 @@ const rows = [
     ['597-2, widths swapped', doc(':::: outer', '::: inner', FENCE, 'code', '::::', ':::', '::::', 'after *b*'), ['::::'], [':::', '::::']],
     ['597-3, one container', doc('::: note', FENCE, 'code', '::::', ':::', 'after *b*'), ['::::'], [':::']],
     ['597-6, a comment above the fence', doc('::: outer', ':::: inner', '%% c', FENCE, 'code', ':::', '::::', ':::', 'after *b*'), [':::'], ['::::', ':::']],
+    ['597-8, an item holding only a comment', doc('::: note', '- %% c', FENCE, 'code', '::::', ':::', 'after *b*'), ['::::'], [':::']],
+    ['an ordered item holding only a comment', doc('::: note', '1. %% c', FENCE, 'code', '::::', ':::', 'after *b*'), ['::::'], [':::']],
+    ['a comment item that continues a paragraph opens no fence', doc('::: note', 'para', '- %% c', FENCE, 'code', '::::', ':::', 'after *b*'), [], ['::::', ':::']],
 ];
 
 const isCode = { prism: /code-block/, highlightjs: /^code$/ };

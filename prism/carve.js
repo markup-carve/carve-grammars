@@ -278,8 +278,10 @@
         + '(?:(?![ \\t\\r]*\\n)(?!' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n){0,16})';
 
     // A fence does not interrupt a paragraph: one at column 0 opens a block only
-    // at the start, after a blank line or after a one-line block.
-    var fenceAfterBlock = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|' + oneLineBlock + '[^\\n]{0,4096})\\n))';
+    // at the start, after a blank line, after a one-line block, or after a list
+    // item whose only content is a comment (a marker line that continues a
+    // paragraph is that paragraph's text).
+    var fenceAfterBlock = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|(?:' + oneLineBlock + '|' + notParagraphContinuation + listMarkerBeforeBlock + '%%)[^\\n]{0,4096})\\n))';
 
     // A caption needs a host above it, past any blank lines: an image alone on
     // its line, a table row, a code fence, a `$$` math line, a quote line, or

@@ -1606,8 +1606,19 @@
     };
 
     // A fence does not interrupt a paragraph: one at column 0 opens a block only
-    // at the start, after a blank line or after a one-line block (Prism's `oneLineBlock`).
-    const FENCE_AFTER_BLOCK = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|[ \\t]*(?:> ?)*(?:#{1,6} |\\+[ \\t\\r]*(?=\\n)|(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )[^\\n]{0,4096})\\n))';
+    // at the start, after a blank line, after a one-line block (Prism's `oneLineBlock`),
+    // or after a list item whose only content is a comment. A marker line that
+    // continues open text is that text, so the last branch takes Prism's
+    // continuation guard; `on:begin` may not veto (hljs-block-context-test).
+    const ONE_LINE_BLOCK = '[ \\t]*(?:> ?)*(?:#{1,6} |\\+[ \\t\\r]*(?=\\n)|(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )';
+    const MARKER_LINE = '(?:: +|[-*][ {]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ {]|\\.[ {])';
+    const MARKER_STARTS_A_BLOCK = '(?<!(?:(?<![\\s\\S])|(?<![^\\n])[ \\t\\r>]*\\n'
+        + '|(?![ \\t]*\\+[ \\t\\r]*\\n)(?!(?=[ \\t{])(?<=(?<![^\\n])[ \\t]*\\+[ \\t\\r]*\\n)[ \\t]*\\{)(?=' + ONE_LINE_BLOCK + ')(?<![^\\n])[^\\n]*\\n)'
+        + '(?![ \\t\\r]|' + MARKER_LINE + '|' + ONE_LINE_BLOCK + ')(?<![^\\n])[^\\n]+\\n'
+        + '(?:(?![ \\t\\r]*\\n)(?!' + ONE_LINE_BLOCK + ')(?<![^\\n])[^\\n]*\\n){0,16})';
+    const COMMENT_ONLY_ITEM = MARKER_STARTS_A_BLOCK
+        + '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)%%';
+    const FENCE_AFTER_BLOCK = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|(?:' + ONE_LINE_BLOCK + '|' + COMMENT_ONLY_ITEM + ')[^\\n]{0,4096})\\n))';
     // An unclosed fence at column 0: code to the end of the document, or to the
     // closer of the innermost open colon fence, whose width must match exactly.
     // A fence whose closer lies past the bounded lookahead above lands here
