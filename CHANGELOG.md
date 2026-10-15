@@ -24,7 +24,7 @@ All notable changes to `carve-grammars` are documented here.
   item, footnote, quote or description, and a `+ ... |` line is a table row
   only directly under a row, as carve reads them. Elsewhere, such as at the
   start of a document, under a heading or table, or after a paragraph, both
-  stay text.
+  stay text (#721).
 
 ## [0.1.15] - 2026-10-14
 
