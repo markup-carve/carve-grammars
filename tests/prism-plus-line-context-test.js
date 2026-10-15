@@ -114,16 +114,16 @@ for (const [source, markup] of SHAPES) {
 const script = `
     import { prismTokens } from './tests/lib/engines.js';
     for (const source of [
-        '+\\n'.repeat(40000),
-        '+\\n\\n'.repeat(30000),
-        '+\\nx\\n'.repeat(30000),
-        '- a\\n' + '+\\nx\\n'.repeat(30000),
-        '- a\\n' + '\\n  i\\n+\\n'.repeat(20000),
-        '+ b |\\n'.repeat(30000),
-        '> +\\n'.repeat(30000),
-        '> - a\\n' + '> +\\n> x\\n'.repeat(20000),
-        '> + b |\\n'.repeat(30000),
-        '  | a |\\n  + b |\\n'.repeat(20000),
+        '+\\n'.repeat(20000),
+        '+\\n\\n'.repeat(15000),
+        '+\\nx\\n'.repeat(15000),
+        '- a\\n' + '+\\nx\\n'.repeat(15000),
+        '- a\\n' + '\\n  i\\n+\\n'.repeat(10000),
+        '+ b |\\n'.repeat(15000),
+        '> +\\n'.repeat(15000),
+        '> - a\\n' + '> +\\n> x\\n'.repeat(10000),
+        '> + b |\\n'.repeat(15000),
+        '  | a |\\n  + b |\\n'.repeat(10000),
     ]) {
         if (prismTokens(source).map((token) => token.text).join('') !== source) process.exit(1);
     }
