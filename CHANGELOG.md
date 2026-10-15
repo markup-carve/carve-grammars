@@ -6,6 +6,12 @@ All notable changes to `carve-grammars` are documented here.
 
 ### Fixes
 
+- TextMate: a closed code fence or `%%%` comment inside a `:::` container
+  keeps a colon line of the container's width inside it, and the container
+  ends at its own closer instead of the rest of the document showing as code.
+  A nested container of the same width closes before its parent, and a bold
+  run left open ends at a bare colon line. An unclosed fence in a container
+  runs to the end of the document again, as it did before 0.1.15.
 - highlight.js: a closed code fence longer than 32 KB ends at its closer
   instead of painting the rest of the document as code (#711).
 - Prism: a long run of spaces in a table cell or before an attribute block no

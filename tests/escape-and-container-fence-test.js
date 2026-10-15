@@ -73,7 +73,45 @@ for (const [source, needle, kind, opens, parser] of rows) {
     }
 }
 
+// A closed fence keeps a colon line of its container's width as code; the
+// container ends at its own closer and the text after it is a paragraph.
+const closed = [
+    [['::: outer', FENCE, 'code', ':::', FENCE, ':::', 'after *b*'], ':::'],
+    [['::: outer', ':::: inner', FENCE, 'code', ':::', FENCE, '::::', ':::', 'after *b*'], ':::'],
+    [['::: outer', ':::: inner', FENCE, 'code', '::::', FENCE, '::::', ':::', 'after *b*'], '::::'],
+    [['::: note', '~~~', 'code', ':::', '~~~', ':::', 'after *b*'], ':::'],
+    [['::: figure', FENCE, 'code', ':::', FENCE, ':::', 'after *b*'], ':::'],
+];
+for (const [lines, inner] of closed) {
+    const source = `${lines.join('\n')}\n`;
+    const rendered = html(source);
+    assert.ok(rendered.includes(`<code>code${inner}</code>`), `parser keeps ${inner} as code: ${rendered}`);
+    assert.ok(rendered.endsWith('<p>after <strong>b</strong></p>'), `parser: ${rendered}`);
+    const innerAt = source.indexOf(`\n${inner}\n`) + 1;
+    for (const [name, tokenize] of surfaces) {
+        assert.ok(matches('code', name, (await tokenAt(tokenize, source, inner, innerAt)).scope),
+            `${name}: ${JSON.stringify(source)} keeps the inner ${inner} as code`);
+        const token = await tokenAt(tokenize, source, 'b*', source.lastIndexOf('after'));
+        assert.ok(matches('bold', name, token.scope), `${name}: ${JSON.stringify(source)} scopes b as bold (scope ${token.scope})`);
+        checked += 2;
+    }
+}
+
+// A bare colon line ends a paragraph, so a bold run left open in it does not
+// reach past the container's closer.
+for (const lines of [['::: note', '*a', ':::', 'after *b*'], ['::: |', 'x *a', 'y', ':::', 'after *b*'], ['::: note', '::: tip', '*a', ':::', ':::', 'after *b*']]) {
+    const source = `${lines.join('\n')}\n`;
+    assert.ok(html(source).endsWith('<p>after <strong>b</strong></p>'), `parser: ${html(source)}`);
+    for (const [name, tokenize] of surfaces) {
+        const token = await tokenAt(tokenize, source, 'b*', source.lastIndexOf('after'));
+        assert.ok(matches('bold', name, token.scope) && !/admonition/.test(token.scope), `${name}: ${JSON.stringify(source)} scopes b as top-level bold (scope ${token.scope})`);
+        checked++;
+    }
+}
+
 // An unclosed fence ends at the closer of its own container, of the same width.
+// TextMate can't tell that closer from a colon line in a closed fence, so it
+// keeps the closed reading (docs/reference.md, TextMate limits).
 const fences = [
     [['::: note', FENCE, 'code', ':::', '*after*'], 'after', true],
     [[':::', FENCE, 'code', ':::', '*after*'], 'after', true],
@@ -85,7 +123,7 @@ const fences = [
 for (const [lines, needle, bold] of fences) {
     const source = `${lines.join('\n')}\n`;
     assert.equal(html(source).includes(`<strong>${needle}</strong>`), bold, `parser: ${JSON.stringify(source)}`);
-    for (const [name, tokenize] of surfaces) {
+    for (const [name, tokenize] of surfaces.filter(([id]) => id === 'prism' || id === 'highlightjs')) {
         const token = await tokenAt(tokenize, source, needle);
         assert.equal(matches('bold', name, token.scope), bold, `${name}: ${JSON.stringify(source)} scopes ${needle} (scope ${token.scope})`);
         checked++;

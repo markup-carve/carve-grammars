@@ -493,6 +493,10 @@ how Carve reads them. vscode-carve declares the first three.
 - A `+` alone on a quote's or footnote's first line (`> +`, `[^a]: +`) is
   scoped as the continuation marker even when nothing follows it or the next
   line is blank or indented, where Carve reads it as the text `+`.
+- A code fence inside a `:::` container runs to its own closer, so a colon line
+  inside it stays code. When the fence is unclosed, Carve ends it at the
+  container's closer, but the grammar can't tell that closer from a colon line
+  in a closed fence, so the rest of the document shows as code.
 
 ### Prism and highlight.js limits
 

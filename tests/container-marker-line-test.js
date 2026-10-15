@@ -9,10 +9,11 @@ assertThisFileRuns(import.meta.url);
 const path = fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url));
 const grammar = JSON.parse(readFileSync(path, 'utf8'));
 for (const name of ['admonition', 'figure_group']) {
-    // The regular rule keeps its body in a `while` region; the marker-line form does not.
-    const regular = grammar.repository[name].patterns[0];
+    // The regular rule keeps its body in an inner region; the marker-line form does not.
+    const regular = grammar.repository[name];
+    const body = regular.patterns[0];
     const marker = grammar.repository[`${name}_on_marker_line`];
-    assert.deepEqual(marker.patterns, regular.patterns.map(pattern => {
+    assert.deepEqual(marker.patterns, body.patterns.map(pattern => {
         const include = pattern.include === '#heading' ? '#heading_in_container'
             : ['#admonition', '#admonition_in_group', '#figure_group'].includes(pattern.include) ? `${pattern.include}_in_list` : pattern.include;
         return { ...pattern, include };
