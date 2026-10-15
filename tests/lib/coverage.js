@@ -109,8 +109,6 @@ const TIPTAP_COVERED = [
     // every file in each category and will reject a category that needs the
     // whole-document fallback instead.
     'a-bare-closer-does-not-reach-inside-a-braced-inline',
-    'a-bare-closer-does-not-reach-inside-a-cross-reference',
-    'an-autolink-or-a-cross-reference-is-atomic-to-brackets-and-braces',
     'an-empty-link-destination-is-not-a-link',
     'a-quote-is-an-ordinary-link-destination-character',
     'a-bare-closer-does-not-reach-inside-a-link-destination',

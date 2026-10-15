@@ -1,18 +1,6 @@
 [
   {
-    "scope": "symbol",
-    "text": "[r]:   "
-  },
-  {
     "scope": null,
-    "text": "\n\n"
-  },
-  {
-    "scope": "link",
-    "text": "[x][r]"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "[r]:   \n"
   }
 ]
