@@ -29,7 +29,19 @@
   },
   {
     "type": "blockquote",
-    "text": " + b |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>table-continuation>table-operator",
+    "text": "+"
+  },
+  {
+    "type": "blockquote>table-continuation",
+    "text": " b "
+  },
+  {
+    "type": "blockquote>table-continuation>table-boundary",
+    "text": "|"
   },
   {
     "type": "text",

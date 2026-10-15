@@ -1020,7 +1020,7 @@
     // or description takes no blank line and no `%%` line. Whatever follows a
     // `+` up to the next blank line is the block it attached, so it keeps the
     // container open. Each class is one line, asserted from its start.
-    var plusLineAt = function (body) { return '(?<![^\\n])(?:' + body + ')\\n'; };
+    var plusLineAt = function (body, start) { return (start || '(?<![^\\n])') + '(?:' + body + ')\\n'; };
     var plusLone = '\\+[ \\t\\r]*';
     var plusIndented = '[ \\t]+[^ \\t\\r\\n][^\\n]*';
     // Paragraph text, which the open block takes as a lazy line.
@@ -1029,24 +1029,39 @@
         + '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:[ \\t]+[^ \\t\\r\\n]|' + gluedAttrBlock + ')[^\\n]*';
     var plusFootnote = '(?:(?<![\\s\\S])\\uFEFF)?\\[\\^[^\\]\\r\\n]+\\]:[ \\t][^\\n]*';
     var plusHolder = '(?:(?<![\\s\\S])\\uFEFF)?(?:>(?![^ \\t\\r\\n])|:[ \\t]+[^ \\t\\r\\n])[^\\n]*';
-    var plusLines = function (body) { return '(?:' + plusLineAt(body) + ')*'; };
-    var plusBlank = plusLineAt('[ \\t\\r]*');
-    // A `+` and the block it attached run to the next blank line.
-    // Bounded: this run can cross earlier `+` lines, so a document of them would
-    // otherwise cost a lookback over the whole document at every line.
-    var plusAttached = plusLineAt(plusLone) + '(?:' + plusLineAt('[ \\t]*[^ \\t\\r\\n][^\\n]*') + '){0,64}';
-    var plusListRun = plusLines(plusLazy + '|%%(?!%)[^\\n]*|' + plusIndented) + '(?:' + plusAttached + ')?';
-    var plusAttaches = '(?<='
-        + plusLineAt(plusListOpener + '|' + plusFootnote) + plusListRun
-        + '(?:(?:' + plusBlank + ')+(?:' + plusLineAt(plusIndented) + plusListRun + '|' + plusAttached + ')){0,32}'
-        + '(?:' + plusBlank + '){0,64}'
-        + '|' + plusLineAt(plusHolder) + plusLines(plusLazy + '|' + plusIndented) + '(?:' + plusAttached + ')?'
-        + ')';
+    // `start` asserts a line start and, inside a quote, the line's quote prefix;
+    // `blank` is a whole blank line.
+    var plusAttachesFrom = function (start, blank, listOpener, tail) {
+        var at = function (body) { return plusLineAt(body, start); };
+        var lines = function (body) { return '(?:' + at(body) + ')*'; };
+        // A `+` and the block it attached run to the next blank line.
+        // Bounded: this run can cross earlier `+` lines, so a document of them would
+        // otherwise cost a lookback over the whole document at every line.
+        var attached = at(plusLone) + '(?:' + at('[ \\t]*[^ \\t\\r\\n][^\\n]*') + '){0,64}';
+        var listRun = lines(plusLazy + '|%%(?!%)[^\\n]*|' + plusIndented) + '(?:' + attached + ')?';
+        return '(?<=(?:'
+            + at(listOpener + '|' + plusFootnote) + listRun
+            + '(?:(?:' + blank + ')+(?:' + at(plusIndented) + listRun + '|' + attached + ')){0,32}'
+            + '(?:' + blank + '){0,64}'
+            + '|' + at(plusHolder) + lines(plusLazy + '|' + plusIndented) + '(?:' + attached + ')?'
+            + ')' + (tail || '') + ')';
+    };
+    var plusAttaches = plusAttachesFrom('(?<![^\\n])', plusLineAt('[ \\t\\r]*'), plusListOpener);
+    var plusListMarker = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
+    // In a quote: the same reading behind the quote prefix captured as group 1.
+    // A quote line holding only its markers is the blank line.
+    var plusAttachesInQuote = plusAttachesFrom('(?<![^\\n])\\1', '(?<![^\\n])[ \\t]*(?:>[ \\t]*)+\\r?\\n',
+        plusListMarker + '(?:[ \\t]+[^ \\t\\r\\n]|' + gluedAttrBlock + ')[^\\n]*', '\\1');
     // A `+ ... |` line is a row only directly under a row at its indent: a
     // table row, not the separator under a header, or a `+` row continuing one.
     var plusRowSeparator = '[ \\t]*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t\\r]*\\n';
+    // Group 1 is empty for a row at column 0, group 2 the indent of a row inside a
+    // list item or description; the rule spells the indent as `\1\2`.
+    var plusRowLine = '\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n';
     var plusRowAbove = '(?<=(?<![^\\n])(?!' + plusRowSeparator + '(?<=\\|[ \\t\\r]*\\n[^\\n]*\\n))'
-        + '([ \\t]*)\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n)';
+        + '(?:()' + plusRowLine
+        + '|(?<=(?<![^\\n])[ \\t]*(?:' + plusListMarker + '|:)[ \\t]+[^ \\t\\r\\n][^\\n]*\\n'
+        + '(?:(?<![^\\n])(?:[ \\t\\r]*|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,256})([ \\t]+)' + plusRowLine + '))';
     var plusRowOnMarker = '(?<=(?<![^\\n])[ \\t]*(?:(?:[-*:]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) +)+'
         + '\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n)';
     var plusRowTail = '\\+[^\\r\\n]*\\|[ \\t]*(?![^\\r\\n])';
@@ -1626,8 +1641,8 @@
         // `one + two` in prose stays literal.
         'table-continuation': {
             pattern: RegExp('^(?<![^\\r\\n])(?=[ \\t]*\\+[^\\r\\n]*\\|[ \\t]*$(?![^\\r\\n]))(?:'
-                + plusRowAbove + '\\1' + plusRowTail + '(?:\\r?\\n\\1' + plusRowTail + ')*'
-                + '|' + plusRowOnMarker + '([ \\t]+)' + plusRowTail + '(?:\\r?\\n\\2' + plusRowTail + ')*)', 'm'),
+                + plusRowAbove + '\\1\\2' + plusRowTail + '(?:\\r?\\n\\1\\2' + plusRowTail + ')*'
+                + '|' + plusRowOnMarker + '([ \\t]+)' + plusRowTail + '(?:\\r?\\n\\3' + plusRowTail + ')*)', 'm'),
             greedy: true,
             inside: Object.assign({
                 'code': /(?!)/,
@@ -2795,6 +2810,35 @@
             Prism.languages.carve['definition-list'].inside,
             pick(['comment'].concat(keys.slice(keys.indexOf('math'))))
         );
+    }
+
+    // A `+` behind a quote prefix reads the quoted lines above it at the same
+    // prefix (group 1): a lone `+` as at the top level, a `+ ... |` line only
+    // directly under a quoted row. Ahead of the quote-line rule, which tokenizes
+    // each line alone.
+    {
+        const quotePrefix = /^(?<![^\r\n])\uFEFF?[ \t]*>(?: ?>)*/m;
+        Prism.languages.carve.blockquote.unshift({
+            pattern: RegExp('^(?<![^\\r\\n])([ \\t]*(?:>[ \\t]?)+)(?=\\+[ \\t]*$(?![^\\r\\n]))' + plusAttachesInQuote
+                + '\\+[ \\t]*(?:\\r?\\n\\1\\+[ \\t]*(?![^\\r\\n]))*$(?![^\\r\\n])', 'm'),
+            greedy: true,
+            inside: {
+                'punctuation': quotePrefix,
+                'continuation-marker': { pattern: /\+/, inside: continuationInside },
+            },
+        }, {
+            pattern: RegExp('^(?<![^\\r\\n])(?=[ \\t]*(?:>[ \\t]?)+[ \\t]*\\+[^\\r\\n]*\\|[ \\t]*$(?![^\\r\\n]))'
+                + '(?<=(?<![^\\n])[^\\n>]*((?:>[ \\t]?)+)(?:' + plusListMarker + ' +)*(?!' + plusRowSeparator + ')' + plusRowLine + ')'
+                + '[ \\t]*\\1[ \\t]*' + plusRowTail + '(?:\\r?\\n[ \\t]*\\1[ \\t]*' + plusRowTail + ')*', 'm'),
+            greedy: true,
+            inside: {
+                'punctuation': quotePrefix,
+                'table-continuation': {
+                    pattern: /\+[^\r\n]*\|[ \t]*$(?![^\r\n])/m,
+                    inside: Prism.languages.carve['table-continuation'].inside,
+                },
+            },
+        });
     }
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).

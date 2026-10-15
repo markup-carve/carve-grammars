@@ -33,7 +33,11 @@
   },
   {
     "type": "blockquote",
-    "text": " +"
+    "text": " "
+  },
+  {
+    "type": "blockquote>continuation-marker>punctuation",
+    "text": "+"
   },
   {
     "type": "text",

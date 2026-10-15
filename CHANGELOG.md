@@ -27,6 +27,10 @@ All notable changes to `carve-grammars` are documented here.
   only directly under a row, as carve reads them. Elsewhere, such as at the
   start of a document, under a heading or table, or after a paragraph, both
   stay text (#721).
+- Prism: a `+` line behind a `>` quote prefix is read the same way against
+  the quoted lines above it, so a quoted `+` row continues the quoted row
+  above it, and an indented `+` row continues an indented table only inside a
+  list item or description (#PRNUM).
 
 ## [0.1.15] - 2026-10-14
 
