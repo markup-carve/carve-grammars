@@ -30,7 +30,7 @@ All notable changes to `carve-grammars` are documented here.
 - Prism: a `+` line behind a `>` quote prefix is read the same way against
   the quoted lines above it, so a quoted `+` row continues the quoted row
   above it, and an indented `+` row continues an indented table only inside a
-  list item or description (#PRNUM).
+  list item or description (#723).
 
 ## [0.1.15] - 2026-10-14
 
