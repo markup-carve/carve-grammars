@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-10-15
+
 ### Fixes
 
 - TextMate: a closed code fence or `%%%` comment inside a `:::` container
@@ -11,15 +13,15 @@ All notable changes to `carve-grammars` are documented here.
   ends at its own closer instead of the rest of the document showing as code.
   A nested container of the same width closes before its parent, and a bold
   run left open ends at a bare colon line. An unclosed fence in a container
-  runs to the end of the document again, as it did before 0.1.15.
+  runs to the end of the document again, as it did before 0.1.15 (#720).
 - highlight.js: a closed code fence longer than 32 KB ends at its closer
-  instead of painting the rest of the document as code (#711).
+  instead of painting the rest of the document as code (#711, #713).
 - Prism: a long run of spaces in a table cell or before an attribute block no
-  longer takes quadratic time.
+  longer takes quadratic time (#714).
 - Prism: a line holding many `%%` runs is read once per line instead of once
   per run, so it no longer takes quadratic time. A table row starting with a
   byte order mark keeps its cell comments, and a `|` line that is not a table
-  row ends its comment at the line end, as the parser does.
+  row ends its comment at the line end, as the parser does (#715).
 - Prism: a lone `+` line is a continuation marker only under an open list
   item, footnote, quote or description, and a `+ ... |` line is a table row
   only directly under a row, as carve reads them. Elsewhere, such as at the
