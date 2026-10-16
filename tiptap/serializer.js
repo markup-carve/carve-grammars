@@ -2311,7 +2311,7 @@ function escapeTitle(title) {
  */
 function serializeAttributes(attrs, skip = [], placeholderClass = false) {
     if (!attrs) return '';
-    const ignore = new Set(['id', 'class', 'carveKeyValues', 'carveAttrOrder', ...skip]);
+    const ignore = new Set(['id', 'class', 'carveKeyValues', 'carveAttrOrder', 'carvePos', ...skip]);
     // Each entry is [slot, token]: the SLOT is the name `carveAttrOrder` uses
     // (`#id`, `.class`, or the key), the token is what gets written. Collected
     // in canonical order first, then replayed in the authored one where the

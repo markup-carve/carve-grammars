@@ -1,5 +1,11 @@
 # Development
 
+For an end-to-end Tiptap 3 JSON check against a local `carve-php` checkout, run
+`npm run test:cross-runtime -- /path/to/carve-php`. The check mounts both
+bridges' JSON in CarveKit, converts it in the other runtime, and fails on
+reported losses or changed Carve content. Install the PHP checkout's Composer
+dependencies first.
+
 ## Tests
 
 ```bash

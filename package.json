@@ -14,6 +14,7 @@
     "test:roundtrip": "node tests/roundtrip-test.js",
     "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js",
     "test:schema-map": "node tests/schema-map-test.js && node tests/schema-attributes-test.js",
+    "test:cross-runtime": "node scripts/cross-runtime-check.mjs",
     "test:authored-spelling": "node tests/authored-spelling-test.js",
     "perf:sweep": "node scripts/scan-superlinear.mjs",
     "fence-languages": "node scripts/generate-fence-languages.mjs"
