@@ -763,7 +763,11 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 - Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`, `CarveUnsupported`.
 
 Both serializers throw by default on a node, mark, or document attribute outside CarveKit's
-wire vocabulary. Check stored JSON before mounting it in an editor: Tiptap can
+wire vocabulary. They also reject non-null custom attributes on delimiter marks
+such as bold and italic, which have no Carve attribute run. This includes the
+`color` attribute added by Tiptap Highlight with `multicolor: true`. Empty code
+marks cannot carry attributes either. Check stored JSON before mounting it in an
+editor: Tiptap can
 replace invalid initial content with an empty paragraph, leaving the serializer
 no way to recover what the original JSON held. `serializeToCarveWithReport`
 reports losses among recognized constructs; it does not turn foreign JSON into

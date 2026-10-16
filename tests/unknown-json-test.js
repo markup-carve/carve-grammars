@@ -9,6 +9,10 @@ for (const [name, input, expected] of [
     ['unknown block', doc([{ type: 'alien', content: [text('lost')] }]), /node at \$\.content\[0\]: alien/],
     ['unknown inline', doc([paragraph([{ type: 'alienInline', text: 'lost' }])]), /node at \$\.content\[0\]\.content\[0\]: alienInline/],
     ['unknown mark', doc([paragraph([text('kept', [{ type: 'alienMark' }])])]), /mark at \$\.content\[0\]\.content\[0\]\.marks\[0\]: alienMark/],
+    ['unspellable bold attribute', doc([paragraph([text('kept', [{ type: 'bold', attrs: { applicationData: 'lost' } }])])]), /mark attribute at \$\.content\[0\]\.content\[0\]\.marks\[0\]\.attrs\.applicationData: bold/],
+    ['unspellable false attribute', doc([paragraph([text('kept', [{ type: 'italic', attrs: { applicationFlag: false } }])])]), /mark attribute at \$\.content\[0\]\.content\[0\]\.marks\[0\]\.attrs\.applicationFlag: italic/],
+    ['unspellable empty-mark attribute', doc([paragraph([{ type: 'carveEmptyMark', attrs: { markType: 'italic', markAttrs: { applicationData: 'lost' } } }])]), /mark attribute at \$\.content\[0\]\.content\[0\]\.attrs\.markAttrs\.applicationData: italic/],
+    ['unspellable empty-code attribute', doc([paragraph([{ type: 'carveEmptyMark', attrs: { markType: 'code', markAttrs: { applicationData: 'lost' } } }])]), /mark attribute at \$\.content\[0\]\.content\[0\]\.attrs\.markAttrs\.applicationData: code/],
     ['unknown document attribute', doc([paragraph([text('kept')])], { applicationData: 'lost' }), /document attribute: applicationData/],
     ['unknown empty mark', doc([paragraph([{ type: 'carveEmptyMark', attrs: { markType: 'alienMark' } }])]), /empty mark at \$\.content\[0\]\.content\[0\]: alienMark/],
     ['unknown substitution child', doc([paragraph([{ type: 'carveSubstitution', attrs: { old: [{ type: 'alien' }], new: [text('new')] } }])]), /node at \$\.content\[0\]\.content\[0\]\.attrs\.old\[0\]: alien/],
@@ -18,6 +22,8 @@ for (const [name, input, expected] of [
 }
 
 assert.equal(serializeToCarve(doc([paragraph([text('kept', [{ type: 'bold' }])])])), '*kept*');
+assert.equal(serializeToCarve(doc([paragraph([text('kept', [{ type: 'bold', attrs: { carveBoldItalic: null } }])])])), '*kept*');
+assert.equal(serializeToCarve(doc([paragraph([text('kept', [{ type: 'bold', attrs: { carveBoldItalic: true } }])])])), '*kept*');
 assert.equal(serializeToCarve(doc([paragraph([text('kept')])], { carveSource: null })), 'kept');
 const foreign = doc([
     paragraph([text('visible', [{ type: 'alienMark' }])]),

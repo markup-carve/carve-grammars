@@ -45,12 +45,25 @@ const SERIALIZABLE_MARKS = new Set([
     'carveSmallCaps', 'carveSpan', 'code', 'highlight', 'italic', 'link', 'strike',
     'subscript', 'superscript', 'underline',
 ]);
+// Delimiter marks have no Carve attribute run. Their editor defaults are null,
+// while bold's carveBoldItalic flag records the author's combined delimiter.
+const MARKS_WITHOUT_ATTRIBUTE_RUN = new Set([
+    'bold', 'italic', 'highlight', 'strike', 'underline', 'subscript',
+    'superscript', 'carveCriticComment', 'carveSmallCaps',
+]);
 const DOCUMENT_METADATA = new Set([
     'carveSource', 'carveFingerprint', 'carveSourceLayout',
     'carveProjectedSource', 'carveSourceAppendable',
 ]);
 
 function assertSerializableDocument(doc) {
+    function assertMarkAttributes(type, attrs, path) {
+        if (!MARKS_WITHOUT_ATTRIBUTE_RUN.has(type)) return;
+        for (const [key, value] of Object.entries(attrs || {})) {
+            if (value == null || (type === 'bold' && key === 'carveBoldItalic')) continue;
+            throw new TypeError(`Cannot serialize ProseMirror mark attribute at ${path}.${key}: ${type}`);
+        }
+    }
     function visit(node, path) {
         if (!node || !SERIALIZABLE_NODES.has(node.type)) {
             throw new TypeError(`Cannot serialize ProseMirror node at ${path}: ${String(node?.type)}`);
@@ -66,9 +79,20 @@ function assertSerializableDocument(doc) {
             if (!mark || !SERIALIZABLE_MARKS.has(mark.type)) {
                 throw new TypeError(`Cannot serialize ProseMirror mark at ${path}.marks[${index}]: ${String(mark?.type)}`);
             }
+            assertMarkAttributes(mark.type, mark.attrs, `${path}.marks[${index}].attrs`);
         }
         if (node.type === 'carveEmptyMark' && !SERIALIZABLE_MARKS.has(node.attrs?.markType)) {
             throw new TypeError(`Cannot serialize empty mark at ${path}: ${String(node.attrs?.markType)}`);
+        }
+        if (node.type === 'carveEmptyMark') {
+            assertMarkAttributes(node.attrs.markType, node.attrs.markAttrs, `${path}.attrs.markAttrs`);
+            if (node.attrs.markType === 'code') {
+                for (const [key, value] of Object.entries(node.attrs.markAttrs || {})) {
+                    if (value != null) {
+                        throw new TypeError(`Cannot serialize ProseMirror mark attribute at ${path}.attrs.markAttrs.${key}: code`);
+                    }
+                }
+            }
         }
         (node.content || []).forEach((child, index) => visit(child, `${path}.content[${index}]`));
         if (node.type === 'carveSubstitution') {
