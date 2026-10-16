@@ -301,9 +301,9 @@ function serializeMention(node, report) {
  * each attribute or node that is gone, `degraded` each name whose text survives
  * as literal text and each field carried in a lesser form.
  */
-export function serializeToCarveWithReport(doc) {
+export function serializeToCarveWithReport(doc, options = {}) {
     const report = {};
-    const source = serializeToCarve(doc, { report });
+    const source = serializeToCarve(doc, { ...options, report });
     return { source, dropped: report.dropped || {}, degraded: report.degraded || {} };
 }
 
@@ -369,7 +369,11 @@ function pruneEmptyListItems(node) {
 }
 
 export function serializeToCarve(doc, options = {}) {
-    assertSerializableDocument(doc);
+    const unsupported = options.unsupported ?? 'throw';
+    if (unsupported !== 'throw' && unsupported !== 'omit') {
+        throw new TypeError(`Unsupported serializer policy: ${String(unsupported)}`);
+    }
+    if (unsupported === 'throw') assertSerializableDocument(doc);
     const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
     const preservedFingerprint = doc?.attrs?.carveFingerprint;

@@ -19,4 +19,13 @@ for (const [name, input, expected] of [
 
 assert.equal(serializeToCarve(doc([paragraph([text('kept', [{ type: 'bold' }])])])), '*kept*');
 assert.equal(serializeToCarve(doc([paragraph([text('kept')])], { carveSource: null })), 'kept');
+const foreign = doc([
+    paragraph([text('visible', [{ type: 'alienMark' }])]),
+    { type: 'alien', content: [text('lost')] },
+], { applicationData: 'ignored' });
+assert.equal(serializeToCarve(foreign, { unsupported: 'omit' }), 'visible');
+assert.equal(serializeToCarveWithReport(foreign, { unsupported: 'omit' }).source, 'visible');
+assert.equal(serializeToCarve(doc([paragraph([text('before'), { type: 'alienInline', text: 'lost' }, text('after')])]),
+    { unsupported: 'omit' }), 'beforeafter');
+assert.throws(() => serializeToCarve(foreign, { unsupported: 'ignore' }), /Unsupported serializer policy/);
 console.log('unknown ProseMirror JSON fails closed');

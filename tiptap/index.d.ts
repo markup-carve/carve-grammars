@@ -67,8 +67,13 @@ export function astToProseMirror(
   options?: CarveLoaderOptions & { source?: string },
 ): JSONContent;
 
-export function serializeToCarve(document: JSONContent): string;
-export function serializeToCarveWithReport(document: JSONContent): {
+export interface CarveSerializerOptions {
+  /** Throw on foreign JSON by default. Omit restores the former lossy behavior. */
+  unsupported?: 'throw' | 'omit';
+}
+
+export function serializeToCarve(document: JSONContent, options?: CarveSerializerOptions): string;
+export function serializeToCarveWithReport(document: JSONContent, options?: CarveSerializerOptions): {
   source: string;
   /** Attributes or nodes the Carve source does not carry. */
   dropped: Record<string, string>;
