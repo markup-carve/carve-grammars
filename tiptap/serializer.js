@@ -25,6 +25,69 @@
  */
 import { diff3Merge } from 'node-diff3';
 
+const SERIALIZABLE_NODES = new Set([
+    'blockquote', 'bulletList', 'carveAbbreviationDefinition', 'carveBlockExtension',
+    'carveCaption', 'carveCitation', 'carveCitationDefinition', 'carveComment',
+    'carveCommentInline', 'carveCrossref', 'carveDirective', 'carveDiv', 'carveEmbed',
+    'carveEmptyMark', 'carveFigure', 'carveFigureGroup', 'carveFootnote',
+    'carveFootnoteDefinition', 'carveFrontmatter', 'carveInlineExtension',
+    'carveInlineNote', 'carveLineBlock', 'carveLinkRefDef', 'carveLiteral', 'carveMath',
+    'carveMention', 'carveRawBlock', 'carveRawInline', 'carveRuby', 'carveSection',
+    'carveSubstitution', 'carveSymbol', 'carveTab', 'carveTabSet', 'carveTag',
+    'carveUnsupported', 'carveUnsupportedInline', 'codeBlock',
+    'definitionDescription', 'definitionList', 'definitionTerm', 'doc', 'hardBreak',
+    'heading', 'horizontalRule', 'image', 'listItem', 'mention', 'orderedList',
+    'paragraph', 'table', 'tableCell', 'tableHeader', 'tableRow', 'taskItem',
+    'taskList', 'text',
+]);
+const SERIALIZABLE_MARKS = new Set([
+    'bold', 'carveAbbreviation', 'carveCriticComment', 'carveDelete', 'carveInsert',
+    'carveSmallCaps', 'carveSpan', 'code', 'highlight', 'italic', 'link', 'strike',
+    'subscript', 'superscript', 'underline',
+]);
+const DOCUMENT_METADATA = new Set([
+    'carveSource', 'carveFingerprint', 'carveSourceLayout',
+    'carveProjectedSource', 'carveSourceAppendable',
+]);
+
+function assertSerializableDocument(doc) {
+    function visit(node, path) {
+        if (!node || !SERIALIZABLE_NODES.has(node.type)) {
+            throw new TypeError(`Cannot serialize ProseMirror node at ${path}: ${String(node?.type)}`);
+        }
+        if (node.type === 'doc') {
+            for (const key of Object.keys(node.attrs || {})) {
+                if (!DOCUMENT_METADATA.has(key)) {
+                    throw new TypeError(`Cannot serialize ProseMirror document attribute: ${key}`);
+                }
+            }
+        }
+        for (const [index, mark] of (node.marks || []).entries()) {
+            if (!mark || !SERIALIZABLE_MARKS.has(mark.type)) {
+                throw new TypeError(`Cannot serialize ProseMirror mark at ${path}.marks[${index}]: ${String(mark?.type)}`);
+            }
+        }
+        if (node.type === 'carveEmptyMark' && !SERIALIZABLE_MARKS.has(node.attrs?.markType)) {
+            throw new TypeError(`Cannot serialize empty mark at ${path}: ${String(node.attrs?.markType)}`);
+        }
+        (node.content || []).forEach((child, index) => visit(child, `${path}.content[${index}]`));
+        if (node.type === 'carveSubstitution') {
+            for (const side of ['old', 'new']) {
+                (node.attrs?.[side] || []).forEach((child, index) => visit(child, `${path}.attrs.${side}[${index}]`));
+            }
+        }
+        if (node.type === 'carveRuby') {
+            (node.attrs?.pairs || []).forEach((pair, pairIndex) => {
+                for (const side of ['base', 'annotation']) {
+                    (pair?.[side] || []).forEach((child, index) => visit(child,
+                        `${path}.attrs.pairs[${pairIndex}].${side}[${index}]`));
+                }
+            });
+        }
+    }
+    visit(doc, '$');
+}
+
 /**
  * Serialize a Tiptap/ProseMirror JSON document to Carve markup
  *
@@ -306,6 +369,7 @@ function pruneEmptyListItems(node) {
 }
 
 export function serializeToCarve(doc, options = {}) {
+    assertSerializableDocument(doc);
     const report = options.report && typeof options.report === 'object' ? options.report : null;
     const preservedSource = doc?.attrs?.carveSource;
     const preservedFingerprint = doc?.attrs?.carveFingerprint;

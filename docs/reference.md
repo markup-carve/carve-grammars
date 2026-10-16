@@ -762,6 +762,13 @@ graphviz/d2 against a self-hosted server), `onError`, `fetch`.
 - `CarveKit` - the bundled Tiptap extension set.
 - Individual extensions: `CarveInsert`, `CarveDelete`, `CarveCriticComment`, `CarveDiv`, `CarveSpan`, `CarveFootnote`, `CarveFootnoteDefinition`, `CarveMath`, `CarveEmbed`, `CarveAbbreviation`, `CarveDefinitionList`, `CarveUnsupported`.
 
+Both serializers throw on a node, mark, or document attribute outside CarveKit's
+wire vocabulary. Check stored JSON before mounting it in an editor: Tiptap can
+replace invalid initial content with an empty paragraph, leaving the serializer
+no way to recover what the original JSON held. `serializeToCarveWithReport`
+reports losses among recognized constructs; it does not turn foreign JSON into
+Carve source.
+
 ## Schema map (for other engines)
 
 `tiptap/schema-map.json` publishes the Carve-to-ProseMirror vocabulary as data, so
