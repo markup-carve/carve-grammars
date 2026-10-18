@@ -4,6 +4,29 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-10-18
+
+### Breaking
+
+- Tiptap export rejects nodes, marks and document attributes that Carve cannot
+  write. Pass `unsupported: "omit"` to retain the previous omission behavior
+  (#730). Mark attributes without a Carve spelling follow the same rule (#731).
+
+### Fixes
+
+- Prism stops an unclosed fence at its nested container's closer (#727).
+- Prism and highlight.js keep an unclosed fence from swallowing a following
+  comment-only list item (#728).
+- TextMate, Prism and highlight.js recognize empty link destinations and
+  reference definitions (#726).
+- Tiptap export omits the internal `carvePos` attribute (#729).
+
+### Changed
+
+- Pin the Carve 0.1.10 spec and carve-js 0.1.12. The corpus snapshots and
+  conversion ledgers cover the new syntax, and an empty CSV or TSV table opens
+  with an editable placeholder cell (#725).
+
 ## [0.1.16] - 2026-10-15
 
 ### Fixes
