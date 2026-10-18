@@ -52,7 +52,8 @@ function check(engineName, tokenize) {
     assertInventory(`${engineName} sweep`, applicable.length);
 
     for (const construct of applicable) {
-        const { name, sample, attr } = construct;
+        const { name, sample } = construct;
+        const attr = construct.engineAttr?.[engineName] ?? construct.attr;
         const payload = construct.enginePayload ?? construct.payload;
         const tokens = tokenize(sample);
         // every token whose text overlaps the payload

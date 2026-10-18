@@ -67,7 +67,7 @@ const positives = CONSTRUCTS.filter(c => !c.skip?.textmate)
 const skipped = CONSTRUCTS.filter(c => c.skip?.textmate)
 assertInventory('textmate sweep', positives.length)
 
-for (const { name, sample, payload, textmate } of positives) {
+for (const { name, sample, payload, textmate, textmateNot } of positives) {
   const { tokens } = hl.codeToTokens(sample, {
     lang: 'carve',
     theme: 'github-light',
@@ -78,7 +78,8 @@ for (const { name, sample, payload, textmate } of positives) {
   for (const tk of flat) {
     const scopes = (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName))
     scopes.forEach(s => allScopes.add(s))
-    if ((tk.content ?? '').includes(payload) && scopes.some(s => s.includes(textmate))) {
+    if ((tk.content ?? '').includes(payload) && scopes.some(s => s.includes(textmate))
+        && (!textmateNot || !scopes.some(s => s.includes(textmateNot)))) {
       found = true
       break
     }

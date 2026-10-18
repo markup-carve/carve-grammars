@@ -2833,7 +2833,20 @@
           "name": "punctuation.definition.attributes.carve"
         },
         "5": {
-          "name": "meta.attributes.carve"
+          "name": "meta.attributes.carve",
+          "patterns": [
+            {
+              "match": "\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'"
+            },
+            {
+              "name": "support.constant.attribute.carve",
+              "match": "(?<=[{\\s])kbd(?![\\w=-])"
+            },
+            {
+              "name": "support.constant.attribute.carve",
+              "match": "(?<=[{\\s])(?:abbr|time)(?==)"
+            }
+          ]
         },
         "6": {
           "name": "punctuation.definition.attributes.carve"
