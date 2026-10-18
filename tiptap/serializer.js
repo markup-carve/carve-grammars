@@ -2076,6 +2076,7 @@ function mergeAuthoredSource(authored, baseline, edited, appendable = null) {
     // Handle them without diff alignment: repeated punctuation can otherwise
     // make a character diff align an untouched delimiter with the new text and
     // needlessly replace the author's spelling in the original document.
+    if (!baseline && edited && appendable) return authored.trimEnd() + '\n\n' + edited;
     const appended = edited.startsWith(baseline) ? edited.slice(baseline.length) : null;
     const baselineClose = baseline.match(/(?:^|\n)([ \t]*(?:`{3,}|~{3,}|:{3,}))$/)?.[1];
     // The loader measured this against the engine when it could; the closing
@@ -2083,7 +2084,8 @@ function mergeAuthoredSource(authored, baseline, edited, appendable = null) {
     const authoredHasClose = typeof appendable === 'boolean'
         ? appendable
         : !baselineClose || authored.trimEnd().endsWith(baselineClose);
-    if (appended?.startsWith('\n\n') && authoredHasClose) return authored.trimEnd() + appended;
+    const appendedBlocks = appended?.match(/^[ \t]*(\n\n[\s\S]*)$/)?.[1];
+    if (appendedBlocks && authoredHasClose) return authored.trimEnd() + appendedBlocks;
     if (edited.endsWith(baseline)) return edited.slice(0, -baseline.length) + authored;
 
     const characters = Math.max(authored.length, baseline.length, edited.length) <= 20_000;
