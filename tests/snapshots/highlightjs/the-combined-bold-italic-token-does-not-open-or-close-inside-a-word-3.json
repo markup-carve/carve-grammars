@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "2"
+  },
+  {
+    "scope": "strong",
+    "text": "/*a*/"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "strong",
+    "text": "/*b*/"
+  },
+  {
+    "scope": null,
+    "text": "3\n"
+  }
+]

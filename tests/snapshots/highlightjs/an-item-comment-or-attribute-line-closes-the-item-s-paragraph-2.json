@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{#x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\ncode\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nafter "
+  },
+  {
+    "scope": "strong",
+    "text": "*b*"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

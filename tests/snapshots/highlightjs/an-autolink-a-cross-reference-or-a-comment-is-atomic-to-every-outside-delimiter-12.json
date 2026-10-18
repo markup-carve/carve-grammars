@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[a "
+  },
+  {
+    "scope": "link>link",
+    "text": "</#x](u)>"
+  },
+  {
+    "scope": "link",
+    "text": " b](v)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

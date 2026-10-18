@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "attr",
+    "text": "{table aligns=left,right,right}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "csv"
+  },
+  {
+    "scope": "code",
+    "text": "\nItem,Qty,Price\nApple,12,0.40\n\"Pear, green\",3,0.55\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "^ Stock on hand"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

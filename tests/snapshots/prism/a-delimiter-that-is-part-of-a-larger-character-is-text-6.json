@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*x*"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*️⃣ *y*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

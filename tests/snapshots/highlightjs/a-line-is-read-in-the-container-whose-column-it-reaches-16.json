@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
+  },
+  {
+    "scope": "meta",
+    "text": " ---"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

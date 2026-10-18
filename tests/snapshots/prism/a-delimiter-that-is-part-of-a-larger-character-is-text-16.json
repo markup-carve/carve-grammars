@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "comment",
+    "text": "{% y %}"
+  },
+  {
+    "type": "text",
+    "text": "b "
+  },
+  {
+    "type": "comment",
+    "text": "{%ाx%}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

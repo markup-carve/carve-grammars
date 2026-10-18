@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "{#a </#x#}"
+  },
+  {
+    "scope": null,
+    "text": "> b#}\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "critic-comment>comment",
+    "text": "{#️⃣ x#}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "critic-comment>comment",
+    "text": "{#y#}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

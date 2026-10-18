@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n  : para\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " li\n"
+  }
+]

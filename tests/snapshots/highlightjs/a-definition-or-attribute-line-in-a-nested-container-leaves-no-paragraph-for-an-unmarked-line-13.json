@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> para"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > [^f]: n"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
+  }
+]

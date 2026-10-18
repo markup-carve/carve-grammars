@@ -19,7 +19,7 @@
     "textmate": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-10-14",
+      "measured": "2026-10-18",
       "gapTicket": "#307",
       "constructs": {
         "heading": {
@@ -62,10 +62,15 @@
           "evidence": "definition_list",
           "payload": "parsed"
         },
-        "table": {
+        "pipe_table": {
           "status": "IMPLEMENTED",
           "evidence": "table_row",
           "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "#307",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -397,7 +402,7 @@
     "prism": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-10-14",
+      "measured": "2026-10-18",
       "gapTicket": "#308",
       "constructs": {
         "heading": {
@@ -440,10 +445,15 @@
           "evidence": "definition-list",
           "payload": "parsed"
         },
-        "table": {
+        "pipe_table": {
           "status": "IMPLEMENTED",
           "evidence": "table",
           "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "#308",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -775,7 +785,7 @@
     "highlightjs": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-10-14",
+      "measured": "2026-10-18",
       "gapTicket": "#317",
       "constructs": {
         "heading": {
@@ -818,10 +828,15 @@
           "evidence": "DEFINITION_TERM",
           "payload": "parsed"
         },
-        "table": {
+        "pipe_table": {
           "status": "IMPLEMENTED",
           "evidence": "TABLE_ROW",
           "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "#317",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -1153,7 +1168,7 @@
     "tiptap": {
       "repo": "markup-carve/carve-grammars",
       "commit": "this repository",
-      "measured": "2026-10-14",
+      "measured": "2026-10-18",
       "gapTicket": "#310",
       "note": "ZERO HERE MEANT NO SCHEMA CHANGE, and the reasoning is worth keeping because the number does not carry it (carve-grammars#310). Nineteen rows were red and none of them was a missing feature. Eight are the smart-typography family, UNSUPPORTED for the reason tiptap/schema-map.json's own `unmapped` section already carried: the engine resolves the source spelling to the resolved character before the bridge sees it, so a node modelling the result would reparse as that character and lose the spelling. The other eleven are folds of what the engine actually emits - all three link spellings arrive as a `link` and all three image spellings as an `image`, the local hard-break block as a `div` with a class where the line block has a type of its own, the braced comment as the one `comment` node, the combined bold-italic spelling as an `emphasis` mark inside a `strong`, and each braced emphasis as the bare one's mark. Nothing was implemented for this surface; the probe was taught to see what was there.",
       "constructs": {
@@ -1197,10 +1212,15 @@
           "evidence": "definitionList",
           "payload": "parsed"
         },
-        "table": {
+        "pipe_table": {
           "status": "IMPLEMENTED",
           "evidence": "table",
           "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "#310",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -1576,11 +1596,6 @@
           "evidence": "definition_list",
           "payload": "parsed"
         },
-        "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "table",
-          "payload": "parsed"
-        },
         "line_block": {
           "status": "IMPLEMENTED",
           "evidence": "line_block_marker",
@@ -1905,6 +1920,16 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "table",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/tree-sitter-carve#245",
+          "payload": "none"
         }
       }
     },
@@ -1951,11 +1976,6 @@
           "payload": "parsed"
         },
         "definition_list": {
-          "status": "GAP",
-          "ticket": "markup-carve/vscode-carve#150",
-          "payload": "none"
-        },
-        "table": {
           "status": "GAP",
           "ticket": "markup-carve/vscode-carve#150",
           "payload": "none"
@@ -2284,6 +2304,16 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
+        },
+        "pipe_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/vscode-carve#150",
+          "payload": "none"
         }
       }
     },
@@ -2333,11 +2363,6 @@
           "status": "GAP",
           "ticket": "markup-carve/intellij-carve#97",
           "payload": "none"
-        },
-        "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "tables",
-          "payload": "parsed"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -2663,6 +2688,16 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "tables",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/intellij-carve#97",
+          "payload": "none"
         }
       }
     },
@@ -2710,11 +2745,6 @@
         "definition_list": {
           "status": "IMPLEMENTED",
           "evidence": "markup.list.definition.carve",
-          "payload": "parsed"
-        },
-        "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "tables",
           "payload": "parsed"
         },
         "line_block": {
@@ -3041,6 +3071,16 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "tables",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/sublime-carve#31",
+          "payload": "none"
         }
       }
     },
@@ -3088,11 +3128,6 @@
         "definition_list": {
           "status": "IMPLEMENTED",
           "evidence": "carveDefTerm",
-          "payload": "parsed"
-        },
-        "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "carveTable",
           "payload": "parsed"
         },
         "line_block": {
@@ -3419,6 +3454,16 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "carveTable",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/vim-carve#26",
+          "payload": "none"
         }
       }
     },
@@ -3467,11 +3512,6 @@
         "definition_list": {
           "status": "IMPLEMENTED",
           "evidence": "Definition list: :: term  /  :  definition",
-          "payload": "parsed"
-        },
-        "table": {
-          "status": "IMPLEMENTED",
-          "evidence": "Table.",
           "payload": "parsed"
         },
         "line_block": {
@@ -3797,6 +3837,16 @@
         "soft_break": {
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
+          "payload": "none"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "Table.",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         }
       }

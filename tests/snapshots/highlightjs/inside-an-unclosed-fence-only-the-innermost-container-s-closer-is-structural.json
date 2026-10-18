@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: outer"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::: inner"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\ncode\n:::\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\nafter "
+  },
+  {
+    "scope": "strong",
+    "text": "*b*"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

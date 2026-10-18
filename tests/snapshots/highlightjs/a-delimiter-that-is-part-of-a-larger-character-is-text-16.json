@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "comment",
+    "text": "{% y %}"
+  },
+  {
+    "scope": null,
+    "text": "b "
+  },
+  {
+    "scope": "comment",
+    "text": "{%ाx%}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

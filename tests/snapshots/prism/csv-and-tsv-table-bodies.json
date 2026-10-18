@@ -1,0 +1,62 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "table "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "aligns"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "left,right,right"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "csv"
+  },
+  {
+    "type": "code-block",
+    "text": "\nItem,Qty,Price\nApple,12,0.40\n\"Pear, green\",3,0.55\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Stock on hand"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

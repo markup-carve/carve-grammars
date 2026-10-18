@@ -1,0 +1,34 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+a "
+  },
+  {
+    "type": "inserted>inserted>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "inserted>inserted>url>link-text",
+    "text": "x+}"
+  },
+  {
+    "type": "inserted>inserted>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "inserted>inserted>url",
+    "text": "u"
+  },
+  {
+    "type": "inserted>inserted>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": " b+}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

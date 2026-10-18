@@ -856,6 +856,13 @@ function inlinePlainText(nodes) {
 
 function convertTable(node, ctx) {
     const table = withSeparatorWidths(convertTableCore(node, ctx), node);
+    if (!(node.rows || []).some((row) => (row.cells || []).length)) {
+        // Tiptap's table requires a cell to mount. The source envelope keeps
+        // the authored empty table until the user edits this placeholder.
+        table.content = [{ type: 'tableRow', content: [
+            { type: 'tableCell', content: [{ type: 'paragraph' }] },
+        ] }];
+    }
     if (node.caption) {
         return {
             type: 'carveFigure',

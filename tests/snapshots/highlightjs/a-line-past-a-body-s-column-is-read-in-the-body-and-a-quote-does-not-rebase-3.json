@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " d\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\nx\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a "
+  },
+  {
+    "scope": "deletion>link",
+    "text": "<https://x~>"
+  },
+  {
+    "scope": "deletion",
+    "text": "y"
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "z b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

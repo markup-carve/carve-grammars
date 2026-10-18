@@ -1,0 +1,54 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^p]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^c]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^c]"
+  },
+  {
+    "type": "text",
+    "text": ": - para\n"
+  },
+  {
+    "type": "title>important",
+    "text": "   # H"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

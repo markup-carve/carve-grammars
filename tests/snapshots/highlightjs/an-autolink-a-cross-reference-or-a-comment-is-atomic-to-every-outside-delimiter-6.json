@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{-a "
+  },
+  {
+    "scope": "deletion>comment",
+    "text": "{#x-}#}"
+  },
+  {
+    "scope": "deletion",
+    "text": " b-}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^p]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^c]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^c]:"
+  },
+  {
+    "scope": null,
+    "text": " - para\n"
+  },
+  {
+    "scope": "section",
+    "text": "   # H"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

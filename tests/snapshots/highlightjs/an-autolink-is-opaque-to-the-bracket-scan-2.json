@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "link",
+    "text": "[a "
+  },
+  {
+    "scope": "link>link",
+    "text": "<me@x.org>"
+  },
+  {
+    "scope": "link",
+    "text": " b](u)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

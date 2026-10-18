@@ -1,0 +1,22 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "csv"
+  },
+  {
+    "type": "code-block",
+    "text": "\na,b\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

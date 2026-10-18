@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*️⃣abc*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

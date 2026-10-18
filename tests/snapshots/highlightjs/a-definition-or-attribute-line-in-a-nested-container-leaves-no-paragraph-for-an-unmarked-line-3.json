@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [^f]:"
+  },
+  {
+    "scope": null,
+    "text": " n\n      more\nx\n"
+  }
+]

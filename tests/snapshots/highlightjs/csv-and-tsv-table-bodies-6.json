@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{table}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "csv"
+  },
+  {
+    "scope": "code",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "italic>italic",
+    "text": "/a "
+  },
+  {
+    "type": "italic>italic>bold-italic>important",
+    "text": "/*x*/"
+  },
+  {
+    "type": "text",
+    "text": " b/\n"
+  }
+]

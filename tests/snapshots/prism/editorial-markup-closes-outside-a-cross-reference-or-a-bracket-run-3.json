@@ -1,0 +1,34 @@
+[
+  {
+    "type": "deleted>deleted",
+    "text": "{-a "
+  },
+  {
+    "type": "deleted>deleted>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "deleted>deleted>url>link-text",
+    "text": "x"
+  },
+  {
+    "type": "deleted>deleted>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "deleted>deleted>url",
+    "text": "u-}"
+  },
+  {
+    "type": "deleted>deleted>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "deleted>deleted",
+    "text": " b-}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

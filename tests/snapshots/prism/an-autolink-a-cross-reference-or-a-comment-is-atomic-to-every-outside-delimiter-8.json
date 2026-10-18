@@ -1,0 +1,18 @@
+[
+  {
+    "type": "critic-comment>comment",
+    "text": "{#a </#x#}"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " b#}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

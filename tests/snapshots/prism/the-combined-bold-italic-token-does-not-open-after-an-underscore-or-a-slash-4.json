@@ -1,0 +1,18 @@
+[
+  {
+    "type": "underline>underline",
+    "text": "_"
+  },
+  {
+    "type": "underline>underline>bold-italic>important",
+    "text": "/*x*/"
+  },
+  {
+    "type": "underline>underline",
+    "text": "_"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

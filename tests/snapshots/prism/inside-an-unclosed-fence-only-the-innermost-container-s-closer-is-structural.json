@@ -1,0 +1,70 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "outer"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "inner"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "div>code-block-unclosed>code-block",
+    "text": "\ncode\n:::"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

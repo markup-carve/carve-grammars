@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " para"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "blockquote",
+    "text": " more"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% c"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n"
+  }
+]

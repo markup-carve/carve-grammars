@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{table header-rows=0}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "tsv"
+  },
+  {
+    "scope": "code",
+    "text": "\nA\tB\n^\t<x>\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

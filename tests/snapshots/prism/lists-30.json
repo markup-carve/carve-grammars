@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "setup\n\n   para\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   - "
+  },
+  {
+    "type": "text",
+    "text": "nested\n\n     deep para\n\n"
+  },
+  {
+    "type": "code-block",
+    "text": "     ```\n     a\n\n     b\n     "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "2. "
+  },
+  {
+    "type": "text",
+    "text": "build\n"
+  }
+]

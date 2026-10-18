@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a "
+  },
+  {
+    "scope": "deletion>link",
+    "text": "<https://x~>"
+  },
+  {
+    "scope": "deletion",
+    "text": "y> b~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

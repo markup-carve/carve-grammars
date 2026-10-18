@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " d\n  1. para\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "     [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\nx\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

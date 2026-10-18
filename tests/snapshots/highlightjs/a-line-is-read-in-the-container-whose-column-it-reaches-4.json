@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " - para\n    "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^p]"
+  },
+  {
+    "scope": null,
+    "text": ": n\nx\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_"
+  },
+  {
+    "scope": "emphasis>strong",
+    "text": "/*x*/"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

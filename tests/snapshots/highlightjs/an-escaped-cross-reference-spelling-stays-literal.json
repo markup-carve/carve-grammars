@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "\\<"
+  },
+  {
+    "scope": null,
+    "text": "/"
+  },
+  {
+    "scope": "symbol",
+    "text": "#id"
+  },
+  {
+    "scope": null,
+    "text": ">\n\nx "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\<"
+  },
+  {
+    "scope": null,
+    "text": "/"
+  },
+  {
+    "scope": "symbol",
+    "text": "#x"
+  },
+  {
+    "scope": null,
+    "text": "~>y> y\n"
+  }
+]

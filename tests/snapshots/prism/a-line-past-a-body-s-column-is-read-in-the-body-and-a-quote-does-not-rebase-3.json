@@ -1,0 +1,58 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": d\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "para\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "    [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

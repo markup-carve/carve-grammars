@@ -1,0 +1,18 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+a {"
+  },
+  {
+    "type": "inserted>inserted>tag>variable",
+    "text": "#x"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": "+}"
+  },
+  {
+    "type": "text",
+    "text": "#} b+}\n"
+  }
+]

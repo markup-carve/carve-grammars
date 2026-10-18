@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "blockquote",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": " [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n"
+  }
+]

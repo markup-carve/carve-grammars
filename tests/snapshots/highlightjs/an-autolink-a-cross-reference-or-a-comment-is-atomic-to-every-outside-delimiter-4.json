@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a <me@x.org"
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "y> b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "see lib"
+  },
+  {
+    "scope": "strong",
+    "text": "/*.js and src/*foo*/"
+  },
+  {
+    "scope": null,
+    "text": "bar\n"
+  }
+]

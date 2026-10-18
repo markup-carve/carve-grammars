@@ -1,0 +1,50 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " d\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "   [^f]: n"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

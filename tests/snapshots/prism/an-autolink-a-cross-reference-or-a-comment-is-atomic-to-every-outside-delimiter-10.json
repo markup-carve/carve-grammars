@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "[a "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "x]"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": " b]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

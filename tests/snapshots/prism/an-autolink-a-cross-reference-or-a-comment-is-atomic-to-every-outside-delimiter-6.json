@@ -1,0 +1,18 @@
+[
+  {
+    "type": "deleted>deleted",
+    "text": "{-a {"
+  },
+  {
+    "type": "deleted>deleted>tag>variable",
+    "text": "#x-"
+  },
+  {
+    "type": "deleted>deleted",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "#} b-}\n"
+  }
+]

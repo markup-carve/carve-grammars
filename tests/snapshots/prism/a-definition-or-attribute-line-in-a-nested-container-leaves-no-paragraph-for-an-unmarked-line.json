@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "para\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "    [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n"
+  }
+]

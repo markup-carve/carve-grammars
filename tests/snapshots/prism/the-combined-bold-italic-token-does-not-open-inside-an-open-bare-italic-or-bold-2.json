@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*a /*x*"
+  },
+  {
+    "type": "text",
+    "text": "/ b*\n"
+  }
+]

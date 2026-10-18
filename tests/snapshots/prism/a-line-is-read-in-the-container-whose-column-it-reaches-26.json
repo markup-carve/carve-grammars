@@ -1,0 +1,50 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^c]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^c]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": para\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "     >"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "para"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote",
+    "text": "   [^f]: n"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "type": "escape>constant",
+    "text": "\\<"
+  },
+  {
+    "type": "text",
+    "text": "/"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#id"
+  },
+  {
+    "type": "text",
+    "text": ">\n\nx "
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\<"
+  },
+  {
+    "type": "text",
+    "text": "/"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#x"
+  },
+  {
+    "type": "text",
+    "text": "~>y> y\n"
+  }
+]

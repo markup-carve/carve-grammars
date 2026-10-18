@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "2"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a*/"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*b*/"
+  },
+  {
+    "type": "text",
+    "text": "3\n"
+  }
+]

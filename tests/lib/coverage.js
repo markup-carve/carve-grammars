@@ -27,6 +27,28 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // New spec categories measured by the 2679-document round-trip gate.
+    'a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence',
+    'a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line',
+    'a-delimiter-that-is-part-of-a-larger-character-is-text',
+    'a-line-is-read-in-the-container-whose-column-it-reaches',
+    'a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase',
+    'a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph',
+    'a-quoted-item-comment-ends-the-quote-before-an-unclosed-fence',
+    'a-table-row-or-a-definition-under-a-paragraph-ends-it-before-an-unclosed-fence',
+    'an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter',
+    'an-autolink-is-opaque-to-the-bracket-scan',
+    'an-escaped-cross-reference-spelling-stays-literal',
+    'an-item-comment-or-attribute-line-closes-the-item-s-paragraph',
+    'an-unclosed-fence-after-an-attribute-line-in-a-container-ends-at-its-closer',
+    'an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing',
+    'an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing',
+    'csv-and-tsv-table-bodies',
+    'editorial-markup-closes-outside-a-cross-reference-or-a-bracket-run',
+    'inside-an-unclosed-fence-only-the-innermost-container-s-closer-is-structural',
+    'the-combined-bold-italic-token-does-not-open-after-an-underscore-or-a-slash',
+    'the-combined-bold-italic-token-does-not-open-inside-an-open-bare-italic-or-bold',
+    'the-combined-bold-italic-token-does-not-open-or-close-inside-a-word',
     /*
      * Spec corpus 476-495, the 20 categories the bump to carve `275425f3`
      * added. Each was classified from its OWN measured round trip over every

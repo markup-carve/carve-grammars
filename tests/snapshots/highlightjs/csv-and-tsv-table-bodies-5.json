@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{table footer-rows=1}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "csv"
+  },
+  {
+    "scope": "code",
+    "text": "\nItem,Qty\nApple,2\nTotal,2\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "d\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "para\n"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "    *"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "b"
+  },
+  {
+    "type": "text",
+    "text": "\nx\n"
+  }
+]

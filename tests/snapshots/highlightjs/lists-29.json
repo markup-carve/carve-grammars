@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item one\n\n  second para\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n  code\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > quote"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " nested\n"
+  }
+]

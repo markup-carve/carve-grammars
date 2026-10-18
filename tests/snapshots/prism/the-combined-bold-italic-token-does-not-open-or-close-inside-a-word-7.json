@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "{"
+  },
+  {
+    "type": "forced-italic>italic>bold-italic>important",
+    "text": "/*y*/"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  }
+]

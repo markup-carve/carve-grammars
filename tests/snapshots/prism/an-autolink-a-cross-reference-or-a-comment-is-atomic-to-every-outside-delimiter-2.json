@@ -1,0 +1,26 @@
+[
+  {
+    "type": "changed>important>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>important>deleted",
+    "text": "a <https://x"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>important>inserted",
+    "text": "y~>z b"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

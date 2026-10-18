@@ -1,0 +1,38 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "a </"
+  },
+  {
+    "type": "url>link-text>tag>variable",
+    "text": "#x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url",
+    "text": "u"
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " b](v)"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

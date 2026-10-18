@@ -1,0 +1,90 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "div>blockquote",
+    "text": " a"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "div>blockquote",
+    "text": " b"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "div>blockquote",
+    "text": " c"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "div>blockquote",
+    "text": " d"
+  },
+  {
+    "type": "div",
+    "text": "\n```\ncode\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": "::::"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
