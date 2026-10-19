@@ -59,7 +59,7 @@ function check(engineName, tokenize) {
         // every token whose text overlaps the payload
         const hits = tokens.filter((t) => t.text.includes(payload) || payload.includes(t.text.trim()) && t.text.trim() !== '');
         const carrying = hits.filter((t) => t.scope);
-        const covered = carrying.length > 0;
+        const covered = construct.plain || carrying.length > 0;
         const attrScoped = carrying.some((t) =>
             [t.scope, ...(t.ancestors ?? [])].some((scope) => ATTR_SCOPE.test(scope))
             && !t.ancestors?.some((scope) => scope.startsWith('language-')));
@@ -76,8 +76,8 @@ function check(engineName, tokenize) {
                 : ENGINE_SCOPES[construct.textmate]?.[engineName];
             const seen = carrying.flatMap((t) => [t.scope, ...(t.ancestors ?? [])]);
             const forbidden = construct.engineScopesNot?.[engineName] ?? [];
-            if (!expected) problem = `no expected ${engineName} scope for TextMate selector ${JSON.stringify(construct.textmate)}`;
-            else if (!expected.some((scopes) => scopes.every((scope) => seen.some((s) => s.includes(scope))))) {
+            if (!expected && !construct.plain) problem = `no expected ${engineName} scope for TextMate selector ${JSON.stringify(construct.textmate)}`;
+            else if (expected && !expected.some((scopes) => scopes.every((scope) => seen.some((s) => s.includes(scope))))) {
                 problem = `no token carries an expected scope set (${expected.map((scopes) => scopes.map(JSON.stringify).join(' + ')).join(' or ')})`;
             }
             else if (carrying.some((t) => forbidden.some((scope) => t.scope?.includes(scope)))) {

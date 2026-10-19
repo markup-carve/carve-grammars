@@ -52,7 +52,7 @@ const allScopes = new Set()
 // of every document ever written, so a mistyped selector is a check that cannot
 // fail. It has happened - a case here was written with another repo's scope
 // name and asserted nothing until the grammar was reverted and CI stayed green.
-const declaredScopes = new Set()
+const declaredScopes = new Set([grammar.scopeName])
 ;(function collect(node) {
   if (Array.isArray(node)) return node.forEach(collect)
   if (node && typeof node === 'object') {

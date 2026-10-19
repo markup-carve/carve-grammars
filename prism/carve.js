@@ -2361,6 +2361,12 @@
         // (`[x]{}` -> <span>x</span>). A bare `{}` in prose is literal text
         // (corpus 123). Must precede 'span', which would otherwise consume the
         // `]` this rule anchors on.
+        'escaped-bracket-literal': {
+            pattern: /(?=\\\[)(?<!\[(?:[^\[\]\\\n]|\\.){0,4096})(?<!(?<!\\)(?:\\\\){0,32}\\)\\\[(?:[^\[\]\\\n]|\\.)*\]\{[^{}\n]*\}/,
+            greedy: true,
+            inside: { 'escape': /\\\[/, 'bold': inline.bold, 'italic': inline.italic, 'code': /(?<!`)(`{1,2})(?!`)[^`\n]+\1(?!`)/ },
+        },
+
         'span-empty-attrs': spanEmptyAttrs,
 
         // Bracketed span with attributes: [text]{.class}

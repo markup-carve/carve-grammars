@@ -1859,6 +1859,9 @@
           "include": "#forced_strike"
         },
         {
+          "include": "#escaped_bracket_attributes"
+        },
+        {
           "include": "#attributes_empty"
         },
         {
@@ -2434,6 +2437,9 @@
               "include": "#subscript"
             },
             {
+              "include": "#escaped_bracket_attributes"
+            },
+            {
               "include": "#attributes_empty"
             },
             {
@@ -2573,6 +2579,9 @@
             },
             {
               "include": "#subscript"
+            },
+            {
+              "include": "#escaped_bracket_attributes"
             },
             {
               "include": "#attributes_empty"
@@ -2811,6 +2820,13 @@
       "name": "meta.attributes.carve",
       "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons."
     },
+    "escaped_bracket_attributes": {
+      "match": "(?<!\\\\)(?:\\\\\\\\)*(\\\\\\[)((?:[^\\[\\]\\\\\\n]|\\\\.)*)(\\])((?:\\{[^{}\\n]*\\})?)",
+      "captures": {
+        "1": { "name": "constant.character.escape.carve" },
+        "2": { "patterns": [{ "include": "#inline" }] }
+      }
+    },
     "span": {
       "comment": "Balanced bracketed span text followed by a valid attribute block. Kept ahead of links so its text receives a stable span scope rather than only the trailing attributes being visible.",
       "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
@@ -2939,6 +2955,9 @@
         },
         {
           "include": "#subscript"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
         },
         {
           "include": "#attributes_empty"
@@ -3149,6 +3168,9 @@
         },
         {
           "include": "#subscript"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
         },
         {
           "include": "#attributes_empty"

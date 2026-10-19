@@ -2588,6 +2588,12 @@
         FORCED_UNDERLINE,
         FORCED_STRIKE,
         FORCED_HIGHLIGHT,
+        {
+            begin: /(?<!\\)(?:\\\\)*\\\[(?=(?:[^\[\]\\\n]|\\.)*\]\{[^{}\n]*\})/,
+            end: /\](?:\{[^{}\n]*\})?/,
+            relevance: 0,
+            contains: [ESCAPE, STRONG, EMPHASIS, INLINE_CODE],
+        },
         ATTRIBUTE_EMPTY,
         SPAN_ATTRIBUTE,
         ATTRIBUTE,
