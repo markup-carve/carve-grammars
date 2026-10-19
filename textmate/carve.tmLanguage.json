@@ -1862,6 +1862,15 @@
           "include": "#escaped_bracket_attributes"
         },
         {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
+        },
+        {
           "include": "#attributes_empty"
         },
         {
@@ -2820,11 +2829,31 @@
       "name": "meta.attributes.carve",
       "comment": "Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons."
     },
+    "non_link_paren_attributes": {
+      "match": "(?<!\\])\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+      "captures": {
+        "1": { "patterns": [{ "include": "#inline" }] }
+      }
+    },
+    "escaped_destination_closer_attributes": {
+      "match": "(?<!\\\\)(?:\\\\\\\\)*\\\\\\]\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+      "captures": {
+        "1": { "patterns": [{ "include": "#inline" }] }
+      }
+    },
+    "escaped_closing_link_attributes": {
+      "match": "(?<!\\\\)\\[((?:[^\\[\\]\\\\\\n]|\\\\.)*)\\\\\\]\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\)\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}",
+      "captures": {
+        "1": { "patterns": [{ "include": "#inline" }] },
+        "2": { "patterns": [{ "include": "#inline" }] }
+      }
+    },
     "escaped_bracket_attributes": {
-      "match": "(?<!\\\\)(?:\\\\\\\\)*(\\\\\\[)((?:[^\\[\\]\\\\\\n]|\\\\.)*)(\\])((?:\\{[^{}\\n]*\\})?)",
+      "match": "(?<!\\\\)(?:\\\\\\\\)*(\\\\\\[)((?:[^\\[\\]\\\\\\n]|\\\\.)*)(\\])(?:\\(((?:[^()\\n]|\\([^()\\n]{0,256}\\)|\\([^()\\n]{0,256}\\([^()\\n]{0,256}\\)[^()\\n]{0,256}\\)){0,2048})\\))?((?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})?)",
       "captures": {
         "1": { "name": "constant.character.escape.carve" },
-        "2": { "patterns": [{ "include": "#inline" }] }
+        "2": { "patterns": [{ "include": "#inline" }] },
+        "4": { "patterns": [{ "include": "#inline" }] }
       }
     },
     "span": {
@@ -2958,6 +2987,15 @@
         },
         {
           "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
         },
         {
           "include": "#attributes_empty"
@@ -3171,6 +3209,15 @@
         },
         {
           "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
         },
         {
           "include": "#attributes_empty"
