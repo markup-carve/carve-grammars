@@ -2203,7 +2203,9 @@
                     // `@`, so `@shift:1@lines:1-8` is two options and never
                     // one whose value is `1@lines:1-8`. A value that needs an
                     // `@` takes the quoted form.
-                    pattern: /@[A-Za-z_][\w-]*:(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}@]+)/,
+                    // THE VALUE IS OPTIONAL: a bare `@code` (I1c) is an
+                    // option too. `@k:` with nothing after the colon is not.
+                    pattern: /@[A-Za-z_][\w-]*(?::(?:"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|[^\s}@]+)|(?![\w:-]))/,
                     inside: {
                         'include-option-name': {
                             pattern: /^(?<![^\r\n])@[A-Za-z_][\w-]*/,

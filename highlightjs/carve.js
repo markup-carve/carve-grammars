@@ -2261,9 +2261,10 @@
                 // name is a reserved word in a slot, which is what `keyword` is.
                 className: 'keyword',
                 // NO WHITESPACE REQUIRED before the `@`: the slot admits a
-                // glued option. The `:` lookahead is what keeps the name
-                // shape, now that the preceding character no longer does.
-                begin: /@[A-Za-z_][\w-]*(?=:)/,
+                // glued option. The lookahead keeps the name shape: a `:` and
+                // its value, or a bare `@code` (I1c) ending at a space, the
+                // next `@` or the line end. `@k:` with no value stays unscoped.
+                begin: /@[A-Za-z_][\w-]*(?=:(?![\s}]|$)|[ @]|$)/,
             },
             {
                 // An `attribute_value`, so it may be quoted and then carries

@@ -3547,7 +3547,7 @@
               "name": "entity.name.section.include.carve"
             },
             {
-              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(:)(\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^\\s}@]+)",
+              "match": "(@[A-Za-z_][A-Za-z0-9_-]*)(?:(:)(\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^\\s}@]+)|(?![A-Za-z0-9_:-]))",
               "captures": {
                 "1": {
                   "name": "variable.parameter.include.carve"
