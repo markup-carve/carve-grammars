@@ -44,7 +44,7 @@
     "text": "Item"
   },
   {
-    "type": "code-block>csv-body>header>separator>punctuation",
+    "type": "code-block>csv-body>header>separator>operator",
     "text": ","
   },
   {
@@ -60,7 +60,7 @@
     "text": "Apple"
   },
   {
-    "type": "code-block>csv-body>separator>punctuation",
+    "type": "code-block>csv-body>separator>operator",
     "text": ","
   },
   {
@@ -76,7 +76,7 @@
     "text": "Total"
   },
   {
-    "type": "code-block>csv-body>separator>punctuation",
+    "type": "code-block>csv-body>separator>operator",
     "text": ","
   },
   {

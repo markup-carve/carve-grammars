@@ -44,7 +44,7 @@
     "text": "A"
   },
   {
-    "type": "code-block>tsv-body>header>separator>punctuation",
+    "type": "code-block>tsv-body>header>separator>operator",
     "text": "\t"
   },
   {
@@ -60,7 +60,7 @@
     "text": "^"
   },
   {
-    "type": "code-block>tsv-body>separator>punctuation",
+    "type": "code-block>tsv-body>separator>operator",
     "text": "\t"
   },
   {

@@ -1077,7 +1077,7 @@
             greedy: true,
             inside: { escape: { pattern: /""/, alias: 'char' } },
         };
-        var punctuation = { pattern: new RegExp(escaped), alias: 'punctuation' };
+        var punctuation = { pattern: new RegExp(escaped), alias: 'operator' };
         return {
             header: {
                 pattern: /(?<![\s\S])[^\r\n]+/,

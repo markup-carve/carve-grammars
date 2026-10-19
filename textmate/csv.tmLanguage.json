@@ -21,7 +21,7 @@
           "name": "string.unquoted.csv markup.heading.csv"
         },
         "4": {
-          "name": "punctuation.separator.delimiter.csv"
+          "name": "keyword.operator.separator.csv"
         }
       },
       "end": "(?=A)(?!A)",
@@ -62,7 +62,7 @@
       "patterns": [
         {
           "match": ",",
-          "name": "punctuation.separator.delimiter.csv"
+          "name": "keyword.operator.separator.csv"
         },
         {
           "begin": "(?:^[ \\t]*|(?<=,))(\")",
@@ -94,7 +94,7 @@
       "patterns": [
         {
           "match": ",",
-          "name": "punctuation.separator.delimiter.csv"
+          "name": "keyword.operator.separator.csv"
         },
         {
           "begin": "(?:^[ \\t]*|(?<=,))(\")",

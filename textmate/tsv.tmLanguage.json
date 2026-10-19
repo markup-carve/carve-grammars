@@ -21,7 +21,7 @@
           "name": "string.unquoted.tsv markup.heading.tsv"
         },
         "4": {
-          "name": "punctuation.separator.delimiter.tsv"
+          "name": "keyword.operator.separator.tsv"
         }
       },
       "end": "(?=A)(?!A)",
@@ -62,7 +62,7 @@
       "patterns": [
         {
           "match": "\\t",
-          "name": "punctuation.separator.delimiter.tsv"
+          "name": "keyword.operator.separator.tsv"
         },
         {
           "begin": "(?:^ *|(?<=\\t))(\")",
@@ -94,7 +94,7 @@
       "patterns": [
         {
           "match": "\\t",
-          "name": "punctuation.separator.delimiter.tsv"
+          "name": "keyword.operator.separator.tsv"
         },
         {
           "begin": "(?:^ *|(?<=\\t))(\")",

@@ -19,7 +19,7 @@
                 end: /"(?!")/,
                 contains: [{ scope: 'char.escape', match: /""/ }],
             };
-            var punctuation = { scope: 'punctuation', match: new RegExp(escaped) };
+            var punctuation = { scope: 'operator', match: new RegExp(escaped) };
             var indent = { match: separator === ',' ? /^[ \t]+(?=")/ : /^ +(?=")/ };
             var field = { scope: 'string', match: new RegExp('[^' + escaped + '\\r\\n]+') };
             return {

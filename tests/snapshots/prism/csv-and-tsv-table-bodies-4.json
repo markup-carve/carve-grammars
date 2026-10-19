@@ -32,7 +32,7 @@
     "text": "Name"
   },
   {
-    "type": "code-block>csv-body>header>separator>punctuation",
+    "type": "code-block>csv-body>header>separator>operator",
     "text": ","
   },
   {
@@ -48,7 +48,7 @@
     "text": "A"
   },
   {
-    "type": "code-block>csv-body>separator>punctuation",
+    "type": "code-block>csv-body>separator>operator",
     "text": ","
   },
   {

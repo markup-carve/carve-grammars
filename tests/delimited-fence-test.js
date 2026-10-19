@@ -85,7 +85,7 @@ if (UPDATE) {
 // The facts the goldens hold, stated so a wrong regeneration cannot pass silently.
 const has = (lines, re) => assert.ok(lines.some((line) => re.test(line)), re.source);
 const lacks = (lines, re) => assert.ok(!lines.some((line) => re.test(line)), re.source);
-const fieldScope = /(?:string\.unquoted|string\.quoted\.double|punctuation\.separator\.delimiter|constant\.character\.escape)\.(?:csv|tsv)/;
+const fieldScope = /(?:string\.unquoted|string\.quoted\.double|keyword\.operator\.separator|constant\.character\.escape)\.(?:csv|tsv)/;
 for (const [name, paths] of Object.entries(live)) {
     for (const line of [...(paths.textmate || []), ...(paths.csv || []), ...(paths.tsv || [])]) {
         const match = line.match(/^\d+ ("(?:\\.|[^"])*") (.*)$/);
@@ -112,7 +112,7 @@ for (const [name, paths] of Object.entries(live)) {
 }
 const tm = live['maintainer-sample'].textmate;
 has(tm, /^3 "Plan" meta\.embedded\.block\.csv string\.unquoted\.csv markup\.heading\.csv$/);
-has(tm, /^3 "," .*punctuation\.separator\.delimiter\.csv$/);
+has(tm, /^3 "," .*keyword\.operator\.separator\.csv$/);
 has(tm, /^5 "\$49, billed yearly" .*string\.quoted\.double\.csv$/);
 lacks(tm, /^4 .*markup\.heading/);
 const edge = live['quoted-comma-newline-escape'].textmate;
@@ -125,10 +125,10 @@ has(live.malformed.hljs, /<span class="hljs-string">a&quot;b<\/span>.*<span clas
 has(live['multi-line-header'].textmate, /^3 "c" .*markup\.heading\.csv$/);
 lacks(live['multi-line-header'].textmate, /^4 .*markup\.heading/);
 has(live['tsv-in-a-list-item'].textmate, /^5 "a\\tb" .*string\.quoted\.double\.tsv$/);
-has(live['tsv-in-a-list-item'].textmate, /^5 "\\t" .*punctuation\.separator\.delimiter\.tsv$/);
+has(live['tsv-in-a-list-item'].textmate, /^5 "\\t" .*keyword\.operator\.separator\.tsv$/);
 lacks(live.crlf.textmate, /"[^"]*\\r[^"]*" .*(?:heading|separator|invalid|string)/);
 has(live['quoted-comma-newline-escape'].prism, /^<span class="token string">"Ann <span class="token escape char">""<\/span>/);
-has(live['tsv-in-a-list-item'].hljs, /^ {2}<span class="hljs-string">&quot;a\tb&quot;<\/span><span class="hljs-punctuation">\t<\/span><span class="hljs-string">c<\/span>$/);
+has(live['tsv-in-a-list-item'].hljs, /^ {2}<span class="hljs-string">&quot;a\tb&quot;<\/span><span class="hljs-operator">\t<\/span><span class="hljs-string">c<\/span>$/);
 count += 17;
 
 assertThisFileRuns(import.meta.url);
