@@ -12,13 +12,13 @@
   "repository": {
     "header": {
       "comment": "The first record. Its begin consumes the first field so #records, which starts at a line start, cannot open before the next line; no capture carries patterns, which the IntelliJ TextMate lexer ignores.",
-      "begin": "^(?:([ \\t]*)(\")|([^,\"\\r\\n]+)|(,))",
+      "begin": "^(?:([ \\t]*)(\")|([^,\\r\\n]+)|(,))",
       "beginCaptures": {
         "2": {
           "name": "string.quoted.double.csv punctuation.definition.string.begin.csv"
         },
         "3": {
-          "name": "markup.heading.csv"
+          "name": "string.unquoted.csv markup.heading.csv"
         },
         "4": {
           "name": "punctuation.separator.delimiter.csv"
@@ -37,7 +37,7 @@
               "name": "string.quoted.double.csv punctuation.definition.string.end.csv"
             }
           },
-          "contentName": "string.quoted.double.csv",
+          "contentName": "string.quoted.double.csv markup.heading.csv",
           "patterns": [
             {
               "include": "#escape"
@@ -85,15 +85,8 @@
           ]
         },
         {
-          "match": "(?<=\")[^,\\r\\n]+",
-          "name": "invalid.illegal.text-after-quote.csv"
-        },
-        {
-          "match": "[^,\"\\r\\n]+"
-        },
-        {
-          "match": "\"",
-          "name": "invalid.illegal.quote-in-unquoted-field.csv"
+          "match": "[^,\\r\\n]+",
+          "name": "string.unquoted.csv"
         }
       ]
     },
@@ -116,7 +109,7 @@
               "name": "string.quoted.double.csv punctuation.definition.string.end.csv"
             }
           },
-          "contentName": "string.quoted.double.csv",
+          "contentName": "string.quoted.double.csv markup.heading.csv",
           "patterns": [
             {
               "include": "#escape"
@@ -124,16 +117,8 @@
           ]
         },
         {
-          "match": "(?<=\")[^,\\r\\n]+",
-          "name": "invalid.illegal.text-after-quote.csv"
-        },
-        {
-          "match": "[^,\"\\r\\n]+",
-          "name": "markup.heading.csv"
-        },
-        {
-          "match": "\"",
-          "name": "invalid.illegal.quote-in-unquoted-field.csv"
+          "match": "[^,\\r\\n]+",
+          "name": "string.unquoted.csv markup.heading.csv"
         }
       ]
     },

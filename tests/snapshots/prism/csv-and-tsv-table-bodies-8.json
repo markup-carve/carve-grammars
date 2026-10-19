@@ -41,14 +41,26 @@
   },
   {
     "type": "code-block>csv-body",
-    "text": "\n1\n2"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "1"
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "2"
   },
   {
     "type": "code-block>csv-body>separator>punctuation",
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "3"
   },
   {
@@ -56,7 +68,7 @@
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "4"
   },
   {

@@ -20,6 +20,8 @@
                 contains: [{ scope: 'char.escape', match: /""/ }],
             };
             var punctuation = { scope: 'punctuation', match: new RegExp(escaped) };
+            var indent = { match: separator === ',' ? /^[ \t]+(?=")/ : /^ +(?=")/ };
+            var field = { scope: 'string', match: new RegExp('[^' + escaped + '\\r\\n]+') };
             return {
                 name: name,
                 aliases: [name.toLowerCase()],
@@ -27,13 +29,15 @@
                     {
                         begin: /(?<![\s\S])(?=[\s\S])/,
                         end: /$/,
-                        contains: [quoted, punctuation, {
+                        contains: [indent, quoted, punctuation, {
                             scope: 'attr',
-                            match: new RegExp('[^' + escaped + '"\\r\\n]+'),
+                            match: new RegExp('[^' + escaped + '\\r\\n]+'),
                         }],
                     },
+                    indent,
                     quoted,
                     punctuation,
+                    field,
                 ],
             };
         };

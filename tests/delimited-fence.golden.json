@@ -6,21 +6,21 @@
       "1 \"}\" -",
       "2 \"```\" -",
       "2 \"csv\" -",
-      "3 \"Plan\" meta.embedded.block.csv markup.heading.csv",
+      "3 \"Plan\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "3 \"Seats\" meta.embedded.block.csv markup.heading.csv",
+      "3 \"Seats\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "3 \"Price per month\" meta.embedded.block.csv markup.heading.csv",
-      "4 \"Starter\" meta.embedded.block.csv",
+      "3 \"Price per month\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
+      "4 \"Starter\" meta.embedded.block.csv string.unquoted.csv",
       "4 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "4 \"1\" meta.embedded.block.csv",
+      "4 \"1\" meta.embedded.block.csv string.unquoted.csv",
       "4 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
       "4 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "4 \"$0\" meta.embedded.block.csv string.quoted.double.csv",
       "4 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
-      "5 \"Team\" meta.embedded.block.csv",
+      "5 \"Team\" meta.embedded.block.csv string.unquoted.csv",
       "5 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "5 \"10\" meta.embedded.block.csv",
+      "5 \"10\" meta.embedded.block.csv string.unquoted.csv",
       "5 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
       "5 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "5 \"$49, billed yearly\" meta.embedded.block.csv string.quoted.double.csv",
@@ -31,8 +31,8 @@
       "<span class=\"hljs-attr\">{table}</span>",
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span><span class=\"hljs-title\">csv</span><span class=\"language-csv\">",
       "<span class=\"hljs-attr\">Plan</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-attr\">Seats</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-attr\">Price per month</span>",
-      "Starter<span class=\"hljs-punctuation\">,</span>1<span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;$0&quot;</span>",
-      "Team<span class=\"hljs-punctuation\">,</span>10<span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;$49, billed yearly&quot;</span>",
+      "<span class=\"hljs-string\">Starter</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">1</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;$0&quot;</span>",
+      "<span class=\"hljs-string\">Team</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">10</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;$49, billed yearly&quot;</span>",
       "</span><span class=\"hljs-keyword\">```</span></span>",
       ""
     ],
@@ -40,8 +40,8 @@
       "<span class=\"token attributes attr-value\"><span class=\"token punctuation\">{</span>table<span class=\"token punctuation\">}</span></span>",
       "<span class=\"token code-block\"><span class=\"token punctuation\">```</span><span class=\"token language class-name\">csv</span>",
       "<span class=\"token csv-body\"><span class=\"token header\"><span class=\"token field property\">Plan</span><span class=\"token separator punctuation\">,</span><span class=\"token field property\">Seats</span><span class=\"token separator punctuation\">,</span><span class=\"token field property\">Price per month</span></span>",
-      "Starter<span class=\"token separator punctuation\">,</span>1<span class=\"token separator punctuation\">,</span><span class=\"token string\">\"$0\"</span>",
-      "Team<span class=\"token separator punctuation\">,</span>10<span class=\"token separator punctuation\">,</span><span class=\"token string\">\"$49, billed yearly\"</span></span>",
+      "<span class=\"token field string\">Starter</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">1</span><span class=\"token separator punctuation\">,</span><span class=\"token string\">\"$0\"</span>",
+      "<span class=\"token field string\">Team</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">10</span><span class=\"token separator punctuation\">,</span><span class=\"token string\">\"$49, billed yearly\"</span></span>",
       "<span class=\"token punctuation\">```</span></span>",
       ""
     ]
@@ -51,10 +51,10 @@
       "1 \"```\" -",
       "1 \"csv\" -",
       "2 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
-      "2 \"Name, full\" meta.embedded.block.csv string.quoted.double.csv",
+      "2 \"Name, full\" meta.embedded.block.csv string.quoted.double.csv markup.heading.csv",
       "2 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
       "2 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "2 \"Note\" meta.embedded.block.csv markup.heading.csv",
+      "2 \"Note\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "3 \"Ann \" meta.embedded.block.csv string.quoted.double.csv",
       "3 \"\\\"\\\"\" meta.embedded.block.csv string.quoted.double.csv constant.character.escape.csv",
@@ -62,30 +62,30 @@
       "3 \"\\\"\\\"\" meta.embedded.block.csv string.quoted.double.csv constant.character.escape.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "3 \"x\" meta.embedded.block.csv",
+      "3 \"x\" meta.embedded.block.csv string.unquoted.csv",
       "4 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "4 \"multi\" meta.embedded.block.csv string.quoted.double.csv",
       "5 \"line\" meta.embedded.block.csv string.quoted.double.csv",
       "5 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
       "5 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "5 \"ok\" meta.embedded.block.csv",
+      "5 \"ok\" meta.embedded.block.csv string.unquoted.csv",
       "6 \"```\" -"
     ],
     "hljs": [
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span><span class=\"hljs-title\">csv</span><span class=\"language-csv\">",
       "<span class=\"hljs-string\">&quot;Name, full&quot;</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-attr\">Note</span>",
-      "<span class=\"hljs-string\">&quot;Ann <span class=\"hljs-char escape_\">&quot;&quot;</span>A<span class=\"hljs-char escape_\">&quot;&quot;</span>&quot;</span><span class=\"hljs-punctuation\">,</span>x",
+      "<span class=\"hljs-string\">&quot;Ann <span class=\"hljs-char escape_\">&quot;&quot;</span>A<span class=\"hljs-char escape_\">&quot;&quot;</span>&quot;</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">x</span>",
       "<span class=\"hljs-string\">&quot;multi",
-      "line&quot;</span><span class=\"hljs-punctuation\">,</span>ok",
+      "line&quot;</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">ok</span>",
       "</span><span class=\"hljs-keyword\">```</span></span>",
       ""
     ],
     "prism": [
       "<span class=\"token code-block\"><span class=\"token punctuation\">```</span><span class=\"token language class-name\">csv</span>",
       "<span class=\"token csv-body\"><span class=\"token header\"><span class=\"token string\">\"Name, full\"</span><span class=\"token separator punctuation\">,</span><span class=\"token field property\">Note</span></span>",
-      "<span class=\"token string\">\"Ann <span class=\"token escape char\">\"\"</span>A<span class=\"token escape char\">\"\"</span>\"</span><span class=\"token separator punctuation\">,</span>x",
+      "<span class=\"token string\">\"Ann <span class=\"token escape char\">\"\"</span>A<span class=\"token escape char\">\"\"</span>\"</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">x</span>",
       "<span class=\"token string\">\"multi",
-      "line\"</span><span class=\"token separator punctuation\">,</span>ok</span>",
+      "line\"</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">ok</span></span>",
       "<span class=\"token punctuation\">```</span></span>",
       ""
     ]
@@ -94,28 +94,26 @@
     "textmate": [
       "1 \"```\" -",
       "1 \"csv\" -",
-      "2 \"h\" meta.embedded.block.csv markup.heading.csv",
-      "3 \"a\" meta.embedded.block.csv",
-      "3 \"\\\"\" meta.embedded.block.csv invalid.illegal.quote-in-unquoted-field.csv",
-      "3 \"b\" meta.embedded.block.csv invalid.illegal.text-after-quote.csv",
+      "2 \"h\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
+      "3 \"a\\\"b\" meta.embedded.block.csv string.unquoted.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "3 \"c\" meta.embedded.block.csv string.quoted.double.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
-      "3 \"d\" meta.embedded.block.csv invalid.illegal.text-after-quote.csv",
+      "3 \"d\" meta.embedded.block.csv string.unquoted.csv",
       "4 \"```\" -"
     ],
     "hljs": [
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span><span class=\"hljs-title\">csv</span><span class=\"language-csv\">",
       "<span class=\"hljs-attr\">h</span>",
-      "a&quot;b<span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;c&quot;</span>d",
+      "<span class=\"hljs-string\">a&quot;b</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">&quot;c&quot;</span><span class=\"hljs-string\">d</span>",
       "</span><span class=\"hljs-keyword\">```</span></span>",
       ""
     ],
     "prism": [
       "<span class=\"token code-block\"><span class=\"token punctuation\">```</span><span class=\"token language class-name\">csv</span>",
       "<span class=\"token csv-body\"><span class=\"token header\"><span class=\"token field property\">h</span></span>",
-      "a\"b<span class=\"token separator punctuation\">,</span><span class=\"token string\">\"c\"</span>d</span>",
+      "<span class=\"token field string\">a\"b</span><span class=\"token separator punctuation\">,</span><span class=\"token string\">\"c\"</span><span class=\"token field string\">d</span></span>",
       "<span class=\"token punctuation\">```</span></span>",
       ""
     ]
@@ -128,15 +126,15 @@
       "3 \"  \" -",
       "3 \"```\" -",
       "3 \"tsv\" -",
-      "4 \"  K\" meta.embedded.block.tsv markup.heading.tsv",
+      "4 \"  K\" meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv",
       "4 \"\\t\" meta.embedded.block.tsv punctuation.separator.delimiter.tsv",
-      "4 \"V\" meta.embedded.block.tsv markup.heading.tsv",
+      "4 \"V\" meta.embedded.block.tsv string.unquoted.tsv markup.heading.tsv",
       "5 \"  \" meta.embedded.block.tsv",
       "5 \"\\\"\" meta.embedded.block.tsv string.quoted.double.tsv punctuation.definition.string.begin.tsv",
       "5 \"a\\tb\" meta.embedded.block.tsv string.quoted.double.tsv",
       "5 \"\\\"\" meta.embedded.block.tsv string.quoted.double.tsv punctuation.definition.string.end.tsv",
       "5 \"\\t\" meta.embedded.block.tsv punctuation.separator.delimiter.tsv",
-      "5 \"c\" meta.embedded.block.tsv",
+      "5 \"c\" meta.embedded.block.tsv string.unquoted.tsv",
       "6 \"  ```\" -"
     ],
     "hljs": [
@@ -144,7 +142,7 @@
       "",
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">  ```</span><span class=\"hljs-title\">tsv</span><span class=\"language-tsv\">",
       "<span class=\"hljs-attr\">  K</span><span class=\"hljs-punctuation\">\t</span><span class=\"hljs-attr\">V</span>",
-      "  <span class=\"hljs-string\">&quot;a\tb&quot;</span><span class=\"hljs-punctuation\">\t</span>c",
+      "  <span class=\"hljs-string\">&quot;a\tb&quot;</span><span class=\"hljs-punctuation\">\t</span><span class=\"hljs-string\">c</span>",
       "</span><span class=\"hljs-keyword\">  ```</span></span>",
       ""
     ],
@@ -153,7 +151,7 @@
       "",
       "<span class=\"token code-block\">  ```tsv",
       "<span class=\"token tsv-body\"><span class=\"token header\"><span class=\"token field property\">  K</span><span class=\"token separator punctuation\">\t</span><span class=\"token field property\">V</span></span>",
-      "  <span class=\"token string\">\"a\tb\"</span><span class=\"token separator punctuation\">\t</span>c</span>",
+      "<span class=\"token field string\">  </span><span class=\"token string\">\"a\tb\"</span><span class=\"token separator punctuation\">\t</span><span class=\"token field string\">c</span></span>",
       "  <span class=\"token punctuation\">```</span></span>",
       ""
     ]
@@ -163,29 +161,29 @@
       "1 \"```\" -",
       "1 \"csv\" -",
       "2 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
-      "2 \"a\" meta.embedded.block.csv string.quoted.double.csv",
-      "3 \"b\" meta.embedded.block.csv string.quoted.double.csv",
+      "2 \"a\" meta.embedded.block.csv string.quoted.double.csv markup.heading.csv",
+      "3 \"b\" meta.embedded.block.csv string.quoted.double.csv markup.heading.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "3 \"c\" meta.embedded.block.csv markup.heading.csv",
-      "4 \"x\" meta.embedded.block.csv",
+      "3 \"c\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
+      "4 \"x\" meta.embedded.block.csv string.unquoted.csv",
       "4 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "4 \"y\" meta.embedded.block.csv",
+      "4 \"y\" meta.embedded.block.csv string.unquoted.csv",
       "5 \"```\" -"
     ],
     "hljs": [
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span><span class=\"hljs-title\">csv</span><span class=\"language-csv\">",
       "<span class=\"hljs-string\">&quot;a",
       "b&quot;</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-attr\">c</span>",
-      "x<span class=\"hljs-punctuation\">,</span>y",
+      "<span class=\"hljs-string\">x</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">y</span>",
       "</span><span class=\"hljs-keyword\">```</span></span>",
       ""
     ],
     "prism": [
       "<span class=\"token code-block\"><span class=\"token punctuation\">```</span><span class=\"token language class-name\">csv</span>",
-      "<span class=\"token csv-body\"><span class=\"token header\">\"<span class=\"token field property\">a</span></span>",
-      "b\"<span class=\"token separator punctuation\">,</span>c",
-      "x<span class=\"token separator punctuation\">,</span>y</span>",
+      "<span class=\"token csv-body\"><span class=\"token header\"><span class=\"token field property\">\"a</span></span>",
+      "<span class=\"token field string\">b\"</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">c</span>",
+      "<span class=\"token field string\">x</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">y</span></span>",
       "<span class=\"token punctuation\">```</span></span>",
       ""
     ]
@@ -194,53 +192,53 @@
     "textmate": [
       "1 \"```\" -",
       "1 \"csv\" -",
-      "2 \"Plan\" meta.embedded.block.csv markup.heading.csv",
+      "2 \"Plan\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
       "2 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "2 \"Seats\" meta.embedded.block.csv markup.heading.csv",
+      "2 \"Seats\" meta.embedded.block.csv string.unquoted.csv markup.heading.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.begin.csv",
       "3 \"x, y\" meta.embedded.block.csv string.quoted.double.csv",
       "3 \"\\\"\" meta.embedded.block.csv string.quoted.double.csv punctuation.definition.string.end.csv",
       "3 \",\" meta.embedded.block.csv punctuation.separator.delimiter.csv",
-      "3 \"1\" meta.embedded.block.csv",
+      "3 \"1\" meta.embedded.block.csv string.unquoted.csv",
       "4 \"```\" -"
     ],
     "hljs": [
       "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span><span class=\"hljs-title\">csv</span>\r<span class=\"language-csv\">",
       "<span class=\"hljs-attr\">Plan</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-attr\">Seats</span>\r",
-      "<span class=\"hljs-string\">&quot;x, y&quot;</span><span class=\"hljs-punctuation\">,</span>1\r",
+      "<span class=\"hljs-string\">&quot;x, y&quot;</span><span class=\"hljs-punctuation\">,</span><span class=\"hljs-string\">1</span>\r",
       "</span><span class=\"hljs-keyword\">```</span></span>\r",
       ""
     ],
     "prism": [
       "<span class=\"token code-block\"><span class=\"token punctuation\">```</span><span class=\"token language class-name\">csv</span>\r",
       "<span class=\"token csv-body\"><span class=\"token header\"><span class=\"token field property\">Plan</span><span class=\"token separator punctuation\">,</span><span class=\"token field property\">Seats</span></span>\r",
-      "<span class=\"token string\">\"x, y\"</span><span class=\"token separator punctuation\">,</span>1\r</span>",
+      "<span class=\"token string\">\"x, y\"</span><span class=\"token separator punctuation\">,</span><span class=\"token field string\">1</span>\r</span>",
       "<span class=\"token punctuation\">```</span></span>\r",
       ""
     ]
   },
   "standalone-grammars": {
     "csv": [
-      "1 \"Plan\" text.csv.carve markup.heading.csv",
+      "1 \"Plan\" text.csv.carve string.unquoted.csv markup.heading.csv",
       "1 \",\" text.csv.carve punctuation.separator.delimiter.csv",
-      "1 \"Seats\" text.csv.carve markup.heading.csv",
+      "1 \"Seats\" text.csv.carve string.unquoted.csv markup.heading.csv",
       "2 \"\\\"\" text.csv.carve string.quoted.double.csv punctuation.definition.string.begin.csv",
       "2 \"a\" text.csv.carve string.quoted.double.csv",
       "2 \"\\\"\\\"\" text.csv.carve string.quoted.double.csv constant.character.escape.csv",
       "2 \"b\" text.csv.carve string.quoted.double.csv",
       "2 \"\\\"\" text.csv.carve string.quoted.double.csv punctuation.definition.string.end.csv",
       "2 \",\" text.csv.carve punctuation.separator.delimiter.csv",
-      "2 \"1\" text.csv.carve"
+      "2 \"1\" text.csv.carve string.unquoted.csv"
     ],
     "tsv": [
-      "1 \"Plan\" text.tsv.carve markup.heading.tsv",
+      "1 \"Plan\" text.tsv.carve string.unquoted.tsv markup.heading.tsv",
       "1 \"\\t\" text.tsv.carve punctuation.separator.delimiter.tsv",
-      "1 \"Seats\" text.tsv.carve markup.heading.tsv",
+      "1 \"Seats\" text.tsv.carve string.unquoted.tsv markup.heading.tsv",
       "2 \"\\\"\" text.tsv.carve string.quoted.double.tsv punctuation.definition.string.begin.tsv",
       "2 \"a\\tb\" text.tsv.carve string.quoted.double.tsv",
       "2 \"\\\"\" text.tsv.carve string.quoted.double.tsv punctuation.definition.string.end.tsv",
       "2 \"\\t\" text.tsv.carve punctuation.separator.delimiter.tsv",
-      "2 \"1\" text.tsv.carve"
+      "2 \"1\" text.tsv.carve string.unquoted.tsv"
     ]
   }
 }

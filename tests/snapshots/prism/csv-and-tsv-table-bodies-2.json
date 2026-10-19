@@ -53,14 +53,18 @@
   },
   {
     "type": "code-block>tsv-body",
-    "text": "\n^"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>tsv-body>field>string",
+    "text": "^"
   },
   {
     "type": "code-block>tsv-body>separator>punctuation",
     "text": "\t"
   },
   {
-    "type": "code-block>tsv-body",
+    "type": "code-block>tsv-body>field>string",
     "text": "<x>"
   },
   {

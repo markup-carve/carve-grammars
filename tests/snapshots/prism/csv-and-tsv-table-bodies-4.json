@@ -41,7 +41,11 @@
   },
   {
     "type": "code-block>csv-body",
-    "text": "\nA"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "A"
   },
   {
     "type": "code-block>csv-body>separator>punctuation",

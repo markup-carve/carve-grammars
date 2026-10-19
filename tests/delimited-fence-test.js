@@ -85,24 +85,51 @@ if (UPDATE) {
 // The facts the goldens hold, stated so a wrong regeneration cannot pass silently.
 const has = (lines, re) => assert.ok(lines.some((line) => re.test(line)), re.source);
 const lacks = (lines, re) => assert.ok(!lines.some((line) => re.test(line)), re.source);
+const fieldScope = /(?:string\.unquoted|string\.quoted\.double|punctuation\.separator\.delimiter|constant\.character\.escape)\.(?:csv|tsv)/;
+for (const [name, paths] of Object.entries(live)) {
+    for (const line of [...(paths.textmate || []), ...(paths.csv || []), ...(paths.tsv || [])]) {
+        const match = line.match(/^\d+ ("(?:\\.|[^"])*") (.*)$/);
+        if (match && /^(?:meta\.embedded\.block\.[ct]sv|text\.[ct]sv\.carve)/.test(match[2])
+            && !/^\s*$/.test(JSON.parse(match[1]))) {
+            assert.match(match[2], fieldScope, `${name}: ${line}`);
+            count++;
+        }
+    }
+    for (const path of ['prism', 'hljs']) {
+        if (!paths[path]) continue;
+        const stack = [];
+        const html = paths[path].join('\n');
+        for (const part of html.matchAll(/<span class="([^"]+)">|<\/span>|[^<]+/g)) {
+            if (part[1]) stack.push(part[1]);
+            else if (part[0] === '</span>') stack.pop();
+            else if (stack.some((scope) => path === 'prism' ? /\b(?:csv|tsv)-body\b/.test(scope) : /\blanguage-(?:csv|tsv)\b/.test(scope))
+                && /\S/.test(part[0].replace(/&(?:quot|amp|lt|gt|#\d+);/g, 'x'))) {
+                assert.ok(stack.some((scope) => path === 'prism' ? /\btoken (?:field|string|separator|escape)\b/.test(scope) : /\bhljs-/.test(scope)), `${name} / ${path}: ${part[0]}`);
+                count++;
+            }
+        }
+    }
+}
 const tm = live['maintainer-sample'].textmate;
-has(tm, /^3 "Plan" meta\.embedded\.block\.csv markup\.heading\.csv$/);
+has(tm, /^3 "Plan" meta\.embedded\.block\.csv string\.unquoted\.csv markup\.heading\.csv$/);
 has(tm, /^3 "," .*punctuation\.separator\.delimiter\.csv$/);
 has(tm, /^5 "\$49, billed yearly" .*string\.quoted\.double\.csv$/);
 lacks(tm, /^4 .*markup\.heading/);
 const edge = live['quoted-comma-newline-escape'].textmate;
 has(edge, /^3 "\\"\\"" .*constant\.character\.escape\.csv$/);
 has(edge, /^5 "line" .*string\.quoted\.double\.csv$/);
-has(live.malformed.textmate, /^3 "\\"" .*invalid\.illegal\.quote-in-unquoted-field\.csv$/);
-has(live.malformed.textmate, /^3 "d" .*invalid\.illegal\.text-after-quote\.csv$/);
+has(live.malformed.textmate, /^3 "a\\"b" .*string\.unquoted\.csv$/);
+has(live.malformed.textmate, /^3 "d" .*string\.unquoted\.csv$/);
+has(live.malformed.prism, /<span class="token field string">a"b<\/span>.*<span class="token string">"c"<\/span><span class="token field string">d<\/span>/);
+has(live.malformed.hljs, /<span class="hljs-string">a&quot;b<\/span>.*<span class="hljs-string">&quot;c&quot;<\/span><span class="hljs-string">d<\/span>/);
 has(live['multi-line-header'].textmate, /^3 "c" .*markup\.heading\.csv$/);
 lacks(live['multi-line-header'].textmate, /^4 .*markup\.heading/);
 has(live['tsv-in-a-list-item'].textmate, /^5 "a\\tb" .*string\.quoted\.double\.tsv$/);
 has(live['tsv-in-a-list-item'].textmate, /^5 "\\t" .*punctuation\.separator\.delimiter\.tsv$/);
 lacks(live.crlf.textmate, /"[^"]*\\r[^"]*" .*(?:heading|separator|invalid|string)/);
 has(live['quoted-comma-newline-escape'].prism, /^<span class="token string">"Ann <span class="token escape char">""<\/span>/);
-has(live['tsv-in-a-list-item'].hljs, /^ {2}<span class="hljs-string">&quot;a\tb&quot;<\/span><span class="hljs-punctuation">\t<\/span>c$/);
-count += 15;
+has(live['tsv-in-a-list-item'].hljs, /^ {2}<span class="hljs-string">&quot;a\tb&quot;<\/span><span class="hljs-punctuation">\t<\/span><span class="hljs-string">c<\/span>$/);
+count += 17;
 
 assertThisFileRuns(import.meta.url);
 console.log(`delimited fence: ${count} assertions passed`);

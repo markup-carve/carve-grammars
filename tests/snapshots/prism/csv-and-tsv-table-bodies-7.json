@@ -28,12 +28,8 @@
     "text": "\n"
   },
   {
-    "type": "code-block>csv-body>header",
-    "text": "\""
-  },
-  {
     "type": "code-block>csv-body>header>field>property",
-    "text": "bad"
+    "text": "\"bad"
   },
   {
     "type": "code-block",

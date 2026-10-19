@@ -1084,11 +1084,12 @@
                 inside: {
                     string: string,
                     separator: punctuation,
-                    field: { pattern: new RegExp('[^' + escaped + '"\\r\\n]+'), alias: 'property' },
+                    field: { pattern: new RegExp('[^' + escaped + '\\r\\n]+'), alias: 'property' },
                 },
             },
             string: string,
             separator: punctuation,
+            field: { pattern: new RegExp('[^' + escaped + '\\r\\n]+'), alias: 'string' },
         };
     }
     var csvBody = delimitedBody(',');

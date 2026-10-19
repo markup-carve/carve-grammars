@@ -29,15 +29,7 @@
   },
   {
     "type": "code-block>csv-body>header>field>property",
-    "text": "a"
-  },
-  {
-    "type": "code-block>csv-body>header",
-    "text": "\""
-  },
-  {
-    "type": "code-block>csv-body>header>field>property",
-    "text": "b"
+    "text": "a\"b"
   },
   {
     "type": "code-block>csv-body>header>separator>punctuation",

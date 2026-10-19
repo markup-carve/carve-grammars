@@ -12,13 +12,13 @@
   "repository": {
     "header": {
       "comment": "The first record. Its begin consumes the first field so #records, which starts at a line start, cannot open before the next line; no capture carries patterns, which the IntelliJ TextMate lexer ignores.",
-      "begin": "^(?:( *)(\")|([^\\t\"\\r\\n]+)|(\\t))",
+      "begin": "^(?:( *)(\")|([^\\t\\r\\n]+)|(\\t))",
       "beginCaptures": {
         "2": {
           "name": "string.quoted.double.tsv punctuation.definition.string.begin.tsv"
         },
         "3": {
-          "name": "markup.heading.tsv"
+          "name": "string.unquoted.tsv markup.heading.tsv"
         },
         "4": {
           "name": "punctuation.separator.delimiter.tsv"
@@ -37,7 +37,7 @@
               "name": "string.quoted.double.tsv punctuation.definition.string.end.tsv"
             }
           },
-          "contentName": "string.quoted.double.tsv",
+          "contentName": "string.quoted.double.tsv markup.heading.tsv",
           "patterns": [
             {
               "include": "#escape"
@@ -85,15 +85,8 @@
           ]
         },
         {
-          "match": "(?<=\")[^\\t\\r\\n]+",
-          "name": "invalid.illegal.text-after-quote.tsv"
-        },
-        {
-          "match": "[^\\t\"\\r\\n]+"
-        },
-        {
-          "match": "\"",
-          "name": "invalid.illegal.quote-in-unquoted-field.tsv"
+          "match": "[^\\t\\r\\n]+",
+          "name": "string.unquoted.tsv"
         }
       ]
     },
@@ -116,7 +109,7 @@
               "name": "string.quoted.double.tsv punctuation.definition.string.end.tsv"
             }
           },
-          "contentName": "string.quoted.double.tsv",
+          "contentName": "string.quoted.double.tsv markup.heading.tsv",
           "patterns": [
             {
               "include": "#escape"
@@ -124,16 +117,8 @@
           ]
         },
         {
-          "match": "(?<=\")[^\\t\\r\\n]+",
-          "name": "invalid.illegal.text-after-quote.tsv"
-        },
-        {
-          "match": "[^\\t\"\\r\\n]+",
-          "name": "markup.heading.tsv"
-        },
-        {
-          "match": "\"",
-          "name": "invalid.illegal.quote-in-unquoted-field.tsv"
+          "match": "[^\\t\\r\\n]+",
+          "name": "string.unquoted.tsv markup.heading.tsv"
         }
       ]
     },

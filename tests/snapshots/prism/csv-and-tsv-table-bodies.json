@@ -61,14 +61,18 @@
   },
   {
     "type": "code-block>csv-body",
-    "text": "\nApple"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "Apple"
   },
   {
     "type": "code-block>csv-body>separator>punctuation",
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "12"
   },
   {
@@ -76,8 +80,12 @@
     "text": ","
   },
   {
+    "type": "code-block>csv-body>field>string",
+    "text": "0.40"
+  },
+  {
     "type": "code-block>csv-body",
-    "text": "0.40\n"
+    "text": "\n"
   },
   {
     "type": "code-block>csv-body>string",
@@ -88,7 +96,7 @@
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "3"
   },
   {
@@ -96,7 +104,7 @@
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "0.55"
   },
   {

@@ -53,22 +53,34 @@
   },
   {
     "type": "code-block>csv-body",
-    "text": "\nApple"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "Apple"
   },
   {
     "type": "code-block>csv-body>separator>punctuation",
     "text": ","
   },
   {
+    "type": "code-block>csv-body>field>string",
+    "text": "2"
+  },
+  {
     "type": "code-block>csv-body",
-    "text": "2\nTotal"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "Total"
   },
   {
     "type": "code-block>csv-body>separator>punctuation",
     "text": ","
   },
   {
-    "type": "code-block>csv-body",
+    "type": "code-block>csv-body>field>string",
     "text": "2"
   },
   {
