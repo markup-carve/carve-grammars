@@ -5,7 +5,23 @@
   },
   {
     "scope": "attr",
-    "text": "{abbr=\"HyperText Markup Language\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "abbr"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"HyperText Markup Language\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,
@@ -17,7 +33,23 @@
   },
   {
     "scope": "attr",
-    "text": "{time=\"12:00\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "time"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"12:00\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,
@@ -29,7 +61,15 @@
   },
   {
     "scope": "attr",
-    "text": "{kbd}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "kbd"
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

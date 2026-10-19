@@ -5,7 +5,23 @@
   },
   {
     "scope": "attr",
-    "text": "{abbr=\"HyperText Markup Language\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "abbr"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"HyperText Markup Language\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

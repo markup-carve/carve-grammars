@@ -13,7 +13,15 @@
   },
   {
     "scope": "attr",
-    "text": "{kbd}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "kbd"
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

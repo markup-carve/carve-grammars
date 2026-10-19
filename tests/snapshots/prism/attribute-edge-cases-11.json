@@ -29,7 +29,11 @@
   },
   {
     "type": "attributes>attr-value",
-    "text": " kbd"
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-value>builtin",
+    "text": "kbd"
   },
   {
     "type": "attributes>attr-value>punctuation",

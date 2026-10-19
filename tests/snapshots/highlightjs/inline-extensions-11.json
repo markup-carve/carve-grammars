@@ -13,7 +13,23 @@
   },
   {
     "scope": "attr",
-    "text": "{abbr=\"Custom\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "abbr"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"Custom\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

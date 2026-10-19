@@ -5,7 +5,23 @@
   },
   {
     "scope": "attr",
-    "text": "{kbd onclick=\"steal()\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "kbd"
+  },
+  {
+    "scope": "attr",
+    "text": " onclick="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"steal()\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

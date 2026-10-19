@@ -359,6 +359,16 @@
     // The closer a block glues to is not an escaped character: `x\]{.c}` is text.
     const afterEscape = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\[^\\n])';
     const noCommentRun = '(?<!\\{%(?:[^%\\n]|%(?!\\})|\\n(?![ \\t\\r]*\\n)){0,4096}%\\}(?:[ \\t]{0,64}\\{[^{}\\n]{0,512}\\}){1,64})';
+    const SPAN_ATTRIBUTE = {
+        className: 'attr',
+        begin: new RegExp('(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\]\\n\\\\]|\\\\[^\\n])+\\])(?<!\\!\\[[^\\]\\n]+\\])(?<!\\]\\[[^\\]\\n]+\\])\\{(?=(?:[ \t]*' + ATTR_ITEM + '[ \t]+)*[ \t]*(?:kbd(?=[ \t}])|(?:abbr|time)=))(?=[ \t]*' + ATTR_ITEM + '(?:[ \t]+' + ATTR_ITEM + ')*[ \t]*\\})'),
+        end: /\}/,
+        contains: [
+            { className: 'string', begin: /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/ },
+            { className: 'built_in', begin: /(?<=[\s{])(?:kbd(?=[\s}])|(?:abbr|time)(?==))/ },
+        ],
+        relevance: 5,
+    };
     const ATTRIBUTE = {
         className: 'attr',
         // TWO ROLES, ONE TOKEN - see the note on Prism's `attributes`. A standalone
@@ -2579,6 +2589,7 @@
         FORCED_STRIKE,
         FORCED_HIGHLIGHT,
         ATTRIBUTE_EMPTY,
+        SPAN_ATTRIBUTE,
         ATTRIBUTE,
         ESCAPE,
         HARD_BREAK,

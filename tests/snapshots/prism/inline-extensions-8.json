@@ -16,7 +16,7 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-value>attr-name",
+    "type": "attributes>attr-value>builtin",
     "text": "abbr"
   },
   {
@@ -52,7 +52,7 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-value>attr-name",
+    "type": "attributes>attr-value>builtin",
     "text": "time"
   },
   {
@@ -88,7 +88,7 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-value",
+    "type": "attributes>attr-value>builtin",
     "text": "kbd"
   },
   {

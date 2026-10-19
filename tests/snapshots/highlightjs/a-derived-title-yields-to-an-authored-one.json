@@ -5,7 +5,31 @@
   },
   {
     "scope": "attr",
-    "text": "{abbr=\"derived\" title=\"authored\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "abbr"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"derived\""
+  },
+  {
+    "scope": "attr",
+    "text": " title="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"authored\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,
@@ -17,7 +41,31 @@
   },
   {
     "scope": "attr",
-    "text": "{time=\"2026\" datetime=\"custom\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "time"
+  },
+  {
+    "scope": "attr",
+    "text": "="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"2026\""
+  },
+  {
+    "scope": "attr",
+    "text": " datetime="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"custom\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

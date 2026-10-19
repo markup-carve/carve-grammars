@@ -53,7 +53,7 @@
  * @module tests/lib/constructs
  */
 
-/** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), textmateNot?: string, attr?: boolean, engineAttr?: object, skip?: object, whole?: boolean, engineScopes?: object}>} */
+/** @type {Array<{name: string, sample: string, payload: string, textmate: (string|null), textmateNot?: string, engineScopesNot?: object, attr?: boolean, engineAttr?: object, skip?: object, whole?: boolean, engineScopes?: object}>} */
 export const CONSTRUCTS = [
     // The other half of #164, and the reason the fix cannot just narrow the shared
     // separator: a standalone attribute LINE DOES span lines, and must keep doing so.
@@ -174,20 +174,27 @@ export const CONSTRUCTS = [
     { name: "critic substitution", sample: "a {~old~>new~} b", payload: "old", textmate: "markup.changed" },
     { name: "critic comment", sample: "a {#note#} b", payload: "note", textmate: "comment" },
     { name: "span attrs", sample: "[span]{.class}", payload: ".class", textmate: "attributes", attr: true },
-    { name: "semantic span kbd", sample: "[Tab]{kbd}", payload: "kbd", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "semantic span abbr", sample: "[HTML]{abbr=\"Hypertext\"}", payload: "abbr", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "semantic span time", sample: "[today]{time=\"2026-10-18\"}", payload: "time", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "semantic span abbr unquoted", sample: "[HTML]{abbr=Hypertext}", payload: "abbr", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "semantic span time unquoted", sample: "[now]{time=2026-01-01}", payload: "time", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "link attribute kbd", sample: "[x](u){kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
-    { name: "block attribute kbd", sample: "{kbd}\n# H", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "kbd in an attribute value", sample: "[x]{title=\"press kbd\"}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "extension semantic name", sample: "[x]{samp}", payload: "samp", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "extension semantic var", sample: "[x]{var}", payload: "var", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "extension semantic cite", sample: "[x]{cite}", payload: "cite", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "extension semantic dfn", sample: "[x]{dfn}", payload: "dfn", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "structural key on span", sample: "[x]{table loose}", payload: "table", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "structural loose on span", sample: "[x]{table loose}", payload: "loose", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "semantic span kbd", sample: "[Tab]{kbd}", payload: "kbd", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span abbr", sample: "[HTML]{abbr=\"Hypertext\"}", payload: "abbr", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span time", sample: "[today]{time=\"2026-10-18\"}", payload: "time", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span abbr unquoted", sample: "[HTML]{abbr=Hypertext}", payload: "abbr", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span time unquoted", sample: "[now]{time=2026-01-01}", payload: "time", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span after an escaped backslash", sample: "\\\\[Tab]{kbd}", payload: "kbd", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    { name: "semantic span with an escaped closing bracket", sample: "[a\\]b]{kbd}", payload: "kbd", textmate: "support.constant.attribute", attr: true, engineScopes: { prism: ['builtin'], highlightjs: ['built_in'] } },
+    // The engine renders `{kbd}` here as text; every grammar still reads a generic attribute block, which is older than this row.
+    { name: "kbd after an escaped opening bracket", sample: "\\[x]{kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", attr: true, engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "link attribute kbd", sample: "[x](u){kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
+    { name: "reference link attribute kbd", sample: "[x][ref]{kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
+    { name: "block attribute kbd", sample: "{kbd}\n# H", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "data-kbd key", sample: "[x]{data-kbd=x}", payload: "data-kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attr-name'], highlightjs: ['attr'] } },
+    { name: "kbdx boolean", sample: "[x]{kbdx}", payload: "kbdx", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "kbd in an attribute value", sample: "[x]{title=\"press kbd\"}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "extension semantic name", sample: "[x]{samp}", payload: "samp", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "extension semantic var", sample: "[x]{var}", payload: "var", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "extension semantic cite", sample: "[x]{cite}", payload: "cite", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "extension semantic dfn", sample: "[x]{dfn}", payload: "dfn", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "structural key on span", sample: "[x]{table loose}", payload: "table", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "structural loose on span", sample: "[x]{table loose}", payload: "loose", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
     { name: "block attrs line", sample: "{#id .class key=value}\n# H", payload: "#id", textmate: "attributes", attr: true },
     { name: "quoted attr value", sample: "[x]{title=\"a b\"}", payload: "title", textmate: "meta.attributes", attr: true },
     { name: "escaped quote in attr value", sample: "[x]{title=\"a\\\"b\"}", payload: "title", textmate: "meta.attributes", attr: true },

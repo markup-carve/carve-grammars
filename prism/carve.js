@@ -2403,7 +2403,16 @@
         'forced-strike': inline['forced-strike'],
 
         // Attribute blocks attached to the preceding element
-        'attributes': attributes,
+        'attributes': [{
+            pattern: new RegExp('(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\]\\n\\\\]|\\\\[^\\n])+\\])(?<!\\!\\[[^\\]\\n]+\\])(?<!\\]\\[[^\\]\\n]+\\])\\{(?=(?:[ \t]*' + attrItem + '[ \t]+)*[ \t]*(?:kbd(?=[ \t}])|(?:abbr|time)=))[ \t]*' + attrItem + '(?:[ \t]+' + attrItem + ')*[ \t]*\\}'),
+            greedy: true,
+            alias: 'attr-value',
+            inside: {
+                'string': attributes.inside.string,
+                'builtin': { pattern: /(^|[\s{])(?:kbd(?=[\s}])|(?:abbr|time)(?==))/, lookbehind: true },
+                ...Object.fromEntries(Object.entries(attributes.inside).filter(([name]) => name !== 'string')),
+            },
+        }, attributes],
 
         // Inline emphasis family (must come after code/links/attributes)
         'bold-italic': inline['bold-italic'],

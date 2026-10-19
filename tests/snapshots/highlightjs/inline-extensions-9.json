@@ -13,7 +13,31 @@
   },
   {
     "scope": "attr",
-    "text": "{#copy .shortcut kbd data-key=\"copy\" onclick=\"alert(1)\"}"
+    "text": "{#copy .shortcut "
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "kbd"
+  },
+  {
+    "scope": "attr",
+    "text": " data-key="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"copy\""
+  },
+  {
+    "scope": "attr",
+    "text": " onclick="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"alert(1)\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,
@@ -25,7 +49,23 @@
   },
   {
     "scope": "attr",
-    "text": "{kbd onclick=\"alert(1)\"}"
+    "text": "{"
+  },
+  {
+    "scope": "attr>built_in",
+    "text": "kbd"
+  },
+  {
+    "scope": "attr",
+    "text": " onclick="
+  },
+  {
+    "scope": "attr>string",
+    "text": "\"alert(1)\""
+  },
+  {
+    "scope": "attr",
+    "text": "}"
   },
   {
     "scope": null,

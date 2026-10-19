@@ -16,7 +16,7 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-value>attr-name",
+    "type": "attributes>attr-value>builtin",
     "text": "abbr"
   },
   {
@@ -68,7 +68,7 @@
     "text": "{"
   },
   {
-    "type": "attributes>attr-value>attr-name",
+    "type": "attributes>attr-value>builtin",
     "text": "time"
   },
   {

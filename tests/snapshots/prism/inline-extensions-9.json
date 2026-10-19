@@ -33,7 +33,15 @@
   },
   {
     "type": "attributes>attr-value",
-    "text": " kbd "
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-value>builtin",
+    "text": "kbd"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": " "
   },
   {
     "type": "attributes>attr-value>attr-name",
@@ -88,8 +96,12 @@
     "text": "{"
   },
   {
+    "type": "attributes>attr-value>builtin",
+    "text": "kbd"
+  },
+  {
     "type": "attributes>attr-value",
-    "text": "kbd "
+    "text": " "
   },
   {
     "type": "attributes>attr-value>attr-name",
