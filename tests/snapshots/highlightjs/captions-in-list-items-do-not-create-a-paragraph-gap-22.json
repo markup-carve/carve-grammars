@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "- -"
+  },
+  {
+    "scope": "quote",
+    "text": " text"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   > q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   ^ cap"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

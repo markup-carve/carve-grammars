@@ -1,0 +1,46 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "text\n\n"
+  },
+  {
+    "type": "table",
+    "text": "  "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n  |b\n\n"
+  },
+  {
+    "type": "caption>title",
+    "text": "  ^ cap"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  }
+]

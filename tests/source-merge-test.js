@@ -35,16 +35,17 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Spec 0.1.10 with carve-js 0.1.12 leaves 579 source envelopes. Appending
-// a block preserves authored semantics for 576; three use the canonical
+// Spec main 49c8598 with carve-js 0.1.12 leaves 594 source envelopes. Appending
+// a block preserves authored semantics for 590; four use the canonical
 // projection. Keep their exact filenames below so new conflicts fail this test.
-assert.strictEqual(envelopes, 579, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 576, 'an append normalized authored layout in additional documents');
-assert.strictEqual(canonicalAppend, 3, 'the set of structurally unterminated append conflicts changed');
+assert.strictEqual(envelopes, 594, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 590, 'an append normalized authored layout in additional documents');
+assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',
     '268-trailing-whitespace-on-a-content-line-is-dropped-8',
     '559-a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-3',
+    '619-a-fence-run-that-dedents-out-of-a-child-keeps-the-outer-item-tight-6',
 ]);
 
 const escaped = carveToProseMirror('a \\* b\n', { unsupported: 'preserve' });

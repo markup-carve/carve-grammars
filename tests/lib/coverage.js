@@ -27,6 +27,10 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Spec 618-620: all new documents pass the structured round-trip gate.
+    'captions-in-list-items-do-not-create-a-paragraph-gap',
+    'a-fence-run-that-dedents-out-of-a-child-keeps-the-outer-item-tight',
+    'generated-container-documents',
     // New spec categories measured by the 2679-document round-trip gate.
     'a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence',
     'a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line',

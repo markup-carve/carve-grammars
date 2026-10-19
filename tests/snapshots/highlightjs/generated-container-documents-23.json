@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^f]:"
+  },
+  {
+    "scope": null,
+    "text": " t\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "     [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "[r][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " outer"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   - head"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">     ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">     a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   tail"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

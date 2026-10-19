@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "text",
+    "text": "text\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "caption>title",
+    "text": "  ^ cap"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  Body.\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  }
+]

@@ -2085,7 +2085,11 @@ function mergeAuthoredSource(authored, baseline, edited, appendable = null) {
         ? appendable
         : !baselineClose || authored.trimEnd().endsWith(baselineClose);
     const appendedBlocks = appended?.match(/^[ \t]*(\n\n[\s\S]*)$/)?.[1];
-    if (appendedBlocks && authoredHasClose) return authored.trimEnd() + appendedBlocks;
+    if (appendedBlocks) {
+        // An unterminated authored fence can absorb the new block. Use the
+        // editor projection so the appended block stays a document sibling.
+        return authoredHasClose ? authored.trimEnd() + appendedBlocks : edited;
+    }
     if (edited.endsWith(baseline)) return edited.slice(0, -baseline.length) + authored;
 
     const characters = Math.max(authored.length, baseline.length, edited.length) <= 20_000;

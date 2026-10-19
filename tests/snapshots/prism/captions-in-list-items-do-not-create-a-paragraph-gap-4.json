@@ -1,0 +1,46 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "a"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "b.png"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "caption>title",
+    "text": "  ^ cap"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  }
+]

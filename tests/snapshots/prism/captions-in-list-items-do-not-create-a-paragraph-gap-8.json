@@ -1,0 +1,66 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter",
+    "text": " "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>class-name",
+    "text": "figure"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n  "
+  },
+  {
+    "type": "figure-group>image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "figure-group>image>url",
+    "text": "a"
+  },
+  {
+    "type": "figure-group>image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "figure-group>image>url",
+    "text": "b.png"
+  },
+  {
+    "type": "figure-group>image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "figure-group",
+    "text": "\n"
+  },
+  {
+    "type": "figure-group>figure-group-delimiter",
+    "text": "  "
+  },
+  {
+    "type": "figure-group>figure-group-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  ^ cap\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  }
+]

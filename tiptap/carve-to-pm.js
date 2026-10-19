@@ -596,12 +596,14 @@ function convertBlock(node, ctx) {
             };
 
         case 'line-block':
-        case 'line_block':
+        case 'line_block': {
+            const content = convertBlocks((node.children || []).map(lineBlockIndentation), ctx);
             return {
                 type: 'carveLineBlock',
                 attrs: { mode: '|' },
-                content: convertBlocks((node.children || []).map(lineBlockIndentation), ctx),
+                content: content.length ? content : [{ type: 'paragraph' }],
             };
+        }
 
         case 'admonition':
             return convertAdmonition(node, ctx);

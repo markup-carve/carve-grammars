@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "section",
+    "text": "::: figure"
+  },
+  {
+    "scope": null,
+    "text": "\n  "
+  },
+  {
+    "scope": "link",
+    "text": "![a](b.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "  :::"
+  },
+  {
+    "scope": null,
+    "text": "\n\n  ^ cap\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " c\n"
+  }
+]

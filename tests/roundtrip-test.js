@@ -744,6 +744,8 @@ assert.strictEqual(failures, 0, `${failures} round-trip check group(s) failed (s
  *   four of the five new documents joined (10 to 13). The writer spells a
  *   forced run without its braces and escapes what it held; 1, 2, 4, 10 and 13
  *   also load through an engine that predates same-kind nesting.
+ * - The 618-620 bump was diffed by name: 15 envelopes added, none removed.
+ *   They cover captions (4), dedented fences (2), and generated containers (9).
  */
 assertLedger(
     'enveloped-ledger.json',

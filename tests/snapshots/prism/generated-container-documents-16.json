@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "text",
+    "text": "body\n\n  "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ": n\n   prose\n"
+  }
+]
