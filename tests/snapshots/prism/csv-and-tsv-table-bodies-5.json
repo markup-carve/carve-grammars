@@ -37,7 +37,43 @@
   },
   {
     "type": "code-block",
-    "text": "\nItem,Qty\nApple,2\nTotal,2\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "Item"
+  },
+  {
+    "type": "code-block>csv-body>header>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "Qty"
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "\nApple"
+  },
+  {
+    "type": "code-block>csv-body>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "2\nTotal"
+  },
+  {
+    "type": "code-block>csv-body>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "2"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

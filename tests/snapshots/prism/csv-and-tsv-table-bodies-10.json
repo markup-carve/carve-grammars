@@ -37,7 +37,15 @@
   },
   {
     "type": "code-block",
-    "text": "\nlast\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "last"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

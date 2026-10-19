@@ -1385,6 +1385,8 @@
         json: ['json', 'json5', 'jsonc'],
         yaml: ['yaml', 'yml'],
         ini: ['toml', 'ini', 'cfg'],
+        csv: ['csv'],
+        tsv: ['tsv'],
         xml: ['html', 'htm', 'xhtml', 'xml', 'svg', 'xsd', 'xsl', 'xslt'],
         css: ['css'],
         scss: ['scss'],

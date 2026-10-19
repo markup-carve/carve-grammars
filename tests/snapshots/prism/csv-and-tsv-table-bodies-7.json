@@ -25,7 +25,19 @@
   },
   {
     "type": "code-block",
-    "text": "\n\"bad\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header",
+    "text": "\""
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "bad"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

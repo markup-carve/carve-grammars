@@ -1069,6 +1069,31 @@
         + '\\|[^\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*\\n)';
     var plusRowTail = '\\+[^\\r\\n]*\\|[ \\t]*(?![^\\r\\n])';
 
+    function delimitedBody(separator) {
+        var escaped = separator === ',' ? ',' : '\\t';
+        var string = {
+            // A field opens at a separator or a row start; the row-start indent is a container's.
+            pattern: new RegExp('(?<=(?:^|\\n)' + (separator === ',' ? '[ \\t]*' : ' *') + '|' + escaped + ')"(?:[^"]|"")*"(?!")'),
+            greedy: true,
+            inside: { escape: { pattern: /""/, alias: 'char' } },
+        };
+        var punctuation = { pattern: new RegExp(escaped), alias: 'punctuation' };
+        return {
+            header: {
+                pattern: /(?<![\s\S])[^\r\n]+/,
+                inside: {
+                    string: string,
+                    separator: punctuation,
+                    field: { pattern: new RegExp('[^' + escaped + '"\\r\\n]+'), alias: 'property' },
+                },
+            },
+            string: string,
+            separator: punctuation,
+        };
+    }
+    var csvBody = delimitedBody(',');
+    var tsvBody = delimitedBody('\t');
+
     Prism.languages.carve = {
         // Block comments %%% ... %%% and line comments %% ...
         // A `%%%` fence line is a DELIMITER plus an INSIGNIFICANT TAIL (spec
@@ -1363,6 +1388,16 @@
             inside: {
                 // An info string's quoted title and bracketed label, on the
                 // opener line only.
+                'csv-body': {
+                    pattern: /(^\uFEFF?[ \t]*(?:`{3,}|~{3,})[ \t]?[cC][sS][vV](?![^\s"\[])[^\n]*\n)[\s\S]*(?=\n[^\n]*$)/,
+                    lookbehind: true,
+                    inside: csvBody,
+                },
+                'tsv-body': {
+                    pattern: /(^\uFEFF?[ \t]*(?:`{3,}|~{3,})[ \t]?[tT][sS][vV](?![^\s"\[])[^\n]*\n)[\s\S]*(?=\n[^\n]*$)/,
+                    lookbehind: true,
+                    inside: tsvBody,
+                },
                 'string': { pattern: /(^[^\n]*?)"[^"\n]*"/, lookbehind: true },
                 'symbol': { pattern: /(^[^\n]*?)\[(?:[^\]\n`]|`[^`\n]*`)*\]/, lookbehind: true },
                 // BEFORE `punctuation`, which consumes the opening fence this

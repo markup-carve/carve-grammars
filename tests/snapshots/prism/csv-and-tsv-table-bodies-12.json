@@ -25,7 +25,27 @@
   },
   {
     "type": "code-block",
-    "text": "\n\"a\" ,b\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header>string",
+    "text": "\"a\""
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": " "
+  },
+  {
+    "type": "code-block>csv-body>header>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "b"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

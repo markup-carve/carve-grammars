@@ -82,12 +82,12 @@ ok('transformer tags strike/super/sub/highlight tokens', () => {
 
 ok('carveMarkdown returns a spreadable vitepress markdown config', () => {
     const md = carveMarkdown();
-    assert.strictEqual(md.languages[0].name, 'carve');
+    assert.deepStrictEqual(md.languages.map((lang) => lang.name), ['carve', 'carve-csv', 'carve-tsv']);
     assert.ok(md.theme.light.tokenColors.length);
     assert.ok(md.theme.dark.tokenColors.length);
     assert.strictEqual(md.codeTransformers[0].name, 'carve-extras');
     const extraLang = { name: 'other' };
-    assert.strictEqual(carveMarkdown({ languages: [extraLang] }).languages[1], extraLang);
+    assert.strictEqual(carveMarkdown({ languages: [extraLang] }).languages.at(-1), extraLang);
 });
 
 const browser = await import('../shiki/themes.js');

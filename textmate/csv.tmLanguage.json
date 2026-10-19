@@ -1,0 +1,166 @@
+{
+  "name": "CSV (Carve)",
+  "scopeName": "text.csv.carve",
+  "patterns": [
+    {
+      "include": "#table"
+    }
+  ],
+  "repository": {
+    "table": {
+      "comment": "The header is the first line captured whole: inside a host fence's while region \\G re-anchors every line, so a first record whose quoted field spans lines gets record scopes instead.",
+      "begin": "^(?:(?=(?:[^\"\\r\\n]|\"(?:[^\"\\r\\n]|\"\")*\")*\\r?$)([^\\r\\n]*))?",
+      "beginCaptures": {
+        "1": {
+          "name": "meta.record.header.csv",
+          "patterns": [
+            {
+              "include": "#header-fields"
+            }
+          ]
+        }
+      },
+      "end": "(?=A)(?!A)",
+      "patterns": [
+        {
+          "include": "#fields"
+        }
+      ]
+    },
+    "fields": {
+      "patterns": [
+        {
+          "match": ",",
+          "name": "punctuation.separator.delimiter.csv"
+        },
+        {
+          "begin": "^[ \\t]+(?=\")",
+          "end": "(?<=\")",
+          "patterns": [
+            {
+              "begin": "(\")",
+              "beginCaptures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.csv"
+                }
+              },
+              "end": "\"(?!\")",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.end.csv"
+                }
+              },
+              "name": "string.quoted.double.csv",
+              "patterns": [
+                {
+                  "match": "\"\"",
+                  "name": "constant.character.escape.csv"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "begin": "(?:(?<=^)|(?<=,))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.begin.csv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.csv"
+            }
+          },
+          "name": "string.quoted.double.csv",
+          "patterns": [
+            {
+              "match": "\"\"",
+              "name": "constant.character.escape.csv"
+            }
+          ]
+        },
+        {
+          "match": "(?<=\")[^,\\r\\n]+",
+          "name": "invalid.illegal.text-after-quote.csv"
+        },
+        {
+          "match": "[^,\"\\r\\n]+"
+        },
+        {
+          "match": "\"",
+          "name": "invalid.illegal.quote-in-unquoted-field.csv"
+        }
+      ]
+    },
+    "header-fields": {
+      "patterns": [
+        {
+          "match": ",",
+          "name": "punctuation.separator.delimiter.csv"
+        },
+        {
+          "begin": "^[ \\t]+(?=\")",
+          "end": "(?<=\")",
+          "patterns": [
+            {
+              "begin": "(\")",
+              "beginCaptures": {
+                "1": {
+                  "name": "punctuation.definition.string.begin.csv"
+                }
+              },
+              "end": "\"(?!\")",
+              "endCaptures": {
+                "0": {
+                  "name": "punctuation.definition.string.end.csv"
+                }
+              },
+              "name": "string.quoted.double.csv",
+              "patterns": [
+                {
+                  "match": "\"\"",
+                  "name": "constant.character.escape.csv"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "begin": "(?:(?<=^)|(?<=,))(\")",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.begin.csv"
+            }
+          },
+          "end": "\"(?!\")",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.string.end.csv"
+            }
+          },
+          "name": "string.quoted.double.csv",
+          "patterns": [
+            {
+              "match": "\"\"",
+              "name": "constant.character.escape.csv"
+            }
+          ]
+        },
+        {
+          "match": "(?<=\")[^,\\r\\n]+",
+          "name": "invalid.illegal.text-after-quote.csv"
+        },
+        {
+          "match": "[^,\"\\r\\n]+",
+          "name": "markup.heading.csv"
+        },
+        {
+          "match": "\"",
+          "name": "invalid.illegal.quote-in-unquoted-field.csv"
+        }
+      ]
+    }
+  }
+}

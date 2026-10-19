@@ -25,7 +25,35 @@
   },
   {
     "type": "code-block",
-    "text": "\nName,Note\nA,\"one\ntwo\"\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "Name"
+  },
+  {
+    "type": "code-block>csv-body>header>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "Note"
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "\nA"
+  },
+  {
+    "type": "code-block>csv-body>separator>punctuation",
+    "text": ","
+  },
+  {
+    "type": "code-block>csv-body>string",
+    "text": "\"one\ntwo\""
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

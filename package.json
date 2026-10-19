@@ -80,6 +80,10 @@
       "import": "./highlightjs/carve.mjs",
       "default": "./highlightjs/carve.js"
     },
+    "./highlightjs/delimited.js": {
+      "import": "./highlightjs/delimited.mjs",
+      "default": "./highlightjs/delimited.js"
+    },
     "./highlightjs/*": "./highlightjs/*",
     "./shiki": "./shiki/index.js",
     "./shiki/diff": {
@@ -98,6 +102,8 @@
     },
     "./diff/carve-diff.css": "./diff/carve-diff.css",
     "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
+    "./textmate/csv.tmLanguage.json": "./textmate/csv.tmLanguage.json",
+    "./textmate/tsv.tmLanguage.json": "./textmate/tsv.tmLanguage.json",
     "./fence-languages.json": "./fence-languages/fence-languages.json",
     "./tiptap/schema-map.json": "./tiptap/schema-map.json",
     "./package.json": "./package.json"

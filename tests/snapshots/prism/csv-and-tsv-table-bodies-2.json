@@ -37,7 +37,35 @@
   },
   {
     "type": "code-block",
-    "text": "\nA\tB\n^\t<x>\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block>tsv-body>header>field>property",
+    "text": "A"
+  },
+  {
+    "type": "code-block>tsv-body>header>separator>punctuation",
+    "text": "\t"
+  },
+  {
+    "type": "code-block>tsv-body>header>field>property",
+    "text": "B"
+  },
+  {
+    "type": "code-block>tsv-body",
+    "text": "\n^"
+  },
+  {
+    "type": "code-block>tsv-body>separator>punctuation",
+    "text": "\t"
+  },
+  {
+    "type": "code-block>tsv-body",
+    "text": "<x>"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
   },
   {
     "type": "code-block>punctuation",

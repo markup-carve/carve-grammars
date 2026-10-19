@@ -12,6 +12,8 @@
     {"words": ["jsonl"], "language": "jsonl", "textmate": ["source.json.lines"], "sublime": null},
     {"words": ["yaml", "yml"], "language": "yaml", "textmate": ["source.yaml"], "sublime": "scope:source.yaml"},
     {"words": ["toml"], "language": "toml", "textmate": ["source.toml"], "sublime": "scope:source.toml"},
+    {"words": ["csv"], "language": "csv", "textmate": ["text.csv.carve"], "sublime": "scope:text.csv.carve"},
+    {"words": ["tsv"], "language": "tsv", "textmate": ["text.tsv.carve"], "sublime": "scope:text.tsv.carve"},
     {"words": ["html", "htm", "xhtml"], "language": "html", "textmate": ["text.html.basic"], "sublime": "scope:text.html.basic"},
     {"words": ["xml", "svg", "xsd"], "language": "xml", "textmate": ["text.xml"], "sublime": "scope:text.xml"},
     {"words": ["xsl", "xslt"], "language": "xsl", "textmate": ["text.xml.xsl"], "sublime": "scope:text.xml"},

@@ -40,6 +40,8 @@ export const carveGrammar = {
     name: 'carve',
     aliases: ['crv', 'Carve'],
 }
+export const carveCsvGrammar = { ...require('../textmate/csv.tmLanguage.json'), name: 'carve-csv' }
+export const carveTsvGrammar = { ...require('../textmate/tsv.tmLanguage.json'), name: 'carve-tsv' }
 
 export {
     carveLightExtras,
@@ -66,7 +68,7 @@ export function carveMarkdown(options = {}) {
     const dark = extendTheme(options.dark ?? githubDark, carveDarkExtras)
 
     return {
-        languages: [carveGrammar, ...(options.languages ?? [])],
+        languages: [carveGrammar, carveCsvGrammar, carveTsvGrammar, ...(options.languages ?? [])],
         theme: { light, dark },
         codeTransformers: [carveStylingTransformer],
     }

@@ -82,8 +82,11 @@ await import('@markup-carve/carve-grammars/prism/carve.js')
 ```js
 import hljs from 'highlight.js/lib/core'
 import carve from '@markup-carve/carve-grammars/highlightjs/carve.js'
+import { csv, tsv } from '@markup-carve/carve-grammars/highlightjs/delimited.js'
 
 hljs.registerLanguage('carve', carve)
+hljs.registerLanguage('csv', csv)
+hljs.registerLanguage('tsv', tsv)
 ```
 
 For Prism or highlight.js, load the optional table token colors after the
@@ -102,6 +105,10 @@ For a dark Prism or highlight.js theme, set `.dark` or
 TextMate consumers can load `textmate/carve.tmLanguage.json`. Shiki and
 VitePress users can call `carveMarkdown()` from
 `@markup-carve/carve-grammars/shiki`; it registers both `carve` and `crv`.
+CSV and TSV fence bodies are highlighted in all three grammars. `carveMarkdown()`
+includes `carveCsvGrammar` and `carveTsvGrammar`, which are also exported for
+direct Shiki registration. Register `highlightjs/delimited.js` as shown above
+when using highlight.js; Prism needs no additional registration.
 A fenced code block highlights its body with the grammar its language word
 names in [`fence-languages.json`](fence-languages/README.md), a `=html` raw block
 as HTML, and a bare fence under a `{.diff}` line as a diff. The host has to have

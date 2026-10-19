@@ -12,7 +12,10 @@ This package's own TextMate grammar reads the `textmate` column too:
 are stale. Re-run the script after changing a row.
 
 Editors that embed by the info string itself (tree-sitter in Zed, Helix and
-Neovim; Emacs' `<word>-mode` lookup) do not need it.
+Neovim; Emacs' `<word>-mode` lookup) do not need it. They highlight a `csv` or
+`tsv` body only with a CSV grammar of their own: nvim-treesitter has `csv` and
+`tsv` parsers, Helix bundles `csv` but not `tsv`, and Zed has neither built in
+(the `csv` extension adds CSV, `rainbow-csv` adds both).
 
 ## Columns
 
@@ -40,3 +43,9 @@ three fence positions), so a row should name a grammar that exists:
   built-in extension or a published extension's own `package.json`, never
   from memory.
 - `sublime` only for a scope a default Sublime Text package defines.
+
+`csv` and `tsv` are the exception. The CSV grammar Shiki ships (Rainbow CSV's)
+colors columns and scopes neither the separator nor a quoted field, and VS Code
+ships none, so their `textmate` scopes name this package's own
+`textmate/csv.tmLanguage.json` and `textmate/tsv.tmLanguage.json`, which each
+editor repository vendors, and their `sublime` scopes a port sublime-carve ships.
