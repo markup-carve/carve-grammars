@@ -71,12 +71,11 @@ const textUnder = (g, source, scope, sep) => g.leaves(source)
     .map((t) => t.text)
     .join(sep);
 
-// `oracle` overrides `directive` where the pinned spec's directive scanner
-// predates carve#3326 and still refuses a valueless option.
+// `oracle` overrides `directive` where the spec's directive scanner reads the row differently.
 const ROWS = [
-    { why: 'a bare `@code`', source: '{{ src/a.js @code }}', directive: '{{ src/a.js @code }}', oracle: '', path: 'src/a.js', options: '@code', values: '' },
-    { why: 'a bare `@code` glued to the path', source: '{{ src/a.js@code }}', directive: '{{ src/a.js@code }}', oracle: '', path: 'src/a.js', options: '@code', values: '' },
-    { why: 'a bare `@code` before a valued option', source: '{{ a.js @code @lines:1-2 }}', directive: '{{ a.js @code @lines:1-2 }}', oracle: '', path: 'a.js', options: '@code|@lines', values: '1-2' },
+    { why: 'a bare `@code`', source: '{{ src/a.js @code }}', directive: '{{ src/a.js @code }}', path: 'src/a.js', options: '@code', values: '' },
+    { why: 'a bare `@code` glued to the path', source: '{{ src/a.js@code }}', directive: '{{ src/a.js@code }}', path: 'src/a.js', options: '@code', values: '' },
+    { why: 'a bare `@code` before a valued option', source: '{{ a.js @code @lines:1-2 }}', directive: '{{ a.js @code @lines:1-2 }}', path: 'a.js', options: '@code|@lines', values: '1-2' },
     { why: 'a glued region and a valued `@code`', source: '{{ src/a.js@region:start @code:js }}', directive: '{{ src/a.js@region:start @code:js }}', path: 'src/a.js', options: '@region|@code', values: 'start|js' },
     { why: 'a valued option - the control', source: '{{ c.crv @shift:1 }}', directive: '{{ c.crv @shift:1 }}', path: 'c.crv', options: '@shift', values: '1' },
     { why: 'a colon with no value is no option', source: '{{ c.crv @shift: }}', directive: '{{ c.crv @shift: }}', oracle: '', path: 'c.crv', options: '', values: '' },
