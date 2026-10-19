@@ -25,7 +25,6 @@ const SAMPLES = {
     'quoted-comma-newline-escape': '```csv\n"Name, full",Note\n"Ann ""A""",x\n"multi\nline",ok\n```\n',
     'malformed': '```csv\nh\na"b,"c"d\n```\n',
     'tsv-in-a-list-item': '- item\n\n  ```tsv\n  K\tV\n  "a\tb"\tc\n  ```\n',
-    // A first record whose quoted field spans lines is not marked as the header (see the grammar's comment).
     'multi-line-header': '```csv\n"a\nb",c\nx,y\n```\n',
     'crlf': '```csv\r\nPlan,Seats\r\n"x, y",1\r\n```\r\n',
 };
@@ -87,7 +86,7 @@ if (UPDATE) {
 const has = (lines, re) => assert.ok(lines.some((line) => re.test(line)), re.source);
 const lacks = (lines, re) => assert.ok(!lines.some((line) => re.test(line)), re.source);
 const tm = live['maintainer-sample'].textmate;
-has(tm, /^3 "Plan" .*meta\.record\.header\.csv markup\.heading\.csv$/);
+has(tm, /^3 "Plan" meta\.embedded\.block\.csv markup\.heading\.csv$/);
 has(tm, /^3 "," .*punctuation\.separator\.delimiter\.csv$/);
 has(tm, /^5 "\$49, billed yearly" .*string\.quoted\.double\.csv$/);
 lacks(tm, /^4 .*markup\.heading/);
@@ -96,12 +95,14 @@ has(edge, /^3 "\\"\\"" .*constant\.character\.escape\.csv$/);
 has(edge, /^5 "line" .*string\.quoted\.double\.csv$/);
 has(live.malformed.textmate, /^3 "\\"" .*invalid\.illegal\.quote-in-unquoted-field\.csv$/);
 has(live.malformed.textmate, /^3 "d" .*invalid\.illegal\.text-after-quote\.csv$/);
+has(live['multi-line-header'].textmate, /^3 "c" .*markup\.heading\.csv$/);
+lacks(live['multi-line-header'].textmate, /^4 .*markup\.heading/);
 has(live['tsv-in-a-list-item'].textmate, /^5 "a\\tb" .*string\.quoted\.double\.tsv$/);
 has(live['tsv-in-a-list-item'].textmate, /^5 "\\t" .*punctuation\.separator\.delimiter\.tsv$/);
 lacks(live.crlf.textmate, /"[^"]*\\r[^"]*" .*(?:heading|separator|invalid|string)/);
 has(live['quoted-comma-newline-escape'].prism, /^<span class="token string">"Ann <span class="token escape char">""<\/span>/);
 has(live['tsv-in-a-list-item'].hljs, /^ {2}<span class="hljs-string">&quot;a\tb&quot;<\/span><span class="hljs-punctuation">\t<\/span>c$/);
-count += 13;
+count += 15;
 
 assertThisFileRuns(import.meta.url);
 console.log(`delimited fence: ${count} assertions passed`);
