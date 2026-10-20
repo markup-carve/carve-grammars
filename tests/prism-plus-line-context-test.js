@@ -6,8 +6,9 @@ import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 // A lone `+` attaches only under an open list item, footnote, quote or
 // description, and a `+ ... |` line is a row only directly under a row
-// (pygments-carve#92). Each shape is how carve 0.1.11 renders it: true when
-// every `+` is markup, false when every `+` stays in the text.
+// (pygments-carve#92). Each shape is how the carve spec model renders it since
+// the relative-column ruling (markup-carve/carve#3445): true when every `+` is
+// markup, false when every `+` stays in the text.
 const SHAPES = [
     ['- item\n+\n```\nx\n```\n', true],
     ['- item\n\n+\n```\nx\n```\n', true],
@@ -18,7 +19,7 @@ const SHAPES = [
     ['- a\n%% c\n\n+\n```\nx\n```\n', true],
     ['- a\n\n  para\n%% c\n+\n```\nx\n```\n', true],
     ['- a\n  - b\n+\n```\nx\n```\n', true],
-    ['- a\n  - b\n  +\n  c\n', false],
+    ['- a\n  - b\n  +\n  c\n', true],
     ['- x\n  > q\n  +\n', false],
     ['- a\n+\n```\nx\n```\n+\n```\ny\n```\n', true],
     ['- x\n+\n| a |\n|---|\n| b |\n+\n| c |\n', true],
@@ -27,7 +28,7 @@ const SHAPES = [
     ['> q\nlazy\n+\n```\nx\n```\n', true],
     [':: t\n: d\n+\n```\nx\n```\n', true],
     ['[^n]: x\n+\n```\nc\n```\n', true],
-    ['[^n]: x\n\n+\n```\nc\n```\n', true],
+    ['[^n]: x\n\n+\n```\nc\n```\n', false],
     ['+\n```\nx\n```\n', false],
     ['para\n\n+\n\nnext\n', false],
     ['para\n+\n', false],

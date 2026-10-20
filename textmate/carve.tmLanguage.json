@@ -73,9 +73,6 @@
       "include": "#table_row"
     },
     {
-      "include": "#list_continuation"
-    },
-    {
       "include": "#multiline_cell"
     },
     {
@@ -678,9 +675,6 @@
               "include": "#table_row"
             },
             {
-              "include": "#list_continuation"
-            },
-            {
               "include": "#multiline_cell"
             },
             {
@@ -850,9 +844,6 @@
               "include": "#table_row"
             },
             {
-              "include": "#list_continuation"
-            },
-            {
               "include": "#multiline_cell"
             },
             {
@@ -944,9 +935,6 @@
               "include": "#table_row"
             },
             {
-              "include": "#list_continuation"
-            },
-            {
               "include": "#multiline_cell"
             },
             {
@@ -1007,8 +995,8 @@
           "include": "#quoted_blocks"
         },
         {
-          "comment": "A `+` as the whole rest of a quoted marker line is the continuation marker: after a list marker always, and as the quote's own first line (`> +`) when a flush-left block follows (markup-carve/carve#3105). The next line is out of reach here, so the bare form is scoped regardless.",
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))?(\\+)[ \\t]*$",
+          "comment": "A `+` as the whole rest of a quoted list item's marker line is the continuation marker. A bare `> +` is a marker only when the next line starts at the right column (markup-carve/carve#3445), which a line grammar cannot see, so it stays text.",
+          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -1591,18 +1579,9 @@
         }
       ]
     },
-    "list_continuation": {
-      "comment": "A lone `+` at column 0 is the list-continuation marker; it attaches the following flush-left block to the item.",
-      "match": "^(?:\\A\\x{FEFF})?(\\+)([ \\t]*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.list.continuation.carve"
-        }
-      }
-    },
     "marker_line_continuation": {
       "comment": "A `+` that is the whole rest of a list item's or footnote's marker line is the continuation marker too (`- +`, `1. +`, `- [ ] +`, `[^a]: +`). `\\G` is where the container's opener stopped: a list opener has consumed its separator, a footnote opener stops before it. A footnote's `+` is a marker only when a flush-left line follows, which a line grammar cannot see, so it is scoped regardless.",
-      "match": "\\G(?:(?<=[^ \\t][ \\t]+)|(?<=[^ \\t]) +|(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}) +)(\\+)[ \\t]*$",
+      "match": "\\G(?:(?<=[^ \\t][ \\t]+)|(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}) +)(\\+)[ \\t]*$",
       "captures": {
         "1": {
           "patterns": [
@@ -4154,9 +4133,6 @@
           "include": "#table_row"
         },
         {
-          "include": "#list_continuation"
-        },
-        {
           "include": "#multiline_cell"
         },
         {
@@ -4317,9 +4293,6 @@
         },
         {
           "include": "#table_row"
-        },
-        {
-          "include": "#list_continuation"
         },
         {
           "include": "#multiline_cell"
@@ -4484,9 +4457,6 @@
           "include": "#table_row"
         },
         {
-          "include": "#list_continuation"
-        },
-        {
           "include": "#multiline_cell"
         },
         {
@@ -4645,9 +4615,6 @@
           "include": "#table_row"
         },
         {
-          "include": "#list_continuation"
-        },
-        {
           "include": "#multiline_cell"
         },
         {
@@ -4726,9 +4693,6 @@
         },
         {
           "include": "#table_row"
-        },
-        {
-          "include": "#list_continuation"
         },
         {
           "include": "#multiline_cell"
@@ -4824,9 +4788,6 @@
         },
         {
           "include": "#table_row"
-        },
-        {
-          "include": "#list_continuation"
         },
         {
           "include": "#multiline_cell"

@@ -13,14 +13,6 @@
   },
   {
     "type": "text",
-    "text": "L\n"
-  },
-  {
-    "type": "continuation-marker>punctuation",
-    "text": "+"
-  },
-  {
-    "type": "text",
-    "text": "\n  p\n"
+    "text": "L\n+\n  p\n"
   }
 ]

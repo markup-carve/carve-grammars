@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": " A first paragraph,\n+\nthen a flush-left block joined with +.\n"
+    "text": " A first paragraph,\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\nthen a flush-left block joined with +.\n"
   }
 ]

@@ -5,15 +5,7 @@
   },
   {
     "type": "text",
-    "text": ": intro\n"
-  },
-  {
-    "type": "continuation-marker>punctuation",
-    "text": "+"
-  },
-  {
-    "type": "text",
-    "text": "\n more\n\nsee"
+    "text": ": intro\n+\n more\n\nsee"
   },
   {
     "type": "footnote>symbol",

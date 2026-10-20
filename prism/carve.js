@@ -1018,45 +1018,67 @@
         'punctuation': /\+/,
     };
 
-    // A lone `+` at column 0 attaches only while a list item, footnote, quote or
-    // description is open; elsewhere carve renders it as text. A list item or
-    // footnote stays open across blank lines, where only an indented line or a
-    // `+` reopens it; a lazy or `%%` line right under a blank closes it. A quote
-    // or description takes no blank line and no `%%` line. Whatever follows a
-    // `+` up to the next blank line is the block it attached, so it keeps the
-    // container open. Each class is one line, asserted from its start.
-    var plusLineAt = function (body, start) { return (start || '(?<![^\\n])') + '(?:' + body + ')\\n'; };
-    var plusLone = '\\+[ \\t\\r]*';
-    var plusIndented = '[ \\t]+[^ \\t\\r\\n][^\\n]*';
-    // Paragraph text, which the open block takes as a lazy line.
-    var plusLazy = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
-    var plusListOpener = notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?'
-        + '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:[ \\t]+[^ \\t\\r\\n]|' + gluedAttrBlock + ')[^\\n]*';
-    var plusFootnote = '(?:(?<![\\s\\S])\\uFEFF)?\\[\\^[^\\]\\r\\n]+\\]:[ \\t][^\\n]*';
-    var plusHolder = '(?:(?<![\\s\\S])\\uFEFF)?(?:>(?![^ \\t\\r\\n])|:[ \\t]+[^ \\t\\r\\n])[^\\n]*';
-    // `start` asserts a line start and, inside a quote, the line's quote prefix;
-    // `blank` is a whole blank line.
-    var plusAttachesFrom = function (start, blank, listOpener, tail) {
-        var at = function (body) { return plusLineAt(body, start); };
-        var lines = function (body) { return '(?:' + at(body) + ')*'; };
-        // A `+` and the block it attached run to the next blank line.
-        // Bounded: this run can cross earlier `+` lines, so a document of them would
-        // otherwise cost a lookback over the whole document at every line.
-        var attached = at(plusLone) + '(?:' + at('[ \\t]*[^ \\t\\r\\n][^\\n]*') + '){0,64}';
-        var listRun = lines(plusLazy + '|%%(?!%)[^\\n]*|' + plusIndented) + '(?:' + attached + ')?';
-        return '(?<=(?:'
-            + at(listOpener + '|' + plusFootnote) + listRun
-            + '(?:(?:' + blank + ')+(?:' + at(plusIndented) + listRun + '|' + attached + ')){0,32}'
-            + '(?:' + blank + '){0,64}'
-            + '|' + at(plusHolder) + lines(plusLazy + '|' + plusIndented) + '(?:' + attached + ')?'
-            + ')' + (tail || '') + ')';
-    };
-    var plusAttaches = plusAttachesFrom('(?<![^\\n])', plusLineAt('[ \\t\\r]*'), plusListOpener);
+    // The continuation marker at RELATIVE column 0 (markup-carve/carve#3445,
+    // CARVE-P9-031). A lone `+` is the marker only where the lines around it
+    // prove it: it sits at the marker column of an item, quote, description or
+    // footnote opened above and still open, and the next line starts at that
+    // column. Everything else is text. Lookbehinds read right to left, so a
+    // group is captured on the `+` line before the lines above it are read;
+    // the `(?=\+)` in front of each keeps them off every other position.
+    function relativePlusSource(g) {
+        var item = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
+        var notItem = '(?!' + item + '(?:[ \\t]|\\r?$|\\{))';
+        // A list item does not interrupt a paragraph, so one under prose opens nothing.
+        var notUnderProse = '(?<!(?<![^\\n])[^ \\t\\r\\n>|#:`~*\\-+\\d[{%][^\\n]*\\n)';
+        var listOpener = notUnderProse + item + '(?:[ \\t]|\\{)';
+        var holderOpener = '(?:>|:[ \\t]|\\[\\^[^\\]\\r\\n]+\\]:[ \\t])';
+        var opener = '(?:' + listOpener + '|' + holderOpener + ')';
+        var comment = '[ \\t]*%%[^\\n]*';
+        // `(?=[^\\r\\n])` is each inner lookbehind's sentinel: these lines are never empty.
+        var underText = '(?=[^\\r\\n])(?<=(?<![^\\n])[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n)';
+        var lazyText = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
+        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> ?)*)(?!(?<=>) )( *)';
+        var lone = '\\+[ \\t]*(?=\\r?\\n';
+        // The lines between the opener and the `+` that keep the container
+        // open, for quote prefix `q` and column `s`. The classes are disjoint,
+        // so a run that reaches no opener fails once rather than once per way
+        // of splitting it. A list item stays open across a blank line and a
+        // comment; the other containers take neither. Bounded twice: 512 lines
+        // between two `+` and 8 earlier `+` lines, so a document of `+` lines
+        // costs a constant per line.
+        var run = function (q, s, list) {
+            var deeper = q + s + '[ \\t]+[^ \\t\\r\\n][^\\n]*';
+            var sibling = q + s + opener + '[^\\n]*';
+            var lazy = underText + q + '(?!' + s + opener + ')' + lazyText;
+            var plus = q + s + '\\+[ \\t]*\\r?';
+            // The lines of the block an earlier `+` attached, up to a blank line.
+            var attached = '(?=[^\\r\\n])(?<=(?<![^\\n])' + plus + '\\n(?:[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n){0,64})'
+                + '(?!' + deeper + '|' + sibling + '|' + plus + '\\n|' + comment + '|' + lazy + ')[ \\t>]*[^ \\t\\r\\n>][^\\n]*';
+            var kept = '(?<![^\\n])(?:' + deeper + '|' + sibling + '|' + lazy + '|' + attached
+                + (list ? '|[ \\t]*\\r?|[ \\t]*(?:>[ \\t]*)+\\r?|' + underText + q + '(?!' + s + opener + ')' + comment : '') + ')\\n';
+            return '(?:(?:' + kept + '){0,512}(?<![^\\n])' + plus + '\\n){0,8}(?:' + kept + '){0,512}';
+        };
+        var at = function (n) { return { q: '\\' + n, s: '\\' + (n + 1) }; };
+        // Under a list item, a list item below is a sibling, not the attached block.
+        var a = at(g);
+        var listed = '(?=\\+)(?<=(?<![^\\n])' + a.q + a.s + listOpener + '[^\\n]*\\n' + run(a.q, a.s, true) + lineAt + ')'
+            + lone + a.q + a.s + '(?![ \\t])' + notItem + '[^\\r\\n])';
+        var b = at(g + 2);
+        var held = '(?=\\+)(?<=(?<![^\\n])' + b.q + b.s + holderOpener + '[^\\n]*\\n' + run(b.q, b.s, false) + lineAt + ')'
+            + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
+        // A quote's own first line: the block below starts left of it.
+        var c = at(g + 4);
+        var opened = '(?=\\+)(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?!' + c.q + ')[^\\n]*\\n)' + lineAt + ')(?<=>|> )'
+            + lone + '(?!' + c.q + ')(?:> ?)*(?![ \\t>])' + notItem + '[^\\r\\n])';
+        // Openers on one line with a quote innermost (`- > +`): the block
+        // below starts at column 0 or at that line's column.
+        var d = at(g + 6);
+        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> ?)+)'
+            + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
+        return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
+    }
+
     var plusListMarker = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
-    // In a quote: the same reading behind the quote prefix captured as group 1.
-    // A quote line holding only its markers is the blank line.
-    var plusAttachesInQuote = plusAttachesFrom('(?<![^\\n])\\1', '(?<![^\\n])[ \\t]*(?:>[ \\t]*)+\\r?\\n',
-        plusListMarker + '(?:[ \\t]+[^ \\t\\r\\n]|' + gluedAttrBlock + ')[^\\n]*', '\\1');
     // A `+ ... |` line is a row only directly under a row at its indent: a
     // table row, not the separator under a header, or a `+` row continuing one.
     var plusRowSeparator = '[ \\t]*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t\\r]*\\n';
@@ -1803,15 +1825,13 @@
         // non-blank flush-left line follows (markup-carve/carve#3105).
         'continuation-marker': [
             {
-                // A run of `+` lines is one token, so the lookbehind runs once per run.
-                pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?=\\+[ \\t]*$(?![^\\r\\n]))' + plusAttaches
-                    + '\\+[ \\t]*(?:\\r?\\n\\+[ \\t]*(?![^\\r\\n]))*$(?![^\\r\\n])', 'm'),
+                pattern: RegExp(relativePlusSource(1), 'm'),
                 greedy: true,
                 inside: continuationInside,
             },
             // On a list marker line once 'list' has the marker (`- +`).
             {
-                pattern: /(?=\+)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.) +(?:\[[ xX\-_>?]\] +)?)+)\+[ \t]*$(?![^\r\n])/m,
+                pattern: /(?=\+)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:[-*] +(?:\[[ xX\-_>?]\] +)?|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.) +)+)\+[ \t]*$(?![^\r\n])/m,
                 greedy: true,
                 inside: continuationInside,
             },
@@ -1823,14 +1843,6 @@
             {
                 pattern: RegExp('(^(?<![\\s\\S])' + gluedAttrRun + ' +)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
                 lookbehind: true,
-                inside: continuationInside,
-            },
-            {
-                // Greedy so the lookahead reads the next line even when an
-                // earlier rule (a table, a fence) has already tokenized it.
-                pattern: /(^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?:> )+)\+[ \t]*(?=\r?\n[^ \t\r\n>])/m,
-                lookbehind: true,
-                greedy: true,
                 inside: continuationInside,
             },
             {
@@ -1935,8 +1947,8 @@
                 'punctuation': /^(?<![^\r\n])[ \t]*: +(?![ \t]*$(?![^\r\n]))/m,
                 'description-attributes': bodyAttributes(':'),
                 'continuation-marker': {
-                    // Before the first description under a `::` term, a `+` is the term's text.
-                    pattern: /(?=\+)(?:(?<![^\r\n])(?<!(?<![^\n])[ \t]*::[^\n]*\n(?:(?<![^\n])(?![ \t]*:[ \t])[^\n]*\n)*)|(?<=(?<![^\r\n])[ \t]*: +))\+[ \t]*$(?![^\r\n])/m,
+                    // On its own line under the relative-column rule, or right after a description marker.
+                    pattern: RegExp(relativePlusSource(1) + '|(?=\\+)(?<=(?<![^\\r\\n])[ \\t]*: +)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
                     greedy: true,
                     inside: continuationInside,
                 },
@@ -2881,8 +2893,7 @@
     {
         const quotePrefix = /^(?<![^\r\n])\uFEFF?[ \t]*>(?: ?>)*/m;
         Prism.languages.carve.blockquote.unshift({
-            pattern: RegExp('^(?<![^\\r\\n])([ \\t]*(?:>[ \\t]?)+)(?=\\+[ \\t]*$(?![^\\r\\n]))' + plusAttachesInQuote
-                + '\\+[ \\t]*(?:\\r?\\n\\1\\+[ \\t]*(?![^\\r\\n]))*$(?![^\\r\\n])', 'm'),
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:> ?)+ *(?=' + relativePlusSource(1) + ')\\+[ \\t]*', 'm'),
             greedy: true,
             inside: {
                 'punctuation': quotePrefix,

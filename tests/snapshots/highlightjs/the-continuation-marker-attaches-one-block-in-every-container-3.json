@@ -13,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": "  a\n+\npara\n"
+    "text": "  a\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
   },
   {
     "scope": "quote",

@@ -1,0 +1,1140 @@
+{
+  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634",
+  "rows": [
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-2",
+      "source": "- - - ```\n    +\ntail\n",
+      "plus": [
+        [2, 4, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-3",
+      "source": "- - - ```\n      x\n    +\n- y\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-4",
+      "source": "- - - ```=html\n      x\n    +\ntail\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-5",
+      "source": "- - ```\n\n\n  +\ntail\n",
+      "plus": [
+        [4, 2, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-6",
+      "source": "- - - ```\n      x\n\n\n    +\ntail\n",
+      "plus": [
+        [5, 4, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-7",
+      "source": "- 1. ```\n\n\n  +\ntail\n",
+      "plus": [
+        [4, 2, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-8",
+      "source": "- - [ ] ```js\n        x\n\n  +\ntail\n",
+      "plus": [
+        [4, 2, "text"]
+      ]
+    },
+    {
+      "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth",
+      "source": "- - - ```\n      x\n    +\ntail\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-2",
+      "source": "- ```\n+\n\n  x\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-3",
+      "source": "- ```\n  a\n+\n  x\n",
+      "plus": [
+        [3, 0, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-4",
+      "source": "- ```\n  x\n+\n\ntail\n",
+      "plus": [
+        [3, 0, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-5",
+      "source": "- - ```\n  +\n\ntail\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-6",
+      "source": "- ```\n+\n\ntail\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-7",
+      "source": "- ```=html\n  x\n+\n\ntail\n",
+      "plus": [
+        [3, 0, "text"]
+      ]
+    },
+    {
+      "id": "627-a-refused-marker-leaves-an-open-fence-s-blank-payload",
+      "source": "- ```\n+\n  x\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-2",
+      "source": "- - ::: d\n  +\ntail\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-3",
+      "source": "1. ::: d\n+\ntail\n",
+      "plus": [
+        [2, 0, "marker"]
+      ]
+    },
+    {
+      "id": "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-4",
+      "source": "- ::: d\n  z\n+\ntail\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div",
+      "source": "- ::: d\n+\ntail\n",
+      "plus": [
+        [2, 0, "marker"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-2",
+      "source": "> q\n+\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-3",
+      "source": "- a\n+\n\npara\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-4",
+      "source": "x[^a]\n\n[^a]: note\n+\n\npara\n",
+      "plus": [
+        [4, 0, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-5",
+      "source": "> > q\n> +\n> para\n",
+      "plus": [
+        [2, 2, "marker"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6",
+      "source": "> > q\n> +\npara\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7",
+      "source": "> > q\n> +\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-8",
+      "source": "> [^a]: n\n> +\n\npara\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one",
+      "source": "> q\n+\n\npara\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-10",
+      "source": "  > +\nq\n",
+      "plus": [
+        [1, 4, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11",
+      "source": ">>+\nq\n",
+      "plus": [
+        [1, 2, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12",
+      "source": ">+\nq\n",
+      "plus": [
+        [1, 1, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-13",
+      "source": "- - +\npara\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-14",
+      "source": "- > +\npara\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-15",
+      "source": "> - +\n> para\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-16",
+      "source": "1. - +\npara\n",
+      "plus": [
+        [1, 5, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-17",
+      "source": "- a\n  - b\n+\npara\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-18",
+      "source": "- a\n  - +\npara\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-2",
+      "source": "- a\n  - b\n+\npara\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-3",
+      "source": "> - a\n>   - b\n> +\n> para\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4",
+      "source": "> > q\n> > +\n> > - s\n",
+      "plus": [
+        [2, 4, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-5",
+      "source": "> q\n>   +\n> para\n",
+      "plus": [
+        [2, 4, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-6",
+      "source": "- a\n  - ```\n    x\n    +\n    ```\n",
+      "plus": [
+        [4, 4, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7",
+      "source": "- a\n  - b\n  +\n> q\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-8",
+      "source": "- a\n  - b\n  +\n  > q\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-9",
+      "source": "- - - ```\n      x\n    +\ntail\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener",
+      "source": "- a\n  - b\n  +\npara\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "631-a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox-2",
+      "source": "- [x] +\n> quote\n",
+      "plus": [
+        [1, 6, "marker"]
+      ]
+    },
+    {
+      "id": "631-a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox-3",
+      "source": "- [ ] + text\n",
+      "plus": [
+        [1, 6, "text"]
+      ]
+    },
+    {
+      "id": "631-a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox-4",
+      "source": "- - [ ] +\n```\ncode\n```\n",
+      "plus": [
+        [1, 8, "marker"]
+      ]
+    },
+    {
+      "id": "631-a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox",
+      "source": "- [ ] +\n```\ncode\n```\n",
+      "plus": [
+        [1, 6, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-10",
+      "source": "- a\n  - b\n  +\n  > q\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-11",
+      "source": "- a\n  - b\n  +\n    > q\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-12",
+      "source": "- foo\n  - [ ] task\n  +\n  - x\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-13",
+      "source": "- a\n+\n- b\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-14",
+      "source": "> - a\n  +\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-15",
+      "source": "- a\n  > q\n  +\n  para\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-16",
+      "source": "- a\n  - ```\n  +\n  > q\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-17",
+      "source": "- a\n  - ```\n    +\n    ```\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-18",
+      "source": "- a\n  - ```\n  +\n\n  tail\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-19",
+      "source": "- a\n  - b\n  +\n\n  tail\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-2",
+      "source": "- a\n  - b\n+\n> q\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-20",
+      "source": "- a\n  - b\n  +\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-21",
+      "source": "- a\n  - b\n\n  +\n  > q\n",
+      "plus": [
+        [4, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-22",
+      "source": "- x\n  - y\n    - a\n\t+\n\t> q\n",
+      "plus": [
+        [4, 1, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-23",
+      "source": "- a\n  | h |\n  | v |\n+\n> q\n",
+      "plus": [
+        [4, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-24",
+      "source": "- a\n  | h |\n  | v |\n  + text |\n",
+      "plus": [
+        [4, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-25",
+      "source": "- a\n  - b\n+\n> q\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-26",
+      "source": "- foo\n  - [ ] task\n  +\n  ```sh\n  npm test\n  ```\n  - [ ] more\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-27",
+      "source": "- a\n  - +\n  > b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-28",
+      "source": "- a\n  - +\n> b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-29",
+      "source": "- - +\n> q\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-3",
+      "source": "- a\n  - b\n  +\n  para\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-30",
+      "source": "- - [ ] +\n> q\n",
+      "plus": [
+        [1, 8, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-31",
+      "source": "- > +\n> q\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-32",
+      "source": "> - +\n> q\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-33",
+      "source": "1. - +\n> q\n",
+      "plus": [
+        [1, 5, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-34",
+      "source": " - a\n +\n > q\n",
+      "plus": [
+        [2, 1, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-4",
+      "source": "1. a\n+\n> q\n",
+      "plus": [
+        [2, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-5",
+      "source": "- [ ] task\n+\n> q\n",
+      "plus": [
+        [2, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-6",
+      "source": "x[^a]\n\n[^a]: note\n+\n> q\n",
+      "plus": [
+        [4, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-7",
+      "source": ":: term\n: body\n+\n> q\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-8",
+      "source": "> q\n+\n| a |\n",
+      "plus": [
+        [2, 0, "marker"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column-9",
+      "source": "- a\n  - b\n  +\n> q\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "632-a-continuation-marker-uses-its-container-column",
+      "source": "- a\n  - b\n  +\n  > q\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-10",
+      "source": "- foo\n  - +\n    > b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-11",
+      "source": "- foo\n  - [ ] +\n> b\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-12",
+      "source": "- foo\n  - [ ] +\n > b\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-13",
+      "source": "- foo\n  - [ ] +\n  > b\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-14",
+      "source": "- foo\n  - [ ] +\n    > b\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-15",
+      "source": "- foo\n  1. +\n> b\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-16",
+      "source": "- foo\n  1. +\n > b\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-17",
+      "source": "- foo\n  1. +\n  > b\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-18",
+      "source": "- foo\n  1. +\n    > b\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-19",
+      "source": "- foo\n  - +\n```\nx\n```\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-2",
+      "source": "- a\n+\n- b\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-20",
+      "source": "- foo\n  - +\n ```\n x\n ```\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-21",
+      "source": "- foo\n  - +\n  ```\n  x\n  ```\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-22",
+      "source": "- foo\n  - +\n    ```\n    x\n    ```\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-23",
+      "source": "- foo\n  - [ ] +\n```\nx\n```\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-24",
+      "source": "- foo\n  - [ ] +\n ```\n x\n ```\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-25",
+      "source": "- foo\n  - [ ] +\n  ```\n  x\n  ```\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-26",
+      "source": "- foo\n  - [ ] +\n    ```\n    x\n    ```\n",
+      "plus": [
+        [2, 8, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-27",
+      "source": "- foo\n  1. +\n```\nx\n```\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-28",
+      "source": "- foo\n  1. +\n ```\n x\n ```\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-29",
+      "source": "- foo\n  1. +\n  ```\n  x\n  ```\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-3",
+      "source": "- foo\n  - [ ] task\n  +\n  1. x\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-30",
+      "source": "- foo\n  1. +\n    ```\n    x\n    ```\n",
+      "plus": [
+        [2, 5, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-31",
+      "source": "- foo\n  - +\n  - x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-32",
+      "source": "- foo\n  - +\n  + x\n",
+      "plus": [
+        [2, 4, "marker"],
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-33",
+      "source": "- foo\n  - +\n  * x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-34",
+      "source": "- foo\n  - +\n  1. x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-35",
+      "source": "- foo\n  - +\n  - [ ] x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-36",
+      "source": "- foo\n  - +\n    - x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-37",
+      "source": "- a\n\n+\n- s\n",
+      "plus": [
+        [3, 0, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-38",
+      "source": "- ```\n+\n- s\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-39",
+      "source": "> - ```\n> +\n> - s\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-4",
+      "source": "- foo\n  - b\n  +\n    - x\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-5",
+      "source": "- foo\n  - +\n> b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-6",
+      "source": "- foo\n  - +\n x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-7",
+      "source": "- foo\n  - +\n> b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-8",
+      "source": "- foo\n  - +\n > b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-9",
+      "source": "- foo\n  - +\n  > b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "633-a-first-block-marker-on-an-indented-opener-reads-two-columns",
+      "source": "- foo\n  - +\n- x\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-10",
+      "source": "- foo\n  - [ ] task\n  +\n  > q\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-11",
+      "source": "- foo\n  - [ ] task\n    +\n  - x\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-12",
+      "source": "- foo\n  - [ ] task\n  +\n  - x\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-13",
+      "source": "> - a\n> +\n",
+      "plus": [
+        [2, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-14",
+      "source": "- a\n  - b\n  +\n  - c\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-15",
+      "source": "- foo\n  - [ ] task\n  +\n  ```sh\n  npm test\n  ```\n  - [ ] more\n",
+      "plus": [
+        [3, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-16",
+      "source": "- foo\n  - [ ] task\n    +\n    q\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-17",
+      "source": "- a\n  - ``` =html\n    +\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-18",
+      "source": "- a\n  - ``` =html\n  +\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-19",
+      "source": "- a\n  - b\n  +\nleft\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-2",
+      "source": "- a\n  - b\n  +\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-20",
+      "source": "- a\n  - b\n  +\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-21",
+      "source": "- > a\n  +\n  b\n",
+      "plus": [
+        [2, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-22",
+      "source": "- x\n  - > a\n    +\n    b\n",
+      "plus": [
+        [3, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-23",
+      "source": "- +\n",
+      "plus": [
+        [1, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-24",
+      "source": "- +\n\npara\n",
+      "plus": [
+        [1, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-25",
+      "source": "- +\n- b\n",
+      "plus": [
+        [1, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-26",
+      "source": "1. +\n",
+      "plus": [
+        [1, 3, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-27",
+      "source": "- [ ] +\n",
+      "plus": [
+        [1, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-28",
+      "source": "- foo\n  - +\n  - b\n",
+      "plus": [
+        [2, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-29",
+      "source": "> +\nflush\n",
+      "plus": [
+        [1, 2, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-3",
+      "source": "- a\n\n+\n- s\n",
+      "plus": [
+        [3, 0, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-30",
+      "source": "> > +\nflush\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-31",
+      "source": "- a\n  - - +\n  > b\n",
+      "plus": [
+        [2, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-32",
+      "source": "- a\n  - - +\n> b\n",
+      "plus": [
+        [2, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-33",
+      "source": "- a\n  - > +\n  b\n",
+      "plus": [
+        [2, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-34",
+      "source": "> > +\n> b\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-35",
+      "source": "- > +\n# h\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-36",
+      "source": "- > +\n```\nx\n```\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-37",
+      "source": "- > +\n| a |\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-38",
+      "source": "- > +\n> q\n",
+      "plus": [
+        [1, 4, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-39",
+      "source": "- a\n  - > +\n# h\n",
+      "plus": [
+        [2, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-4",
+      "source": "- ```\n+\n- s\n",
+      "plus": [
+        [2, 0, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-40",
+      "source": "- a\n  - > +\n  # h\n",
+      "plus": [
+        [2, 6, "marker"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-5",
+      "source": "- a\n  - ```\n    +\n",
+      "plus": [
+        [3, 4, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-6",
+      "source": "- a\n  - ```\n  +\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-7",
+      "source": "- a\n  - ```\n  x\n  +\n",
+      "plus": [
+        [4, 2, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-8",
+      "source": "- a\n  - ```\n  x\n    +\n",
+      "plus": [
+        [4, 4, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text-9",
+      "source": "1. [ ] +\n",
+      "plus": [
+        [1, 7, "text"]
+      ]
+    },
+    {
+      "id": "634-a-refused-continuation-plus-remains-text",
+      "source": "- a\n  - b\n  +\ntail\n",
+      "plus": [
+        [3, 2, "text"]
+      ]
+    }
+  ]
+}

@@ -818,13 +818,73 @@
         '[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$(?![^\\r\\n])|\\*{3,}[ \\t]*$(?![^\\r\\n])|_{3,}[ \\t]*$(?![^\\r\\n])|`{3,}|~{3,}|:{3,}|>(?: |$(?![^\\r\\n]))'
         + '|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t])';
 
+    // The continuation marker at RELATIVE column 0 (markup-carve/carve#3445,
+    // CARVE-P9-031). A lone `+` is the marker only where the lines around it
+    // prove it: it sits at the marker column of an item, quote, description or
+    // footnote opened above and still open, and the next line starts at that
+    // column. Everything else is text. Lookbehinds read right to left, so a
+    // group is captured on the `+` line before the lines above it are read;
+    // the `(?=\+)` in front of each keeps them off every other position.
+    function relativePlusSource(g) {
+        var item = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
+        var notItem = '(?!' + item + '(?:[ \\t]|\\r?$|\\{))';
+        // A list item does not interrupt a paragraph, so one under prose opens nothing.
+        var notUnderProse = '(?<!(?<![^\\n])[^ \\t\\r\\n>|#:`~*\\-+\\d[{%][^\\n]*\\n)';
+        var listOpener = notUnderProse + item + '(?:[ \\t]|\\{)';
+        var holderOpener = '(?:>|:[ \\t]|\\[\\^[^\\]\\r\\n]+\\]:[ \\t])';
+        var opener = '(?:' + listOpener + '|' + holderOpener + ')';
+        var comment = '[ \\t]*%%[^\\n]*';
+        // `(?=[^\\r\\n])` is each inner lookbehind's sentinel: these lines are never empty.
+        var underText = '(?=[^\\r\\n])(?<=(?<![^\\n])[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n)';
+        var lazyText = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
+        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> ?)*)(?!(?<=>) )( *)';
+        var lone = '\\+[ \\t]*(?=\\r?\\n';
+        // The lines between the opener and the `+` that keep the container
+        // open, for quote prefix `q` and column `s`. The classes are disjoint,
+        // so a run that reaches no opener fails once rather than once per way
+        // of splitting it. A list item stays open across a blank line and a
+        // comment; the other containers take neither. Bounded twice: 512 lines
+        // between two `+` and 8 earlier `+` lines, so a document of `+` lines
+        // costs a constant per line.
+        var run = function (q, s, list) {
+            var deeper = q + s + '[ \\t]+[^ \\t\\r\\n][^\\n]*';
+            var sibling = q + s + opener + '[^\\n]*';
+            var lazy = underText + q + '(?!' + s + opener + ')' + lazyText;
+            var plus = q + s + '\\+[ \\t]*\\r?';
+            // The lines of the block an earlier `+` attached, up to a blank line.
+            var attached = '(?=[^\\r\\n])(?<=(?<![^\\n])' + plus + '\\n(?:[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n){0,64})'
+                + '(?!' + deeper + '|' + sibling + '|' + plus + '\\n|' + comment + '|' + lazy + ')[ \\t>]*[^ \\t\\r\\n>][^\\n]*';
+            var kept = '(?<![^\\n])(?:' + deeper + '|' + sibling + '|' + lazy + '|' + attached
+                + (list ? '|[ \\t]*\\r?|[ \\t]*(?:>[ \\t]*)+\\r?|' + underText + q + '(?!' + s + opener + ')' + comment : '') + ')\\n';
+            return '(?:(?:' + kept + '){0,512}(?<![^\\n])' + plus + '\\n){0,8}(?:' + kept + '){0,512}';
+        };
+        var at = function (n) { return { q: '\\' + n, s: '\\' + (n + 1) }; };
+        // Under a list item, a list item below is a sibling, not the attached block.
+        var a = at(g);
+        var listed = '(?=\\+)(?<=(?<![^\\n])' + a.q + a.s + listOpener + '[^\\n]*\\n' + run(a.q, a.s, true) + lineAt + ')'
+            + lone + a.q + a.s + '(?![ \\t])' + notItem + '[^\\r\\n])';
+        var b = at(g + 2);
+        var held = '(?=\\+)(?<=(?<![^\\n])' + b.q + b.s + holderOpener + '[^\\n]*\\n' + run(b.q, b.s, false) + lineAt + ')'
+            + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
+        // A quote's own first line: the block below starts left of it.
+        var c = at(g + 4);
+        var opened = '(?=\\+)(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?!' + c.q + ')[^\\n]*\\n)' + lineAt + ')(?<=>|> )'
+            + lone + '(?!' + c.q + ')(?:> ?)*(?![ \\t>])' + notItem + '[^\\r\\n])';
+        // Openers on one line with a quote innermost (`- > +`): the block
+        // below starts at column 0 or at that line's column.
+        var d = at(g + 6);
+        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> ?)+)'
+            + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
+        return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
+    }
+
     // Table/list continuation: a lone `+` (grammar.ebnf `continuation_marker`)
     // or a continuation ROW carrying cells (`continuation_row`, corpus
     // 63-table-multi-line-cell-continuation). The row form has to end in `|`,
     // so `one + two` in prose stays literal.
     const TABLE_CONTINUATION = {
         className: 'punctuation',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\+[ \t]*$(?![^\r\n])/,
+        begin: RegExp(relativePlusSource(1)),
         relevance: 5,
     };
     const TABLE_CONTINUATION_ROW = {
@@ -1060,18 +1120,14 @@
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
         { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
         // The `+` continuation marker: after a quoted list marker always, and
-        // as a column-0 quote's own first line when a non-blank flush-left
-        // line follows (markup-carve/carve#3105).
+        // a lone `+` in a quote where the lines around it prove it.
         {
             className: 'punctuation',
             begin: RegExp('(?=\\+)' + QUOTED.slice(0, -1)
                 + '(?:[-*] \\[[ xX\\-_>?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.) +|'
                 + GLUED_MARKER + '))\\+[ \\t]*$(?![^\\r\\n])'),
         },
-        {
-            className: 'punctuation',
-            begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?>(?: >)* )\+[ \t]*(?=\r?\n[^ \t\r\n>])/,
-        },
+        { className: 'punctuation', begin: RegExp(relativePlusSource(1)) },
     );
 
     // Horizontal rules: --- or *** or ___
@@ -1205,7 +1261,8 @@
     const MARKER_LINE_CONTINUATION = {
         className: 'punctuation',
         begin: RegExp('(?=\\+)(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-            + GLUED_MARKER + ')\\+[ \\t]*$(?![^\\r\\n])'),
+            + GLUED_MARKER + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+            + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +))+)\\+[ \\t]*$(?![^\\r\\n])'),
         relevance: 0,
     };
 
@@ -1260,7 +1317,7 @@
         },
         relevance: 0,
         // The inline modes are appended once CONTAINS exists.
-        contains: [DEFINITION_TERM, DESCRIPTION_MARKER, DESCRIPTION_CONTINUATION, bodyAttribute(':')],
+        contains: [DEFINITION_TERM, DESCRIPTION_MARKER, DESCRIPTION_CONTINUATION, TABLE_CONTINUATION, bodyAttribute(':')],
     };
 
     /*

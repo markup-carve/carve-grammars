@@ -490,6 +490,12 @@ export const CONSTRUCTS = [
         // read it as a table continuation (#523).
         name: "continuation marker", sample: "- step\n+\n> note", payload: "+", textmate: "list",
         engineScopes: { prism: ['continuation-marker'], highlightjs: ['punctuation'] },
+        skip: { textmate: 'a lone `+` is a marker only when the next line starts at its column (markup-carve/carve#3445), which a line grammar cannot see' },
+    },
+    {
+        // The same marker as an item's first block, which needs no next line.
+        name: "first-block continuation marker", sample: "- +\n> note", payload: "+", textmate: "list.continuation",
+        engineScopes: { prism: ['continuation-marker'], highlightjs: ['punctuation'] },
     },
     { name: "caption", sample: "> q\n^ Attribution", payload: "Attribution", textmate: "caption" },
     { name: "numbered caption", sample: "![Sun](sun.jpg)\n^ Figure #: A sunset", payload: "A sunset", textmate: "markup.caption" },

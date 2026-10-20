@@ -13,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": "  d\n+\n"
+    "text": "  d\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "code",

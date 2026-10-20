@@ -1,15 +1,14 @@
 /**
  * A `+` that is the whole content of a list item's, a description's, a quote's
  * or a footnote's first line is the continuation marker, and takes the scope a
- * lone `+` line already gets.
+ * lone `+` line gets.
  *
- * List and description rows are measured against carve-js main: `- +` over a
- * table renders the table inside the item, trailing spaces or a tab included,
- * whatever follows. The quote and footnote rows follow the ruling on
- * markup-carve/carve#3105, which carve-js does not implement yet: there the
- * `+` is a marker only when a non-blank flush-left line follows. TextMate
- * cannot see the next line, so it scopes those two forms regardless; the
- * `textmate` residuals below pin that.
+ * Rows follow the carve spec model since the relative-column ruling
+ * (markup-carve/carve#3445). After a list or description marker the `+` is a
+ * marker whatever follows. After a quote or footnote marker, and on a line of
+ * its own, it is a marker only when the next line starts at the right column.
+ * TextMate cannot see the next line, so it leaves those forms unscoped; the
+ * `textmate` misses below pin that.
  */
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -30,7 +29,7 @@ const ENGINES = {
 
 const MARKER = [
     '- +\n| a |',
-    '- a\n+\nx',
+    ['- a\n+\nx', ['textmate']],
     '-   +\nx',
     '1.  +\nx',
     '- +  \n| a |',
@@ -51,12 +50,20 @@ const MARKER = [
     '> - +\n> x',
     '> 1. +\n> x',
     '> - [ ] +\n> x',
-    '> +\nx',
-    '> +\n| a |',
-    '> > +\nx',
-    '[^a]: +\nx',
-    '[^a]: +\n```\nx\n```',
-    '[^a]: +\n> q',
+    ['> +\nx', ['textmate']],
+    ['> +\n| a |', ['textmate']],
+    ['> > +\nx', ['textmate']],
+    ['[^a]: +\nx', ['textmate']],
+    ['[^a]: +\n```\nx\n```', ['textmate']],
+    ['[^a]: +\n> q', ['textmate']],
+    // A lone `+` at a nested item's marker column.
+    ['- a\n  - b\n  +\n  c', ['textmate']],
+    // A second marker of another kind before the `+`; TextMate does not scope
+    // that marker either, nor a quoted description.
+    ['- 1. +\nx', ['textmate']],
+    ['1. - +\nx', ['textmate']],
+    ['- [ ] - +\nx', ['textmate']],
+    ['> :: t\n> : +\n> x', ['textmate', 'prism', 'highlightjs']],
     '-{.c} +\n| a |',
     '1.{.c} +\n| a |',
     '*{.c} +\nx',
@@ -76,15 +83,13 @@ const MARKER = [
 const ATTRS = { textmate: 'meta.attributes', prism: 'attributes', highlightjs: 'attr' };
 const GLUED = ['-{.c} +\nx', '1.{.c} +\nx', '-{#id .c} +\nx'];
 
-// Rows where the `+` is text, or a marker a grammar cannot reach. The names
-// list the grammars that scope it.
+// Rows where the `+` is text. The names list the grammars that scope it anyway.
 const TEXT = [
-    ['+\nx', ['textmate', 'highlightjs']],
+    ['+\nx'],
     ['  +'],
     ['\t+'],
     ['- a\n  +'],
     ['- a\n\t+\n'],
-    ['- a\n  - b\n  +\n  c'],
     ['- x\n  > q\n  +\n'],
     ['>  +\nx'],
     ['> \t+\nx'],
@@ -97,14 +102,14 @@ const TEXT = [
     ['+ x'],
     [': +\nx'],
     ['> +x\ny'],
-    ['> +\n\nx', ['textmate']],
-    ['> +', ['textmate']],
-    ['> +\n> x', ['textmate']],
-    ['> +\n  x', ['textmate']],
-    ['> > +\n\nx', ['textmate']],
-    ['[^a]: +\n\nx', ['textmate']],
-    ['[^a]: +', ['textmate']],
-    ['[^a]: +\n  x', ['textmate']],
+    ['> +\n\nx'],
+    ['> +'],
+    ['> +\n> x'],
+    ['> +\n  x'],
+    ['> > +\n\nx'],
+    ['[^a]: +\n\nx'],
+    ['[^a]: +'],
+    ['[^a]: +\n  x'],
     ['-{.c} + x'],
     ['-{.c} +x'],
     ['-{.c}+\nx'],
@@ -114,28 +119,24 @@ const TEXT = [
     // fragment, and a document's first line is a fragment start too.
     ['{.c} +\nx', ['prism']],
     // carve-js reads these `+` as markers too. A grammar scopes the `+` only
-    // where it also scopes the marker before it: a second marker of another
-    // kind (Prism) or after a bullet and before a glued block (Prism and
-    // highlight.js). None reaches a marker or task box after a glued block,
-    // or a quoted description.
-    ['- 1. +\nx', ['prism']],
-    ['1. - +\nx', ['prism']],
-    ['- [ ] - +\nx', ['prism']],
+    // where it also scopes the marker before it: after a bullet and before a
+    // glued block (Prism and highlight.js). None reaches a marker or task box
+    // after a glued block.
     ['- -{.c} +\nx', ['prism', 'highlightjs']],
     ['-{.c} [ ] +\nx'],
     ['-{.c} - +\nx'],
-    ['> :: t\n> : +\n> x'],
 ];
 
 const plus = (tokens) => tokens.filter((t) => t.text.includes('+'));
 let failures = 0;
 for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
-    for (const source of MARKER) {
+    for (const row of MARKER) {
+        const [source, missed = []] = Array.isArray(row) ? row : [row];
         const hits = plus(tokenize(source));
         const ok = hits.some((t) => t.text.trim() === '+' && marks(t.scope ?? ''));
-        if (!ok) {
+        if (ok === missed.includes(name)) {
             failures++;
-            console.error(`${name}: ${JSON.stringify(source)} - the + is not the continuation marker: ${JSON.stringify(hits)}`);
+            console.error(`${name}: ${JSON.stringify(source)} - expected the + ${missed.includes(name) ? 'unscoped' : 'scoped as the continuation marker'}: ${JSON.stringify(hits)}`);
         }
     }
     for (const [source, residual = []] of TEXT) {
@@ -156,4 +157,4 @@ for (const [name, { tokenize }] of Object.entries(ENGINES)) {
     }
 }
 assert.equal(failures, 0, `${failures} marker-line continuation row(s) failed`);
-console.log('marker-line continuation: a lone + on a marker line is scoped as the continuation marker in all three grammars');
+console.log('marker-line continuation: each grammar scopes a lone + on a marker line as the spec model reads it, misses pinned');

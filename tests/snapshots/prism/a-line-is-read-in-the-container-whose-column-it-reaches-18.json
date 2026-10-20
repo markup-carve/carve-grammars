@@ -21,7 +21,19 @@
   },
   {
     "type": "definition-list",
-    "text": "body\n  +\n  before\n"
+    "text": "body"
+  },
+  {
+    "type": "text",
+    "text": "\n  "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n  before\n"
   },
   {
     "type": "blockquote>punctuation",
