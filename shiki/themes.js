@@ -23,6 +23,7 @@ export const carveLightExtras = [
     { scope: 'punctuation.definition.fenced', settings: { foreground: '#959da5' } },
     { scope: 'punctuation.definition.raw', settings: { foreground: '#959da5' } },
     { scope: ['punctuation.definition.list.unnumbered', 'punctuation.definition.list.numbered', 'punctuation.definition.list'], settings: { foreground: '#d73a49', fontStyle: 'bold' } },
+    { scope: 'punctuation.definition.list.continuation', settings: { foreground: '#8250df', fontStyle: 'bold' } },
     { scope: 'punctuation.definition.checkbox', settings: { foreground: '#959da5' } },
     { scope: 'constant.language.checkbox', settings: { foreground: '#22863a', fontStyle: 'bold' } },
     // Table markers by meaning (carve-grammars#685): header in heading blue, span and
@@ -78,6 +79,7 @@ export const carveDarkExtras = [
     { scope: 'punctuation.definition.fenced', settings: { foreground: '#6a737d' } },
     { scope: 'punctuation.definition.raw', settings: { foreground: '#6a737d' } },
     { scope: ['punctuation.definition.list.unnumbered', 'punctuation.definition.list.numbered', 'punctuation.definition.list'], settings: { foreground: '#f97583', fontStyle: 'bold' } },
+    { scope: 'punctuation.definition.list.continuation', settings: { foreground: '#d2a8ff', fontStyle: 'bold' } },
     { scope: 'punctuation.definition.checkbox', settings: { foreground: '#6a737d' } },
     { scope: 'constant.language.checkbox', settings: { foreground: '#85e89d', fontStyle: 'bold' } },
     { scope: 'keyword.operator.table.header', settings: { foreground: '#79b8ff', fontStyle: 'bold' } },

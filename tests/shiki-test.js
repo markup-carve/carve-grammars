@@ -33,6 +33,16 @@ ok('light and dark extras cover the same scopes', () => {
     assert.deepStrictEqual(scopes(carveLightExtras), scopes(carveDarkExtras));
 });
 
+ok('list continuation markers use a distinct color in both themes', () => {
+    for (const extras of [carveLightExtras, carveDarkExtras]) {
+        const rule = (scope) => extras.find((entry) => entry.scope === scope
+            || Array.isArray(entry.scope) && entry.scope.includes(scope));
+        const list = rule('punctuation.definition.list').settings.foreground;
+        const continuation = rule('punctuation.definition.list.continuation').settings.foreground;
+        assert.notStrictEqual(continuation, list);
+    }
+});
+
 ok('table separators recede and header, span and continuation markers differ', () => {
     for (const [extras, boundaryColor, headerColor, spanColor] of [
         [carveLightExtras, '#959da5', '#005cc5', '#e36209'],
