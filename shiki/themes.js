@@ -133,6 +133,10 @@ export const carveStylingTransformer = {
     name: 'carve-extras',
     preprocess(_code, options) {
         options.includeExplanation = 'scopeName'
+        // Keep plain directive padding outside the underlined include path.
+        if (['carve', 'crv'].includes(options.lang?.toLowerCase()) && options.mergeWhitespaces === undefined) {
+            options.mergeWhitespaces = false
+        }
     },
     tokens(tokens) {
         for (const line of tokens) {
