@@ -45,6 +45,9 @@ export const RAW_FORMATS = [
 ];
 
 const LANGUAGE_CAPTURE = '(=?[a-zA-Z0-9_-]*)';
+const DIFF_FENCE_WORDS = LANGUAGES.flatMap(([, words]) => words).filter((word) => /[+#]/.test(word));
+const DIFF_LANGUAGE_CAPTURE = '([a-zA-Z0-9_-]*)';
+const DIFF_OPENER_LANGUAGE = `(?:(?i:${DIFF_FENCE_WORDS.join('|')})|[a-zA-Z0-9_-]*)`;
 const BARE_FENCE = '[ \\t]*[`~]{3,}[ \\t]*$';
 const WHILE_GUARD = `(^|\\G)(?!${BARE_FENCE})`;
 
@@ -87,10 +90,10 @@ function embedded(rule, id, scopes) {
 }
 
 /*
- * `{.diff}` on the line above a fence with no language makes it a diff block
+ * `{.diff}` on the line above a fence makes it a diff block
  * (carve-js renders `<pre class="diff">`). TextMate sees one line at a time, so
  * the attribute line opens a region that holds the fence. It ends on the next
- * line when that is no bare fence opener, or right after the fence's closer:
+ * line when that is no fence opener, or right after the fence's closer:
  * Shiki skips blank lines, so a blank line after the block cannot end it.
  */
 function diffAttribute(generic, indent) {
@@ -98,11 +101,21 @@ function diffAttribute(generic, indent) {
     // `\s*` would consume the newline and leave the region's end nothing to match.
     fence.end = fence.end.replace('\\s*$', '[ \\t]*$');
 
+    const languageRules = LANGUAGES.map(([id, words, scopes]) => {
+        const rule = embedded(narrowed(generic, `((?i:${words.join('|')}))`), id, scopes);
+        rule.contentName += ' meta.diff.carve';
+        rule.end = rule.end.replace('\\s*$', '[ \\t]*$');
+        return rule;
+    });
+    const unknownLanguage = narrowed(generic, DIFF_LANGUAGE_CAPTURE);
+    unknownLanguage.contentName += ' meta.diff.carve';
+    unknownLanguage.end = unknownLanguage.end.replace('\\s*$', '[ \\t]*$');
+
     return {
         begin: `^(?:\\A\\x{FEFF})?${indent}(\\{(?=[^{}\\n]*(?<=[{\\s])\\.diff(?![\\w-]))[^{}\\n]*\\})[ \\t]*$`,
         beginCaptures: { 1: { patterns: [{ include: '#attributes' }] } },
-        end: `^(?!${indent}(?:\`{3,}|~{3,})[ \\t]*(?:"[^"\\n]*"[ \\t]*)?(?:\\[[^\\]\\n]*\\][ \\t]*)?$)|(?<=[\`~])$|(?<=[\`~][ \\t])$`,
-        patterns: [embedded(fence, 'diff', ['source.diff'])],
+        end: `^(?!${indent}(?:\`{3,}|~{3,})[ \\t]*${DIFF_OPENER_LANGUAGE}[ \\t]*(?:"[^"\\n]*"[ \\t]*)?(?:\\[[^\\]\\n]*\\][ \\t]*)?$)|(?<=[\`~])$|(?<=[\`~][ \\t])$`,
+        patterns: [...languageRules, embedded(fence, 'diff', ['source.diff']), unknownLanguage],
     };
 }
 
