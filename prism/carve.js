@@ -267,14 +267,16 @@
     // began with a plain unindented line (after a blank line, the start, or a
     // one-line block) continues that paragraph. Indented lines stay ambiguous.
     // 'list' is greedy so this lookbehind reads the real lines, not a fragment.
-    var oneLineBlock = '[ \\t]*(?:> ?)*(?:#{1,6} |\\+[ \\t\\r]*(?=\\n)|(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )';
+    var lonePlusBlock = '(?:\\+|[ \\t]*(?:> ?)+\\+)[ \\t\\r]*(?=\\n)';
+    var lonePlusLine = '(?:\\+|[ \\t]*(?:> ?)+\\+)[ \\t\\r]*\\n';
+    var oneLineBlock = '(?:[ \\t]*(?:> ?)*(?:#{1,6} |(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )|' + lonePlusBlock + ')';
     var markerLine = '(?:: +|[-*][ {]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ {]|\\.[ {])';
     // A lone `+` line, and an attribute line right after one, attach the next
     // block to the container, so neither starts a paragraph run.
     // A lookbehind matches right to left, so each line start is asserted right
     // after its `[^\n]*`: a mid-line split then fails at once.
     var notParagraphContinuation = '(?<!(?:(?<![\\s\\S])|(?<![^\\n])[ \\t\\r>]*\\n'
-        + '|(?![ \\t]*\\+[ \\t\\r]*\\n)(?!(?<=(?<![^\\n])[ \\t]*\\+[ \\t\\r]*\\n)[ \\t]*\\{)(?=' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n)'
+        + '|(?!' + lonePlusLine + ')(?!(?<=(?<![^\\n])' + lonePlusLine + ')[ \\t]*\\{)(?=' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n)'
         + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + ')(?<![^\\n])[^\\n]+\\n'
         + '(?:(?![ \\t\\r]*\\n)(?!' + oneLineBlock + ')(?<![^\\n])[^\\n]*\\n){0,16})';
 
@@ -1804,16 +1806,6 @@
                 // A run of `+` lines is one token, so the lookbehind runs once per run.
                 pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?=\\+[ \\t]*$(?![^\\r\\n]))' + plusAttaches
                     + '\\+[ \\t]*(?:\\r?\\n\\+[ \\t]*(?![^\\r\\n]))*$(?![^\\r\\n])', 'm'),
-                greedy: true,
-                inside: continuationInside,
-            },
-            // An indented `+` attaches only at the column of a nested item or
-            // quote opened above it, with nothing but deeper lines between.
-            {
-                pattern: RegExp('^(?<![^\\r\\n])([ \\t]+)(?=\\+[ \\t]*$(?![^\\r\\n]))'
-                    + '(?<=(?<![^\\n])\\1(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)[ \\t]+[^ \\t\\r\\n]|>(?![^ \\t\\r\\n]))[^\\n]*\\n'
-                    + '(?:(?<![^\\n])\\1[ \\t]+[^ \\t\\r\\n][^\\n]*\\n)*\\1)\\+[ \\t]*$(?![^\\r\\n])', 'm'),
-                lookbehind: true,
                 greedy: true,
                 inside: continuationInside,
             },

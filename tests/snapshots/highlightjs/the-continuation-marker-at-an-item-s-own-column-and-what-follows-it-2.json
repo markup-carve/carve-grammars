@@ -5,14 +5,6 @@
   },
   {
     "scope": null,
-    "text": " a\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "  +"
-  },
-  {
-    "scope": null,
-    "text": "\n\nx\n"
+    "text": " a\n  +\n\nx\n"
   }
 ]

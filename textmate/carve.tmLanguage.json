@@ -1592,17 +1592,17 @@
       ]
     },
     "list_continuation": {
-      "comment": "A lone `+` at the list-marker column is the list-continuation marker (not a bullet -- `+` is never a bullet in Carve); it attaches the following flush-left block to the item.",
-      "match": "^(?:\\A\\x{FEFF})?(\\s*)(\\+)(\\s*)$",
+      "comment": "A lone `+` at column 0 is the list-continuation marker; it attaches the following flush-left block to the item.",
+      "match": "^(?:\\A\\x{FEFF})?(\\+)([ \\t]*)$",
       "captures": {
-        "2": {
+        "1": {
           "name": "punctuation.definition.list.continuation.carve"
         }
       }
     },
     "marker_line_continuation": {
       "comment": "A `+` that is the whole rest of a list item's or footnote's marker line is the continuation marker too (`- +`, `1. +`, `- [ ] +`, `[^a]: +`). `\\G` is where the container's opener stopped: a list opener has consumed its separator, a footnote opener stops before it. A footnote's `+` is a marker only when a flush-left line follows, which a line grammar cannot see, so it is scoped regardless.",
-      "match": "\\G(?:(?<=[ \\t])| +|(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}) +)(\\+)[ \\t]*$",
+      "match": "\\G(?:(?<=[^ \\t][ \\t]+)|(?<=[^ \\t]) +|(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}) +)(\\+)[ \\t]*$",
       "captures": {
         "1": {
           "patterns": [

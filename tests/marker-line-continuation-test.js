@@ -30,6 +30,9 @@ const ENGINES = {
 
 const MARKER = [
     '- +\n| a |',
+    '- a\n+\nx',
+    '-   +\nx',
+    '1.  +\nx',
     '- +  \n| a |',
     '- +\t\n| a |',
     '* +\nx',
@@ -76,6 +79,16 @@ const GLUED = ['-{.c} +\nx', '1.{.c} +\nx', '-{#id .c} +\nx'];
 // Rows where the `+` is text, or a marker a grammar cannot reach. The names
 // list the grammars that scope it.
 const TEXT = [
+    ['+\nx', ['textmate', 'highlightjs']],
+    ['  +'],
+    ['\t+'],
+    ['- a\n  +'],
+    ['- a\n\t+\n'],
+    ['- a\n  - b\n  +\n  c'],
+    ['- x\n  > q\n  +\n'],
+    ['>  +\nx'],
+    ['> \t+\nx'],
+    ['```\n+\n```'],
     ['- +x'],
     ['- + x'],
     ['- +\u00a0\nx'],

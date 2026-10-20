@@ -5,22 +5,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": " +"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " m\n"
+    "text": "\n +\n- m\n"
   }
 ]

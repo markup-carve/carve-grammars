@@ -9,14 +9,6 @@
   },
   {
     "type": "text",
-    "text": "\n +\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "- "
-  },
-  {
-    "type": "text",
-    "text": "m\n"
+    "text": "\n +\n- m\n"
   }
 ]

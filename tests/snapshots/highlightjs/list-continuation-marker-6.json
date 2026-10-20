@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": " b\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "    +"
-  },
-  {
-    "scope": null,
-    "text": "\n    c\n"
+    "text": " b\n    +\n    c\n"
   }
 ]
