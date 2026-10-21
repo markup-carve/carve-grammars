@@ -1507,7 +1507,9 @@
     // The opener line a body reads its language off, in a lookbehind checked
     // only at that line's end. Words match case-insensitively.
     const anyCase = (word) => [...word].map((c) => (/[a-z]/.test(c) ? `[${c}${c.toUpperCase()}]` : /[+#.\/-]/.test(c) ? '\\' + c : c)).join('');
-    const OPENER_LINE = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\uFEFF)?[ \\t]*(?:`{3,}|~{3,}) ?';
+    const OPENER_LINE = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\uFEFF)?(?:[ \\t]*|'
+        + LIST_MARKER_BEFORE_BLOCK.replace('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?', '')
+        + ')(?:`{3,}|~{3,}) ?';
     const languageOpener = (key) => [
         ...(FENCE_LANGUAGES[key] ? [OPENER_LINE + '(?:' + FENCE_LANGUAGES[key].map(anyCase).join('|') + ')(?![A-Za-z0-9_+#./-])[^\\n]*'] : []),
         ...(RAW_FENCE_LANGUAGES[key] ? [OPENER_LINE + '=(?:' + RAW_FENCE_LANGUAGES[key].map(anyCase).join('|') + ')(?![\\w-])[ \\t]*'] : []),
@@ -1526,7 +1528,7 @@
         ...(subLanguage ? { subLanguage } : { contains: [] }),
     });
     const FENCE_BODIES = [...Object.keys(FENCE_LANGUAGES).map(fenceBody), fenceBody(undefined)];
-    const FENCE_INFO_LEAD = '(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:`{3,}|~{3,}) ?)';
+    const FENCE_INFO_LEAD = '(?<=' + OPENER_LINE + ')';
     const FENCE_INFO = [
         { className: 'title', begin: new RegExp('(?=[A-Za-z0-9_+#./-])' + FENCE_INFO_LEAD + FENCE_LANGUAGE) },
         { className: 'keyword', begin: new RegExp('(?==)' + FENCE_INFO_LEAD + RAW_FENCE_INFO) },
@@ -1581,6 +1583,42 @@
 
     const CODE_BLOCK = fencedVerbatim(CODE_FENCE_INFO);
     const RAW_BLOCK = fencedVerbatim(RAW_FENCE_INFO);
+    const MARKER_CODE_FORMS = [];
+    for (let depth = 1; depth <= 8; depth++) {
+        MARKER_CODE_FORMS.push([Array(depth).fill('[-*] ').join(''), depth * 2]);
+        MARKER_CODE_FORMS.push([Array(depth).fill('[-*] ').join('') + '\\[[ xX\\-_>?]\\] ', depth * 2]);
+    }
+    for (let digits = 1; digits <= 9; digits++) {
+        MARKER_CODE_FORMS.push(['[0-9]{' + digits + '}[.)] ', digits + 2]);
+    }
+    for (let roman = 2; roman <= 6; roman++) {
+        MARKER_CODE_FORMS.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})[.)] ', roman + 2]);
+    }
+    MARKER_CODE_FORMS.push(['[A-Za-z][.)] ', 3], ['\\. ', 2]);
+    const PLAIN_LINE_BEFORE_MARKER = '(?<![^\\n])(?!(?:[-*] +|[0-9]+[.)] +|(?:[ivxlcdm]+|[IVXLCDM]+)[.)] +|[A-Za-z][.)] +|\\. +|> |#{1,6} |:{2,}|\\||[-*_]{3,}|[`~]{3,}|%%|\\+))[\\S][^\\n]*\\n';
+    const markerLineFence = (info, marker, width) => ({
+        className: 'code',
+        beginScope: 'keyword',
+        begin: RegExp('(?=[`~])(?<=^(?<![^\\r\\n])(?<!' + PLAIN_LINE_BEFORE_MARKER
+            + ')(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)'
+            + marker + ')((`|~)\\3{2,})'
+            + '(?=(?: ?' + info + ')?[ \\t]*\\r?$(?![^\\r\\n]))'
+            + '(?=[^\\n]*(?:\\n[ \\t]*\\r?(?![^\\n])|\\n\\1[ ]{' + width
+            + '}[ \\t]*[^ \\t\\r\\n][^\\r\\n]*\\r?)*?\\n\\1[ ]{' + width
+            + '}\\2\\3*[ \\t]*\\r?$(?![^\\r\\n]))'),
+        'on:begin': (m) => {
+            Object.assign(codeFence(m), { indent: m[1] + ' '.repeat(width), run: m[2] });
+        },
+        endScope: 'keyword',
+        end: /^(?<![^\r\n])([ \t]*)(`{3,}|~{3,})[ \t]*\r?$(?![^\r\n])/,
+        'on:end': (m, resp) => {
+            if (!closesFence(m)) resp.ignoreMatch();
+        },
+        contains: [...FENCE_INFO, ...FENCE_BODIES],
+        relevance: 10,
+    });
+    const CODE_BLOCK_ON_MARKER_LINE = MARKER_CODE_FORMS.map(([marker, width]) => markerLineFence(CODE_FENCE_INFO, marker, width));
+    const RAW_BLOCK_ON_MARKER_LINE = MARKER_CODE_FORMS.map(([marker, width]) => markerLineFence(RAW_FENCE_INFO, marker, width));
 
     // A FENCE LINE THIS GRAMMAR DOES NOT PAIR: an opener with no closer ahead,
     // and the closer of a pair the rules above did not take. It stays what both
@@ -2580,6 +2618,8 @@
         HEADING,
         CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
         RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string
+        ...CODE_BLOCK_ON_MARKER_LINE,
+        ...RAW_BLOCK_ON_MARKER_LINE,
         UNCLOSED_CODE_BLOCK,  // an unpaired fence at column 0: to its container's end
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)

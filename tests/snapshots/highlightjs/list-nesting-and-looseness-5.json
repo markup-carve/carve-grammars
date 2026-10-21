@@ -8,8 +8,16 @@
     "text": " "
   },
   {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
     "scope": "code",
-    "text": "```\n  a\n\n  b\n  ```"
+    "text": "\n  a\n\n  b\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
   },
   {
     "scope": null,

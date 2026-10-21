@@ -4,8 +4,20 @@
     "text": "- "
   },
   {
-    "type": "code",
-    "text": "```=latex\n  \\x\n  ```"
+    "type": "code-block-on-marker-line>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-on-marker-line>code-block>language>class-name",
+    "text": "=latex"
+  },
+  {
+    "type": "code-block-on-marker-line>code-block",
+    "text": "\n  \\x\n  "
+  },
+  {
+    "type": "code-block-on-marker-line>code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

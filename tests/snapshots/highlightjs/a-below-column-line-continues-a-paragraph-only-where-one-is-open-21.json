@@ -8,8 +8,20 @@
     "text": " "
   },
   {
-    "scope": "code",
-    "text": "```=html\n    ```"
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "=html"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ```"
   },
   {
     "scope": null,

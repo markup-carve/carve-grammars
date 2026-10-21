@@ -4,8 +4,16 @@
     "text": "- - "
   },
   {
-    "type": "code",
-    "text": "```\n    ```"
+    "type": "code-block-on-marker-line>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-on-marker-line>code-block",
+    "text": "\n    "
+  },
+  {
+    "type": "code-block-on-marker-line>code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

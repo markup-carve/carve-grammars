@@ -5,12 +5,9 @@
  *   node scripts/generate-fence-languages.mjs          rewrite the generated entries
  *   node scripts/generate-fence-languages.mjs --check  exit 1 when they are stale
  *
- * Each generated rule is a copy of a hand-written fence rule (`fenced_code`,
- * `fenced_code_in_container`) with its language capture narrowed to one row of
- * fence-languages/fence-languages.json, so fence, title, label and closer
- * handling cannot drift from the generic rule. A host that has not loaded the
- * embedded grammar gets the plain body, as before. The same layout as
- * vscode-carve's generator, which reads the same table.
+ * Each language rule copies a generic fence rule and narrows its language
+ * capture to one row of fence-languages/fence-languages.json. Marker-line
+ * fences use the same table. A missing embedded grammar leaves a plain body.
  *
  * The file is spliced, never re-serialized: the rest of it keeps its own layout.
  */
@@ -55,7 +52,39 @@ const WHILE_GUARD = `(^|\\G)(?!${BARE_FENCE})`;
 const VARIANTS = [
     ['fenced_code_languages', 'fenced_code'],
     ['fenced_code_languages_in_container', 'fenced_code_in_container'],
+    ['fenced_code_languages_on_marker_line', 'fenced_code_on_marker_line'],
+    ['fenced_code_languages_on_marker_line_common', 'fenced_code_on_marker_line_common'],
 ];
+
+function markerLineCommonRule(generic) {
+    const forms = new Map();
+    const add = (width, pattern) => forms.set(width, [...(forms.get(width) ?? []), pattern]);
+    for (let depth = 1; depth <= 8; depth++) {
+        const bullets = '[-*] '.repeat(depth);
+        add(depth * 2, bullets);
+        add(depth * 2, `${bullets}\\[[ xX\\-_>?]\\] `);
+    }
+    for (let digits = 1; digits <= 9; digits++) add(digits + 2, `[0-9]{${digits}}[.)] `);
+    add(3, '[A-Za-z][.)] ');
+    for (let length = 2; length <= 6; length++) {
+        add(length + 2, `(?:[ivxlcdm]{${length}}|[IVXLCDM]{${length}})[.)] `);
+    }
+    add(2, '\\. ');
+
+    const widths = [...forms.keys()].sort((a, b) => a - b);
+    const marker = widths.map((width) => `(${forms.get(width).join('|')})`).join('|');
+    const guards = widths.map((width, index) => `(?!\\${index + 2})${' '.repeat(width)}`).join('|');
+    const fence = widths.length + 2;
+    return {
+        ...generic,
+        begin: generic.begin.replace('\\G(?<=[ \\t])()', `\\G(?<=^([ \\t]*)(?:${marker}))`),
+        beginCaptures: Object.fromEntries(Object.entries(generic.beginCaptures)
+            .map(([group, capture]) => [String(Number(group) + widths.length), capture])),
+        end: `^\\1(?:${guards})\\${fence}(?:(?<=\`)\`|(?<=~)~)*[ \\t]*$`
+            + `|^(?![ \\t]*\\r?$)(?!\\1(?:${guards}))`,
+        comment: 'A code fence after a list or task marker. Each marker shape selects its content column for the closer and the body boundary.',
+    };
+}
 
 function narrowed(generic, capture) {
     if (generic.begin.split(LANGUAGE_CAPTURE).length !== 2) {
@@ -72,9 +101,9 @@ function narrowed(generic, capture) {
  * line: `while` is checked through every nested region, so an unterminated
  * string in the embedded language cannot swallow the closer.
  */
-function embedded(rule, id, scopes) {
+function embedded(rule, id, scopes, direct = false) {
     const include = scopes.map((scope) => ({ include: scope }));
-    if (id === 'carve') {
+    if (id === 'carve' || direct) {
         return { ...rule, contentName: `${rule.contentName} meta.embedded.block.${id}`, patterns: [{ include: '#callout_marker' }, ...include] };
     }
 
@@ -121,11 +150,14 @@ function diffAttribute(generic, indent) {
 
 export function generate(grammar) {
     const entries = {};
+    entries.fenced_code_on_marker_line_common = markerLineCommonRule(grammar.repository.fenced_code_on_marker_line);
     for (const [key, source] of VARIANTS) {
-        const generic = grammar.repository[source];
-        const rules = LANGUAGES.map(([id, words, scopes]) => embedded(narrowed(generic, `((?i:${words.join('|')}))`), id, scopes));
+        const generic = entries[source] ?? grammar.repository[source];
+        // An inner while would hide a line that falls below the item's content column from the outer end rule.
+        const direct = key === 'fenced_code_languages_on_marker_line_common';
+        const rules = LANGUAGES.map(([id, words, scopes]) => embedded(narrowed(generic, `((?i:${words.join('|')}))`), id, scopes, direct));
         for (const [id, words, scopes] of RAW_FORMATS) {
-            rules.push(embedded(narrowed(generic, `(=(?i:${words.join('|')}))`), id, scopes));
+            rules.push(embedded(narrowed(generic, `(=(?i:${words.join('|')}))`), id, scopes, direct));
         }
         entries[key] = { patterns: rules };
     }
@@ -177,7 +209,8 @@ function skipValue(text, i) {
 
 // One rule per line keeps a language's variants reviewable as one-line diffs.
 const indentValue = (value) =>
-    `{\n      "patterns": [\n${value.patterns.map((rule) => `        ${JSON.stringify(rule)}`).join(',\n')}\n      ]\n    }`;
+    value.begin ? JSON.stringify(value)
+        : `{\n      "patterns": [\n${value.patterns.map((rule) => `        ${JSON.stringify(rule)}`).join(',\n')}\n      ]\n    }`;
 
 export function splice(text, entries) {
     for (const [key, value] of Object.entries(entries)) {

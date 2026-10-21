@@ -262,6 +262,18 @@
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
         + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
+    var markerCodeForms = [];
+    for (var depth = 1; depth <= 8; depth++) {
+        markerCodeForms.push([Array(depth).fill('[-*] ').join(''), depth * 2]);
+        markerCodeForms.push([Array(depth).fill('[-*] ').join('') + '\\[[ xX\\-_>?]\\] ', depth * 2]);
+    }
+    for (var digits = 1; digits <= 9; digits++) {
+        markerCodeForms.push(['[0-9]{' + digits + '}[.)] ', digits + 2]);
+    }
+    for (var roman = 2; roman <= 6; roman++) {
+        markerCodeForms.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})[.)] ', roman + 2]);
+    }
+    markerCodeForms.push(['[A-Za-z][.)] ', 3], ['\\. ', 2]);
 
     // A list marker does not interrupt a paragraph: a marker line whose block
     // began with a plain unindented line (after a blank line, the start, or a
@@ -1381,6 +1393,22 @@
                 inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
             },
         ],
+
+        // A fence opened on a list marker line leaves the marker to the list rule.
+        'code-block-on-marker-line': markerCodeForms.map(function (form) {
+            return {
+                pattern: RegExp('^(?<![^\\r\\n])' + notParagraphContinuation
+                    + '((?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)' + form[0] + ')'
+                    + '((`|~)\\4{2,})[ \\t]*[^\\n]{0,512}\\n'
+                    + '(?:[ \\t]*\\r?\\n|\\2[ ]{' + form[1]
+                    + '}[ \\t]*[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)*?'
+                    + '\\2[ ]{' + form[1] + '}\\3\\4*[ \\t]*\\r?$(?![^\\r\\n])', 'm'),
+                lookbehind: true,
+                greedy: true,
+                alias: 'code-block',
+                inside: null,
+            };
+        }),
 
         // Fenced code blocks: ``` lang ... ``` or ~~~ lang ... ~~~
         'code-block': {
@@ -2912,6 +2940,10 @@
                 },
             },
         });
+    }
+
+    for (var markerFence of Prism.languages.carve['code-block-on-marker-line']) {
+        markerFence.inside = Prism.languages.carve['code-block'].inside;
     }
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).
