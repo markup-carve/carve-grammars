@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": ". "
+  },
+  {
+    "type": "text",
+    "text": "d\n   "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": e\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "    - "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> > "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   Q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   - b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

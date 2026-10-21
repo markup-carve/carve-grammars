@@ -1,0 +1,62 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " foo\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  - [ ]"
+  },
+  {
+    "scope": null,
+    "text": " task\n  "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": "code>title",
+    "text": "sh"
+  },
+  {
+    "scope": "code>language-bash",
+    "text": "\n  npm "
+  },
+  {
+    "scope": "code>language-bash>built_in",
+    "text": "test"
+  },
+  {
+    "scope": "code>language-bash",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  - [ ]"
+  },
+  {
+    "scope": null,
+    "text": " more\n"
+  }
+]

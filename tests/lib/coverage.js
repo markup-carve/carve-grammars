@@ -27,6 +27,28 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Spec 621-641: all new documents pass the structured round-trip gate.
+    'a-caption-after-a-continuation-marker-fence-stays-with-the-fence',
+    'a-column-zero-marker-below-an-open-div-attaches-beside-the-div',
+    'a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener',
+    'a-continuation-marker-uses-its-container-column',
+    'a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one',
+    'a-fence-closer-outside-the-child-folds-and-leaves-the-child-open',
+    'a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item',
+    'a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column',
+    'a-first-block-marker-on-an-indented-opener-reads-two-columns',
+    'a-folded-child-fence-keeps-the-below-column-line-in-its-paragraph',
+    'a-folded-fence-run-leaves-a-later-paragraph-loose',
+    'a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight',
+    'a-refused-continuation-plus-remains-text',
+    'a-refused-marker-leaves-an-open-fence-s-blank-payload',
+    'a-refused-plus-without-the-inner-quote-prefix-renders-as-text',
+    'a-tab-indented-nested-list-starts-at-its-marker',
+    'a-task-item-takes-a-first-block-continuation-marker-after-its-checkbox',
+    'an-indented-plus-below-a-nested-fence-stays-content-at-every-depth',
+    'an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line',
+    'definition-body-note-and-fence-owner-boundaries',
+    'nested-plus-below-fence-and-description',
     // Spec 618-620: all new documents pass the structured round-trip gate.
     'captions-in-list-items-do-not-create-a-paragraph-gap',
     'a-fence-run-that-dedents-out-of-a-child-keeps-the-outer-item-tight',

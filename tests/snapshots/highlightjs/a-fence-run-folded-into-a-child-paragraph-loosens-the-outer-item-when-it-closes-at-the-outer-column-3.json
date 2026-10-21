@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " outer\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " head\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "      ```"
+  },
+  {
+    "scope": null,
+    "text": "\n      a\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n\n   tail\n"
+  }
+]

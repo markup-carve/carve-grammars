@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "    - "
+  },
+  {
+    "type": "text",
+    "text": "a\n\t+\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "\t>"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">>"
+  },
+  {
+    "type": "blockquote>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nq\n"
+  }
+]

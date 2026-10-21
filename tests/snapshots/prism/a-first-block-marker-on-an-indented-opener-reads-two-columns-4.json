@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "foo\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "b\n  +\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "    - "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  }
+]

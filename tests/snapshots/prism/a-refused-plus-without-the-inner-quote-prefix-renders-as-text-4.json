@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "ordered\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "  > >"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote"
+  },
+  {
+    "type": "text",
+    "text": "\nQ  \n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n"
+  }
+]

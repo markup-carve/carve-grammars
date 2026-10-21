@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": "  d\n"
+  },
+  {
+    "scope": "title",
+    "text": "   :: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "   :"
+  },
+  {
+    "scope": null,
+    "text": "  detail\n   "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n   code\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

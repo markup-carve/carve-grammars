@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " ordered\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  > > quote"
+  },
+  {
+    "scope": null,
+    "text": "\nQ  \n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  }
+]

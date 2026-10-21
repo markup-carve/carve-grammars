@@ -1,0 +1,10 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - - "
+  },
+  {
+    "type": "text",
+    "text": "```\n      x\n\n\n    +\ntail\n"
+  }
+]
