@@ -1,8 +1,9 @@
 /**
- * A `+` line may glue its quote prefixes (grammar.ebnf `quote_continuation_line`:
- * `>+`, `>>+`, `>> +`, `> >+`). carve-js reads every such line as a quote line,
- * whether or not the `+` attaches, so each grammar gives the prefix its quote
- * scope. A glued `>>` before anything but the `+` is text (`>> x`, `>>  +`).
+ * A continuation marker after quote prefixes needs one space after each `>`
+ * (markup-carve/carve#3421). `>+`, `>>+` and `>> +` are paragraph text, like
+ * `>x` and `>> q`; `> >+` is a quote holding the text `>+`, like `> >x`. Only
+ * `> +` and `> > +` are markers. TextMate cannot see the next line, so it
+ * leaves the quote-line marker unscoped (pinned in marker-line-continuation).
  */
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
@@ -16,13 +17,29 @@ assertThisFileRuns(import.meta.url);
 const tm = await textmateLineTokenizer(fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url)));
 
 const ENGINES = {
-    textmate: { tokenize: tm, quote: (scope) => scope.includes('punctuation.definition.quote.carve') },
-    prism: { tokenize: prismTokens, quote: (scope) => scope.startsWith('blockquote') },
-    highlightjs: { tokenize: hljsTokens, quote: (scope) => scope === 'quote' },
+    textmate: {
+        tokenize: tm,
+        quote: (scope) => scope.includes('punctuation.definition.quote.carve'),
+        marks: null,
+    },
+    prism: {
+        tokenize: prismTokens,
+        quote: (scope) => scope.startsWith('blockquote'),
+        marks: (scope) => scope.includes('continuation-marker>punctuation'),
+    },
+    highlightjs: {
+        tokenize: hljsTokens,
+        quote: (scope) => scope === 'quote',
+        marks: (scope) => scope === 'punctuation',
+    },
 };
 
-const QUOTED = ['>+\nx', '>>+\nx', '>> +\nx', '> >+\nx', '> > +\nx', '>>>+\nx', '>+\n\nx', '>+', '>>+\n>>+\nx', '>+ \nx', '>> para\n>>+\nx'];
-const LITERAL = ['>+x\ny', '>>  +\nx', '>> + x', '>> x', '>>x'];
+// No quote scope on the line, and the `+` is no marker.
+const TEXT = ['>+\nx', '>>+\nx', '>> +\nx', '>+\n\nx', '>+', '>>+\n>>+\nx', '>+ \nx', '>> para\n>>+\nx', '>+x\ny', '>>  +\nx', '>> + x', '>> x', '>>x'];
+// A quote on the first `>`; the `+` is text.
+const QUOTED_TEXT = ['> >+\nx', '> >+', '> > >+\nx'];
+// The `+` is the continuation marker.
+const MARKER = ['> +\nx', '> > +\nx', '> - a\n>\n> +\n> b', '> > - a\n> >\n> > +\n> > b'];
 
 const scopeAt = (tokens, at) => {
     let offset = 0;
@@ -32,23 +49,30 @@ const scopeAt = (tokens, at) => {
     }
     return '';
 };
+const plusLine = (source) => source.lastIndexOf('\n', source.lastIndexOf('+')) + 1;
 
 let failures = 0;
-for (const [name, { tokenize, quote }] of Object.entries(ENGINES)) {
-    for (const source of QUOTED) {
+const fail = (name, source, why) => {
+    failures++;
+    console.error(`${name}: ${JSON.stringify(source)} - ${why}`);
+};
+for (const [name, { tokenize, quote, marks }] of Object.entries(ENGINES)) {
+    for (const source of TEXT) {
         const tokens = tokenize(source);
-        const line = source.lastIndexOf('\n', source.indexOf('+')) + 1;
-        if (!quote(scopeAt(tokens, line))) {
-            failures++;
-            console.error(`${name}: ${JSON.stringify(source)} - the first > of the + line has no quote scope`);
-        }
+        if (quote(scopeAt(tokens, plusLine(source)))) fail(name, source, 'a glued > took the quote scope');
+        if (marks && marks(scopeAt(tokens, source.lastIndexOf('+')))) fail(name, source, 'the + is scoped as a marker');
     }
-    for (const source of LITERAL) {
-        if (quote(scopeAt(tokenize(source), 0))) {
-            failures++;
-            console.error(`${name}: ${JSON.stringify(source)} - a literal > took the quote scope`);
-        }
+    for (const source of QUOTED_TEXT) {
+        const tokens = tokenize(source);
+        if (!quote(scopeAt(tokens, 0))) fail(name, source, 'the first > lost its quote scope');
+        if (marks && marks(scopeAt(tokens, source.indexOf('+')))) fail(name, source, 'the + is scoped as a marker');
+    }
+    for (const source of MARKER) {
+        const tokens = tokenize(source);
+        const at = source.lastIndexOf('+');
+        if (!quote(scopeAt(tokens, plusLine(source)))) fail(name, source, 'the + line has no quote scope');
+        if (marks && !marks(scopeAt(tokens, at))) fail(name, source, 'the + is not scoped as a marker');
     }
 }
 assert.equal(failures, 0, `${failures} glued quote prefix row(s) failed`);
-console.log('glued quote prefix: a + line with glued > prefixes is a quote line in all three grammars');
+console.log('glued quote prefix: only a spaced > + line holds a marker in all three grammars');

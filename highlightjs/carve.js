@@ -837,7 +837,7 @@
         // `(?=[^\\r\\n])` is each inner lookbehind's sentinel: these lines are never empty.
         var underText = '(?=[^\\r\\n])(?<=(?<![^\\n])[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n)';
         var lazyText = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
-        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> ?)*)(?!(?<=>) )( *)';
+        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> )*)( *)';
         var lone = '\\+[ \\t]*(?=\\r?\\n';
         // The lines between the opener and the `+` that keep the container
         // open, for quote prefix `q` and column `s`. The classes are disjoint,
@@ -866,15 +866,15 @@
         var b = at(g + 2);
         var held = '(?=\\+)(?<=(?<![^\\n])' + b.q + b.s + holderOpener + '[^\\n]*\\n' + run(b.q, b.s, false) + lineAt + ')'
             + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
-        // A quote's own first line (`> +`, `>+`, `>> +`, `> >+`), one branch per
-        // depth k: the line above is no quote line of depth k or more, and the
-        // line below has fewer than k real `> ` prefixes before its block. A
-        // glued `>>` is a prefix only in front of the `+` (`>> x` is text).
+        // A quote's own first line (`> +`, `> > +`), one branch per depth k: the
+        // line above is no quote line of depth k or more, and the line below has
+        // fewer than k `> ` prefixes before its block. Every `>` needs its space
+        // (markup-carve/carve#3421): `>+`, `>>+`, `>> +` are text.
         var opened = [];
         for (var k = 1; k <= 8; k++) {
-            var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]|>(?: ?>){' + (k - 1) + ',} ?\\+[ \\t]*\\r?\\n';
-            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)>(?: ?>){' + (k - 1) + '} ?)'
-                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$)|>(?: ?>)* ?\\+[ \\t]*\\r?$)(?![ \\t])' + notItem + '[^\\r\\n])');
+            var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]';
+            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)(?:> ){' + k + '})'
+                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$))(?![ \\t])' + notItem + '[^\\r\\n])');
         }
         opened = opened.join('|');
         // Openers on one line with a quote innermost (`- > +`): the block
@@ -1099,8 +1099,7 @@
         // (carve-grammars#259).
         begin: RegExp(
             '(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?=>)(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
-            // A `+` continuation line may glue its prefixes (`>+`, `>>+`, `>> +`).
-            + '>(?= |$(?![^\\r\\n])|(?: ?>)* ?\\+[ \\t]*$(?![^\\r\\n]))',
+            + '>(?= |$(?![^\\r\\n]))',
         ),
         end: /$(?![^\r\n])/,
         // The ONE construct a quote line contains: a comment fence opened on

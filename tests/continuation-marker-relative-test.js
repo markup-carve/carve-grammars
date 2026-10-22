@@ -33,7 +33,7 @@ const ENGINES = {
 
 // Markers each grammar cannot prove, as `<row id> L<line>`.
 const MISSED = {
-    textmate: 49,
+    textmate: 47,
     prism: [
         // A tab-indented `+`: the column needs tab expansion.
         '632-a-continuation-marker-uses-its-container-column-22 L4',

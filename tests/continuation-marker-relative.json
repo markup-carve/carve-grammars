@@ -1,5 +1,5 @@
 {
-  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634; rows 643-644 from carve main (markup-carve/carve#3482, #3513)",
+  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634; rows 643-644 from carve main (markup-carve/carve#3482, #3513); rows 630-11 and 630-12 as carve 7285149 reads them (markup-carve/carve#3521)",
   "rows": [
     {
       "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-2",
@@ -201,14 +201,14 @@
       "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11",
       "source": ">>+\nq\n",
       "plus": [
-        [1, 2, "marker"]
+        [1, 2, "text"]
       ]
     },
     {
       "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12",
       "source": ">+\nq\n",
       "plus": [
-        [1, 1, "marker"]
+        [1, 1, "text"]
       ]
     },
     {

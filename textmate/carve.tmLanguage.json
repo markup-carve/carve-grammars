@@ -992,15 +992,6 @@
       "comment": "The DOCUMENT-LEVEL blockquote, anchored at column 0 (carve-grammars#138). An indented marker at the top level is literal text - verified against the pinned engine, ` > q` renders `<p>&gt; q</p>` - so this rule refuses it and `#blockquote_in_container` takes over inside a container. A quoted line's own heading, task, bullet or ordered marker scopes as it does outside a quote, nested prefixes included, and its inline run is scoped (carve-grammars#683); one match per line keeps every inline span on its line.",
       "patterns": [
         {
-          "comment": "A `+` line whose quote prefixes are glued (`>+`, `>>+`, `>> +`, `> >+`) is a quote line (grammar.ebnf `quote_continuation_line`). Whether the `+` attaches depends on the next line, so it stays quote text, as in `> +`.",
-          "match": "^(?:\\A\\x{FEFF})?(?=(?:> )*>[>+])(>(?: ?>)*) ?(\\+)[ \\t]*$",
-          "captures": {
-            "1": { "name": "punctuation.definition.quote.carve" },
-            "2": { "name": "markup.quote.carve" }
-          },
-          "name": "markup.quote.carve"
-        },
-        {
           "include": "#quoted_blocks"
         },
         {
@@ -1132,15 +1123,6 @@
     "blockquote_in_container": {
       "comment": "The in-container blockquote: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this, and only after the container's `end` has established that the line sits at or beyond the item's content column - which is the block context a line-based grammar cannot derive on its own (carve-grammars#71, #137). A quoted line's own heading, task, bullet or ordered marker scopes as it does outside a quote, nested prefixes included, and its inline run is scoped (carve-grammars#683); one match per line keeps every inline span on its line.",
       "patterns": [
-        {
-          "comment": "The in-container form of the glued `+` quote line in `#blockquote`.",
-          "match": "^[ \\t]*(?=(?:> )*>[>+])(>(?: ?>)*) ?(\\+)[ \\t]*$",
-          "captures": {
-            "1": { "name": "punctuation.definition.quote.carve" },
-            "2": { "name": "markup.quote.carve" }
-          },
-          "name": "markup.quote.carve"
-        },
         {
           "include": "#quoted_blocks_in_container"
         },

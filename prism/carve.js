@@ -1049,7 +1049,7 @@
         // `(?=[^\\r\\n])` is each inner lookbehind's sentinel: these lines are never empty.
         var underText = '(?=[^\\r\\n])(?<=(?<![^\\n])[ \\t>]*[^ \\t\\r\\n>][^\\n]*\\n)';
         var lazyText = '(?!#{1,6}(?:[ \\t]|\\r?$)|[>|:{]|%%|\\^[ \\t]|[`~]{3}|\\$\\$|\\[\\^|[-*+](?:[ \\t]|\\r?$)|(?:[-*_][ \\t]*){3,}\\r?$)[^ \\t\\r\\n][^\\n]*';
-        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> ?)*)(?!(?<=>) )( *)';
+        var lineAt = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?((?:> )*)( *)';
         var lone = '\\+[ \\t]*(?=\\r?\\n';
         // The lines between the opener and the `+` that keep the container
         // open, for quote prefix `q` and column `s`. The classes are disjoint,
@@ -1078,15 +1078,15 @@
         var b = at(g + 2);
         var held = '(?=\\+)(?<=(?<![^\\n])' + b.q + b.s + holderOpener + '[^\\n]*\\n' + run(b.q, b.s, false) + lineAt + ')'
             + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
-        // A quote's own first line (`> +`, `>+`, `>> +`, `> >+`), one branch per
-        // depth k: the line above is no quote line of depth k or more, and the
-        // line below has fewer than k real `> ` prefixes before its block. A
-        // glued `>>` is a prefix only in front of the `+` (`>> x` is text).
+        // A quote's own first line (`> +`, `> > +`), one branch per depth k: the
+        // line above is no quote line of depth k or more, and the line below has
+        // fewer than k `> ` prefixes before its block. Every `>` needs its space
+        // (markup-carve/carve#3421): `>+`, `>>+`, `>> +` are text.
         var opened = [];
         for (var k = 1; k <= 8; k++) {
-            var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]|>(?: ?>){' + (k - 1) + ',} ?\\+[ \\t]*\\r?\\n';
-            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)>(?: ?>){' + (k - 1) + '} ?)'
-                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$)|>(?: ?>)* ?\\+[ \\t]*\\r?$)(?![ \\t])' + notItem + '[^\\r\\n])');
+            var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]';
+            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)(?:> ){' + k + '})'
+                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$))(?![ \\t])' + notItem + '[^\\r\\n])');
         }
         opened = opened.join('|');
         // Openers on one line with a quote innermost (`- > +`): the block
@@ -2808,7 +2808,8 @@
         const rest = { ...quoteLine.inside };
         delete rest.punctuation;
         quoteLine.inside = Object.assign({
-            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+            // A `>` glued to a `+` is text (`> >+`, markup-carve/carve#3421).
+            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*(?!\+)/m,
             // A heading opens only right after the prefix (`>  # h` is prose),
             // while a list marker may stand further in, as at the top level.
             'title': {
@@ -2928,16 +2929,12 @@
     {
         const quotePrefix = /^(?<![^\r\n])\uFEFF?[ \t]*>(?: ?>)*/m;
         Prism.languages.carve.blockquote.unshift({
-            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:> ?)+ *(?=' + relativePlusSource(1) + ')\\+[ \\t]*', 'm'),
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:> )+ *(?=' + relativePlusSource(1) + ')\\+[ \\t]*', 'm'),
             greedy: true,
             inside: {
                 'punctuation': quotePrefix,
                 'continuation-marker': { pattern: /\+/, inside: continuationInside },
             },
-        }, {
-            // The same line when the `+` attaches nothing: still a quote line.
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: ?>)* ?\+[ \t]*$(?![^\r\n])/m,
-            inside: { 'punctuation': quotePrefix },
         }, {
             pattern: RegExp('^(?<![^\\r\\n])(?=[ \\t]*(?:>[ \\t]?)+[ \\t]*\\+[^\\r\\n]*\\|[ \\t]*$(?![^\\r\\n]))'
                 + '(?<=(?<![^\\n])[^\\n>]*((?:>[ \\t]?)+)(?:' + plusListMarker + ' +)*(?!' + plusRowSeparator + ')' + plusRowLine + ')'
