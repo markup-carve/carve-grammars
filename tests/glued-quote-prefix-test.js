@@ -40,6 +40,12 @@ const TEXT = ['>+\nx', '>>+\nx', '>> +\nx', '>+\n\nx', '>+', '>>+\n>>+\nx', '>+ 
 const QUOTED_TEXT = ['> >+\nx', '> >+', '> > >+\nx'];
 // The `+` is the continuation marker.
 const MARKER = ['> +\nx', '> > +\nx', '> - a\n>\n> +\n> b', '> > - a\n> >\n> > +\n> > b'];
+// After a list marker on the same line: the `+` is item text (`- >+`) or quote text (`- > >+`).
+const ITEM_TEXT = ['- >+\nx', '1. >+\nx', '* >+\nx', '- >>+\nx', '- >> +\nx', '- > >+\nx', '1. > >+\nx', '- [ ] >+\nx', '- - >+\nx'];
+// ...and the marker once every `>` has its space.
+const ITEM_MARKER = ['- > +\nx', '1. > +\nx', '- > > +\nx', '- - > +\nx'];
+// A glued `>+` line is paragraph text, so a list marker below it does not open a list.
+const NO_LIST = ['>+\n- x', '>>+\n- x', '>> +\n- x'];
 
 const scopeAt = (tokens, at) => {
     let offset = 0;
@@ -73,6 +79,16 @@ for (const [name, { tokenize, quote, marks }] of Object.entries(ENGINES)) {
         if (!quote(scopeAt(tokens, plusLine(source)))) fail(name, source, 'the + line has no quote scope');
         if (marks && !marks(scopeAt(tokens, at))) fail(name, source, 'the + is not scoped as a marker');
     }
+    for (const source of ITEM_TEXT) {
+        if (marks && marks(scopeAt(tokenize(source), source.indexOf('+')))) fail(name, source, 'the + after a list marker is scoped as a marker');
+    }
+    for (const source of ITEM_MARKER) {
+        if (marks && !marks(scopeAt(tokenize(source), source.indexOf('+')))) fail(name, source, 'the + after a list marker is not scoped as a marker');
+    }
+}
+for (const source of NO_LIST) {
+    if (prismTokens(source).some((token) => token.scope?.startsWith('list'))) fail('prism', source, 'a list opened under a glued > + line');
+    if (hljsTokens(source).some((token) => token.scope === 'bullet')) fail('highlightjs', source, 'a list opened under a glued > + line');
 }
 assert.equal(failures, 0, `${failures} glued quote prefix row(s) failed`);
 console.log('glued quote prefix: only a spaced > + line holds a marker in all three grammars');

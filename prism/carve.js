@@ -279,8 +279,8 @@
     // began with a plain unindented line (after a blank line, the start, or a
     // one-line block) continues that paragraph. Indented lines stay ambiguous.
     // 'list' is greedy so this lookbehind reads the real lines, not a fragment.
-    var lonePlusBlock = '(?:\\+|[ \\t]*(?:> ?)+\\+)[ \\t\\r]*(?=\\n)';
-    var lonePlusLine = '(?:\\+|[ \\t]*(?:> ?)+\\+)[ \\t\\r]*\\n';
+    var lonePlusBlock = '(?:\\+|[ \\t]*(?:> )+\\+)[ \\t\\r]*(?=\\n)';
+    var lonePlusLine = '(?:\\+|[ \\t]*(?:> )+\\+)[ \\t\\r]*\\n';
     var oneLineBlock = '(?:[ \\t]*(?:> ?)*(?:#{1,6} |(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=\\n)|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\n]*\\]: )|' + lonePlusBlock + ')';
     var markerLine = '(?:: +|[-*][ {]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ {]|\\.[ {])';
     // A lone `+` line, and an attribute line right after one, attach the next
@@ -1091,8 +1091,9 @@
         opened = opened.join('|');
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
+        // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
         var d = at(g + 4);
-        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> ?)+)'
+        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> )+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
         return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
     }

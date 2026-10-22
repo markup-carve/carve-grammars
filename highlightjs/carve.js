@@ -879,8 +879,9 @@
         opened = opened.join('|');
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
+        // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
         var d = at(g + 4);
-        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> ?)+)'
+        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> )+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
         return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
     }
