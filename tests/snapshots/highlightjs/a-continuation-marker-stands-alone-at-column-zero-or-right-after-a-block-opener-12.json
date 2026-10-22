@@ -1,10 +1,10 @@
 [
   {
-    "scope": null,
+    "scope": "quote",
     "text": ">"
   },
   {
-    "scope": "punctuation",
+    "scope": "quote>punctuation",
     "text": "+"
   },
   {

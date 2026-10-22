@@ -1,5 +1,5 @@
 {
-  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634",
+  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634; rows 643-644 from carve main (markup-carve/carve#3482, #3513)",
   "rows": [
     {
       "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-2",
@@ -1134,6 +1134,34 @@
       "source": "- a\n  - b\n  +\ntail\n",
       "plus": [
         [3, 2, "text"]
+      ]
+    },
+    {
+      "id": "643-a-first-block-marker-does-not-pull-a-column-zero-list-into-a-note-or-description",
+      "source": "[^a]: +\n- a list\n\nsee[^a]\n",
+      "plus": [
+        [1, 6, "text"]
+      ]
+    },
+    {
+      "id": "643-a-first-block-marker-does-not-pull-a-column-zero-list-into-a-note-or-description-2",
+      "source": ":: t\n: +\n- a list\n",
+      "plus": [
+        [2, 2, "marker"]
+      ]
+    },
+    {
+      "id": "644-a-separate-plus-after-content-attaches-a-list-to-a-note-or-description",
+      "source": ":: t\n: a\n+\n- b\n",
+      "plus": [
+        [3, 0, "marker"]
+      ]
+    },
+    {
+      "id": "644-a-separate-plus-after-content-attaches-a-list-to-a-note-or-description-2",
+      "source": "[^a]: x\n+\n- b\n\nsee[^a]\n",
+      "plus": [
+        [2, 0, "marker"]
       ]
     }
   ]

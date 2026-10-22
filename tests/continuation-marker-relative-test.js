@@ -1,7 +1,9 @@
 /**
  * The continuation marker at RELATIVE column 0 (markup-carve/carve#3445),
  * measured against the spec model's own reading of every `+` in the corpus
- * rows that ruling added (sections 626-634, `continuation-marker-relative.json`).
+ * rows that ruling added (sections 626-634) and the first-block rows of
+ * markup-carve/carve#3482 and #3513 (sections 643-644), all in
+ * `continuation-marker-relative.json`.
  *
  * The rule a grammar has to hold is one-sided: it may leave a marker unscoped
  * where it cannot prove it, but it may never scope a `+` the spec reads as
@@ -31,7 +33,7 @@ const ENGINES = {
 
 // Markers each grammar cannot prove, as `<row id> L<line>`.
 const MISSED = {
-    textmate: 47,
+    textmate: 49,
     prism: [
         // A tab-indented `+`: the column needs tab expansion.
         '632-a-continuation-marker-uses-its-container-column-22 L4',

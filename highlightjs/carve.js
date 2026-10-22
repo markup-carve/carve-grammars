@@ -866,13 +866,20 @@
         var b = at(g + 2);
         var held = '(?=\\+)(?<=(?<![^\\n])' + b.q + b.s + holderOpener + '[^\\n]*\\n' + run(b.q, b.s, false) + lineAt + ')'
             + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
-        // A quote's own first line: the block below starts left of it.
-        var c = at(g + 4);
-        var opened = '(?=\\+)(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?!' + c.q + ')[^\\n]*\\n)' + lineAt + ')(?<=>|> )'
-            + lone + '(?!' + c.q + ')(?:> ?)*(?![ \\t>])' + notItem + '[^\\r\\n])';
+        // A quote's own first line (`> +`, `>+`, `>> +`, `> >+`), one branch per
+        // depth k: the line above is no quote line of depth k or more, and the
+        // line below has fewer than k real `> ` prefixes before its block. A
+        // glued `>>` is a prefix only in front of the `+` (`>> x` is text).
+        var opened = [];
+        for (var k = 1; k <= 8; k++) {
+            var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]|>(?: ?>){' + (k - 1) + ',} ?\\+[ \\t]*\\r?\\n';
+            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)>(?: ?>){' + (k - 1) + '} ?)'
+                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$)|>(?: ?>)* ?\\+[ \\t]*\\r?$)(?![ \\t])' + notItem + '[^\\r\\n])');
+        }
+        opened = opened.join('|');
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
-        var d = at(g + 6);
+        var d = at(g + 4);
         var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> ?)+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
         return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
@@ -957,10 +964,11 @@
                 begin: /(?<=^(?<![^\r\n]))(?:(?<![\s\S])\uFEFF)?[ \t]*\[\^[^\]]+\]:/,
             },
             // A `+` as the whole first line is the continuation marker when a
-            // non-blank flush-left line follows (markup-carve/carve#3105).
+            // non-blank flush-left line follows (markup-carve/carve#3105) that
+            // opens no list item: a column-0 list stays outside (carve#3482).
             {
                 className: 'punctuation',
-                begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n[^ \t\r\n])/,
+                begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n(?!(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:[ \t]|\r?$|\{))[^ \t\r\n])/,
             },
             bodyAttribute('\\[\\^[^\\]\\r\\n]+\\]:'),
         ],
@@ -1091,7 +1099,8 @@
         // (carve-grammars#259).
         begin: RegExp(
             '(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?=>)(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
-            + '>(?= |$(?![^\\r\\n]))',
+            // A `+` continuation line may glue its prefixes (`>+`, `>>+`, `>> +`).
+            + '>(?= |$(?![^\\r\\n])|(?: ?>)* ?\\+[ \\t]*$(?![^\\r\\n]))',
         ),
         end: /$(?![^\r\n])/,
         // The ONE construct a quote line contains: a comment fence opened on
