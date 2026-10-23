@@ -37,6 +37,7 @@ const MARKER = [
     '- x\nother\n  :: t\n  : d\n',
     '- x\nother\nmore\n  :: t\n  : d\n',
     '1. x\nother\n   :: t\n   : d\n',
+    `- x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -51,6 +52,7 @@ const TEXT = [
     '>   :: t\n>   : d\n>   : e\n',
     '- x\n\nother\n  :: t\n  : d\n',
     '- x\n# h\n  :: t\n  : d\n',
+    `x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
 ];
 
 const scopeAt = (tokens, at) => {
