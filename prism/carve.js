@@ -1113,19 +1113,20 @@
         // A quote's own first line inside a list item (`- a` / `  > +`), at or
         // right of the item's content column and under no quote line: the
         // follower is lazy text at column 0, or a non-list block at the quote's
-        // column with fewer `> ` prefixes. One branch per indent and depth, so no
-        // group is captured.
+        // column with fewer `> ` prefixes (depth 4 at most). One branch per indent
+        // and depth, so no group is captured.
         var hosted = [];
+        var follow = [];
         for (var n = 1; n <= 12; n++) {
             var host = '(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])[ \\t]*' + item + '[ \\t]+)[^ \\t\\r\\n])';
             hosted.push('(?=\\+)(?<=(?<![^\\n])' + host + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '}(?:> )+)'
-                + '(?=\\+)(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)'
-                + '(?:' + [1, 2, 3, 4, 5, 6, 7, 8].map(function (k) {
-                    return '(?=\\+)(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '})' + lone + '(?: {' + n + '}(?:> ){0,' + (k - 1) + '}(?![ \\t>])'
-                        + notItem + '[^\\r\\n]|' + lazyText + '))';
-                }).join('|') + ')');
+                + '(?=\\+)(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)');
+            for (var k = 1; k <= 4; k++) {
+                follow.push('(?= {' + n + '})(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '}\\+[ \\t]*\\r?\\n) {' + n + '}(?:> ){0,' + (k - 1) + '}');
+            }
         }
-        hosted = '(?=\\+)(?:' + hosted.join('|') + ')';
+        hosted = '(?=\\+)(?<=(?<![^\\n]) +(?:> )+)(?:' + hosted.join('|') + ')' + lone
+            + '(?:' + lazyText + '|(?:' + follow.join('|') + ')(?![ \\t>])' + notItem + '[^\\r\\n]))';
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
         // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
