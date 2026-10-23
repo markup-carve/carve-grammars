@@ -70,6 +70,8 @@ const MARKER = [
     '- x\n\t:: t\n    : e\n',
     '- x\n    :: t\n\t: e\n',
     '1. x\n \t:: t\n\t: e\n',
+    '1. x\n  \t:: t\n    : e\n',
+    '- x\n  \t:: t\n  \t: e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -122,6 +124,11 @@ const TEXT = [
     'para\n\t:: t\n\t: e\n',
     '\t:: t\n\t: e\n',
     '# h\n\t:: t\n\t: e\n',
+    // Inside a two-column container a tab is measured from the container's column.
+    ':: a\n: b\n  \t:: t\n    : e\n',
+    ':: a\n: b\n  \t:: t\n\t: e\n',
+    '- x\n  \t:: t\n    : e\n',
+    '- x\n  \t:: t\n\t: e\n',
 ];
 
 const scopeAt = (tokens, at) => {

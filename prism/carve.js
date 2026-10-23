@@ -955,6 +955,11 @@
         at.push(first + '[ \\t]{2,}', first + '(?=[ \\t]{2})\\1: ' + lines + '\\1');
         return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
     })();
+    // Inside a two-column container (`- x`, `: d`) a tab is measured from the
+    // container's column, so `  \t:: t` stands at its column 4 and a description
+    // at 4 columns or a tab is not its column (PART 9 §24 C5).
+    var dlRelativeTab = '(?<=(?<![^\\n])(?:: |[-*] )(?! )[^\\n]*\\n(?:[ \\t]+(?![ \\t]|[-*] |\\w+[.)] |::? )[^\\n]*\\n|\\r?\\n){0,64}  \\t:: [^\\n]*\\n'
+        + '(?:[ \\t]+(?!::? )[^ \\t\\n][^\\n]*\\n|[ \\t]*\\r?\\n){0,64}(?: {4}|\\t))';
     var dlDescription = '([ \\t]*)(?=:)' + dlAligned + ':( +)' + dlBlankEnd + '[^\\n]*(?:' + dlLazy
         + '|(?:\\n[ \\t\\r]*(?=\\n))+\\n(?=\\1 \\2[ \\t]*[^\\s])(?!' + otherBlockOpener + ')[^\\n]*)*';
     // A term indented past column 0 opens a list only at or right of the
@@ -2093,6 +2098,13 @@
         // line only into another entry or an indented description line.
         'refused-term': {
             pattern: refusedTermPattern,
+            greedy: true,
+            inside: inline,
+        },
+        // A description line the relative tab rule refuses is text. Greedy, so
+        // it reads the list marker that 'list' has already split off.
+        'refused-description': {
+            pattern: RegExp('^(?<![^\\r\\n])(?: {4}|\\t)(?=: +[^ \\t\\r\\n])' + dlRelativeTab + '[^\\r\\n]*', 'm'),
             greedy: true,
             inside: inline,
         },

@@ -1376,6 +1376,27 @@
     let entryColumn = 0;
     // The column of the last term the entry accepted.
     let termColumn = 0;
+    // Inside a two-column container (`- x`, `: d`) a tab is measured from the
+    // container's column, so `  \t:: t` stands at its column 4 and a description
+    // at 4 columns or a tab is not its column (PART 9 §24 C5).
+    const relativeTabTerm = (input, at) => {
+        let end = at - 1;
+        let sawTerm = false;
+        for (let n = 0; n < 130 && end > 0; n++) {
+            const start = input.lastIndexOf('\n', end - 1) + 1;
+            const line = input.slice(start, end).replace(/\r$/, '');
+            end = start - 1;
+            if (!sawTerm) {
+                if (/^  \t:: /.test(line)) sawTerm = true;
+                else if (/^[ \t]*::? |^[^ \t]/.test(line)) return false;
+            } else if (/^[^ \t]/.test(line)) {
+                return /^(?:: |[-*] )(?! )/.test(line);
+            } else if (/^[ \t]+(?:[-*] |\w+[.)] |::? )/.test(line)) {
+                return false;
+            }
+        }
+        return false;
+    };
     const indentColumns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
@@ -1400,7 +1421,8 @@
         begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
             const indent = indentColumns(match[1]);
-            if (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)) {
+            if (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)
+                || ((match[1] === '    ' || match[1] === '\t') && relativeTabTerm(match.input, match.index))) {
                 match.rule.scope = undefined;
                 return;
             }
