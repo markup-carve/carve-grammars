@@ -48,6 +48,8 @@ const MARKER = [
     '> - x\n>   :: a\n> :: u\n> : e\n',    // A list marker hosts below a block line.
     '# h\n- z\n  :: t\n  : e\n',
     ':: a\n: d\n- z\n  :: t\n  : e\n',
+    '~~~\nx\n~~~\n- z\n  :: t\n  : e\n',
+    '| a |\n- z\n  :: t\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
