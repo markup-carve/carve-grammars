@@ -17,6 +17,14 @@ All notable changes to `carve-grammars` are documented here.
   own line in a list item (#764, #766).
 - Prism and highlight.js scope a `:` description marker only at its
   definition list's column (#765, #766).
+- Prism and highlight.js scope the first-block `+` of a quote held by an
+  outer quote or nested several quotes deep, and before an unclosed fence at
+  column 0, as carve-js reads it (#768, #769).
+- Prism and highlight.js open an indented definition list only below an item
+  or description whose column it reaches, also after a lazy item line, and in
+  quoted lists after the `> ` prefix (#768, #770).
+- TextMate scopes the `+` on a quote's marker line and a `:` at its term's
+  column (#768, #770).
 - Code fences opened on list, task and ordered marker lines highlight as
   blocks (#757).
 - An attribute block glued to a `]` after an escaped `\[`, or to a `)` that
