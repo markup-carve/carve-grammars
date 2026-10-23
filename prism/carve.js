@@ -1101,39 +1101,69 @@
             + lone + b.q + b.s + '(?![ \\t])[^\\r\\n])';
         // A quote's own first line (`> +`, `> > +`), one branch per depth k: the
         // line above is no quote line of depth k or more, and the line below has
-        // fewer than k `> ` prefixes before its block. Every `>` needs its space
+        // fewer than k `> ` prefixes before its block, indented freely after at
+        // least one of them. Every `>` needs its space
         // (markup-carve/carve#3421): `>+`, `>>+`, `>> +` are text.
         var opened = [];
         for (var k = 1; k <= 8; k++) {
             var deep = '(?:> ){' + (k - 1) + '}>[ \\r\\n]';
             opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?!' + deep + ')[^\\n]*\\n)(?:> ){' + k + '})'
-                + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$))(?![ \\t])' + notItem + '[^\\r\\n])');
+                + lone + '(?:' + (k > 1 ? '(?:> ){1,' + (k - 1) + '} +|' : '') + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$)))(?![ \\t])' + notItem + '[^\\r\\n])');
         }
         opened = opened.join('|');
-        // A quote's own first line inside a list item (`- a` / `  > +`), at or
-        // right of the item's content column and under no quote line: the
-        // follower is lazy text at column 0, or a non-list block at the quote's
-        // column with fewer `> ` prefixes (depth 4 at most). One branch per indent
-        // and depth, so no group is captured.
-        var hosted = [];
-        var follow = [];
-        for (var n = 1; n <= 12; n++) {
-            var host = '(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])[ \\t]*' + item + '[ \\t]+)[^ \\t\\r\\n])';
-            hosted.push('(?=\\+)(?<=(?<![^\\n])' + host + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '}(?:> )+)'
-                + '(?=\\+)(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)');
-            for (var k = 1; k <= 4; k++) {
-                follow.push('(?= {' + n + '})(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '}\\+[ \\t]*\\r?\\n) {' + n + '}(?:> ){0,' + (k - 1) + '}');
+        // A quote's own first line inside a list item or description (`- a` /
+        // `  > +`), at or right of the item's content column and under no quote
+        // line: the follower is lazy text at the host's column 0, or a non-list
+        // block at the quote's column with fewer `> ` prefixes (depth 8 at most).
+        // The host may itself sit in a quote (`> - a` / `>   > +`), up to two
+        // levels. One branch per prefix, indent and depth, so no group is captured.
+        // An opening fence with no closer ahead is lazy text too (carve-js 0.1.13
+        // folds it into the quote paragraph); a closed one is a block. The closer
+        // scan is bounded to 32 KB.
+        // A closer under an outer quote must carry that quote's prefix.
+        var unclosedFence = function (P) {
+            var fences = [];
+            ['`', '~'].forEach(function (c) {
+                for (var L = 3; L <= 8; L++) {
+                    fences.push(c + '{' + L + '}(?!' + c + ')(?![^\\n]*\\r?\\n[\\s\\S]{0,32768}?(?<![^\\n])' + P + '[ \\t>]*' + c + '{' + L + ',}[ \\t]*\\r?(?:\\n|$(?![\\s\\S])))[^\\r\\n]*');
+                }
+            });
+            return '(?:' + fences.join('|') + ')';
+        };
+        var hostedAt = function (p) {
+            // p is the group that captures the outer prefix, or 0 for none.
+            var P = p ? '\\' + p : '';
+            var hosted = [];
+            var follow = [];
+            // An indented quote with fewer `> ` than the `+` line attaches too.
+            var quoteFollow = [];
+            for (var j = 2; j <= 8; j++) {
+                quoteFollow.push('(?= )(?<=(?<![^\\n])' + P + ' +(?:> ){' + j + '}\\+[ \\t]*\\r?\\n' + P + ') +(?:> ){1,' + (j - 1) + '}(?![ \\t>])' + notItem + '[^\\r\\n]');
             }
-        }
-        hosted = '(?=\\+)(?<=(?<![^\\n]) +(?:> )+)(?:' + hosted.join('|') + ')' + lone
-            + '(?:' + lazyText + '|(?:' + follow.join('|') + ')(?![ \\t>])' + notItem + '[^\\r\\n]))';
+            for (var n = 1; n <= 12; n++) {
+                var host = '(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])' + P + '[ \\t]*(?:' + item + '|(?=:)(?<=(?<![^\\n])' + P + '[ \\t]*::?[ \\t][^\\n]*\\n' + P + '[ \\t]*):)[ \\t]+)[^ \\t\\r\\n])';
+                hosted.push('(?=\\+)(?<=(?<![^\\n])' + P + host + '[^\\n]*\\n(?:' + P + '(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64}' + P + ' {' + n + '}(?:> )+)'
+                    + '(?=\\+)(?<=(?<![^\\n])' + P + '(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n' + P + ' {' + n + '}(?:> )+)');
+                for (var k = 1; k <= 8; k++) {
+                    follow.push('(?= {' + n + '})(?<=(?<![^\\n])' + P + ' {' + n + '}(?:> ){' + k + '}\\+[ \\t]*\\r?\\n' + P + ') {' + n + '}(?:> ){0,' + (k - 1) + '}');
+                }
+            }
+            // Under an outer quote, lazy text and an unclosed fence may drop
+            // prefixes, and any non-list block indented past the prefix attaches.
+            return '(?=\\+)(?<=(?<![^\\n])' + (p ? '((?:> )+)' : '') + ' +(?:> )+)(?:' + hosted.join('|') + ')' + lone
+                + '(?:' + (p ? '(?!' + P + '> )(?:> )*' : '') + '(?:' + lazyText + '|' + unclosedFence(P) + ')|' + P
+                + '(?:' + (p ? ' +(?!>(?: |\\r?$))' + notItem + '[^ \\t\\r\\n]|' + quoteFollow.join('|') + '|' : '') + '(?:' + follow.join('|') + ')(?![ \\t>])' + notItem + '[^\\r\\n])))';
+        };
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
         // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
         var d = at(g + 4);
         var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> )+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
-        return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + '|' + hosted + ')';
+        // The quote-held branch captures its prefix in the group after all of the above.
+        var before = '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + '|' + hostedAt(0);
+        var hosted = hostedAt(g + RegExp(before + ')|').exec('').length - 1) + ')';
+        return before + '|' + hosted;
     }
 
     var plusListMarker = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';

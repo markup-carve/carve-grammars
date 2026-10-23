@@ -3,7 +3,9 @@
  * form (spec corpus 647): `- a` / `  > +` attaches lazy text at column 0 or a
  * block at the quote's column. Prism and highlight.js scope that `+` as the
  * marker; a quote below the item's content column, under another quote line,
- * or followed by a list stays text. Each shape is checked against carve-js too.
+ * or followed by a list stays text. An unclosed fence follows as lazy text,
+ * and the host may sit in a quote or be a description. Each shape is checked
+ * against carve-js too.
  */
 import assert from 'node:assert/strict';
 
@@ -28,6 +30,16 @@ const MARKER = [
     '- a\n  c\n  > +\n  b\n',
     '- a\n\n  > +\n  b\n',
     '- a\n    > +\n    b\n',
+    '- a\n  > +\n```\n',
+    '- a\n  > +\n~~~~\nz\n~~~\n',
+    '- a\n  > > > > > +\n  b\n',
+    '> > +\n>   b\n',
+    '> > +\n>   > b\n',
+    ':: t\n: d\n  > +\nb\n',
+    '> - a\n>   > +\n>     b\n',
+    '> - a\n>   > +\nb\n',
+    '> - a\n>   > +\n> ```\nz\n```\n',
+    '> - a\n>   > > +\n>     > b\n',
 ];
 const TEXT = [
     '- a\n  > +\n   b\n',
@@ -39,6 +51,11 @@ const TEXT = [
     '1. a\n  > +\n  b\n',
     '- a\n > +\nb\n',
     'x\n  > +\n  b\n',
+    '- a\n  > +\n```\nz\n```\n',
+    ': d\n  > +\nb\n',
+    '> - a\n>   > +\n> ```\nz\n> ```\n',
+    '> - a\n>   > +\n>     - s\n',
+    '> - a\n>   > +\n>   > b\n',
 ];
 
 const scopeAt = (tokens, at) => {
