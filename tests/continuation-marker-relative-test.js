@@ -31,9 +31,22 @@ const ENGINES = {
     highlightjs: { tokenize: hljsTokens, marks: (scope) => scope === 'punctuation' || scope === 'table-operator' },
 };
 
+// Text each grammar scopes anyway. TextMate scopes a quote's marker-line `+`
+// without seeing the next line (carve-grammars#768).
+const WRONG = {
+    textmate: [
+        '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6 L2',
+        '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7 L2',
+        '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-8 L2',
+        '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4 L2',
+        '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-39 L2',
+        '634-a-refused-continuation-plus-remains-text-13 L2',
+    ],
+};
+
 // Markers each grammar cannot prove, as `<row id> L<line>`.
 const MISSED = {
-    textmate: 47,
+    textmate: 33,
     prism: [
         // A tab-indented `+`: the column needs tab expansion.
         '632-a-continuation-marker-uses-its-container-column-22 L4',
@@ -73,7 +86,7 @@ for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
             if (!scoped && verdict === 'marker') missed.push(`${row.id} L${line}`);
         }
     }
-    assert.deepEqual(wrong, [], `${name}: scopes a + the spec reads as text`);
+    assert.deepEqual(wrong, WRONG[name] ?? [], `${name}: scopes a + the spec reads as text`);
     if (typeof MISSED[name] === 'number') {
         assert.equal(missed.length, MISSED[name], `${name}: unscoped markers moved: ${missed.join(', ')}`);
     } else {

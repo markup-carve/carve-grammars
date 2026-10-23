@@ -12,6 +12,8 @@ import assert from 'node:assert/strict';
 
 import { parse, renderHtml } from '@markup-carve/carve';
 import { prismTokens, hljsTokens } from './lib/engines.js';
+import { fileURLToPath } from 'node:url';
+import { textmateLineTokenizer } from './lib/textmate-lines.js';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 assertThisFileRuns(import.meta.url);
@@ -75,6 +77,24 @@ const check = (source, marker) => {
 };
 for (const source of MARKER) check(source, true);
 for (const source of TEXT) check(source, false);
+
+// TextMate reads one line at a time: a `:` scopes at the first term's column or
+// two or more columns right of it, never below it or one column right.
+const tm = await textmateLineTokenizer(fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url)));
+const TEXTMATE = [
+    [':: t\n: d\n: e\n', true],
+    [':: t\n: d\n  :: u\n  : v\n: e\n', true],
+    ['- x\n  :: t\n  : d\n  : e\n', true],
+    ['- x\n  :: t\n  : d\n: e\n', false],
+    ['- x\n  :: t\n  : d\n   : e\n', false],
+];
+for (const [source, marker] of TEXTMATE) {
+    const scoped = /punctuation\.definition\.list\.definition/.test(scopeAt(tm(source), source.lastIndexOf(':')));
+    if (scoped !== marker) {
+        failures++;
+        console.error(`textmate: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`);
+    }
+}
 
 assert.equal(failures, 0, `${failures} shape(s) disagree`);
 console.log(`description separator column: ${MARKER.length + TEXT.length} shapes agree with carve-js in prism and highlight.js`);

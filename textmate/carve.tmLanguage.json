@@ -995,6 +995,12 @@
           "include": "#quoted_blocks"
         },
         {
+          "comment": "A `+` as the whole rest of a quote's own marker line (`> +`, `> > +`) is the continuation marker. Whether it attaches depends on the next line, which a line grammar cannot see, so it is scoped regardless.",
+          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
+          "captures": {"1": {"name": "punctuation.definition.quote.carve"}, "2": {"name": "punctuation.definition.quote.carve"}, "3": {"name": "punctuation.definition.list.continuation.carve"}},
+          "name": "markup.quote.carve"
+        },
+        {
           "comment": "A `+` as the whole rest of a quoted list item's marker line is the continuation marker. A bare `> +` is a marker only when the next line starts at the right column (markup-carve/carve#3445), which a line grammar cannot see, so it stays text.",
           "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
@@ -1125,6 +1131,12 @@
       "patterns": [
         {
           "include": "#quoted_blocks_in_container"
+        },
+        {
+          "comment": "A quote's own marker-line `+`, as in `#blockquote`.",
+          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
+          "captures": {"1": {"name": "punctuation.definition.quote.carve"}, "2": {"name": "punctuation.definition.quote.carve"}, "3": {"name": "punctuation.definition.list.continuation.carve"}},
+          "name": "markup.quote.carve"
         },
         {
           "comment": "The quoted list-marker form of the `+` continuation marker, as in `#blockquote`.",
@@ -3829,11 +3841,11 @@
       }
     },
     "definition_list": {
-      "comment": "A `:` description line scopes only inside an entry a real `:: ` term opened (carve-grammars#91); the separator is a literal space (markup-carve/carve#698). The list ends at another block opener, as a lookahead so the opener still scopes (carve-grammars#682), and at any line no entry holds. A term or description runs over its lazy lines to a blank line; after one, a description keeps only lines indented to its content column (`\\1 \\3`), as carve-js does. Blank lines between entries stay inside (corpus 25-definition-lists-7).",
+      "comment": "A `:` description line scopes only inside an entry a real `:: ` term opened (carve-grammars#91); the separator is a literal space (markup-carve/carve#698). The list ends at another block opener, as a lookahead so the opener still scopes (carve-grammars#682), and at any line no entry holds. A term or description runs over its lazy lines to a blank line; after one, a description keeps only lines indented to its content column (`\\1 \\3`), as carve-js does. Blank lines between entries stay inside (corpus 25-definition-lists-7). A `:` line ends the list unless it sits at the first term's column or at least two columns right of it, where a nested list may hold it (markup-carve/carve#3458).",
       "patterns": [
         {
-          "begin": "^(?=(?:\\A\\x{FEFF})?[ \\t]*:: +(?![ \\t]*$))",
-          "end": "^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!(?:\\A\\x{FEFF})?[ \\t]*(?::: +(?![ \\t]*$)|: ))",
+          "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*):: +(?![ \\t]*$))",
+          "end": "^(?=[ \\t]*: )(?!\\1(?::|  +:))|^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+[.)][ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!(?:\\A\\x{FEFF})?[ \\t]*(?::: +(?![ \\t]*$)|: ))",
           "patterns": [
             {
               "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
@@ -4047,12 +4059,18 @@
     },
     "blockquote_on_marker_line": {
       "comment": "A BLOCK QUOTE MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- > x`, `1. > x`, `- - > x`, `- [ ] > x`), and it takes the rest of that line: carve-js renders `<ul><li><blockquote><p>x</p></blockquote></li></ul>`. Neither `#blockquote` nor `#blockquote_in_container` can reach it - both are anchored on ^, and the container's own begin match has already consumed the marker by the time this line is scanned - so the whole line fell through to the list rule and everything after the marker carried no quote scope at all (carve-grammars#259). Anchored on \\\\G with the same `(?<=[ \\\\t])` guard `#block_comment_on_marker_line` uses, for the reasons stated there. Reachable ONLY from `#container_blocks`, so a document-level line can never take it. The marker run is capture 1 and keeps its quote punctuation scope, which is tree-sitter-carve's split: the `block_quote` sits inside `list_item_content` beside the `list_marker_*` rather than over it.",
-      "match": "\\G(?<=[ \\t])(>)(?= |$) ?(.*)$",
+      "match": "\\G(?<=[ \\t])(>)(?= |$) ?((?:(?<=> )>(?= ) )*)(?:(\\+)[ \\t]*$|(.*)$)",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
         },
         "2": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "3": {
+          "name": "punctuation.definition.list.continuation.carve"
+        },
+        "4": {
           "name": "markup.quote.carve",
           "patterns": [
             {
