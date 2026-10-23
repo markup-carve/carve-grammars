@@ -1437,8 +1437,8 @@
         var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + OTHER_BLOCK_OPENER_SOURCE + ')(?!::? |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
         // A marker line right under paragraph text is that paragraph's lazy
         // text, so it hosts only below a blank or block line, or at the top.
-        var prevOk = '(?=[^\\n])(?<=(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?=[ \\t]*(?:\\r?\\n|[-*:#%`~|'
-            + '{]|\\w+[.)] )|\\[\\^[^\\n]*\\n[ \\t]*[-*\\d])[^\\n]*\\n)';
+        var prevOk = '(?=[^\\n])(?<=(?<![\\s\\S])|(?<![^\\n])(?=[ \\t]*(?:[\\r\\n]|[-*:%`~|'
+            + '{]|\\w+[.)] )|(?:> ?)*#|\\[[^\\]^\\n]*\\]: |\\[\\^.*\\n[ \\t]*[-*\\d]).*\\n)';
         var at = [];
         for (var n = 1; n <= 12; n++) {
             at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=' + prevOk + '(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'

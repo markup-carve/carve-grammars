@@ -50,6 +50,8 @@ const MARKER = [
     ':: a\n: d\n- z\n  :: t\n  : e\n',
     '~~~\nx\n~~~\n- z\n  :: t\n  : e\n',
     '| a |\n- z\n  :: t\n  : e\n',
+    '> # h\n- z\n  :: t\n  : e\n',
+    '[x]: y\n- z\n  :: t\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -77,6 +79,7 @@ const TEXT = [
     'para\n: d\n  :: t\n  : e\n',
     '> q\n- z\n  :: t\n  : e\n',
     'para\n1. z\n   :: t\n   : e\n',
+    '  # h\n- z\n  :: t\n  : e\n',
 ];
 
 const scopeAt = (tokens, at) => {
