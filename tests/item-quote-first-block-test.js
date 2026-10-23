@@ -40,6 +40,7 @@ const MARKER = [
     '> - a\n>   > +\nb\n',
     '> - a\n>   > +\n> ```\nz\n```\n',
     '> - a\n>   > > +\n>     > b\n',
+    '- a\n  > +\n```\nz\n> ```\n',
 ];
 const TEXT = [
     '- a\n  > +\n   b\n',
@@ -56,6 +57,7 @@ const TEXT = [
     '> - a\n>   > +\n> ```\nz\n> ```\n',
     '> - a\n>   > +\n>     - s\n',
     '> - a\n>   > +\n>   > b\n',
+    '> - a\n>   > +\n```\nz\n```\n',
 ];
 
 const scopeAt = (tokens, at) => {

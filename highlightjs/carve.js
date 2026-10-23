@@ -887,11 +887,11 @@
         // An opening fence with no closer ahead is lazy text too (carve-js 0.1.13
         // folds it into the quote paragraph); a closed one is a block. The closer
         // scan is bounded to 32 KB.
-        // A closer under an outer quote must carry that quote's prefix. Group
-        // `f` captures the opening run. Past 32 KB with neither a closer nor
+        // A closer must carry the opener's own prefix `P`, no more and no less.
+        // Group `f` captures the opening run. Past 32 KB with neither a closer nor
         // the end of its container the fence counts as closed.
         var unclosedFence = function (P, f) {
-            return '(`{3,}(?!`)|~{3,}(?!~))(?=[\\s\\S]{0,32768}?(?:$(?![\\s\\S])|\\n(?!' + P + ')))(?![^\\n]*\\r?\\n[\\s\\S]{0,32768}?(?<![^\\n])' + P + '[ \\t>]*\\' + f + '[`~]*[ \\t]*\\r?(?:\\n|$(?![\\s\\S])))[^\\r\\n]*';
+            return '(`{3,}(?!`)|~{3,}(?!~))(?=[\\s\\S]{0,32768}?(?:$(?![\\s\\S])|\\n(?!' + P + ')))(?![^\\n]*\\r?\\n[\\s\\S]{0,32768}?(?<![^\\n])' + P + '[ \\t]*\\' + f + '[`~]*[ \\t]*\\r?(?:\\n|$(?![\\s\\S])))[^\\r\\n]*';
         };
         // `base` is the number of the first group this branch captures: the
         // prefix of a quote holding the host (often empty). The `+` line's own
@@ -902,6 +902,7 @@
             var P = '\\' + next++;
             // The host sits in a quote: the captured prefix is not empty.
             var held = '(?!' + P + '(?<![^\\n]))';
+            var pf = '\\' + next++;
             var f = next++;
             var hosted = [];
             var follow = [];
@@ -918,7 +919,7 @@
             // Under an outer quote, lazy text and an unclosed fence may drop
             // prefixes, and any non-list block indented past the prefix attaches.
             return '(?=\\+)(?<=[ ]> )(?=\\+)(?<=(?<![^\\n])((?:> )*) +(?:> )+)(?:' + hosted.join('|') + ')' + lone
-                + '(?:(?!' + P + '> )(?:> )*(?:' + lazyText + '|' + unclosedFence(P, f) + ')|' + P
+                + '(?:(?!' + P + '> )((?:> )*)(?:' + lazyText + '|' + unclosedFence(pf, f) + ')|' + P
                 + '(?:' + held + ' +(?!>(?: |\\r?$))' + notItem + '[^ \\t\\r\\n]|' + quoteFollow + '(?:' + follow.join('|') + ')(?![ \\t>])' + notItem + '[^\\r\\n])))';
         };
         // Openers on one line with a quote innermost (`- > +`): the block
