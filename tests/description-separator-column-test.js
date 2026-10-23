@@ -66,6 +66,10 @@ const MARKER = [
     ':: a\n: d\n%% c\n :: t\n : e\n',
     `:: a\n: d\n%% ${'c'.repeat(300)}\n :: t\n : e\n`,
     ':: a\n: d\n  :: t\n  : f\n  : e\n',
+    // A tab runs to the next multiple of 4 on the term and the description line.
+    '- x\n\t:: t\n    : e\n',
+    '- x\n    :: t\n\t: e\n',
+    '1. x\n \t:: t\n\t: e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -113,6 +117,11 @@ const TEXT = [
     // A thematic break or attribute line ends the list.
     ':: a\n: d\n---\n  :: t\n  : e\n',
     ':: a\n: d\n{.c}\n  :: t\n  : e\n',
+    '- x\n\t:: t\n : e\n',
+    // A tab-indented term needs a host like a space-indented one.
+    'para\n\t:: t\n\t: e\n',
+    '\t:: t\n\t: e\n',
+    '# h\n\t:: t\n\t: e\n',
 ];
 
 const scopeAt = (tokens, at) => {

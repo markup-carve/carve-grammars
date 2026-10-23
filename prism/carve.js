@@ -937,8 +937,12 @@
         var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>?]\\] |::? )';
         var lines = '[^\\n]*\\n(?:[^\\n]*\\n){0,64}';
         var at = ['\\1::? '];
+        // n columns, a tab running to the next multiple of 4.
+        var cols = function (n, ch) {
+            return '(?:' + ch + '{4}|' + ch + '{0,3}\\t){' + (n >> 2) + '}' + ch + '{' + (n & 3) + '}';
+        };
         for (var n = 0; n <= 12; n++) {
-            at.push(unit + '*(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?[^\\n]{' + n + '})::? ' + lines + ' {' + n + '}(?<![^\\n] {' + n + '})');
+            at.push(unit + '*(?=:)(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?' + cols(n, '[^\\t\\n]') + ')::? ' + lines + cols(n, ' ') + '(?<![^\\n]' + cols(n, ' ') + ')');
         }
         // Past 64 lines with no marker line the column cannot be read: accept it.
         at.push('(?:(?![ \\t]*::? )[^\\n]*\\n){64}[ \\t]*');
@@ -969,29 +973,33 @@
         var prevOk = '(?=[^\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=\\r?\\n)|%%|[`~]{3}|(?::{3}|::? )|#{1,6} |\\[[^\\]^\\n]*\\]:(?=\\s)|'
             + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*\\r?\\n))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S).*\\n[ \\t]*[-*\\d]).*\\n)'
             + '(?:[ \\t]*(?:[-*.] |\\w+[.)] ).*\\n(?!:))*)';
+        // n columns of indentation, a tab running to the next multiple of 4.
+        var wsCols = function (n) {
+            return '(?: {4}| {0,3}\\t){' + (n >> 2) + '} {' + (n & 3) + '}';
+        };
         var at = [];
         for (var n = 1; n <= 12; n++) {
             at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=' + prevOk + '(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
-                + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {' + n + '})');
+                + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64}' + wsCols(n) + ')');
         }
         // Past column 12 the column is not compared (a branch per column costs
         // too much): any host above accepts it.
-        at.push('(?=::)(?<=' + prevOk + '(?<![^\\n])' + hostLead + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {13,})');
+        at.push('(?=::)(?<=' + prevOk + '(?<![^\\n])' + hostLead + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64}' + wsCols(12) + '[ \\t]+)');
         // Past 64 lines with nothing that ends a container the host cannot be
         // read: accept the term.
-        at.push('(?=::)(?<=(?<![^\\n])(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){64} +)');
+        at.push('(?=::)(?<=(?<![^\\n])(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){64}[ \\t]+)');
         // A footnote body holds blocks at any indentation.
-        at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}  +)');
+        at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}(?:  | ?\\t)[ \\t]*)');
         // A column-0 comment line closes a column-0 description's paragraph,
         // and the description then holds a term at any indent.
-        at.push('(?=::)(?<=(?<![^\\n]): +[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64}%%[^\\n]*\\n +)');
+        at.push('(?=::)(?<=(?<![^\\n]): +[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64}%%[^\\n]*\\n[ \\t]+)');
         return '(?:' + at.join('|') + ')';
     })();
     // A refused term and the lines it folds: a paragraph, matched greedily
     // ahead of 'definition-list' so that rule never sees it as an entry.
     var refusedTermPattern = RegExp(
-        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)? +(?=:: +' + dlBlankEnd + ')(?!' + dlTermHosted + ')[^\\n]*'
-        + '(?:\\n(?![ \\t\\r]*(?:\\n|$))(?!' + otherBlockOpener + ')(?!::)(?! +:: )[^\\n]*)*',
+        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]+(?=:: +' + dlBlankEnd + ')(?!' + dlTermHosted + ')[^\\n]*'
+        + '(?:\\n(?![ \\t\\r]*(?:\\n|$))(?!' + otherBlockOpener + ')(?!::)(?![ \\t]+:: )[^\\n]*)*',
         'm',
     );
     var definitionListPattern = RegExp(
