@@ -25,6 +25,17 @@ All notable changes to `carve-grammars` are documented here.
   quoted lists after the `> ` prefix (#768, #770).
 - TextMate scopes the `+` on a quote's marker line and a `:` at its term's
   column (#768, #770).
+- Prism and highlight.js scope a quoted term hosted by a quoted list item or
+  description (#772, #773).
+- Prism and highlight.js read a list marker or description line under
+  paragraph text as lazy text that hosts no indented term (#772, #774).
+- highlight.js reads a term inside a column-0 description's paragraph as
+  text, and a thematic break or attribute line ends the list (#772, #775).
+- Prism and highlight.js count a tab to the next multiple of 4 when they
+  align a description with its term, and a tab-indented term needs a host
+  (#772, #776).
+- Prism and highlight.js measure a tab after a two-column item or
+  description from that container's column (#772, #777).
 - Code fences opened on list, task and ordered marker lines highlight as
   blocks (#757).
 - An attribute block glued to a `]` after an escaped `\[`, or to a `)` that
