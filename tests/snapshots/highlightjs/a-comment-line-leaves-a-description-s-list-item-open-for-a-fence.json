@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " 1. para\n "
+  },
+  {
+    "scope": "comment",
+    "text": "%% c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code",
+    "text": "```\nx\n"
+  }
+]

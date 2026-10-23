@@ -1,0 +1,46 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "text",
+    "text": "```\n  +\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "code-block",
+    "text": "\ny\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

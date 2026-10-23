@@ -1,0 +1,54 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "> q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "   > >"
+  },
+  {
+    "type": "blockquote",
+    "text": " +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "   >"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "s"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

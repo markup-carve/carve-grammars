@@ -824,5 +824,7 @@ imported.destroy();
 // They follow the existing envelope losses in captions (4), fences (2), and containers (8).
 // The 621-641 bump (spec 5452811, carve-js 0.1.12) added 83 mounted losses, none removed;
 // every one is in a new continuation-marker or folded-fence category.
+// The 642-656 bump (spec 3214cb6, carve-js 0.1.13) added 43 and removed 50, all in
+// continuation-marker, folded-fence and wrapped-attribute categories.
 assertLedger('mounted-ledger.json', changed.map(slugOf), 'the set of corpus documents whose mounted rich projection is not render-equivalent');
 console.log(`mounted Tiptap corpus: ${listCorpusFiles().length - changed.length}/${listCorpusFiles().length} render-equivalent; ${changed.length} protected fallbacks`);

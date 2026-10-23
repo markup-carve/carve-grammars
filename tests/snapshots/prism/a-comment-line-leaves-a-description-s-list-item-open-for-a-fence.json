@@ -1,0 +1,38 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "1. para\n"
+  },
+  {
+    "type": "comment",
+    "text": " %% c"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nx\n"
+  }
+]

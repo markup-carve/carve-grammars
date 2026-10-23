@@ -27,6 +27,22 @@ const emptySkip = () => new Map();
 // Categories the tiptap serializer round-trips cleanly for every corpus file.
 // Verified empirically by tests/roundtrip-test.js (which fails if this drifts).
 const TIPTAP_COVERED = [
+    // Spec 642-656: all new documents pass the structured round-trip gate.
+    'a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation',
+    'a-first-block-marker-does-not-pull-a-column-zero-list-into-a-note-or-description',
+    'a-separate-plus-after-content-attaches-a-list-to-a-note-or-description',
+    'a-comment-line-leaves-a-description-s-list-item-open-for-a-fence',
+    'a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote',
+    'a-quote-opened-on-its-own-line-in-an-item-takes-the-first-block-form',
+    'a-quote-opened-on-an-item-s-marker-line-attaches-a-quote-at-its-own-depth',
+    'a-first-block-plus-refuses-a-follower-at-an-intervening-column',
+    'a-wrapped-attribute-line-interrupts-like-a-one-line-attribute-line',
+    'a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column',
+    'a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host',
+    'a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct',
+    'a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column',
+    'a-hosted-quote-s-first-block-plus-attaches-any-non-list-block-at-column-zero',
+    'the-column-of-the-quote-that-owns-a-first-block-plus-stays-eligible-at-every-depth',
     // Spec 621-641: all new documents pass the structured round-trip gate.
     'a-caption-after-a-continuation-marker-fence-stays-with-the-fence',
     'a-column-zero-marker-below-an-open-div-attaches-beside-the-div',
