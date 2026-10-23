@@ -1578,7 +1578,9 @@
             // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
             + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
         'on:begin': (match) => {
-            const indent = /^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index, match.index + 256))[1];
+            const lead = /\uFEFF?([ \t]*)/y;
+            lead.lastIndex = match.index;
+            const indent = lead.exec(match.input)[1];
             entryColumn = termColumn = lineColumns(match.input, match.index, indent);
             lastTermTabbed = indent.includes('\t');
             foldedTermLine = -1;
