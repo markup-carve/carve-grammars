@@ -2680,7 +2680,7 @@
     DEFINITION_TERM['on:begin'] = (match) => {
         const indent = indentColumns(/^\uFEFF?([ \t]*)/.exec(match[0])[1]);
         if (indent > entryColumn && indent < descriptionColumn
-            && !/(?:^|\n)%%[^\n]*\r?\n$/.test(match.input.slice(Math.max(0, match.index - 256), match.index))) {
+            && !(match.index > 0 && match.input.startsWith('%%', match.input.lastIndexOf('\n', match.index - 2) + 1))) {
             match.rule.scope = undefined;
             return;
         }

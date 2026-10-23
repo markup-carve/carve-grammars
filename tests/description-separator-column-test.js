@@ -64,6 +64,7 @@ const MARKER = [
     '- x\n1. z\n   :: t\n   : e\n',
     // A column-0 comment line closes the description's paragraph.
     ':: a\n: d\n%% c\n :: t\n : e\n',
+    `:: a\n: d\n%% ${'c'.repeat(300)}\n :: t\n : e\n`,
     ':: a\n: d\n  :: t\n  : f\n  : e\n',
 ];
 const TEXT = [
