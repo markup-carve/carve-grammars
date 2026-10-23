@@ -38,7 +38,14 @@ const MARKER = [
     '- x\nother\nmore\n  :: t\n  : d\n',
     '1. x\nother\n   :: t\n   : d\n',
     `- x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
-    `- x\n${'  filler\n'.repeat(65)}  :: t\n  : d\n`,
+    `- x\n${'  filler\n'.repeat(65)}  :: t\n  : d\n`,    // A quoted term hosted by a quoted list item or description.
+    '> - x\n>   :: t\n>   : e\n',
+    '> 1. x\n>    :: t\n>    : e\n',
+    '> > - x\n> >   y\n> >   :: t\n> >   : e\n',
+    '- > - x\n  >   :: t\n  >   : e\n',
+    '> - x\n> \n> \n>   :: t\n>   : e\n',
+    '> :: t\n> : d\n>   :: u\n>   : e\n',
+    '> - x\n>   :: a\n> :: u\n> : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -56,7 +63,12 @@ const TEXT = [
     `x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
     '> :: t\n>   :: u\n>   : v\n',
     '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
-    '> :: t\n> : d\n>  :: u\n>  : v\n',
+    '> :: t\n> : d\n>  :: u\n>  : v\n',    '> 1. x\n>   :: t\n>   : e\n',
+    '> - x\n>   :: a\n>     :: u\n>     : e\n',
+    '> :: t\n> other\n>   :: u\n>   : e\n',
+    '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
+    '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
+    '> para\n>   :: t\n>   : e\n',
 ];
 
 const scopeAt = (tokens, at) => {

@@ -2976,6 +2976,34 @@
         }]),
     }, Prism.languages.carve.table.inside);
 
+    // A quoted term indented past the quote's column 0 opens a list only at or
+    // right of the content column of a quoted list item or description above
+    // it at the same quote prefix, as `TERM_HOSTED` reads an unquoted one. Each
+    // call names its groups by `tag`, since one regex may hold several.
+    function quotedTermHostedSource(tag, opener) {
+        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
+        // A description hosts only at column 0 or after list markers on its
+        // line, and two blank lines end it.
+        var leads = ['[ \\t]*' + list + ' +', '(?:' + list + ' +)*: +'];
+        var at = [];
+        for (var h = 0; h < 2; h++) {
+            for (var n = 1; n <= 12; n++) {
+                var g = 'qh' + tag + h + 'n' + n;
+                var prefix = '(?:\\k<' + g + '>|[ \\t]*(?:[-*]|[0-9]+[.)]) +>(?: >)*)';
+                var host = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?' + prefix + ' (?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?'
+                    + prefix + ' ' + leads[h] + ')[^ \\t\\r\\n])[^\\n]*\\n';
+                var line = '(?<![^\\n])\\k<' + g + '>(?:[ \\t]*\\r?'
+                    + '| ' + (n > 1 ? '(?! {1,' + (n - 1) + '}:: )' : '') + '[ \\t]+[^ \\t\\r\\n][^\\n]*'
+                    + '| (?=[^ \\t\\r\\n])(?<![ \\t>]\\r?\\n\\k<' + g + '> )(?!' + opener + ')(?!::? )[^\\n]*)\\n'
+                    + (h ? '(?<!(?<![^\\n])\\k<' + g + '>[ \\t]*\\r?\\n\\k<' + g + '>[ \\t]*\\r?\\n)' : '');
+                at.push('(?=::)(?<=' + host + '(?:' + line + '){0,64}(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?<' + g + '>[ \\t]*>(?: >)*) {' + (n + 1) + '})');
+            }
+        }
+        // Any quoted host within reach first: most quoted terms have none.
+        var any = '(?=::)(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*]|[0-9]+[.)]) +)?>(?: >)* (?:' + leads.join('|') + ')[^\\n]*\\n(?:[^\\n]*\\n){0,64}[ \\t]*>(?: >)*   +)';
+        return any + '(?:' + at.join('|') + ')';
+    }
+
     // Tables, colon containers and definition lists inside a quote, read after
     // the `> ` prefix at any quote depth. A container needs its closer at the
     // same prefix, and a `: d` line counts only below a quoted `:: term`.
@@ -3021,6 +3049,26 @@
                     // An indented `:` at the column of a term or description above it.
                     { pattern: /(?=:)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?:\1: |\1:: (?<=> :: )|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +[^\n]*\n(?:[^\r\n]*\n){0,64}|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +)*: +[^\n]*\n(?:[^\r\n]*\n(?<!(?<![^\n])[ \t]*(?:> )*>[ \t]*\n(?<![^\n])[ \t]*(?:> )*>[ \t]*\n)){0,64})(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?=  )\1:: )[^\r\n]*\n(?:[^\r\n]*\n){0,64}(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> ( +)):(?= )/m, greedy: true },
                     /^\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+                ],
+            }, inline),
+        });
+        // A term indented under a quoted list item or description that hosts
+        // it, with its descriptions at the term's column.
+        Prism.languages.carve.blockquote.splice(1, 0, {
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) {3,}(?=::)' + quotedTermHostedSource('p', otherBlockOpener)
+                + ':: +(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*'
+                + '(?:\\r?\\n\\1 (?: +::? +|(?!' + otherBlockOpener + ')(?!::? ))(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*', 'm'),
+            greedy: true,
+            inside: Object.assign({
+                'definition-term': {
+                    pattern: /(?=::)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> +)::[^\r\n]*/,
+                    greedy: true,
+                    alias: 'title',
+                    inside: Object.assign({ 'punctuation': /^::/ }, inline),
+                },
+                'punctuation': [
+                    { pattern: /(?=:)(?<=(?<![\s\S])\uFEFF?[ \t]*(?:> )*>\1::[^]*\n[ \t]*(?:> )*>( +)):(?= )/, greedy: true },
+                    { pattern: /(?<![^\r\n])\uFEFF?[ \t]*>(?: >)*/, greedy: true },
                 ],
             }, inline),
         });

@@ -1169,6 +1169,34 @@
      * below still see the text. Inline formatting stays out: those modes may
      * span lines and would carry the next line's `>` into their run.
      */
+    // A quoted term indented past the quote's column 0 opens a list only at or
+    // right of the content column of a quoted list item or description above
+    // it at the same quote prefix, as `TERM_HOSTED` reads an unquoted one. Each
+    // call names its groups by `tag`, since one regex may hold several.
+    function quotedTermHostedSource(tag, opener) {
+        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
+        // A description hosts only at column 0 or after list markers on its
+        // line, and two blank lines end it.
+        var leads = ['[ \\t]*' + list + ' +', '(?:' + list + ' +)*: +'];
+        var at = [];
+        for (var h = 0; h < 2; h++) {
+            for (var n = 1; n <= 12; n++) {
+                var g = 'qh' + tag + h + 'n' + n;
+                var prefix = '(?:\\k<' + g + '>|[ \\t]*(?:[-*]|[0-9]+[.)]) +>(?: >)*)';
+                var host = '(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?' + prefix + ' (?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?'
+                    + prefix + ' ' + leads[h] + ')[^ \\t\\r\\n])[^\\n]*\\n';
+                var line = '(?<![^\\n])\\k<' + g + '>(?:[ \\t]*\\r?'
+                    + '| ' + (n > 1 ? '(?! {1,' + (n - 1) + '}:: )' : '') + '[ \\t]+[^ \\t\\r\\n][^\\n]*'
+                    + '| (?=[^ \\t\\r\\n])(?<![ \\t>]\\r?\\n\\k<' + g + '> )(?!' + opener + ')(?!::? )[^\\n]*)\\n'
+                    + (h ? '(?<!(?<![^\\n])\\k<' + g + '>[ \\t]*\\r?\\n\\k<' + g + '>[ \\t]*\\r?\\n)' : '');
+                at.push('(?=::)(?<=' + host + '(?:' + line + '){0,64}(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?<' + g + '>[ \\t]*>(?: >)*) {' + (n + 1) + '})');
+            }
+        }
+        // Any quoted host within reach first: most quoted terms have none.
+        var any = '(?=::)(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*]|[0-9]+[.)]) +)?>(?: >)* (?:' + leads.join('|') + ')[^\\n]*\\n(?:[^\\n]*\\n){0,64}[ \\t]*>(?: >)*   +)';
+        return any + '(?:' + at.join('|') + ')';
+    }
+
     const QUOTED = '(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*>(?: >)* )';
     const NO_EMPTY = '(?![ \\t]*$(?![^\\r\\n]))';
     BLOCKQUOTE.contains.push(
@@ -1188,10 +1216,17 @@
         // A quoted definition list: the `::` of a term, and a `:` at the column of
         // a term or description above it, under a quoted term.
         { className: 'punctuation', begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* )::(?= +[^ \t\r\n])/ },
-        { className: 'punctuation', begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +)*: +[^\n]*\n(?:[ \t]*>[^\n]*\n(?<!(?<![^\n])[ \t]*>(?: >)*[ \t]*\n(?<![^\n])[ \t]*>(?: >)*[ \t]*\n)){0,64})(?<![^\r\n])[ \t]*>(?: >)*   +)::(?= +[^ \t\r\n])/ },
+        { className: 'punctuation', begin: RegExp('(?=::)' + quotedTermHostedSource('t', OTHER_BLOCK_OPENER_SOURCE) + '::(?= +[^ \\t\\r\\n])') },
         {
             className: 'punctuation',
-            begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}[^\n]*)(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?:\1: |\1:: (?<=> :: )|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +)*: +[^\n]*\n(?:[ \t]*>[^\n]*\n(?<!(?<![^\n])[ \t]*>(?: >)*[ \t]*\n(?<![^\n])[ \t]*>(?: >)*[ \t]*\n)){0,64})(?<![^\r\n])[ \t]*>(?: >)* (?=  )\1:: )[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ( *)):(?= +[^ \t\r\n])/,
+            begin: RegExp(/(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}[^\n]*)(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?:\k<dcol>: |\k<dcol>:: (?<=> :: )|\k<dcol>(?=::)QHOSTDESC:: )[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?<dcol> *)):(?= +[^ \t\r\n])/.source.replace('QHOSTDESC', quotedTermHostedSource('c', OTHER_BLOCK_OPENER_SOURCE))),
+        },
+        // A description at the column of the nearest term above it that a quoted
+        // list item or description hosts.
+        {
+            className: 'punctuation',
+            begin: RegExp('(?=:)(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*>(?: >)* \\k<dc>(?=::)' + quotedTermHostedSource('d', OTHER_BLOCK_OPENER_SOURCE)
+                + '::[^\\n]*\\n(?:(?<![^\\n])[ \\t]*>(?: >)*(?! \\k<dc>:: )[^\\n]*\\n){0,64}(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*>(?: >)* (?<dc> +)):(?= +[^ \\t\\r\\n])'),
         },
     );
 
