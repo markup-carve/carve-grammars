@@ -17,7 +17,11 @@
   },
   {
     "scope": "quote",
-    "text": "     > +"
+    "text": "     > "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "+"
   },
   {
     "scope": null,

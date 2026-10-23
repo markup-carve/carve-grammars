@@ -1089,13 +1089,29 @@
                 + lone + '(?:> ){0,' + (k - 1) + '}(?!>(?: |\\r?$))(?![ \\t])' + notItem + '[^\\r\\n])');
         }
         opened = opened.join('|');
+        // A quote's own first line inside a list item (`- a` / `  > +`), at or
+        // right of the item's content column and under no quote line: the
+        // follower is lazy text at column 0, or a non-list block at the quote's
+        // column with fewer `> ` prefixes. One branch per indent and depth, so no
+        // group is captured.
+        var hosted = [];
+        for (var n = 1; n <= 12; n++) {
+            var host = '(?=[^\\n]{0,' + n + '}(?<=(?<![^\\n])[ \\t]*' + item + '[ \\t]+)[^ \\t\\r\\n])';
+            hosted.push('(?<=(?<![^\\n])' + host + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '}(?:> )+)'
+                + '(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)'
+                + '(?:' + [1, 2, 3, 4, 5, 6, 7, 8].map(function (k) {
+                    return '(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '})' + lone + '(?: {' + n + '}(?:> ){0,' + (k - 1) + '}(?![ \\t>])'
+                        + notItem + '[^\\r\\n]|' + lazyText + '))';
+                }).join('|') + ')');
+        }
+        hosted = '(?=\\+)(?:' + hosted.join('|') + ')';
         // Openers on one line with a quote innermost (`- > +`): the block
         // below starts at column 0 or at that line's column.
         // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
         var d = at(g + 4);
         var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> )+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
-        return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + ')';
+        return '(?:' + listed + '|' + held + '|' + opened + '|' + stacked + '|' + hosted + ')';
     }
 
     var plusListMarker = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
