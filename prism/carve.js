@@ -966,8 +966,8 @@
         var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + otherBlockOpener + ')(?!::? |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
         // A marker line right under paragraph text is that paragraph's lazy
         // text, so it hosts only below a blank or block line, or at the top.
-        var prevOk = '(?=[^\\n])(?<=(?<![\\s\\S])|(?<![^\\n])(?=[ \\t]*(?:[\\r\\n]|[-*:%`~|'
-            + '{]|\\w+[.)] )|(?:> ?)*#|\\[[^\\]^\\n]*\\]: |\\[\\^.*\\n[ \\t]*[-*\\d]).*\\n)';
+        var prevOk = '(?=[^\\n])(?<=(?<![\\s\\S])|(?<![^\\n])(?=[ \\t]*(?:[\\r\\n]|[-*.] |[-*_]{3}|%%|[`~]{3}|:|'
+            + '[|{]|\\w+[.)] )|(?:> ?)*#|\\[[^\\]^\\n]*\\]: |\\[\\^.*\\n[ \\t]*[-*\\d]).*\\n)';
         var at = [];
         for (var n = 1; n <= 12; n++) {
             at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=' + prevOk + '(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
@@ -987,7 +987,7 @@
     // ahead of 'definition-list' so that rule never sees it as an entry.
     var refusedTermPattern = RegExp(
         '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)? +(?=:: +' + dlBlankEnd + ')(?!' + dlTermHosted + ')[^\\n]*'
-        + '(?:\\n(?![ \\t\\r]*(?:\\n|$))(?!' + otherBlockOpener + ')(?!::)(?! +(?=:: )' + dlTermHosted + ')[^\\n]*)*',
+        + '(?:\\n(?![ \\t\\r]*(?:\\n|$))(?!' + otherBlockOpener + ')(?!::)(?! +:: )[^\\n]*)*',
         'm',
     );
     var definitionListPattern = RegExp(
