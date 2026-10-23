@@ -933,6 +933,14 @@
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
     // line (markup-carve/carve#3458); any other `:` line is no marker.
+    var footnoteHost = '\\[\\^[^\\]\\r\\n]+\\]:';
+    var footnoteBody = footnoteHost + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}';
+    // A container's opening line and the lines of its body down to a term.
+    var dlContainer = function (host) {
+        return '(?<![^\\n])(?:' + host + ')[^\\n]*\\n(?:[ \\t]+(?![ \\t]|[-*] |\\w+[.)] |::? )[^\\n]*\\n|%%[^\\n]*\\n|[ \\t]*\\r?\\n){0,64}';
+    };
+    // From a term to the next description line below it.
+    var dlTermToDescription = ':: [^\\n]*\\n(?:[ \\t]+(?!::? )[^ \\t\\n][^\\n]*\\n|[ \\t]*\\r?\\n){0,64}';
     var dlAligned = (function () {
         var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>?]\\] |::? )';
         var lines = '[^\\n]*\\n(?:[^\\n]*\\n){0,64}';
@@ -953,13 +961,22 @@
         // description indented two or more columns is accepted too.
         var first = '(?<![\\s\\S])\\uFEFF?:: [^\\n]*\\n(?:(?![ \\t]*: )[^\\n]*\\n){0,64}';
         at.push(first + '[ \\t]{2,}', first + '(?=[ \\t]{2})\\1: ' + lines + '\\1');
+        // In a footnote body or a description a tab counts from the container's
+        // column (PART 9 §24 C5): `  \t:: t` stands at column 6.
+        var six = '(?:  (?: {4}| {0,3}\\t)| ?\\t(?:  | ?\\t))';
+        at.push(dlContainer(footnoteHost) + six + dlTermToDescription + six,
+            dlContainer(': (?! )') + ' {2,3}\\t' + dlTermToDescription + six,
+            // Inside the token the container line is cut off; the outer match
+            // has checked it, so a tab-indented first term stands for it.
+            '(?<![\\s\\S])(?:  | ?\\t)[ \\t]*\\t' + dlTermToDescription + six);
         return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
     })();
-    // Inside a two-column container (`- x`, `: d`) a tab is measured from the
-    // container's column, so `  \t:: t` stands at its column 4 and a description
-    // at 4 columns or a tab is not its column (PART 9 §24 C5).
-    var dlRelativeTab = '(?<=(?<![^\\n])(?:: |[-*] )(?! )[^\\n]*\\n(?:[ \\t]+(?![ \\t]|[-*] |\\w+[.)] |::? )[^\\n]*\\n|\\r?\\n){0,64}  \\t:: [^\\n]*\\n'
-        + '(?:[ \\t]+(?!::? )[^ \\t\\n][^\\n]*\\n|[ \\t]*\\r?\\n){0,64}(?: {4}|\\t))';
+    // Inside a two-column container (`- x`, `: d`, a footnote body) a tab is
+    // measured from the container's column, so `  \t:: t` stands at its column
+    // 4 and a description at 4 columns is not its column (PART 9 §24 C5).
+    var dlRelativeTab = '(?<=' + dlContainer('[-*] (?! )') + '  \\t' + dlTermToDescription + '(?: {4}| ?\\t)'
+        + '|' + dlContainer(': (?! )|' + footnoteHost) + ' {2,3}\\t' + dlTermToDescription + '(?: {4}| ?\\t)'
+        + '|' + dlContainer(footnoteHost) + '(?: ?\\t\\t| {4}\\t)' + dlTermToDescription + '(?: {8}| ?\\t {4}))';
     var dlDescription = '([ \\t]*)(?=:)' + dlAligned + ':( +)' + dlBlankEnd + '[^\\n]*(?:' + dlLazy
         + '|(?:\\n[ \\t\\r]*(?=\\n))+\\n(?=\\1 \\2[ \\t]*[^\\s])(?!' + otherBlockOpener + ')[^\\n]*)*';
     // A term indented past column 0 opens a list only at or right of the
@@ -974,10 +991,16 @@
         // A column-0 lazy line right under a non-blank line keeps the item open.
         var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + otherBlockOpener + ')(?!:: |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
         // A marker line right under paragraph text is that paragraph's lazy
-        // text, so it hosts only below a blank or block line, or at the top.
-        var prevOk = '(?=[^\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=\\r?\\n)|%%|[`~]{3}|(?::{3}|::? )|#{1,6} |\\[[^\\]^\\n]*\\]:(?=\\s)|'
-            + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*\\r?\\n))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S).*\\n[ \\t]*[-*\\d]).*\\n)'
-            + '(?:[ \\t]*(?:[-*.] |\\w+[.)] ).*\\n(?!:))*)';
+        // text, so it hosts only below a blank or block line, at the top, or
+        // in a paragraph that an item or description line opened.
+        // A `: ` line is a description only under a term; elsewhere it is text.
+        var dlAbove = '(?<![^\\n])(?:> ?)*[ \\t]*:: [^\\n]*\\n(?:[^\\n]*\\n){0,64}(?:> ?)*[ \\t]*: ';
+        // An indented line continues an item, description or footnote above it,
+        // past a blank line only from two columns in; elsewhere it is text.
+        var inItem = '(?<![^\\n])[ \\t]*(?:(?:[-*]|\\w+[.)]|::?) +\\S|\\[\\^)[^\\n]*\\n(?:(?:[ \\t]+\\S[^\\n]*\\n)*[ \\t]+|(?:(?:[ \\t]*\\r?|[ \\t]+\\S[^\\n]*)\\n){0,64}(?:  | ?\\t)[ \\t]*)\\S';
+        var prevOk = '(?=[^\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=\\r?\\n)|%%|[`~]{3}|(?::{3}|:: |: (?=[\\s\\S])(?<=' + dlAbove + '))|#{1,6} |\\[[^\\]^\\n]*\\]:(?=\\s)|'
+            + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*\\r?\\n))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S(?=[\\s\\S])(?<=' + inItem + ')).*\\n[ \\t]*[-*\\d]).*\\n)'
+            + '(?:(?:[ \\t]*(?:[-*.] |\\w+[.)] )[ \\t]*\\S|(?:> ?)*[ \\t]*: (?=[\\s\\S])(?<=' + dlAbove + ')).*\\n(?:(?:> ?)*[ \\t]*\\S.*\\n){0,64}(?!:))?)';
         // n columns of indentation, a tab running to the next multiple of 4.
         var wsCols = function (n) {
             return '(?: {4}| {0,3}\\t){' + (n >> 2) + '} {' + (n & 3) + '}';
@@ -2104,9 +2127,22 @@
         // A description line the relative tab rule refuses is text. Greedy, so
         // it reads the list marker that 'list' has already split off.
         'refused-description': {
-            pattern: RegExp('^(?<![^\\r\\n])(?: {4}|\\t)(?=: +[^ \\t\\r\\n])' + dlRelativeTab + '[^\\r\\n]*', 'm'),
+            // After a list marker a footnote body takes no description at its
+            // own column; the text left of the marker is cut off from the other rules.
+            pattern: RegExp('^(?<![^\\r\\n])[ \\t]+(?=: +[^ \\t\\r\\n])(?:' + dlRelativeTab + '|(?<=(?<![^\\n])[ \\t]*(?:[-*]|\\w+[.)]) +'
+                + footnoteBody + '(?:[ \\t]{3,}|[ \\t]*\\t[ \\t]*)' + dlTermToDescription + '  ))[^\\r\\n]*', 'm'),
             greedy: true,
             inside: inline,
+        },
+        // A footnote body's list also takes a description at the body's
+        // column. Greedy, since a comment or a list marker above may have cut
+        // the footnote line off from the text 'definition-list' sees.
+        'footnote-description': {
+            pattern: RegExp('^(?<![^\\r\\n])  (?=: +[^ \\t\\r\\n])(?<=(?<![^\\n])' + footnoteBody + '(?:[ \\t]{3,}|[ \\t]*\\t[ \\t]*)'
+                + dlTermToDescription + '  )[^\\r\\n]*', 'm'),
+            greedy: true,
+            alias: 'definition-list',
+            inside: { 'punctuation': /^ *: +/ },
         },
         'definition-list': {
             pattern: definitionListPattern,
@@ -3109,6 +3145,11 @@
         Prism.languages.carve['definition-list'].inside = Object.assign(
             {},
             Prism.languages.carve['definition-list'].inside,
+            pick(['comment'].concat(keys.slice(keys.indexOf('math'))))
+        );
+        Prism.languages.carve['footnote-description'].inside = Object.assign(
+            {},
+            Prism.languages.carve['footnote-description'].inside,
             pick(['comment'].concat(keys.slice(keys.indexOf('math'))))
         );
     }

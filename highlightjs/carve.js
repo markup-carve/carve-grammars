@@ -1254,7 +1254,9 @@
         const end = input.indexOf('\n', start);
         return input.slice(start, end === -1 ? undefined : end).replace(/\r$/, '');
     };
-    const previousLineStart = (input, start) => (start === 0 ? -1 : input.lastIndexOf('\n', start - 2) + 1);
+    // `lastIndexOf` clamps a negative start to 0, so the line after a leading
+    // newline must not search at all: it would find itself.
+    const previousLineStart = (input, start) => (start < 2 ? start - 1 : input.lastIndexOf('\n', start - 2) + 1);
     // A line after which a new block starts: it ends any paragraph above.
     const BLOCK_BOUNDARY_LINE = /^\uFEFF?(?:[ \t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\*{3,}|_{3,})[ \t]*$|\|.*\|(?:\{[^{}]*\})?[ \t]*$|\{[^{}]*\}[ \t]*$|%%|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|:: )|\+[ \t]*$)/;
     const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?: +[^ \t]|\{)/;
@@ -1376,6 +1378,60 @@
     let entryColumn = 0;
     // The column of the last term the entry accepted.
     let termColumn = 0;
+    const indentColumns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
+    // The column-0 line that opens the container a line sits in: an item, a
+    // description or a footnote. `nested` is set past an indented item marker.
+    // Memoized per line, so a long run of indented lines is walked once.
+    const CONTAINER_MEMO = new Map();
+    const containerAbove = (input, lineStart) => {
+        let memo = CONTAINER_MEMO.get(input);
+        if (!memo) {
+            memo = new Map();
+            CONTAINER_MEMO.set(input, memo);
+            if (CONTAINER_MEMO.size > 4) CONTAINER_MEMO.delete(CONTAINER_MEMO.keys().next().value);
+        }
+        const path = [];
+        let at = lineStart;
+        let found = null;
+        while (at > 0) {
+            if (memo.has(at)) {
+                found = memo.get(at);
+                break;
+            }
+            const above = previousLineStart(input, at);
+            const line = lineAt(input, above);
+            if (/^[^ \t]/.test(line) && !line.startsWith('%%')) {
+                if (/^\[\^[^\]\r\n]+\]:/.test(line)) found = { kind: 'footnote', nested: false };
+                else if (/^: (?! )/.test(line)) found = { kind: 'description', nested: false };
+                else if (/^[-*] (?! )/.test(line)) found = { kind: 'item', nested: false };
+                path.push([at, false]);
+                break;
+            }
+            path.push([at, /^[ \t]+(?:[-*] |\w+[.)] )/.test(line)]);
+            at = above;
+        }
+        for (let i = path.length - 1; i >= 0; i--) {
+            if (found && path[i][1] && !found.nested) found = { kind: found.kind, nested: true };
+            memo.set(path[i][0], found);
+        }
+        return found;
+    };
+    // Inside a footnote body or a description a tab is measured from the
+    // container's column (PART 9 §24 C5), so `  \t` stands at column 6, not 4.
+    // In a description the spec model does so only for a tab at column 2 or 3;
+    // in a list item the engines and the model disagree (markup-carve/carve#3550).
+    const lineColumns = (input, lineStart, indent) => {
+        if (!indent.includes('\t')) return indentColumns(indent);
+        const container = containerAbove(input, lineStart);
+        if (!container || container.nested || container.kind === 'item'
+            || (container.kind === 'description' && !/^ {2,3}\t *$/.test(indent))) return indentColumns(indent);
+        let col = 0;
+        let i = 0;
+        while (i < indent.length && col < 2) col = indent[i++] === '\t' ? col + 4 - (col % 4) : col + 1;
+        let rel = col - 2;
+        while (i < indent.length) rel = indent[i++] === '\t' ? rel + 4 - (rel % 4) : rel + 1;
+        return rel + 2;
+    };
     // Inside a two-column container (`- x`, `: d`) a tab is measured from the
     // container's column, so `  \t:: t` stands at its column 4 and a description
     // at 4 columns or a tab is not its column (PART 9 §24 C5).
@@ -1398,7 +1454,13 @@
         }
         return false;
     };
-    const indentColumns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
+    // A footnote body's entry also takes a description at the body's column.
+    let entryInFootnote = false;
+    // Whether the last term's indentation holds a tab.
+    let lastTermTabbed = false;
+    // The start of the last term line folded into a paragraph: a `:` right
+    // below it is that paragraph's text too.
+    let foldedTermLine = -1;
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
     // line (markup-carve/carve#3458); any other `:` line is no marker.
@@ -1415,15 +1477,25 @@
         }
         // Past 64 lines with no marker line the column cannot be read: accept it.
         at.push('(?:(?![ \\t]*::? )[^\\n]*\\n){64}[ \\t]*');
+        // Below a tab-indented marker the column is relative to a container;
+        // `on:begin` compares it. A footnote body also takes its own column.
+        at.push('[ \\t]*\\t[ \\t]*::? ' + lines + '[ \\t]*', '\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}  ');
         return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
     })();
     const DESCRIPTION_MARKER = {
         className: 'punctuation',
         begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
-            const indent = indentColumns(match[1]);
-            if (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)
-                || ((match[1] === '    ' || match[1] === '\t') && relativeTabTerm(match.input, match.index))) {
+            const indent = lineColumns(match.input, match.index, match[1]);
+            const tabbed = match[1].includes('\t') || lastTermTabbed;
+            if (foldedTermLine !== -1 && previousLineStart(match.input, match.index) === foldedTermLine) {
+                match.rule.scope = undefined;
+                return;
+            }
+            if (!(entryInFootnote && match[1] === '  ')
+                && (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)
+                    || (tabbed && indent !== termColumn && indent !== entryColumn)
+                    || ((match[1] === '    ' || match[1] === '\t') && relativeTabTerm(match.input, match.index)))) {
                 match.rule.scope = undefined;
                 return;
             }
@@ -1466,10 +1538,16 @@
         // A column-0 lazy line right under a non-blank line keeps the item open.
         var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + OTHER_BLOCK_OPENER_SOURCE + ')(?!:: |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
         // A marker line right under paragraph text is that paragraph's lazy
-        // text, so it hosts only below a blank or block line, or at the top.
-        var prevOk = '(?=[^\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=\\r?\\n)|%%|[`~]{3}|(?::{3}|::? )|#{1,6} |\\[[^\\]^\\n]*\\]:(?=\\s)|'
-            + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*\\r?\\n))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S).*\\n[ \\t]*[-*\\d]).*\\n)'
-            + '(?:[ \\t]*(?:[-*.] |\\w+[.)] ).*\\n(?!:))*)';
+        // text, so it hosts only below a blank or block line, at the top, or
+        // in a paragraph that an item or description line opened.
+        // A `: ` line is a description only under a term; elsewhere it is text.
+        var dlAbove = '(?<![^\\n])(?:> ?)*[ \\t]*:: [^\\n]*\\n(?:[^\\n]*\\n){0,64}(?:> ?)*[ \\t]*: ';
+        // An indented line continues an item, description or footnote above it,
+        // past a blank line only from two columns in; elsewhere it is text.
+        var inItem = '(?<![^\\n])[ \\t]*(?:(?:[-*]|\\w+[.)]|::?) +\\S|\\[\\^)[^\\n]*\\n(?:(?:[ \\t]+\\S[^\\n]*\\n)*[ \\t]+|(?:(?:[ \\t]*\\r?|[ \\t]+\\S[^\\n]*)\\n){0,64}(?:  | ?\\t)[ \\t]*)\\S';
+        var prevOk = '(?=[^\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=\\r?\\n)|%%|[`~]{3}|(?::{3}|:: |: (?=[\\s\\S])(?<=' + dlAbove + '))|#{1,6} |\\[[^\\]^\\n]*\\]:(?=\\s)|'
+            + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*\\r?\\n))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S(?=[\\s\\S])(?<=' + inItem + ')).*\\n[ \\t]*[-*\\d]).*\\n)'
+            + '(?:(?:[ \\t]*(?:[-*.] |\\w+[.)] )[ \\t]*\\S|(?:> ?)*[ \\t]*: (?=[\\s\\S])(?<=' + dlAbove + ')).*\\n(?:(?:> ?)*[ \\t]*\\S.*\\n){0,64}(?!:))?)';
         // n columns of indentation, a tab running to the next multiple of 4.
         var wsCols = function (n) {
             return '(?: {4}| {0,3}\\t){' + (n >> 2) + '} {' + (n & 3) + '}';
@@ -1500,7 +1578,12 @@
             // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
             + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
         'on:begin': (match) => {
-            entryColumn = termColumn = indentColumns(/^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1]);
+            const indent = /^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index, match.index + 256))[1];
+            entryColumn = termColumn = lineColumns(match.input, match.index, indent);
+            lastTermTabbed = indent.includes('\t');
+            foldedTermLine = -1;
+            const container = indent && containerAbove(match.input, match.index);
+            entryInFootnote = Boolean(container && container.kind === 'footnote');
         },
         'on:end': (match, response) => {
             if (match[1] !== undefined && match[1].length >= descriptionColumn) response.ignoreMatch();
@@ -2709,14 +2792,18 @@
     // A term indented into an open description's paragraph is its lazy text,
     // unless a column-0 comment line right above closed that paragraph.
     DEFINITION_TERM['on:begin'] = (match) => {
-        const indent = indentColumns(/^\uFEFF?([ \t]*)/.exec(match[0])[1]);
+        const lead = /^\uFEFF?([ \t]*)/.exec(match[0])[1];
+        const indent = lineColumns(match.input, match.index, lead);
         if (indent > entryColumn && indent < descriptionColumn
             && !(match.index > 0 && match.input.startsWith('%%', match.input.lastIndexOf('\n', match.index - 2) + 1))) {
             match.rule.scope = undefined;
+            foldedTermLine = match.index;
             return;
         }
         match.rule.scope = 'title';
         termColumn = indent;
+        lastTermTabbed = lead.includes('\t');
+        foldedTermLine = -1;
         descriptionColumn = Infinity;
     };
     // The content of a quoted heading or caption line: entered right after

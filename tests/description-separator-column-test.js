@@ -72,6 +72,18 @@ const MARKER = [
     '1. x\n \t:: t\n\t: e\n',
     '1. x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n  \t: e\n',
+    // A leading blank line, and a list continued past a lazy or empty line.
+    '\n- x\n  :: t\n  : e\n',
+    '\n1. x\n   :: t\n   : e\n',
+    '- w\n: x\n- z\n  :: t\n  : e\n',
+    '- w\n- \n- z\n  :: t\n  : e\n',
+    '- w\np\n- z\n  :: t\n  : e\n',
+    ':: a\n: b\n: \n- z\n  :: t\n  : e\n',
+    // A footnote body's list takes a description at the body's column.
+    'r[^1]\n\n[^1]: x\n    :: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n\t:: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n%% c\n    :: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -130,6 +142,22 @@ const TEXT = [
     '- x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : f\n    : e\n',
+    // A paragraph line above a list marker makes it lazy text.
+    ': x\n- z\n  :: t\n  : e\n',
+    '> : x\n- z\n  :: t\n  : e\n',
+    '# h\n: \n- z\n  :: t\n  : e\n',
+    '- \n- z\n  :: t\n  : e\n',
+    '  y\n- z\n  :: t\n  : e\n',
+    '    code\n- z\n  :: t\n  : e\n',
+    'p\n  y\n- z\n  :: t\n  : e\n',
+    '- w\n\n y\n- z\n  :: t\n  : e\n',
+    // A term folded into a paragraph takes no description below it.
+    ':: a\n: b\n :: t\n: e\n',
+    // In a footnote body or a description a tab counts from the body's column.
+    'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
+    'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
+    ':: a\n: b\n\n   \t:: t\n    : e\n',
+    'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
 ];
 
 const scopeAt = (tokens, at) => {
@@ -161,6 +189,18 @@ const check = (source, marker) => {
 };
 for (const source of MARKER) check(source, true);
 for (const source of TEXT) check(source, false);
+
+// The spec model reads a tab in a footnote body from the body's column, where
+// carve-js 0.1.13 does not (`  \t:: t` stands at column 6).
+for (const [source, marker] of [['r[^1]\n\n[^1]: x\n  \t:: t\n      : e\n', true]]) {
+    for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
+        const scoped = marks(scopeAt(tokenize(source), source.lastIndexOf(':')));
+        if (scoped !== marker) {
+            failures++;
+            console.error(`${name}: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`);
+        }
+    }
+}
 
 // highlight.js compares the expanded column of a tab-indented term.
 for (const [source, marker] of [['- x\n\t:: t\n : d\n', false]]) {
