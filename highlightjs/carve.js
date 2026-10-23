@@ -1339,6 +1339,7 @@
     let descriptionColumn = Infinity;
     // The open entry's term column: a `:` left of it is no marker of that list.
     let entryColumn = 0;
+    const indentColumns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
     // line (markup-carve/carve#3458); any other `:` line is no marker.
@@ -1357,7 +1358,7 @@
         className: 'punctuation',
         begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
-            if (match[1].length < entryColumn) {
+            if (indentColumns(match[1]) < entryColumn) {
                 match.rule.scope = undefined;
                 return;
             }
@@ -1423,7 +1424,7 @@
         end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
             + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'),
         'on:begin': (match) => {
-            entryColumn = /^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1].length;
+            entryColumn = indentColumns(/^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1]);
         },
         'on:end': (match, response) => {
             if (match[0] !== '' && match[1].length >= descriptionColumn) response.ignoreMatch();

@@ -89,6 +89,15 @@ const check = (source, marker) => {
 for (const source of MARKER) check(source, true);
 for (const source of TEXT) check(source, false);
 
+// highlight.js compares the expanded column of a tab-indented term.
+for (const [source, marker] of [['- x\n\t:: t\n : d\n', false]]) {
+    const scoped = ENGINES.highlightjs.marks(scopeAt(hljsTokens(source), source.lastIndexOf(':')));
+    if (scoped !== marker) {
+        failures++;
+        console.error(`highlightjs: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`);
+    }
+}
+
 // TextMate reads one line at a time: a `:` scopes at the first term's column or
 // two or more columns right of it, never below it or one column right.
 const tm = await textmateLineTokenizer(fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url)));
