@@ -884,11 +884,11 @@
         // group is captured.
         var hosted = [];
         for (var n = 1; n <= 12; n++) {
-            var host = '(?=[^\\n]{0,' + n + '}(?<=(?<![^\\n])[ \\t]*' + item + '[ \\t]+)[^ \\t\\r\\n])';
-            hosted.push('(?<=(?<![^\\n])' + host + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '}(?:> )+)'
-                + '(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)'
+            var host = '(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])[ \\t]*' + item + '[ \\t]+)[^ \\t\\r\\n])';
+            hosted.push('(?=\\+)(?<=(?<![^\\n])' + host + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '}(?:> )+)'
+                + '(?=\\+)(?<=(?<![^\\n])(?![ \\t]*(?:' + item + '[ \\t]+)*>)[^\\n]*\\n {' + n + '}(?:> )+)'
                 + '(?:' + [1, 2, 3, 4, 5, 6, 7, 8].map(function (k) {
-                    return '(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '})' + lone + '(?: {' + n + '}(?:> ){0,' + (k - 1) + '}(?![ \\t>])'
+                    return '(?=\\+)(?<=(?<![^\\n]) {' + n + '}(?:> ){' + k + '})' + lone + '(?: {' + n + '}(?:> ){0,' + (k - 1) + '}(?![ \\t>])'
                         + notItem + '[^\\r\\n]|' + lazyText + '))';
                 }).join('|') + ')');
         }
@@ -1297,9 +1297,23 @@
     // The open description's content column, which DEFINITION_LIST_ENTRY's
     // end reads; a term resets it, so no list inherits another's.
     let descriptionColumn = Infinity;
+    // A description marker sits at the column of a term or description within
+    // 64 lines above it, which may follow list or description markers on its
+    // line (markup-carve/carve#3458); any other `:` line is no marker.
+    const DESCRIPTION_ALIGNED = (function () {
+        var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>?]\\] |::? )';
+        var lines = '[^\\n]*\\n(?:[^\\n]*\\n){0,64}';
+        var at = ['\\1::? '];
+        for (var n = 0; n <= 12; n++) {
+            at.push(unit + '*(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?[^\\n]{' + n + '})::? ' + lines + ' {' + n + '}(?<![^\\n] {' + n + '})');
+        }
+        // Past 64 lines with no marker line the column cannot be read: accept it.
+        at.push('(?:(?![ \\t]*::? )[^\\n]*\\n){64}[ \\t]*');
+        return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
+    })();
     const DESCRIPTION_MARKER = {
         className: 'punctuation',
-        begin: /^(?<![^\r\n])[ \t]*:(?= +(?![ \t]*$(?![^\r\n])))/,
+        begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
             const separator = / */y;
             separator.lastIndex = match.index + match[0].length;

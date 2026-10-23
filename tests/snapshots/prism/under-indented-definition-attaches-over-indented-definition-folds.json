@@ -16,15 +16,7 @@
     "text": " term"
   },
   {
-    "type": "definition-list",
-    "text": "\n"
-  },
-  {
-    "type": "definition-list>punctuation",
-    "text": " :  "
-  },
-  {
-    "type": "definition-list",
-    "text": "def\n"
+    "type": "text",
+    "text": "\n :  def\n"
   }
 ]

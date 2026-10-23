@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "   :"
-  },
-  {
-    "scope": null,
-    "text": "  def\n"
+    "text": "\n   :  def\n"
   }
 ]

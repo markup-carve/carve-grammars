@@ -16,8 +16,16 @@
     "text": ":  "
   },
   {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " u"
+  },
+  {
     "type": "definition-list",
-    "text": ":: u\n"
+    "text": "\n"
   },
   {
     "type": "definition-list>punctuation",
