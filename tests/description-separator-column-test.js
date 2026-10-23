@@ -92,6 +92,9 @@ const MARKER = [
     'r[^1]\n\n> [^1]: x\n>   \t:: t\n>       : e\n',
     'r[^1]\n\n> [^1]: x\n> \t\t:: t\n>   : e\n',
     'r[^1]\n\n- [^1]: x\n  \t:: t\n    : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n>   : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -169,6 +172,8 @@ const TEXT = [
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
     'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n> % c\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
 ];
 
 const scopeAt = (tokens, at) => {

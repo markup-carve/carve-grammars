@@ -3157,7 +3157,8 @@
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) ' + termIndent + '(?=::)(?<=(?<![^\\n])\\1 \\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n'
                 + '(?:\\1(?:[ \\t]*\\r?| [ \\t]+[^ \\t\\r\\n][^\\n]*| %%[^\\n]*)\\n){0,64}\\1 [ \\t]+)'
                 + ':: +(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*'
-                + '(?:\\r?\\n\\1 (?:[ \\t]*::? +|(?!' + otherBlockOpener + ')(?!::? ))(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*', 'm'),
+                // Only indented, marker and blank lines keep the body open.
+                + '(?:\\r?\\n\\1(?: (?:[ \\t]*::? +|[ \\t]+(?!::? )[^ \\t\\r\\n])[^\\r\\n]*|[ \\t]*(?=\\r?\\n\\1 [ \\t])))*', 'm'),
             greedy: true,
             inside: Object.assign({
                 'definition-term': {
