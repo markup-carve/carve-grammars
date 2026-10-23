@@ -4,6 +4,47 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.18] - 2026-10-23
+
+### Fixes
+
+- TextMate, Prism and highlight.js scope a lone `+` as the continuation
+  marker only where the spec 0.1.11 column rule attaches it; any other `+`
+  line reads as text (#753, #755).
+- A `+` after quote prefixes needs one space after each `>`: `>+`, `>>+` and
+  `>> +` read as text, also after a list marker (#759, #760, #761).
+- Prism and highlight.js scope the first-block `+` of a quote opened on its
+  own line in a list item (#764, #766).
+- Prism and highlight.js scope a `:` description marker only at its
+  definition list's column (#765, #766).
+- Code fences opened on list, task and ordered marker lines highlight as
+  blocks (#757).
+- An attribute block glued to a `]` after an escaped `\[`, or to a `)` that
+  closes no link destination, stays text (#739, #741).
+- A valueless include option such as `@code` is scoped as an option (#744).
+- Shiki keeps the padding around an include path outside its underline
+  (#751).
+- Tiptap mounts an empty line block with a placeholder paragraph, and a
+  block appended after an unterminated fence stays a document sibling
+  (#745).
+
+### Improvements
+
+- `csv` and `tsv` fences highlight separators, fields, quoted fields and the
+  header row, through the new `textmate/csv.tmLanguage.json` and
+  `textmate/tsv.tmLanguage.json` grammars and their `fence-languages.json`
+  rows (#747, #750).
+- TextMate scopes the leading `+` and `-` of a `{.diff}` language fence as
+  inserted and deleted lines (#752).
+- TextMate scopes the `kbd`, `abbr` and `time` span names in span
+  attributes (#734).
+- The Shiki themes give the continuation marker its own color (#754).
+
+### Changed
+
+- Requires `@markup-carve/carve` 0.1.13 and carries the Carve 0.1.11 spec
+  corpus (#762).
+
 ## [0.1.17] - 2026-10-18
 
 ### Breaking
