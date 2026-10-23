@@ -13,7 +13,15 @@
   },
   {
     "scope": "quote",
-    "text": "> :: c"
+    "text": "> "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " c"
   },
   {
     "scope": null,

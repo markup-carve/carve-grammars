@@ -4,7 +4,9 @@
  * it is paragraph or description text, so Prism and highlight.js must not
  * scope it as the marker. Each shape is checked against carve-js too. Prism
  * reads a term that starts its text as a fragment after a list marker, so the
- * TEXT shapes open below a paragraph.
+ * TEXT shapes open below a paragraph. A term indented past column 0 needs a
+ * list item or description whose content column it reaches, and a
+ * quoted list takes its markers after the `> ` prefix.
  */
 import assert from 'node:assert/strict';
 
@@ -27,6 +29,9 @@ const MARKER = [
     '- x\n  :: t\n  : d\n\n  : e\n',
     ':: t\n:  :: u\n   : e\n',
     `:: t\n${'x\n'.repeat(70)}: e\n`,
+    '> :: t\n> : d\n> : e\n',
+    '> :: t\n> : d\n>   :: u\n>   : v\n>   : e\n',
+    '1. x\n   :: t\n   : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -35,6 +40,10 @@ const TEXT = [
     '- x\n  :: t\n  : d\n  x\n : e\n',
     'x\n\n:: t\n: d\n  : e\n',
     'x\n\n:: t\n  : d\n',
+    '  :: t\n  : d\n  : e\n',
+    '1. x\n  :: t\n  : d\n  : e\n',
+    '1. x\n  :: t\n  : d\n    :: u\n    : v\n  : e\n',
+    '>   :: t\n>   : d\n>   : e\n',
 ];
 
 const scopeAt = (tokens, at) => {

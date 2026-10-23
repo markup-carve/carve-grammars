@@ -1,7 +1,15 @@
 [
   {
     "scope": "quote",
-    "text": "> :: t"
+    "text": "> "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " t"
   },
   {
     "scope": null,

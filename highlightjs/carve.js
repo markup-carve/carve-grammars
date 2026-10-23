@@ -1185,6 +1185,14 @@
                 + GLUED_MARKER + '))\\+[ \\t]*$(?![^\\r\\n])'),
         },
         { className: 'punctuation', begin: RegExp(relativePlusSource(1)) },
+        // A quoted definition list: the `::` of a term, and a `:` at the column of
+        // a term or description above it, under a quoted term.
+        { className: 'punctuation', begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* )::(?= +[^ \t\r\n])/ },
+        { className: 'punctuation', begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])[ \t]*>(?: >)* +)::(?= +[^ \t\r\n])/ },
+        {
+            className: 'punctuation',
+            begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}[^\n]*)(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* \1::? [^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ( *)):(?= +[^ \t\r\n])/,
+        },
     );
 
     // Horizontal rules: --- or *** or ___
@@ -1329,6 +1337,8 @@
     // The open description's content column, which DEFINITION_LIST_ENTRY's
     // end reads; a term resets it, so no list inherits another's.
     let descriptionColumn = Infinity;
+    // The open entry's term column: a `:` left of it is no marker of that list.
+    let entryColumn = 0;
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
     // line (markup-carve/carve#3458); any other `:` line is no marker.
@@ -1347,6 +1357,11 @@
         className: 'punctuation',
         begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
+            if (match[1].length < entryColumn) {
+                match.rule.scope = undefined;
+                return;
+            }
+            match.rule.scope = 'punctuation';
             const separator = / */y;
             separator.lastIndex = match.index + match[0].length;
             separator.test(match.input);
@@ -1375,14 +1390,33 @@
     // OTHER_BLOCK_OPENER_SOURCE above). `begin` is a zero-width lookahead so
     // DEFINITION_TERM/DESCRIPTION_MARKER (below, in `contains`) do the actual
     // per-line matching and coloring themselves.
+    // A term indented past column 0 opens a list only at or right of the
+    // content column of a list item or description above it whose lines reach
+    // down to it; anywhere else the engines fold it into a paragraph.
+    const TERM_HOSTED = (function () {
+        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
+        // A description hosts only at column 0 or after list markers on its line.
+        var hostLead = '(?:[ \\t]*' + list + ' +|(?:' + list + ' +)*: +)';
+        var at = [];
+        for (var n = 1; n <= 12; n++) {
+            at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
+                + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '})');
+        }
+        // A footnote body holds blocks at any indentation.
+        at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} +)');
+        return '(?:' + at.join('|') + ')';
+    })();
     const DEFINITION_LIST_ENTRY = {
-        begin: /^(?<![^\r\n])(?=(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$(?![^\r\n])))/,
+        begin: RegExp('^(?<![^\\r\\n])(?=(?:(?<![\\s\\S])\\uFEFF)?(?:[ \\t]*\\t[ \\t]*| +' + TERM_HOSTED + ')?:: (?![ \\t]*$(?![^\\r\\n])))'),
         // Also ends at blank lines followed by a line no entry holds: not a
         // marker, and not indented to the open description's content column,
         // as carve-js reads it. It consumes the blank lines, since highlight.js
         // re-runs an end on the remainder, where a lookbehind sees nothing.
         end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
             + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'),
+        'on:begin': (match) => {
+            entryColumn = /^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1].length;
+        },
         'on:end': (match, response) => {
             if (match[0] !== '' && match[1].length >= descriptionColumn) response.ignoreMatch();
         },
