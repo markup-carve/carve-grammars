@@ -245,5 +245,17 @@ for (const [source, marker] of TEXTMATE) {
     }
 }
 
+// The footnote container scan reads each body line one way: a run of tab
+// terms under a list item stays linear (an ambiguous split made it exponential).
+for (const [name, { tokenize }] of Object.entries(ENGINES)) {
+    const started = process.hrtime.bigint();
+    tokenize('- x\n' + '  \t:: t\n    : e\n'.repeat(400));
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    if (ms > 5000) {
+        failures++;
+        console.error(`${name}: 400 tab terms under a list item took ${Math.round(ms)} ms`);
+    }
+}
+
 assert.equal(failures, 0, `${failures} shape(s) disagree`);
 console.log(`description separator column: ${MARKER.length + TEXT.length} shapes agree with carve-js in prism and highlight.js`);
