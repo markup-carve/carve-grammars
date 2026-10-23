@@ -976,7 +976,7 @@
     // 4 and a description at 4 columns is not its column (PART 9 §24 C5).
     // A footnote body may hold a list item at its column, under which a tab
     // still counts from the body's column.
-    var footnoteContainer = '(?<![^\\n])' + footnoteHost + '[^\\n]*\\n(?:[ \\t][^\\n]*\\n|%%[^\\n]*\\n|\\r?\\n){0,64}';
+    var footnoteContainer = '(?<![^\\n])' + footnoteHost + '[^\\n]*\\n(?:[ \\t]+(?![ \\t]|::? )[^\\n]*\\n|%%[^\\n]*\\n|\\r?\\n){0,64}';
     var dlRelativeTab = '(?<=' + dlContainer('[-*] (?! )(?!\\[\\^)') + '  \\t' + dlTermToDescription + '(?: {4}| ?\\t)'
         + '|' + dlContainer(': (?! )') + ' {2,3}\\t' + dlTermToDescription + '(?: {4}| ?\\t)'
         + '|' + footnoteContainer + ' {2,3}\\t' + dlTermToDescription + '(?: {4}| ?\\t)'
