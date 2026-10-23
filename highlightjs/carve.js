@@ -1404,8 +1404,12 @@
             at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
                 + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {' + n + '})');
         }
-        // Past column 12 the column is not compared: any host above accepts it.
+        // Past column 12 the column is not compared (a branch per column costs
+        // too much): any host above accepts it.
         at.push('(?=::)(?<=(?<![^\\n])' + hostLead + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {13,})');
+        // Past 64 lines with nothing that ends a container the host cannot be
+        // read: accept the term.
+        at.push('(?=::)(?<=(?<![^\\n])(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){64} +)');
         // A footnote body holds blocks at any indentation.
         at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} +)');
         return '(?:' + at.join('|') + ')';

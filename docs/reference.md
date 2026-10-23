@@ -443,6 +443,23 @@ Known limits, shared by all three unless noted:
   accepts any non-ASCII character other than whitespace where the spec asks for
   a letter. The TextMate grammar uses `\p{L}`.
 
+### Definition lists in list items
+
+An indented `:: term` opens a definition list only at or right of the content
+column of a list item or description above it, as in carve-js; anywhere else it
+is paragraph text. A `:` description marker counts only at its list's column.
+
+Known limits in Prism and highlight.js:
+
+- The host is looked for within 64 lines above the term. Past that, a term
+  with nothing between that ends a container is accepted.
+- Past column 12 the term's column is not compared with the host's, so any list
+  item or description above accepts it. A marker eleven or more characters wide
+  (`12345678901234567890. x`) with a term left of its content column is
+  therefore scoped as a term. One pattern branch per column costs too much:
+  extending the comparison to column 32 made Prism 3.5 times slower on a
+  document of 6000 indented terms.
+
 ### Substitutions
 
 A substitution splits at its first arrow outside code, math, a literal, a

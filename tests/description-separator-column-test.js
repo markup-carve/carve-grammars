@@ -38,6 +38,7 @@ const MARKER = [
     '- x\nother\nmore\n  :: t\n  : d\n',
     '1. x\nother\n   :: t\n   : d\n',
     `- x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
+    `- x\n${'  filler\n'.repeat(65)}  :: t\n  : d\n`,
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
