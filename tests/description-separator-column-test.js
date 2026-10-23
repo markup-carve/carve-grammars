@@ -58,6 +58,8 @@ const MARKER = [
     '::: d\n- z\n  :: t\n  : e\n',
     '> [x]: y\n- z\n  :: t\n  : e\n',
     '> [^1]: f\n- z\n  :: t\n  : e\n',
+    '[x]:\n- z\n  :: t\n  : e\n',
+    '---  \n- z\n  :: t\n  : e\n',
     'p\n\n- x\n- z\n- y\n  :: t\n  : e\n',
     '- x\n1. z\n   :: t\n   : e\n',
 ];
@@ -95,6 +97,8 @@ const TEXT = [
     '| a | b\n- z\n  :: t\n  : e\n',
     '{.c} x\n- z\n  :: t\n  : e\n',
     ':x\n- z\n  :: t\n  : e\n',
+    '--- foo\n- z\n  :: t\n  : e\n',
+    '::x\n- z\n  :: t\n  : e\n',
     'para\n- z\n- y\n  :: t\n  : e\n',
     'para\n- z\n  - y\n    :: t\n    : e\n',
 ];
