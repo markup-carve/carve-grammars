@@ -962,10 +962,12 @@
         var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
         // A description hosts only at column 0 or after list markers on its line.
         var hostLead = '(?:[ \\t]*' + list + ' +|(?:' + list + ' +)*: +)';
+        // A column-0 lazy line right under a non-blank line keeps the item open.
+        var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + otherBlockOpener + ')(?!::? |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
         var at = [];
         for (var n = 1; n <= 12; n++) {
             at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
-                + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} {' + n + '})');
+                + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {' + n + '})');
         }
         // Past column 12 the host is not read: the term is accepted, as before.
         at.push('(?=::)(?<=(?<![^\\n]) {13,})');
