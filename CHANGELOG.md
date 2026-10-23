@@ -4,6 +4,19 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-10-23
+
+### Fixes
+
+- Prism and highlight.js read a list marker under a paragraph line as lazy
+  text that hosts no definition term: a `: ` line with no term above it, an
+  empty marker line, or an indented line that no item continues (#780, #781).
+- Prism and highlight.js scope a description at a footnote body's column
+  below a deeper term, and count a tab in a footnote body from the body's
+  column (#780, #781).
+- highlight.js scopes a list after a leading blank line, where it scoped
+  nothing and could take over a minute of CPU (#780, #781).
+
 ## [0.1.18] - 2026-10-23
 
 ### Fixes
