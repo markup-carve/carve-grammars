@@ -41,6 +41,7 @@ const MARKER = [
     '> - a\n>   > +\n> ```\nz\n```\n',
     '> - a\n>   > > +\n>     > b\n',
     '- a\n  > +\n```\nz\n> ```\n',
+    '- a\n  > +\n```\nz\n```~\n',
 ];
 const TEXT = [
     '- a\n  > +\n   b\n',

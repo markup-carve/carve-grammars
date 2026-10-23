@@ -891,7 +891,7 @@
         // Group `f` captures the opening run. Past 32 KB with neither a closer nor
         // the end of its container the fence counts as closed.
         var unclosedFence = function (P, f) {
-            return '(`{3,}(?!`)|~{3,}(?!~))(?=[\\s\\S]{0,32768}?(?:$(?![\\s\\S])|\\n(?!' + P + ')))(?![^\\n]*\\r?\\n[\\s\\S]{0,32768}?(?<![^\\n])' + P + '[ \\t]*\\' + f + '[`~]*[ \\t]*\\r?(?:\\n|$(?![\\s\\S])))[^\\r\\n]*';
+            return '(`{3,}(?!`)|~{3,}(?!~))(?=[\\s\\S]{0,32768}?(?:$(?![\\s\\S])|\\n(?!' + P + ')))(?![^\\n]*\\r?\\n[\\s\\S]{0,32768}?(?<![^\\n])' + P + '[ \\t]*\\' + f + '(?:(?<=`)`|(?<=~)~)*[ \\t]*\\r?(?:\\n|$(?![\\s\\S])))[^\\r\\n]*';
         };
         // `base` is the number of the first group this branch captures: the
         // prefix of a quote holding the host (often empty). The `+` line's own
