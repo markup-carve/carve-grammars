@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " b\n    "
+  },
+  {
+    "scope": "attr",
+    "text": "{.c\n}"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]
