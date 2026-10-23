@@ -84,6 +84,14 @@ const MARKER = [
     'r[^1]\n\n[^1]: x\n\t:: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n%% c\n    :: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
+    // The same in a quoted footnote, and after a list marker at column 4.
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>    :: t\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>     :: t\n> \t: e\n',
+    'r[^1]\n\n> [^1]: x\n> \t:: t\n>   : e\n',
+    'r[^1]\n\n> [^1]: x\n>   \t:: t\n>       : e\n',
+    'r[^1]\n\n> [^1]: x\n> \t\t:: t\n>   : e\n',
+    'r[^1]\n\n- [^1]: x\n  \t:: t\n    : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -158,6 +166,9 @@ const TEXT = [
     'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
     ':: a\n: b\n\n   \t:: t\n    : e\n',
     'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
+    'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
+    'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
 ];
 
 const scopeAt = (tokens, at) => {
@@ -190,9 +201,14 @@ const check = (source, marker) => {
 for (const source of MARKER) check(source, true);
 for (const source of TEXT) check(source, false);
 
-// The spec model reads a tab in a footnote body from the body's column, where
-// carve-js 0.1.13 does not (`  \t:: t` stands at column 6).
-for (const [source, marker] of [['r[^1]\n\n[^1]: x\n  \t:: t\n      : e\n', true]]) {
+// The spec model and carve-rs read a tab in a footnote body from the body's
+// column, and take the body's column after a list marker; carve-js 0.1.13 does not.
+for (const [source, marker] of [
+    ['r[^1]\n\n[^1]: x\n  \t:: t\n      : e\n', true],
+    ['r[^1]\n\n> [^1]: x\n> \t:: t\n>     : e\n', true],
+    ['r[^1]\n\n- [^1]: x\n      :: t\n\t: e\n', true],
+    ['r[^1]\n\n- [^1]: x\n\t\t:: t\n    : e\n', true],
+]) {
     for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
         const scoped = marks(scopeAt(tokenize(source), source.lastIndexOf(':')));
         if (scoped !== marker) {

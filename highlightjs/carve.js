@@ -1401,17 +1401,28 @@
             const above = previousLineStart(input, at);
             const line = lineAt(input, above);
             if (/^[^ \t]/.test(line) && !line.startsWith('%%')) {
-                if (/^\[\^[^\]\r\n]+\]:/.test(line)) found = { kind: 'footnote', nested: false };
-                else if (/^: (?! )/.test(line)) found = { kind: 'description', nested: false };
-                else if (/^[-*] (?! )/.test(line)) found = { kind: 'item', nested: false };
-                path.push([at, false]);
+                const marker = /^((?:[-*]|\d+[.)]) +)?\[\^[^\]\r\n]+\]:/.exec(line);
+                if (marker) {
+                    // After an ordered marker the spec model measures a tab from the line start.
+                    const widths = !marker[1] ? [2] : /^[-*] $/.test(marker[1]) ? [2, 2] : null;
+                    found = { kind: 'footnote', widths, body: (marker[1] ? marker[1].length : 0) + 2, nested: false };
+                } else if (/^: (?! )/.test(line)) found = { kind: 'description', widths: [2], nested: false };
+                else if (/^[-*] (?! )/.test(line)) found = { kind: 'item', widths: [2], nested: false };
+                path.push([at, null]);
                 break;
             }
-            path.push([at, /^[ \t]+(?:[-*] |\w+[.)] )/.test(line)]);
+            path.push([at, /^[ \t]+(?:[-*] |\w+[.)] )/.test(line) ? line : null]);
             at = above;
         }
         for (let i = path.length - 1; i >= 0; i--) {
-            if (found && path[i][1] && !found.nested) found = { kind: found.kind, nested: true };
+            const marker = path[i][1];
+            if (found && marker !== null && !found.nested) {
+                // An item at a footnote body's column is one more container.
+                const atBody = found.kind === 'footnote' && found.widths && found.widths.length < 3
+                    && /^ */.exec(marker)[0].length === found.widths.reduce((a, b) => a + b);
+                if (!atBody) found = { ...found, nested: true };
+                else if (/^ +[-*] (?! )/.test(marker)) found = { ...found, widths: [...found.widths, 2] };
+            }
             memo.set(path[i][0], found);
         }
         return found;
@@ -1423,14 +1434,69 @@
     const lineColumns = (input, lineStart, indent) => {
         if (!indent.includes('\t')) return indentColumns(indent);
         const container = containerAbove(input, lineStart);
-        if (!container || container.nested || container.kind === 'item'
+        if (!container || container.nested || container.kind === 'item' || !container.widths
             || (container.kind === 'description' && !/^ {2,3}\t *$/.test(indent))) return indentColumns(indent);
-        let col = 0;
-        let i = 0;
-        while (i < indent.length && col < 2) col = indent[i++] === '\t' ? col + 4 - (col % 4) : col + 1;
-        let rel = col - 2;
-        while (i < indent.length) rel = indent[i++] === '\t' ? rel + 4 - (rel % 4) : rel + 1;
-        return rel + 2;
+        return relativeColumns(indent, container.widths);
+    };
+    // The column of an indentation inside containers of the given widths: each
+    // dedents its columns in turn, and a tab straddling one keeps its residual.
+    function relativeColumns(indent, widths) {
+        let rest = indent;
+        let base = 0;
+        for (const width of widths) {
+            let col = 0;
+            let i = 0;
+            while (i < rest.length && col < width) col = rest[i++] === '\t' ? col + 4 - (col % 4) : col + 1;
+            if (col < width) return base + col;
+            rest = ' '.repeat(col - width) + rest.slice(i);
+            base += width;
+        }
+        return base + indentColumns(rest);
+    }
+    // A quoted line's `>` depth and its text after the prefix and one space.
+    const quotedLine = (line) => {
+        const prefix = /^\uFEFF?[ \t]*>(?: ?>)*/.exec(line);
+        if (!prefix) return null;
+        const rest = line.slice(prefix[0].length);
+        return { depth: prefix[0].split('>').length - 1, content: rest.startsWith(' ') ? rest.slice(1) : rest };
+    };
+    // Whether a quoted line sits in a footnote body at the same quote depth:
+    // only blank, indented or comment lines between it and the footnote line.
+    const inQuotedFootnote = (input, lineStart, depth) => {
+        let at = lineStart;
+        for (let n = 0; n < 130 && at > 0; n++) {
+            at = previousLineStart(input, at);
+            const quoted = quotedLine(lineAt(input, at));
+            if (!quoted || quoted.depth !== depth) return false;
+            const text = quoted.content;
+            if (/^[ \t]*$|^[ \t]+\S|^%%/.test(text)) continue;
+            return /^\[\^[^\]\r\n]+\]:/.test(text);
+        }
+        return false;
+    };
+    // A quoted term indented into a footnote body is hosted by it.
+    const quotedFootnoteTerm = (input, lineStart) => {
+        const quoted = quotedLine(lineAt(input, lineStart));
+        const indent = /^[ \t]*/.exec(quoted.content)[0];
+        return relativeColumns(indent, [2]) >= 2 && inQuotedFootnote(input, lineStart, quoted.depth) ? indent : null;
+    };
+    // A quoted description below such a term: at the term's column or the
+    // footnote body's, a tab counting from the body's column.
+    const quotedFootnoteDescription = (input, lineStart) => {
+        const quoted = quotedLine(lineAt(input, lineStart));
+        const indent = /^[ \t]*/.exec(quoted.content)[0];
+        let at = lineStart;
+        for (let n = 0; n < 130 && at > 0; n++) {
+            at = previousLineStart(input, at);
+            const above = quotedLine(lineAt(input, at));
+            if (!above || above.depth !== quoted.depth) return false;
+            if (/^[ \t]*:: /.test(above.content)) {
+                const term = quotedFootnoteTerm(input, at);
+                return term !== null && (indent === '  ' || relativeColumns(indent, [2]) === relativeColumns(term, [2]));
+            }
+            if (!/^[ \t]*(?:: |$)|^[ \t]+\S/.test(above.content)) return false;
+        }
+        return false;
     };
     // Inside a two-column container (`- x`, `: d`) a tab is measured from the
     // container's column, so `  \t:: t` stands at its column 4 and a description
@@ -1455,7 +1521,7 @@
         return false;
     };
     // A footnote body's entry also takes a description at the body's column.
-    let entryInFootnote = false;
+    let entryFootnoteBody = -1;
     // Whether the last term's indentation holds a tab.
     let lastTermTabbed = false;
     // The start of the last term line folded into a paragraph: a `:` right
@@ -1479,7 +1545,7 @@
         at.push('(?:(?![ \\t]*::? )[^\\n]*\\n){64}[ \\t]*');
         // Below a tab-indented marker the column is relative to a container;
         // `on:begin` compares it. A footnote body also takes its own column.
-        at.push('[ \\t]*\\t[ \\t]*::? ' + lines + '[ \\t]*', '\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}  ');
+        at.push('[ \\t]*\\t[ \\t]*::? ' + lines + '[ \\t]*', '(?:(?:[-*]|\\d+[.)]) +)?\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}(?:  | {4,5}| {0,3}\\t)');
         return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
     })();
     const DESCRIPTION_MARKER = {
@@ -1492,7 +1558,7 @@
                 match.rule.scope = undefined;
                 return;
             }
-            if (!(entryInFootnote && match[1] === '  ')
+            if (!(indent === entryFootnoteBody && termColumn >= entryFootnoteBody)
                 && (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)
                     || (tabbed && indent !== termColumn && indent !== entryColumn)
                     || ((match[1] === '    ' || match[1] === '\t') && relativeTabTerm(match.input, match.index)))) {
@@ -1585,7 +1651,7 @@
             lastTermTabbed = indent.includes('\t');
             foldedTermLine = -1;
             const container = indent && containerAbove(match.input, match.index);
-            entryInFootnote = Boolean(container && container.kind === 'footnote');
+            entryFootnoteBody = container && container.kind === 'footnote' ? container.body : -1;
         },
         'on:end': (match, response) => {
             if (match[1] !== undefined && match[1].length >= descriptionColumn) response.ignoreMatch();
@@ -2791,6 +2857,19 @@
     INLINE_EXTENSION.contains = LABEL_CONTENT.filter((mode) => mode !== BRACKET_PAIR);
     // A definition term is a one-line inline run like a title.
     DEFINITION_TERM.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
+    // A term and its descriptions in a quoted footnote body.
+    BLOCKQUOTE.contains.push(
+        {
+            className: 'punctuation',
+            begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: ?>)*[ \t]+)::(?= +[^ \t\r\n])/,
+            'on:begin': scopeUnless('punctuation', (m) => quotedFootnoteTerm(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1) === null),
+        },
+        {
+            className: 'punctuation',
+            begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: ?>)*[ \t]*):(?= +[^ \t\r\n])/,
+            'on:begin': scopeUnless('punctuation', (m) => !quotedFootnoteDescription(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1)),
+        },
+    );
     // A term indented into an open description's paragraph is its lazy text,
     // unless a column-0 comment line right above closed that paragraph.
     DEFINITION_TERM['on:begin'] = (match) => {
