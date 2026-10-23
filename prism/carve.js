@@ -2075,7 +2075,7 @@
         // through lines that are not some OTHER block opener (see
         // `otherBlockOpener` above `Prism.languages.carve`), and past a blank
         // line only into another entry or an indented description line.
-        'paragraph': {
+        'refused-term': {
             pattern: refusedTermPattern,
             greedy: true,
             inside: inline,
