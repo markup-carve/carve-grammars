@@ -62,6 +62,9 @@ const MARKER = [
     '---  \n- z\n  :: t\n  : e\n',
     'p\n\n- x\n- z\n- y\n  :: t\n  : e\n',
     '- x\n1. z\n   :: t\n   : e\n',
+    // A column-0 comment line closes the description's paragraph.
+    ':: a\n: d\n%% c\n :: t\n : e\n',
+    ':: a\n: d\n  :: t\n  : f\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -101,6 +104,14 @@ const TEXT = [
     '::x\n- z\n  :: t\n  : e\n',
     'para\n- z\n- y\n  :: t\n  : e\n',
     'para\n- z\n  - y\n    :: t\n    : e\n',
+    // A term left of the open description's content column is its lazy text.
+    ':: a\n: d\n :: t\n : e\n',
+    ':: a\n: d\nother\n :: t\n : e\n',
+    ':: a\n: d\n: f\n :: t\n : e\n',
+    ':: a\n: d\n%% c\n y\n :: t\n : e\n',
+    // A thematic break or attribute line ends the list.
+    ':: a\n: d\n---\n  :: t\n  : e\n',
+    ':: a\n: d\n{.c}\n  :: t\n  : e\n',
 ];
 
 const scopeAt = (tokens, at) => {

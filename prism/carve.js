@@ -982,6 +982,9 @@
         at.push('(?=::)(?<=(?<![^\\n])(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){64} +)');
         // A footnote body holds blocks at any indentation.
         at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}  +)');
+        // A column-0 comment line closes a column-0 description's paragraph,
+        // and the description then holds a term at any indent.
+        at.push('(?=::)(?<=(?<![^\\n]): +[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64}%%[^\\n]*\\n +)');
         return '(?:' + at.join('|') + ')';
     })();
     // A refused term and the lines it folds: a paragraph, matched greedily

@@ -1374,6 +1374,8 @@
     let descriptionColumn = Infinity;
     // The open entry's term column: a `:` left of it is no marker of that list.
     let entryColumn = 0;
+    // The column of the last term the entry accepted.
+    let termColumn = 0;
     const indentColumns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
     // A description marker sits at the column of a term or description within
     // 64 lines above it, which may follow list or description markers on its
@@ -1393,7 +1395,8 @@
         className: 'punctuation',
         begin: RegExp('^(?<![^\\r\\n])([ \\t]*)(?=:)' + DESCRIPTION_ALIGNED + ':(?= +(?![ \\t]*$(?![^\\r\\n])))'),
         'on:begin': (match) => {
-            if (indentColumns(match[1]) < entryColumn) {
+            const indent = indentColumns(match[1]);
+            if (indent < entryColumn || (indent > entryColumn && indent < descriptionColumn && indent !== termColumn)) {
                 match.rule.scope = undefined;
                 return;
             }
@@ -1462,12 +1465,14 @@
         // as carve-js reads it. It consumes the blank lines, since highlight.js
         // re-runs an end on the remainder, where a lookbehind sees nothing.
         end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
-            + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'),
+            + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'
+            // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
+            + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
         'on:begin': (match) => {
-            entryColumn = indentColumns(/^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1]);
+            entryColumn = termColumn = indentColumns(/^\uFEFF?([ \t]*)/.exec(match.input.slice(match.index))[1]);
         },
         'on:end': (match, response) => {
-            if (match[0] !== '' && match[1].length >= descriptionColumn) response.ignoreMatch();
+            if (match[1] !== undefined && match[1].length >= descriptionColumn) response.ignoreMatch();
         },
         relevance: 0,
         // The inline modes are appended once CONTAINS exists.
@@ -2670,7 +2675,17 @@
     INLINE_EXTENSION.contains = LABEL_CONTENT.filter((mode) => mode !== BRACKET_PAIR);
     // A definition term is a one-line inline run like a title.
     DEFINITION_TERM.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
-    DEFINITION_TERM['on:begin'] = () => {
+    // A term indented into an open description's paragraph is its lazy text,
+    // unless a column-0 comment line right above closed that paragraph.
+    DEFINITION_TERM['on:begin'] = (match) => {
+        const indent = indentColumns(/^\uFEFF?([ \t]*)/.exec(match[0])[1]);
+        if (indent > entryColumn && indent < descriptionColumn
+            && !/(?:^|\n)%%[^\n]*\r?\n$/.test(match.input.slice(Math.max(0, match.index - 256), match.index))) {
+            match.rule.scope = undefined;
+            return;
+        }
+        match.rule.scope = 'title';
+        termColumn = indent;
         descriptionColumn = Infinity;
     };
     // The content of a quoted heading or caption line: entered right after
