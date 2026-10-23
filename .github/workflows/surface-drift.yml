@@ -57,10 +57,10 @@ jobs:
           - id: emacs-carve
             repo: markup-carve/emacs-carve
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check out ${{ matrix.surface.id }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ matrix.surface.repo }}
           path: surface
