@@ -3181,9 +3181,11 @@
         const spaced = ['\\1::[^]*\\n[ \\t]*(?:> )*> ([ \\t]+)'];
         for (let n = 2; n <= 12; n++) spaced.push(' {' + n + '}::[^]*\\n[ \\t]*(?:> )*> (?=[ \\t]*\\t)' + bodyColumn(n));
         Prism.languages.carve.blockquote.splice(1, 0, quotedFootnote('  +', spaced));
-        // A tab-indented term: every spelling of its column.
+        // A tab-indented term: the same spelling at any column, and every
+        // spelling of its column up to column 12.
         const tabbed = [];
         for (let n = 2; n <= 12; n++) tabbed.push(bodyColumn(n) + '::[^]*\\n[ \\t]*(?:> )*> ' + bodyColumn(n));
+        tabbed.push('\\1::[^]*\\n[ \\t]*(?:> )*> (?=[ \\t]{3}[ \\t]*\\t|[ \\t]*\\t[ \\t]{3})([ \\t]+)');
         Prism.languages.carve.blockquote.splice(1, 0, quotedFootnote('(?=[ \\t]*\\t)(?:  | ?\\t)[ \\t]*', tabbed));
     }
 
