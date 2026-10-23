@@ -54,6 +54,9 @@ const TEXT = [
     '- x\n\nother\n  :: t\n  : d\n',
     '- x\n# h\n  :: t\n  : d\n',
     `x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
+    '> :: t\n>   :: u\n>   : v\n',
+    '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
+    '> :: t\n> : d\n>  :: u\n>  : v\n',
 ];
 
 const scopeAt = (tokens, at) => {

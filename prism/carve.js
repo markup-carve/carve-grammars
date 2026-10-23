@@ -3019,7 +3019,7 @@
                 'punctuation': [
                     { pattern: /(^\uFEFF?[ \t]*(?:> )*> ):(?= )/m, lookbehind: true },
                     // An indented `:` at the column of a term or description above it.
-                    { pattern: /(?=:)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> \1::? [^\r\n]*\n(?:[^\r\n]*\n){0,64}(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> ( +)):(?= )/m, greedy: true },
+                    { pattern: /(?=:)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?:\1: |\1:: (?<=> :: )|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +[^\n]*\n(?:[^\r\n]*\n){0,64}|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>?]\])? +)*: +[^\n]*\n(?:[^\r\n]*\n(?<!(?<![^\n])[ \t]*(?:> )*>[ \t]*\n(?<![^\n])[ \t]*(?:> )*>[ \t]*\n)){0,64})(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?=  )\1:: )[^\r\n]*\n(?:[^\r\n]*\n){0,64}(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> ( +)):(?= )/m, greedy: true },
                     /^\uFEFF?[ \t]*>(?: >(?= |$))*/m,
                 ],
             }, inline),
