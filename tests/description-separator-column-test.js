@@ -129,6 +129,7 @@ const TEXT = [
     ':: a\n: b\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n\t: e\n',
+    '- x\n  \t:: t\n    : f\n    : e\n',
 ];
 
 const scopeAt = (tokens, at) => {

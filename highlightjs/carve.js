@@ -1388,6 +1388,7 @@
             end = start - 1;
             if (!sawTerm) {
                 if (/^  \t:: /.test(line)) sawTerm = true;
+                else if (/^(?: {4}|\t): /.test(line)) continue;
                 else if (/^[ \t]*::? |^[^ \t]/.test(line)) return false;
             } else if (/^[^ \t]/.test(line)) {
                 return /^(?:: |[-*] )(?! )/.test(line);
