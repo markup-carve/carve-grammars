@@ -53,6 +53,7 @@ const MARKER = [
     '> # h\n- z\n  :: t\n  : e\n',
     '[x]: y\n- z\n  :: t\n  : e\n',
     '. x\n- z\n  :: t\n  : e\n',
+    '- a\n  b\n- z\n  :: t\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
