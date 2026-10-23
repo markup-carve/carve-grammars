@@ -3153,31 +3153,38 @@
             else if (c >= 4) alts.push(' ?\\t(?:  | ?\\t)' + spaces(c - 4));
             return '(?:' + alts.join('|') + ')';
         };
-        const aligned = [];
-        for (let n = 2; n <= 12; n++) aligned.push(bodyColumn(n) + '::[^]*\\n[ \\t]*(?:> )*> ' + bodyColumn(n));
-        Prism.languages.carve.blockquote.splice(1, 0, {
-            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (?:  | ?\\t)[ \\t]*(?=::)(?<=(?<![^\\n])\\1 \\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n'
+        const quotedFootnote = (termIndent, aligned) => ({
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) ' + termIndent + '(?=::)(?<=(?<![^\\n])\\1 \\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n'
                 + '(?:\\1(?:[ \\t]*\\r?| [ \\t]+[^ \\t\\r\\n][^\\n]*| %%[^\\n]*)\\n){0,64}\\1 [ \\t]+)'
                 + ':: +(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*'
                 + '(?:\\r?\\n\\1 (?:[ \\t]*::? +|(?!' + otherBlockOpener + ')(?!::? ))(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*', 'm'),
             greedy: true,
             inside: Object.assign({
                 'definition-term': {
-                    pattern: /(?=::)(?<=(?<![^\r\n])﻿?[ \t]*(?:> )*> [ \t]+)::[^\r\n]*/,
+                    pattern: /(?=::)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> [ \t]+)::[^\r\n]*/,
                     greedy: true,
                     alias: 'title',
                     inside: Object.assign({ 'punctuation': /^::/ }, inline),
                 },
                 'punctuation': [
                     {
-                        pattern: RegExp('(?=:)(?<=(?<![\\s\\S])\\uFEFF?[ \\t]*(?:> )*> (?:' + aligned.join('|')
+                        pattern: RegExp('(?=: )(?<=(?<![\\s\\S])\\uFEFF?[ \\t]*(?:> )*> (?:' + aligned.join('|')
                             + '|[^]*\\n[ \\t]*(?:> )*>   )):(?= )'),
                         greedy: true,
                     },
-                    { pattern: /(?<![^\r\n])﻿?[ \t]*>(?: >)*/, greedy: true },
+                    { pattern: /(?<![^\r\n])\uFEFF?[ \t]*>(?: >)*/, greedy: true },
                 ],
             }, inline),
         });
+        // A term indented with spaces only: a description with the same
+        // indentation, or with a tab at the same column.
+        const spaced = ['\\1::[^]*\\n[ \\t]*(?:> )*> ([ \\t]+)'];
+        for (let n = 2; n <= 12; n++) spaced.push(' {' + n + '}::[^]*\\n[ \\t]*(?:> )*> (?=[ \\t]*\\t)' + bodyColumn(n));
+        Prism.languages.carve.blockquote.splice(1, 0, quotedFootnote('  +', spaced));
+        // A tab-indented term: every spelling of its column.
+        const tabbed = [];
+        for (let n = 2; n <= 12; n++) tabbed.push(bodyColumn(n) + '::[^]*\\n[ \\t]*(?:> )*> ' + bodyColumn(n));
+        Prism.languages.carve.blockquote.splice(1, 0, quotedFootnote('(?=[ \\t]*\\t)(?:  | ?\\t)[ \\t]*', tabbed));
     }
 
     // A term's lazy lines and a description's body are inline runs, read with
