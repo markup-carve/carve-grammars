@@ -964,19 +964,23 @@
         var hostLead = '(?:[ \\t]*' + list + ' +|(?:' + list + ' +)*: +)';
         // A column-0 lazy line right under a non-blank line keeps the item open.
         var dlHostLazy = '(?=[^ \\t\\r\\n])(?<=[^ \\t\\r\\n][^\\r\\n]*\\r?\\n)(?!' + otherBlockOpener + ')(?!::? |\\{[^\\n]*\\}[ \\t]*\\r?(?![^\\n]))[^ \\t\\r\\n][^\\n]*';
+        // A marker line right under paragraph text is that paragraph's lazy
+        // text, so it hosts only below a blank or block line, or at the top.
+        var prevOk = '(?=[^\\n])(?<=(?<![\\s\\S])\\uFEFF?|(?<![^\\n])(?=[ \\t]*(?:\\r?\\n|[-*:#%'
+            + '{]|\\w+[.)] )|\\[\\^[^\\n]*\\n[ \\t]*[-*\\d])[^\\n]*\\n)';
         var at = [];
         for (var n = 1; n <= 12; n++) {
-            at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
+            at.push('(?=::)(?<=(?<![^\\n])(?=[^\\n]{0,' + n + '}(?=[^ \\t\\r\\n])(?<=' + prevOk + '(?<![^\\n])' + hostLead + ')[^ \\t\\r\\n])'
                 + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {' + n + '})');
         }
         // Past column 12 the column is not compared (a branch per column costs
         // too much): any host above accepts it.
-        at.push('(?=::)(?<=(?<![^\\n])' + hostLead + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {13,})');
+        at.push('(?=::)(?<=' + prevOk + '(?<![^\\n])' + hostLead + '[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){0,64} {13,})');
         // Past 64 lines with nothing that ends a container the host cannot be
         // read: accept the term.
         at.push('(?=::)(?<=(?<![^\\n])(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|' + dlHostLazy + ')\\n){64} +)');
         // A footnote body holds blocks at any indentation.
-        at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*)\\n){0,64} +)');
+        at.push('(?=::)(?<=(?<![^\\n])\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}  +)');
         return '(?:' + at.join('|') + ')';
     })();
     // A refused term and the lines it folds: a paragraph, matched greedily

@@ -45,7 +45,9 @@ const MARKER = [
     '- > - x\n  >   :: t\n  >   : e\n',
     '> - x\n> \n> \n>   :: t\n>   : e\n',
     '> :: t\n> : d\n>   :: u\n>   : e\n',
-    '> - x\n>   :: a\n> :: u\n> : e\n',
+    '> - x\n>   :: a\n> :: u\n> : e\n',    // A list marker hosts below a block line.
+    '# h\n- z\n  :: t\n  : e\n',
+    ':: a\n: d\n- z\n  :: t\n  : e\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -68,7 +70,11 @@ const TEXT = [
     '> :: t\n> other\n>   :: u\n>   : e\n',
     '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
     '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
-    '> para\n>   :: t\n>   : e\n',
+    '> para\n>   :: t\n>   : e\n',    // A marker line under paragraph text is lazy text and hosts nothing.
+    'para\n- z\n  :: t\n  : e\n',
+    'para\n: d\n  :: t\n  : e\n',
+    '> q\n- z\n  :: t\n  : e\n',
+    'para\n1. z\n   :: t\n   : e\n',
 ];
 
 const scopeAt = (tokens, at) => {
