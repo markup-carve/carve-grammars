@@ -19,16 +19,11 @@ for (const [source, marker] of [
     assert.equal(covered(tokenize, source, alignment), marker, source);
 }
 
-// A marker glued to the pipe and followed by a space is an alignment run even
-// when the cell is empty; a span marker stands alone between spaces or pipes.
-assert.match(carveToHtml('| a | b |\n| x |< |'), /<td style="text-align: left;"><\/td>/);
-assert.equal(covered(tokenize, '| a | b |\n| x |< |', alignment), '<');
-assert.equal(covered(tokenize, '| a | b |\n| x |< |', colspan), '');
-
-for (const source of ['| a | b |\n| x |<|', '| a | b |\n| x | < |']) {
+// A lone `<` is a span marker in every padding form.
+for (const source of ['| a | b |\n| x |<|', '| a | b |\n| x |< |', '| a | b |\n| x | <|', '| a | b |\n| x | < |']) {
     assert.match(carveToHtml(source), /colspan="2"/, source);
     assert.equal(covered(tokenize, source, colspan), '<', source);
     assert.equal(covered(tokenize, source, alignment), '', source);
 }
 
-console.log('TextMate table alignment and colspan scopes: 7 cases passed');
+console.log('TextMate table alignment and colspan scopes: 8 cases passed');

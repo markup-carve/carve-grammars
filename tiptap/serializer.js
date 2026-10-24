@@ -1060,8 +1060,12 @@ export function serializeToCarve(doc, options = {}) {
                     // A blank line, or the block would join the one above it -
                     // except between contiguous line comments.
                     if (!isTightPair(blocks[i - 1], block)) output += '\n';
-                    lines.forEach(line => {
-                        output += (line ? DEFINITION_CONTENT_INDENT + line : '') + '\n';
+                    lines.forEach((line, lineIndex) => {
+                        // A paragraph after a nested term must not become that
+                        // term's description when it starts with `: `.
+                        const literal = block.type === 'paragraph' && lineIndex === 0 && /^: /.test(line)
+                            ? '\\' + line : line;
+                        output += (literal ? DEFINITION_CONTENT_INDENT + literal : '') + '\n';
                     });
                 });
                 afterDescription = true;
@@ -1151,7 +1155,11 @@ export function serializeToCarve(doc, options = {}) {
                 else out.push({
                     header,
                     content: cellText(segments[0].nodes),
-                    align: cell.attrs?.textAlign || null,
+                    // A spanning header leaves a physical column with only a
+                    // marker. That slot cannot convey its default to the next
+                    // row, so write the inherited alignment on the body cell.
+                    align: cell.attrs?.textAlign || (grid[0]?.[col]?.spanMarker && !table.attrs?.carveKeyValues?.aligns
+                        ? cell.attrs?.carveInheritedTextAlign : null) || null,
                     valign: cell.attrs?.carveVerticalAlign || null,
                     attrs: cell.attrs,
                 });
@@ -1244,7 +1252,10 @@ export function serializeToCarve(doc, options = {}) {
             }
             let line = '';
             for (const c of out) {
-                const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
+                // An empty left-aligned cell cannot be spelled `|< |`: it is
+                // a colspan marker. Left is the empty cell's default anyway.
+                const align = c.content === '' && c.align === 'left' ? ''
+                    : c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
                 const valign = c.valign === 'top' ? '^' : c.valign === 'middle' ? '~' : c.valign === 'bottom' ? 'v' : '';
                 const markerRun = (c.header ? '=' : '') + align + (valign ? (align ? '' : '?') + valign : '');
                 // Cell attributes bind after the kind/alignment markers.
