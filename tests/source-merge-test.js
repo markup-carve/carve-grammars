@@ -35,11 +35,11 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Spec c3bf23f2 adds fifteen inputs. Five need source envelopes: 657-4, 658,
-// and 659 rows 1, 4 and 7. Row 10 adds one more envelope. Their appended
-// blocks keep authored semantics. The four existing canonical projections stay listed below.
-assert.strictEqual(envelopes, 677, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 673, 'an append normalized authored layout in additional documents');
+// The current spec adds inputs, while table marker and vertical alignment
+// projection fixes remove envelopes that previously guarded those cells.
+// The four canonical projections below still need their existing envelopes.
+assert.strictEqual(envelopes, 672, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 668, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',
