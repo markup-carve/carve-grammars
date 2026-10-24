@@ -12,6 +12,10 @@ Editor highlighting and table editing follow the latest definition-list and tabl
 
 - Definition lists in quoted footnotes and after list markers receive the correct scopes (#784).
 - Table alignment defaults and marker spelling survive editor round trips (#788).
+- The editor keeps a literal `: ` paragraph after a nested definition term and
+  preserves a physical column's alignment behind a spanning header (#792, #793).
+- TextMate highlights a lone `<` as a colspan marker in every padding form;
+  empty left-aligned cells no longer serialize as `|< |` (#792, #793).
 
 **Full Changelog**: https://github.com/markup-carve/carve-grammars/compare/v0.1.19...v0.1.20
 
