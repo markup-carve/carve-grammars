@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "table-header",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " <"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "d"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "a\n    "
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\npara\n"
+  }
+]
