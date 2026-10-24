@@ -1,0 +1,142 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "=>^"
+  },
+  {
+    "type": "table",
+    "text": " A"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "<"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "=~"
+  },
+  {
+    "type": "table",
+    "text": " B"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "a"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "b"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "c"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "=<v"
+  },
+  {
+    "type": "table",
+    "text": " D"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "<"
+  },
+  {
+    "type": "table>table-header",
+    "text": "|="
+  },
+  {
+    "type": "table",
+    "text": " End"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "d"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "e"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "f"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

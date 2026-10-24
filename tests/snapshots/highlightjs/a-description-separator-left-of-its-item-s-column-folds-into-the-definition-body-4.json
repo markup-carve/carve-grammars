@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: Term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": "  Def\n :  under\n"
+  }
+]

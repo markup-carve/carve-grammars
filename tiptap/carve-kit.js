@@ -997,15 +997,35 @@ export const CarveKit = Extension.create({
                         'data-carve-inherited-align': attrs.carveInheritedTextAlign,
                     } : {},
             };
+            const tableVerticalAlign = {
+                default: null,
+                parseHTML: element => !element.hasAttribute('data-carve-inherited-valign')
+                    && ['top', 'middle', 'bottom'].includes(element.style.verticalAlign)
+                    ? element.style.verticalAlign : null,
+                renderHTML: attrs => ['top', 'middle', 'bottom'].includes(attrs.carveVerticalAlign)
+                    ? { style: `vertical-align: ${attrs.carveVerticalAlign}` } : {},
+            };
+            const inheritedTableVerticalAlign = {
+                default: null,
+                parseHTML: element => element.getAttribute('data-carve-inherited-valign'),
+                renderHTML: attrs => !attrs.carveVerticalAlign
+                    && ['top', 'middle', 'bottom'].includes(attrs.carveInheritedVerticalAlign)
+                    ? {
+                        style: `vertical-align: ${attrs.carveInheritedVerticalAlign}`,
+                        'data-carve-inherited-valign': attrs.carveInheritedVerticalAlign,
+                    } : {},
+            };
             // `scope` is header-only: both engines write it on a `<th>` and on
             // nothing else, so reserving it on a row or a body cell would drop
             // an authored `|{scope=row} x |` instead.
             const tableAttrs = (own = []) => ({
                 ...attributeSlots([
                     'colspan', 'rowspan', 'colwidth', 'data-colwidth', 'style',
-                    'data-carve-inherited-align', ...own,
+                    'data-carve-inherited-align', 'data-carve-inherited-valign', ...own,
                 ]),
                 textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
+                carveVerticalAlign: tableVerticalAlign,
+                carveInheritedVerticalAlign: inheritedTableVerticalAlign,
             });
             // Tiptap 3 cells declare an `align` of their own, read from the
             // same `text-align` the kit writes for `textAlign`, and the

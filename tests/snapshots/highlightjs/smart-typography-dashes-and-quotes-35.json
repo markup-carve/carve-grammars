@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "Exclude \""
+  },
+  {
+    "scope": "symbol",
+    "text": "\\/"
+  },
+  {
+    "scope": null,
+    "text": "trunk/app/config/\".\n\nsee \"https://example.org/\" here\n\nthe 'tmp/' folder, and/\"or\" too\n"
+  }
+]

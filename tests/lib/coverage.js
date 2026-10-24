@@ -69,6 +69,10 @@ const TIPTAP_COVERED = [
     'captions-in-list-items-do-not-create-a-paragraph-gap',
     'a-fence-run-that-dedents-out-of-a-child-keeps-the-outer-item-tight',
     'generated-container-documents',
+    // The new categories pass the structured round-trip gate.
+    'a-definition-marker-line-keeps-a-straddling-tab-s-residual-columns',
+    'a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body',
+    'table-spans-keep-alignment-defaults-in-physical-columns',
     // New spec categories measured by the 2679-document round-trip gate.
     'a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence',
     'a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line',

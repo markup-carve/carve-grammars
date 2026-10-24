@@ -1133,6 +1133,7 @@ export function serializeToCarve(doc, options = {}) {
                     out.push({
                         header: false,
                         content: offset === 0 ? '^' : spanning.attrs?.carveCoverMarkers?.[spanRow]?.[offset - 1] || '<',
+                        spanMarker: true,
                     });
                     rowspanCarry[col]--;
                     col++;
@@ -1146,12 +1147,18 @@ export function serializeToCarve(doc, options = {}) {
                 const marker = cell.attrs?.carveSpanMarker || null;
                 const segments = segmentsOf(cell);
                 owners.push({ row: rowIndex, col, colspan, rowspan, marker, segments });
-                if (marker) out.push({ header, content: marker });
-                else out.push({ header, content: cellText(segments[0].nodes), align: cell.attrs?.textAlign || null, attrs: cell.attrs });
+                if (marker) out.push({ header, content: marker, spanMarker: true });
+                else out.push({
+                    header,
+                    content: cellText(segments[0].nodes),
+                    align: cell.attrs?.textAlign || null,
+                    valign: cell.attrs?.carveVerticalAlign || null,
+                    attrs: cell.attrs,
+                });
                 if (rowspan > 1) { rowspanCarry[col] = rowspan - 1; carryMarker[col] = { cell, offset: 0 }; }
                 col++;
                 for (let k = 1; k < colspan; k++) {
-                    out.push({ header: false, content: '<' });
+                    out.push({ header: false, content: '<', spanMarker: true });
                     if (rowspan > 1) { rowspanCarry[col] = rowspan - 1; carryMarker[col] = { cell, offset: k }; }
                     col++;
                 }
@@ -1202,7 +1209,7 @@ export function serializeToCarve(doc, options = {}) {
             }
         }
 
-        const cellAttrsOf = c => serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveSpanMarker', 'carveCoverMarkers']);
+        const cellAttrsOf = c => serializeAttributes(c.attrs, ['colspan', 'rowspan', 'colwidth', 'textAlign', 'carveInheritedTextAlign', 'carveVerticalAlign', 'carveInheritedVerticalAlign', 'carveSpanMarker', 'carveCoverMarkers']);
         rows.forEach((row, rowIndex) => {
             const out = grid[rowIndex];
             const rowAttrs = serializeAttributes(row.attrs, ['textAlign', 'carveContinuationLines']);
@@ -1220,7 +1227,7 @@ export function serializeToCarve(doc, options = {}) {
             const separatorForm = rowIndex === 0 && Array.isArray(separatorWidths)
                 && separatorWidths.length > 0 && continuationLines[0] === 0
                 && separatorWidths.every(width => Number.isInteger(width) && width > 0)
-                && out.every((c, i) => c.header && c.content !== '<' && c.content !== '^'
+                && out.every((c, i) => c.header && !c.valign && c.content !== '<' && c.content !== '^'
                     && (i < separatorWidths.length || !c.align))
                 && rows.slice(1).every(other => !(other.content || []).some(cell => cell.type === 'tableHeader'));
             if (separatorForm) {
@@ -1238,8 +1245,12 @@ export function serializeToCarve(doc, options = {}) {
             let line = '';
             for (const c of out) {
                 const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
+                const valign = c.valign === 'top' ? '^' : c.valign === 'middle' ? '~' : c.valign === 'bottom' ? 'v' : '';
+                const markerRun = (c.header ? '=' : '') + align + (valign ? (align ? '' : '?') + valign : '');
                 // Cell attributes bind after the kind/alignment markers.
-                line += '|' + (c.header ? '=' : '') + align + cellAttrsOf(c) + ' ' + c.content + ' ';
+                const attrs = cellAttrsOf(c);
+                const literalSpan = !c.spanMarker && !markerRun && !attrs && (c.content === '<' || c.content === '^');
+                line += '|' + markerRun + attrs + ' ' + (literalSpan ? '\\' : '') + c.content + ' ';
             }
             output += line + '|' + rowAttrs + '\n';
             continuation();

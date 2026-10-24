@@ -888,10 +888,22 @@ function withSeparatorWidths(table, node) {
 function convertTableCore(node, ctx) {
     let previousGrid = [];
     const inheritedColumnAligns = (node.columns || []).map(column => column?.align || null);
-    const headingRow = (node.rows || []).find(row => (row.cells || []).some(cell => cell.header));
-    (headingRow?.cells || []).forEach((cell, col) => {
-        if (cell.header && cell.align) inheritedColumnAligns[col] = cell.align;
-    });
+    const inheritedColumnValigns = (node.columns || []).map(column => column?.valign || null);
+    const sourceRows = node.rows || [];
+    let headRows = node.rowGroups?.headRows ?? 0;
+    if (!node.rowGroups) {
+        while (headRows < sourceRows.length) {
+            const cells = sourceRows[headRows].cells || [];
+            if (!cells.some(cell => cell.header) || !cells.every(cell => cell.header || cell.span)) break;
+            headRows++;
+        }
+    }
+    for (let rowIndex = 0; rowIndex < headRows; rowIndex++) {
+        (sourceRows[rowIndex].cells || []).forEach((cell, col) => {
+            if (cell.header && cell.align) inheritedColumnAligns[col] = cell.align;
+            if (cell.header && cell.valign) inheritedColumnValigns[col] = cell.valign;
+        });
+    }
     // A span marker extends its cell only where the grown rectangle covers no
     // other cell; a blocked one stays an empty cell, as the engine renders it.
     const startCol = new Map(); // origin cell -> its first column
@@ -949,6 +961,8 @@ function convertTableCore(node, ctx) {
             const attrs = { ...(convertAttrs(cell.attrs) || {}) };
             if (cell.align) attrs.textAlign = cell.align;
             else if (inheritedColumnAligns[col]) attrs.carveInheritedTextAlign = inheritedColumnAligns[col];
+            if (cell.valign) attrs.carveVerticalAlign = cell.valign;
+            else if (inheritedColumnValigns[col]) attrs.carveInheritedVerticalAlign = inheritedColumnValigns[col];
             const converted = {
                 type: cell.header ? 'tableHeader' : 'tableCell',
                 attrs,

@@ -35,11 +35,11 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Spec main 3214cb6 with carve-js 0.1.13 leaves 671 source envelopes. Appending
-// a block preserves authored semantics for 667; four use the canonical
-// projection. Keep their exact filenames below so new conflicts fail this test.
-assert.strictEqual(envelopes, 671, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 667, 'an append normalized authored layout in additional documents');
+// Spec c3bf23f2 adds fifteen inputs. Five need source envelopes: 657-4, 658,
+// and 659 rows 1, 4 and 7. Row 10 adds one more envelope. Their appended
+// blocks keep authored semantics. The four existing canonical projections stay listed below.
+assert.strictEqual(envelopes, 677, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 673, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

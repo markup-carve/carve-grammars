@@ -1,0 +1,94 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "header-rows"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "1 "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "aligns"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "right,left"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": ">"
+  },
+  {
+    "type": "table",
+    "text": " First"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-operator",
+    "text": "<"
+  },
+  {
+    "type": "table",
+    "text": " Second"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "a"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "b"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

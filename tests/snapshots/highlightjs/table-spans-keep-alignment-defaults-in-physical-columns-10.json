@@ -1,0 +1,134 @@
+[
+  {
+    "scope": "table-header",
+    "text": "|=>^"
+  },
+  {
+    "scope": null,
+    "text": " A"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "<"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "=~"
+  },
+  {
+    "scope": null,
+    "text": " B"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "b"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "c"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-header",
+    "text": "|=<v"
+  },
+  {
+    "scope": null,
+    "text": " D"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "<"
+  },
+  {
+    "scope": "table-header",
+    "text": "|="
+  },
+  {
+    "scope": null,
+    "text": " End"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "d"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "e"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "f"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

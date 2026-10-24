@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "attr",
+    "text": "{header-rows=1 aligns=right,left}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": " First"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-operator",
+    "text": "<"
+  },
+  {
+    "scope": null,
+    "text": " Second"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "a"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "b"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

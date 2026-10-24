@@ -1,0 +1,34 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "  ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " Term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  :  "
+  },
+  {
+    "type": "definition-list",
+    "text": "Def"
+  },
+  {
+    "type": "text",
+    "text": "\n:  under\n"
+  }
+]

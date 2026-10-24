@@ -497,6 +497,47 @@ check('table header row uses |=',
     ] }),
     '|= H1 |= H2 |\n| a | b |');
 
+{
+    const source = '|=> A|= B|\n|=< C|= D|\n|a|b|\n';
+    const rows = carveToProseMirror(source).content[0].content;
+    assert.strictEqual(rows[2].content[0].attrs.carveInheritedTextAlign, 'left');
+    assert.strictEqual(serializeToCarve({ type: 'doc', content: [{ type: 'table', content: rows }] }).includes('|=< C'), true);
+    passed++;
+    console.log('  ✓ the last leading header marker sets the editor column default');
+}
+
+{
+    const source = '|< A|<|~ B|\n|--:|--:|:--:|\n|a|b|c|\n';
+    const cells = carveToProseMirror(source).content[0].content[1].content;
+    assert.deepStrictEqual(cells.map(cellNode => cellNode.attrs.carveInheritedTextAlign), ['left', 'right', 'center']);
+    passed++;
+    console.log('  ✓ a covered delimiter colon keeps its own column default');
+}
+
+{
+    const source = '{header-rows=1}\n|> A|<|~ B|\n|a|b|c|\n';
+    const cells = carveToProseMirror(source).content[0].content[1].content;
+    assert.deepStrictEqual(cells.map(cellNode => cellNode.attrs.carveInheritedTextAlign), [undefined, undefined, undefined]);
+    passed++;
+    console.log('  ✓ promoted plain header markers stay local in the editor');
+}
+
+{
+    const source = '|a|b|\n|=> h| x|\n|c|d|\n';
+    const cells = carveToProseMirror(source).content[0].content[2].content;
+    assert.strictEqual(cells[0].attrs.carveInheritedTextAlign, undefined);
+    passed++;
+    console.log('  ✓ a body row header does not seed an editor column default');
+}
+
+{
+    const source = '{footer-rows=1}\n|=> A|=~ B|\n|a|b|\n';
+    const cells = carveToProseMirror(source).content[0].content[1].content;
+    assert.strictEqual(cells[0].attrs.carveInheritedTextAlign, undefined);
+    passed++;
+    console.log('  ✓ a grouped table without head rows has no editor column default');
+}
+
 check('table colspan emits a < filler cell',
     doc({ type: 'table', content: [
         row(cell('wide', 'tableCell', { colspan: 2 })),
