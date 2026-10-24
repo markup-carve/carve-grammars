@@ -273,6 +273,7 @@
   "a-wrapped-attribute-line-interrupts-like-a-one-line-attribute-line-3",
   "a-wrapped-attribute-line-leaves-no-paragraph-open",
   "a-wrapped-attribute-line-leaves-no-paragraph-open-3",
+  "a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct-10",
   "adjacent-sibling-lists-survive-the-round-trip",
   "adjacent-sibling-lists-survive-the-round-trip-2",
   "adjacent-sibling-lists-survive-the-round-trip-3",
