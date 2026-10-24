@@ -4,6 +4,18 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.20] - 2026-10-24
+
+Editor highlighting and table editing follow the latest definition-list and table rules.
+
+### Fixes
+
+- Definition lists in quoted footnotes and after list markers receive the correct scopes (#784).
+- Table alignment defaults and marker spelling survive editor round trips (#788).
+
+**Full Changelog**: https://github.com/markup-carve/carve-grammars/compare/v0.1.19...v0.1.20
+
+
 ## [0.1.19] - 2026-10-23
 
 ### Fixes
