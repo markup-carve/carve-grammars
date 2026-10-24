@@ -2703,8 +2703,8 @@
     },
     "sublime-carve": {
       "repo": "markup-carve/sublime-carve",
-      "commit": "fc7f8c7",
-      "measured": "2026-10-14",
+      "commit": "41f517a",
+      "measured": "2026-10-24",
       "gapTicket": "markup-carve/sublime-carve#31",
       "constructs": {
         "heading": {
@@ -2747,6 +2747,16 @@
           "evidence": "markup.list.definition.carve",
           "payload": "parsed"
         },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "table-row",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/sublime-carve#31",
+          "payload": "none"
+        },
         "line_block": {
           "status": "IMPLEMENTED",
           "evidence": "line-blocks",
@@ -2764,7 +2774,7 @@
         },
         "admonition": {
           "status": "IMPLEMENTED",
-          "evidence": "markup.other.admonition.carve",
+          "evidence": "admonition-opener",
           "payload": "parsed"
         },
         "div": {
@@ -2793,9 +2803,9 @@
           "payload": "parsed"
         },
         "empty_reference_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/carve#2878",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "meta.link.reference.definition.carve",
+          "payload": "parsed"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -2809,7 +2819,7 @@
         },
         "paragraph": {
           "status": "IMPLEMENTED",
-          "evidence": "text.carve",
+          "evidence": "paragraph",
           "payload": "parsed"
         },
         "block_attributes": {
@@ -3071,23 +3081,13 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
-        },
-        "pipe_table": {
-          "status": "IMPLEMENTED",
-          "evidence": "tables",
-          "payload": "parsed"
-        },
-        "delimited_table": {
-          "status": "GAP",
-          "ticket": "markup-carve/sublime-carve#31",
-          "payload": "none"
         }
       }
     },
     "vim-carve": {
       "repo": "markup-carve/vim-carve",
-      "commit": "c447b3b",
-      "measured": "2026-10-14",
+      "commit": "82def5d",
+      "measured": "2026-10-24",
       "gapTicket": "markup-carve/vim-carve#26",
       "constructs": {
         "heading": {
@@ -3127,8 +3127,18 @@
         },
         "definition_list": {
           "status": "IMPLEMENTED",
-          "evidence": "carveDefTerm",
+          "evidence": "carveDefList",
           "payload": "parsed"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "carveTable",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/vim-carve#26",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -3176,9 +3186,9 @@
           "payload": "parsed"
         },
         "empty_reference_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/carve#2878",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carveRefDef",
+          "payload": "parsed"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -3191,9 +3201,9 @@
           "payload": "parsed"
         },
         "paragraph": {
-          "status": "UNSUPPORTED",
-          "reason": "a paragraph is the ABSENCE of a block marker, and this surface scopes markers rather than their absence - prose that matches no rule is already the default",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "carveParagraph",
+          "payload": "parsed"
         },
         "block_attributes": {
           "status": "IMPLEMENTED",
@@ -3454,23 +3464,13 @@
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
           "payload": "none"
-        },
-        "pipe_table": {
-          "status": "IMPLEMENTED",
-          "evidence": "carveTable",
-          "payload": "parsed"
-        },
-        "delimited_table": {
-          "status": "GAP",
-          "ticket": "markup-carve/vim-carve#26",
-          "payload": "none"
         }
       }
     },
     "emacs-carve": {
       "repo": "markup-carve/emacs-carve",
-      "commit": "9cdb998",
-      "measured": "2026-10-14",
+      "commit": "7030d1e",
+      "measured": "2026-10-24",
       "gapTicket": "markup-carve/emacs-carve#19",
       "note": "BOTH AXES ARE NOW READ AT THE SAME COMMIT, db1796b, and the reading before this one described a checkout five merges old (carve-grammars#332). What moved, and why the old note is gone rather than amended: markup-carve/emacs-carve#24 named 28 constructs that had no row and fixed the ATTRIBUTION defect the old note was mostly about - the row for the braced comment cited the delimited comment's own header, so a rule that existed read as a gap under another construct's name. Both `braced_comment` and `editorial_comment` now read IMPLEMENTED, each citing its own rule, and the surface has no GAP rows left. The payload column is measured by fontifying a buffer in batch Emacs and reading back the `face` text property, through the GENERATED sweep (tests/opaque-payload-test.js, run with CARVE_SURFACE_EMACS_CARVE) rather than through one sample per construct - which is the distinction that mattered here, since the single-sample column called every row inert while six leaked. All six recorded leaks are closed: markup-carve/emacs-carve#28 bounded a verbatim payload by its paragraph rather than by its line, taking the two comment rows and the three code-span rows, and `comment_block` had already been inert since #24. markup-carve/emacs-carve#29 additionally closed the UNTERMINATED fence, which was a residual rather than a ledger row. ONE SHAPE STILL LEAKS AND IS NOT A LEDGER CELL: a comment whose continuation line opens a block is broken by the block rule, pinned in the RESIDUALS table of that file alongside prism and intellij-carve, because it needs a container model rather than a wider rule.",
       "constructs": {
@@ -3513,6 +3513,16 @@
           "status": "IMPLEMENTED",
           "evidence": "Definition list: :: term  /  :  definition",
           "payload": "parsed"
+        },
+        "pipe_table": {
+          "status": "IMPLEMENTED",
+          "evidence": "Table.",
+          "payload": "parsed"
+        },
+        "delimited_table": {
+          "status": "GAP",
+          "ticket": "markup-carve/emacs-carve#19",
+          "payload": "none"
         },
         "line_block": {
           "status": "IMPLEMENTED",
@@ -3560,9 +3570,9 @@
           "payload": "parsed"
         },
         "empty_reference_definition": {
-          "status": "GAP",
-          "ticket": "markup-carve/carve#2878",
-          "payload": "none"
+          "status": "IMPLEMENTED",
+          "evidence": "Reference definition: [label]: url",
+          "payload": "parsed"
         },
         "footnote_definition": {
           "status": "IMPLEMENTED",
@@ -3576,7 +3586,7 @@
         },
         "paragraph": {
           "status": "IMPLEMENTED",
-          "evidence": "AN UNTERMINATED FENCE REACHES THE END OF THE DOCUMENT, and a paragraph",
+          "evidence": "A list item cannot interrupt a paragraph.",
           "payload": "parsed"
         },
         "block_attributes": {
@@ -3837,16 +3847,6 @@
         "soft_break": {
           "status": "UNSUPPORTED",
           "reason": "a newline inside a paragraph carries no marker, so there is nothing to scope; the line ending is where the next inline run continues",
-          "payload": "none"
-        },
-        "pipe_table": {
-          "status": "IMPLEMENTED",
-          "evidence": "Table.",
-          "payload": "parsed"
-        },
-        "delimited_table": {
-          "status": "GAP",
-          "ticket": "markup-carve/emacs-carve#19",
           "payload": "none"
         }
       }
