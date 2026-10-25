@@ -4,6 +4,18 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.21] - 2026-10-25
+
+Editor scopes distinguish task states and table marker roles.
+
+### Improvements
+
+- Editor schema declares table separator metadata: column count and cell separator widths (#794).
+- Prism and highlight.js assign alignment, span and continuation markers their own classes and colors. CSS that targets `table-operator` for these markers should use `table-alignment`, `table-span`, and `table-continuation-marker` (Prism) or `table-continuation` (highlight.js) (#796).
+- Progress `[/]` and blocked `[!]` task markers receive distinct editor scopes; generated fenced language rules are current (#798).
+
+**Full Changelog**: https://github.com/markup-carve/carve-grammars/compare/v0.1.20...v0.1.21
+
 ## [0.1.20] - 2026-10-24
 
 Editor highlighting and table editing follow the latest definition-list and table rules.
