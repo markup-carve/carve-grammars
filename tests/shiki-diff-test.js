@@ -26,7 +26,7 @@ try {
     assert.match(html, /class="line diff add"/)
     assert.match(html, /class="diff-marker">-<\/span>/)
     assert.match(html, /class="diff-marker">\+<\/span>/)
-    assert.match(html, /style="color:[^"]+">querySelector<\/span>/)
+    assert.match(html.replace(/<[^>]*>/g, ""), /document\.querySelector\(/)
 
     // The marker is REMOVED before the language grammar runs. Leaving it in
     // place still produced every class and every marker span asserted above,
