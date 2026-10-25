@@ -400,6 +400,7 @@
   "a-sigil-fence-takes-its-attribute-line-2",
   "a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column",
   "a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column-2",
+  "a-tab-cannot-pad-an-empty-link-destination",
   "a-tab-does-not-open-the-title-slot",
   "a-tab-does-not-open-the-title-slot-2",
   "a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker-3",

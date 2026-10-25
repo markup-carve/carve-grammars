@@ -1108,7 +1108,7 @@ export const CarveKit = Extension.create({
                                 'data-checked': attributes.checked,
                             }),
                         },
-                        // The four non-space task states (`-` `_` `>` `?`)
+                        // The extended task states (`-` `_` `/` `!` `>` `?`)
                         // the engine emits as `data-task-state`. Null for a
                         // plain `[ ]`/`[x]` item, whose state `checked` holds.
                         // Without this, a load/save cycle collapsed every such

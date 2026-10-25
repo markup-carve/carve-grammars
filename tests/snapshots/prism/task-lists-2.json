@@ -29,7 +29,39 @@
   },
   {
     "type": "text",
-    "text": "paused\n"
+    "text": "open alias\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[/]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "in progress\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[!]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "blocked\n"
   },
   {
     "type": "list>punctuation",

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#adm-1}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# H"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "::: warning \"Careful\""
+  },
+  {
+    "scope": null,
+    "text": "\nbody\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

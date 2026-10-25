@@ -1,0 +1,70 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#adm-1"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " H"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "warning"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div>div-delimiter>string>title-text",
+    "text": "Careful"
+  },
+  {
+    "type": "div>div-delimiter>string>punctuation",
+    "text": "\""
+  },
+  {
+    "type": "div",
+    "text": "\nbody\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

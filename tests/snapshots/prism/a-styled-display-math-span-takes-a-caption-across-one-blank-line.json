@@ -1,0 +1,38 @@
+[
+  {
+    "type": "math>string",
+    "text": "$$`x+y`"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".boxed"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "data-k"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "v"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n^ Equation #: Sum\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "math>string",
+    "text": "$$`E=mc^2`"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#eq-1"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n^ cap\n"
+  }
+]

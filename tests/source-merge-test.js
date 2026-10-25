@@ -38,8 +38,8 @@ for (const file of listCorpusFiles()) {
 // The current spec adds inputs, while table marker and vertical alignment
 // projection fixes remove envelopes that previously guarded those cells.
 // The four canonical projections below still need their existing envelopes.
-assert.strictEqual(envelopes, 672, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 668, 'an append normalized authored layout in additional documents');
+assert.strictEqual(envelopes, 673, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 669, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 4, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

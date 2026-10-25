@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "$$`E=mc^2`"
+  },
+  {
+    "scope": "attr",
+    "text": "{#eq-1}"
+  },
+  {
+    "scope": null,
+    "text": "\n^ cap\n"
+  }
+]
