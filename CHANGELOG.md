@@ -4,6 +4,16 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.1.22] - 2026-10-25
+
+The editor kit now loads and saves every published task state with carve-js 0.1.15.
+
+### Fixes
+
+- Progress `[/]`, blocked `[!]`, and open alias `[_]` task items keep their state through editor round trips (#803).
+
+**Full Changelog**: https://github.com/markup-carve/carve-grammars/compare/v0.1.21...v0.1.22
+
 ## [0.1.21] - 2026-10-25
 
 Editor scopes distinguish task states and table marker roles.

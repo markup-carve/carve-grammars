@@ -1,3 +1,4 @@
 # Merges left out of the CHANGELOG on purpose: `<number>: <reason>`.
 718: reverted by #719 before any release; re-lands with carve-js 0.1.12 (carve#3199)
 719: reverts #718, which no release shipped
+807: spec pin, corpus baselines, and source comments only; no shipped behavior change
