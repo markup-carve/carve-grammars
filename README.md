@@ -70,6 +70,13 @@ const editor = new Editor({
 })
 ```
 
+## Task states
+
+Task markers are `[ ]` open, `[_]` open alias, `[/]` progress, `[!]` blocked,
+`[x]` or `[X]` done, `[-]` dropped, `[>]` deferred and `[?]` uncertain. Only
+`x` and `X` are checked. The Tiptap task item keeps a nondefault marker in
+`carveTaskState` and writes it as `data-task-state` on the list item.
+
 ## Syntax highlighting
 
 ```js
