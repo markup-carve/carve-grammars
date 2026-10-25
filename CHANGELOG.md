@@ -10,7 +10,7 @@ The editor kit now loads and saves every published task state with carve-js 0.1.
 
 ### Fixes
 
-- Progress `[/]`, blocked `[!]`, and open alias `[_]` task items keep their state through editor round trips (#803).
+- Progress `[/]`, blocked `[!]`, and open alias `[_]` task items keep their state through editor round trips (#803, #809).
 
 **Full Changelog**: https://github.com/markup-carve/carve-grammars/compare/v0.1.21...v0.1.22
 
