@@ -321,6 +321,13 @@ container divs, front matter and comments, plus inline emphasis
 code, links, images, spans, attributes, footnotes, math (`` $`x` ``),
 CriticMarkup (`{+ins+}` `{-del-}`), mentions, tags and emoji.
 
+Task markers include `[ ]` and its open alias `[_]`, progress `[/]`, blocked
+`[!]`, done `[x]` and `[X]`, dropped `[-]`, deferred `[>]`, and uncertain
+`[?]`. TextMate assigns `constant.language.checkbox.<state>.carve` to each
+marker, with `open` shared by `[ ]` and `[_]`. The other state names are
+`progress`, `blocked`, `done`, `dropped`, `deferred`, and `uncertain`. Prism emits a `constant` token inside `list` for the brackets, while
+highlight.js emits the `bullet` class for the task marker. Both recognize all the listed spellings.
+
 ### Where the three grammars deliberately differ
 
 The TextMate grammar is stricter than the Prism and highlight.js grammars about
