@@ -470,6 +470,9 @@ export const CONSTRUCTS = [
     { name: "hard break", sample: "line\\\n next", payload: "\\", textmate: "hard-break" },
     { name: "ordered marker bare dot", sample: ". first", payload: ".", textmate: "punctuation.definition.list.numbered" },
     { name: "task state deferred", sample: "- [>] deferred", payload: ">", textmate: "constant.language.checkbox" },
+    { name: "task state open alias", sample: "- [_] open", payload: "_", textmate: "constant.language.checkbox" },
+    { name: "task state in progress", sample: "- [/] active", payload: "/", textmate: "constant.language.checkbox" },
+    { name: "task state blocked", sample: "- [!] blocked", payload: "!", textmate: "constant.language.checkbox" },
     {
         // The state character is the bullet character, so the payload has to
         // differ per grammar to stay sharp: TextMate scopes the bare `-`

@@ -495,7 +495,7 @@ function convertBlock(node, ctx) {
                         attrs: {
                             checked: !!it.checked,
                             // The engine carries the four non-space task states
-                            // (`-` `_` `>` `?`) in `taskState`; absent for the
+                            // (`-` `_` `/` `!` `>` `?`) in `taskState`; absent for the
                             // plain `[ ]`/`[x]`, whose state `checked` already holds.
                             ...(it.taskState != null ? { carveTaskState: it.taskState } : {}),
                             ...(convertAttrs(it.attrs) || {}),

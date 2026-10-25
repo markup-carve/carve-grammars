@@ -926,7 +926,7 @@
         // below starts at column 0 or at that line's column.
         // Every `>` needs its space: `- >+`, `- > >+` and `- >> +` are item text.
         var d = at(g + 4);
-        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?|' + item + ' +)+)(?:> )+)'
+        var stacked = '(?=\\+)(?<=' + lineAt + '(?:(?:[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?|' + item + ' +)+)(?:> )+)'
             + lone + '(?:' + d.q + d.s + ')?(?![ \\t])' + notItem + '[^\\r\\n])';
         // The hosted branches capture groups numbered after all of the above.
         var groups = function (source) { return RegExp(source + ')|').exec('').length - 1; };
@@ -1056,7 +1056,7 @@
     // (carve-grammars#259).
     const LIST_MARKER_BEFORE_BLOCK =
         '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-        + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+        + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
         + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
 
     // The lookbehinds built from this prefix are variable length. The modes
@@ -1174,7 +1174,7 @@
     // it at the same quote prefix, as `TERM_HOSTED` reads an unquoted one. Each
     // call names its groups by `tag`, since one regex may hold several.
     function quotedTermHostedSource(tag, opener) {
-        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
+        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
         // A description hosts only at column 0 or after list markers on its
         // line, and two blank lines end it.
         var leads = ['[ \\t]*' + list + ' +', '(?:' + list + ' +)*: +'];
@@ -1201,7 +1201,7 @@
     const NO_EMPTY = '(?![ \\t]*$(?![^\\r\\n]))';
     BLOCKQUOTE.contains.push(
         { className: 'section', begin: RegExp('(?=#)' + QUOTED + '#{1,6}(?= )' + NO_EMPTY) },
-        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>?]\\](?= )' + NO_EMPTY) },
+        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>\\/!?]\\](?= )' + NO_EMPTY) },
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
         { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
         // The `+` continuation marker: after a quoted list marker always, and
@@ -1209,7 +1209,7 @@
         {
             className: 'punctuation',
             begin: RegExp('(?=\\+)' + QUOTED.slice(0, -1)
-                + '(?:[-*] \\[[ xX\\-_>?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.) +|'
+                + '(?:[-*] \\[[ xX\\-_>\\/!?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|[a-zA-Z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\\.) +|'
                 + GLUED_MARKER + '))\\+[ \\t]*$(?![^\\r\\n])'),
         },
         { className: 'punctuation', begin: RegExp(relativePlusSource(1)) },
@@ -1348,12 +1348,12 @@
     };
 
     // Task list items: - [ ] or - [x]
-    // `task_state` is ` `, `x`, `X`, `-`, `_`, `>` or `?` (grammar.ebnf
+    // `task_state` is ` `, `x`, `X`, `-`, `_`, `/`, `!`, `>` or `?` (grammar.ebnf
     // `task_state`). Only `x`/`X` render checked; the rest are still task
-    // markers, and corpus 06-task-lists-2 uses all four of the others.
+    // markers, and corpus 06-task-lists-2 covers the named states.
     const TASK_LIST = {
         className: 'bullet',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*[-*] \[[ xX\-_>?]\](?= )(?![ \t]*$(?![^\r\n]))/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*[-*] \[[ xX\-_>\/!?]\](?= )(?![ \t]*$(?![^\r\n]))/,
         'on:begin': scopeUnless('bullet', markerIsParagraphText),
         relevance: 5,
     };
@@ -1363,7 +1363,7 @@
     const MARKER_LINE_CONTINUATION = {
         className: 'punctuation',
         begin: RegExp('(?=\\+)(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-            + GLUED_MARKER + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +(?:\\[[ xX\\-_>?]\\] +)?'
+            + GLUED_MARKER + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
             + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +))+)\\+[ \\t]*$(?![^\\r\\n])'),
         relevance: 0,
     };
@@ -1531,7 +1531,7 @@
     // 64 lines above it, which may follow list or description markers on its
     // line (markup-carve/carve#3458); any other `:` line is no marker.
     const DESCRIPTION_ALIGNED = (function () {
-        var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>?]\\] |::? )';
+        var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>\\/!?]\\] |::? )';
         var lines = '[^\\n]*\\n(?:[^\\n]*\\n){0,64}';
         var at = ['\\1::? '];
         // n columns, a tab running to the next multiple of 4.
@@ -1598,7 +1598,7 @@
     // content column of a list item or description above it whose lines reach
     // down to it; anywhere else the engines fold it into a paragraph.
     const TERM_HOSTED = (function () {
-        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>?]\\])?';
+        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
         // A description hosts only at column 0 or after list markers on its line.
         var hostLead = '(?:[ \\t]*' + list + ' +|(?:' + list + ' +)*: +)';
         // A column-0 lazy line right under a non-blank line keeps the item open.
@@ -1927,7 +1927,7 @@
     const MARKER_CODE_FORMS = [];
     for (let depth = 1; depth <= 8; depth++) {
         MARKER_CODE_FORMS.push([Array(depth).fill('[-*] ').join(''), depth * 2]);
-        MARKER_CODE_FORMS.push([Array(depth).fill('[-*] ').join('') + '\\[[ xX\\-_>?]\\] ', depth * 2]);
+        MARKER_CODE_FORMS.push([Array(depth).fill('[-*] ').join('') + '\\[[ xX\\-_>\\/!?]\\] ', depth * 2]);
     }
     for (let digits = 1; digits <= 9; digits++) {
         MARKER_CODE_FORMS.push(['[0-9]{' + digits + '}[.)] ', digits + 2]);
@@ -2066,7 +2066,7 @@
         + '(?![ \\t\\r]|' + MARKER_LINE + '|' + ONE_LINE_BLOCK + ')(?<![^\\n])[^\\n]+\\n'
         + '(?:(?![ \\t\\r]*\\n)(?!' + ONE_LINE_BLOCK + ')(?<![^\\n])[^\\n]*\\n){0,16})';
     const COMMENT_ONLY_ITEM = MARKER_STARTS_A_BLOCK
-        + '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>?]\\] +)?|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)%%';
+        + '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)%%';
     const FENCE_AFTER_BLOCK = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\n])(?:[ \\t\\r]*|(?:' + ONE_LINE_BLOCK + '|' + COMMENT_ONLY_ITEM + ')[^\\n]{0,4096})\\n))';
     // An unclosed fence at column 0: code to the end of the document, or to the
     // closer of the innermost open colon fence, whose width must match exactly.
@@ -2211,7 +2211,7 @@
         const input = m.input;
         const lineStart = input.lastIndexOf('\n', m.index - 1) + 1;
         const prefix = input.slice(lineStart, m.index).replace(/^(?<![^\r\n])\uFEFF/, '');
-        const task = /[-*] +\[[ xX\-_>?]\] +$(?![^\r\n])/.exec(prefix);
+        const task = /[-*] +\[[ xX\-_>\/!?]\] +$(?![^\r\n])/.exec(prefix);
         const contentColumn = task ? columns(prefix.slice(0, task.index)) + 2 : columns(prefix);
         const lineEnd = input.indexOf('\n', m.index);
         if (lineEnd === -1) return false;

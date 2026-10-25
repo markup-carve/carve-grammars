@@ -24,16 +24,16 @@ console.log('carve-grammars task-state round trip:');
 
 const issueInput = [
     '- [-] dropped',
-    '- [_] paused',
+    '- [_] open alias',
     '- [>] deferred',
     '- [?] maybe',
 ].join('\n');
 
-check('the four non-space states survive the round trip unchanged', () => {
+check('the existing named task markers survive the round trip unchanged', () => {
     assert.strictEqual(roundTrip(issueInput), issueInput);
 });
 
-check('the PM doc carries each non-space state on its taskItem', () => {
+check('the PM doc carries each existing named task marker on its taskItem', () => {
     const doc = carveToProseMirror(issueInput, { unsupported: 'preserve' });
     const list = doc.content.find((n) => n.type === 'taskList');
     assert.ok(list, 'expected a taskList');

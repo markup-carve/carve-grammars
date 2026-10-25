@@ -336,6 +336,17 @@ ok('a checkbox after a glued attribute block', () => {
     refuteScope(source, 'done', 'constant.language.checkbox');
 });
 
+ok('task states have distinct editor scopes', () => {
+    for (const [state, kind] of [
+        [' ', 'open'], ['_', 'open'], ['/', 'progress'],
+        ['!', 'blocked'], ['x', 'done'], ['-', 'dropped'],
+        ['>', 'deferred'], ['?', 'uncertain'],
+    ]) {
+        const source = `- [${state}] task`;
+        assertScope(source, state, `constant.language.checkbox.${kind}`, source.indexOf('[') + 1);
+    }
+});
+
 ok('a list opening a description body', () => {
     for (const [source, marker, scope] of [
         [':: t\n:  - list', '-', 'punctuation.definition.list.unnumbered'],
