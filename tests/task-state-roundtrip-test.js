@@ -22,6 +22,17 @@ const roundTrip = (src) => serializeToCarve(carveToProseMirror(src, { unsupporte
 
 console.log('carve-grammars task-state round trip:');
 
+check('all six task states load into one editable task list', () => {
+    const src = ['- [ ] todo', '- [x] done', '- [/] progress', '- [!] blocked', '- [_] open', '- [-] dropped'].join('\n');
+    const doc = carveToProseMirror(src);
+    assert.strictEqual(doc.content.length, 1);
+    const [list] = doc.content;
+    assert.strictEqual(list.type, 'taskList');
+    assert.deepStrictEqual(list.content.map((item) => item.type), Array(6).fill('taskItem'));
+    assert.deepStrictEqual(list.content.map((item) => item.attrs?.checked), [false, true, false, false, false, false]);
+    assert.deepStrictEqual(list.content.map((item) => item.attrs?.carveTaskState ?? null), [null, null, '/', '!', '_', '-']);
+});
+
 const issueInput = [
     '- [-] dropped',
     '- [_] open alias',
