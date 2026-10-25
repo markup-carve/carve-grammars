@@ -748,6 +748,13 @@ const TIPTAP_COVERED = [
     // `carveLinkRefDef`; the unresolved `![Apollo][nope]` has no destination and
     // projects to a paragraph of literal text. All four reparse to the same AST.
     '412-a-lone-reference-image-at-column-0-in-every-spelling',
+    'a-display-math-span-with-trailing-attributes-takes-a-caption',
+    'a-line-at-the-marker-column-leaves-a-closed-nested-body',
+    'a-styled-display-math-span-takes-a-caption-across-one-blank-line',
+    'a-tab-after-a-comment-marker-stays-in-its-text',
+    'a-tab-cannot-pad-an-empty-link-destination',
+    'a-titled-admonition-skips-an-authored-heading-id',
+    'an-empty-link-destination-takes-spaces',
 
     // Carve main through 1774be2. Initially classified as structured and then
     // measured by the round-trip gate; any category that needs the whole-source

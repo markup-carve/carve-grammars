@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "$$`x+y`"
+  },
+  {
+    "scope": "attr",
+    "text": "{.boxed data-k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n^ Equation #: Sum\n"
+  }
+]

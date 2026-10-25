@@ -13,7 +13,23 @@
   },
   {
     "scope": null,
-    "text": " paused\n"
+    "text": " open alias\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- [/]"
+  },
+  {
+    "scope": null,
+    "text": " in progress\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- [!]"
+  },
+  {
+    "scope": null,
+    "text": " blocked\n"
   },
   {
     "scope": "bullet",

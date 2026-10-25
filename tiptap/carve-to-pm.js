@@ -494,7 +494,7 @@ function convertBlock(node, ctx) {
                         type: 'taskItem',
                         attrs: {
                             checked: !!it.checked,
-                            // The engine carries the four non-space task states
+                            // The engine carries the extended task states
                             // (`-` `_` `/` `!` `>` `?`) in `taskState`; absent for the
                             // plain `[ ]`/`[x]`, whose state `checked` already holds.
                             ...(it.taskState != null ? { carveTaskState: it.taskState } : {}),

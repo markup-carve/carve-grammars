@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "    -"
+  },
+  {
+    "scope": null,
+    "text": " :: term\n      : definition\n    \n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "        ~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n        code\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "        ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n    after\n"
+  }
+]
