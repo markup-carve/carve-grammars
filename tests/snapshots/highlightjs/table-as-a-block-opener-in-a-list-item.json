@@ -5,11 +5,15 @@
   },
   {
     "scope": null,
-    "text": " one\n"
+    "text": " one\n  "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
   },
   {
     "scope": "table-header",
-    "text": "  |="
+    "text": "="
   },
   {
     "scope": null,

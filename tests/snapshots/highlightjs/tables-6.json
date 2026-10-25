@@ -1,15 +1,23 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " Style    "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,

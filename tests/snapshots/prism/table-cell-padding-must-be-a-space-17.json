@@ -24,7 +24,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>table-operator",
+    "type": "table-continuation>table-continuation-marker",
     "text": "+"
   },
   {

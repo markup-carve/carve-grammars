@@ -1,15 +1,23 @@
 [
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
     "text": " Feature "
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
@@ -48,7 +56,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>table-operator",
+    "type": "table-continuation>table-continuation-marker",
     "text": "+"
   },
   {
@@ -72,7 +80,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>table-operator",
+    "type": "table-continuation>table-continuation-marker",
     "text": "+"
   },
   {

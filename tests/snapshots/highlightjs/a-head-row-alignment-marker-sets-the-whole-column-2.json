@@ -1,15 +1,27 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|=~"
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": "~"
   },
   {
     "scope": null,
     "text": " a "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -68,7 +80,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-alignment",
     "text": ">"
   },
   {

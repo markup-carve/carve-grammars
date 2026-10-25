@@ -1,15 +1,23 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " a "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -24,7 +32,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-continuation",
     "text": "+"
   },
   {

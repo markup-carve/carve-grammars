@@ -8,8 +8,12 @@
     "text": "a"
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -32,8 +36,12 @@
     "text": "b"
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,

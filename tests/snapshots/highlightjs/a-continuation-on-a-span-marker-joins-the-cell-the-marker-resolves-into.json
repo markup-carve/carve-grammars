@@ -28,7 +28,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " <"
   },
   {
@@ -52,7 +52,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-continuation",
     "text": "+"
   },
   {

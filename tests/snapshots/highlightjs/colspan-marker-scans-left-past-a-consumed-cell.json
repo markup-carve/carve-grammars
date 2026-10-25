@@ -132,7 +132,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " ^"
   },
   {
@@ -144,7 +144,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " <"
   },
   {

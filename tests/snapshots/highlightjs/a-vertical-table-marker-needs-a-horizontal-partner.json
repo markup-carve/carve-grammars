@@ -20,8 +20,12 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
-    "text": "=<^"
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": "<^"
   },
   {
     "scope": null,

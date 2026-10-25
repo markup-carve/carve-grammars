@@ -948,7 +948,7 @@
         end: /\|[ \t]*$(?![^\r\n])|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n])))/,
         endScope: 'table-boundary',
         contains: [
-            { className: 'table-operator', begin: /\+(?=(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n]))/ },
+            { className: 'table-continuation', begin: /\+(?=(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n]))/ },
             TABLE_INLINE_CODE,
             ESCAPE,
             { className: 'table-boundary', begin: /\|(?=[^\n]*\|)/ },
@@ -2522,9 +2522,14 @@
     // Table rows: | cell | cell |
     const tableRow = (header) => ({
         begin: header
-            ? /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|=(?:[<~>][\^~v]?|\?[\^~v])?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/
+            ? [
+                /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*/,
+                /\|/,
+                /=/,
+                /(?:[<~>][\^~v]?|\?[\^~v])?(?= |\{)(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/,
+            ]
             : /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?=(?:\\.|[^\\\n])*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/,
-        beginScope: header ? 'table-header' : 'table-boundary',
+        beginScope: header ? { 2: 'table-boundary', 3: 'table-header', 4: 'table-alignment' } : 'table-boundary',
         end: [/\||(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n])))/, /(?:\{[^}\n]*\})?/, /[ \t]*$(?![^\r\n])/],
         endScope: { 1: 'table-boundary', 2: 'meta' },
         contains: [
@@ -2539,9 +2544,13 @@
              * reaches inside this mode.
              */
             { className: 'comment', begin: /(?<=[ \t])%{2,}(?:\\.|[^\\|\r\n])*/ },
-            { className: 'table-header', begin: /\|=(?= |\{)/ },
-            { className: 'table-operator', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
-            { className: 'table-operator', begin: /(?<=\|)[=]?(?:[<~>](?:[\^~v])?|\?[\^~v])(?= |\{)/ },
+            {
+                begin: [/\|/, /=/, /(?:[<~>][\^~v]?|\?[\^~v])(?= |\{)/],
+                beginScope: { 1: 'table-boundary', 2: 'table-header', 3: 'table-alignment' },
+            },
+            { begin: [/\|/, /=(?= |\{)/], beginScope: { 1: 'table-boundary', 2: 'table-header' } },
+            { className: 'table-span', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
+            { className: 'table-alignment', begin: /(?<=\|)(?:[<~>](?:[\^~v])?|\?[\^~v])(?= |\{)/ },
             { className: 'table-boundary', begin: /\|(?!(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))(?=[^\n]*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/ },
         ],
         relevance: 2,

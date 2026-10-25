@@ -24,8 +24,16 @@
     "text": "\n"
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|=>"
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": ">"
   },
   {
     "scope": null,
@@ -36,8 +44,12 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
-    "text": "=~"
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": "~"
   },
   {
     "scope": null,

@@ -1,10 +1,13 @@
 /* Optional source-view palette for Prism and highlight.js. Shiki uses its
    theme rules, and TextMate editors use their own color schemes. The colors
-   match the Shiki rules: header blue, span markers orange, separators gray. */
+   match the Shiki rules: header blue, alignment orange, spans purple,
+   continuation green, separators gray. */
 :root {
   --carve-table-boundary: #959da5;
   --carve-table-header: #005cc5;
   --carve-table-operator: #e36209;
+  --carve-table-span: #6f42c1;
+  --carve-table-continuation: #22863a;
 }
 
 .light,
@@ -13,6 +16,8 @@
   --carve-table-boundary: #959da5;
   --carve-table-header: #005cc5;
   --carve-table-operator: #e36209;
+  --carve-table-span: #6f42c1;
+  --carve-table-continuation: #22863a;
 }
 
 .dark,
@@ -21,6 +26,8 @@
   --carve-table-boundary: #6a737d;
   --carve-table-header: #79b8ff;
   --carve-table-operator: #ffab70;
+  --carve-table-span: #b392f0;
+  --carve-table-continuation: #85e89d;
 }
 
 .token.table-boundary,
@@ -35,7 +42,21 @@
 }
 
 .token.table-operator,
-.hljs-table-operator {
+.token.table-alignment,
+.hljs-table-operator,
+.hljs-table-alignment {
   color: var(--carve-table-operator);
+  font-weight: 650;
+}
+
+.token.table-span,
+.hljs-table-span {
+  color: var(--carve-table-span);
+  font-weight: 650;
+}
+
+.token.table-continuation-marker,
+.hljs-table-continuation {
+  color: var(--carve-table-continuation);
   font-weight: 650;
 }

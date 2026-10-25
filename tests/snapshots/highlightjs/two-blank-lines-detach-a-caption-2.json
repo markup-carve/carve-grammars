@@ -1,15 +1,23 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " City "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,

@@ -40,7 +40,7 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
+    "type": "table>table-alignment",
     "text": ">"
   },
   {
@@ -52,7 +52,7 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
+    "type": "table>table-alignment",
     "text": "<"
   },
   {

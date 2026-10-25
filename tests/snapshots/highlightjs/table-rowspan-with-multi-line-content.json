@@ -1,15 +1,23 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " Category       "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -48,7 +56,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-continuation",
     "text": "+"
   },
   {
@@ -72,7 +80,7 @@
     "text": "\n"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-continuation",
     "text": "+"
   },
   {
@@ -100,7 +108,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " ^"
   },
   {

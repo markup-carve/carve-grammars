@@ -28,7 +28,7 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
+    "type": "table>table-span",
     "text": " <"
   },
   {
@@ -52,7 +52,7 @@
     "text": "\n"
   },
   {
-    "type": "table-continuation>table-operator",
+    "type": "table-continuation>table-continuation-marker",
     "text": "+"
   },
   {

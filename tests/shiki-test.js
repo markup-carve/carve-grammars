@@ -43,18 +43,20 @@ ok('list continuation markers use a distinct color in both themes', () => {
     }
 });
 
-ok('table separators recede and header, span and continuation markers differ', () => {
-    for (const [extras, boundaryColor, headerColor, spanColor] of [
-        [carveLightExtras, '#959da5', '#005cc5', '#e36209'],
-        [carveDarkExtras, '#6a737d', '#79b8ff', '#ffab70'],
+ok('table boundaries, headers, alignment, spans and continuation use separate colors', () => {
+    for (const [extras, boundaryColor, headerColor, alignmentColor, spanColor, continuationColor] of [
+        [carveLightExtras, '#959da5', '#005cc5', '#e36209', '#6f42c1', '#22863a'],
+        [carveDarkExtras, '#6a737d', '#79b8ff', '#ffab70', '#b392f0', '#85e89d'],
     ]) {
         const rule = (scope) => extras.find((entry) => entry.scope === scope
             || Array.isArray(entry.scope) && entry.scope.includes(scope));
         assert.strictEqual(rule('punctuation.separator.table').settings.foreground, boundaryColor);
         assert.strictEqual(rule('keyword.operator.table.header').settings.foreground, headerColor);
-        for (const marker of ['colspan', 'rowspan', 'continuation']) {
+        assert.strictEqual(rule('keyword.operator.table.alignment').settings.foreground, alignmentColor);
+        for (const marker of ['colspan', 'rowspan']) {
             assert.strictEqual(rule(`keyword.operator.table.${marker}`).settings.foreground, spanColor);
         }
+        assert.strictEqual(rule('keyword.operator.table.continuation').settings.foreground, continuationColor);
     }
 });
 

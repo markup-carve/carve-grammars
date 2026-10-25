@@ -16,16 +16,24 @@
     "text": "\n"
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
     "text": " Item "
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",

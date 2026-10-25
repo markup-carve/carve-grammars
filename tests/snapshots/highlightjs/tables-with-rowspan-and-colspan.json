@@ -1,23 +1,35 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " Category "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
     "text": " Item    "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -68,7 +80,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " ^"
   },
   {
@@ -112,7 +124,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-span",
     "text": " <"
   },
   {

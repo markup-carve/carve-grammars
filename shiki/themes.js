@@ -26,10 +26,11 @@ export const carveLightExtras = [
     { scope: 'punctuation.definition.list.continuation', settings: { foreground: '#8250df', fontStyle: 'bold' } },
     { scope: 'punctuation.definition.checkbox', settings: { foreground: '#959da5' } },
     { scope: 'constant.language.checkbox', settings: { foreground: '#22863a', fontStyle: 'bold' } },
-    // Table markers by meaning (carve-grammars#685): header in heading blue, span and
-    // continuation markers in marker orange, separators receding like other punctuation.
+    // Table markers by meaning: header blue, alignment orange, spans purple,
+    // continuation green, and separators gray.
     { scope: 'keyword.operator.table.header', settings: { foreground: '#005cc5', fontStyle: 'bold' } },
-    { scope: ['keyword.operator.table.rowspan', 'keyword.operator.table.colspan', 'keyword.operator.table.continuation'], settings: { foreground: '#e36209', fontStyle: 'bold' } },
+    { scope: ['keyword.operator.table.rowspan', 'keyword.operator.table.colspan'], settings: { foreground: '#6f42c1', fontStyle: 'bold' } },
+    { scope: 'keyword.operator.table.continuation', settings: { foreground: '#22863a', fontStyle: 'bold' } },
     { scope: 'keyword.operator.table.alignment', settings: { foreground: '#e36209' } },
     { scope: 'punctuation.separator.table', settings: { foreground: '#959da5' } },
     { scope: 'punctuation.definition.admonition', settings: { foreground: '#d73a49', fontStyle: 'bold' } },
@@ -83,7 +84,8 @@ export const carveDarkExtras = [
     { scope: 'punctuation.definition.checkbox', settings: { foreground: '#6a737d' } },
     { scope: 'constant.language.checkbox', settings: { foreground: '#85e89d', fontStyle: 'bold' } },
     { scope: 'keyword.operator.table.header', settings: { foreground: '#79b8ff', fontStyle: 'bold' } },
-    { scope: ['keyword.operator.table.rowspan', 'keyword.operator.table.colspan', 'keyword.operator.table.continuation'], settings: { foreground: '#ffab70', fontStyle: 'bold' } },
+    { scope: ['keyword.operator.table.rowspan', 'keyword.operator.table.colspan'], settings: { foreground: '#b392f0', fontStyle: 'bold' } },
+    { scope: 'keyword.operator.table.continuation', settings: { foreground: '#85e89d', fontStyle: 'bold' } },
     { scope: 'keyword.operator.table.alignment', settings: { foreground: '#ffab70' } },
     { scope: 'punctuation.separator.table', settings: { foreground: '#6a737d' } },
     { scope: 'punctuation.definition.admonition', settings: { foreground: '#f97583', fontStyle: 'bold' } },

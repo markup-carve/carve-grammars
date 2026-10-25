@@ -8,8 +8,12 @@
     "text": " "
   },
   {
+    "type": "blockquote>table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "blockquote>table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "blockquote>table",
@@ -32,7 +36,7 @@
     "text": " "
   },
   {
-    "type": "blockquote>table-continuation>table-operator",
+    "type": "blockquote>table-continuation>table-continuation-marker",
     "text": "+"
   },
   {

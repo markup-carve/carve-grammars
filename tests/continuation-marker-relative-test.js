@@ -28,7 +28,7 @@ const tm = await textmateLineTokenizer(fileURLToPath(new URL('../textmate/carve.
 const ENGINES = {
     textmate: { tokenize: tm, marks: (scope) => /continuation\.carve/.test(scope) },
     prism: { tokenize: prismTokens, marks: (scope) => /continuation/.test(scope) },
-    highlightjs: { tokenize: hljsTokens, marks: (scope) => scope === 'punctuation' || scope === 'table-operator' },
+    highlightjs: { tokenize: hljsTokens, marks: (scope) => scope === 'punctuation' || scope === 'table-continuation' },
 };
 
 // Text each grammar scopes anyway. TextMate scopes a quote's marker-line `+`

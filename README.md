@@ -96,9 +96,12 @@ highlighter's theme stylesheet:
 import '@markup-carve/carve-grammars/shiki/table-tokens.css'
 ```
 
-Plain table pipes use a muted border color; header and span markers use a
-stronger operator color. Shiki's included light and dark themes carry the same
-palette without this stylesheet.
+Table pipes are gray, header markers blue, alignment markers orange, span
+markers purple, and continuation markers green. Shiki's included light and dark
+themes carry the same palette without this stylesheet. Prism uses
+`table-alignment`, `table-span`, and `table-continuation-marker` for the new
+roles; highlight.js uses `table-alignment`, `table-span`, and
+`table-continuation`.
 For a dark Prism or highlight.js theme, set `.dark` or
 `data-theme="dark"` on an ancestor.
 

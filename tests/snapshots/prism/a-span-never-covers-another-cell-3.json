@@ -1,7 +1,11 @@
 [
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
@@ -12,12 +16,16 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
+    "type": "table>table-span",
     "text": "<"
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",

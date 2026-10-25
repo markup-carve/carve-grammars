@@ -560,12 +560,12 @@ export const ENGINE_SCOPES = {
   "keyword.operator.table.continuation": {
     "prism": [
       [
-        "table-continuation>table-operator"
+        "table-continuation>table-continuation-marker"
       ]
     ],
     "highlightjs": [
       [
-        "table-operator"
+        "table-continuation"
       ]
     ]
   },
@@ -947,7 +947,7 @@ export const ENGINE_SCOPES = {
         "table>table-header"
       ],
       [
-        "table>table-operator"
+        "table>table-alignment"
       ],
       [
         "table-separator>table-operator"
@@ -958,6 +958,9 @@ export const ENGINE_SCOPES = {
         "table-header"
       ],
       [
+        "table-alignment"
+      ],
+      [
         "table-operator"
       ]
     ]
@@ -965,24 +968,24 @@ export const ENGINE_SCOPES = {
   "keyword.operator.table.rowspan": {
     "prism": [
       [
-        "table>table-operator"
+        "table>table-span"
       ]
     ],
     "highlightjs": [
       [
-        "table-operator"
+        "table-span"
       ]
     ]
   },
   "keyword.operator.table.colspan": {
     "prism": [
       [
-        "table>table-operator"
+        "table>table-span"
       ]
     ],
     "highlightjs": [
       [
-        "table-operator"
+        "table-span"
       ]
     ]
   },

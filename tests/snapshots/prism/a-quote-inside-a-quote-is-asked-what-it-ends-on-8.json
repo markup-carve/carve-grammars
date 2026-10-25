@@ -32,7 +32,7 @@
     "text": " "
   },
   {
-    "type": "blockquote>table-continuation>table-operator",
+    "type": "blockquote>table-continuation>table-continuation-marker",
     "text": "+"
   },
   {

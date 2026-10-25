@@ -28,8 +28,12 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": "=>"
+    "type": "table>table-alignment>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>table-alignment",
+    "text": ">"
   },
   {
     "type": "table",
@@ -40,8 +44,12 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": "=~"
+    "type": "table>table-alignment>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>table-alignment",
+    "text": "~"
   },
   {
     "type": "table",

@@ -1878,21 +1878,25 @@
                 'escape': /(?!)/,
                 // rowspan `^` / colspan `<` markers - must precede `punctuation`
                 // so the surrounding `|` is not consumed first.
-                'table-operator': [
-                    {
-                        pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
-                        lookbehind: true,
-                    },
+                'table-span': {
+                    pattern: /(\|)[ \t]*[\^<](?=[ \t]*\|)/,
+                    lookbehind: true,
+                },
+                'table-alignment': [
                     {
                         pattern: /(\|)=(?:[<~>][\^~v]?|\?[\^~v])(?= |\{)/,
                         lookbehind: true,
+                        inside: { 'table-header': /^=/ },
                     },
                     {
                         pattern: /(\|)(?:[<~>][\^~v]?|\?[\^~v])(?= |\{)/,
                         lookbehind: true,
                     },
                 ],
-                'table-header': /\|=(?= |\{)/,
+                'table-header': {
+                    pattern: /\|=(?= |\{)/,
+                    inside: { 'table-boundary': /^\|/ },
+                },
                 'table-boundary': /\|/,
                 'attributes': attributes,
                 'url': new RegExp(unescaped('\\[') + /[^\]]+\]\([^\s)]+\)/.source),
@@ -1910,7 +1914,7 @@
             inside: Object.assign({
                 'code': /(?!)/,
                 'escape': /(?!)/,
-                'table-operator': /^(?<![^\r\n])\uFEFF?[ \t]*\+/m,
+                'table-continuation-marker': /^(?<![^\r\n])\uFEFF?[ \t]*\+/m,
                 'table-boundary': /\|/,
             }, inline),
         },

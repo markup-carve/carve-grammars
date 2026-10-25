@@ -1,15 +1,27 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|=>^"
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": ">^"
   },
   {
     "scope": null,
     "text": " Name "
   },
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "scope": null,
@@ -28,7 +40,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-alignment",
     "text": "?v"
   },
   {
@@ -40,7 +52,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-alignment",
     "text": "?~"
   },
   {
@@ -60,7 +72,7 @@
     "text": "|"
   },
   {
-    "scope": "table-operator",
+    "scope": "table-alignment",
     "text": "?^"
   },
   {

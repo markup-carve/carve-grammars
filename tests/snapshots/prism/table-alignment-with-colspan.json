@@ -4,24 +4,36 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
-    "text": "=>"
+    "type": "table>table-alignment>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>table-alignment",
+    "text": ">"
   },
   {
     "type": "table",
     "text": " Category "
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
     "text": " Item   "
   },
   {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
     "type": "table>table-header",
-    "text": "|="
+    "text": "="
   },
   {
     "type": "table",
@@ -80,7 +92,7 @@
     "text": "|"
   },
   {
-    "type": "table>table-operator",
+    "type": "table>table-span",
     "text": " <"
   },
   {

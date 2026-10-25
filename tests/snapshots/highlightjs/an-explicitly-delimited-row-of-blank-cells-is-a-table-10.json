@@ -1,7 +1,15 @@
 [
   {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
     "scope": "table-header",
-    "text": "|=~"
+    "text": "="
+  },
+  {
+    "scope": "table-alignment",
+    "text": "~"
   },
   {
     "scope": null,

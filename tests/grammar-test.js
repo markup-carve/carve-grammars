@@ -144,16 +144,26 @@ ok('prism: every token pattern is a valid RegExp', () => {
 if (realPrism) {
     ok('prism: table borders differ from operators and stay out of code', () => {
         const html = realPrism.highlight('|= Name | `a|b` | ^ |\n| a\\|b | c |', carvePrism, 'carve');
-        assert.match(html, /class="token table-header">\|=<\/span>/);
+        assert.match(html, /class="token table-header"><span class="token table-boundary">\|<\/span>=<\/span>/);
         assert.match(html, /class="token table-boundary">\|<\/span>/);
-        assert.match(html, /class="token table-operator"> \^<\/span>/);
+        assert.match(html, /class="token table-span"> \^<\/span>/);
         assert.match(html, /class="token code">`a\|b`<\/span>/);
         assert.match(html, /class="token escape constant">\\\|<\/span>/);
     });
-    ok('prism: vertical table alignment is an operator', () => {
+    ok('prism: vertical table alignment has its own class', () => {
         const html = realPrism.highlight('|=?^ Heading |= Other |\n|?v Value | Plain |', carvePrism, 'carve');
-        assert.match(html, /class="token table-operator">=\?\^<\/span>/);
-        assert.match(html, /class="token table-operator">\?v<\/span>/);
+        assert.match(html, /class="token table-alignment"><span class="token table-header">=<\/span>\?\^<\/span>/);
+        assert.match(html, /class="token table-alignment">\?v<\/span>/);
+    });
+    ok('prism: the same angle mark distinguishes alignment from a column span', () => {
+        const html = realPrism.highlight('|=< Left | < |', carvePrism, 'carve');
+        assert.match(html, /class="token table-alignment"><span class="token table-header">=<\/span>&lt;<\/span>/);
+        assert.match(html, /class="token table-span"> &lt;<\/span>/);
+    });
+    ok('prism: table continuation has its own marker class', () => {
+        const html = realPrism.highlight('| a |\n+ b |', carvePrism, 'carve');
+        assert.match(html, /class="token table-continuation-marker">\+<\/span>/);
+        assert.doesNotMatch(html, /class="token table-continuation-marker">[^<]*b/);
     });
     ok('prism: a body cell with a dash is not a delimiter row', () => {
         const delimiter = realPrism.highlight('|---|---|', carvePrism, 'carve');
@@ -580,16 +590,25 @@ if (realHljs) {
     realHljs.registerLanguage('carve', hljsDef);
     ok('hljs: table borders differ from operators and stay out of code', () => {
         const { value } = realHljs.highlight('|= Name | `a|b` | ^ |\n| a\\|b | c |', { language: 'carve' });
-        assert.match(value, /class="hljs-table-header">\|=<\/span>/);
+        assert.match(value, /class="hljs-table-boundary">\|<\/span><span class="hljs-table-header">=<\/span>/);
         assert.match(value, /class="hljs-table-boundary">\|<\/span>/);
-        assert.match(value, /class="hljs-table-operator"> \^<\/span>/);
+        assert.match(value, /class="hljs-table-span"> \^<\/span>/);
         assert.match(value, /class="hljs-code">`a\|b`<\/span>/);
         assert.match(value, /class="hljs-symbol">\\\|<\/span>/);
     });
-    ok('hljs: vertical table alignment is an operator', () => {
+    ok('hljs: vertical table alignment has its own class', () => {
         const value = realHljs.highlight('|=?^ Heading |= Other |\n|?v Value | Plain |', { language: 'carve' }).value;
-        assert.match(value, /class="hljs-table-header">\|=\?\^<\/span>/);
-        assert.match(value, /class="hljs-table-operator">\?v<\/span>/);
+        assert.match(value, /class="hljs-table-header">=<\/span><span class="hljs-table-alignment">\?\^<\/span>/);
+        assert.match(value, /class="hljs-table-alignment">\?v<\/span>/);
+    });
+    ok('hljs: the same angle mark distinguishes alignment from a column span', () => {
+        const value = realHljs.highlight('|=< Left | < |', { language: 'carve' }).value;
+        assert.match(value, /class="hljs-table-header">=<\/span><span class="hljs-table-alignment">&lt;<\/span>/);
+        assert.match(value, /class="hljs-table-span"> &lt;<\/span>/);
+    });
+    ok('hljs: table continuation has its own marker class', () => {
+        const value = realHljs.highlight('| a |\n+ b |', { language: 'carve' }).value;
+        assert.match(value, /class="hljs-table-continuation">\+<\/span>/);
     });
     ok('hljs: an unclosed pipe-led line does not swallow later markup', () => {
         const { value } = realHljs.highlight('| verse line\nplain *para*\n\n| a | b |', { language: 'carve' });
