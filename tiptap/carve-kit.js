@@ -973,6 +973,11 @@ export const CarveKit = Extension.create({
                             parseHTML: () => null,
                             renderHTML: () => ({}),
                         },
+                        carveSeparatorColumnCount: {
+                            default: null,
+                            parseHTML: () => null,
+                            renderHTML: () => ({}),
+                        },
                     };
                 },
             });
@@ -1026,6 +1031,11 @@ export const CarveKit = Extension.create({
                 textAlign: tableAlign, carveInheritedTextAlign: inheritedTableAlign,
                 carveVerticalAlign: tableVerticalAlign,
                 carveInheritedVerticalAlign: inheritedTableVerticalAlign,
+                carveSeparatorWidths: {
+                    default: null,
+                    parseHTML: () => null,
+                    renderHTML: () => ({}),
+                },
             });
             // Tiptap 3 cells declare an `align` of their own, read from the
             // same `text-align` the kit writes for `textAlign`, and the

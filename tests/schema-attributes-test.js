@@ -48,10 +48,14 @@ const tableJson = {
     type: 'doc',
     content: [{
         type: 'table',
-        attrs: { carveSeparatorWidths: [3, 17], undeclaredWidth: [99] },
+        attrs: { carveSeparatorWidths: [3, 17], carveSeparatorColumnCount: 2, undeclaredWidth: [99] },
         content: [{
             type: 'tableRow',
-            content: [3, 17].map(() => ({ type: 'tableHeader', content: [{ type: 'paragraph' }] })),
+            content: [3, 17].map(width => ({
+                type: 'tableHeader',
+                attrs: { carveSeparatorWidths: [width] },
+                content: [{ type: 'paragraph' }],
+            })),
         }],
     }],
 };
@@ -59,6 +63,8 @@ const mounted = schema.nodeFromJSON(tableJson);
 mounted.check();
 const mountedJson = mounted.toJSON();
 assert.deepEqual(mountedJson.content[0].attrs.carveSeparatorWidths, [3, 17]);
+assert.equal(mountedJson.content[0].attrs.carveSeparatorColumnCount, 2);
+assert.deepEqual(mountedJson.content[0].content[0].content[0].attrs.carveSeparatorWidths, [3]);
 assert.equal(Object.hasOwn(mountedJson.content[0].attrs, 'undeclaredWidth'), false);
 assert.equal(Object.hasOwn(oldTableSchema.nodeFromJSON(tableJson).toJSON().content[0].attrs, 'carveSeparatorWidths'), false);
 const nativeTableJson = structuredClone(tableJson);

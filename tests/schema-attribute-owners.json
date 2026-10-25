@@ -43,6 +43,7 @@
     "tableCell": [
       "carveCoverMarkers",
       "carveInheritedTextAlign",
+      "carveSeparatorWidths",
       "carveSpanMarker",
       "colspan",
       "rowspan",
@@ -51,6 +52,7 @@
     "tableHeader": [
       "carveCoverMarkers",
       "carveInheritedTextAlign",
+      "carveSeparatorWidths",
       "carveSpanMarker",
       "colspan",
       "rowspan",
