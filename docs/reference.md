@@ -868,3 +868,10 @@ implementation spelled it with underscores.
 - **Footnotes** - `CarveFootnote` is the inline `[^label]` reference;
   `CarveFootnoteDefinition` is the matching body block, serialized as
   `[^label]: body`.
+
+## Task states
+
+Task markers are `[ ]` open, `[_]` open alias, `[/]` progress, `[!]` blocked,
+`[x]` or `[X]` done, `[-]` dropped, `[>]` deferred and `[?]` uncertain. Only
+`x` and `X` are checked. The Tiptap task item keeps a nondefault marker in
+`carveTaskState` and writes it as `data-task-state` on the list item.
