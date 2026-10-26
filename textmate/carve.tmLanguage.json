@@ -2092,7 +2092,7 @@
     },
     "image": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})') *)?(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.image.carve"
@@ -2157,7 +2157,7 @@
     },
     "link_inline": {
       "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})'))?(\\))",
+      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:\"((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})\"|'((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})') *)?(\\))",
       "captures": {
         "1": {
           "name": "punctuation.definition.link.carve"

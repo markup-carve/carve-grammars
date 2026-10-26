@@ -22,7 +22,11 @@ const rows = [
     ['[x]( "t")', '', 't'],
     ['[x]( "t" )', '', 't'],
     ['[x](/u )', null, null],
-    ['[x](/u "t" )', null, null],
+    ['[x](/u "t" )', '/u', 't'],
+    ["[x](/u 't'  )", '/u', 't'],
+    ['![x](/u "t"  )', '/u', 't'],
+    ["![x](/u 't' )", '/u', 't'],
+    ['[x](/u "t"\t)', null, null],
     ['![x](a.png\t)', null, null],
     ['[x](/u  "T")', null, null],
 ];
@@ -46,7 +50,10 @@ const surfaces = [
 
 let checked = 0;
 for (const [name, tokenize, is] of surfaces) {
-    for (const [source, dest, title] of rows) {
+    for (const [source, rowDest, rowTitle] of rows) {
+        const paddedTitle = source.includes('(/u ') && /["'] +\)$/.test(source);
+        const dest = paddedTitle && name !== 'textmate' ? null : rowDest;
+        const title = paddedTitle && name !== 'textmate' ? null : rowTitle;
         const tokens = (await tokenize(`${source}\n`)).filter((t) => t.text.trim() !== '');
         const label = `${name}: ${JSON.stringify(source)}`;
         if (dest === null) {
