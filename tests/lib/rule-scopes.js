@@ -162,8 +162,11 @@ function tmScopesUnder(node, out = new Set()) {
         node.forEach((item) => tmScopesUnder(item, out));
     } else if (node && typeof node === 'object') {
         for (const [key, value] of Object.entries(node)) {
-            if ((key === 'name' || key === 'contentName') && typeof value === 'string') out.add(value);
-            else tmScopesUnder(value, out);
+            if ((key === 'name' || key === 'contentName') && typeof value === 'string') {
+                for (const scope of value.split(/\s+/)) if (scope) out.add(scope);
+            } else {
+                tmScopesUnder(value, out);
+            }
         }
     }
 
