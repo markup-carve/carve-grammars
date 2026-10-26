@@ -5,7 +5,7 @@ Editor and highlighting grammars for Carve, with Tiptap, Prism, highlight.js, an
 ## Install
 
 ```sh
-npm install @markup-carve/carve-grammars
+npm install @markup-carve/carve-grammars prismjs
 ```
 
 ## Usage
