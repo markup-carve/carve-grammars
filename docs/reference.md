@@ -868,3 +868,9 @@ implementation spelled it with underscores.
 - **Footnotes** - `CarveFootnote` is the inline `[^label]` reference;
   `CarveFootnoteDefinition` is the matching body block, serialized as
   `[^label]: body`.
+
+## Tiptap task state attributes
+
+The Tiptap task item keeps a nondefault task marker in `carveTaskState` and
+writes it as `data-task-state` on the list item. See the
+[Carve documentation](https://markup-carve.github.io/carve/) for task marker syntax.
