@@ -6,6 +6,8 @@
   "main": "tiptap/index.js",
   "scripts": {
     "test": "npm run test:types && node scripts/run-tests.mjs",
+    "syntax-palette:build": "node scripts/build-syntax-palette.mjs",
+    "syntax-palette:check": "node scripts/build-syntax-palette.mjs --check",
     "test:serial": "npm run test:types && node scripts/run-tests.mjs --serial",
     "test:types": "tsc -p tsconfig.types.json && node tests/source-merge-test.js",
     "test:citations": "node tests/spec-citations-test.js",
@@ -48,6 +50,7 @@
     "prism/",
     "highlightjs/",
     "shiki/",
+    "themes/",
     "diff/",
     "textmate/",
     "fence-languages/",
@@ -96,6 +99,8 @@
     },
     "./shiki/carve.css": "./shiki/carve.css",
     "./shiki/table-tokens.css": "./shiki/table-tokens.css",
+    "./themes/palette.json": "./themes/palette.json",
+    "./themes/carve-code.css": "./themes/carve-code.css",
     "./diff": {
       "types": "./diff/index.d.ts",
       "default": "./diff/index.js"

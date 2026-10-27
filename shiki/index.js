@@ -49,6 +49,7 @@ export {
     extendTheme,
     carveLightTheme,
     carveDarkTheme,
+    carvePalette,
     carveStylingTransformer,
 } from './themes.js'
 export { diffCodeTransformer } from './diff.js'
