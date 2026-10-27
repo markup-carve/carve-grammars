@@ -141,9 +141,32 @@ ok('a table row, a container fence and a definition list are scoped', () => {
     assertScope(source, ':::', 'punctuation.definition.admonition');
     assertScope(source, 'note', 'entity.name.tag.admonition');
     assertScope(source, ':: t', 'punctuation.definition.list.definition');
+    assertScope(source, ':: t', 'keyword.control.definition');
+    assert.ok(scopeAt(source, ':: t').indexOf('keyword.control.definition') <
+        scopeAt(source, ':: t').indexOf('punctuation.definition.list.definition'));
     assertScope(source, 't\n', 'entity.name.tag.definition.term');
+    refuteScope(source, 't\n', 'keyword.control.definition');
     assertScope(source, ': d', 'punctuation.definition.list.definition');
+    assertScope(source, ': d', 'keyword.control.definition');
+    assert.ok(scopeAt(source, ': d').indexOf('keyword.control.definition') <
+        scopeAt(source, ': d').indexOf('punctuation.definition.list.definition'));
     assertScope(source, 'e*', 'markup.bold');
+});
+
+ok('definition marker keyword fallback stays on the marker at top level', () => {
+    const source = ':: Safe Mode\n: + removes unsafe HTML\n\nparagraph\n: orphan';
+    for (const marker of ['::', ': +']) {
+        assertScope(source, marker, 'keyword.control.definition');
+        assertScope(source, marker, 'punctuation.definition.list.definition');
+    }
+    refuteScope(source, '+ removes', 'keyword.control.definition');
+    refuteScope(source, 'Safe Mode', 'keyword.control.definition');
+    refuteScope(source, ': orphan', 'keyword.control.definition');
+
+    const continuation = ':: Safe Mode\n: +\n';
+    assertScope(continuation, ': +', 'keyword.control.definition');
+    assertScope(continuation, '+', 'punctuation.definition.list.continuation');
+    refuteScope(continuation, '+', 'keyword.control.definition');
 });
 
 for (const [source, opener, scope] of [
