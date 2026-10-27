@@ -15,24 +15,6 @@
   --carve-syntax-table-continuation: #22863a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not(.light):not(.vscode-light) {
-    --carve-syntax-background: #0d1117;
-    --carve-syntax-foreground: #c9d1d9;
-    --carve-syntax-code-background: #0d1117;
-    --carve-syntax-definition: #d2a8ff;
-    --carve-syntax-list: #f2cc60;
-    --carve-syntax-task: #3fb950;
-    --carve-syntax-language: #79c0ff;
-    --carve-syntax-muted: #8b949e;
-    --carve-syntax-table-boundary: #6a737d;
-    --carve-syntax-table-header: #79b8ff;
-    --carve-syntax-table-operator: #ffab70;
-    --carve-syntax-table-span: #b392f0;
-    --carve-syntax-table-continuation: #85e89d;
-  }
-}
-
 .dark, .vscode-dark, [data-theme="dark"] {
   --carve-syntax-background: #0d1117;
   --carve-syntax-foreground: #c9d1d9;
