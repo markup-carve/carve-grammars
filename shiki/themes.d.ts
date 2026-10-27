@@ -6,6 +6,28 @@ export interface CarveThemeRule {
     settings: { foreground?: string, fontStyle?: string }
 }
 
+/** Shared source syntax colors for light and dark backgrounds. */
+export const carvePalette: {
+    light: CarvePaletteColors
+    dark: CarvePaletteColors
+}
+
+export interface CarvePaletteColors {
+    background: string
+    foreground: string
+    codeBackground: string
+    definition: string
+    list: string
+    task: string
+    language: string
+    muted: string
+    tableBoundary: string
+    tableHeader: string
+    tableOperator: string
+    tableSpan: string
+    tableContinuation: string
+}
+
 /** Token-color rules for Carve scopes the stock GitHub light theme does not style. */
 export const carveLightExtras: CarveThemeRule[]
 /** Token-color rules for Carve scopes the stock GitHub dark theme does not style. */

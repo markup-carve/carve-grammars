@@ -598,6 +598,15 @@ light/dark themes extended with Carve scope colors, and a transformer + CSS
 pair that bridges what Shiki's HTML emitter cannot express (strikethrough,
 sub/superscript positioning, highlight background).
 
+`themes/palette.json` defines the light and dark colors used by the Shiki
+extras, table markers, and Carve tokens in Prism and highlight.js blocks. Run
+`npm run syntax-palette:build` after editing it; the test suite checks that the
+generated files match. Import `carvePalette` from the Shiki entry or import
+`themes/palette.json` when another UI needs the same colors. Load
+`@markup-carve/carve-grammars/themes/carve-code.css` after the Prism or
+highlight.js base theme. The stylesheet targets Carve code blocks and leaves
+embedded languages to their own highlighters.
+
 ```ts
 // .vitepress/config.ts
 import { defineConfig } from 'vitepress'
