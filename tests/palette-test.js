@@ -35,6 +35,7 @@ for (const mode of ['light', 'dark']) {
 
 const css = readFileSync(resolve(root, 'themes/carve-code.css'), 'utf8')
 assert.match(css, /:where\(\.language-carve, \.language-crv\) \.hljs-title/)
+assert.doesNotMatch(css, /prefers-color-scheme/)
 assert.match(css, /\.hljs-code > \.hljs-title \{ color: var\(--carve-syntax-language\)/)
 assert.match(css, /\.hljs-code > \.hljs-keyword \{ color: var\(--carve-syntax-muted\)/)
 assert.doesNotMatch(css, /language-(?:js|javascript|php|rust)/)
