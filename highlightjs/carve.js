@@ -1219,7 +1219,7 @@
         { className: 'punctuation', begin: RegExp('(?=::)' + quotedTermHostedSource('t', OTHER_BLOCK_OPENER_SOURCE) + '::(?= +[^ \\t\\r\\n])') },
         {
             className: 'punctuation',
-            begin: RegExp(/(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}[^\n]*)(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?:\k<dcol>: |\k<dcol>:: (?<=> :: )|\k<dcol>(?=::)QHOSTDESC:: )[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?<dcol> *)):(?= +[^ \t\r\n])/.source.replace('QHOSTDESC', quotedTermHostedSource('c', OTHER_BLOCK_OPENER_SOURCE))),
+            begin: RegExp(/(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* ::[ ][^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}[^\n]*)(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?:\k<dcol>: |\k<dcol>:: (?<=> :: )|\k<dcol>(?=::)QHOSTDESC:: )[^\n]*\n(?:[ \t]*>[^\n]*\n){0,64}(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* (?<dcol> *)):(?= +[^ \t\r\n])/.source.replaceAll('[^ \\t\\r\\n]', 'NONSPACE_CHAR').replaceAll('[^\\r\\n]', 'LINE_BOUNDARY').replaceAll('[^\\n]', 'LINE_CHARS').replaceAll('\\n', '(?:\\r\\n|\\r|\\n)').replaceAll('NONSPACE_CHAR', '[^ \\t\\r\\n]').replaceAll('LINE_BOUNDARY', '[^\\r\\n]').replaceAll('LINE_CHARS', '[^\\r\\n]').replace('QHOSTDESC', quotedTermHostedSource('c', OTHER_BLOCK_OPENER_SOURCE))),
         },
         // A description at the column of the nearest term above it that a quoted
         // list item or description hosts.
@@ -1250,13 +1250,22 @@
     const scopeUnless = (scope, refused) => (m) => {
         m.rule.scope = refused(m) ? undefined : scope;
     };
-    const lineAt = (input, start) => {
-        const end = input.indexOf('\n', start);
-        return input.slice(start, end === -1 ? undefined : end).replace(/\r$/, '');
+    const lineStartBefore = (input, index) => {
+        for (let at = index - 1; at >= 0; at--) {
+            if (input[at] === '\r' || input[at] === '\n') return at + 1;
+        }
+        return 0;
     };
-    // `lastIndexOf` clamps a negative start to 0, so the line after a leading
-    // newline must not search at all: it would find itself.
-    const previousLineStart = (input, start) => (start < 2 ? start - 1 : input.lastIndexOf('\n', start - 2) + 1);
+    const lineEndFrom = (input, index) => {
+        for (let at = index; at < input.length; at++) {
+            if (input[at] === '\r' || input[at] === '\n') return at;
+        }
+        return input.length;
+    };
+    const nextLineStart = (input, end) => end + (input[end] === '\r' && input[end + 1] === '\n' ? 2 : 1);
+    const lineAt = (input, start) => input.slice(start, lineEndFrom(input, start));
+    const previousLineStart = (input, start) => start === 0 ? -1
+        : lineStartBefore(input, start - (input[start - 1] === '\n' && input[start - 2] === '\r' ? 2 : 1));
     // A line after which a new block starts: it ends any paragraph above.
     const BLOCK_BOUNDARY_LINE = /^\uFEFF?(?:[ \t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\*{3,}|_{3,})[ \t]*$|\|.*\|(?:\{[^{}]*\})?[ \t]*$|\{[^{}]*\}[ \t]*$|%%|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|:: )|\+[ \t]*$)/;
     const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|[A-Za-z][.)]|[ivxlcdm]+[.)]|[IVXLCDM]+[.)]|\.)(?: +[^ \t]|\{)/;
@@ -1505,7 +1514,7 @@
         let end = at - 1;
         let sawTerm = false;
         for (let n = 0; n < 130 && end > 0; n++) {
-            const start = input.lastIndexOf('\n', end - 1) + 1;
+            const start = previousLineStart(input, end + 1);
             const line = input.slice(start, end).replace(/\r$/, '');
             end = start - 1;
             if (!sawTerm) {
@@ -1532,21 +1541,21 @@
     // line (markup-carve/carve#3458); any other `:` line is no marker.
     const DESCRIPTION_ALIGNED = (function () {
         var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>\\/!?]\\] |::? )';
-        var lines = '[^\\n]*\\n(?:[^\\n]*\\n){0,64}';
+        var lines = '[^\\r\\n]*(?:\\r\\n|\\r|\\n)(?:[^\\r\\n]*(?:\\r\\n|\\r|\\n)){0,64}';
         var at = ['\\1::? '];
         // n columns, a tab running to the next multiple of 4.
         var cols = function (n, ch) {
             return '(?:' + ch + '{4}|' + ch + '{0,3}\\t){' + (n >> 2) + '}' + ch + '{' + (n & 3) + '}';
         };
         for (var n = 0; n <= 12; n++) {
-            at.push(unit + '*(?=:)(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?' + cols(n, '[^\\t\\n]') + ')::? ' + lines + cols(n, ' ') + '(?<![^\\n]' + cols(n, ' ') + ')');
+            at.push(unit + '*(?=:)(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?' + cols(n, '[^\\t\\r\\n]') + ')::? ' + lines + cols(n, ' ') + '(?<![^\\r\\n]' + cols(n, ' ') + ')');
         }
         // Past 64 lines with no marker line the column cannot be read: accept it.
-        at.push('(?:(?![ \\t]*::? )[^\\n]*\\n){64}[ \\t]*');
+        at.push('(?:(?![ \\t]*::? )[^\\r\\n]*(?:\\r\\n|\\r|\\n)){64}[ \\t]*');
         // Below a tab-indented marker the column is relative to a container;
         // `on:begin` compares it. A footnote body also takes its own column.
-        at.push('[ \\t]*\\t[ \\t]*::? ' + lines + '[ \\t]*', '(?:(?:[-*]|\\d+[.)]) +)?\\[\\^[^\\]\\r\\n]+\\]:[^\\n]*\\n(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\n]*|%%[^\\n]*)\\n){0,64}(?:  | {4,5}| {0,3}\\t)');
-        return '(?<=(?<![^\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
+        at.push('[ \\t]*\\t[ \\t]*::? ' + lines + '[ \\t]*', '(?:(?:[-*]|\\d+[.)]) +)?\\[\\^[^\\]\\r\\n]+\\]:[^\\r\\n]*(?:\\r\\n|\\r|\\n)(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\r\\n]*|%%[^\\r\\n]*)(?:\\r\\n|\\r|\\n)){0,64}(?:  | {4,5}| {0,3}\\t)');
+        return '(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:' + at[0] + lines + '\\1|' + at.slice(1).join('|') + '))';
     })();
     const DESCRIPTION_MARKER = {
         className: 'punctuation',
@@ -2209,14 +2218,14 @@
     const columns = (text) => [...text].reduce((col, ch) => (ch === '\t' ? col + 4 - (col % 4) : col + 1), 0);
     const foldsIntoItem = (m) => {
         const input = m.input;
-        const lineStart = input.lastIndexOf('\n', m.index - 1) + 1;
+        const lineStart = lineStartBefore(input, m.index);
         const prefix = input.slice(lineStart, m.index).replace(/^(?<![^\r\n])\uFEFF/, '');
         const task = /[-*] +\[[ xX\-_>\/!?]\] +$(?![^\r\n])/.exec(prefix);
         const contentColumn = task ? columns(prefix.slice(0, task.index)) + 2 : columns(prefix);
-        const lineEnd = input.indexOf('\n', m.index);
-        if (lineEnd === -1) return false;
-        const nextEnd = input.indexOf('\n', lineEnd + 1);
-        const next = input.slice(lineEnd + 1, nextEnd === -1 ? undefined : nextEnd);
+        const lineEnd = lineEndFrom(input, m.index);
+        if (lineEnd === input.length) return false;
+        const nextStart = nextLineStart(input, lineEnd);
+        const next = lineAt(input, nextStart);
         if (/^(?<![^\r\n])[ \t]*$(?![^\r\n])/.test(next)) return false;
         return columns(/^(?<![^\r\n])[ \t]*/.exec(next)[0]) < contentColumn;
     };
@@ -2593,8 +2602,8 @@
                 if (above === -1 || ['blank', 'boundary'].includes(lineKind(lineAt(input, above)))) break;
                 first = above;
             }
-            const end = input.indexOf('\n', host);
-            if (SOLE_IMAGE.test(input.slice(first, end === -1 ? undefined : end).replace(/\r(?=\n|$)/g, ''))) return true;
+            const end = lineEndFrom(input, host);
+            if (SOLE_IMAGE.test(input.slice(first, end).replace(/\r(?=\n|$)/g, ''))) return true;
         }
         if (BARE_COLON_FENCE.test(line)) {
             const closed = COLON_FENCES.docs?.get(input)?.closed;
@@ -2836,7 +2845,7 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [
-        { begin: /\^/, 'on:begin': scopeUnless('caption-marker', (m) => !captionHost(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1) || m.input.slice(m.input.lastIndexOf('\n', m.index - 1) + 1, m.index).trim() !== ''), relevance: 0 },
+        { begin: /\^/, 'on:begin': scopeUnless('caption-marker', (m) => !captionHost(m.input, lineStartBefore(m.input, m.index)) || m.input.slice(lineStartBefore(m.input, m.index), m.index).trim() !== ''), relevance: 0 },
         ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE,
     ];
     // A TABLE CELL IS AN INLINE RUN that ends at its pipe, so an opener whose
@@ -2874,12 +2883,12 @@
         {
             className: 'punctuation',
             begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: ?>)*[ \t]+)::(?= +[^ \t\r\n])/,
-            'on:begin': scopeUnless('punctuation', (m) => quotedFootnoteTerm(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1) === null),
+            'on:begin': scopeUnless('punctuation', (m) => quotedFootnoteTerm(m.input, lineStartBefore(m.input, m.index)) === null),
         },
         {
             className: 'punctuation',
             begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: ?>)*[ \t]*):(?= +[^ \t\r\n])/,
-            'on:begin': scopeUnless('punctuation', (m) => !quotedFootnoteDescription(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1)),
+            'on:begin': scopeUnless('punctuation', (m) => !quotedFootnoteDescription(m.input, lineStartBefore(m.input, m.index))),
         },
     );
     // A term indented into an open description's paragraph is its lazy text,
@@ -2888,7 +2897,7 @@
         const lead = /^\uFEFF?([ \t]*)/.exec(match[0])[1];
         const indent = lineColumns(match.input, match.index, lead);
         if (indent > entryColumn && indent < descriptionColumn
-            && !(match.index > 0 && match.input.startsWith('%%', match.input.lastIndexOf('\n', match.index - 2) + 1))) {
+            && !(match.index > 0 && match.input.startsWith('%%', previousLineStart(match.input, match.index)))) {
             match.rule.scope = undefined;
             foldedTermLine = match.index;
             return;
