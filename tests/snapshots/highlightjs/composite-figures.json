@@ -32,11 +32,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " (a) One"
   },
   {
@@ -60,11 +60,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " (b) Two"
   },
   {
@@ -80,11 +80,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " Figure #: Group caption"
   },
   {

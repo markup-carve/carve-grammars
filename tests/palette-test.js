@@ -39,9 +39,9 @@ for (const mode of ['light', 'dark']) {
 
 const css = readFileSync(resolve(root, 'themes/carve-code.css'), 'utf8')
 assert.match(css, /:where\(code\.language-carve, code\.language-crv, \.language-carve > code, \.language-crv > code\) > \.hljs-title/)
-assert.match(css, /\.hljs-caption > \.hljs-caption-marker,/)
+assert.match(css, /\.hljs-title\.caption_ > \.hljs-punctuation\.caption-marker_,/)
 assert.match(css, /\.token.caption > \.token.punctuation \{ color: var\(--carve-syntax-caption-marker\); font-weight: 700/)
-assert.match(css, /\.hljs-caption \{ color: var\(--carve-syntax-caption-text\); font-style: italic/)
+assert.match(css, /\.hljs-title\.caption_ \{ color: var\(--carve-syntax-caption-text\); font-style: italic/)
 assert.match(css, /\.token.caption \{ color: var\(--carve-syntax-caption-text\); font-style: italic/)
 assert.doesNotMatch(css, /prefers-color-scheme/)
 assert.match(css, /\.hljs-code > \.hljs-title \{ color: var\(--carve-syntax-language\)/)

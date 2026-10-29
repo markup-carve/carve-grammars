@@ -12,15 +12,15 @@
     "text": "\n"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " "
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " Figure 1: moon"
   },
   {

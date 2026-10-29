@@ -8,19 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " a "
   },
   {
-    "scope": "caption>strong",
+    "scope": "title caption_>strong",
     "text": "*# x*"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " b"
   },
   {

@@ -608,7 +608,10 @@ highlight.js base theme. The stylesheet targets Carve code blocks and leaves
 embedded languages to their own highlighters. Caption colors have separate
 `captionMarker` and `captionText` roles in both modes; the marker is bold and
 the text is italic. Load `carve-code.css` to color caption scopes in Prism
-and highlight.js.
+and highlight.js. In highlight.js a caption line is
+`<span class="hljs-title caption_">` with its `^` in
+`<span class="hljs-punctuation caption-marker_">`, so a stock theme without
+`carve-code.css` still colors the caption as a title.
 
 ```ts
 // .vitepress/config.ts

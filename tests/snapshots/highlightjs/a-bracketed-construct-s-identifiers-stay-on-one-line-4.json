@@ -4,11 +4,11 @@
     "text": "![a](/i\nq)\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " cap"
   },
   {

@@ -124,11 +124,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " A listing panel"
   },
   {
@@ -144,11 +144,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " An equation panel"
   },
   {
@@ -172,11 +172,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " A quoted panel"
   },
   {
@@ -192,11 +192,11 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " Figure #: Mixed panels"
   },
   {

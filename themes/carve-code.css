@@ -37,8 +37,8 @@
 
 :where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title,
 :where(.language-carve, .language-crv) .token.definition-term { color: var(--carve-syntax-definition); }
-:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-caption { color: var(--carve-syntax-caption-text); font-style: italic; }
-:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-caption > .hljs-caption-marker,
+:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title.caption_ { color: var(--carve-syntax-caption-text); font-style: italic; }
+:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title.caption_ > .hljs-punctuation.caption-marker_,
 :where(.language-carve, .language-crv) .token.caption > .token.punctuation { color: var(--carve-syntax-caption-marker); font-weight: 700; font-style: normal; }
 :where(.language-carve, .language-crv) .token.caption { color: var(--carve-syntax-caption-text); font-style: italic; }
 :where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-bullet,
