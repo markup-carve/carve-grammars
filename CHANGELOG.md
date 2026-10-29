@@ -4,6 +4,8 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+- Add shared caption colors and separate highlight.js caption scopes (#819).
+
 ## [0.1.22] - 2026-10-25
 
 The editor kit now loads and saves every published task state with carve-js 0.1.15.

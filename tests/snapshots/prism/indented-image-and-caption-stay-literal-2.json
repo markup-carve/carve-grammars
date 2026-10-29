@@ -45,7 +45,15 @@
   },
   {
     "type": "caption>title",
-    "text": " ^ Figure 1: moon"
+    "text": " "
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Figure 1: moon"
   },
   {
     "type": "text",

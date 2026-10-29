@@ -8,15 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ a "
+    "scope": "caption>caption-marker",
+    "text": "^"
   },
   {
-    "scope": "title>strong",
+    "scope": "caption",
+    "text": " a "
+  },
+  {
+    "scope": "caption>strong",
     "text": "*# x*"
   },
   {
-    "scope": "title",
+    "scope": "caption",
     "text": " b"
   },
   {

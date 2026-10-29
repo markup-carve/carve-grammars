@@ -24,8 +24,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ (a) One"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " (a) One"
   },
   {
     "scope": null,
@@ -48,8 +52,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Figure #: Outer only"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure #: Outer only"
   },
   {
     "scope": null,

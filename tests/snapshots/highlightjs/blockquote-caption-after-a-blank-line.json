@@ -8,8 +8,12 @@
     "text": "\n\n"
   },
   {
-    "scope": "title",
-    "text": "^ Source: Someone"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Source: Someone"
   },
   {
     "scope": null,

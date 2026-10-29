@@ -124,8 +124,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ A listing panel"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " A listing panel"
   },
   {
     "scope": null,
@@ -140,8 +144,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ An equation panel"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " An equation panel"
   },
   {
     "scope": null,
@@ -164,8 +172,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ A quoted panel"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " A quoted panel"
   },
   {
     "scope": null,
@@ -180,8 +192,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Figure #: Mixed panels"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure #: Mixed panels"
   },
   {
     "scope": null,

@@ -8,8 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Figure #: one"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure #: one"
   },
   {
     "scope": null,
@@ -24,8 +28,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Figure #: two"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure #: two"
   },
   {
     "scope": null,

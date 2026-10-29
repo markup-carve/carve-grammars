@@ -21,6 +21,8 @@ export interface CarvePaletteColors {
     task: string
     language: string
     muted: string
+    captionMarker: string
+    captionText: string
     tableBoundary: string
     tableHeader: string
     tableOperator: string

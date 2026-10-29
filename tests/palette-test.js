@@ -25,7 +25,11 @@ for (const mode of ['light', 'dark']) {
     assert.equal(rule('punctuation.definition.list.definition').settings.foreground, colors.definition)
     assert.equal(rule('entity.name.tag.definition.term').settings.foreground, colors.definition)
     assert.equal(rule('fenced_code.block.language').settings.foreground, colors.language)
-    for (const role of ['definition', 'list', 'task', 'language', 'muted']) {
+    assert.equal(rule('punctuation.definition.caption').settings.foreground, colors.captionMarker)
+    assert.equal(rule('punctuation.definition.caption').settings.fontStyle, 'bold')
+    assert.equal(rule('markup.caption').settings.foreground, colors.captionText)
+    assert.equal(rule('markup.caption').settings.fontStyle, 'italic')
+    for (const role of ['definition', 'list', 'task', 'language', 'muted', 'captionMarker', 'captionText']) {
         for (const surface of ['background', 'codeBackground']) {
             const [high, low] = [luminance(colors[role]), luminance(colors[surface])].sort((a, b) => b - a)
             assert.ok((high + 0.05) / (low + 0.05) >= 4.5, `${mode} ${role} on ${surface} contrast`)
@@ -35,6 +39,10 @@ for (const mode of ['light', 'dark']) {
 
 const css = readFileSync(resolve(root, 'themes/carve-code.css'), 'utf8')
 assert.match(css, /:where\(code\.language-carve, code\.language-crv, \.language-carve > code, \.language-crv > code\) > \.hljs-title/)
+assert.match(css, /\.hljs-caption > \.hljs-caption-marker,/)
+assert.match(css, /\.token.caption > \.token.punctuation \{ color: var\(--carve-syntax-caption-marker\); font-weight: 700/)
+assert.match(css, /\.hljs-caption \{ color: var\(--carve-syntax-caption-text\); font-style: italic/)
+assert.match(css, /\.token.caption \{ color: var\(--carve-syntax-caption-text\); font-style: italic/)
 assert.doesNotMatch(css, /prefers-color-scheme/)
 assert.match(css, /\.hljs-code > \.hljs-title \{ color: var\(--carve-syntax-language\)/)
 assert.match(css, /\.hljs-code > \.hljs-keyword \{ color: var\(--carve-syntax-muted\)/)

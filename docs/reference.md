@@ -605,7 +605,10 @@ generated files match. Import `carvePalette` from the Shiki entry or import
 `themes/palette.json` when another UI needs the same colors. Load
 `@markup-carve/carve-grammars/themes/carve-code.css` after the Prism or
 highlight.js base theme. The stylesheet targets Carve code blocks and leaves
-embedded languages to their own highlighters.
+embedded languages to their own highlighters. Caption colors have separate
+`captionMarker` and `captionText` roles in both modes; the marker is bold and
+the text is italic. Load `carve-code.css` to color caption scopes in Prism
+and highlight.js.
 
 ```ts
 // .vitepress/config.ts

@@ -8,6 +8,8 @@
   --carve-syntax-task: #1a7f37;
   --carve-syntax-language: #0969da;
   --carve-syntax-muted: #57606a;
+  --carve-syntax-caption-marker: #bc4c00;
+  --carve-syntax-caption-text: #57606a;
   --carve-syntax-table-boundary: #959da5;
   --carve-syntax-table-header: #005cc5;
   --carve-syntax-table-operator: #e36209;
@@ -24,6 +26,8 @@
   --carve-syntax-task: #3fb950;
   --carve-syntax-language: #79c0ff;
   --carve-syntax-muted: #8b949e;
+  --carve-syntax-caption-marker: #ffab70;
+  --carve-syntax-caption-text: #8b949e;
   --carve-syntax-table-boundary: #6a737d;
   --carve-syntax-table-header: #79b8ff;
   --carve-syntax-table-operator: #ffab70;
@@ -33,6 +37,10 @@
 
 :where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title,
 :where(.language-carve, .language-crv) .token.definition-term { color: var(--carve-syntax-definition); }
+:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-caption { color: var(--carve-syntax-caption-text); font-style: italic; }
+:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-caption > .hljs-caption-marker,
+:where(.language-carve, .language-crv) .token.caption > .token.punctuation { color: var(--carve-syntax-caption-marker); font-weight: 700; font-style: normal; }
+:where(.language-carve, .language-crv) .token.caption { color: var(--carve-syntax-caption-text); font-style: italic; }
 :where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-bullet,
 :where(.language-carve, .language-crv) .token.list.punctuation { color: var(--carve-syntax-list); font-weight: 700; }
 :where(.language-carve, .language-crv) .token.definition-term .token.punctuation,

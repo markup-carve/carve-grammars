@@ -81,8 +81,16 @@ check('a caret line with no captionable host is paragraph text', () => {
 check('a caption on a host keeps its scope', () => {
     for (const source of HOSTED) {
         assert.match(carveToHtml(source), /<figcaption>cap|<caption>cap/, `engine: ${JSON.stringify(source)}`);
-        assert.equal(scopeOf(source, '^ cap'), 'title', `hljs: ${JSON.stringify(source)}`);
+        assert.equal(scopeOf(source, '^ cap'), 'caption>caption-marker', `hljs: ${JSON.stringify(source)}`);
+        assert.equal(scopeOf(source, 'cap'), 'caption', `hljs text: ${JSON.stringify(source)}`);
     }
+});
+
+check('an indented caption scopes only its opening caret as a marker', () => {
+    const source = '- ![a](b.png)\n  ^ cap ^ more\n';
+    assert.equal(scopeOf(source, '^ cap'), 'caption>caption-marker');
+    assert.equal(scopeOf(source, 'cap'), 'caption');
+    assert.equal(scopeOf(source, '^ more'), 'caption');
 });
 
 console.log('colon fences:');

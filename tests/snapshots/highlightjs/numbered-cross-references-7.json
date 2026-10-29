@@ -8,15 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Costs "
+    "scope": "caption>caption-marker",
+    "text": "^"
   },
   {
-    "scope": "title>symbol",
+    "scope": "caption",
+    "text": " Costs "
+  },
+  {
+    "scope": "caption>symbol",
     "text": "\\#"
   },
   {
-    "scope": "title",
+    "scope": "caption",
     "text": " units"
   },
   {

@@ -60,8 +60,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Listing #: a greeting"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Listing #: a greeting"
   },
   {
     "scope": null,

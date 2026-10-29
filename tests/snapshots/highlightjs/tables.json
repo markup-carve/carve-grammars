@@ -80,8 +80,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Fruit prices"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Fruit prices"
   },
   {
     "scope": null,
