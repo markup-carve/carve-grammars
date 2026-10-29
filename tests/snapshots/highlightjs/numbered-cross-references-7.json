@@ -8,19 +8,19 @@
     "text": "\n"
   },
   {
-    "scope": "caption>caption-marker",
+    "scope": "title caption_>punctuation caption-marker_",
     "text": "^"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " Costs "
   },
   {
-    "scope": "caption>symbol",
+    "scope": "title caption_>symbol",
     "text": "\\#"
   },
   {
-    "scope": "caption",
+    "scope": "title caption_",
     "text": " units"
   },
   {

@@ -34,7 +34,7 @@ for (const [name, source] of samples) {
     if (name === 'nonquote prefix') assert.doesNotMatch(outputs[2], /hljs-punctuation/);
     if (name === 'image caption') {
         assert.match(outputs[2], /<span class="hljs-link">!\[a\]\(b\.png\)<\/span>/);
-        assert.match(outputs[2], /<span class="hljs-caption"><span class="hljs-caption-marker">\^<\/span> Abb<\/span>/);
+        assert.match(outputs[2], /<span class="hljs-title caption_"><span class="hljs-punctuation caption-marker_">\^<\/span> Abb<\/span>/);
     }
 }
 console.log('highlight.js line ends: ten contexts agree across LF, CRLF, and CR.');

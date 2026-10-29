@@ -91,7 +91,7 @@ const ENGINES = [
         name: 'highlightjs',
         tokenize: hljsTokens,
         container: (scope) => (scope === 'section' && 'group') || (scope === 'keyword' && 'generic') || null,
-        isCaption: (scope) => scope === 'caption-marker',
+        isCaption: (scope) => scope === 'punctuation caption-marker_',
     },
     {
         name: 'textmate',

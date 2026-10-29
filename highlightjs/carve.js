@@ -2620,10 +2620,10 @@
         return at !== -1 && lineKind(lineAt(input, at)) !== 'blank';
     };
     const CAPTION = {
-        className: 'caption',
+        className: 'title.caption',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\^ (?![ \t]*$(?![^\r\n])))/,
         // Without a host the line is paragraph text, inline runs and all.
-        'on:begin': scopeUnless('caption', (m) => !captionHost(m.input, m.index)),
+        'on:begin': scopeUnless('title.caption', (m) => !captionHost(m.input, m.index)),
         end: /$(?![^\r\n])/,
         relevance: 5,
     };
@@ -2845,7 +2845,7 @@
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
     CAPTION.contains = [
-        { begin: /\^/, 'on:begin': scopeUnless('caption-marker', (m) => !captionHost(m.input, lineStartBefore(m.input, m.index)) || m.input.slice(lineStartBefore(m.input, m.index), m.index).trim() !== ''), relevance: 0 },
+        { begin: /\^/, 'on:begin': scopeUnless('punctuation.caption-marker', (m) => !captionHost(m.input, lineStartBefore(m.input, m.index)) || m.input.slice(lineStartBefore(m.input, m.index), m.index).trim() !== ''), relevance: 0 },
         ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE,
     ];
     // A TABLE CELL IS AN INLINE RUN that ends at its pipe, so an opener whose
