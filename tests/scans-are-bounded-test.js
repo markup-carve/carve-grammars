@@ -52,7 +52,7 @@ const BOUNDED = {
         ['critic comment', 'pattern: RegExp(notEscaped + /\\{#(?!#\\})(?=', 3],
         ['inline code', "(?<!`)(`{3,16})(?:[^`]|[^`][\\\\s\\\\S]", 2],
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
-        ['fenced block info string', "[^\\n]{0,512}\\n[\\s\\S]", 1],
+        ['fenced block info string', "[^\\r\\n]{0,512}(?:\\r\\n?|\\n)[\\s\\S]", 1],
         ['bracket label body', "var BRACKET_SCAN =", 1],
         // Matched on the TEMPERED `%`, not on the body class, so a REVERT of
         // this rule to an unrolled-but-unbounded form still finds the line and
@@ -71,8 +71,8 @@ const BOUNDED = {
         ['braced span atoms', "return kind + '(?:[^' + kind", 1],
         ['bare run code atoms', 'var bareCode = ', 3],
         ['bare run body', "+ '|(?!' + opaque + ')[^' + delimiter", 1],
-        ['substitution code atoms', "+ '|```(?:[^`\\\\n]|`(?!``)){1,4096}", 3],
-        ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\n]|#(?!\\\\})){0,4096}", 2],
+        ['substitution code atoms', "+ '|```(?:[^`\\\\r\\\\n]|`(?!``)){1,4096}", 3],
+        ['substitution comment atoms', "+ '|\\\\{#(?:[^#\\\\r\\\\n]|#(?!\\\\})){0,4096}", 2],
         ['substitution brace guard', 'var closedComment = ', 2],
         ['substitution open code', 'var openCode = ', 1],
         ['substitution half', "return '(?:' + substitutionAtom", 1],
