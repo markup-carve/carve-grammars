@@ -660,14 +660,39 @@ attribute above a language-tagged fence:
 ````
 
 Core HTML preserves both channels as
-`<pre class="diff"><code class="language-js">`. A host can detect that shape
-and invoke the opt-in `diffCodeTransformer()` with the fence language:
+`<pre class="diff"><code class="language-js">`. With a caption the class moves
+to the figure, because the figure the caption makes owns the attribute line:
+
+````carve
+{#lst-icon .diff}
+```js
+- fileIcon.classList.add("icon-file-text");
++ fileIcon.classList.remove("icon-file-text");
+```
+^ Listing #: Swap the icon class
+````
+
+```html
+<figure id="lst-icon" class="diff">
+  <pre><code class="language-js">…</code></pre>
+  <figcaption>…</figcaption>
+</figure>
+```
+
+Detect both shapes with the helpers from `@markup-carve/carve-grammars/diff`:
+`isDiffFence(pre)` checks one rendered `<pre>`, `findDiffFences(root)` returns
+the `<code>` of every diff fence, `DIFF_FENCE_SELECTOR` is the same test as a
+CSS selector, and `isDiffCodeBlock(node, parent)` answers it for a Carve AST
+`code_block` and its parent `figure`. The same holds for any other class on a
+captioned fence, such as `{.scroll}`. A host that has detected a diff fence
+invokes the opt-in `diffCodeTransformer()` with the fence language:
 
 ```js
 import { diffCodeTransformer } from '@markup-carve/carve-grammars/shiki/diff'
+import { isDiffFence } from '@markup-carve/carve-grammars/diff'
 import '@markup-carve/carve-grammars/shiki/carve.css'
 
-const transformers = pre.classList.contains('diff')
+const transformers = isDiffFence(pre)
     ? [diffCodeTransformer()]
     : []
 
@@ -693,10 +718,10 @@ and produces the same `line` / `diff add` / `diff remove` / `diff-marker`
 classes:
 
 ```js
-import { applyLanguageDiff } from '@markup-carve/carve-grammars/diff'
+import { applyLanguageDiff, findDiffFences } from '@markup-carve/carve-grammars/diff'
 import '@markup-carve/carve-grammars/diff/carve-diff.css'
 
-document.querySelectorAll('pre.diff > code').forEach((code) => {
+findDiffFences(document).forEach((code) => {
     const language = [...code.classList]
         .find((name) => name.startsWith('language-'))
         ?.slice('language-'.length)

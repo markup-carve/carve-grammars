@@ -2,9 +2,11 @@
  * Present a Carve `{.diff}` language fence with any highlighter (or none).
  *
  * Carve core emits `{.diff}` on a language-tagged fence as
- * `<pre class="diff"><code class="language-x">…</code></pre>` with the leading
- * `+`, `-`, and context-space characters left as plain text - applying the
- * presentation is the host's job. The Shiki hosts use `../shiki/diff.js`; this
+ * `<pre class="diff"><code class="language-x">…</code></pre>`, or with a caption
+ * as `<figure class="diff"><pre><code class="language-x">`, because the caption's
+ * figure owns the attribute line. The leading `+`, `-`, and context-space
+ * characters stay plain text - applying the presentation is the host's job;
+ * `findDiffFences()` finds both shapes. The Shiki hosts use `../shiki/diff.js`; this
  * module covers hosts on highlight.js, Prism, or no highlighter, where the
  * per-line token model Shiki provides is not available.
  *
@@ -18,6 +20,49 @@
  */
 
 const MARKER = /^[+\- ]/;
+
+/** Matches the `<code>` of a diff fence, uncaptioned or captioned. */
+export const DIFF_FENCE_SELECTOR = 'pre.diff > code, figure.diff > pre > code';
+
+const hasDiffClass = (attrs) => Array.isArray(attrs?.classes) && attrs.classes.includes('diff');
+
+/**
+ * Whether a rendered `<pre>` belongs to a diff fence: `pre.diff`, or a `<pre>`
+ * whose parent is a captioned `figure.diff`.
+ *
+ * @param {Element | null | undefined} pre
+ * @returns {boolean}
+ */
+export function isDiffFence(pre) {
+  if (!pre || pre.tagName !== 'PRE') return false;
+  if (pre.classList.contains('diff')) return true;
+  const parent = pre.parentElement;
+  return !!parent && parent.tagName === 'FIGURE' && parent.classList.contains('diff');
+}
+
+/**
+ * The `<code>` elements of every diff fence under `root`, in document order.
+ *
+ * @param {ParentNode} root A document, element, or fragment.
+ * @returns {Element[]}
+ */
+export function findDiffFences(root) {
+  return Array.from(root.querySelectorAll(DIFF_FENCE_SELECTOR));
+}
+
+/**
+ * Whether a Carve AST node is a diff fence: a `code_block` with the `diff`
+ * class, or a captioned one whose `figure` parent carries it.
+ *
+ * @param {{ type?: string, attrs?: { classes?: string[] } } | null | undefined} node
+ * @param {{ type?: string, target?: unknown, attrs?: { classes?: string[] } } | null} [parent]
+ * @returns {boolean}
+ */
+export function isDiffCodeBlock(node, parent = null) {
+  if (!node || node.type !== 'code_block') return false;
+  if (hasDiffClass(node.attrs)) return true;
+  return !!parent && parent.type === 'figure' && parent.target === node && hasDiffClass(parent.attrs);
+}
 
 const escapeHtml = (value) =>
   value.replace(/[&<>]/g, (character) => (character === '&' ? '&amp;' : character === '<' ? '&lt;' : '&gt;'));
@@ -45,10 +90,10 @@ export function renderLanguageDiff(code, highlightLine = escapeHtml) {
 }
 
 /**
- * Apply the diff presentation to a rendered `<pre class="diff"><code>` in the
+ * Apply the diff presentation to the `<code>` of a diff fence in the
  * DOM: replace the code's content with per-line diff spans and mark the `<pre>`.
  *
- * @param {Element} codeElement The `<code>` inside a `<pre class="diff">`.
+ * @param {Element} codeElement The `<code>` of a diff fence (see `findDiffFences`).
  * @param {(body: string) => string} [highlightLine] See {@link renderLanguageDiff}.
  */
 export function applyLanguageDiff(codeElement, highlightLine) {
