@@ -5,6 +5,7 @@ All notable changes to `carve-grammars` are documented here.
 ## [Unreleased]
 
 - Highlight.js treats lone CR as a line end in context checks (#821).
+- Highlight lone CR line endings in Prism like LF (#823).
 
 - Add shared caption colors and separate highlight.js caption scopes (#819).
 
