@@ -2611,10 +2611,10 @@
         return at !== -1 && lineKind(lineAt(input, at)) !== 'blank';
     };
     const CAPTION = {
-        className: 'title',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\^ (?![ \t]*$(?![^\r\n]))/,
+        className: 'caption',
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\^ (?![ \t]*$(?![^\r\n])))/,
         // Without a host the line is paragraph text, inline runs and all.
-        'on:begin': scopeUnless('title', (m) => !captionHost(m.input, m.index)),
+        'on:begin': scopeUnless('caption', (m) => !captionHost(m.input, m.index)),
         end: /$(?![^\r\n])/,
         relevance: 5,
     };
@@ -2835,7 +2835,10 @@
     // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
     // no trailing attribute block argument, so nothing asks for it.
-    CAPTION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE];
+    CAPTION.contains = [
+        { begin: /\^/, 'on:begin': scopeUnless('caption-marker', (m) => !captionHost(m.input, m.input.lastIndexOf('\n', m.index - 1) + 1) || m.input.slice(m.input.lastIndexOf('\n', m.index - 1) + 1, m.index).trim() !== ''), relevance: 0 },
+        ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, ...LINE_INLINE,
+    ];
     // A TABLE CELL IS AN INLINE RUN that ends at its pipe, so an opener whose
     // closer is not in the same cell is text.
     const CELL_INLINE = [

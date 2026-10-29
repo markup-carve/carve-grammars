@@ -8,11 +8,15 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ cap\t"
+    "scope": "caption>caption-marker",
+    "text": "^"
   },
   {
-    "scope": "title>comment",
+    "scope": "caption",
+    "text": " cap\t"
+  },
+  {
+    "scope": "caption>comment",
     "text": "%% hidden"
   },
   {

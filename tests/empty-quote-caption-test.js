@@ -11,7 +11,7 @@ assertThisFileRuns(import.meta.url);
 const grammar = fileURLToPath(new URL('../textmate/carve.tmLanguage.json', import.meta.url));
 const textmate = await textmateLineTokenizer(grammar);
 
-const CAPTION = { textmate: /meta\.caption/, prism: /(^|>)caption(>|$)/, highlightjs: /^title$/ };
+const CAPTION = { textmate: /meta\.caption/, prism: /(^|>)caption(>|$)/, highlightjs: /^caption$/ };
 const engines = [['textmate', textmate], ['prism', prismTokens], ['highlightjs', hljsTokens]];
 
 const PARAGRAPH = [

@@ -8,8 +8,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Equation: mass-energy"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Equation: mass-energy"
   },
   {
     "scope": null,

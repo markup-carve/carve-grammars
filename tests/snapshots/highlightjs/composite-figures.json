@@ -32,8 +32,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ (a) One"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " (a) One"
   },
   {
     "scope": null,
@@ -56,8 +60,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ (b) Two"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " (b) Two"
   },
   {
     "scope": null,
@@ -72,8 +80,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Figure #: Group caption"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure #: Group caption"
   },
   {
     "scope": null,

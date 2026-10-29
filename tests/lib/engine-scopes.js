@@ -589,7 +589,7 @@ export const ENGINE_SCOPES = {
     ],
     "highlightjs": [
       [
-        "title"
+        "caption"
       ]
     ]
   },
@@ -601,7 +601,7 @@ export const ENGINE_SCOPES = {
     ],
     "highlightjs": [
       [
-        "title"
+        "caption"
       ]
     ]
   },

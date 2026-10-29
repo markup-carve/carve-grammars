@@ -1950,7 +1950,7 @@
                 // Greedy, so a trailing comment the top-level rule found is
                 // reclaimed; the same walk as the heading's restores it.
                 'comment': { pattern: RegExp(commentAfterPrefix + '[^\\r\\n]*$(?![^\\r\\n])'), lookbehind: true, greedy: true },
-                'punctuation': /^(?<![^\r\n])\uFEFF?\^/,
+                'punctuation': { pattern: /^(?<![^\r\n])(\uFEFF?[ \t]*)\^/, lookbehind: true },
             }, inline),
         },
 

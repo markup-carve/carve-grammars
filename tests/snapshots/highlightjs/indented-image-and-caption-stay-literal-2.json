@@ -20,8 +20,16 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": " ^ Figure 1: moon"
+    "scope": "caption",
+    "text": " "
+  },
+  {
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Figure 1: moon"
   },
   {
     "scope": null,

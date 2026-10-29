@@ -24,8 +24,12 @@
     "text": "\n"
   },
   {
-    "scope": "title",
-    "text": "^ Benjamin Franklin"
+    "scope": "caption>caption-marker",
+    "text": "^"
+  },
+  {
+    "scope": "caption",
+    "text": " Benjamin Franklin"
   },
   {
     "scope": null,

@@ -103,7 +103,7 @@ const engines = {
     )
     if (classes.has('section')) return 'heading'
     if (classes.has('quote')) return 'quote'
-    if (classes.has('title')) return 'caption-or-deflist'
+    if (classes.has('title') || classes.has('caption')) return 'caption-or-deflist'
     if (classes.has('bullet')) return 'list'
     return 'none'
   },

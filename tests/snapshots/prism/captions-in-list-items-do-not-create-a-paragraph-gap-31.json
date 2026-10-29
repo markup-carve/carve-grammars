@@ -33,7 +33,15 @@
   },
   {
     "type": "caption>title",
-    "text": "  ^ cap"
+    "text": "  "
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " cap"
   },
   {
     "type": "text",
