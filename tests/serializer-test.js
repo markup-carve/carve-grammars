@@ -446,8 +446,13 @@ check('code block strips one trailing newline (no blank line before fence)',
     doc({ type: 'codeBlock', attrs: { language: 'php' }, content: [{ type: 'text', text: 'echo 1;\n' }] }),
     '```php\necho 1;\n```');
 
+// A rule the editor inserts is written canonically (carve#4973).
 check('horizontal rule',
     doc(para(text('a')), { type: 'horizontalRule' }, para(text('b'))),
+    'a\n\n***\n\nb');
+
+check('an authored dash rule keeps its dashes',
+    carveToProseMirror('a\n\n---\n\nb\n'),
     'a\n\n---\n\nb');
 
 check('a rule keeps its authored star or underscore marker',
@@ -456,7 +461,7 @@ check('a rule keeps its authored star or underscore marker',
 
 // A leading `---` with a later `---` opens frontmatter and swallows both.
 check('a dash rule that opens the document is written with stars',
-    doc({ type: 'horizontalRule' }, { type: 'horizontalRule' }, para(text('b'))),
+    doc({ type: 'horizontalRule', attrs: { carveMarker: '-' } }, { type: 'horizontalRule', attrs: { carveMarker: '-' } }, para(text('b'))),
     '***\n\n---\n\nb');
 
 check('a rule marker survives the AST bridge',

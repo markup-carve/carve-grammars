@@ -571,10 +571,9 @@ function convertBlock(node, ctx) {
 
         case 'thematic-break':
         case 'thematic_break':
-            // The engine records `*` and `_`; a dash rule carries no marker.
-            return node.marker === '*' || node.marker === '_'
-                ? { type: 'horizontalRule', attrs: { carveMarker: node.marker } }
-                : { type: 'horizontalRule' };
+            // The engine records `*` and `_`; a dash rule carries no marker, so
+            // it is named here to tell it from a rule the editor inserts.
+            return { type: 'horizontalRule', attrs: { carveMarker: node.marker === '*' || node.marker === '_' ? node.marker : '-' } };
 
         case 'image':
             // A bare image as a block (figure-less) is serialized as a paragraph

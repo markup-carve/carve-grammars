@@ -510,7 +510,7 @@ export const CarveKit = Extension.create({
                             default: null,
                             parseHTML: (element) => {
                                 const marker = element.getAttribute('data-carve-marker');
-                                return marker === '*' || marker === '_' ? marker : null;
+                                return marker === '*' || marker === '_' || marker === '-' ? marker : null;
                             },
                             renderHTML: attributes => (attributes.carveMarker ? { 'data-carve-marker': attributes.carveMarker } : {}),
                         },
