@@ -550,7 +550,8 @@ export function serializeToCarve(doc, options = {}) {
                     // content, either literal text or a block-attribute line for
                     // what follows (corpus 90-list-item-attributes-7, 172).
                     const markerAttrs = serializeAttributes(item.attrs, ['checked', 'carveTaskState']);
-                    const prefix = marker + markerAttrs + ' ';
+                    // A letter or roman marker with a dot needs two spaces (carve#4828).
+                    const prefix = marker + markerAttrs + (/^[A-Za-z]+\.$/.test(marker) ? '  ' : ' ');
                     output += indent + prefix + taskBox;
                     // The content column is measured from the prefix ACTUALLY
                     // written, attributes included - that is how the engine this
@@ -1432,7 +1433,7 @@ export function serializeToCarve(doc, options = {}) {
     // valid). The escape goes on the punctuation, since a backslash before a
     // letter or digit is literal.
     const LEADING_BLOCK_OPENER =
-        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=[.)] ))/;
+        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|[0-9]+(?=[.)] )|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=\.  |\) ))/;
     // On a list item's marker line, a following lazy line folds a colon
     // opener back into the paragraph, so only a one-line paragraph needs it.
     const LEADING_COLON_FENCE = /^(?=:{3,}(?: +(?:[A-Za-z0-9_][\w-]*|\|))? *(?:\n|$))/;
