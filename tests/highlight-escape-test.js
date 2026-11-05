@@ -54,7 +54,8 @@ const unescapeHtml = (s) => s.replace(/&(?:lt|gt|amp|quot|#x27|#39);/g, (m) => E
 function engineMark(source) {
     const m = carveToHtml(source).match(/<mark>(.*?)<\/mark>/s);
 
-    return m ? unescapeHtml(m[1]) : null;
+    // carve#4197: a comparison inside a mark renders typographically; compare in source spelling.
+    return m ? unescapeHtml(m[1]).replace(/≠/g, '!=').replace(/≤/g, '<=').replace(/≥/g, '>=') : null;
 }
 
 /*

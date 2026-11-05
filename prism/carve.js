@@ -561,6 +561,8 @@
             + '|\\[[^\\]\\r\\n]*\\]\\([^\\s)]*\\)|\\[(?![^\\]\\r\\n]*\\]\\([^\\s)]*\\))'
             + '|<[a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>|<(?![a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>)|[^\\r\\n\\\\`\\[<])';
         var closerAhead = '(?=' + step + '{0,8192}?(?:(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))' + step + '{0,8192}?)?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
+        // The `=` of a comparison neither opens nor closes (PART 9 §9).
+        if (delimiter === '=') atom += '|[>!]=|<=(?![=>])';
         var line = atom + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\r\\n`]){1,4096}?';
         return closerAhead + line + '(?:' + softBreak + line + ')??';
     }
@@ -738,9 +740,9 @@
             // family, `a \!=b c= d` still scoped nothing. The other two
             // grammars need none of this, because their escape rule really
             // does consume the flank before the highlight rule is asked.
-            // THE CLOSER IS UNGUARDED AGAINST SMART TYPOGRAPHY, deliberately -
-            // once a highlight is open the closer wins over the pattern in the
-            // engine too, so `x =y z<= w` marks `y z<`. AN ESCAPE IS A
+            // THE `=` OF A COMPARISON NEITHER OPENS NOR CLOSES (PART 9 §9), so
+            // the body takes `<=`, `>=` and `!=` whole and the closer refuses an
+            // unescaped `<`, `>` or `!` before it: `x =y z<= w` marks nothing. AN ESCAPE IS A
             // DIFFERENT QUESTION (carve-grammars#385): an escaped `=` is not a
             // delimiter at all, so `x =\= y` renders `x == y` with no mark and
             // this rule closed on it. THE BODY CONSUMES AN ESCAPE AS A PAIR and
@@ -783,7 +785,7 @@
                 notEscaped + '\\{=(?!=\\})' + forcedBody('=') + '=\\}|'
                 + /(?:(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
                 + bareRun('=')
-                + /(?<=\S)=(?![\p{L}\p{N}])/.source,
+                + /(?<=\S)(?<!(?<!\\)(?:\\\\){0,32}[>!])(?:(?<!(?<!\\)(?:\\\\){0,32}<)=|=(?=[=>]))(?![\p{L}\p{N}])/.source,
                 'u',
             ),
             alias: 'important',
