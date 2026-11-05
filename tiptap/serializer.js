@@ -1252,16 +1252,14 @@ export function serializeToCarve(doc, options = {}) {
             }
             let line = '';
             for (const c of out) {
-                // An empty left-aligned cell cannot be spelled `|< |`: it is
-                // a colspan marker. Left is the empty cell's default anyway.
-                const align = c.content === '' && c.align === 'left' ? ''
-                    : c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
+                const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
                 const valign = c.valign === 'top' ? '^' : c.valign === 'middle' ? '~' : c.valign === 'bottom' ? 'v' : '';
-                const markerRun = (c.header ? '=' : '') + align + (valign ? (align ? '' : '?') + valign : '');
-                // Cell attributes bind after the kind/alignment markers.
-                const attrs = cellAttrsOf(c);
-                const literalSpan = !c.spanMarker && !markerRun && !attrs && (c.content === '<' || c.content === '^');
-                line += '|' + markerRun + attrs + ' ' + (literalSpan ? '\\' : '') + c.content + ' ';
+                const alignment = align + (valign ? (align ? '' : '?') + valign : '');
+                // Alignment symbols lead the cell's attribute block (carve#5091 D3).
+                const ordinary = cellAttrsOf(c);
+                const attrs = alignment ? '{' + alignment + (ordinary ? ' ' + ordinary.slice(1) : '}') : ordinary;
+                const literalSpan = !c.spanMarker && !attrs && (c.content === '<' || c.content === '^');
+                line += '|' + (c.header ? '=' : '') + attrs + ' ' + (literalSpan ? '\\' : '') + c.content + ' ';
             }
             output += line + '|' + rowAttrs + '\n';
             continuation();
