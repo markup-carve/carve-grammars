@@ -560,6 +560,8 @@
             + '|\\[[^\\]\\r\\n]*\\]\\([^\\s)]*\\)|\\[(?![^\\]\\r\\n]*\\]\\([^\\s)]*\\))'
             + '|<[a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>|<(?![a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>)|[^\\r\\n\\\\`\\[<])';
         var closerAhead = '(?=' + step + '{0,8192}?(?:(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))' + step + '{0,8192}?)?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
+        // The `=` of a comparison neither opens nor closes (PART 9 §9).
+        if (delimiter === '=') atom += '|[>!]=|<=(?![=>])';
         var line = atom + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\r\\n`]){1,4096}?';
         return closerAhead + line + '(?:' + softBreak + line + ')??';
     }
@@ -737,9 +739,9 @@
             // family, `a \!=b c= d` still scoped nothing. The other two
             // grammars need none of this, because their escape rule really
             // does consume the flank before the highlight rule is asked.
-            // THE CLOSER IS UNGUARDED AGAINST SMART TYPOGRAPHY, deliberately -
-            // once a highlight is open the closer wins over the pattern in the
-            // engine too, so `x =y z<= w` marks `y z<`. AN ESCAPE IS A
+            // THE `=` OF A COMPARISON NEITHER OPENS NOR CLOSES (PART 9 §9), so
+            // the body takes `<=`, `>=` and `!=` whole and the closer refuses an
+            // unescaped `<`, `>` or `!` before it: `x =y z<= w` marks nothing. AN ESCAPE IS A
             // DIFFERENT QUESTION (carve-grammars#385): an escaped `=` is not a
             // delimiter at all, so `x =\= y` renders `x == y` with no mark and
             // this rule closed on it. THE BODY CONSUMES AN ESCAPE AS A PAIR and
@@ -782,7 +784,7 @@
                 notEscaped + '\\{=(?!=\\})' + forcedBody('=') + '=\\}|'
                 + /(?:(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32})(?<![\w=<>!])|(?<=(?:^(?<![^\r\n])|[^\\])(?:\\\\){0,32}\\[<>!]))=(?=\S)(?![>=])/.source
                 + bareRun('=')
-                + /(?<=\S)=(?![\p{L}\p{N}])/.source,
+                + /(?<=\S)(?<!(?<!\\)(?:\\\\){0,32}[>!])(?:(?<!(?<!\\)(?:\\\\){0,32}<)=|=(?=[=>]))(?![\p{L}\p{N}])/.source,
                 'u',
             ),
             alias: 'important',
@@ -1495,13 +1497,14 @@
             },
         ],
 
-        // Typed front matter. Bare `---` is YAML; known payloads receive their
+        // Typed front matter. Bare `---` is YAML; an opener with no closer runs to
+        // the end of the document (carve#5016). Known payloads receive their
         // native Prism grammar when the host registered it, with compact local
         // fallbacks so the standalone Carve grammar still provides useful
         // highlighting. Unknown format tokens remain opaque metadata.
         'front-matter': [
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?json|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1517,7 +1520,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?toml|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1532,7 +1535,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1546,7 +1549,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 alias: 'comment',
                 greedy: true,
                 inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
@@ -1899,7 +1902,15 @@
                     inside: { 'table-boundary': /^\|/ },
                 },
                 'table-boundary': /\|/,
-                'attributes': attributes,
+                // Braced cell alignment leads the cell's attribute block: `|={>} a |`, `|{> .num} 1 |` (carve#5091 D3).
+                'attributes': [{
+                    pattern: new RegExp('(?<=(?<!\\\\)\\|=?)\\{(?:[<>~][\\^~v]?|\\?[\\^~v])(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?= )'),
+                    greedy: true,
+                    alias: 'attr-value',
+                    inside: Object.assign({
+                        'table-alignment': { pattern: /(^\{)(?:[<>~][\^~v]?|\?[\^~v])/, lookbehind: true },
+                    }, attributes.inside),
+                }, attributes],
                 'url': new RegExp(unescaped('\\[') + /[^\]]+\]\([^\s)]+\)/.source),
             }, inline),
         },

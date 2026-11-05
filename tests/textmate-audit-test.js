@@ -50,12 +50,13 @@ const refuteScope = (source, text, scope, from = 0) => assert.ok(!has(source, te
 
 console.log('front matter needs its closer:');
 
-ok('an unclosed bare dash run does not turn the document into YAML', () => {
+// carve#5016: a first-line opener with no closer runs to the end of the document.
+ok('an unclosed bare dash run is front matter to the end of the document', () => {
     const source = '---\n\nPara *b*\n\n# Heading';
-    assert.match(html(source), /^<hr>/);
-    refuteScope(source, 'Para', 'meta.frontmatter');
-    assertScope(source, 'b*', 'markup.bold');
-    assertScope(source, 'Heading', 'markup.heading');
+    assert.equal(html(source), '');
+    assertScope(source, 'Para', 'meta.frontmatter');
+    refuteScope(source, 'b*', 'markup.bold');
+    assertScope(source, 'Heading', 'meta.frontmatter');
 });
 
 ok('a closed block stays front matter, comments and nested values included', () => {
@@ -75,15 +76,16 @@ ok('a block holding only a boolean, null or number stays front matter', () => {
     }
 });
 
-// RESIDUAL: any other plain line ends the block, since begin cannot see the closer,
-// and a `# ` line before it reads as a YAML comment even when the block never closes.
-ok('residual: a plain-text bare block and an unclosed comment line', () => {
+// carve#5016 removed the closer lookahead, so a plain-text line no longer ends the block.
+ok('a plain-text bare block and an unclosed comment line stay front matter', () => {
     const plain = '---\nhello\n---\nBody';
     assert.equal(html(plain).trim(), '<p>Body</p>');
-    refuteScope(plain, 'hello', 'meta.frontmatter');
+    assertScope(plain, 'hello', 'meta.frontmatter');
+    refuteScope(plain, 'Body', 'meta.frontmatter');
     const heading = '---\n# Heading\n\npara';
-    assert.match(html(heading), /<h1>Heading<\/h1>/);
+    assert.equal(html(heading), '');
     assertScope(heading, 'Heading', 'meta.embedded.block.yaml');
+    assertScope(heading, 'para', 'meta.frontmatter');
 });
 
 console.log('\nan unpartnered verbatim run closes on a later line:');
