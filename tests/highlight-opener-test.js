@@ -561,7 +561,8 @@ ok('the generated space is big enough to mean something', () => {
     // 33 of the 1555 hold a highlight the engine renders, which is the point of
     // the space: the other 1522 are runs it refuses, and most of them are the
     // ones a guard could get wrong in the other direction.
-    assert.ok(marked >= 25, `the engine marks only ${marked} of ${DOCUMENTS.length} generated documents`);
+    // carve#4197: a comparison's `=` neither opens nor closes, which took the count to 20.
+    assert.ok(marked >= 15, `the engine marks only ${marked} of ${DOCUMENTS.length} generated documents`);
     assert.ok(
         DOCUMENTS.length - marked >= 1000,
         `the engine marks all but ${DOCUMENTS.length - marked} generated documents`,

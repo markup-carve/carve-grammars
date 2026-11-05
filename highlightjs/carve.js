@@ -198,7 +198,8 @@
     // a letter.
     const LETTER_OR_DIGIT = '[A-Za-z0-9\\u0080-\\uFFFF]';
     const BARE_CODE = '```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)';
-    const bareCloser = (d) => `(?<=\\S)${d}(?!${LETTER_OR_DIGIT})`;
+    // The `=` of a comparison neither opens nor closes (PART 9 §9).
+    const bareCloser = (d) => `(?<=\\S)${d === '=' ? '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}[>!])(?:(?<!(?<!\\\\)(?:\\\\\\\\){0,32}<)=|=(?=[=>]))' : d}(?!${LETTER_OR_DIGIT})`;
     // A braced span's body: a braced span of another kind, a closed code span
     // and a link destination or autolink are atoms, so the closer is the first
     // one outside all three. An insertion or deletion (`atoms` false) closes at
@@ -221,11 +222,11 @@
         const opaque = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE, sameKindAtoms(d) + '|' + bracedSource(BRACED_KINDS.filter((kind) => kind !== d)));
         // Keep the whitespace and letter cases disjoint for repeated `*a`.
         const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}(?!${LETTER_OR_DIGIT})|${d}(?=${LETTER_OR_DIGIT})`
-            + `|(?!${opaque})[^${d}\\\\\\n\`]|\\n(?![ \\t]*\\n))`;
+            + `${d === '=' ? '|[>!]=|<=(?![=>])' : ''}|(?!${opaque})[^${d}\\\\\\n\`]|\\n(?![ \\t]*\\n))`;
         // A plain scan for any closer runs first: the atom scan re-reads every
         // braced span from each opener, so openers with no closer went cubic.
         // Tempered on disjoint non-closer cases, so a failure costs one pass.
-        const precheck = `(?:[^${d}\\n]|\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})){0,4096}${bareCloser(d)}`;
+        const precheck = `(?:[^${d}\\n]|${d === '=' ? '[>!]=|<=(?![=>])|' : ''}\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})){0,4096}${bareCloser(d)}`;
         opener = new RegExp(`${opener.source}(?=${precheck})`);
         return {
             begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?${bareCloser(d)})`),
@@ -509,9 +510,9 @@
      * `=` IS IN THE OPENER'S OWN LOOKAHEAD: a doubled run opens nothing, so
      * `x == y` stays literal.
      *
-     * THE CLOSER IS DELIBERATELY NOT GUARDED AGAINST SMART TYPOGRAPHY, and the
-     * asymmetry is the engine's: once a highlight is open the closer wins over
-     * the pattern, so `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`.
+     * THE `=` OF A COMPARISON NEITHER OPENS NOR CLOSES (PART 9 §9): `x =y z<= w`
+     * marks nothing and `x =!== y` marks the `≠`. An arrow is no such guard:
+     * `x =y z=> w` marks `y z`.
      *
      * AN ESCAPED `=` IS NOT A DELIMITER (carve-grammars#385): `x =\= y`
      * renders `x == y` with no mark. The guard consumes an escape as a pair,
@@ -2934,7 +2935,7 @@
     // A bare run holds inline content. Inside it, a same-kind braced span nests
     // and `{**}` is text, and so is a bare opener whose closer lies only past
     // this run's.
-    // Once a highlight is open its closer beats smart typography (`x =y z<= w`).
+    // Once a highlight is open its closer beats an arrow; a comparison is no closer.
     // A link whose label the LINK mode cannot read, or an autolink, is still
     // opaque to a bare closer.
     const OPAQUE_DESTINATION = { begin: new RegExp(OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE + '|', '')), relevance: 0 };
@@ -2955,7 +2956,9 @@
         const content = bareContent(d, mode);
         const at = content.findIndex((m) => m === HIGHLIGHT || m === STRONG || m === EMPHASIS);
         content.splice(at, 0, crossing);
-        mode.contains = [{ begin: new RegExp(`\\s${d}`), relevance: 0 }, DELIMITED_COMMENT, ...content];
+        // The `=` of a comparison is no closer (PART 9 §9).
+        const comparison = d === '=' ? [{ className: 'literal', begin: /[>!]=|<=(?![=>])/, relevance: 0 }] : [];
+        mode.contains = [{ begin: new RegExp(`\\s${d}`), relevance: 0 }, DELIMITED_COMMENT, ...comparison, ...content];
     }
 
     // A braced span holds inline content. Its own bare delimiter is text inside
