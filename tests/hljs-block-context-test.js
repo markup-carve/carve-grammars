@@ -33,12 +33,12 @@ const scopeOf = (source, needle) => {
 };
 
 console.log('front matter:');
-check('an opener with no closer is a thematic break, not front matter', () => {
+// carve#5016: a first-line opener with no closer runs to the end of the document.
+check('an opener with no closer is front matter to the end of the document', () => {
     const source = '---\n\nPara *b*\n\n# Heading\n';
-    assert.match(carveToHtml(source), /^<hr>/);
-    assert.equal(scoped(source, /^language-/).length, 0);
-    assert.equal(scopeOf(source, '# Heading'), 'section');
-    assert.equal(scopeOf(source, '*b*'), 'strong');
+    assert.equal(carveToHtml(source), '');
+    assert.notEqual(scopeOf(source, '# Heading'), 'section');
+    assert.notEqual(scopeOf(source, '*b*'), 'strong');
 });
 check('the closing dash line is the envelope, not the payload', () => {
     for (const source of ['---toml\na = 1\n---\n\nx\n', '---\ntitle: x\n---\nbody\n', '---json\n{"a": 1}\n---\nx\n']) {

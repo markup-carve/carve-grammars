@@ -1495,13 +1495,14 @@
             },
         ],
 
-        // Typed front matter. Bare `---` is YAML; known payloads receive their
+        // Typed front matter. Bare `---` is YAML; an opener with no closer runs to
+        // the end of the document (carve#5016). Known payloads receive their
         // native Prism grammar when the host registered it, with compact local
         // fallbacks so the standalone Carve grammar still provides useful
         // highlighting. Unknown format tokens remain opaque metadata.
         'front-matter': [
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?json[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?json|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1517,7 +1518,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?toml[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?toml|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1532,7 +1533,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 greedy: true,
                 inside: Object.assign({
                     'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?---(?: ?(?:yaml|yml))?|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' },
@@ -1546,7 +1547,7 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*(?:\r\n?|\n)(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 alias: 'comment',
                 greedy: true,
                 inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
@@ -1899,7 +1900,15 @@
                     inside: { 'table-boundary': /^\|/ },
                 },
                 'table-boundary': /\|/,
-                'attributes': attributes,
+                // Braced cell alignment leads the cell's attribute block: `|={>} a |`, `|{> .num} 1 |` (carve#5091 D3).
+                'attributes': [{
+                    pattern: new RegExp('(?<=(?<!\\\\)\\|=?)\\{(?:[<>~][\\^~v]?|\\?[\\^~v])(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?= )'),
+                    greedy: true,
+                    alias: 'attr-value',
+                    inside: Object.assign({
+                        'table-alignment': { pattern: /(^\{)(?:[<>~][\^~v]?|\?[\^~v])/, lookbehind: true },
+                    }, attributes.inside),
+                }, attributes],
                 'url': new RegExp(unescaped('\\[') + /[^\]]+\]\([^\s)]+\)/.source),
             }, inline),
         },
