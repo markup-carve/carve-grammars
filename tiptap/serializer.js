@@ -628,9 +628,8 @@ export function serializeToCarve(doc, options = {}) {
             case 'horizontalRule':
                 const ruleAttrs = serializeAttributes(node.attrs, ['carveMarker']);
                 if (ruleAttrs) output += ruleAttrs + '\n';
-                const ruleMarker = node.attrs?.carveMarker === '*' || node.attrs?.carveMarker === '_'
-                    ? node.attrs.carveMarker
-                    : '-';
+                // A rule with no authored marker is written in the canonical `***`.
+                const ruleMarker = ['*', '_', '-'].includes(node.attrs?.carveMarker) ? node.attrs.carveMarker : '*';
                 // A dash run on the first line opens frontmatter when a later
                 // `---` closes it, so a dash rule that starts the document is `***`.
                 output += (ruleMarker === '-' && output === '' && detached === 0 ? '*' : ruleMarker).repeat(3) + '\n';
