@@ -80,6 +80,18 @@ export function declaredCorpusSize() {
         try {
             text = readFileSync(`${EXAMPLES_DIR}/${page}`, 'utf8');
         } catch {
+            // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+            const dir = `${EXAMPLES_DIR}/${page.replace(/\.md$/, '')}`;
+            let sections = [];
+            try {
+                sections = readdirSync(dir).filter((f) => f.endsWith('.md')).sort();
+            } catch {
+                sections = [];
+            }
+            if (sections.length > 0) {
+                for (const section of sections) declared += declaredPairsIn(readFileSync(`${dir}/${section}`, 'utf8'));
+                continue;
+            }
             throw new Error(
                 `${EXAMPLES_DIR}/${page} is missing - the submodule is incomplete, or the ` +
                 'spec moved the corpus source pages. Without them there is nothing to ' +
