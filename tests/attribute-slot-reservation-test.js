@@ -172,7 +172,8 @@ console.log(`  ✓ ${authoredSources.length} authored runs survive on a node tha
 // A cell's alignment marker renders as `text-align`, which Tiptap 3's own
 // `align` attribute read back as an authored run (#532).
 const alignedTables = [
-    ['|= a |=> b |\n| c | d |', '|= a |=> b |\n| c | d |'],
+    // carve#5091 D3: the writer moves the deprecated glued marker into braces.
+    ['|= a |=> b |\n| c | d |', '|= a |={>} b |\n| c | d |'],
     ['| a |{align=right} b |', '| a |{align="right"} b |'],
 ];
 for (const [source, expected] of alignedTables) {
