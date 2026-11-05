@@ -1483,7 +1483,7 @@
           },
           "end": "(?=\\|)|$",
           "contentName": "markup.bold.table.header.carve",
-          "patterns": [{ "comment": "Braced cell alignment leads the cell's attribute block (carve#5091 D3).", "match": "\\G(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "name": "meta.attributes.carve", "captures": { "1": { "name": "punctuation.definition.attributes.carve" }, "2": { "name": "keyword.operator.table.alignment.carve" }, "4": { "name": "punctuation.definition.attributes.carve" } } }, 
+          "patterns": [{ "comment": "Braced cell alignment leads the cell's attribute block (carve#5091 D3).", "match": "\\G(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "name": "meta.attributes.carve", "captures": { "1": { "name": "punctuation.definition.attributes.carve" }, "2": { "name": "keyword.operator.table.alignment.carve" }, "4": { "name": "punctuation.definition.attributes.carve" } } }, 
             {
               "match": "(?<=[ \\t])%{2,}(?:\\\\.|[^\\\\|\\r\\n])*",
               "name": "comment.line.percent.carve"
@@ -1512,7 +1512,7 @@
             }
           }
         },
-        { "comment": "Braced cell alignment on a data cell (carve#5091 D3).", "match": "(\\|)(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "captures": { "1": { "name": "punctuation.separator.table.carve" }, "2": { "name": "punctuation.definition.attributes.carve" }, "3": { "name": "keyword.operator.table.alignment.carve" }, "5": { "name": "punctuation.definition.attributes.carve" } } },
+        { "comment": "Braced cell alignment on a data cell (carve#5091 D3).", "match": "(\\|)(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "captures": { "1": { "name": "punctuation.separator.table.carve" }, "2": { "name": "punctuation.definition.attributes.carve" }, "3": { "name": "keyword.operator.table.alignment.carve" }, "5": { "name": "punctuation.definition.attributes.carve" } } },
 {
           "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
           "captures": {
