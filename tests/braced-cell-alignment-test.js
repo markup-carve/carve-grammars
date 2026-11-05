@@ -21,6 +21,7 @@ const ALIGNED = [
     ['|={>^} T |\n', '>^'],
     ['|={~ #score} S |\n', '~'],
     ['|{~~} z |\n', '~~'],
+    ['|{> k="a\\"b"} x |\n', '>'],
 ];
 
 const alignmentText = (tokens, has) => tokens.filter(has).map((t) => t.text).join('');
