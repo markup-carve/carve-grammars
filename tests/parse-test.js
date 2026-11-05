@@ -168,14 +168,15 @@ check('editor-shaped footnote hooks beat superscript and list item',
     'Text[^f].\n\n[^f]: Note body.');
 
 // The marker STYLE arrives as `<ol type>` on the HTML path, which is a different
-// attribute from the one the Carve AST carries.
+// attribute from the one the Carve AST carries. A letter or roman marker with a
+// dot takes two spaces (carve#4828).
 check('an alphabetic ordered list keeps its style through the editor',
     '<ol type="a" start="2"><li>x</li></ol>',
-    'b. x');
+    'b.  x');
 
 check('a roman ordered list keeps its style through the editor',
     '<ol type="i"><li>x</li><li>y</li></ol>',
-    'i. x\nii. y');
+    'i.  x\nii.  y');
 
 check('an imported HTML decimal list remains explicitly numbered',
     '<ol><li>x</li><li>y</li></ol>',
