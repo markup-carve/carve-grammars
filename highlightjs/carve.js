@@ -389,11 +389,10 @@
     // Front matter is valid only at byte offset zero. Unlike the historical
     // `^---$` rule, the negative lookbehind below cannot match a thematic break
     // on a later line even though highlight.js compiles modes with `m`.
-    // An opener with no closing dash line ahead is a thematic break, so the
-    // closer is required up front; the scan runs at offset zero only.
+    // An opener with no closing dash line runs to the end of the document
+    // (carve#5016), so no closer lookahead.
     const FRONT_MATTER_CLOSER = /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/;
-    const frontMatterOpener = (format) => new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])'
-        + '(?=[\\s\\S]*?(?:\\r\\n|\\r|\\n)---[ \\t]*$(?![^\\r\\n]))');
+    const frontMatterOpener = (format) => new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])');
     const frontMatter = (format) => ({
         className: 'meta',
         begin: frontMatterOpener(format),
@@ -2565,6 +2564,11 @@
                 beginScope: { 1: 'table-boundary', 2: 'table-header', 3: 'table-alignment' },
             },
             { begin: [/\|/, /=(?= |\{)/], beginScope: { 1: 'table-boundary', 2: 'table-header' } },
+            // Braced cell alignment leads the cell's attribute block (carve#5091 D3).
+            {
+                begin: [/(?<=(?<!\\)\|=?)\{/, /(?:[<>~][\^~v]?|\?[\^~v])/, /(?=(?:[ \t]+(?::[\w-]*|[.#]?[\w-]+(?:=(?:"[^"\n]{0,256}"|'[^'\n]{0,256}'|[^\s"'{}]{1,256}))?))*[ \t]*\})/],
+                beginScope: { 2: 'table-alignment' },
+            },
             { className: 'table-span', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
             { className: 'table-alignment', begin: /(?<=\|)(?:[<~>](?:[\^~v])?|\?[\^~v])(?= |\{)/ },
             { className: 'table-boundary', begin: /\|(?!(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))(?=[^\n]*\|(?:\{[^}\n]*\})?[ \t]*$(?![^\r\n]))/ },

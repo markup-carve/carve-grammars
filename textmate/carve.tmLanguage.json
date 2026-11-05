@@ -125,8 +125,8 @@
         },
         {
           "begin": "\\A\\x{FEFF}?(---)(?: ?(?:(yaml|yml)))?[ \\t]*$",
-          "comment": "No closer in sight is a thematic break, and begin cannot look ahead for one: a column-0 line no YAML mapping starts (no key, comment, sequence or flow opener) ends the block instead of coloring the rest of the document. A line holding only a boolean, null or number stays YAML, since that is a scalar-only block.",
-          "end": "^(---)[ \\t]*$|^(?=[^\\s#\\-\"'\\[{](?![^\\n]*:(?:[ \\t]|$)))(?!(?:(?i:true|false|null)|~|\\+?(?:\\d[\\d_]*(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?)[ \\t]*$)",
+          "comment": "An opener with no closer runs to the end of the document (carve#5016).",
+          "end": "^(---)[ \\t]*$",
           "name": "meta.frontmatter.yaml.carve",
           "contentName": "meta.embedded.block.yaml",
           "beginCaptures": {
@@ -181,8 +181,8 @@
         },
         {
           "begin": "\\A\\x{FEFF}?(---)(?: ?(?:(yaml|yml)))?[ \\t]*$",
-          "comment": "No closer in sight is a thematic break, and begin cannot look ahead for one: a column-0 line no YAML mapping starts (no key, comment, sequence or flow opener) ends the block instead of coloring the rest of the document. A line holding only a boolean, null or number stays YAML, since that is a scalar-only block.",
-          "end": "^(---)[ \\t]*$|^(?=[^\\s#\\-\"'\\[{](?![^\\n]*:(?:[ \\t]|$)))(?!(?:(?i:true|false|null)|~|\\+?(?:\\d[\\d_]*(?:\\.\\d*)?|\\.\\d+)(?:[eE][-+]?\\d+)?)[ \\t]*$)",
+          "comment": "An opener with no closer runs to the end of the document (carve#5016).",
+          "end": "^(---)[ \\t]*$",
           "name": "meta.frontmatter.yaml.carve",
           "contentName": "meta.embedded.block.yaml",
           "beginCaptures": {
@@ -1483,7 +1483,7 @@
           },
           "end": "(?=\\|)|$",
           "contentName": "markup.bold.table.header.carve",
-          "patterns": [
+          "patterns": [{ "comment": "Braced cell alignment leads the cell's attribute block (carve#5091 D3).", "match": "\\G(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "name": "meta.attributes.carve", "captures": { "1": { "name": "punctuation.definition.attributes.carve" }, "2": { "name": "keyword.operator.table.alignment.carve" }, "4": { "name": "punctuation.definition.attributes.carve" } } }, 
             {
               "match": "(?<=[ \\t])%{2,}(?:\\\\.|[^\\\\|\\r\\n])*",
               "name": "comment.line.percent.carve"
@@ -1512,7 +1512,8 @@
             }
           }
         },
-        {
+        { "comment": "Braced cell alignment on a data cell (carve#5091 D3).", "match": "(\\|)(\\{)((?:[<>~][\\^~v]?|\\?[\\^~v]))((?:[ \\t]+(?::[\\w-]*|[.#]?[\\w-]+(?:=(?:\"[^\"\\n]*\"|'[^'\\n]*'|[^\\s\"'{}]+))?))*)[ \\t]*(\\})(?= )", "captures": { "1": { "name": "punctuation.separator.table.carve" }, "2": { "name": "punctuation.definition.attributes.carve" }, "3": { "name": "keyword.operator.table.alignment.carve" }, "5": { "name": "punctuation.definition.attributes.carve" } } },
+{
           "match": "(?<=\\|)\\s*(\\^)\\s*(?=\\|)",
           "captures": {
             "1": {
