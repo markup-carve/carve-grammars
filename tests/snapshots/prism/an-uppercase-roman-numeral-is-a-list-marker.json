@@ -1,18 +1,6 @@
 [
   {
-    "type": "list>punctuation",
-    "text": "I. "
-  },
-  {
     "type": "text",
-    "text": "one\n"
-  },
-  {
-    "type": "list>punctuation",
-    "text": "II. "
-  },
-  {
-    "type": "text",
-    "text": "two\n"
+    "text": "I. one\nII. two\n"
   }
 ]

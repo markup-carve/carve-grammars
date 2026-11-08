@@ -415,9 +415,6 @@ export const CONSTRUCTS = [
     { name: "typography arrow double reversed", sample: "a <== b", payload: "<==", textmate: "typography", whole: true },
     { name: "typography arrow double forward", sample: "a ==> b", payload: "==>", textmate: "typography", whole: true },
     { name: "typography arrow double bidirectional", sample: "a <=> b", payload: "<=>", textmate: "typography", whole: true },
-    { name: "typography arrow deprecated reversed", sample: "a <- b", payload: "<-", textmate: "typography", whole: true },
-    { name: "typography arrow deprecated forward", sample: "a -> b", payload: "->", textmate: "typography", whole: true },
-    { name: "typography arrow deprecated bidirectional", sample: "a <-> b", payload: "<->", textmate: "typography", whole: true },
     { name: "typography en dash", sample: "a -- b", payload: "--", textmate: "typography", whole: true },
     { name: "typography em dash", sample: "a --- b", payload: "---", textmate: "typography", whole: true },
     { name: "typography ellipsis", sample: "a ... b", payload: "...", textmate: "typography", whole: true },
@@ -463,8 +460,6 @@ export const CONSTRUCTS = [
      * tests/highlight-opener-test.js.
      */
     { name: "typography comparison unequal", sample: "a != b", payload: "!=", textmate: "typography", whole: true },
-    { name: "typography symbol copyright", sample: "a (c) b", payload: "(c)", textmate: "typography", whole: true },
-    { name: "typography symbol registered", sample: "a (r) b", payload: "(r)", textmate: "typography", whole: true },
     { name: "typography symbol trademark", sample: "a (tm) b", payload: "(tm)", textmate: "typography", whole: true },
     { name: "typography symbol plus-minus", sample: "a +-1 b", payload: "+-", textmate: "typography", whole: true },
     { name: "hard break", sample: "line\\\n next", payload: "\\", textmate: "hard-break" },
@@ -556,16 +551,18 @@ export const CONSTRUCTS = [
     { name: "empty link title", sample: "[x](u \"\")", payload: "u", textmate: "markup.underline.link" },
     { name: "ordered marker decimal", sample: "1. first", payload: "1.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker paren", sample: "1) first", payload: "1)", textmate: "punctuation.definition.list.numbered" },
-    { name: "ordered marker alpha", sample: "a. first", payload: "a.", textmate: "punctuation.definition.list.numbered" },
-    { name: "ordered marker roman", sample: "iv. fourth", payload: "iv.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker alpha", sample: "a.  first", payload: "a.", textmate: "punctuation.definition.list.numbered" },
+    // A letter or roman marker with `.` needs two spaces after it (markup-carve/carve#4811).
+    { name: "ordered marker alpha paren", sample: "a) first", payload: "a)", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker roman", sample: "iv.  fourth", payload: "iv.", textmate: "punctuation.definition.list.numbered" },
     // A roman run is CASE-CONSISTENT, and both spellings open a list. The mixed-case
     // counter-examples are in LITERALS below; the two here are what a rule that rejects
     // multi-letter runs outright would break (#118).
-    { name: "ordered marker roman lowercase run", sample: "ivx. text", payload: "ivx.", textmate: "punctuation.definition.list.numbered" },
-    { name: "ordered marker roman uppercase run", sample: "IVX. text", payload: "IVX.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker roman lowercase run", sample: "ivx.  text", payload: "ivx.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker roman uppercase run", sample: "IVX.  text", payload: "IVX.", textmate: "punctuation.definition.list.numbered" },
     // A word made only of roman letters IS a marker - `mix.` is 1009. So the case split
     // is the fix rather than a length or dictionary rule.
-    { name: "ordered marker roman word", sample: "mix. text", payload: "mix.", textmate: "punctuation.definition.list.numbered" },
+    { name: "ordered marker roman word", sample: "mix.  text", payload: "mix.", textmate: "punctuation.definition.list.numbered" },
     { name: "ordered marker bare dot with attrs", sample: ".{#x} attributed", payload: ".", textmate: "punctuation.definition.list.numbered" },
     // The valid half of #85. The marker takes ONE glued attribute block and
     // then content; these are the shapes a lookahead that stops at the first
@@ -800,6 +797,24 @@ export const CONSTRUCTS = [
  * @type {Array<{name: string, sample: string, payload: string, scopes: object}>}
  */
 export const LITERALS = [
+    // Spellings the 0.1.14 spec turned into text: single-hyphen arrows
+    // (markup-carve/carve#4815), an arrow inside a longer hyphen run
+    // (markup-carve/carve#4851), `(c)` and `(r)` (markup-carve/carve#4808), and a
+    // letter or roman `.` marker with one space (markup-carve/carve#4811).
+    { name: 'a single-hyphen forward arrow is text', sample: 'a -> b\n', payload: '->', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a single-hyphen reversed arrow is text', sample: 'a <- b\n', payload: '<-', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a single-hyphen bidirectional arrow is text', sample: 'a <-> b\n', payload: '<->', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a forward arrow needs its exact hyphen run', sample: 'a--->b\n', payload: '-->', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a reversed arrow needs its exact hyphen run', sample: 'a<---b\n', payload: '<--', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a bidirectional arrow needs its exact hyphen run', sample: 'a<--->b\n', payload: '<-->', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: '(c) is text', sample: 'a (c) b\n', payload: '(c)', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: '(r) is text', sample: 'a (r) b\n', payload: '(r)', scopes: { prism: 'typography', highlightjs: 'literal', textmate: 'typography' } },
+    { name: 'a letter marker with one space is text', sample: 'a. first\n', payload: 'a.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
+    { name: 'a roman marker with one space is text', sample: 'iv. fourth\n', payload: 'iv.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
+    { name: 'an uppercase letter marker with one space is text', sample: 'A. first\n', payload: 'A.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
+    { name: 'a roman word marker with one space is text', sample: 'mix. text\n', payload: 'mix.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
+    { name: 'a letter marker with one space is text in a list item', sample: '- a. x\n', payload: 'a.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
+    { name: 'a letter marker with one space is text in a quote', sample: '> a. x\n', payload: 'a.', scopes: { prism: 'list', highlightjs: 'bullet', textmate: 'list.numbered' } },
     {
         /*
          * THE BRACED EN DASH IS NOT AN EMPTY DELETION (carve-grammars#378).

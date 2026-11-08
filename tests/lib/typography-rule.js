@@ -51,5 +51,6 @@ export function typographyAlternatives(surface) {
     return matches[0]
         .replace(/^\(|\)$/g, '')
         .split('|')
-        .map((alternative) => alternative.replace(/\\(.)/g, '$1'));
+        // A lookaround guards a run's neighbors (`<--(?!-)`), not its spelling.
+        .map((alternative) => alternative.replace(/\(\?<?[=!][^)]*\)/g, '').replace(/\\(.)/g, '$1'));
 }

@@ -2,9 +2,9 @@
  * Every TextMate grammar reads an arrow the way the language spells it.
  *
  * The doubled runs are the CANONICAL arrows in both families
- * (`386-the-doubled-run-is-the-canonical-arrow-in-both-families`), the single
- * runs are deprecated but still rendered, and a bare `=>` is NOT an arrow - it
- * is `key => value`, ordinary prose about code.
+ * (`386-the-doubled-run-is-the-canonical-arrow-in-both-families`). The single
+ * hyphen runs are text since markup-carve/carve#4815, and a bare `=>` is NOT an
+ * arrow - it is `key => value`, ordinary prose about code.
  *
  * Prism and highlight.js learned that family; both TextMate grammars did not,
  * and the vscode port additionally highlighted the one run the language says
@@ -33,14 +33,14 @@ const ARROWS = [
     ['<==', 'canonical'],
     ['==>', 'canonical'],
     ['<=>', 'canonical'],
-    ['<-', 'deprecated'],
-    ['->', 'deprecated'],
-    ['<->', 'deprecated'],
 ];
 
 /** The runs that are NOT arrows, each for its own stated reason. */
 const NOT_ARROWS = [
     ['=>', 'key => value is prose about code, so the run stays literal'],
+    ['->', 'a single-hyphen arrow is text (markup-carve/carve#4815)'],
+    ['<-', 'a single-hyphen arrow is text (markup-carve/carve#4815)'],
+    ['<->', 'a single-hyphen arrow is text (markup-carve/carve#4815)'],
 ];
 
 /**

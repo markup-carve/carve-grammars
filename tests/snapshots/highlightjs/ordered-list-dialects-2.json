@@ -1,26 +1,6 @@
 [
   {
-    "scope": "bullet",
-    "text": "iv."
-  },
-  {
     "scope": null,
-    "text": " four\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "v."
-  },
-  {
-    "scope": null,
-    "text": " five\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "vi."
-  },
-  {
-    "scope": null,
-    "text": " six\n"
+    "text": "iv. four\nv. five\nvi. six\n"
   }
 ]

@@ -65,23 +65,7 @@
   },
   {
     "type": "text",
-    "text": "1.\n"
-  },
-  {
-    "type": "typography>constant",
-    "text": "(c)"
-  },
-  {
-    "type": "text",
-    "text": " 2024, "
-  },
-  {
-    "type": "typography>constant",
-    "text": "(r)"
-  },
-  {
-    "type": "text",
-    "text": ", "
+    "text": "1.\n(c) 2024, (r), "
   },
   {
     "type": "typography>constant",

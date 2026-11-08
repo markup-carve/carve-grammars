@@ -206,8 +206,8 @@
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
             '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}[.)]|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
         ),
         greedy: true,
         alias: 'attr-value',
@@ -261,7 +261,7 @@
     var commentAfterPrefix = '^(?<![^\\r\\n])(' + outsideSpans + '[ \\t])%%(?!%)';
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
-        + '|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)] +|\\. +)';
+        + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\. +)';
     var markerCodeForms = [];
     for (var depth = 1; depth <= 8; depth++) {
         markerCodeForms.push([Array(depth).fill('[-*] ').join(''), depth * 2]);
@@ -271,9 +271,10 @@
         markerCodeForms.push(['[0-9]{' + digits + '}[.)] ', digits + 2]);
     }
     for (var roman = 2; roman <= 6; roman++) {
-        markerCodeForms.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})[.)] ', roman + 2]);
+        markerCodeForms.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})\\) ', roman + 2]);
+        markerCodeForms.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})\\.  ', roman + 3]);
     }
-    markerCodeForms.push(['[A-Za-z][.)] ', 3], ['\\. ', 2]);
+    markerCodeForms.push(['[A-Za-z]\\) ', 3], ['[A-Za-z]\\.  ', 4], ['\\. ', 2]);
 
     // A list marker does not interrupt a paragraph: a marker line whose block
     // began with a plain unindented line (after a blank line, the start, or a
@@ -282,7 +283,7 @@
     var lonePlusBlock = '(?:\\+|[ \\t]*(?:> )+\\+)[ \\t\\r]*(?=(?:\\r\\n?|\\n))';
     var lonePlusLine = '(?:\\+|[ \\t]*(?:> )+\\+)[ \\t\\r]*(?:\\r\\n?|\\n)';
     var oneLineBlock = '(?:[ \\t]*(?:> ?)*(?:#{1,6} |(?:-{3,}|\\*{3,}|_{3,})[ \\t\\r]*(?=(?:\\r\\n?|\\n))|\\||:{2,}|`{3,}|~{3,}|\\{|%%|\\^ |\\*?\\[[^\\]\\r\\n]*\\]: )|' + lonePlusBlock + ')';
-    var markerLine = '(?:: +|[-*][ {]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)][ {]|\\.[ {])';
+    var markerLine = '(?:: +|[-*][ {]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))[ {]|\\.[ {])';
     // A lone `+` line, and an attribute line right after one, attach the next
     // block to the container, so neither starts a paragraph run.
     // A lookbehind matches right to left, so each line start is asserted right
@@ -350,7 +351,7 @@
      * quadratic on a line of many `%%` runs; here the prefix is read once per
      * line. A line holding a bare `\r` keeps the exact per-candidate test.
      */
-    var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)|\\||\\^)';
+    var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)|\\||\\^)';
     function toLineEndOutsideBlockOpeners(head) {
         var opener = RegExp(BLOCK_OPENER_PREFIX, 'y');
         var exact = RegExp('(?<!^(?<![^\\r\\n])' + BLOCK_OPENER_PREFIX + '[^\\r\\n]*)', 'my');
@@ -536,7 +537,7 @@
     // a folded term line (`term_continuation_line`, corpus
     // 25-definition-lists-6) and a definition separated from its term by one
     // blank line (corpus 25-definition-lists-7) scoped correctly.
-    var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$(?![^\r\n])|\*{3,}[ \t]*$(?![^\r\n])|_{3,}[ \t]*$(?![^\r\n])|`{3,}|~{3,}|:{3,}|>(?: |$(?![^\r\n]))|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+[.)][ \t]|\.[ \t])/.source;
+    var otherBlockOpener = /[ \t]*(?:#{1,6} |-{3,}[ \t]*$(?![^\r\n])|\*{3,}[ \t]*$(?![^\r\n])|_{3,}[ \t]*$(?![^\r\n])|`{3,}|~{3,}|:{3,}|>(?: |$(?![^\r\n]))|\^ |\||[-*][ \t]|[-*]\{|\d+[.)][ \t]|[A-Za-z]+(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))[ \t]|\.[ \t])/.source;
 
     function bareRun(delimiter) {
         var braced = bracedInline(bracedKinds.filter(function (kind) { return kind !== delimiter; }));
@@ -938,12 +939,12 @@
     var footnoteBody = footnoteHost + '[^\\r\\n]*(?:\\r\\n?|\\n)(?:(?:[ \\t]*\\r?|[ \\t]+[^ \\t\\r\\n][^\\r\\n]*|%%[^\\r\\n]*)(?:\\r\\n?|\\n)){0,64}';
     // A container's opening line and the lines of its body down to a term.
     var dlContainer = function (host) {
-        return '(?<![^\\r\\n])(?:' + host + ')[^\\r\\n]*(?:\\r\\n?|\\n)(?:[ \\t]+(?![ \\t]|[-*] |\\w+[.)] |::? )[^\\r\\n]*(?:\\r\\n?|\\n)|%%[^\\r\\n]*(?:\\r\\n?|\\n)|[ \\t]*(?:\\r\\n?|\\n)){0,64}';
+        return '(?<![^\\r\\n])(?:' + host + ')[^\\r\\n]*(?:\\r\\n?|\\n)(?:[ \\t]+(?![ \\t]|[-*] |(?:\\w+\\)|\\d+\\.|\\w+\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) |::? )[^\\r\\n]*(?:\\r\\n?|\\n)|%%[^\\r\\n]*(?:\\r\\n?|\\n)|[ \\t]*(?:\\r\\n?|\\n)){0,64}';
     };
     // From a term to the next description line below it.
     var dlTermToDescription = ':: [^\\r\\n]*(?:\\r\\n?|\\n)(?:[ \\t]+(?!::? )[^ \\t\\r\\n][^\\r\\n]*(?:\\r\\n?|\\n)|[ \\t]*(?:\\r\\n?|\\n)){0,64}';
     var dlAligned = (function () {
-        var unit = '(?:[ \\t]|[-*+] |[0-9A-Za-z]+[.)] |\\[[ xX\\-_>\\/!?]\\] |::? )';
+        var unit = '(?:[ \\t]|[-*+] |(?:[0-9A-Za-z]+\\)|[0-9]+\\.|[0-9A-Za-z]+\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) |\\[[ xX\\-_>\\/!?]\\] |::? )';
         var lines = '[^\\r\\n]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,64}';
         var at = ['\\1::? '];
         // n columns, a tab running to the next multiple of 4.
@@ -990,7 +991,7 @@
     // anywhere else the engines fold it into a paragraph. One branch per
     // column, each checked right after the indentation.
     var dlTermHosted = (function () {
-        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
+        var list = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
         // A description hosts only at column 0 or after list markers on its line.
         var hostLead = '(?:[ \\t]*' + list + ' +|(?:' + list + ' +)*: +)';
         // A column-0 lazy line right under a non-blank line keeps the item open.
@@ -1002,10 +1003,10 @@
         var dlAbove = '(?<![^\\r\\n])(?:> ?)*[ \\t]*:: [^\\r\\n]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,64}(?:> ?)*[ \\t]*: ';
         // An indented line continues an item, description or footnote above it,
         // past a blank line only from two columns in; elsewhere it is text.
-        var inItem = '(?<![^\\r\\n])[ \\t]*(?:(?:[-*]|\\w+[.)]|::?) +\\S|\\[\\^)[^\\r\\n]*(?:\\r\\n?|\\n)(?:(?:[ \\t]+\\S[^\\r\\n]*(?:\\r\\n?|\\n))*[ \\t]+|(?:(?:[ \\t]*\\r?|[ \\t]+\\S[^\\r\\n]*)(?:\\r\\n?|\\n)){0,64}(?:  | ?\\t)[ \\t]*)\\S';
+        var inItem = '(?<![^\\r\\n])[ \\t]*(?:(?:[-*]|(?:\\w+\\)|\\d+\\.|\\w+\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|::?) +\\S|\\[\\^)[^\\r\\n]*(?:\\r\\n?|\\n)(?:(?:[ \\t]+\\S[^\\r\\n]*(?:\\r\\n?|\\n))*[ \\t]+|(?:(?:[ \\t]*\\r?|[ \\t]+\\S[^\\r\\n]*)(?:\\r\\n?|\\n)){0,64}(?:  | ?\\t)[ \\t]*)\\S';
         var prevOk = '(?=[^\\r\\n])(?<=(?:(?<![\\s\\S])|(?<![^\\r\\n])(?=(?:> ?)*[ \\t]*(?:[\\r\\n]|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*(?=(?:\\r\\n?|\\n))|%%|[`~]{3}|(?::{3}|:: |: (?=[\\s\\S])(?<=' + dlAbove + '))|#{1,6} |\\[[^\\]^\\r\\n]*\\]:(?=\\s)|'
             + '(?:\\|.*\\||\\{.*\\})(?=[ \\t]*(?:\\r\\n?|\\n)))|(?:(?:> ?)*\\[\\^|[ \\t]+\\S(?=[\\s\\S])(?<=' + inItem + ')).*(?:\\r\\n?|\\n)[ \\t]*[-*\\d]).*(?:\\r\\n?|\\n))'
-            + '(?:(?:[ \\t]*(?:[-*.] |\\w+[.)] )[ \\t]*\\S|(?:> ?)*[ \\t]*: (?=[\\s\\S])(?<=' + dlAbove + ')).*(?:\\r\\n?|\\n)(?:(?:> ?)*[ \\t]*\\S.*(?:\\r\\n?|\\n)){0,64}(?!:))?)';
+            + '(?:(?:[ \\t]*(?:[-*.] |(?:\\w+\\)|\\d+\\.|\\w+\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) )[ \\t]*\\S|(?:> ?)*[ \\t]*: (?=[\\s\\S])(?<=' + dlAbove + ')).*(?:\\r\\n?|\\n)(?:(?:> ?)*[ \\t]*\\S.*(?:\\r\\n?|\\n)){0,64}(?!:))?)';
         // n columns of indentation, a tab running to the next multiple of 4.
         var wsCols = function (n) {
             return '(?: {4}| {0,3}\\t){' + (n >> 2) + '} {' + (n & 3) + '}';
@@ -1141,7 +1142,7 @@
     // group is captured on the `+` line before the lines above it are read;
     // the `(?=\+)` in front of each keeps them off every other position.
     function relativePlusSource(g) {
-        var item = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
+        var item = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)';
         var notItem = '(?!' + item + '(?:[ \\t]|\\r?$|\\{))';
         // A list item does not interrupt a paragraph, so one under prose opens nothing.
         var notUnderProse = '(?<!(?<![^\\r\\n])[^ \\t\\r\\n>|#:`~*\\-+\\d[{%][^\\r\\n]*(?:\\r\\n?|\\n))';
@@ -1249,7 +1250,7 @@
         return before + '|' + hostedAt(g + groups(before)) + ')';
     }
 
-    var plusListMarker = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)';
+    var plusListMarker = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)';
     // A `+ ... |` line is a row only directly under a row at its indent: a
     // table row, not the separator under a header, or a `+` row continuing one.
     var plusRowSeparator = '[ \\t]*\\|(?:[ \\t]*:?-+:?[ \\t]*\\|)+[ \\t\\r]*(?:\\r\\n?|\\n)';
@@ -1260,7 +1261,7 @@
         + '(?:()' + plusRowLine
         + '|(?<=(?<![^\\r\\n])[ \\t]*(?:' + plusListMarker + '|:)[ \\t]+[^ \\t\\r\\n][^\\r\\n]*(?:\\r\\n?|\\n)'
         + '(?:(?<![^\\r\\n])(?:[ \\t\\r]*|[ \\t]+[^ \\t\\r\\n][^\\r\\n]*)(?:\\r\\n?|\\n)){0,256})([ \\t]+)' + plusRowLine + '))';
-    var plusRowOnMarker = '(?<=(?<![^\\r\\n])[ \\t]*(?:(?:[-*:]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) +)+'
+    var plusRowOnMarker = '(?<=(?<![^\\r\\n])[ \\t]*(?:(?:[-*:]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.) +)+'
         + '\\|[^\\r\\n]*\\|(?:\\{[^{}\\r\\n]*\\})?[ \\t\\r]*(?:\\r\\n?|\\n))';
     var plusRowTail = '\\+[^\\r\\n]*\\|[ \\t]*(?![^\\r\\n])';
 
@@ -1462,7 +1463,7 @@
                 // the run - so the tab form is untouched.
                 pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
-                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.) %%)'
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.) %%)'
                     + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
                 )),
@@ -1487,7 +1488,7 @@
                  * `> # a` behind the same marker opens a block.
                  */
                 pattern: outsideContainerMetadata(toLineEndOutsideBlockOpeners(RegExp(
-                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)) |\\t)%%(?!%)',
+                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)) |\\t)%%(?!%)',
                     'm',
                 ))),
                 lookbehind: true,
@@ -1991,7 +1992,7 @@
             // quote, and `{title="a}b"} x` is a valid item (#85).
             pattern: RegExp(
                 '^(?<![^\\r\\n])' + notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
-                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>\\/!?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$(?![^\\r\\n]))|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?:(?= )|'
+                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>\\/!?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$(?![^\\r\\n]))|(?:(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?:(?= )|'
                 + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$(?![^\\r\\n])))'
                 // A marker whose whole content is a comment takes the comment
                 // with it, so the marker keeps its scope and the comment is
@@ -2022,7 +2023,7 @@
             },
             // On a list marker line once 'list' has the marker (`- +`).
             {
-                pattern: /(?=\+)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:[-*] +(?:\[[ xX\-_>\/!?]\] +)?|(?:(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.) +)+)\+[ \t]*$(?![^\r\n])/m,
+                pattern: /(?=\+)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?:[-*] +(?:\[[ xX\-_>\/!?]\] +)?|(?:(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.) +)+)\+[ \t]*$(?![^\r\n])/m,
                 greedy: true,
                 inside: continuationInside,
             },
@@ -2037,7 +2038,7 @@
                 inside: continuationInside,
             },
             {
-                pattern: /(^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=(?:\r\n?|\n)(?!(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?:[ \t]|\r?$|\{))[^ \t\r\n])/m,
+                pattern: /(^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=(?:\r\n?|\n)(?!(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.)(?:[ \t]|\r?$|\{))[^ \t\r\n])/m,
                 lookbehind: true,
                 greedy: true,
                 inside: continuationInside,
@@ -2138,7 +2139,7 @@
         'refused-description': {
             // After a list marker a footnote body takes no description at its
             // own column; the text left of the marker is cut off from the other rules.
-            pattern: RegExp('^(?<![^\\r\\n])[ \\t]+(?=: +[^ \\t\\r\\n])(?:' + dlRelativeTab + '|(?<=(?<![^\\r\\n])[ \\t]*(?:[-*]|\\w+[.)]) +'
+            pattern: RegExp('^(?<![^\\r\\n])[ \\t]+(?=: +[^ \\t\\r\\n])(?:' + dlRelativeTab + '|(?<=(?<![^\\r\\n])[ \\t]*(?:[-*]|(?:\\w+\\)|\\d+\\.|\\w+\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +'
                 + footnoteBody + '(?:[ \\t]{3,}|[ \\t]*\\t[ \\t]*)' + dlTermToDescription + '  ))[^\\r\\n]*', 'm'),
             greedy: true,
             inside: inline,
@@ -2744,8 +2745,11 @@
         // while `1--10`, `Mon--Fri` and `a -- b` still are. That is the guard
         // around the dash alternatives: preceded by a non-space, or not
         // followed by a word character.
+        // An arrow needs its exact hyphen run (CARVE-P3-022). Prism matches each
+        // remaining fragment on its own, so `(?<!-)` cannot see a hyphen an
+        // earlier token took: `-{3,}(?=>)` keeps the run whole instead.
         'typography': {
-            pattern: /\{--\}|\.\.\.|<-->|<--|-->|<=>|<==|==>|<->|<-|->|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(c\)|\(r\)|\(tm\)/,
+            pattern: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|-{3,}(?=>)|<=>|<==|==>|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(tm\)/,
             alias: 'constant',
         },
     };
@@ -3056,7 +3060,7 @@
     // it at the same quote prefix, as `TERM_HOSTED` reads an unquoted one. Each
     // call names its groups by `tag`, since one regex may hold several.
     function quotedTermHostedSource(tag, opener) {
-        var list = '(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
+        var list = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?: \\[[ xX\\-_>\\/!?]\\])?';
         // A description hosts only at column 0 or after list markers on its
         // line, and two blank lines end it.
         var leads = ['[ \\t]*' + list + ' +', '(?:' + list + ' +)*: +'];
@@ -3122,7 +3126,7 @@
                 'punctuation': [
                     { pattern: /(^\uFEFF?[ \t]*(?:> )*> ):(?= )/m, lookbehind: true },
                     // An indented `:` at the column of a term or description above it.
-                    { pattern: /(?=:)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?:\1: |\1:: (?<=> :: )|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>\/!?]\])? +[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)){0,64}|(?:(?:[-*]|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]|\.)(?: \[[ xX\-_>\/!?]\])? +)*: +[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)(?<!(?<![^\r\n])[ \t]*(?:> )*>[ \t]*(?:\r\n?|\n)(?<![^\r\n])[ \t]*(?:> )*>[ \t]*(?:\r\n?|\n))){0,64})(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?=  )\1:: )[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)){0,64}(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> ( +)):(?= )/m, greedy: true },
+                    { pattern: /(?=:)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?:\1: |\1:: (?<=> :: )|(?:(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.)(?: \[[ xX\-_>\/!?]\])? +[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)){0,64}|(?:(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.)(?: \[[ xX\-_>\/!?]\])? +)*: +[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)(?<!(?<![^\r\n])[ \t]*(?:> )*>[ \t]*(?:\r\n?|\n)(?<![^\r\n])[ \t]*(?:> )*>[ \t]*(?:\r\n?|\n))){0,64})(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> (?=  )\1:: )[^\r\n]*(?:\r\n?|\n)(?:[^\r\n]*(?:\r\n?|\n)){0,64}(?<![^\r\n])\uFEFF?[ \t]*(?:> )*> ( +)):(?= )/m, greedy: true },
                     /^\uFEFF?[ \t]*>(?: >(?= |$))*/m,
                 ],
             }, inline),

@@ -49,31 +49,7 @@
   },
   {
     "type": "text",
-    "text": "\n\nDeprecated but still rendered: "
-  },
-  {
-    "type": "typography>constant",
-    "text": "<-"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "typography>constant",
-    "text": "->"
-  },
-  {
-    "type": "text",
-    "text": " "
-  },
-  {
-    "type": "typography>constant",
-    "text": "<->"
-  },
-  {
-    "type": "text",
-    "text": "\n\nNot an arrow: key => value stays literal, and p "
+    "text": "\n\nDeprecated but still rendered: <- -> <->\n\nNot an arrow: key => value stays literal, and p "
   },
   {
     "type": "typography>constant",
