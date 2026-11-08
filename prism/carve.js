@@ -2742,14 +2742,15 @@
         //
         // A hyphen run that OPENS a word after whitespace is a command-line
         // flag and stays literal (carve#1443), so `--oneline` is not an en dash
-        // while `1--10`, `Mon--Fri` and `a -- b` still are. That is the guard
-        // around the dash alternatives: preceded by a non-space, or not
-        // followed by a word character.
+        // while `1--10`, `Mon--Fri` and `a -- b` still are. Both neighbors are
+        // read through the closed `typography_flank` class (CARVE-P3-021), so
+        // `a --. b` stays text too (carve-grammars#833). An opening `(` `"` `'`
+        // after a flank counts as one.
         // An arrow needs its exact hyphen run (CARVE-P3-022). Prism matches each
         // remaining fragment on its own, so `(?<!-)` cannot see a hyphen an
         // earlier token took: `-{3,}(?=>)` keeps the run whole instead.
         'typography': {
-            pattern: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|-{3,}(?=>)|<=>|<==|==>|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(tm\)/,
+            pattern: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|(?<!-)(?<!(?:^|[ \t\r\n\u00A0])["'(]?)-{3,}(?=>)|<=>|<==|==>|(?<!-)(?:(?<!(?:^|[ \t\r\n\u00A0])["'(]?)(?:---|--)|(?:---|--)(?=-*(?:[ \t\r\n\u00A0]|\\(?:[ \r\n]|$)|$|[*/_~=^+]+(?:[ \t\r\n\u00A0}.,;:!?)\]]|$))))|!=|<=|>=|\+-|\(tm\)/,
             alias: 'constant',
         },
     };

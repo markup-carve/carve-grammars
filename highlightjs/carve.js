@@ -967,11 +967,17 @@
     //
     // A hyphen run that OPENS a word after whitespace is a command-line flag
     // and stays literal (carve#1443), so `--oneline` is not an en dash while
-    // `1--10`, `Mon--Fri` and `a -- b` still are. That is the guard around the
-    // dash alternatives: preceded by a non-space, or not followed by a word.
+    // `1--10`, `Mon--Fri` and `a -- b` still are. Both neighbors are read
+    // through the closed `typography_flank` class (CARVE-P3-021), so `a --. b`
+    // stays text too (carve-grammars#833). An opening `(` `"` `'` after a flank
+    // counts as one.
+    const TYPOGRAPHY_FLAG = {
+        begin: /(?:(?<=^|[ \t\r\n\u00A0])|(?<=(?:^|[ \t\r\n\u00A0])["'(]))(?<!-)(?!--(?!-)>)-{2,}(?![- \t\r\n\u00A0]|\\(?:[ \r\n]|$)|$|[*/_~=^+]+(?:[ \t\r\n\u00A0}.,;:!?)\]]|$))/,
+        relevance: 0,
+    };
     const TYPOGRAPHY = {
         className: 'literal',
-        begin: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|<=>|<==|==>|(?:(?<=\S)(?:---|--)|(?:---|--)(?!\w))|!=|<=|>=|\+-|\(tm\)/,
+        begin: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|<=>|<==|==>|---|--|!=|<=|>=|\+-|\(tm\)/,
         relevance: 0,
     };
 
@@ -2838,7 +2844,7 @@
         INLINE_FOOTNOTE, FOOTNOTE_REF, IMAGE, REFERENCE_IMAGE, SPAN, REFERENCE_LINK, CITATION, INLINE_EXTENSION,
         LINK, AUTOLINK, EMAIL_AUTOLINK, INSERT, DELETE, CRITIC_SUB, CRITIC_COMMENT, MENTION, CROSS_REF,
         HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, STRIKETHROUGH,
-        FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, TYPOGRAPHY,
+        FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, TYPOGRAPHY_FLAG, TYPOGRAPHY,
     ];
     HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG, ...LINE_INLINE];
     // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
@@ -2926,7 +2932,7 @@
         FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT,
         // An emphasis opener whose closer lies only past the boundary is text.
         { begin: new RegExp(`([*/_=])(?!(?:(?!${boundary}).){0,4096}?\\1)`), relevance: 0 },
-        HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, TYPOGRAPHY,
+        HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, TYPOGRAPHY_FLAG, TYPOGRAPHY,
     ];
     // A bare run holds inline content. Inside it, a same-kind braced span nests
     // and `{**}` is text, and so is a bare opener whose closer lies only past
@@ -3090,7 +3096,7 @@
         ATTRIBUTE,
         ESCAPE,
         HARD_BREAK,
-        TYPOGRAPHY,        // dashes/arrows - after the structural rules
+        TYPOGRAPHY_FLAG, TYPOGRAPHY,        // dashes/arrows - after the structural rules
     ];
 
     // A term's lazy lines and a description's body read as a paragraph does.

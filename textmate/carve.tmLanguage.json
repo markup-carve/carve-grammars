@@ -3678,8 +3678,16 @@
       }
     },
     "smart_typography": {
-      "match": "(\\{--\\}|<-->|<--(?!-)|(?<!-)-->|<=>|<==|==>|---|--|\\.\\.\\.|<=|>=|!=|\\+-|\\(tm\\))",
-      "name": "constant.other.smart_typography.carve"
+      "patterns": [
+        {
+          "comment": "A hyphen run after whitespace, the line start or an opening ( \" ' that itself follows one, and before any other character, is a command-line flag and stays text (CARVE-P3-021, carve-grammars#833). Consumed whole so no part of it reads as a dash.",
+          "match": "(?:(?<=^)|(?<=[ \\t\\x{A0}])|(?<=^[(\"'])|(?<=[ \\t\\x{A0}][(\"']))(?<!-)(?!--(?!-)>)-{2,}(?![- \\t\\x{A0}]|\\\\(?: |$)|$|[*/_~=^+]+(?:[ \\t\\x{A0}}.,;:!?)\\]]|$))"
+        },
+        {
+          "match": "(\\{--\\}|<-->|<--(?!-)|(?<!-)-->|<=>|<==|==>|---|--|\\.\\.\\.|<=|>=|!=|\\+-|\\(tm\\))",
+          "name": "constant.other.smart_typography.carve"
+        }
+      ]
     },
     "math_inline": {
       "match": "(\\$\\$?)(`)(?!`)([^`\\n]*)(`)(?!`)",

@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "The bare run is flag-shaped and stays literal: a "
-  },
-  {
-    "scope": "literal",
-    "text": "---"
-  },
-  {
-    "scope": null,
-    "text": "(p) b.\n\nThe braced form converts wherever it stands: a "
+    "text": "The bare run is flag-shaped and stays literal: a ---(p) b.\n\nThe braced form converts wherever it stands: a "
   },
   {
     "scope": "literal",
