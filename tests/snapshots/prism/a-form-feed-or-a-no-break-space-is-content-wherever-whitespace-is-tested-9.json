@@ -1,11 +1,7 @@
 [
   {
-    "type": "typography>constant",
-    "text": "--"
-  },
-  {
     "type": "text",
-    "text": "-yaml\f\na: 1\n"
+    "text": "---yaml\f\na: 1\n"
   },
   {
     "type": "thematic-break>punctuation",

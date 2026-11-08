@@ -1,11 +1,7 @@
 [
   {
-    "scope": "literal",
-    "text": "--"
-  },
-  {
     "scope": null,
-    "text": "-yaml\f\na: 1\n"
+    "text": "---yaml\f\na: 1\n"
   },
   {
     "scope": "meta",
