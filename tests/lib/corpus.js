@@ -37,36 +37,58 @@ const leadingRun = (s, ch) => {
 };
 
 /**
- * Count the corpus pairs one example page declares, mirroring the spec's
- * scripts/lib/example-pair-census.mjs: nothing inside a fence is markup.
+ * The corpus inputs one example page declares, mirroring the spec's
+ * scripts/lib/example-pair-census.mjs: nothing inside a fence is markup. Each
+ * input is keyed by its `::: compare` modifiers and its `carve` fence body.
  * @param {string} text
- * @returns {number}
+ * @returns {string[]}
  */
-export function declaredPairsIn(text) {
-    let pairs = 0;
+export function declaredInputsIn(text) {
+    const inputs = [];
     let marker = null;
+    let modifiers = '';
     let fence = null;
+    let body = null;
     for (const line of text.split('\n')) {
         if (fence !== null) {
-            if (line.startsWith(fence) && line.slice(fence.length).trim() === '') fence = null;
+            if (line.startsWith(fence) && line.slice(fence.length).trim() === '') {
+                if (body !== null) inputs.push(`${modifiers}\n${body.join('\n')}`);
+                fence = null;
+                body = null;
+            } else if (body !== null) {
+                body.push(line);
+            }
             continue;
         }
         const ticks = leadingRun(line, '`');
         if (ticks >= 3) {
             fence = line.slice(0, ticks);
-            if (marker !== null && line.slice(ticks).trim() === 'carve') pairs += 1;
+            if (marker !== null && line.slice(ticks).trim() === 'carve') body = [];
             continue;
         }
         const trimmed = line.trim();
         const colons = leadingRun(trimmed, ':');
         if (colons < 3) continue;
         if (marker === null) {
-            if (/^[ \t]+compare(?:[ \t]|$)/.test(trimmed.slice(colons))) marker = trimmed.slice(0, colons);
+            const rest = trimmed.slice(colons);
+            if (/^[ \t]+compare(?:[ \t]|$)/.test(rest)) {
+                marker = trimmed.slice(0, colons);
+                modifiers = rest.trim().split(/[ \t]+/).slice(1).sort().join(' ');
+            }
         } else if (trimmed === marker) {
             marker = null;
         }
     }
-    return pairs;
+    return inputs;
+}
+
+/**
+ * Count the corpus pairs one example page declares.
+ * @param {string} text
+ * @returns {number}
+ */
+export function declaredPairsIn(text) {
+    return declaredInputsIn(text).length;
 }
 
 /**
@@ -74,21 +96,34 @@ export function declaredPairsIn(text) {
  * @returns {number}
  */
 export function declaredCorpusSize() {
-    let declared = 0;
+    // The spec emits one fixture per distinct input (scripts/generate-corpus.mjs).
+    const declared = new Set();
     for (const page of EXAMPLE_PAGES) {
         let text;
         try {
             text = readFileSync(`${EXAMPLES_DIR}/${page}`, 'utf8');
         } catch {
+            // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+            const dir = `${EXAMPLES_DIR}/${page.replace(/\.md$/, '')}`;
+            let sections = [];
+            try {
+                sections = readdirSync(dir).filter((f) => f.endsWith('.md') && f !== 'README.md').sort();
+            } catch {
+                sections = [];
+            }
+            if (sections.length > 0) {
+                for (const section of sections) for (const input of declaredInputsIn(readFileSync(`${dir}/${section}`, 'utf8'))) declared.add(input);
+                continue;
+            }
             throw new Error(
                 `${EXAMPLES_DIR}/${page} is missing - the submodule is incomplete, or the ` +
                 'spec moved the corpus source pages. Without them there is nothing to ' +
                 'check the corpus size against.',
             );
         }
-        declared += declaredPairsIn(text);
+        for (const input of declaredInputsIn(text)) declared.add(input);
     }
-    return declared;
+    return declared.size;
 }
 
 /**
