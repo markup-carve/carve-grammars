@@ -9,15 +9,7 @@
   },
   {
     "scope": "section",
-    "text": "# Step 1 "
-  },
-  {
-    "scope": "section>literal",
-    "text": "->"
-  },
-  {
-    "scope": "section",
-    "text": " done"
+    "text": "# Step 1 -> done"
   },
   {
     "scope": "section>literal",

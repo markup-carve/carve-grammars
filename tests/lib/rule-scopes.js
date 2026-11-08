@@ -125,7 +125,7 @@ export const SCOPE_SAMPLES = {
     smart_quote: { sample: 'she said "hi"\n', payload: '"' },
     arrow: { sample: 'a --> b\n', payload: '-->' },
     comparison: { sample: 'a != b\n', payload: '!=' },
-    typographic_symbol: { sample: 'a (c) b\n', payload: '(c)' },
+    typographic_symbol: { sample: 'a (tm) b\n', payload: '(tm)' },
     inline_comment: { sample: 'text %% note\n', payload: '%%' },
     braced_comment: { sample: 'a {% c %} b\n', payload: '{%' },
     hard_break: { sample: 'line\\\nnext\n', payload: '\\' },

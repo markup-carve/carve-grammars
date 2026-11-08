@@ -65,9 +65,12 @@ function markerLineCommonRule(generic) {
         add(depth * 2, `${bullets}\\[[ xX\\-_>?]\\] `);
     }
     for (let digits = 1; digits <= 9; digits++) add(digits + 2, `[0-9]{${digits}}[.)] `);
-    add(3, '[A-Za-z][.)] ');
+    // A letter or roman marker takes `)` and one space, or `.` and two (carve#4811).
+    add(3, '[A-Za-z]\\) ');
+    add(4, '[A-Za-z]\\.  ');
     for (let length = 2; length <= 6; length++) {
-        add(length + 2, `(?:[ivxlcdm]{${length}}|[IVXLCDM]{${length}})[.)] `);
+        add(length + 2, `(?:[ivxlcdm]{${length}}|[IVXLCDM]{${length}})\\) `);
+        add(length + 3, `(?:[ivxlcdm]{${length}}|[IVXLCDM]{${length}})\\.  `);
     }
     add(2, '\\. ');
 

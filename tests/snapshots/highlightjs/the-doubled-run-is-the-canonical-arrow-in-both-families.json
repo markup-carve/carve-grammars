@@ -49,31 +49,7 @@
   },
   {
     "scope": null,
-    "text": "\n\nDeprecated but still rendered: "
-  },
-  {
-    "scope": "literal",
-    "text": "<-"
-  },
-  {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "literal",
-    "text": "->"
-  },
-  {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "literal",
-    "text": "<->"
-  },
-  {
-    "scope": null,
-    "text": "\n\nNot an arrow: key => value stays literal, and p "
+    "text": "\n\nDeprecated but still rendered: <- -> <->\n\nNot an arrow: key => value stays literal, and p "
   },
   {
     "scope": "literal",

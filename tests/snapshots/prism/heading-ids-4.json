@@ -17,15 +17,7 @@
   },
   {
     "type": "title>important",
-    "text": " Step 1 "
-  },
-  {
-    "type": "title>important>typography>constant",
-    "text": "->"
-  },
-  {
-    "type": "title>important",
-    "text": " done"
+    "text": " Step 1 -> done"
   },
   {
     "type": "title>important>typography>constant",

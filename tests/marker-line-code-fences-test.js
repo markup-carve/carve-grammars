@@ -7,8 +7,8 @@ assertThisFileRuns(import.meta.url);
 const textmate = await textmateLineTokenizer(new URL('../textmate/carve.tmLanguage.json', import.meta.url).pathname);
 const cases = [
     ['- ', '  '], ['* ', '  '], ['1. ', '   '], ['- [ ] ', '  '], ['- - ', '    '],
-    ['10. ', '    '], ['a. ', '   '], ['. ', '  '], ['- - - ', '      '],
-    ['ii. ', '    '], ['XII) ', '     '], ['1234567. ', '         '],
+    ['10. ', '    '], ['a.  ', '    '], ['a) ', '   '], ['. ', '  '], ['- - - ', '      '],
+    ['ii.  ', '     '], ['XII) ', '     '], ['1234567. ', '         '],
 ];
 for (const [marker, indent] of cases) {
     const source = `${marker}\`\`\`sh\n${indent}npm test\n${indent}\`\`\`\n\nthen\n`;
@@ -35,7 +35,7 @@ for (const [marker, indent] of cases) {
     }
 }
 for (const [name, tokenize] of [...ENGINES, ['textmate', textmate]]) {
-    const romanItems = tokenize('ii. first\niii. ```sh\n     npm test\n     ```\nthen\n');
+    const romanItems = tokenize('ii.  first\niii.  ```sh\n      npm test\n      ```\nthen\n');
     assert.ok(romanItems.some((leaf) => leaf.text.includes('npm') && (name === 'highlightjs'
         ? leaf.ancestors?.includes('language-bash')
         : /code-block|meta.embedded.block.shellscript/.test(leaf.scope ?? ''))), `${name}: Roman list item above fence`);
