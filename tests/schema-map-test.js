@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { getSchema } from '@tiptap/core';
 import { CarveKit } from '../tiptap/carve-kit.js';
 import { INLINE_MARKS } from '../tiptap/carve-to-pm.js';
+import { serializeToCarveWithReport } from '../tiptap/serializer.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const map = JSON.parse(readFileSync(resolve(here, '../tiptap/schema-map.json'), 'utf8'));
@@ -354,6 +355,23 @@ ok('an aliasOf names a type that exists and shares the name', () => {
     }
   }
   assert.deepStrictEqual(broken, [], `broken aliasOf: ${broken.join(', ')}`);
+});
+
+ok('a layout attribute is held by CarveKit and left out of Carve without a report', () => {
+  const layout = Object.keys(map.layoutAttributes).filter((name) => name !== 'about');
+  assert.deepStrictEqual(layout, ['colwidth']);
+  for (const name of ['tableCell', 'tableHeader']) {
+    assert.ok(schema.nodes[name].spec.attrs.colwidth, `${name} drops colwidth`);
+  }
+  const cell = (colwidth) => ({
+    type: 'tableCell',
+    attrs: { colspan: 1, rowspan: 1, colwidth },
+    content: [{ type: 'paragraph', content: [{ type: 'text', text: 'a' }] }],
+  });
+  const doc = (colwidth) => ({ type: 'doc', content: [{ type: 'table', content: [{ type: 'tableRow', content: [cell(colwidth)] }] }] });
+  const resized = serializeToCarveWithReport(doc([120]));
+  assert.strictEqual(resized.source, serializeToCarveWithReport(doc(null)).source);
+  assert.deepStrictEqual([resized.dropped, resized.degraded], [{}, {}]);
 });
 
 console.log(`\n${passed} passed`);

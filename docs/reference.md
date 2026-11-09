@@ -858,6 +858,12 @@ alignment or figure captions is worse than one that says it cannot carry them. T
 profile cannot deny as well: `tag` has its own entry (`carveTag`) even though
 profiles classify it as a `mention`, so a `carveTag` resolves back to `tag`.
 
+`layoutAttributes` names the ProseMirror attributes that are editor layout
+rather than content. `colwidth`, the pixel widths from Tiptap's column resizing,
+is the one entry. A bridge writes nothing to Carve for a layout attribute and
+does not report it as a loss; `CarveKit` keeps it, so a resized column stays
+resized in the editor.
+
 `tests/schema-map-test.js` keeps it honest: every ProseMirror name must exist in
 the `CarveKit` schema with the declared node/mark kind, and every node type in
 the pinned AST schema must have a decision. Types the map covers ahead of the
