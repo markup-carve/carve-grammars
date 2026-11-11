@@ -2110,20 +2110,15 @@
     //
     // A real begin/end mode (carve-grammars#125), not two independent
     // single-line modes: a per-line match left the body wide open to the
-    // full top-level mode list, which incorrectly let ABBREVIATION_DEF fire
-    // inside a div (PART 9: abbreviation definitions are recognized at
-    // document level only). highlight.js has no begin->end backreference, so
+    // full top-level mode list. highlight.js has no begin->end backreference, so
     // the closer's width is checked the same way BLOCK_COMMENT already does
     // above: captured on `on:begin`, compared on `on:end`, and rejected with
     // `ignoreMatch()` on a mismatch - so the closer matches the opener's
     // colon run EXACTLY (PART 9's colon-fence depth rule: a longer or
     // shorter run does not close it, which is what lets equal-length fences
     // nest and `::::` hold `:::`). `contains` is assigned below, once the
-    // full top-level mode list is known, to the same list minus
-    // ABBREVIATION_DEF plus `'self'` (for nested divs) - so everything else
-    // that already worked inside a div body (headings, nested lists,
-    // blockquotes) keeps working; only the one construct this fix targets is
-    // suppressed.
+    // full top-level mode list is known, to that list plus `'self'` (for
+    // nested divs).
     /*
      * ONE STACK FOR EVERY LINE-START COLON FENCE. highlight.js tries a mode's
      * `contains` before its `end`, so a bare fence line used to open a nested
@@ -3186,11 +3181,11 @@
     DEFINITION_LIST_ENTRY.contains.push(ABBREVIATION_DEF, abbreviationOnDescription('[ \\t]*'), FOOTNOTE_DEF, REFERENCE_DEF, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
     FOOTNOTE_DEF.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
 
-    // A div's body holds the full top-level mode list minus ABBREVIATION_DEF
-    // (carve-grammars#125 - see the comment on DIV_BLOCK above) and minus the
+    // A div's body holds the full top-level mode list, abbreviation definitions
+    // included (markup-carve/carve#4874, carve-grammars#852), minus the
     // bare opener, which BARE_FENCE_LINE stands in for. DIV_BLOCK is in that
     // list, so a div nests in a div.
-    const IN_CONTAINER = CONTAINS.filter((mode) => mode !== ABBREVIATION_DEF)
+    const IN_CONTAINER = CONTAINS
         .map((mode) => (mode === BARE_DIV_BLOCK ? BARE_FENCE_LINE : mode));
     DIV_BLOCK.contains = IN_CONTAINER;
     BARE_DIV_BLOCK.contains = IN_CONTAINER;

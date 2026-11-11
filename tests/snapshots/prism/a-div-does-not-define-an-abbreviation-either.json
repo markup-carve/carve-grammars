@@ -5,7 +5,39 @@
   },
   {
     "type": "div",
-    "text": "\n*[HTML]: Hyper Text\n\nThe HTML spec.\n"
+    "text": "\n"
+  },
+  {
+    "type": "div>abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "div>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>abbreviation-definition>symbol",
+    "text": "HTML"
+  },
+  {
+    "type": "div>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "div>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "div>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "div>abbreviation-definition>string",
+    "text": "Hyper Text"
+  },
+  {
+    "type": "div",
+    "text": "\n\nThe HTML spec.\n"
   },
   {
     "type": "div>div-delimiter>punctuation",

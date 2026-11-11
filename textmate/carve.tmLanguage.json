@@ -528,7 +528,7 @@
       "name": "comment.line.percent.carve"
     },
     "admonition": {
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set - which incorrectly let `#abbreviation` fire inside a div (PART 9: abbreviation definitions are recognized at document level only; the sibling list-item and blockquote cases already read correctly, but only because their own line mechanics happen to block it, not because either detects the container). The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus `#abbreviation` (the one construct this fix targets); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before.",
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set. The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus the column-0 `#abbreviation`, whose in-container form reads the body (markup-carve/carve#4874, carve-grammars#852); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before.",
       "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
@@ -661,6 +661,9 @@
             },
             {
               "include": "#blockquote"
+            },
+            {
+              "include": "#abbreviation_in_container"
             },
             {
               "include": "#link_ref_def_in_container"
@@ -832,6 +835,9 @@
               "include": "#blockquote"
             },
             {
+              "include": "#abbreviation_in_container"
+            },
+            {
               "include": "#link_ref_def_in_container"
             },
             {
@@ -921,6 +927,9 @@
             },
             {
               "include": "#blockquote"
+            },
+            {
+              "include": "#abbreviation_in_container"
             },
             {
               "include": "#link_ref_def_in_container"
@@ -1372,7 +1381,7 @@
         }
       },
       "name": "meta.abbreviation.carve",
-      "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
+      "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` and every div body reach this: an abbreviation definition is a definition in every container (markup-carve/carve#4874, carve-grammars#852). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
     "definition_list_on_marker_line": {
       "comment": "A definition list opened on a list item's own marker line (`- :: t`), which carve-js nests in the item (carve-grammars#844). Its later lines are the document-level entry's.",
@@ -4377,6 +4386,9 @@
           "include": "#blockquote"
         },
         {
+          "include": "#abbreviation_in_container"
+        },
+        {
           "include": "#link_ref_def_in_container"
         },
         {
@@ -4537,6 +4549,9 @@
         },
         {
           "include": "#blockquote"
+        },
+        {
+          "include": "#abbreviation_in_container"
         },
         {
           "include": "#link_ref_def_in_container"
@@ -4701,6 +4716,9 @@
           "include": "#blockquote"
         },
         {
+          "include": "#abbreviation_in_container"
+        },
+        {
           "include": "#link_ref_def_in_container"
         },
         {
@@ -4859,6 +4877,9 @@
           "include": "#blockquote"
         },
         {
+          "include": "#abbreviation_in_container"
+        },
+        {
           "include": "#link_ref_def_in_container"
         },
         {
@@ -4937,6 +4958,9 @@
         },
         {
           "include": "#blockquote"
+        },
+        {
+          "include": "#abbreviation_in_container"
         },
         {
           "include": "#link_ref_def_in_container"

@@ -2138,9 +2138,7 @@
         // The pattern spans the WHOLE container (opener through its matching
         // closer), not just the opener line (carve-grammars#125): a per-line
         // match left the body wide open to the full top-level pattern set,
-        // which incorrectly let 'abbreviation-definition' fire inside a div
-        // (PART 9: abbreviation definitions are recognized at document level
-        // only). The optional tail is a lazy scan up to a closer that
+        // which let block rules see a closer as body text. The optional tail is a lazy scan up to a closer that
         // backreferences the SAME colon run captured by the opener (group 1),
         // so it closes on an EXACT length match (PART 9's colon-fence depth
         // rule: a longer or shorter run does not close it, which is what lets
@@ -3093,8 +3091,8 @@
         greedy: false,
     })];
 
-    // A div's body holds the full language MINUS 'abbreviation-definition'
-    // (carve-grammars#125 - see the comment on 'div' above). Composed here,
+    // A div's body holds the full language, abbreviation definitions included
+    // (markup-carve/carve#4874, carve-grammars#852). Composed here,
     // after the grammar object is fully built, rather than hand-duplicated:
     // `Object.assign` with a shallow copy keeps every entry a REFERENCE to
     // the same token object Prism already uses at the top level (including
@@ -3167,7 +3165,6 @@
     var divDelimiterOnly = Prism.languages.carve.div.inside;
     var figureGroupDelimiterOnly = Prism.languages.carve['figure-group'].inside;
     var divBody = Object.assign({}, Prism.languages.carve);
-    delete divBody['abbreviation-definition'];
     Prism.languages.carve.div.inside = Object.assign(
         {},
         divDelimiterOnly,
