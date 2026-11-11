@@ -1905,7 +1905,7 @@
                 'table-boundary': /\|/,
                 // Braced cell alignment leads the cell's attribute block: `|={>} a |`, `|{> .num} 1 |` (carve#5091 D3).
                 'attributes': [{
-                    pattern: new RegExp('(?<=(?<!\\\\)\\|=?)\\{(?:[<>~][\\^~v]?|\\?[\\^~v])(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?= )'),
+                    pattern: new RegExp('(?<=(?<!\\\\)(?:\\\\\\\\)*\\|=?)\\{(?:[<>~][\\^~v]?|\\?[\\^~v])(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}(?= )'),
                     greedy: true,
                     alias: 'attr-value',
                     inside: Object.assign({
@@ -2729,7 +2729,7 @@
 
         // Escapes and smart typography
         'escape': {
-            pattern: /\\[!-\/:-@[-`{-~]/,
+            pattern: /\\(?:[!-\/:-@[-`{-~]| (?![ \t]*(?:\r?\n|$)))/,
             alias: 'constant',
         },
         // Hard break: a backslash ending the line (highlight.js scopes this as

@@ -1943,7 +1943,7 @@
       ]
     },
     "escape": {
-      "match": "\\\\[!-/:-@\\[-`{-~]",
+      "match": "\\\\(?:[!-/:-@\\[-`{-~]| (?![ \\t]*$))",
       "name": "constant.character.escape.carve"
     },
     "code_inline_multi": {

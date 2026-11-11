@@ -37,6 +37,24 @@ for (const [source, symbols] of ALIGNED) {
     });
 }
 
+// The separator before the brace may follow an even backslash run (an escaped backslash).
+ok('a separator after an escaped backslash still opens an aligned cell', () => {
+    const source = '| a \\\\|{>} b |\n';
+    const cell = parse(source).children[0].rows[0].cells[1];
+    assert.equal(cell.align, 'right', 'engine');
+    assert.equal(alignmentText(prismTokens(source), (t) => /table-alignment/.test(t.scope ?? '')), '>', 'prism');
+    assert.equal(alignmentText(hljsTokens(source), (t) => t.scope === 'table-alignment'), '>', 'highlight.js');
+    assert.ok(textmate(source).some((t) => (t.scope ?? '').includes('keyword.operator.table.alignment') && t.text.includes('>')), 'textmate');
+});
+
+ok('an escaped pipe opens no aligned cell', () => {
+    const source = '| a \\|{>} b |\n';
+    assert.equal(parse(source).children[0].rows[0].cells.length, 1, 'engine');
+    assert.ok(!prismTokens(source).some((t) => /table-alignment/.test(t.scope ?? '')), 'prism');
+    assert.ok(!hljsTokens(source).some((t) => t.scope === 'table-alignment'), 'highlight.js');
+    assert.ok(!textmate(source).some((t) => (t.scope ?? '').includes('keyword.operator.table.alignment')), 'textmate');
+});
+
 ok('braced strikethrough in a cell stays strikethrough', () => {
     const source = '|{~ x ~} y |\n';
     assert.ok(!prismTokens(source).some((t) => /table-alignment/.test(t.scope ?? '')), 'prism');
