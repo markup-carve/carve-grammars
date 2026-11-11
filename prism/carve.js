@@ -187,13 +187,45 @@
     var linkDestinationBeforeAttr = '(?:(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\[\\]\\\\\\n]|\\\\.){0,4096}\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\))|(?=\\{)(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[^\\[\\]\\r\\n]{0,4096}(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\)))';
     // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
     // non-blank line indented past its `{`, so `{.a` + newline + `.b}` is text.
-    // With `measured`, `\\1` is a space-only opener indentation and `\\2` one that
-    // holds a tab (an unset group matches empty). A line that does not repeat it
-    // is measured roughly: a tab reaches column 4, past a space-indented `{`, and
-    // five spaces pass a tab-indented one.
-    var attrLineIndent = function (measured) { return measured ? '(?:\\1\\2[ \\t]+|(?!\\1) {0,3}\\t[ \\t]*|(?!\\2) {5,})' : '[ \\t]+'; };
-    var attrLinePad = function (measured) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + attrLineIndent(measured) + ')?'; };
-    var attrLineSep = function (measured) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + attrLineIndent(measured) + '|[ \\t]+)'; };
+    // A regex cannot compare tab-expanded columns, so the pattern admits any
+    // indented line and `pastOpenerColumn` checks the columns.
+    var attrLineIndent = '[ \\t]+';
+    var attrLinePad = '[ \\t]*(?:(?:\\r\\n?|\\n)' + attrLineIndent + ')?';
+    var attrLineSep = '(?:[ \\t]*(?:\\r\\n?|\\n)' + attrLineIndent + '|[ \\t]+)';
+    var indentColumn = function (text, from) {
+        var column = 0;
+        for (var at = from; at < text.length; at++) {
+            var c = text.charAt(at);
+            if (c === ' ') column++;
+            else if (c === '\t') column += 4 - column % 4;
+            else break;
+        }
+        return column;
+    };
+    // Group 1 is the opener's indentation, set only on the line-anchored branch:
+    // a match is kept when every line it wraps onto sits past the `{` column
+    // (tab stops of 4, PART 7), else the search resumes after its `{`.
+    function pastOpenerColumn(pattern) {
+        var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        var lineBreak = /\r\n?|\n/g;
+        gated.exec = function (source) {
+            var match;
+            while ((match = RegExp.prototype.exec.call(this, source))) {
+                if (match[1] === undefined) return match;
+                var opener = indentColumn(match[1], 0);
+                var end = match.index + match[0].length;
+                var past = true;
+                lineBreak.lastIndex = match.index;
+                for (var found; past && (found = lineBreak.exec(source)) && found.index < end;) {
+                    past = indentColumn(source, lineBreak.lastIndex) > opener;
+                }
+                if (past) return match;
+                this.lastIndex = match.index + 1;
+            }
+            return null;
+        };
+        return gated;
+    }
     var attributes = {
         // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
         // INLINE block glued to a construct may not - `attributes` pads and
@@ -209,15 +241,15 @@
         // the `m` flag is the wrong tool here for the reason recorded on the
         // hard-break rule - Prism applies a pattern to the remaining text chunk,
         // so `^` matches at a chunk boundary rather than a real line start.
-        pattern: RegExp(
+        pattern: pastOpenerColumn(RegExp(
             // `(?=\{)` first: every branch starts at `{`, and checking it before the
             // line-prefix lookbehinds keeps a long run of spaces linear.
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
-            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))(?:( *)|([ \\t]*\\t[ \\t]*)))\\{(?!__\\})' + attrLinePad(true) + attrItem + '(?:' + attrLineSep(true) + attrItem + ')*' + attrLinePad(true) + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
+            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))([ \\t]*))\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
             + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad(false) + attrItem + '(?:' + attrLineSep(false) + attrItem + ')*' + attrLinePad(false) + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
-        ),
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+        )),
         greedy: true,
         alias: 'attr-value',
         inside: {

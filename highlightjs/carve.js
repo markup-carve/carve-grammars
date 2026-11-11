@@ -371,10 +371,35 @@
         ],
         relevance: 5,
     };
-    // `08-attributes.ebnf` `continuation`, as on Prism's `attrLineIndent`.
-    const attrLineIndent = '(?:\\1\\2[ \\t]+|(?!\\1) {0,3}\\t[ \\t]*|(?!\\2) {5,})';
-    const attrLineIndentPad = '[ \\t]*(?:\\r?\\n' + attrLineIndent + ')?';
-    const attrLineIndentSep = '(?:[ \\t]*\\r?\\n' + attrLineIndent + '|[ \\t]+)';
+    // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
+    // line indented past its `{` column, tabs expanded to stops of 4 (PART 7).
+    // One branch per opener column counts both lines exactly; a `{` past
+    // ATTR_LINE_COLUMNS takes any indent and `on:begin` checks the columns.
+    // `on:begin` cannot refuse every column: `ignoreMatch()` is banned here and a
+    // dropped scope would swallow a `#tag` on a refused continuation.
+    const ATTR_LINE_COLUMNS = 16;
+    const tabStops = (count) => count ? '(?: {4}| {0,3}\\t){' + count + '}' : '';
+    const atColumn = (column) => tabStops(column >> 2) + (column & 3 ? ' {' + (column & 3) + '}' : '');
+    const pastColumn = (column) => {
+        const reach = column + 1;
+        return tabStops(reach >> 2) + (reach & 3 ? '(?: {' + (reach & 3) + '}| {0,' + ((reach & 3) - 1) + '}\\t)' : '') + '[ \\t]*';
+    };
+    const indentColumn = (text, from) => {
+        let column = 0;
+        for (let at = from; at < text.length; at++) {
+            if (text[at] === ' ') column++;
+            else if (text[at] === '\t') column += 4 - column % 4;
+            else break;
+        }
+        return column;
+    };
+    const attrLineBlock = (opener, indent) => '(?<=(?:^(?<![^\\r\\n])|\\n)' + opener + ')\\{(?!__\\})'
+        + '[ \\t]*(?:\\r?\\n' + indent + ')?' + ATTR_ITEM
+        + '(?:(?:[ \\t]*\\r?\\n' + indent + '|[ \\t]+)' + ATTR_ITEM + ')*'
+        + '[ \\t]*(?:\\r?\\n' + indent + ')?\\}';
+    const attrLineBlocks = Array.from({ length: ATTR_LINE_COLUMNS }, (_, column) => attrLineBlock(atColumn(column), pastColumn(column)))
+        .concat(attrLineBlock('(' + tabStops(ATTR_LINE_COLUMNS >> 2) + '[ \\t]*)', '[ \\t]+'))
+        .join('|');
     const ATTRIBUTE = {
         className: 'attr',
         // TWO ROLES, ONE TOKEN - see the note on Prism's `attributes`. A standalone
@@ -383,11 +408,23 @@
         // engine renders prose (#164). The line-anchored branch is a lookbehind so
         // the match still starts at the `{`.
         begin: new RegExp(
-            '(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)(?:( *)|([ \\t]*\\t[ \\t]*)))\\{(?!__\\})' + attrLineIndentPad + ATTR_ITEM + '(?:' + attrLineIndentSep + ATTR_ITEM + ')*' + attrLineIndentPad + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
+            '(?=\\{)(?:' + attrLineBlocks + ')' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?=\\{)(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
+        // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
+        // keeps its match and drops the scope, as `scopeUnless` does.
+        'on:begin': (m) => {
+            let past = true;
+            if (m[1] !== undefined) {
+                const opener = indentColumn(m[1], 0);
+                for (let at = m[0].indexOf('\n'); past && at !== -1; at = m[0].indexOf('\n', at + 1)) {
+                    past = indentColumn(m[0], at + 1) > opener;
+                }
+            }
+            m.rule.scope = past ? 'attr' : undefined;
+        },
         relevance: 5,
     };
 
