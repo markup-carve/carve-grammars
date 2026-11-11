@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": "\n  :  "
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": "  "
   },
   {
     "scope": "punctuation",
@@ -13,14 +21,6 @@
   },
   {
     "scope": null,
-    "text": "\nl\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": ":"
-  },
-  {
-    "scope": null,
-    "text": " b\n"
+    "text": "\nl\n: b\n"
   }
 ]

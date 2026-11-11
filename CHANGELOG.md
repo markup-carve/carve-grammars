@@ -21,6 +21,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 
 - An escaped space (`10\ kg`) is scoped as an escape in all three grammars (#828).
 - An unclosed code fence in a nested colon container keeps the outer closers as code in Prism too (#840).
+- highlight.js reads a description marker by the 0.1.14 rule: at or right of its term and left of the open description's content column, in quotes too; a term is never folded into a description, and a `: +` description refuses a line left of its marker (#839).
 - TextMate opens an indented heading at the document level, and an indented heading, fence, quote or abbreviation definition below a nested list item's content column (#841).
 - An aligned cell after an escaped backslash (`| a \\|{>} b |`) keeps its alignment scope in Prism and highlight.js (#828).
 - The editor mounts nested spans as a valid document, keeping the outermost span, and drops an empty code span inside a mark, which has no spelling (#828).

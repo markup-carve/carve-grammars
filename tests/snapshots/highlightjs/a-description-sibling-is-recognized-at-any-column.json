@@ -5,6 +5,30 @@
   },
   {
     "scope": null,
-    "text": "\n :: u\n: d\n : e\n"
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": " :: u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " d\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": " :"
+  },
+  {
+    "scope": null,
+    "text": " e\n"
   }
 ]

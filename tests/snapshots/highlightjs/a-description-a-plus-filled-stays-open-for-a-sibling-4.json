@@ -49,7 +49,15 @@
   },
   {
     "scope": "quote",
-    "text": ">  : b"
+    "text": ">  "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "quote",
+    "text": " b"
   },
   {
     "scope": null,

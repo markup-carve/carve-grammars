@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": " payload\n[r]: /u\n : d2\n"
+    "text": " payload\n[r]: /u\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": " :"
+  },
+  {
+    "scope": null,
+    "text": " d2\n"
   }
 ]

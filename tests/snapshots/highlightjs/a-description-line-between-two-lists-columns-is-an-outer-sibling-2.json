@@ -29,6 +29,14 @@
   },
   {
     "scope": null,
-    "text": " v\n\n : e\n"
+    "text": " v\n\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": " :"
+  },
+  {
+    "scope": null,
+    "text": " e\n"
   }
 ]

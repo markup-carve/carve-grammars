@@ -29,14 +29,14 @@
   },
   {
     "scope": null,
-    "text": " - t\n    : e\n"
+    "text": " - t\n    : e\n    : f\n"
   },
   {
-    "scope": "punctuation",
-    "text": "    :"
+    "scope": "title",
+    "text": "    :: u"
   },
   {
     "scope": null,
-    "text": " f\n    :: u\n"
+    "text": "\n"
   }
 ]
