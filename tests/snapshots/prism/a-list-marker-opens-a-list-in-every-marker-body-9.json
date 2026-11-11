@@ -37,6 +37,14 @@
   },
   {
     "type": "text",
-    "text": "\n- x\n"
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
   }
 ]

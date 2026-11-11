@@ -57,6 +57,14 @@
   },
   {
     "type": "text",
-    "text": "\n1. lazy\n"
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "lazy\n"
   }
 ]
