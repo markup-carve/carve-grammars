@@ -69,7 +69,8 @@ const SHAPES = [
     [':: t\n:  > | a |\n   > + b |\ntail\n', true],
     ['> - | a |\n>   | b |\n> +\n> | c |\n> | d |\n', true],
     ['> - a\n> +\n> ```\n> x\n> ```\n', true],
-    ['> +\n> ```\n> x\n> ```\n', false],
+    // A quote's first-line `+` is the marker whatever follows (0.1.14 layout readings).
+    ['> +\n> ```\n> x\n> ```\n', true],
     ['> para\n> +\n> ```\n> x\n> ```\n', false],
     ['> - a\n>\n> +\n> ```\n> x\n> ```\n', true],
     ['> | a |\n> |---|\n> + b |\n', false],

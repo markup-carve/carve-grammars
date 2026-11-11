@@ -16,27 +16,11 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\n\n"
-  },
-  {
-    "scope": "keyword",
-    "text": " ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "section",
-    "text": "  # h"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\n\n ```\n  # h\n"
   }
 ]

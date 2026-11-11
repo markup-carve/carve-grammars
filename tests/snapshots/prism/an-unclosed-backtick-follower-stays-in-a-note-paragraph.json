@@ -49,6 +49,14 @@
   },
   {
     "type": "text",
-    "text": "\n```\nwa\n\n\ntail\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nwa\n\n\ntail\n"
   }
 ]

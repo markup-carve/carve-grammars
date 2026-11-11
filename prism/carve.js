@@ -293,11 +293,6 @@
         + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]+(?:\\r\\n?|\\n)'
         + '(?:(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n)){0,16})';
 
-    // A fence does not interrupt a paragraph: one at column 0 opens a block only
-    // at the start, after a blank line, after a one-line block, or after a list
-    // item whose only content is a comment (a marker line that continues a
-    // paragraph is that paragraph's text).
-    var fenceAfterBlock = '(?:(?<![\\s\\S])\\uFEFF?(?=[`~]{3})|(?=[`~]{3})(?<=(?<![^\\r\\n])(?:[ \\t\\r]*|(?:' + oneLineBlock + '|' + notParagraphContinuation + listMarkerBeforeBlock + '%%)[^\\r\\n]{0,4096})(?:\\r\\n?|\\n)))';
 
     // A caption needs a host above it, past any blank lines: an image alone on
     // its line, a table row, a code fence, a `$$` math line, a quote line, or
@@ -1139,7 +1134,7 @@
         // (markup-carve/carve#3421): `>+`, `>>+`, `>> +` are text.
         var opened = [];
         for (var k = 1; k <= 8; k++) {
-            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\r\\n])(?!(?:[ \\t]*(?:' + item + ') +)*(?:[ \\t]*>){' + k + '}(?![ \\t]*>)[ \\t\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n))(?:[ \\t]*>(?= )){' + k + '} +)'
+            opened.push('(?=\\+)(?<=(?:(?<![\\s\\S])\\uFEFF?|(?<![^\\r\\n])(?!(?:[ \\t]*(?:' + item + ') +)*(?:[ \\t]*>){' + k + '}(?![ \\t]*>)[ \\t\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n))(?:[ \\t]*>(?= )){' + k + '} )'
                 + '\\+[ \\t]*(?![^\\r\\n])');
         }
         opened = opened.join('|');
@@ -1783,12 +1778,13 @@
 
         // A delimiter row has no inline content, so recognize the whole line
         // before the general table rule splits it around code and escapes.
-        // An unclosed fence at column 0 runs to the end of the document, closers
-        // of the divs around it included (PART 0 S1). Greedy, so it runs over the
+        // An unclosed fence at column 0 interrupts a paragraph and runs to the end
+        // of the document, closers of the divs around it included (PART 0 S1).
+        // Greedy, so it runs over the
         // bare colon lines the div rule took as openers. An indented or quoted
         // fence may sit in a list or quote, so it is left alone.
         'code-block-unclosed': {
-            pattern: RegExp(fenceAfterBlock + '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])[\\s\\S]*', 'm'),
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$(?![^\\r\\n])[\\s\\S]*', 'm'),
             greedy: true,
             alias: 'code-block',
             inside: {

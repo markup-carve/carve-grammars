@@ -16,19 +16,11 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " z\n\nq\n"
+    "scope": "code",
+    "text": "\n- z\n\nq\n"
   }
 ]

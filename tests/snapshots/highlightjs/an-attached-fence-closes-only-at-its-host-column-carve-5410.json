@@ -16,19 +16,11 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\na\n\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  ```"
-  },
-  {
-    "scope": null,
-    "text": "\n  c\n"
+    "scope": "code",
+    "text": "\na\n\n  ```\n  c\n"
   }
 ]

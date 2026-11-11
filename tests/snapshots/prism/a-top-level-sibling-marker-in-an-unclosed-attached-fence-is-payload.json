@@ -9,14 +9,14 @@
   },
   {
     "type": "text",
-    "text": "\n```\n"
+    "text": "\n"
   },
   {
-    "type": "list>punctuation",
-    "text": "- "
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "text",
-    "text": "z\n\nq\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\n- z\n\nq\n"
   }
 ]

@@ -20,15 +20,15 @@
     "text": "+"
   },
   {
-    "type": "text",
+    "type": "definition-list",
     "text": "\n"
   },
   {
-    "type": "code",
-    "text": "```\na\n\n  ```"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "text",
-    "text": "\n  c\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\na\n\n  ```\n  c\n"
   }
 ]

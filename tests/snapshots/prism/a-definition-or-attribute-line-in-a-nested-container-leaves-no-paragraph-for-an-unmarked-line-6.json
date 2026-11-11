@@ -25,6 +25,14 @@
   },
   {
     "type": "text",
-    "text": "\n```\ncode\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n"
   }
 ]

@@ -17,11 +17,7 @@
   },
   {
     "scope": "quote",
-    "text": ">   "
-  },
-  {
-    "scope": "quote>punctuation",
-    "text": "+"
+    "text": ">   +"
   },
   {
     "scope": null,

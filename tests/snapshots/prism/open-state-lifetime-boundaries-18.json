@@ -9,6 +9,14 @@
   },
   {
     "type": "text",
-    "text": "\n```\na\n\n  tail\n"
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\na\n\n  tail\n"
   }
 ]

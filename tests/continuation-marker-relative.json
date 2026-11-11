@@ -1,5 +1,5 @@
 {
-  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634; rows 643-644 from carve main (markup-carve/carve#3482, #3513); rows 630-11 and 630-12 as carve 7285149 reads them (markup-carve/carve#3521)",
+  "source": "markup-carve/carve f619b320 (markup-carve/carve#3445), tests/corpus rows 626-634; rows 643-644 from carve main (markup-carve/carve#3482, #3513); rows 630-11 and 630-12 as carve 7285149 reads them (markup-carve/carve#3521); the + of 629-6, 629-7 and 630-10 as carve 143df0b (the 0.1.14 cut) reads them",
   "rows": [
     {
       "id": "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-2",
@@ -166,14 +166,14 @@
       "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6",
       "source": "> > q\n> +\npara\n",
       "plus": [
-        [2, 2, "text"]
+        [2, 2, "marker"]
       ]
     },
     {
       "id": "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7",
       "source": "> > q\n> +\n",
       "plus": [
-        [2, 2, "text"]
+        [2, 2, "marker"]
       ]
     },
     {
@@ -194,7 +194,7 @@
       "id": "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-10",
       "source": "  > +\nq\n",
       "plus": [
-        [1, 4, "text"]
+        [1, 4, "marker"]
       ]
     },
     {

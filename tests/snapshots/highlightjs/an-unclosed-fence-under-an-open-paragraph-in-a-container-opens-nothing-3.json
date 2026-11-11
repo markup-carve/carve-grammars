@@ -16,35 +16,11 @@
     "text": " item\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\ncode\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "::::"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::"
-  },
-  {
-    "scope": null,
-    "text": "\nafter "
-  },
-  {
-    "scope": "strong",
-    "text": "*b*"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\ncode\n::::\n:::\nafter *b*\n"
   }
 ]

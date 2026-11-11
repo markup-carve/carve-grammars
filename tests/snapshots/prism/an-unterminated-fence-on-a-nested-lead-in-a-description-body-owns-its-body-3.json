@@ -17,10 +17,14 @@
   },
   {
     "type": "definition-list",
-    "text": "- ```\ncode"
+    "text": "- ```\ncode\n"
   },
   {
-    "type": "text",
-    "text": "\n```\n"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\n"
   }
 ]

@@ -28,7 +28,15 @@
     "text": "+"
   },
   {
-    "type": "text",
-    "text": "\n```\nx\n\nsee\n"
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nx\n\nsee\n"
   }
 ]

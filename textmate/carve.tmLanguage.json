@@ -996,13 +996,13 @@
         },
         {
           "comment": "A `+` as the whole rest of a quote's own marker line (`> +`, `> > +`) is the continuation marker. Whether it attaches depends on the next line, which a line grammar cannot see, so it is scoped regardless.",
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
           "captures": {"1": {"name": "punctuation.definition.quote.carve"}, "2": {"name": "punctuation.definition.quote.carve"}, "3": {"name": "punctuation.definition.list.continuation.carve"}},
           "name": "markup.quote.carve"
         },
         {
           "comment": "A `+` as the whole rest of a quoted list item's marker line is the continuation marker. A bare `> +` is a marker only when the next line starts at the right column (markup-carve/carve#3445), which a line grammar cannot see, so it stays text.",
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -1055,7 +1055,7 @@
           "name": "markup.quote.carve"
         },
         {
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= |$) ?((?:>(?= |$) ?)*)(#{1,6})( )(?![ \\t]*$)(.*)$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(#{1,6})( )(?![ \\t]*$)(.*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -1084,7 +1084,7 @@
           "include": "#quoted_verbatim_span"
         },
         {
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -1319,7 +1319,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
-      "match": "^(?:\\A\\x{FEFF})?(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"

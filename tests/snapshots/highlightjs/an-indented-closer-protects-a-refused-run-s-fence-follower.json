@@ -8,27 +8,11 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {
-    "scope": null,
-    "text": "\nwa\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> q"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "scope": "code",
+    "text": "\nwa\n> q\n  ```\n"
   }
 ]
