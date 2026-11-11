@@ -21,7 +21,39 @@
   },
   {
     "type": "definition-list",
-    "text": "\n*[A]: b\ntext"
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "definition-list>abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "definition-list>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "definition-list>abbreviation-definition>string",
+    "text": "b"
+  },
+  {
+    "type": "definition-list",
+    "text": "\ntext"
   },
   {
     "type": "text",

@@ -1368,6 +1368,31 @@
       "name": "meta.abbreviation.carve",
       "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
+    "abbreviation_in_description": {
+      "match": "(?:^|\\G)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "3": {
+          "name": "entity.name.abbreviation.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "5": {
+          "name": "punctuation.separator.carve"
+        },
+        "6": {
+          "name": "string.unquoted.abbreviation.carve"
+        }
+      },
+      "name": "meta.abbreviation.carve",
+      "comment": "A description body collects abbreviation definitions like the document does, on the `: ` marker line (`\\G`) and on any later body line at any indent (carve-grammars#842)."
+    },
     "link_ref_def": {
       "match": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:)(?: [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?)?(?=[ \\t]*$)",
       "captures": {
@@ -3923,6 +3948,9 @@
                   "begin": "\\G(?=[ \\t]*\\S)|^[ \\t]*(?=\\S)",
                   "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t]))",
                   "patterns": [
+                    {
+                      "include": "#abbreviation_in_description"
+                    },
                     {
                       "comment": "A list marker opening the description body (`:  - item`).",
                       "match": "\\G[ \\t]*(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])|([-*])|(\\d+[.)]|[a-zA-Z](?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))(?= +\\S)",

@@ -13,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": "  d\n*[A]: x\n"
+    "text": "  d\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "punctuation",

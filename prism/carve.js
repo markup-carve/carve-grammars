@@ -3431,7 +3431,7 @@
         Prism.languages.carve['definition-list'].inside = Object.assign(
             {},
             Prism.languages.carve['definition-list'].inside,
-            pick(['comment'].concat(keys.slice(keys.indexOf('math'))))
+            pick(['abbreviation-definition', 'comment'].concat(keys.slice(keys.indexOf('math'))))
         );
     }
 

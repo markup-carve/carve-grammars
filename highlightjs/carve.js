@@ -1691,6 +1691,19 @@
         },
         relevance: 5,
     };
+    // An abbreviation definition on the description's own `: ` line. Only the
+    // `*[term]:` opener, so a `:` that is no marker leaves the rest of its line
+    // to the inline modes. Outside an entry it serves one an item's marker line
+    // opened, so it needs an indent there.
+    const abbreviationOnDescription = (indent) => ({
+        className: 'symbol',
+        begin: RegExp('(?=\\*\\[)(?<=^(?<![^\\r\\n])' + indent + ': +)\\*\\[[A-Za-z0-9]+\\]:(?= )'),
+        'on:begin': (match) => {
+            const marker = match.input.lastIndexOf(':', match.index - 1);
+            match.rule.scope = definitionListLines(match.input).markers.has(marker) ? 'symbol' : undefined;
+        },
+        relevance: 0,
+    });
     const DESCRIPTION_CONTINUATION = {
         className: 'punctuation',
         begin: /(?=\+)(?<=^(?<![^\r\n])[ \t]*: +)\+[ \t]*$(?![^\r\n])/,
@@ -3074,6 +3087,7 @@
         DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
         // A marker after a block inside the list (an item, a fence) ended the entry.
         DESCRIPTION_MARKER,
+        abbreviationOnDescription('[ \\t]+'),
         FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
         ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
         REFERENCE_DEF,
@@ -3139,7 +3153,8 @@
 
     // A term's lazy lines and a description's body read as a paragraph does;
     // a reference definition there still registers.
-    DEFINITION_LIST_ENTRY.contains.push(FOOTNOTE_DEF, REFERENCE_DEF, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
+    // A description body collects abbreviation definitions, on its `: ` line too (carve-grammars#842).
+    DEFINITION_LIST_ENTRY.contains.push(ABBREVIATION_DEF, abbreviationOnDescription('[ \\t]*'), FOOTNOTE_DEF, REFERENCE_DEF, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
     FOOTNOTE_DEF.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
 
     // A div's body holds the full top-level mode list minus ABBREVIATION_DEF

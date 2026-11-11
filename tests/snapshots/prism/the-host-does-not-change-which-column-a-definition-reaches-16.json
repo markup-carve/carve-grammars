@@ -17,7 +17,35 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n    *[HTML]: HyperText"
+    "text": "- a\n"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "    *"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "definition-list>abbreviation-definition>symbol",
+    "text": "HTML"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "definition-list>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "definition-list>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "definition-list>abbreviation-definition>string",
+    "text": "HyperText"
   },
   {
     "type": "text",
