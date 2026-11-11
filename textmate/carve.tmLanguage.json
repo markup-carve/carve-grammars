@@ -995,6 +995,9 @@
           "include": "#quoted_blocks"
         },
         {
+          "include": "#abbreviation_in_quote"
+        },
+        {
           "comment": "A `+` as the whole rest of a quote's own marker line (`> +`, `> > +`) is the continuation marker. Whether it attaches depends on the next line, which a line grammar cannot see, so it is scoped regardless.",
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
           "captures": {"1": {"name": "punctuation.definition.quote.carve"}, "2": {"name": "punctuation.definition.quote.carve"}, "3": {"name": "punctuation.definition.list.continuation.carve"}},
@@ -1131,6 +1134,9 @@
       "patterns": [
         {
           "include": "#quoted_blocks_in_container"
+        },
+        {
+          "include": "#abbreviation_in_quote"
         },
         {
           "comment": "A quote's own marker-line `+`, as in `#blockquote`.",
@@ -1319,7 +1325,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
@@ -1344,7 +1350,7 @@
       "comment": "The DOCUMENT-LEVEL abbreviation definition, anchored at column 0 (carve-grammars#138). An indented definition at the top level is literal text - verified against the pinned engine, ` *[HTML]: HyperText` renders `<p>*[HTML]: HyperText</p>` and defines nothing - so this rule refuses it and `#abbreviation_in_container` takes over inside a container."
     },
     "abbreviation_in_container": {
-      "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
@@ -1368,8 +1374,182 @@
       "name": "meta.abbreviation.carve",
       "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; `#admonition` deliberately does NOT (PART 9 recognizes abbreviation definitions at document level, and carve-grammars#125 removed the div's include for exactly that reason). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
+    "definition_list_on_marker_line": {
+      "comment": "A definition list opened on a list item's own marker line (`- :: t`), which carve-js nests in the item (carve-grammars#844). Its later lines are the document-level entry's.",
+      "begin": "\\G(?<=[ \\t])(?=:: +(?![ \\t]*$))",
+      "end": "^(?=[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!(?:\\A\\x{FEFF})?[ \\t]*(?::: +(?![ \\t]*$)|: ))",
+      "patterns": [
+        {
+          "match": "\\G(::)( +)(.*)$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            },
+            "3": {
+              "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+          "beginCaptures": {
+            "2": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            },
+            "4": {
+              "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t]))",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
+          "captures": {
+            "2": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.list.continuation.carve"
+            }
+          }
+        },
+        {
+          "begin": "^([ \\t]*)(:)( +)",
+          "beginCaptures": {
+            "2": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t]))|^(?![ \\t]*$)(?!\\1 \\3)",
+          "patterns": [
+            {
+              "begin": "\\G(?=[ \\t]*\\S)|^[ \\t]*(?=\\S)",
+              "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|~{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t]))",
+              "patterns": [
+                {
+                  "include": "#abbreviation_in_description"
+                },
+                {
+                  "comment": "A list marker opening the description body (`:  - item`).",
+                  "match": "\\G[ \\t]*(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])|([-*])|(\\d+[.)]|[a-zA-Z](?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))(?= +\\S)",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.list.unnumbered.carve"
+                    },
+                    "3": {
+                      "name": "punctuation.definition.checkbox.carve"
+                    },
+                    "4": {
+                      "name": "constant.language.checkbox.carve"
+                    },
+                    "5": {
+                      "name": "punctuation.definition.checkbox.carve"
+                    },
+                    "6": {
+                      "name": "punctuation.definition.list.unnumbered.carve"
+                    },
+                    "7": {
+                      "name": "punctuation.definition.list.numbered.carve"
+                    }
+                  }
+                },
+                {
+                  "include": "#description_attributes"
+                },
+                {
+                  "include": "#inline"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "abbreviation_in_quote": {
+      "comment": "A quoted line collects an abbreviation definition as the document does, behind the prefix and any item markers (carve-grammars#845).",
+      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "3": {
+          "name": "punctuation.definition.list.carve"
+        },
+        "4": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "5": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "6": {
+          "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+        },
+        "7": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "8": {
+          "name": "meta.abbreviation.carve punctuation.separator.carve"
+        },
+        "9": {
+          "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+        }
+      },
+      "name": "markup.quote.carve"
+    },
+    "abbreviation_in_quote_on_marker_line": {
+      "comment": "The same on a list item's own marker line (`- > *[HTML]: X`).",
+      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "3": {
+          "name": "punctuation.definition.list.carve"
+        },
+        "4": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "5": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "6": {
+          "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+        },
+        "7": {
+          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+        },
+        "8": {
+          "name": "meta.abbreviation.carve punctuation.separator.carve"
+        },
+        "9": {
+          "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+        }
+      },
+      "name": "markup.quote.carve"
+    },
     "abbreviation_in_description": {
-      "match": "(?:^|\\G)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(.*)$",
+      "match": "(?:^|\\G)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
@@ -4965,6 +5145,12 @@
           "include": "#block_comment_on_quote_on_marker_line"
         },
         {
+          "include": "#definition_list_on_marker_line"
+        },
+        {
+          "include": "#abbreviation_in_quote_on_marker_line"
+        },
+        {
           "include": "#blockquote_on_marker_line"
         },
         {
@@ -5263,6 +5449,39 @@
               "name": "markup.quote.carve"
             },
             {
+              "match": "^(>)(?= ) ((?:>(?= ) )*)(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "5": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "6": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "7": {
+                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+                },
+                "8": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "9": {
+                  "name": "meta.abbreviation.carve punctuation.separator.carve"
+                },
+                "10": {
+                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+                }
+              },
+              "name": "markup.quote.carve"
+            },
+            {
               "match": "^(>)(?= ) ((?:>(?= ) )*)(:)( +)(.*)$",
               "captures": {
                 "1": {
@@ -5401,6 +5620,39 @@
                       "include": "#inline"
                     }
                   ]
+                }
+              },
+              "name": "markup.quote.carve"
+            },
+            {
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "5": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "6": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "7": {
+                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+                },
+                "8": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "9": {
+                  "name": "meta.abbreviation.carve punctuation.separator.carve"
+                },
+                "10": {
+                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
                 }
               },
               "name": "markup.quote.carve"

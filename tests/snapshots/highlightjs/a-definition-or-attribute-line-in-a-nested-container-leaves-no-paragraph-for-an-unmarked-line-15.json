@@ -17,7 +17,11 @@
   },
   {
     "scope": "quote",
-    "text": ">   *[A]: b"
+    "text": ">   "
+  },
+  {
+    "scope": "quote>symbol",
+    "text": "*[A]: b"
   },
   {
     "scope": null,

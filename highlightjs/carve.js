@@ -1042,7 +1042,7 @@
         className: 'symbol',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]:(?= )/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]:(?= +[^\r\n]*[^ \t\r\n])/,
         end: /$(?![^\r\n])/,
         relevance: 10,
     };
@@ -1202,6 +1202,23 @@
             'on:begin': (m) => {
                 m.rule.scope = definitionListLines(m.input).markers.has(m.index) ? 'punctuation' : undefined;
             },
+        },
+        // An abbreviation definition, behind the prefix and any item markers or
+        // a real description marker, as the document collects it (carve-grammars#845).
+        {
+            className: 'symbol',
+            begin: RegExp('(?=\\*\\[)(?<=(?:' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*)>(?: >(?= ))*'
+                + '(?: [ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*(:(?= ) +)?)? *)'
+                + '\\*\\[[A-Za-z0-9]+\\]: +(?=[^\\r\\n]*[^ \\t\\r\\n])[^\\r\\n]*'),
+            end: /$(?![^\r\n])/,
+            'on:begin': (m) => {
+                const before = m.input.slice(0, m.index).trimEnd();
+                const marker = before.endsWith(':') && before.length - 1;
+                const lines = definitionListLines(m.input);
+                const fenced = lines.fenced.has(before.lastIndexOf('\n') + 1);
+                m.rule.scope = !fenced && (marker === false || lines.markers.has(marker)) ? 'symbol' : undefined;
+            },
+            relevance: 0,
         },
     );
 
@@ -1370,7 +1387,7 @@
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [] };
+        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set() };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
@@ -1492,6 +1509,7 @@
                     var closer = /^(`{3,}|~{3,}|%{3,})[ \t]*$/.exec(rest);
                     if (closer && closer[1].charAt(0) === fence.ch && closer[1].length >= fence.len
                         && (fence.ch === '%' || (reached === fence.owner && indent <= fence.indent))) fence = null;
+                    result.fenced.add(at);
                     if (anyList()) extend(end);
                     continue;
                 }
@@ -1704,7 +1722,7 @@
         const expansion = { className: 'symbol', end: /$(?![^\r\n])/ };
         return {
             className: 'symbol',
-            begin: RegExp('(?=\\*\\[)(?<=^(?<![^\\r\\n])' + indent + ': +)\\*\\[[A-Za-z0-9]+\\]:(?= )'),
+            begin: RegExp('(?=\\*\\[)(?<=^(?<![^\\r\\n])' + indent + ': +)\\*\\[[A-Za-z0-9]+\\]:(?= +[^\\r\\n]*[^ \\t\\r\\n])'),
             starts: expansion,
             'on:begin': (match) => {
                 const marker = match.input.lastIndexOf(':', match.index - 1);

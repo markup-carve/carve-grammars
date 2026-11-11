@@ -947,7 +947,7 @@
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [] };
+        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set() };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
@@ -1069,6 +1069,7 @@
                     var closer = /^(`{3,}|~{3,}|%{3,})[ \t]*$/.exec(rest);
                     if (closer && closer[1].charAt(0) === fence.ch && closer[1].length >= fence.len
                         && (fence.ch === '%' || (reached === fence.owner && indent <= fence.indent))) fence = null;
+                    result.fenced.add(at);
                     if (anyList()) extend(end);
                     continue;
                 }
@@ -2531,7 +2532,7 @@
         'abbreviation-definition': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +[^\r\n]*$(?![^\r\n])/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
             inside: {
                 // BEFORE punctuation, and anchored to the brackets. Prism
                 // applies these in order, so a punctuation rule that eats `*[`
@@ -3331,7 +3332,7 @@
         delete rest.punctuation;
         quoteLine.inside = Object.assign({
             // A `>` glued to a `+` is text (`> >+`, markup-carve/carve#3421).
-            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*(?!\+)/m,
+            'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?= |$)(?: >(?= |$))*(?!\+)/m,
             // A heading opens only right after the prefix (`>  # h` is prose),
             // while a list marker may stand further in, as at the top level.
             'title': {
@@ -3391,7 +3392,16 @@
     {
         const quoteLine = Prism.languages.carve.blockquote[1];
         const own = { ...quoteLine.inside };
-        const head = { 'punctuation': own.punctuation, 'title': own.title, 'list': own.list, 'continuation-marker': own['continuation-marker'] };
+        // A quoted line collects an abbreviation definition as the document does,
+        // behind the prefix and any item markers (carve-grammars#845).
+        const quotedAbbreviation = {
+            pattern: /^(?<![^\r\n])[ \t]*\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+            inside: Prism.languages.carve['abbreviation-definition'].inside,
+        };
+        const head = {
+            'punctuation': own.punctuation, 'title': own.title, 'list': own.list, 'continuation-marker': own['continuation-marker'],
+            'abbreviation-definition': quotedAbbreviation,
+        };
         quoteLine.inside = Object.assign(head, {
             'table': {
                 pattern: /(^ )\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$(?![^\r\n])/m,
@@ -3429,6 +3439,7 @@
                     { pattern: /^\uFEFF?[ \t]*>(?: ?>)*/m, greedy: true },
                 ],
                 'list': head.list,
+                'abbreviation-definition': quotedAbbreviation,
             }, inline),
         });
     }
