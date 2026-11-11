@@ -24,8 +24,16 @@
     "text": "\n"
   },
   {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
     "scope": "code",
-    "text": "```\n```"
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
   },
   {
     "scope": null,

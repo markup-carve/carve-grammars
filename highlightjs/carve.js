@@ -1713,7 +1713,7 @@
     // DEFINITION_TERM/DESCRIPTION_MARKER (below, in `contains`) do the actual
     // per-line matching and coloring themselves.
     const DEFINITION_LIST_ENTRY = {
-        begin: RegExp('^(?<![^\\r\\n])(?=(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))'),
+        begin: RegExp('^(?<![^\\r\\n])(?=(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*:: (?![ \\t]*$(?![^\\r\\n])))'),
         // Also ends at blank lines followed by a line no entry holds: not a
         // marker, and not indented to the open description's content column,
         // as carve-js reads it. It consumes the blank lines, since highlight.js
@@ -1722,9 +1722,6 @@
             + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'
             // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
             + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
-        // A term opens it, and any `:` line re-enters it after a block inside
-        // the list (an item, a fence) ended it; DESCRIPTION_MARKER asks
-        // definitionListLines whether that line is a marker.
         'on:begin': () => {
             descriptionColumn = Infinity;
         },
@@ -3075,6 +3072,8 @@
         LIST_NUMBER,
         MARKER_LINE_CONTINUATION,
         DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
+        // A marker after a block inside the list (an item, a fence) ended the entry.
+        DESCRIPTION_MARKER,
         FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
         ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
         REFERENCE_DEF,

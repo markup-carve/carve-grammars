@@ -24,7 +24,11 @@
     "text": "\n"
   },
   {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
     "scope": "code",
-    "text": "```\nx\n"
+    "text": "\nx\n"
   }
 ]
