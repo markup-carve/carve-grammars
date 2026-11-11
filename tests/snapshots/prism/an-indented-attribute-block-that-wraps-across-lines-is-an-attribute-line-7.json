@@ -17,26 +17,6 @@
   },
   {
     "type": "definition-list",
-    "text": "a\n   "
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>class-name",
-    "text": ".c"
-  },
-  {
-    "type": "definition-list>attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "definition-list",
-    "text": "\npara\n"
+    "text": "a\n   {.c\n}\npara\n"
   }
 ]

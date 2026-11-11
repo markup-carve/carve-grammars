@@ -371,6 +371,10 @@
         ],
         relevance: 5,
     };
+    // `08-attributes.ebnf` `continuation`, as on Prism's `attrLinePad`; `\\1` is
+    // the opener line's indentation.
+    const attrLineIndentPad = '[ \\t]*(?:\\r?\\n\\1[ \\t]+)?';
+    const attrLineIndentSep = '(?:[ \\t]*\\r?\\n\\1[ \\t]+|[ \\t]+)';
     const ATTRIBUTE = {
         className: 'attr',
         // TWO ROLES, ONE TOKEN - see the note on Prism's `attributes`. A standalone
@@ -379,7 +383,7 @@
         // engine renders prose (#164). The line-anchored branch is a lookbehind so
         // the match still starts at the `{`.
         begin: new RegExp(
-            '(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*)\\{(?!__\\})\\s*' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
+            '(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)([ \\t]*))\\{(?!__\\})' + attrLineIndentPad + ATTR_ITEM + '(?:' + attrLineIndentSep + ATTR_ITEM + ')*' + attrLineIndentPad + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?=\\{)(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
             + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',

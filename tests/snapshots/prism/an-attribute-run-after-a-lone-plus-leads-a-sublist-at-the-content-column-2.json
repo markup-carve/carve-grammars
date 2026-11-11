@@ -13,23 +13,7 @@
   },
   {
     "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "x\ny"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "\n{x\ny}\n"
   },
   {
     "type": "list>punctuation",

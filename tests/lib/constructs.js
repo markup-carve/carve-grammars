@@ -60,7 +60,7 @@ export const CONSTRUCTS = [
     // The other half of #164, and the reason the fix cannot just narrow the shared
     // separator: a standalone attribute LINE DOES span lines, and must keep doing so.
     {
-        name: 'an attribute line spans lines', sample: '{.a\n.b}\n\nparagraph\n',
+        name: 'an attribute line spans lines', sample: '{.a\n .b}\n\nparagraph\n',
         payload: '{.a', textmate: 'meta.attributes', attr: true,
     },
     { name: "italic", sample: "some /italic/ text", payload: "italic", textmate: "markup.italic" },

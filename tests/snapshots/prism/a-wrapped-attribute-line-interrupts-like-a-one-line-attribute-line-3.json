@@ -5,27 +5,7 @@
   },
   {
     "type": "text",
-    "text": "```\n  +\n"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".c"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "```\n  +\n{.c\n}\n"
   },
   {
     "type": "code-block>punctuation",

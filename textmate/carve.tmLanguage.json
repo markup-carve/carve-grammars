@@ -2847,14 +2847,14 @@
           "name": "punctuation.definition.attributes.carve"
         }
       },
-      "end": "(\\})[ \\t]*$",
+      "end": "(?!^)(\\})[ \\t]*$|^(?:(?![ \\t])|(?=[ \\t]*$))",
       "endCaptures": {
         "1": {
           "name": "punctuation.definition.attributes.carve"
         }
       },
       "name": "meta.attributes.carve",
-      "comment": "A standalone attribute line may span physical lines. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
+      "comment": "A standalone attribute line may span physical lines, but only through continuations indented past the `{` (08-attributes.ebnf `continuation`): a flush-left or blank line ends it. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
     },
     "attributes": {
       "match": "(?<![\\w\"'])(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<!^(?:\\A\\x{FEFF})?[ \\t]{0,64}:[ \\t]{1,64})(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",

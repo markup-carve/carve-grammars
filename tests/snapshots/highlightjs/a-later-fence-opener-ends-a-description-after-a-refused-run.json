@@ -21,15 +21,7 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{.x\n.y}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\n{.x\n.y}\n"
   },
   {
     "scope": "code",

@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": " d\n   "
-  },
-  {
-    "scope": "attr",
-    "text": "{c\n}"
-  },
-  {
-    "scope": null,
-    "text": "\na\n"
+    "text": " d\n   {c\n}\na\n"
   }
 ]

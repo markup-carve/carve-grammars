@@ -1,10 +1,6 @@
 [
   {
-    "scope": "attr",
-    "text": "{.a\n\n.b}"
-  },
-  {
     "scope": null,
-    "text": "\n\nparagraph\n"
+    "text": "{.a\n\n.b}\n\nparagraph\n"
   }
 ]

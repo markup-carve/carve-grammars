@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": " p\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{.a\n.b}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": " p\n{.a\n.b}\n"
   },
   {
     "scope": "section",

@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{.x\n.y}"
-  },
-  {
-    "scope": null,
-    "text": "\n+\n  zq\n"
+    "text": "\n{.x\n.y}\n+\n  zq\n"
   }
 ]

@@ -21,27 +21,7 @@
   },
   {
     "type": "definition-list",
-    "text": "\n"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>class-name",
-    "text": ".x"
-  },
-  {
-    "type": "definition-list>attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>class-name",
-    "text": ".y"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "}"
+    "text": "\n{.x\n.y}"
   },
   {
     "type": "text",

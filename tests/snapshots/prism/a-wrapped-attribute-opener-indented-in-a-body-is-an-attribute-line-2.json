@@ -17,22 +17,6 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n "
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "definition-list>attributes>attr-value",
-    "text": "c\n"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "definition-list",
-    "text": "\n"
+    "text": "d\n {c\n}\n"
   }
 ]

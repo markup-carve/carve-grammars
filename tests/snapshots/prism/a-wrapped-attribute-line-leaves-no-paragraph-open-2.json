@@ -5,30 +5,6 @@
   },
   {
     "type": "text",
-    "text": "prose\n  "
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".a"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\n  "
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".b"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\ntail\n"
+    "text": "prose\n  {.a\n  .b}\ntail\n"
   }
 ]

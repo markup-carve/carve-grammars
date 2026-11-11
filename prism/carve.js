@@ -185,6 +185,11 @@
     var afterEscape = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\[^\\r\\n])';
     var noCommentRun = '(?<!\\{%(?:[^%\\r\\n]|%(?!\\})|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))){0,4096}%\\}(?:[ \\t]{0,64}\\{[^{}\\r\\n]{0,512}\\}){1,64})';
     var linkDestinationBeforeAttr = '(?:(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\[\\]\\\\\\n]|\\\\.){0,4096}\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\))|(?=\\{)(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[^\\[\\]\\r\\n]{0,4096}(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\)))';
+    // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
+    // non-blank line indented past its `{`, so `{.a` + newline + `.b}` is text.
+    // `indent` is a backreference to the opener line's indentation, or ''.
+    var attrLinePad = function (indent) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + indent + '[ \\t]+)?'; };
+    var attrLineSep = function (indent) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + indent + '[ \\t]+|[ \\t]+)'; };
     var attributes = {
         // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
         // INLINE block glued to a construct may not - `attributes` pads and
@@ -204,10 +209,10 @@
             // `(?=\{)` first: every branch starts at `{`, and checking it before the
             // line-prefix lookbehinds keeps a long run of spaces linear.
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
-            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*)\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
+            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))([ \\t]*))\\{(?!__\\})' + attrLinePad('\\1') + attrItem + '(?:' + attrLineSep('\\1') + attrItem + ')*' + attrLinePad('\\1') + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
             + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})\\s*' + attrItem + '(?:\\s+' + attrItem + ')*\\s*\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad('') + attrItem + '(?:' + attrLineSep('') + attrItem + ')*' + attrLinePad('') + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
         ),
         greedy: true,
         alias: 'attr-value',

@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": " d\n  "
-  },
-  {
-    "scope": "attr",
-    "text": "{.c\n}"
-  },
-  {
-    "scope": null,
-    "text": "\n  x\n\n"
+    "text": " d\n  {.c\n}\n  x\n\n"
   },
   {
     "scope": "symbol",

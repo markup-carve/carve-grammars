@@ -13,15 +13,7 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{x\ny}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\n{x\ny}\n"
   },
   {
     "scope": "bullet",
