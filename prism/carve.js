@@ -1042,8 +1042,12 @@
     // rest of the document (PART 0 S1), so its container never reaches a closer.
     // Atomic, and a fence line takes no other branch.
     var bodyFenceOpener = '(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*(?:\\r\\n?|\\n)';
-    var containerBody = '(?:(?=(^(?<![^\\r\\n])' + colonFenceLine + '[^\\r\\n]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,512}?[ \\t]*\\5[ \\t]*$(?![^\\r\\n])(?:\\r\\n?|\\n)))\\4'
-        + '|(?=(((`|~)\\8{2,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,512}?\\7\\8*[ \\t]*(?:\\r\\n?|\\n)))\\6'
+    // A nested body skips its own closed fences the same way; an unclosed one
+    // leaves the nested container unclosed too (carve-grammars#840).
+    var containerBody = '(?:(?=(^(?<![^\\r\\n])' + colonFenceLine + '[^\\r\\n]*(?:\\r\\n?|\\n)'
+        + '(?:(?=(((`|~)\\8{2,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,512}?\\7\\8*[ \\t]*(?:\\r\\n?|\\n)))\\6'
+        + '|(?!' + bodyFenceOpener + ')[^\\r\\n]*(?:\\r\\n?|\\n)){0,512}?[ \\t]*\\5[ \\t]*$(?![^\\r\\n])(?:\\r\\n?|\\n)))\\4'
+        + '|(?=(((`|~)\\11{2,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*(?:\\r\\n?|\\n)(?:[^\\r\\n]*(?:\\r\\n?|\\n)){0,512}?\\10\\11*[ \\t]*(?:\\r\\n?|\\n)))\\9'
         + '|(?!' + colonFenceLine.replace('(:{3,})', ':{3,}') + '|' + bodyFenceOpener + ')[^\\r\\n]*(?:\\r\\n?|\\n))*?';
     var containerPattern = function (opener) {
         return RegExp(

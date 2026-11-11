@@ -12,7 +12,7 @@
     "text": "outer"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
@@ -28,27 +28,15 @@
     "text": "inner"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>code-block-unclosed>code-block>punctuation",
+    "type": "code-block-unclosed>code-block>punctuation",
     "text": "```"
   },
   {
-    "type": "div>code-block-unclosed>code-block",
-    "text": "\ncode\n:::\n::::\n:::"
-  },
-  {
-    "type": "text",
-    "text": "\nafter "
-  },
-  {
-    "type": "bold>bold",
-    "text": "*b*"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n:::\n::::\n:::\nafter *b*\n"
   }
 ]

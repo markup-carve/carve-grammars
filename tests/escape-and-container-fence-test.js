@@ -118,16 +118,19 @@ const fences = [
     [['::: figure', FENCE, 'code', ':::', '*after*'], 'after', false],
     [[':::: note', FENCE, 'code', ':::', 'more', '::::', '*after*'], 'after', false],
     [['::: a', ':::: b', FENCE, 'x', '::::', 'y', ':::', '*after*'], 'after', false],
+    // A nested body skips its closed fences and never closes past an unclosed one.
+    [['::: a', ':::: b', '~~~', 'x', '::::', 'y', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', 'p', FENCE, 'x', '::::', 'y', '', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', '::::: c', FENCE, 'x', ':::::', '::::', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', FENCE, 'x', FENCE, '::::', ':::', '*after*'], 'after', true],
+    [['::: a', ':::: b', '~~~~', 'x', '::::', '~~~~', '::::', ':::', '*after*'], 'after', true],
 ];
-// Prism still closes the outer container past a nested one (carve-grammars#840).
-const lagging = { prism: new Set([`::: a\n:::: b\n${FENCE}\nx\n::::\ny\n:::\n*after*\n`]) };
 for (const [lines, needle, bold] of fences) {
     const source = `${lines.join('\n')}\n`;
     assert.equal(html(source).includes(`<strong>${needle}</strong>`), bold, `parser: ${JSON.stringify(source)}`);
     for (const [name, tokenize] of surfaces.filter(([id]) => id === 'prism' || id === 'highlightjs')) {
         const token = await tokenAt(tokenize, source, needle);
-        const want = lagging[name]?.has(source) ? !bold : bold;
-        assert.equal(matches('bold', name, token.scope), want, `${name}: ${JSON.stringify(source)} scopes ${needle} (scope ${token.scope})`);
+        assert.equal(matches('bold', name, token.scope), bold, `${name}: ${JSON.stringify(source)} scopes ${needle} (scope ${token.scope})`);
         checked++;
     }
 }
