@@ -12,7 +12,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 - Cell alignment in braces leads a cell's attribute block (`|={>} Qty |`, `|{> .num} 1 |`) and is scoped as alignment in all three grammars; the editor writes the braced form (markup-carve/carve#5091, #828).
 - The editor writes two spaces after a letter or roman list marker with a dot (`a.  item`), and a paragraph `a. alpha` stays unescaped (markup-carve/carve#4828, #828).
 - The `=` of `!=`, `<=` and `>=` neither opens nor closes a highlight (markup-carve/carve#4197, #828).
-- Prism, highlight.js and TextMate follow the 0.1.14 block readings: an indented `::` term opens a list without a host and takes no lazy line, a list marker interrupts a description body, a lone `+` on a quote's first line is the first-block marker, a bare `:::` interrupts a quote paragraph, an unclosed code fence takes every later line, and a fence closes at or left of its opener's column (#828). Edge shapes that still differ are tracked in #839.
+- Prism, highlight.js and TextMate follow the 0.1.14 block readings: an indented `::` term opens a list without a host and takes no lazy line, a list marker interrupts a description body, a lone `+` on a quote's first line is the first-block marker, a bare `:::` interrupts a quote paragraph, an unclosed code fence takes every later line, and a fence closes at or left of its opener's column (#828).
 - Prism, highlight.js and TextMate no longer scope `->`, `<-`, `<->`, `(c)`, `(r)` or a one-space letter marker, which the 0.1.14 spec reads as text; an arrow needs its exact hyphen run (#831).
 - The editor kit writes a thematic break it inserts as `***`, and keeps an authored spelling (#829).
 - The schema map lists `colwidth` under the new `layoutAttributes`: editor layout that a bridge leaves out of Carve without reporting a loss (markup-carve/carve-php#4948, #836).
@@ -21,7 +21,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 
 - An escaped space (`10\ kg`) is scoped as an escape in all three grammars (#828).
 - An unclosed code fence in a nested colon container keeps the outer closers as code in Prism too (#840).
-- highlight.js reads a description marker by the 0.1.14 rule: at or right of its term and left of the open description's content column, in quotes too; a term is never folded into a description, and a `: +` description refuses a line left of its marker (#839).
+- Prism and highlight.js read a description marker by the container it reaches: it is a marker when that container holds a definition list, in quotes, footnote bodies and tab-indented lists too; a term is never folded into a description, and a `: +` description refuses a line left of its marker (#839).
 - TextMate opens an indented heading at the document level, and an indented heading, fence, quote or abbreviation definition below a nested list item's content column (#841).
 - An aligned cell after an escaped backslash (`| a \\|{>} b |`) keeps its alignment scope in Prism and highlight.js (#828).
 - The editor mounts nested spans as a valid document, keeping the outermost span, and drops an empty code span inside a mark, which has no spelling (#828).

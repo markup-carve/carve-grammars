@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " :: term\n  : payload\n"
+    "text": " :: term\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " payload\n"
   },
   {
     "scope": "comment",
@@ -13,6 +21,14 @@
   },
   {
     "scope": null,
-    "text": "\n   : d2\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "   :"
+  },
+  {
+    "scope": null,
+    "text": " d2\n"
   }
 ]

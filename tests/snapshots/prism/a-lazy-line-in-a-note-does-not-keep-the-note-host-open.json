@@ -25,7 +25,11 @@
   },
   {
     "type": "definition-list",
-    "text": ": a\nz\n"
+    "text": ": a\nz"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "title>important",

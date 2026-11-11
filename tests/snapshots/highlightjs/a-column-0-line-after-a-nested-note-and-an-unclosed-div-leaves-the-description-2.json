@@ -21,15 +21,15 @@
   },
   {
     "scope": null,
-    "text": ": :\n    "
+    "text": ": :\n"
   },
   {
     "scope": "symbol",
-    "text": "[^4]"
+    "text": "    [^4]:"
   },
   {
     "scope": null,
-    "text": ": p\n"
+    "text": " p\n"
   },
   {
     "scope": "keyword",

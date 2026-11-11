@@ -13,15 +13,15 @@
   },
   {
     "scope": null,
-    "text": " - a\n  "
+    "text": " - a\n"
   },
   {
     "scope": "symbol",
-    "text": "[^q]"
+    "text": "  [^q]:"
   },
   {
     "scope": null,
-    "text": ": note\n"
+    "text": " note\n"
   },
   {
     "scope": "bullet",

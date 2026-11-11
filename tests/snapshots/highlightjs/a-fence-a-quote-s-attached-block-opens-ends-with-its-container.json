@@ -21,7 +21,15 @@
   },
   {
     "scope": null,
-    "text": "\n: - "
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " - "
   },
   {
     "scope": "code",

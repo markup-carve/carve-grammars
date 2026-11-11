@@ -21,7 +21,19 @@
   },
   {
     "type": "text",
-    "text": ": :: t\n          c\n\n"
+    "text": ": "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n          c\n\n"
   },
   {
     "type": "footnote>symbol",

@@ -16,7 +16,7 @@
     "text": " t"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -25,7 +25,15 @@
   },
   {
     "type": "blockquote",
-    "text": "   : p"
+    "text": "   "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " p"
   },
   {
     "type": "text",

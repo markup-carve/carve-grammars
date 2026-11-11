@@ -21,7 +21,15 @@
   },
   {
     "scope": null,
-    "text": "\n  :  > a\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": "  > a\n"
   },
   {
     "scope": "quote",

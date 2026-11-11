@@ -13,7 +13,23 @@
   },
   {
     "scope": null,
-    "text": "  def\n[a]: /u {.c}\n\n"
+    "text": "  def\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[a]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " {.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
   },
   {
     "scope": "link",

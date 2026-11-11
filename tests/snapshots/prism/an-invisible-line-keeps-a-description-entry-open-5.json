@@ -24,7 +24,7 @@
     "text": " t2"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": "\n"
   },
   {
@@ -33,7 +33,19 @@
   },
   {
     "type": "text",
-    "text": "\n  :  > a\n"
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  :  "
+  },
+  {
+    "type": "definition-list",
+    "text": "> a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",

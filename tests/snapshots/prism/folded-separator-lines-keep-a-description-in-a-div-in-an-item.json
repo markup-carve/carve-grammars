@@ -29,11 +29,7 @@
   },
   {
     "type": "definition-list",
-    "text": "t"
-  },
-  {
-    "type": "text",
-    "text": "\n      : e\n      : f\n"
+    "text": "t\n      : e\n      : f\n"
   },
   {
     "type": "definition-list>definition-term>title>punctuation",

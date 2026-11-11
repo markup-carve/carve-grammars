@@ -32,7 +32,19 @@
     "text": " t"
   },
   {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "    : "
+  },
+  {
+    "type": "definition-list",
+    "text": "d"
+  },
+  {
     "type": "text",
-    "text": "\n    : d\n\n    q\n: d\n"
+    "text": "\n\n    q\n: d\n"
   }
 ]

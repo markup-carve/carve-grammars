@@ -65,10 +65,14 @@
   },
   {
     "type": "blockquote",
-    "text": "  : b"
+    "text": "  "
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " b\n"
   }
 ]

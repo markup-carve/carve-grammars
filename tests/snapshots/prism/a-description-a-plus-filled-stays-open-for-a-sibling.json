@@ -21,10 +21,14 @@
   },
   {
     "type": "definition-list",
-    "text": "\nl"
+    "text": "\nl\n"
   },
   {
-    "type": "text",
-    "text": "\n : b\n"
+    "type": "definition-list>punctuation",
+    "text": " : "
+  },
+  {
+    "type": "definition-list",
+    "text": "b\n"
   }
 ]

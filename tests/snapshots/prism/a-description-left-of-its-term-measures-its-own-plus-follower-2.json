@@ -8,7 +8,19 @@
     "text": " t"
   },
   {
-    "type": "text",
-    "text": "\n: +\n  h\n"
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n  h\n"
   }
 ]

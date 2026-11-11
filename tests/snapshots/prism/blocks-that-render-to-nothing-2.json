@@ -8,16 +8,24 @@
     "text": " t"
   },
   {
-    "type": "text",
-    "text": "\n:  "
+    "type": "definition-list",
+    "text": "\n"
   },
   {
-    "type": "comment",
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list>comment",
     "text": "%%%"
   },
   {
+    "type": "definition-list",
+    "text": "\n   x"
+  },
+  {
     "type": "text",
-    "text": "\n   x\n"
+    "text": "\n"
   },
   {
     "type": "comment",

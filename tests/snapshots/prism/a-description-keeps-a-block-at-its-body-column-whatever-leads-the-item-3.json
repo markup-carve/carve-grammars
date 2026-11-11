@@ -9,11 +9,7 @@
   },
   {
     "type": "blockquote",
-    "text": ":: term"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": ":: term\n"
   },
   {
     "type": "blockquote>punctuation",
@@ -21,7 +17,15 @@
   },
   {
     "type": "blockquote",
-    "text": "   : definition"
+    "text": "   "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " definition"
   },
   {
     "type": "text",

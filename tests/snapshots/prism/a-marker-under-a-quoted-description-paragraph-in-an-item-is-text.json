@@ -20,7 +20,7 @@
     "text": " t"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -29,7 +29,15 @@
   },
   {
     "type": "blockquote",
-    "text": " : d"
+    "text": " "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " d"
   },
   {
     "type": "text",

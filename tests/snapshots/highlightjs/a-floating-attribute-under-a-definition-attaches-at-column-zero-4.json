@@ -13,7 +13,19 @@
   },
   {
     "scope": null,
-    "text": "  d\n[r]: /u\n\nSee "
+    "text": "  d\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
   },
   {
     "scope": "link",

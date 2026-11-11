@@ -17,7 +17,19 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n    [r]: /url"
+    "text": "- a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "    [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /url"
   },
   {
     "type": "text",

@@ -33,7 +33,11 @@
   },
   {
     "type": "blockquote",
-    "text": " x\n"
+    "text": " x"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",
@@ -41,7 +45,11 @@
   },
   {
     "type": "blockquote",
-    "text": " [r]: /u\n"
+    "text": " [r]: /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",
@@ -77,10 +85,6 @@
   },
   {
     "type": "blockquote",
-    "text": " v [y][r]"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " v [y][r]\n"
   }
 ]

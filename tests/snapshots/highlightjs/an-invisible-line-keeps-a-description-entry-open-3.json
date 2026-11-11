@@ -13,7 +13,19 @@
   },
   {
     "scope": null,
-    "text": " payload\n[r]: /u\n"
+    "text": " payload\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   },
   {
     "scope": "punctuation",

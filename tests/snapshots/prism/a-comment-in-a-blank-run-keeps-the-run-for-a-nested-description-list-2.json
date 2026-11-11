@@ -33,14 +33,10 @@
   },
   {
     "type": "definition-list",
-    "text": "x\n\n\n\n"
+    "text": "x"
   },
   {
-    "type": "definition-list>punctuation",
-    "text": "    : "
-  },
-  {
-    "type": "definition-list",
-    "text": "d\n"
+    "type": "text",
+    "text": "\n\n\n\n    : d\n"
   }
 ]

@@ -33,11 +33,7 @@
   },
   {
     "type": "blockquote",
-    "text": " +"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " +\n"
   },
   {
     "type": "blockquote>punctuation",
@@ -45,11 +41,7 @@
   },
   {
     "type": "blockquote",
-    "text": " q"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " q\n"
   },
   {
     "type": "blockquote>punctuation",
@@ -57,10 +49,14 @@
   },
   {
     "type": "blockquote",
-    "text": " : b"
+    "text": " "
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " b\n"
   }
 ]

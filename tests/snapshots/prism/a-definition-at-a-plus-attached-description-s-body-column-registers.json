@@ -29,7 +29,19 @@
   },
   {
     "type": "definition-list",
-    "text": "description\n  [r]: /url"
+    "text": "description"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "  [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /url"
   },
   {
     "type": "text",

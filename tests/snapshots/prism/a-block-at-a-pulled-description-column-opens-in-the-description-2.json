@@ -21,7 +21,11 @@
   },
   {
     "type": "definition-list",
-    "text": "\nh\n"
+    "text": "\nh"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "title>important",

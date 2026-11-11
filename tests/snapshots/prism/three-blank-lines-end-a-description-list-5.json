@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "x\n\n\n\n  more\n"
+    "text": "x"
+  },
+  {
+    "type": "text",
+    "text": "\n\n\n\n  more\n"
   }
 ]

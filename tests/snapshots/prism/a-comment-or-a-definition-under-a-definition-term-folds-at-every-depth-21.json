@@ -41,7 +41,11 @@
   },
   {
     "type": "definition-list",
-    "text": "b\n"
+    "text": "b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "comment",

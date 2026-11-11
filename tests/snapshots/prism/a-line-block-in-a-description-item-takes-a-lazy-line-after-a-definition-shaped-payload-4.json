@@ -33,14 +33,18 @@
   },
   {
     "type": "definition-list",
-    "text": "::: |\n    "
+    "text": "::: |"
   },
   {
-    "type": "definition-list>footnote>symbol",
+    "type": "text",
+    "text": "\n    "
+  },
+  {
+    "type": "footnote>symbol",
     "text": "[^1]"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": ": n\nb\n"
   }
 ]

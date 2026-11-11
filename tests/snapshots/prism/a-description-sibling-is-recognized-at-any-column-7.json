@@ -25,10 +25,6 @@
   },
   {
     "type": "definition-list",
-    "text": "a"
-  },
-  {
-    "type": "text",
-    "text": "\n : b\n"
+    "text": "a\n : b\n"
   }
 ]

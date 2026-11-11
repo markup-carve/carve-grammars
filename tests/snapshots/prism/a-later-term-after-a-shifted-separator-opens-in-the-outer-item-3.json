@@ -28,16 +28,8 @@
     "text": " t"
   },
   {
-    "type": "div>definition-list",
-    "text": "\n"
-  },
-  {
-    "type": "div>definition-list>punctuation",
-    "text": "  : "
-  },
-  {
-    "type": "div>definition-list",
-    "text": "a\n"
+    "type": "div",
+    "text": "\n  : a\n"
   },
   {
     "type": "div>definition-list>definition-term>title>punctuation",

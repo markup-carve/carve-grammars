@@ -25,7 +25,19 @@
   },
   {
     "type": "text",
-    "text": "\n: - ``` js\n"
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "- ``` js"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",

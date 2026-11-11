@@ -21,7 +21,11 @@
   },
   {
     "type": "definition-list",
-    "text": "\nafter\n"
+    "text": "\nafter"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "list>punctuation",

@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "- ``` x\ncode\n"
+    "text": "- ``` x\ncode"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "code-block-unclosed>code-block>punctuation",

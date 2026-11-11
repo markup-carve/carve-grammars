@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " :: t\n  : - ~~~\n    x\ntail\n"
+    "text": " :: t\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " - ~~~\n    x\ntail\n"
   }
 ]

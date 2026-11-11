@@ -17,7 +17,15 @@
   },
   {
     "scope": "quote",
-    "text": ">   : definition"
+    "text": ">   "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "quote",
+    "text": " definition"
   },
   {
     "scope": null,

@@ -17,10 +17,10 @@
   },
   {
     "scope": "symbol",
-    "text": "[^m]"
+    "text": "[^m]:"
   },
   {
     "scope": null,
-    "text": ": n\nz\n"
+    "text": " n\nz\n"
   }
 ]

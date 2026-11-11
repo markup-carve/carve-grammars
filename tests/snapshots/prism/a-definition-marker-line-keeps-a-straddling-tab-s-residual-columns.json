@@ -28,7 +28,15 @@
     "text": " t"
   },
   {
-    "type": "text",
-    "text": "\n  : zq\n"
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list",
+    "text": "zq\n"
   }
 ]

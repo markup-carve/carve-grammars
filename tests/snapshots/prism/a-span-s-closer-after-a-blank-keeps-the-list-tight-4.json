@@ -16,11 +16,15 @@
     "text": " u"
   },
   {
-    "type": "text",
-    "text": "\n  : "
+    "type": "definition-list",
+    "text": "\n"
   },
   {
-    "type": "comment",
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list>comment",
     "text": "%%%"
   },
   {

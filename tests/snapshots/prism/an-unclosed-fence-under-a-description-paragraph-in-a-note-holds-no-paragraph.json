@@ -5,7 +5,31 @@
   },
   {
     "type": "text",
-    "text": ": :: t\n  : d\n    ```\nz\n\n"
+    "text": ": "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list",
+    "text": "d"
+  },
+  {
+    "type": "text",
+    "text": "\n    ```\nz\n\n"
   },
   {
     "type": "footnote>symbol",

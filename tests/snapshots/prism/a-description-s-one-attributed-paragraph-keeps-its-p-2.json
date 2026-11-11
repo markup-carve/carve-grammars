@@ -20,23 +20,23 @@
     "text": "+"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "definition-list>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "definition-list>attributes>attr-value>id",
+    "type": "attributes>attr-value>id",
     "text": "#d"
   },
   {
-    "type": "definition-list>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": "\nq\n\n"
   },
   {

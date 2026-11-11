@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n"
+    "text": "d"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "comment",
@@ -25,6 +29,14 @@
   },
   {
     "type": "text",
-    "text": "\n : d2\n"
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": " : "
+  },
+  {
+    "type": "definition-list",
+    "text": "d2\n"
   }
 ]

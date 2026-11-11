@@ -29,19 +29,19 @@
   },
   {
     "type": "definition-list",
-    "text": "description\n  "
-  },
-  {
-    "type": "definition-list>footnote>symbol",
-    "text": "[^n]"
-  },
-  {
-    "type": "definition-list",
-    "text": ": note"
+    "text": "description"
   },
   {
     "type": "text",
-    "text": "\n\nSee"
+    "text": "\n  "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": note\n\nSee"
   },
   {
     "type": "footnote>symbol",

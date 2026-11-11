@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " :: term\n  : payload\n\n"
+    "text": " :: term\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " payload\n\n"
   },
   {
     "scope": "symbol",

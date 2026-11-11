@@ -29,7 +29,15 @@
   },
   {
     "scope": null,
-    "text": "\n: b\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
   },
   {
     "scope": "keyword",

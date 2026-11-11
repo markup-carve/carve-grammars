@@ -29,15 +29,15 @@
   },
   {
     "scope": null,
-    "text": " description\n  "
+    "text": " description\n"
   },
   {
     "scope": "symbol",
-    "text": "[^n]"
+    "text": "  [^n]:"
   },
   {
     "scope": null,
-    "text": ": note\n\nSee"
+    "text": " note\n\nSee"
   },
   {
     "scope": "symbol",

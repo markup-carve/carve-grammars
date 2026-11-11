@@ -1,17 +1,15 @@
 /**
- * A `:` description separator continues a definition list only at the column
- * of a term above it (markup-carve/carve#3458). Below or right of that column
- * it is paragraph or description text, so Prism and highlight.js must not
- * scope it as the marker. Each shape is checked against carve-js too. Prism
- * reads a term that starts its text as a fragment after a list marker, so the
- * TEXT shapes open below a paragraph. A term indented past column 0 needs a
- * list item or description whose content column it reaches, and a
- * quoted list takes its markers after the `> ` prefix.
+ * A `:` description separator is a marker when the deepest container it
+ * reaches holds a definition list (PART 0 CARVE-P0-003 and CARVE-P0-024 S2/S3,
+ * carve-grammars#839); anywhere else it is paragraph or description text, so
+ * Prism and highlight.js must not scope it as the marker. Each shape is checked
+ * against carve-js too.
  */
 import assert from 'node:assert/strict';
 
 import { parse, renderHtml } from '@markup-carve/carve';
 import { prismTokens, hljsTokens } from './lib/engines.js';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { textmateLineTokenizer } from './lib/textmate-lines.js';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
@@ -160,6 +158,12 @@ const MARKER = [
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
     'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
+    // The entry's column is its container's, not its term's (carve-grammars#839).
+    ' :: t\n: d\n: e\n',
+    '- x\n   :: t\n     :  d\n        x\n  : e\n',
+    '- [ ] :: t\n  : a\n',
+    // The line after a `: +` belongs to the description, whatever its column.
+    ':: t\n: +\nafter\n: b\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -182,57 +186,12 @@ const TEXT = [
     '---  \n- z\n  :: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+    // Past the open description's content column a `:` is its text.
+    '  :: t\n : d\n      : e\n',
+    '> - x\n>       :: t\n>    : d\n>      : e\n',
+    // Three blank lines end the list.
+    ':: t\n: x\n\n\n\n: d\n',
 ];
-
-// Shapes Prism and highlight.js still read by the pre-0.1.14 rules (carve-grammars#839).
-// A lagging shape that starts agreeing fails, so the list only shrinks.
-const LAGGING = {
-    prism: new Set([
-        ':: t\n : +\n: e\n',
-        '> :: t\n>  : +\n> : e\n',
-        '- x\n  :: t\n  : d\n   : e\n',
-        'x\n\n:: t\n  : d\n',
-        '>   :: t\n>   : d\n>   : e\n',
-        '> :: t\n>   :: u\n>   : v\n',
-        '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
-        '> :: t\n> : d\n>  :: u\n>  : v\n',
-        '> 1. x\n>   :: t\n>   : e\n',
-        '> - x\n>   :: a\n>     :: u\n>     : e\n',
-        '> :: t\n> other\n>   :: u\n>   : e\n',
-        '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
-        '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
-        '> para\n>   :: t\n>   : e\n',
-        ':: a\n: b\n  \t:: t\n    : e\n',
-        ':: a\n: b\n  \t:: t\n\t: e\n',
-        '- x\n  \t:: t\n    : e\n',
-        '- x\n  \t:: t\n\t: e\n',
-        '- x\n  \t:: t\n    : f\n    : e\n',
-        'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
-        'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
-        ':: a\n: b\n\n   \t:: t\n    : e\n',
-        'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
-        'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
-        'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
-        'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
-    ]),
-    highlightjs: new Set([
-        ':: a\n: b\n  \t:: t\n    : e\n',
-        ':: a\n: b\n  \t:: t\n\t: e\n',
-        '- x\n  \t:: t\n    : e\n',
-        '- x\n  \t:: t\n\t: e\n',
-        '- x\n  \t:: t\n    : f\n    : e\n',
-        'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
-        'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
-        ':: a\n: b\n\n   \t:: t\n    : e\n',
-        'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
-        'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
-    ]),
-};
 
 const scopeAt = (tokens, at) => {
     let offset = 0;
@@ -255,10 +214,9 @@ const check = (source, marker) => {
     }
     for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
         const scoped = marks(scopeAt(tokenize(source), colon));
-        if ((scoped !== marker) !== LAGGING[name].has(source)) {
+        if (scoped !== marker) {
             failures++;
-            console.error(`${name}: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`
-                + (LAGGING[name].has(source) ? ' (now agrees: drop it from LAGGING)' : ''));
+            console.error(`${name}: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`);
         }
     }
 };
@@ -321,5 +279,16 @@ for (const [name, { tokenize }] of Object.entries(ENGINES)) {
     }
 }
 
+// Both grammars carry the same definitionListLines.
+const ownerBlock = (path) => {
+    const text = readFileSync(new URL(path, import.meta.url), 'utf8');
+    const start = text.indexOf('     * DEFINITION-LIST LINES BY OWNER');
+    return text.slice(start, text.indexOf('        return result;\n    }\n', start));
+};
+if (ownerBlock('../prism/carve.js') !== ownerBlock('../highlightjs/carve.js')) {
+    failures++;
+    console.error('prism/carve.js and highlightjs/carve.js carry different definitionListLines blocks');
+}
+
 assert.equal(failures, 0, `${failures} shape(s) disagree`);
-console.log(`description separator column: ${MARKER.length + TEXT.length} shapes checked against carve-js; ${LAGGING.prism.size} lag in prism, ${LAGGING.highlightjs.size} in highlight.js (carve-grammars#839)`);
+console.log(`description separator column: ${MARKER.length + TEXT.length} shapes checked against carve-js in prism and highlight.js`);

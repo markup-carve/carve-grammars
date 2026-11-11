@@ -17,14 +17,18 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n  "
+    "text": "- a"
   },
   {
-    "type": "definition-list>footnote>symbol",
+    "type": "text",
+    "text": "\n  "
+  },
+  {
+    "type": "footnote>symbol",
     "text": "[^q]"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": ": note\n"
   },
   {

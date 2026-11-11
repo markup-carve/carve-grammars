@@ -37,10 +37,14 @@
   },
   {
     "type": "definition-list",
-    "text": "v"
+    "text": "v\n"
   },
   {
-    "type": "text",
-    "text": "\n : e\n"
+    "type": "definition-list>punctuation",
+    "text": " : "
+  },
+  {
+    "type": "definition-list",
+    "text": "e\n"
   }
 ]

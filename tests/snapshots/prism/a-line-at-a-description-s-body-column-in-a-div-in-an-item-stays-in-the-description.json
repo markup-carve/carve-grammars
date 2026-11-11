@@ -29,7 +29,11 @@
   },
   {
     "type": "div>definition-list",
-    "text": "a\n"
+    "text": "a"
+  },
+  {
+    "type": "div",
+    "text": "\n"
   },
   {
     "type": "div>blockquote>punctuation",

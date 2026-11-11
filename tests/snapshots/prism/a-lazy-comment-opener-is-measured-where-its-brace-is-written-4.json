@@ -25,14 +25,10 @@
   },
   {
     "type": "definition-list",
-    "text": "pre"
+    "text": "pre\n  \t"
   },
   {
-    "type": "text",
-    "text": "\n  \t"
-  },
-  {
-    "type": "comment",
+    "type": "definition-list>comment",
     "text": "{% x\n     %}"
   },
   {

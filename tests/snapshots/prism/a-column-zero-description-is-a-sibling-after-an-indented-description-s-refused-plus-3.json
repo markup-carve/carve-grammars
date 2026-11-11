@@ -20,15 +20,7 @@
     "text": "+"
   },
   {
-    "type": "definition-list",
-    "text": "\nl\n"
-  },
-  {
-    "type": "definition-list>punctuation",
-    "text": ": "
-  },
-  {
-    "type": "definition-list",
-    "text": "b\n"
+    "type": "text",
+    "text": "\nl\n: b\n"
   }
 ]

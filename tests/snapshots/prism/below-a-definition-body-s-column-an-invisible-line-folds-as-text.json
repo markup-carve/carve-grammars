@@ -17,11 +17,23 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n  [r]: /u\ntail"
+    "text": "d"
   },
   {
     "type": "text",
-    "text": "\n\nSee "
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "  [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n\nSee "
   },
   {
     "type": "url>punctuation",

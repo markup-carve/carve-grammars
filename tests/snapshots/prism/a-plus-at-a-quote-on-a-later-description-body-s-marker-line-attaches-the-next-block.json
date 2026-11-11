@@ -25,6 +25,10 @@
   },
   {
     "type": "definition-list",
-    "text": "> a\n  +\n  para\n"
+    "text": "> a"
+  },
+  {
+    "type": "text",
+    "text": "\n  +\n  para\n"
   }
 ]

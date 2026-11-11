@@ -29,7 +29,19 @@
   },
   {
     "scope": null,
-    "text": " description\n  [r]: /url\n\nSee "
+    "text": " description\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
   },
   {
     "scope": "link",

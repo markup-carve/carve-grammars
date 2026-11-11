@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " :: t\n   : para\n"
+    "text": " :: t\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "   :"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
   },
   {
     "scope": "comment",
@@ -16,11 +24,7 @@
     "text": "\n"
   },
   {
-    "scope": "code>keyword",
-    "text": "```"
-  },
-  {
     "scope": "code",
-    "text": "\nx\n"
+    "text": "```\nx\n"
   }
 ]

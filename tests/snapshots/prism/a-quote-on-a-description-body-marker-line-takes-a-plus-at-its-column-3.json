@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "> a\n  +\n"
+    "text": "> a"
+  },
+  {
+    "type": "text",
+    "text": "\n  +\n"
   },
   {
     "type": "list>punctuation",

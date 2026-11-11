@@ -41,7 +41,11 @@
   },
   {
     "type": "definition-list",
-    "text": "e\n\n  x\n"
+    "text": "e\n\n  x"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "list>punctuation",

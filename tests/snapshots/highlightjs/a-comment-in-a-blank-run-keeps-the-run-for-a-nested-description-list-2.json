@@ -29,14 +29,6 @@
   },
   {
     "scope": null,
-    "text": " x\n\n\n\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "    :"
-  },
-  {
-    "scope": null,
-    "text": " d\n"
+    "text": " x\n\n\n\n    : d\n"
   }
 ]

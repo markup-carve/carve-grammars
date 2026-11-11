@@ -13,15 +13,15 @@
   },
   {
     "scope": null,
-    "text": " item\n  "
+    "text": " item\n"
   },
   {
     "scope": "symbol",
-    "text": "[^c]"
+    "text": "  [^c]:"
   },
   {
     "scope": null,
-    "text": ": para\n"
+    "text": " para\n"
   },
   {
     "scope": "keyword",

@@ -13,15 +13,7 @@
   },
   {
     "scope": null,
-    "text": "\n    deep\n  : d\n\n"
-  },
-  {
-    "scope": "punctuation",
-    "text": "  :"
-  },
-  {
-    "scope": null,
-    "text": " %%%\n"
+    "text": "\n    deep\n  : d\n\n  : %%%\n"
   },
   {
     "scope": "comment",
