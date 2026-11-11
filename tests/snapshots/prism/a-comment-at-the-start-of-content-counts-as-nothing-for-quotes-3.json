@@ -1,0 +1,14 @@
+[
+  {
+    "type": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "type": "comment",
+    "text": "{% d %}"
+  },
+  {
+    "type": "text",
+    "text": "'word\n"
+  }
+]

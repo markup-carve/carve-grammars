@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_x "
+  },
+  {
+    "scope": "emphasis>strong",
+    "text": "/*a*/"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{.q} b/{c_"
+  },
+  {
+    "scope": null,
+    "text": "} c_\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*x /*a %% b*"
+  },
+  {
+    "type": "text",
+    "text": "/ y*\n"
+  }
+]

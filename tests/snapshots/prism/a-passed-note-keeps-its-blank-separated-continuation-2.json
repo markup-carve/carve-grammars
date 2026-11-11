@@ -1,0 +1,66 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": ": d1\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^k]"
+  },
+  {
+    "type": "text",
+    "text": ": +\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "list\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "other\n\nsee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^k]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

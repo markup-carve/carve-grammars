@@ -1,0 +1,14 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>code",
+    "text": "`\\|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

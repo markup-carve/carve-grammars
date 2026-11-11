@@ -1,0 +1,26 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n       {k=v}\n       z %}"
+  },
+  {
+    "type": "text",
+    "text": " y\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

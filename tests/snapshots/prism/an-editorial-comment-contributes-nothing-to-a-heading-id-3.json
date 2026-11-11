@@ -1,0 +1,30 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Plan "
+  },
+  {
+    "type": "title>important>critic-comment>comment",
+    "text": "{#draft#}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " Plan"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

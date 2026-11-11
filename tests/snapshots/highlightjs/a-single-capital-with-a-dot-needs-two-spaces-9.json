@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "A."
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "  x\n"
+  }
+]

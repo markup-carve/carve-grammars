@@ -1,0 +1,14 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "code",
+    "text": "```\ny\n```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

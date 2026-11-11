@@ -16,15 +16,51 @@
     "text": " b\n\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ```=html"
+    "scope": "code>keyword",
+    "text": "    ```"
   },
   {
-    "scope": null,
-    "text": "\n    <b>p</b>\n"
+    "scope": "code>keyword",
+    "text": "=html"
   },
   {
-    "scope": "keyword",
+    "scope": "code>language-xml",
+    "text": "\n    "
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "<"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "b"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "p"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "</"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "b"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
     "text": "```"
   },
   {

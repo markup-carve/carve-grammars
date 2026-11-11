@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "addition",
+    "text": "{+\"q\"+}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

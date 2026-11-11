@@ -1,0 +1,26 @@
+[
+  {
+    "type": "forced-italic>italic",
+    "text": "{/a "
+  },
+  {
+    "type": "forced-italic>italic>bold-italic>important",
+    "text": "/*b*/"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "{.k}{"
+  },
+  {
+    "type": "forced-italic>italic>tag>variable",
+    "text": "#i"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "}/}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

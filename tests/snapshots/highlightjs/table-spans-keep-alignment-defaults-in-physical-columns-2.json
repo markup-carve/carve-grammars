@@ -17,7 +17,15 @@
   },
   {
     "scope": null,
-    "text": " <"
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\<"
+  },
+  {
+    "scope": null,
+    "text": " "
   },
   {
     "scope": "table-boundary",
@@ -45,7 +53,15 @@
   },
   {
     "scope": null,
-    "text": " ^"
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\^"
+  },
+  {
+    "scope": null,
+    "text": " "
   },
   {
     "scope": "table-boundary",

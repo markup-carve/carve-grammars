@@ -1,0 +1,22 @@
+[
+  {
+    "type": "extension>function>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content",
+    "text": "%% c"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " d\n"
+  }
+]

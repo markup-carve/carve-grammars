@@ -12,55 +12,55 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>blockquote>punctuation",
+    "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "div>blockquote",
+    "type": "blockquote",
     "text": " a"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>blockquote>punctuation",
+    "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "div>blockquote",
+    "type": "blockquote",
     "text": " b"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>blockquote>punctuation",
+    "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "div>blockquote",
+    "type": "blockquote",
     "text": " c"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>blockquote>punctuation",
+    "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "div>blockquote",
+    "type": "blockquote",
     "text": " d"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n```\ncode\n"
   },
   {
@@ -68,7 +68,7 @@
     "text": "::::"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {

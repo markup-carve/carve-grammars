@@ -1,0 +1,38 @@
+[
+  {
+    "type": "extension>function>function",
+    "text": ":code"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content>bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "extension>function>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

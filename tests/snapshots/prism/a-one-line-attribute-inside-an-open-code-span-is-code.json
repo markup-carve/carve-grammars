@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "p\n"
+  },
+  {
+    "type": "code",
+    "text": "`open\n{.x}\nclose`"
+  },
+  {
+    "type": "text",
+    "text": "\nz\n"
+  }
+]

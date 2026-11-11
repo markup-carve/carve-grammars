@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "strong",
+    "text": "{*a "
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "*}"
+  },
+  {
+    "scope": null,
+    "text": " b and "
+  },
+  {
+    "scope": "addition",
+    "text": "{=a "
+  },
+  {
+    "scope": "addition>literal",
+    "text": "---"
+  },
+  {
+    "scope": "addition",
+    "text": "=}"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  },
+  {
+    "scope": "strong",
+    "text": "*a\n"
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

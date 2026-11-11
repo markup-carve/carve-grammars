@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a"
+  },
+  {
+    "type": "hard-break>constant",
+    "text": "\\"
+  },
+  {
+    "type": "text",
+    "text": "\nb\n"
+  }
+]

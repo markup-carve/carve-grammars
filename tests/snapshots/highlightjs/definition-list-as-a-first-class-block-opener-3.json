@@ -5,6 +5,22 @@
   },
   {
     "scope": null,
-    "text": " one\n :: term\n :  def\n"
+    "text": " one\n"
+  },
+  {
+    "scope": "title",
+    "text": " :: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": " :"
+  },
+  {
+    "scope": null,
+    "text": "  def\n"
   }
 ]

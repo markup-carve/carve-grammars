@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>comment",
+    "text": "%%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> secret"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

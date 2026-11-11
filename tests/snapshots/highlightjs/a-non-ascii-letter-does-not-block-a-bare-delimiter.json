@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "é"
+  },
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": null,
+    "text": " y and a*x* y\ny *x*é and y *x*a\n"
+  }
+]

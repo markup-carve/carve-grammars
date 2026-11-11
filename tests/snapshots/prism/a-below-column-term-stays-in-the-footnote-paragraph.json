@@ -1,0 +1,30 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": alpha\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": " ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " term"
+  },
+  {
+    "type": "text",
+    "text": "\n\nSee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

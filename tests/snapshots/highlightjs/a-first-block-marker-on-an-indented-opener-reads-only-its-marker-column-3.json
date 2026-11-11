@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " foo\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  - [ ]"
+  },
+  {
+    "scope": null,
+    "text": " task\n  +\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  1."
+  },
+  {
+    "scope": null,
+    "text": " x\n"
+  }
+]

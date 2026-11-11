@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " d\n  "
+  },
+  {
+    "scope": "attr",
+    "text": "{.c\n}"
+  },
+  {
+    "scope": null,
+    "text": "\n  x\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

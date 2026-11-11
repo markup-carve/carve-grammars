@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "p "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n{lang=de}\nz %}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

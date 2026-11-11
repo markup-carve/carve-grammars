@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^q]:"
+  },
+  {
+    "scope": null,
+    "text": " > {.x\n         .y}\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

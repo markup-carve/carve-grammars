@@ -1,0 +1,82 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-continuation-marker",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " b "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " c "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-continuation-marker",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " d "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " e "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

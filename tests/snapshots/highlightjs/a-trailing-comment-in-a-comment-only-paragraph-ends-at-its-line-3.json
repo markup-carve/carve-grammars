@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "%% t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% d %}"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "%% u"
+  },
+  {
+    "scope": null,
+    "text": "\n\nz\n"
+  }
+]

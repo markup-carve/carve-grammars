@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a %% b"
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "c"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": " d\n"
+  }
+]

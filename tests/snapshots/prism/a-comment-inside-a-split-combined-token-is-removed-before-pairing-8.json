@@ -1,0 +1,30 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " /x /*a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " b "
+  },
+  {
+    "type": "comment",
+    "text": "%% c*/ y"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

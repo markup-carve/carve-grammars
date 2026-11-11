@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "x."
+  },
+  {
+    "type": "bold>bold",
+    "text": "*\"q\"*"
+  },
+  {
+    "type": "text",
+    "text": " and x."
+  },
+  {
+    "type": "italic>italic",
+    "text": "/'q'/"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

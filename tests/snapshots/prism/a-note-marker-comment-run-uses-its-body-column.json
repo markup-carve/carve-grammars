@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n     b\n     z %}"
+  },
+  {
+    "type": "text",
+    "text": "\n    "
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".x"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\nplain\n"
+  }
+]

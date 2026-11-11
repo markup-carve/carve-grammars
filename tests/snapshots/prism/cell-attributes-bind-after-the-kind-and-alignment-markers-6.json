@@ -1,19 +1,23 @@
 [
   {
-    "type": "table>table-boundary",
+    "type": "table>table-header>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>table-alignment>table-header",
+    "type": "table>table-header",
     "text": "="
-  },
-  {
-    "type": "table>table-alignment",
-    "text": "<"
   },
   {
     "type": "table>attributes>attr-value>punctuation",
     "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "<"
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": " "
   },
   {
     "type": "table>attributes>attr-value>class-name",
@@ -28,20 +32,24 @@
     "text": " Name "
   },
   {
-    "type": "table>table-boundary",
+    "type": "table>table-header>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>table-alignment>table-header",
+    "type": "table>table-header",
     "text": "="
-  },
-  {
-    "type": "table>table-alignment",
-    "text": ">"
   },
   {
     "type": "table>attributes>attr-value>punctuation",
     "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": " "
   },
   {
     "type": "table>attributes>attr-value>class-name",
@@ -88,12 +96,16 @@
     "text": "|"
   },
   {
-    "type": "table>table-alignment",
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
     "text": ">"
   },
   {
-    "type": "table>attributes>attr-value>punctuation",
-    "text": "{"
+    "type": "table>attributes>attr-value",
+    "text": " "
   },
   {
     "type": "table>attributes>attr-value>class-name",

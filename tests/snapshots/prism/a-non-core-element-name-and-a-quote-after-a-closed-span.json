@@ -1,0 +1,22 @@
+[
+  {
+    "type": "extension>function>function",
+    "text": ":samp"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content",
+    "text": "x"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

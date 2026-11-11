@@ -1,0 +1,46 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": "> >"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^b]: +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "div",
+    "text": "\nx\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

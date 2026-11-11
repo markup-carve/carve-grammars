@@ -1,0 +1,30 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": - :::::\n"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": "       "
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::::"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

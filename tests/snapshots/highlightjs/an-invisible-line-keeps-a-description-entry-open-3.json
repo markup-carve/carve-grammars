@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " payload\n[r]: /u\n : d2\n"
+  }
+]

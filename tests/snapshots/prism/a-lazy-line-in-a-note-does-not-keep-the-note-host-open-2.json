@@ -1,0 +1,50 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^3]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": a\nz\n"
+  },
+  {
+    "type": "code-block",
+    "text": "          ```\n          c\n          "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n  m\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^3]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{id=\"data:y\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

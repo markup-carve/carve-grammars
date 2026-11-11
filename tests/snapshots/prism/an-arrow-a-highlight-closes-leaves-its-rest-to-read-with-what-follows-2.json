@@ -1,0 +1,14 @@
+[
+  {
+    "type": "highlight>important",
+    "text": "=a =="
+  },
+  {
+    "type": "typography>constant",
+    "text": ">="
+  },
+  {
+    "type": "text",
+    "text": "b=\n"
+  }
+]

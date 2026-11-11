@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "p\n foo]("
+  },
+  {
+    "type": "code",
+    "text": "`url)\n {.x\n .y}"
+  },
+  {
+    "type": "text",
+    "text": "\n ```\n z\n"
+  }
+]

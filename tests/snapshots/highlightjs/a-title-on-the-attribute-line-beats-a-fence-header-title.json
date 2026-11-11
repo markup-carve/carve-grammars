@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "attr",
+    "text": "{title=\"outer\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "js"
+  },
+  {
+    "scope": "code",
+    "text": " "
+  },
+  {
+    "scope": "code>string",
+    "text": "\"inner\""
+  },
+  {
+    "scope": "code>language-javascript",
+    "text": "\nx\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

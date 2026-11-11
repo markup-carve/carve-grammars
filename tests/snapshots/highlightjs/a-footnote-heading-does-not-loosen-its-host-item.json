@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " see"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^n]:"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "section",
+    "text": "    # h"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

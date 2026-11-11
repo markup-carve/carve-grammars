@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".g"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "{% b\n       b %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

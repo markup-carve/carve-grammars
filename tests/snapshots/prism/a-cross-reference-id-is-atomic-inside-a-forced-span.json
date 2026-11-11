@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "{^"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "{^"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "^}\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "type": "raw-inline>string",
+    "text": "`(`{=html}"
+  },
+  {
+    "type": "text",
+    "text": "\"q\"\n"
+  }
+]

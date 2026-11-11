@@ -12,12 +12,20 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "?^"
   },
   {
     "scope": null,
-    "text": " <"
+    "text": "} "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\<"
   },
   {
     "scope": "table-boundary",

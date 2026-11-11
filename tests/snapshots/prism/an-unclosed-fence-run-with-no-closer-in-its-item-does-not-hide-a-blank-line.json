@@ -5,11 +5,15 @@
   },
   {
     "type": "text",
-    "text": "h\n  "
+    "text": "h\n"
   },
   {
-    "type": "code",
-    "text": "```\n\n  b\n```"
+    "type": "code-block",
+    "text": "  ```\n\n  b\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

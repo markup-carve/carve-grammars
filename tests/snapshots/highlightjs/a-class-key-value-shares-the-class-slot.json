@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{class=w-1/2 .bar}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

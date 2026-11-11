@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> > {.x"
+  },
+  {
+    "scope": null,
+    "text": "\n     .y}\nplain\n"
+  }
+]

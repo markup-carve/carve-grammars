@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": t\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%\n  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n\n    ~~~\n    e\n]\n"
+  }
+]

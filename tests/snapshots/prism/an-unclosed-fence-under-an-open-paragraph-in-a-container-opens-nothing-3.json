@@ -12,15 +12,15 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "item\n```\ncode\n"
   },
   {
@@ -28,7 +28,7 @@
     "text": "::::"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {

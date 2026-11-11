@@ -1,0 +1,46 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "critic-comment>comment",
+    "text": "{#c#}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[x]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "critic-comment>comment",
+    "text": "{# note #}"
+  },
+  {
+    "type": "text",
+    "text": "done\n"
+  }
+]

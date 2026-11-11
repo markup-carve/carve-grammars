@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Before.\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": ". "
+  },
+  {
+    "type": "text",
+    "text": "first\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": ". "
+  },
+  {
+    "type": "text",
+    "text": "second\n"
+  }
+]

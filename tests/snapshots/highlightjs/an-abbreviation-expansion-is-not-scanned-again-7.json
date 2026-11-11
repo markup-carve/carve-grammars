@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code",
+    "text": "`A<b>`"
+  },
+  {
+    "scope": "meta",
+    "text": "{=html}"
+  },
+  {
+    "scope": null,
+    "text": " A\n"
+  }
+]

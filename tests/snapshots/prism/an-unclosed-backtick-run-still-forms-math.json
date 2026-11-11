@@ -1,0 +1,10 @@
+[
+  {
+    "type": "math>string",
+    "text": "$`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

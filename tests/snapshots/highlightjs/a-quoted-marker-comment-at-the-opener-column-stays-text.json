@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": " -"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> {% a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "   > b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "   > z %}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

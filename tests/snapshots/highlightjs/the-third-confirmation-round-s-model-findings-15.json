@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~p"
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition>link",
+    "text": "[x](/u){k=\"~}"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "\"}b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

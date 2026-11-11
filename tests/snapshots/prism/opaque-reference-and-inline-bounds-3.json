@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "see [m] here\n"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "m"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "y"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

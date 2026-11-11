@@ -1,0 +1,50 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": p\n"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".a"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "\n"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".b"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "title>important",
+    "text": "  # q"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

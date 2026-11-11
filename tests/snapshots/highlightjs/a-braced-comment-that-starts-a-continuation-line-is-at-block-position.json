@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "pre\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% a\nb %}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

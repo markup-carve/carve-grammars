@@ -1,0 +1,46 @@
+[
+  {
+    "type": "changed>important>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>important>deleted",
+    "text": "p"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>important>inserted>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "changed>important>inserted>url>link-text",
+    "text": "x"
+  },
+  {
+    "type": "changed>important>inserted>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "changed>important>inserted>url",
+    "text": "/u"
+  },
+  {
+    "type": "changed>important>inserted>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "changed>important>inserted",
+    "text": "{k=\""
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": "\"}b~}\n"
+  }
+]

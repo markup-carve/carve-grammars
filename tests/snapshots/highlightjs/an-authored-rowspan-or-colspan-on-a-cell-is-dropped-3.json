@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "table-alignment",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": " align=left} a "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

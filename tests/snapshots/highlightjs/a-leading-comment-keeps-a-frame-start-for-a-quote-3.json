@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "deletion>comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "deletion",
+    "text": "\"a\""
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition>comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "\"b\""
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

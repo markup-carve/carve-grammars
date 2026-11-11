@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "{% c\n  d %}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  Body.\n"
+  }
+]

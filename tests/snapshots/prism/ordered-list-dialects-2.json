@@ -1,6 +1,26 @@
 [
   {
+    "type": "list>punctuation",
+    "text": "iv.  "
+  },
+  {
     "type": "text",
-    "text": "iv. four\nv. five\nvi. six\n"
+    "text": "four\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "v.  "
+  },
+  {
+    "type": "text",
+    "text": "five\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "vi.  "
+  },
+  {
+    "type": "text",
+    "text": "six\n"
   }
 ]

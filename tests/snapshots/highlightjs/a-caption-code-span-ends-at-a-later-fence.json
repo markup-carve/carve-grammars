@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "quote",
+    "text": "> quote"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " "
+  },
+  {
+    "scope": "title caption_>code",
+    "text": "`open"
+  },
+  {
+    "scope": null,
+    "text": "\n "
+  },
+  {
+    "scope": "attr",
+    "text": "{.x\n .y}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": " ```"
+  },
+  {
+    "scope": null,
+    "text": "\n z\n"
+  }
+]

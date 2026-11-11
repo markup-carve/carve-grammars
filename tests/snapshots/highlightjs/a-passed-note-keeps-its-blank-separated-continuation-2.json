@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^m]:"
+  },
+  {
+    "scope": null,
+    "text": " d1\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^k]:"
+  },
+  {
+    "scope": null,
+    "text": " +\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " list\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " other\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^m]"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^k]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ":  "
+  },
+  {
+    "type": "definition-list>footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "definition-list",
+    "text": ": note\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   * "
+  },
+  {
+    "type": "text",
+    "text": "child\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

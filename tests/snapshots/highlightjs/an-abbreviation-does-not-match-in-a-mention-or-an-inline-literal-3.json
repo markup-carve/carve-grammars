@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[AB]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# "
+  },
+  {
+    "scope": "section>symbol",
+    "text": "@AB"
+  },
+  {
+    "scope": "section",
+    "text": " and "
+  },
+  {
+    "scope": "section>string",
+    "text": "!`AB`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

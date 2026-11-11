@@ -1,0 +1,58 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "w[HTML"
+  },
+  {
+    "type": "url",
+    "text": "](u)"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "HTML"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "t"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

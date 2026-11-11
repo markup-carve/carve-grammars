@@ -1,0 +1,46 @@
+[
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "{{"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-path>url",
+    "text": "d"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-name>keyword",
+    "text": "@lines"
+  },
+  {
+    "type": "include-directive>important>include-option>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-value>string",
+    "text": "0"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "}}"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*a*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

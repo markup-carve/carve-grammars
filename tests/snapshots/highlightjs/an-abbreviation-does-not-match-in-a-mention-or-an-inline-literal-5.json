@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> q !`A`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " cap "
+  },
+  {
+    "scope": "title caption_>symbol",
+    "text": "@A"
+  },
+  {
+    "scope": "title caption_",
+    "text": " A"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

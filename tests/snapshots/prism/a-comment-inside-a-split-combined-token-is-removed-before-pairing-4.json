@@ -1,0 +1,26 @@
+[
+  {
+    "type": "italic>italic",
+    "text": "/x "
+  },
+  {
+    "type": "italic>italic>bold-italic>important",
+    "text": "/*a %% b*/"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

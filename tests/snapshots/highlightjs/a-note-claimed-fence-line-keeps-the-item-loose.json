@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^c]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^d]"
+  },
+  {
+    "scope": null,
+    "text": ": para\n          more\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n\n  See"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^c]"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^d]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

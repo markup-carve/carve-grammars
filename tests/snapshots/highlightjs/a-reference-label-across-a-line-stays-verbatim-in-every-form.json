@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![x\ny][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{href=javascript:x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

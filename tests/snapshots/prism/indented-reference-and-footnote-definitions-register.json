@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": " Read "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "intro"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "x"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": ".\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": " [x]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /intro "
+  },
+  {
+    "type": "reference-definition>url>string",
+    "text": "\"T\""
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

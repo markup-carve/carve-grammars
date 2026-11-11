@@ -1,0 +1,62 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "a [b {{ x "
+  },
+  {
+    "type": "url>link-text>mention>variable",
+    "text": "@lines"
+  },
+  {
+    "type": "url>link-text",
+    "text": ":0 }}"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url",
+    "text": " c"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url",
+    "text": "r"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /r"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

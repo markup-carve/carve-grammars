@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "text",
+    "text": "a\n  : b\n  : c\n"
+  },
+  {
+    "type": "title>important",
+    "text": "    # h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

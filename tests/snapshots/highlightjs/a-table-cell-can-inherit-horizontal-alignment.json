@@ -8,12 +8,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">^"
   },
   {
     "scope": null,
-    "text": " Name "
+    "text": "} Name "
   },
   {
     "scope": "table-boundary",
@@ -40,16 +44,24 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "?v"
   },
   {
     "scope": null,
-    "text": " Bottom "
+    "text": "} Bottom "
   },
   {
     "scope": "table-boundary",
     "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "{"
   },
   {
     "scope": "table-alignment",
@@ -57,7 +69,7 @@
   },
   {
     "scope": null,
-    "text": " Middle "
+    "text": "} Middle "
   },
   {
     "scope": "table-boundary",
@@ -72,12 +84,16 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "?^"
   },
   {
     "scope": null,
-    "text": " Top "
+    "text": "} Top "
   },
   {
     "scope": "table-boundary",

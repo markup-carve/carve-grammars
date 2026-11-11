@@ -1,0 +1,74 @@
+[
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "x"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " @A "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " !"
+  },
+  {
+    "type": "table>code",
+    "text": "`A B`"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " A "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

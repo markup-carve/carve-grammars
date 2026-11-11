@@ -1,0 +1,22 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " {{ "
+  },
+  {
+    "type": "blockquote>underline>underline",
+    "text": "_a_"
+  },
+  {
+    "type": "blockquote",
+    "text": " @code:js }}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

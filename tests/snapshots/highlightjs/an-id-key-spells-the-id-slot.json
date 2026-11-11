@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {id=q}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " Heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

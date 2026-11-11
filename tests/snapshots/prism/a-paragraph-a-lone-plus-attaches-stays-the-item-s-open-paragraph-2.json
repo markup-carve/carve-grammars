@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nq\n"
+  },
+  {
+    "type": "title>important",
+    "text": "  # h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

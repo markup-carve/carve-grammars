@@ -17,15 +17,15 @@
   },
   {
     "type": "definition-list",
-    "text": "a"
+    "text": "a\n"
   },
   {
-    "type": "text",
-    "text": "\n\t"
+    "type": "code-block",
+    "text": "\t```\n "
   },
   {
-    "type": "code",
-    "text": "```\n ```"
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

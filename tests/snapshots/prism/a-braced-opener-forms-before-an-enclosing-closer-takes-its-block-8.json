@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "/"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": "{+a/{k=b+}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

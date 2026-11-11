@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "* "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "a\n  : b\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "     >"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

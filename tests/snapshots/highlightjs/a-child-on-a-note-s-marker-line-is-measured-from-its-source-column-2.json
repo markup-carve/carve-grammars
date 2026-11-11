@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": ": a\n"
+  },
+  {
+    "scope": "section",
+    "text": "    # H"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " :::\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

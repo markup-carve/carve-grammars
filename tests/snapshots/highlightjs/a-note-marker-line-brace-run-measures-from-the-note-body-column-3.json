@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "{% a\n       {k=v}\n       z %}"
+  },
+  {
+    "scope": null,
+    "text": " y\n\nr"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

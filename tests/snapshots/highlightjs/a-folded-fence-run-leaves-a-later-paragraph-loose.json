@@ -8,11 +8,11 @@
     "text": " o\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\n"
   },
   {
@@ -20,7 +20,7 @@
     "text": "```"
   },
   {
-    "scope": "code",
+    "scope": null,
     "text": "\n\n  t\n"
   }
 ]

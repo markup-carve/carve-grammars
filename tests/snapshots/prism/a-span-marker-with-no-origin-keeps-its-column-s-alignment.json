@@ -1,0 +1,86 @@
+[
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "~"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-span",
+    "text": " <"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " c "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

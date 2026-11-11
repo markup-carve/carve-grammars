@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "pre\n"
+  },
+  {
+    "type": "comment",
+    "text": "{% b\nb %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

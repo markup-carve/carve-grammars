@@ -1,0 +1,34 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": head\n\n"
+  },
+  {
+    "type": "comment",
+    "text": "  %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% below"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  tail\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

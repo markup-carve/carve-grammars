@@ -1,0 +1,10 @@
+[
+  {
+    "type": "url",
+    "text": "<a@b+c.d>"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

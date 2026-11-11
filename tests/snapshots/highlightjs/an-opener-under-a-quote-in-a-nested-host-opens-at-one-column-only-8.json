@@ -13,31 +13,19 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "   |"
-  },
-  {
-    "scope": null,
-    "text": " c "
+    "text": "\n   "
   },
   {
     "scope": "table-boundary",
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "   |"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
+    "text": " c "
   },
   {
     "scope": "table-boundary",

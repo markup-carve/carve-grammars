@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  1. "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  },
+  {
+    "type": "title>important",
+    "text": "    # h"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "table "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "header-rows"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "2 "
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "footer-rows"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "1"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "csv"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>header>field>property",
+    "text": "a"
+  },
+  {
+    "type": "code-block>csv-body",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>csv-body>field>string",
+    "text": "b"
+  },
+  {
+    "type": "code-block",
+    "text": "\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

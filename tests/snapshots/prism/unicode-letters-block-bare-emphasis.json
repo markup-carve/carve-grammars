@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "Москва/Питер/Киев\n日本/中国/韩国\nснейк_кейс_тут\nä/ö/ü\n𐐀"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*x*"
+  },
+  {
+    "type": "text",
+    "text": " and *x*𐐁\n日本"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "{/中国/}"
+  },
+  {
+    "type": "text",
+    "text": "韩国\n"
+  }
+]

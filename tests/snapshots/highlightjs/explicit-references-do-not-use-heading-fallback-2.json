@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "section",
+    "text": "# Plan"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[Plan]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/defined"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "[x][Missing]"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "link",
+    "text": "[x][Plan]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[Plan][]"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

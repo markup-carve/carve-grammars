@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "\te\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "\t>"
+  },
+  {
+    "type": "blockquote",
+    "text": " q"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

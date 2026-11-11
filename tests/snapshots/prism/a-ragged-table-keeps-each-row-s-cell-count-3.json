@@ -1,7 +1,11 @@
 [
   {
-    "type": "table>table-boundary",
+    "type": "table>table-header>table-boundary",
     "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
   },
   {
     "type": "table",
@@ -9,22 +13,6 @@
   },
   {
     "type": "table>table-boundary",
-    "text": "|"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "table-separator>table-boundary",
-    "text": "|"
-  },
-  {
-    "type": "table-separator>table-operator",
-    "text": "---"
-  },
-  {
-    "type": "table-separator>table-boundary",
     "text": "|"
   },
   {

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "a %% c"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " d\n"
+  }
+]

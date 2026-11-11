@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " p\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% a\n %}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "   > q"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

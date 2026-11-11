@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n  : - "
+  },
+  {
+    "scope": "code",
+    "text": "```\nz\n"
+  }
+]

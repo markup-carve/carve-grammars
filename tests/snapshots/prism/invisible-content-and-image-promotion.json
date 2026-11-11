@@ -1,0 +1,30 @@
+[
+  {
+    "type": "comment",
+    "text": "{%%}"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "alt"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "x.png"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

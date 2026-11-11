@@ -1,0 +1,54 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>attr-name",
+    "text": "a"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value>string",
+    "text": "'x|y|z'"
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "table>attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

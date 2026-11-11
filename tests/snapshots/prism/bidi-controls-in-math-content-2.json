@@ -1,0 +1,10 @@
+[
+  {
+    "type": "math>string",
+    "text": "$`x⁦y`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

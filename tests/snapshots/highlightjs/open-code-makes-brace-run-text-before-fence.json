@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "p\n foo]("
+  },
+  {
+    "scope": "code",
+    "text": "`url)\n {.x\n .y}\n ```\n z\n"
+  }
+]

@@ -17,18 +17,18 @@
   },
   {
     "type": "definition-list",
-    "text": "- ```"
+    "text": "- ```\n"
+  },
+  {
+    "type": "code-block",
+    "text": "     ```\n```rust\nc\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",
-    "text": "\n     "
-  },
-  {
-    "type": "code",
-    "text": "```\n```"
-  },
-  {
-    "type": "text",
-    "text": "rust\nc\n```\n"
+    "text": "\n"
   }
 ]

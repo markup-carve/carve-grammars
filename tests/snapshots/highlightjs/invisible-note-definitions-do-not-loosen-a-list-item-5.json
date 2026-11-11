@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ": x\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [^b]:"
+  },
+  {
+    "scope": null,
+    "text": " +\n    one\n\n   see"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "2."
+  },
+  {
+    "scope": null,
+    "text": " next\n"
+  }
+]

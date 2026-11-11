@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "comment",
+    "text": "%% carve-lint-disable unused-link-reference-definition"
+  },
+  {
+    "scope": null,
+    "text": "\n\nbody\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^b]: +"
+  },
+  {
+    "type": "text",
+    "text": "\npara\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

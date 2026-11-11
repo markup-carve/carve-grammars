@@ -1,0 +1,22 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>highlight>important",
+    "text": "=warm="
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "section",
+    "text": "# "
+  },
+  {
+    "scope": "section>strong",
+    "text": "*A*"
+  },
+  {
+    "scope": "section",
+    "text": "{"
+  },
+  {
+    "scope": "section>symbol",
+    "text": "#z"
+  },
+  {
+    "scope": "section",
+    "text": "}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "</#A>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " u"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list",
+    "text": "::: |\n    [x]: /u\nb"
+  },
+  {
+    "type": "text",
+    "text": "\n\n[x]\n"
+  }
+]

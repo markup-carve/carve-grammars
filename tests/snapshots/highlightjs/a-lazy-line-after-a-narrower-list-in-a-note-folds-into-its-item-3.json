@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " 10. a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  *"
+  },
+  {
+    "scope": null,
+    "text": " y\n tail\n\nr"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

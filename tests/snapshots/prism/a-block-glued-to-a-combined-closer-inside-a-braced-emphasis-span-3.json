@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "*x "
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "{/a "
+  },
+  {
+    "type": "forced-italic>italic>bold-italic>important",
+    "text": "/*b*/"
+  },
+  {
+    "type": "forced-italic>italic",
+    "text": "{k=\"v w\"} c/}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

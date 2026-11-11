@@ -1,0 +1,38 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*"
+  },
+  {
+    "type": "forced-bold>bold>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "x*}"
+  },
+  {
+    "type": "text",
+    "text": " b and a "
+  },
+  {
+    "type": "highlight>important",
+    "text": "{="
+  },
+  {
+    "type": "highlight>important>typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "highlight>important",
+    "text": "x=}"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
+  }
+]

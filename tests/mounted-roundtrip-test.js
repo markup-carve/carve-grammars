@@ -151,7 +151,7 @@ switched.destroy();
 for (const [source, select, expected, lists] of [
     ['- one\n\ntwo', (pos) => ({ from: pos[0], to: pos[1] + 3 }), '. one\n. two', 1],
     ['. before\n\n- one', (pos) => pos[1], '. before\n. one', 1],
-    ['a. before\n\n- one', (pos) => pos[1], 'a. before\n. one', 2],
+    ['a.  before\n\n- one', (pos) => pos[1], 'a.  before\n. one', 2],
 ]) {
     const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });
     const pos = [];
@@ -325,7 +325,7 @@ for (const [source, toggle, select, expected] of [
     ['> - q\n>   - deep\n\npara', 'toggleOrderedList', (pos) => ({ from: pos[0], to: pos[1] + 2 }), '> . q\n>   - deep\n\npara'],
     ['# H\n\n> - q', 'toggleOrderedList', 'all', '# H\n\n> - q'],
     ['- a\n\n## H\n\n- b', 'toggleBulletList', 'all', 'a\n\n## H\n\nb'],
-    ['# H\n\na. one\n   1) deep\n\npara', 'toggleOrderedList', 'all', '# H\n\na. one\n   1) deep\n. para'],
+    ['# H\n\na.  one\n    1) deep\n\npara', 'toggleOrderedList', 'all', '# H\n\na.  one\n    1) deep\n. para'],
     ['1. a\n   - deep\n\na) b', 'toggleOrderedList', 'all', 'a\n\n- deep\n\nb'],
 ]) {
     const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { unsupported: 'throw' }) });

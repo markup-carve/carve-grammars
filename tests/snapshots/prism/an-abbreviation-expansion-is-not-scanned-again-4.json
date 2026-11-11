@@ -1,0 +1,34 @@
+[
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "amp"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "x"
+  },
+  {
+    "type": "text",
+    "text": "\n\na & amp\n"
+  }
+]

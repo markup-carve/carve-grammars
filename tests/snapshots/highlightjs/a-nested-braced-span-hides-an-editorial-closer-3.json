@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{-{+a-}"
+  },
+  {
+    "scope": null,
+    "text": "+} b-}\n"
+  }
+]

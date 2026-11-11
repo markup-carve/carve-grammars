@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "link",
+    "text": "![a](x.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

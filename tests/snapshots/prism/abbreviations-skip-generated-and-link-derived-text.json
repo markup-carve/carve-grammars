@@ -1,0 +1,78 @@
+[
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "expansion"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " A"
+  },
+  {
+    "type": "text",
+    "text": "\n\n<"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#A"
+  },
+  {
+    "type": "text",
+    "text": "> "
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "A"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "url",
+    "text": "<https://example.test/A>"
+  },
+  {
+    "type": "text",
+    "text": " A\n"
+  }
+]

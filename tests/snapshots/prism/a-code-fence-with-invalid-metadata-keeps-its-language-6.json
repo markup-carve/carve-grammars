@@ -1,0 +1,10 @@
+[
+  {
+    "type": "code",
+    "text": "```js foo```"
+  },
+  {
+    "type": "text",
+    "text": " is inline\n"
+  }
+]

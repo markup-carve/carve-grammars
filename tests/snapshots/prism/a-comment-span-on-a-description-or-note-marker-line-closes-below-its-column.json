@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "  ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " u"
+  },
+  {
+    "type": "text",
+    "text": "\n  : "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\nc\n"
+  }
+]

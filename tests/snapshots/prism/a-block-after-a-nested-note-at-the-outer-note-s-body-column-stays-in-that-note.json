@@ -1,0 +1,58 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ": text\n        "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": ": text\n"
+  },
+  {
+    "type": "code-block",
+    "text": "        ~~~\n        code\n        "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\nafter "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

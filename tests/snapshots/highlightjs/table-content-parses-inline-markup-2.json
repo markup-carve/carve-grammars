@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "addition",
+    "text": "=warm="
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

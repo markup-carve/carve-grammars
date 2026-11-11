@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ": t\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [^b]:"
+  },
+  {
+    "scope": null,
+    "text": " r\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n    ~\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n  "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n    n\n  zz\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "/x "
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a %% b*/"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

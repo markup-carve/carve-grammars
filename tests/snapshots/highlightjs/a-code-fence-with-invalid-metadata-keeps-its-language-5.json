@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "para\n"
+  },
+  {
+    "scope": "code",
+    "text": "```js title=\"x\"\na\n```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

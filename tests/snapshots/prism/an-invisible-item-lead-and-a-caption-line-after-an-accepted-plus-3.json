@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n\n  Body.\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  }
+]

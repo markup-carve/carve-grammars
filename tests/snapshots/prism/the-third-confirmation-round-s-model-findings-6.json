@@ -1,0 +1,38 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " "
+  },
+  {
+    "type": "caption>title>bold>bold",
+    "text": "*a*"
+  },
+  {
+    "type": "caption>title",
+    "text": "#"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![a][r]{%%}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "y.png"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

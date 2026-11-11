@@ -1,6 +1,14 @@
 [
   {
+    "scope": "bullet",
+    "text": "a."
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
     "scope": null,
-    "text": "a.{.c} An alpha item.\n"
+    "text": "  An alpha item.\n"
   }
 ]

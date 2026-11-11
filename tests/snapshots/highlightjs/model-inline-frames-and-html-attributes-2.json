@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](/u){src=/v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

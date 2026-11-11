@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "%%%\nhidden\n%%%"
+  },
+  {
+    "scope": null,
+    "text": "\nshown\n"
+  }
+]

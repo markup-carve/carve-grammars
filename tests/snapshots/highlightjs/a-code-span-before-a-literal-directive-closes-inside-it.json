@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "code",
+    "text": "`a *{{ `"
+  },
+  {
+    "scope": "symbol",
+    "text": "@lines"
+  },
+  {
+    "scope": null,
+    "text": ":1 }}*\n"
+  }
+]

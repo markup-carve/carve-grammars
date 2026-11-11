@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "string",
+    "text": "!`A`"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " and A\n"
+  }
+]

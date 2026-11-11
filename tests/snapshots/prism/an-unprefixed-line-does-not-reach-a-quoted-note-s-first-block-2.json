@@ -1,0 +1,42 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^b]: +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " H"
+  },
+  {
+    "type": "text",
+    "text": "\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^b]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

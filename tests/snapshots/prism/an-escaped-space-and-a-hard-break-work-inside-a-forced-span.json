@@ -1,0 +1,42 @@
+[
+  {
+    "type": "highlight>important",
+    "text": "{="
+  },
+  {
+    "type": "highlight>important>escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "highlight>important",
+    "text": "x=}"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "{_a "
+  },
+  {
+    "type": "forced-underline>underline>escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "b_}"
+  },
+  {
+    "type": "text",
+    "text": " and {*a"
+  },
+  {
+    "type": "hard-break>constant",
+    "text": "\\"
+  },
+  {
+    "type": "text",
+    "text": "\nb*}\n"
+  }
+]

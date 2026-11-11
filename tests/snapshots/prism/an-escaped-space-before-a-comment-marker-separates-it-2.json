@@ -1,0 +1,26 @@
+[
+  {
+    "type": "highlight>important",
+    "text": "{=a"
+  },
+  {
+    "type": "highlight>important>escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "highlight>important",
+    "text": "%% c=}"
+  },
+  {
+    "type": "text",
+    "text": " t and b \\ "
+  },
+  {
+    "type": "comment",
+    "text": "%% d"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

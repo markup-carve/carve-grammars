@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "p\n  "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n   # h\n   z %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

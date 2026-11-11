@@ -1,0 +1,18 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " 1.{#i} "
+  },
+  {
+    "type": "comment",
+    "text": "{% b\n>    b %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

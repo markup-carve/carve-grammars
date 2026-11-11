@@ -1,0 +1,58 @@
+[
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "abbreviation-definition>symbol",
+    "text": "AB"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "abbreviation-definition>string",
+    "text": "x"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>mention>variable",
+    "text": "@AB"
+  },
+  {
+    "type": "title>important",
+    "text": " and "
+  },
+  {
+    "type": "title>important>literal>string",
+    "text": "!`AB`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

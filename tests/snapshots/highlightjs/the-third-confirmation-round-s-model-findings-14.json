@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "{+a+}"
+  },
+  {
+    "scope": "deletion",
+    "text": "{k=\""
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "\"}b"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

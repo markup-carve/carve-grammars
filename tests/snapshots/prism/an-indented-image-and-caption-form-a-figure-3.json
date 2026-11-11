@@ -1,0 +1,38 @@
+[
+  {
+    "type": "image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "image>url",
+    "text": "Apollo"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "image>url",
+    "text": "a.jpg"
+  },
+  {
+    "type": "image>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " Figure 1: moon"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

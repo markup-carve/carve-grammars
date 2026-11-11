@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "symbol",
+    "text": ":A:"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " and A\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[A]: y"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

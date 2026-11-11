@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "quote",
+    "text": "> >"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " cap"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

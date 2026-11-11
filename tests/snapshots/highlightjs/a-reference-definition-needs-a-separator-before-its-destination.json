@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[b]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/v"
+  },
+  {
+    "scope": null,
+    "text": "\n\n[a]:/u\n"
+  },
+  {
+    "scope": "link",
+    "text": "[a][]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[b][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

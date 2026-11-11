@@ -1,0 +1,14 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*a*"
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "{_k=b_}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

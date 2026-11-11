@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[t]( \"T\"  )"
+  },
+  {
+    "scope": null,
+    "text": " and [t](/u \"T\" )\n"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "box"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>list>punctuation",
+    "text": "- * "
+  },
+  {
+    "type": "div>definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "div>definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "div>definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "div>definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "div>definition-list",
+    "text": "a\n"
+  },
+  {
+    "type": "div>definition-list>definition-term>title>punctuation",
+    "text": "    ::"
+  },
+  {
+    "type": "div>definition-list>definition-term>title",
+    "text": " sibling"
+  },
+  {
+    "type": "div",
+    "text": "\n    tail\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

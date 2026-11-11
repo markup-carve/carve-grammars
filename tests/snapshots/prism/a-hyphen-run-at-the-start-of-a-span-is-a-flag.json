@@ -1,0 +1,62 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "bold>bold>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "bold>bold",
+    "text": "x*"
+  },
+  {
+    "type": "text",
+    "text": " b, a "
+  },
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "italic>italic>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "italic>italic",
+    "text": "x/"
+  },
+  {
+    "type": "text",
+    "text": " b, a "
+  },
+  {
+    "type": "underline>underline",
+    "text": "_"
+  },
+  {
+    "type": "underline>underline>typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "underline>underline",
+    "text": "x_"
+  },
+  {
+    "type": "text",
+    "text": " b and a "
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "*/--x/*"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
+  }
+]

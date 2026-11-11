@@ -1,0 +1,50 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "\\"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "div>url>link-text",
+    "text": "a\nb"
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "div>url",
+    "text": "missing"
+  },
+  {
+    "type": "div>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

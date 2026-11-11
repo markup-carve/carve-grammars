@@ -1,0 +1,50 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": p\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "    ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "    : "
+  },
+  {
+    "type": "definition-list",
+    "text": "pre"
+  },
+  {
+    "type": "text",
+    "text": "\n  \t"
+  },
+  {
+    "type": "comment",
+    "text": "{% x\n     %}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

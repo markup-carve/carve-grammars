@@ -1,0 +1,26 @@
+[
+  {
+    "type": "deleted>deleted",
+    "text": "{-["
+  },
+  {
+    "type": "deleted>deleted>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "deleted>deleted>inline-footnote>symbol",
+    "text": "g"
+  },
+  {
+    "type": "deleted>deleted>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "deleted>deleted",
+    "text": "-}"
+  },
+  {
+    "type": "text",
+    "text": "] b-}\n"
+  }
+]

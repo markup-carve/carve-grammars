@@ -1,0 +1,58 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " o\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " p\n"
+  },
+  {
+    "scope": "title",
+    "text": "    :: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "    :"
+  },
+  {
+    "scope": null,
+    "text": " x\n\n\n    "
+  },
+  {
+    "scope": "comment",
+    "text": "%% c"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "    :: u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "    :"
+  },
+  {
+    "scope": null,
+    "text": " v\n"
+  }
+]

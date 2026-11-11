@@ -37,23 +37,7 @@
   },
   {
     "type": "div>code-block-unclosed>code-block",
-    "text": "\ncode\n::::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": "::::"
+    "text": "\ncode\n::::\n:::\n::::"
   },
   {
     "type": "text",

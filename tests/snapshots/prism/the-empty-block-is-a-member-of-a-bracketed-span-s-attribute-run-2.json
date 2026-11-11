@@ -1,0 +1,34 @@
+[
+  {
+    "type": "span-empty-attrs>string",
+    "text": "[a]"
+  },
+  {
+    "type": "span-empty-attrs>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "span-empty-attrs>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "{}"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".b"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

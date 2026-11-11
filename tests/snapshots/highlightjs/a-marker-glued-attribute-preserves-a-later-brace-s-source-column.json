@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
+  },
+  {
+    "scope": null,
+    "text": " {.x\n     .y}\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # h"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "  ::: box"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "   :: sub"
+  },
+  {
+    "scope": null,
+    "text": "\n: def\n"
+  }
+]

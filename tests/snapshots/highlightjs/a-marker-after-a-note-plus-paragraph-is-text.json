@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n  - y\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

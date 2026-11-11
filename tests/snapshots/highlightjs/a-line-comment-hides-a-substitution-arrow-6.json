@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "function",
+    "text": ":foo[\"q\"]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

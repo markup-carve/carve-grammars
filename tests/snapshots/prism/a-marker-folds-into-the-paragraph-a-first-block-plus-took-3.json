@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n  + w1\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   9. "
+  },
+  {
+    "type": "text",
+    "text": "w2\n"
+  }
+]

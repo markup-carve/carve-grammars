@@ -1,0 +1,82 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "a"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "b"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-separator>table-operator",
+    "text": "---"
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-separator>table-operator",
+    "text": "---"
+  },
+  {
+    "type": "table-separator>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\-"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\-"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\-"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": "x"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

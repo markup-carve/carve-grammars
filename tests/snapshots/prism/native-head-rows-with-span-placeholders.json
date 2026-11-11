@@ -1,0 +1,78 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-span",
+    "text": " ^"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " Carve "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " Djot "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " Row spans "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " yes "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " no "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

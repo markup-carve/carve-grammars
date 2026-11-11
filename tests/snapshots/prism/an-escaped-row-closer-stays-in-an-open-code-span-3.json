@@ -1,0 +1,34 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>code",
+    "text": "`b |"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-continuation-marker",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " c"
+  },
+  {
+    "type": "table-continuation>escape>constant",
+    "text": "\\|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

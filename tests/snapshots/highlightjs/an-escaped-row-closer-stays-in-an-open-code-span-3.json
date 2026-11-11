@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "code",
+    "text": "`b |"
+  },
+  {
+    "scope": null,
+    "text": "\n+ c"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "l"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "title>important",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "l-t"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

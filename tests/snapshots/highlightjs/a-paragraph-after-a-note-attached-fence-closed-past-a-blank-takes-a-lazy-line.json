@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\na\n\n  ```\n  c\nsee\n\nx[^f]\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " d\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " v\n\n : e\n"
+  }
+]

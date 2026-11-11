@@ -1,0 +1,14 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " {{ a @code:a,b }}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

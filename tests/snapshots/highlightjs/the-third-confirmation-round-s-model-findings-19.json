@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "$`a`"
+  },
+  {
+    "scope": "attr",
+    "text": "{CLASS=c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

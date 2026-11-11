@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "meta",
+    "text": "{a='x|y|z' .c}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

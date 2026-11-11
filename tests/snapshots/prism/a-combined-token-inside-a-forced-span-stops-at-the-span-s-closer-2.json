@@ -1,0 +1,10 @@
+[
+  {
+    "type": "forced-italic>italic",
+    "text": "{/a /*b/}"
+  },
+  {
+    "type": "text",
+    "text": " c*/\n"
+  }
+]

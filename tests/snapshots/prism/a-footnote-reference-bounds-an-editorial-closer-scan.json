@@ -1,0 +1,26 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+["
+  },
+  {
+    "type": "inserted>inserted>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inserted>inserted>inline-footnote>symbol",
+    "text": "g"
+  },
+  {
+    "type": "inserted>inserted>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": "+}"
+  },
+  {
+    "type": "text",
+    "text": "] b+}\n"
+  }
+]

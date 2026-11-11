@@ -8,12 +8,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": " a "
+    "text": "} a "
   },
   {
     "scope": "table-boundary",
@@ -32,12 +36,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "<"
   },
   {
     "scope": null,
-    "text": " b "
+    "text": "} b "
   },
   {
     "scope": "table-boundary",

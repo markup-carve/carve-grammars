@@ -5,10 +5,22 @@
   },
   {
     "type": "blockquote",
-    "text": " ::: |"
+    "text": " "
   },
   {
-    "type": "text",
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "blockquote>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -28,7 +40,7 @@
     "text": " h"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {

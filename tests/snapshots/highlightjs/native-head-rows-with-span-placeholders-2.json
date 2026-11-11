@@ -1,0 +1,98 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "table-alignment",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "} Price "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "table-alignment",
+    "text": "<"
+  },
+  {
+    "scope": null,
+    "text": "} < "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "table-alignment",
+    "text": "~"
+  },
+  {
+    "scope": null,
+    "text": "} Stock "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " 12.50 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " EUR "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " 3 "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

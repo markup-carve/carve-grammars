@@ -1,0 +1,22 @@
+[
+  {
+    "type": "comment",
+    "text": "%% carve-lint-disable unused-link-reference-definition"
+  },
+  {
+    "type": "text",
+    "text": "\n\nbody\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

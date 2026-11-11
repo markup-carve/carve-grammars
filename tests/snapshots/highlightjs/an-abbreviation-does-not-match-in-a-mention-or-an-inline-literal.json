@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "@A"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "string",
+    "text": "!`A`"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "code",
+    "text": "`A`"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "extension>function>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content",
+    "text": "a"
+  },
+  {
+    "type": "extension>function>extension-content>escape>constant",
+    "text": "\\\\"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "b]\n"
+  }
+]

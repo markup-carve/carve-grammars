@@ -4,24 +4,52 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": " Wide"
+    "text": "} Wide "
   },
   {
     "scope": "table-boundary",
     "text": "|"
   },
   {
-    "scope": "table-span",
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": "{"
+  },
+  {
+    "scope": "table-alignment",
     "text": "<"
   },
   {
+    "scope": null,
+    "text": "} < "
+  },
+  {
     "scope": "table-boundary",
     "text": "|"
+  },
+  {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": "{"
   },
   {
     "scope": "table-alignment",
@@ -29,39 +57,7 @@
   },
   {
     "scope": null,
-    "text": " Last"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": ":--"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": ":--"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": ":--"
+    "text": "} Last "
   },
   {
     "scope": "table-boundary",

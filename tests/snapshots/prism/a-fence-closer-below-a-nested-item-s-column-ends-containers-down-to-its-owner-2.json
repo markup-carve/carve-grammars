@@ -13,11 +13,15 @@
   },
   {
     "type": "text",
-    "text": "b\n\n    "
+    "text": "b\n\n"
   },
   {
-    "type": "code",
-    "text": "```\n    p\n ```"
+    "type": "code-block",
+    "text": "    ```\n    p\n "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

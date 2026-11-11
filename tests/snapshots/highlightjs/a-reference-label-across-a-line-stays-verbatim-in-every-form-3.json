@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "!"
+  },
+  {
+    "scope": "link",
+    "text": "["
+  },
+  {
+    "scope": "link>strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "link",
+    "text": "][a\nb]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

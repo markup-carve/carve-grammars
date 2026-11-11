@@ -1,0 +1,34 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "-  "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[ ]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": :: t\n          c\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

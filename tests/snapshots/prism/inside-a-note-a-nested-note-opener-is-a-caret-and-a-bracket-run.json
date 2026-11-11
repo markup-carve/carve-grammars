@@ -1,0 +1,42 @@
+[
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "x ^"
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "inline-footnote>symbol>url>link-text",
+    "text": "a"
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "inline-footnote>symbol>url",
+    "text": "u"
+  },
+  {
+    "type": "inline-footnote>symbol>url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": " b"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

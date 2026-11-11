@@ -1,6 +1,14 @@
 [
   {
     "type": "text",
-    "text": "10\\ kg\n"
+    "text": "10"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "text",
+    "text": "kg\n"
   }
 ]

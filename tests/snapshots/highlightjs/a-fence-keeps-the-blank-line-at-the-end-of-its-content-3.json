@@ -13,14 +13,6 @@
   },
   {
     "scope": "code",
-    "text": "\nx\n\n"
-  },
-  {
-    "scope": "keyword",
-    "text": ":::"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "\nx\n\n:::\n"
   }
 ]

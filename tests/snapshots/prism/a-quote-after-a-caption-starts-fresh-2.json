@@ -1,0 +1,50 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "t"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " p"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "   [^f]: n"
+  },
+  {
+    "type": "text",
+    "text": "\nl\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

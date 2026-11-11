@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "item\n\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "  ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "definition-list>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n  h\n"
+  },
+  {
+    "type": "title>important",
+    "text": "    # H"
+  },
+  {
+    "type": "text",
+    "text": "\nz\n"
+  }
+]

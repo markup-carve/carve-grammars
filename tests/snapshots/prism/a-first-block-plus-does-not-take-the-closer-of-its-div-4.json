@@ -1,0 +1,50 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "div",
+    "text": "d\n\n"
+  },
+  {
+    "type": "div>blockquote>punctuation",
+    "text": "  >"
+  },
+  {
+    "type": "div>blockquote",
+    "text": " "
+  },
+  {
+    "type": "div>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

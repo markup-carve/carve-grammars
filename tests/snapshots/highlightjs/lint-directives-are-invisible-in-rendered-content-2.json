@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "section",
+    "text": "# One"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "### Three "
+  },
+  {
+    "scope": "section>comment",
+    "text": "%% carve-lint-disable-line heading-level-skip"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

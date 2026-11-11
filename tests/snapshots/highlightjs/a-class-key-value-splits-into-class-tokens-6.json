@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{class=\"javascript:x y\"}"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]

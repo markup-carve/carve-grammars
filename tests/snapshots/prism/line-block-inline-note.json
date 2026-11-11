@@ -1,0 +1,42 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "div",
+    "text": "\na "
+  },
+  {
+    "type": "div>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "div>inline-footnote>symbol",
+    "text": "first\nsecond"
+  },
+  {
+    "type": "div>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "div",
+    "text": " end\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

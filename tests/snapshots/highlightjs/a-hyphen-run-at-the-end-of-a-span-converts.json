@@ -1,0 +1,90 @@
+[
+  {
+    "scope": "strong",
+    "text": "*a "
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " b, "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/a "
+  },
+  {
+    "scope": "emphasis>literal",
+    "text": "--"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": null,
+    "text": " b, "
+  },
+  {
+    "scope": "emphasis",
+    "text": "_a "
+  },
+  {
+    "scope": "emphasis>literal",
+    "text": "---"
+  },
+  {
+    "scope": "emphasis",
+    "text": "_"
+  },
+  {
+    "scope": null,
+    "text": " b, "
+  },
+  {
+    "scope": "deletion",
+    "text": "~a "
+  },
+  {
+    "scope": "deletion>literal",
+    "text": "--"
+  },
+  {
+    "scope": "deletion",
+    "text": "~"
+  },
+  {
+    "scope": null,
+    "text": " b and "
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": "strong>emphasis",
+    "text": "/a "
+  },
+  {
+    "scope": "strong>emphasis>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong>emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": r\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": u\n  "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": ": mid\n\n    TAIL\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^g]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

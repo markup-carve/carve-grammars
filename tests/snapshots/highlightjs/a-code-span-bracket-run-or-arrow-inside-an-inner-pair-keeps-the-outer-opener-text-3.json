@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a "
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": " "
+  },
+  {
+    "scope": "deletion>addition>deletion",
+    "text": "{~b ~}"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": " {~a ~> "
+  },
+  {
+    "scope": "deletion>addition>deletion",
+    "text": "{~b ~}"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": " {~a ~> "
+  },
+  {
+    "scope": "deletion>addition>deletion",
+    "text": "{~b ~}"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "\n"
+  }
+]

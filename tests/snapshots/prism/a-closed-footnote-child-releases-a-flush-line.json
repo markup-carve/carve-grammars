@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "see"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": para\n"
+  },
+  {
+    "type": "title>important",
+    "text": "   # Heading"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

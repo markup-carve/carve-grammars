@@ -12,39 +12,39 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "para\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "-"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": " "
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "div>attributes>attr-value>id",
+    "type": "attributes>attr-value>id",
     "text": "#x"
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n```\ncode\n"
   },
   {
@@ -52,7 +52,7 @@
     "text": "::::"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "extension>function>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content",
+    "text": "\"q\""
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "meta>string",
+    "text": "_x_"
+  },
+  {
+    "scope": "meta",
+    "text": " "
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@code"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "js"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": null,
+    "text": "\n  ^ c\n"
+  }
+]

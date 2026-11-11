@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "keyword",
+    "text": "::: box"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- *"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n  : a\n"
+  },
+  {
+    "scope": "title",
+    "text": "    :: sibling"
+  },
+  {
+    "scope": null,
+    "text": "\n    tail\n"
+  },
+  {
+    "scope": "keyword",
+    "text": ":::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

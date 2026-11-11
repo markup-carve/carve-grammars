@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {#x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>section",
+    "text": "#"
+  },
+  {
+    "scope": "quote",
+    "text": " A"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{#x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# B"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "</#x>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

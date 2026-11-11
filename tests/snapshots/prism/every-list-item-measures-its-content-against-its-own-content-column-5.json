@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "w\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   - "
+  },
+  {
+    "type": "text",
+    "text": "deep\n"
+  }
+]

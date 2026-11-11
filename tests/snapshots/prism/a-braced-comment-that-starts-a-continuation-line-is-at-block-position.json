@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "pre\n"
+  },
+  {
+    "type": "comment",
+    "text": "{% a\nb %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

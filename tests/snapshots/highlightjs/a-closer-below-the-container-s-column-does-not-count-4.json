@@ -16,15 +16,15 @@
     "text": " a\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\n  b\n y\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

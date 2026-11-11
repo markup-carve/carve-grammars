@@ -1,0 +1,42 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "x"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "   [r]: /u"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [r][]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

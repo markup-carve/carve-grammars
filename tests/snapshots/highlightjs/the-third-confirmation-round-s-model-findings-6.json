@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " b "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " "
+  },
+  {
+    "scope": "title caption_>strong",
+    "text": "*a*"
+  },
+  {
+    "scope": "title caption_",
+    "text": "#"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

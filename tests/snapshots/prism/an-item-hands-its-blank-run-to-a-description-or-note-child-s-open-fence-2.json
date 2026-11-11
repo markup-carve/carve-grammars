@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "x"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^1]"
+  },
+  {
+    "type": "text",
+    "text": ": ```\n    code\n\nafter\n"
+  }
+]

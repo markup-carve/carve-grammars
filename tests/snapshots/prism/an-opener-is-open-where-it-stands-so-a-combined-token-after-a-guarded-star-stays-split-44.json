@@ -1,0 +1,22 @@
+[
+  {
+    "type": "underline>underline",
+    "text": "_*"
+  },
+  {
+    "type": "underline>underline>code",
+    "text": "`//`"
+  },
+  {
+    "type": "underline>underline>bold-italic>important",
+    "text": "/*a*/"
+  },
+  {
+    "type": "underline>underline",
+    "text": "_"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

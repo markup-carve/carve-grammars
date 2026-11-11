@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "attr",
+    "text": "{body-rows=x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
+    "scope": null,
+    "text": " A "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "addition",
+    "text": "{="
+  },
+  {
+    "scope": "addition>symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": "addition",
+    "text": "x=}"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "emphasis",
+    "text": "{_a "
+  },
+  {
+    "scope": "emphasis>symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": "emphasis",
+    "text": "b_}"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "strong",
+    "text": "{*a\\\nb*}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

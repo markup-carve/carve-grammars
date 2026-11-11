@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " 1. a\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  \t```"
+  },
+  {
+    "scope": "code",
+    "text": "\n  \tx\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "  \t```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

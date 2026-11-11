@@ -1,0 +1,22 @@
+[
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n:   "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n     {k=v}\n: next\nz %}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

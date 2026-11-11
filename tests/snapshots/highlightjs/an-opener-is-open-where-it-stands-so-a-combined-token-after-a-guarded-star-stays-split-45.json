@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_*"
+  },
+  {
+    "scope": "emphasis>code",
+    "text": "`//`"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/*a_"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

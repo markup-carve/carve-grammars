@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ": seed\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^b]:"
+  },
+  {
+    "scope": null,
+    "text": " +\n   x\n\n  y"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^b]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

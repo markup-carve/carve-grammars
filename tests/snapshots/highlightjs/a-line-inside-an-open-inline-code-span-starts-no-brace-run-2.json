@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "p\n"
+  },
+  {
+    "scope": "code",
+    "text": "`open\n{.x\n.y}\n```\nz\n"
+  }
+]

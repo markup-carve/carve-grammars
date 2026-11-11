@@ -1,0 +1,42 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "mid\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "    - "
+  },
+  {
+    "type": "text",
+    "text": "b\n "
+  },
+  {
+    "type": "comment",
+    "text": "{% c\n   d %}"
+  },
+  {
+    "type": "text",
+    "text": "\n  tail\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "    - "
+  },
+  {
+    "type": "text",
+    "text": "z\n"
+  }
+]

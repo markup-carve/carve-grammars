@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " +\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " li\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " sib\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

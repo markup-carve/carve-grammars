@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mention>variable",
+    "text": "@ann"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "tag>variable",
+    "text": "#tag"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

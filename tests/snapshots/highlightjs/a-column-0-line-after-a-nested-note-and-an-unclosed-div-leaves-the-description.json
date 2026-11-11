@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": ": :\n    "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^4]"
+  },
+  {
+    "scope": null,
+    "text": ": p\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    ::::"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "section",
+    "text": "# a "
+  },
+  {
+    "scope": "section>code",
+    "text": "`<b>x</b>`"
+  },
+  {
+    "scope": "section>meta",
+    "text": "{=html}"
+  },
+  {
+    "scope": "section",
+    "text": " c"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

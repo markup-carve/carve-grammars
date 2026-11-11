@@ -13,30 +13,6 @@
   },
   {
     "scope": null,
-    "text": " - | a |\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "    |"
-  },
-  {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "table-operator",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": null,
-    "text": "\nx\n"
+    "text": " - |= a |\nx\n"
   }
 ]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "citation>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "citation>string>function",
+    "text": "@key"
+  },
+  {
+    "type": "citation>string>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": ": entry\n"
+  }
+]

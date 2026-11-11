@@ -1,0 +1,18 @@
+[
+  {
+    "type": "symbol>constant",
+    "text": ":a:"
+  },
+  {
+    "type": "text",
+    "text": "\"q\"\n"
+  },
+  {
+    "type": "symbol>constant",
+    "text": ":long-name:"
+  },
+  {
+    "type": "text",
+    "text": "'q'\n"
+  }
+]

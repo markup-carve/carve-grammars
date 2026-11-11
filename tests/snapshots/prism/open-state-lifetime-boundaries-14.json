@@ -1,0 +1,10 @@
+[
+  {
+    "type": "comment",
+    "text": "%%%\nhidden\n%%%"
+  },
+  {
+    "type": "text",
+    "text": "\nshown\n"
+  }
+]

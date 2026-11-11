@@ -1,0 +1,34 @@
+[
+  {
+    "type": "changed>important>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>important>deleted",
+    "text": "a"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>important>inserted",
+    "text": "b %% "
+  },
+  {
+    "type": "changed>important>inserted>code",
+    "text": "`~}`"
+  },
+  {
+    "type": "changed>important>inserted",
+    "text": " c"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": " d\n"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "quote",
+    "text": "> [^m]: +"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> [^m]: +"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   - item"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^m]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

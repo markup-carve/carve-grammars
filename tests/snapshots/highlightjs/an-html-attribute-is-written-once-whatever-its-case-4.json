@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[a](/u \"T\"){TITLE=t}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

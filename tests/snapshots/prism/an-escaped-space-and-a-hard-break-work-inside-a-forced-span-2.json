@@ -1,0 +1,26 @@
+[
+  {
+    "type": "highlight>important",
+    "text": "{=a"
+  },
+  {
+    "type": "highlight>important>escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "highlight>important",
+    "text": "=}"
+  },
+  {
+    "type": "text",
+    "text": " and {=a"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\="
+  },
+  {
+    "type": "text",
+    "text": "}\n"
+  }
+]

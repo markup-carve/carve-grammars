@@ -1,0 +1,58 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^m]: +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " [^m]: +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": "   - "
+  },
+  {
+    "type": "blockquote",
+    "text": "item"
+  },
+  {
+    "type": "text",
+    "text": "\n\nsee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

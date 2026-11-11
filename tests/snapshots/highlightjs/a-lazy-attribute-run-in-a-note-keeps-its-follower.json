@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " p\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{.a\n.b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # q"
+  },
+  {
+    "scope": null,
+    "text": "\nafter\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

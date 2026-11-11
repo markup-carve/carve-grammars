@@ -1,0 +1,26 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ": pre\n"
+  },
+  {
+    "type": "comment",
+    "text": "{% b\nb %}"
+  },
+  {
+    "type": "text",
+    "text": "\n\nref"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

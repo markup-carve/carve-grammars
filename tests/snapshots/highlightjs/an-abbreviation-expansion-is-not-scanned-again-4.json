@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[amp]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\na & amp\n"
+  }
+]

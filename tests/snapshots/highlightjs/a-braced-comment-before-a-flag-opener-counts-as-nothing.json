@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "comment",
+    "text": "{%c%}"
+  },
+  {
+    "scope": null,
+    "text": "("
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": "force) y\n"
+  }
+]

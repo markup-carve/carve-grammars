@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "function",
+    "text": ":code["
+  },
+  {
+    "scope": "function>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "function",
+    "text": "]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "function",
+    "text": ":foo[]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

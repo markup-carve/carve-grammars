@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n  : | a |\n ^ cap\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

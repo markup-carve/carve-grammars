@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.a\n}"
+  },
+  {
+    "scope": null,
+    "text": "\np\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": ": > > a\n        +\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": "      >"
+  },
+  {
+    "type": "blockquote",
+    "text": " b"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^f]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

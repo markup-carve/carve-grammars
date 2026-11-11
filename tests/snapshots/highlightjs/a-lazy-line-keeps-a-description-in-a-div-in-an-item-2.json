@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "keyword",
+    "text": "::: note"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title",
+    "text": "   :: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "   :"
+  },
+  {
+    "scope": null,
+    "text": " t\n   x\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "     ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n     k\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "     ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

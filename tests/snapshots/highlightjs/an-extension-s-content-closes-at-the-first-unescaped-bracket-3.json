@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "function",
+    "text": ":foo[a"
+  },
+  {
+    "scope": "function>symbol",
+    "text": "\\]"
+  },
+  {
+    "scope": "function",
+    "text": "\n"
+  }
+]

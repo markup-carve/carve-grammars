@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "_*"
+  },
+  {
+    "type": "code",
+    "text": "`x /`"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*{t=a*/"
+  },
+  {
+    "type": "text",
+    "text": "}\n"
+  }
+]

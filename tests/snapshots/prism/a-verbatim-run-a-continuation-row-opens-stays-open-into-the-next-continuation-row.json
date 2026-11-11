@@ -1,0 +1,42 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-continuation-marker",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " c"
+  },
+  {
+    "type": "table-continuation>code",
+    "text": "` |\n+ x | y |"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

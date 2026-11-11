@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "link",
+    "text": "![a](/i)"
+  },
+  {
+    "scope": null,
+    "text": "\n^ cap\n"
+  }
+]

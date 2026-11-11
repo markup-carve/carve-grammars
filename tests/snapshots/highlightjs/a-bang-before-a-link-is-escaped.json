@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\!"
+  },
+  {
+    "scope": "link",
+    "text": "[x](/u)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

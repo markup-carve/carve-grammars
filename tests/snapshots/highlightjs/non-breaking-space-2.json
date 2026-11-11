@@ -1,6 +1,22 @@
 [
   {
     "scope": null,
-    "text": "say\\ 'twas a fine\\ \"day\"\n"
+    "text": "say"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": null,
+    "text": "'twas a fine"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": null,
+    "text": "\"day\"\n"
   }
 ]

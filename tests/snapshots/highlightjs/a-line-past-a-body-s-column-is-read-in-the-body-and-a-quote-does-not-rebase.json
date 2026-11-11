@@ -13,7 +13,15 @@
   },
   {
     "scope": null,
-    "text": " d\n  - para\n"
+    "text": " d\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
   },
   {
     "scope": "symbol",

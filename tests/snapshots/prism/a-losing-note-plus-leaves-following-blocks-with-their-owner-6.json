@@ -1,0 +1,54 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": ": d1\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": ": "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\nflush\n\nsee"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^m]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

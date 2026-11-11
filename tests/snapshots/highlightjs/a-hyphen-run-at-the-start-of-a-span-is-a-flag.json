@@ -1,0 +1,78 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "x*"
+  },
+  {
+    "scope": null,
+    "text": " b, a "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "emphasis>literal",
+    "text": "--"
+  },
+  {
+    "scope": "emphasis",
+    "text": "x/"
+  },
+  {
+    "scope": null,
+    "text": " b, a "
+  },
+  {
+    "scope": "emphasis",
+    "text": "_"
+  },
+  {
+    "scope": "emphasis>literal",
+    "text": "---"
+  },
+  {
+    "scope": "emphasis",
+    "text": "x_"
+  },
+  {
+    "scope": null,
+    "text": " b and a "
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": "strong>emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "strong>emphasis>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong>emphasis",
+    "text": "x/"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

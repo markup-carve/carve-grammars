@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^0]:"
+  },
+  {
+    "scope": null,
+    "text": " > x\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  1."
+  },
+  {
+    "scope": null,
+    "text": " ~~~\ny\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^0]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

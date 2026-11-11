@@ -1,6 +1,18 @@
 [
   {
+    "type": "list>punctuation",
+    "text": "a.  "
+  },
+  {
     "type": "text",
-    "text": "a. apple\nb. banana\n"
+    "text": "apple\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "b.  "
+  },
+  {
+    "type": "text",
+    "text": "banana\n"
   }
 ]

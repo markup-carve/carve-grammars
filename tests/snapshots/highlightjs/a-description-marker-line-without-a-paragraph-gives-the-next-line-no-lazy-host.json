@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " a\n\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: T"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " # h\nafter\n"
+  }
+]

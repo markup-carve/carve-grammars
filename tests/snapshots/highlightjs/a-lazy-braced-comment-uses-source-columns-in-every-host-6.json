@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " pre\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% b\n b %}"
+  },
+  {
+    "scope": null,
+    "text": "\n\nref"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

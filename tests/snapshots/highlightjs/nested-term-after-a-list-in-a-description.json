@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " - a\n"
+  },
+  {
+    "scope": "title",
+    "text": "   :: sub"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " def\n"
+  }
+]

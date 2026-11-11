@@ -1,0 +1,38 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " a "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "[x"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

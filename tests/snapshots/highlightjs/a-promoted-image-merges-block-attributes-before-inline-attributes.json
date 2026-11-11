@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{.outer k=one}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "![a](b){.inner k=two}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

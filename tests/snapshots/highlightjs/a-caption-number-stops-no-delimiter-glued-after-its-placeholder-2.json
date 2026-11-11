@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "link",
+    "text": "![i](a.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " Figure #"
+  },
+  {
+    "scope": "title caption_>addition",
+    "text": "=b="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

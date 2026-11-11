@@ -1,6 +1,22 @@
 [
   {
     "type": "text",
-    "text": "say\\ 'twas a fine\\ \"day\"\n"
+    "text": "say"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "text",
+    "text": "'twas a fine"
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "text",
+    "text": "\"day\"\n"
   }
 ]

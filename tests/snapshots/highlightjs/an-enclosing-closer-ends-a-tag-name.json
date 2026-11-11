@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{-{"
+  },
+  {
+    "scope": "deletion>symbol",
+    "text": "#x-"
+  },
+  {
+    "scope": "deletion",
+    "text": "}\n\n"
+  },
+  {
+    "scope": "deletion>symbol",
+    "text": "#x-"
+  },
+  {
+    "scope": "deletion",
+    "text": "\n"
+  }
+]

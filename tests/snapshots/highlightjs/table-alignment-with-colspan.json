@@ -8,12 +8,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": " Category "
+    "text": "} Category "
   },
   {
     "scope": "table-boundary",

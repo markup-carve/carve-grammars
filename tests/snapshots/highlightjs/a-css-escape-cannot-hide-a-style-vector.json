@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{style=\"background:u\\rl(https://x/)\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

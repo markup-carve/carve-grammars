@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {/a {/b /} {/c {/d /}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

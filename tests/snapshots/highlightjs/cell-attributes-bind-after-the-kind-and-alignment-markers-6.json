@@ -8,12 +8,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "<"
   },
   {
     "scope": null,
-    "text": "{.h} Name "
+    "text": " .h} Name "
   },
   {
     "scope": "table-boundary",
@@ -24,12 +28,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": "{.c} Score "
+    "text": " .c} Score "
   },
   {
     "scope": "table-boundary",
@@ -56,12 +64,16 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": "{.num} 9 "
+    "text": " .num} 9 "
   },
   {
     "scope": "table-boundary",

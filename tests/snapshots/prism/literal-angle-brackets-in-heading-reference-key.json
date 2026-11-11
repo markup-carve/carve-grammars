@@ -1,0 +1,30 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "<>"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

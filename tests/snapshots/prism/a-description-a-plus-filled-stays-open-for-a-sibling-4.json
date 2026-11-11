@@ -1,0 +1,74 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " +"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " H"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "  : b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

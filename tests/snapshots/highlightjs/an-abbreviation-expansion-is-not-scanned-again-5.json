@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[gt]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\na > b\n"
+  }
+]

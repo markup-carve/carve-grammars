@@ -1,0 +1,34 @@
+[
+  {
+    "type": "comment",
+    "text": "{%c%}"
+  },
+  {
+    "type": "text",
+    "text": "(1"
+  },
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": "10) and "
+  },
+  {
+    "type": "comment",
+    "text": "{%c%}"
+  },
+  {
+    "type": "text",
+    "text": "(("
+  },
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": "x))\n"
+  }
+]

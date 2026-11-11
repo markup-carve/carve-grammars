@@ -1,0 +1,34 @@
+[
+  {
+    "scope": null,
+    "text": " Read "
+  },
+  {
+    "scope": "link",
+    "text": "[intro][x]"
+  },
+  {
+    "scope": null,
+    "text": ".\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": " [x]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/intro"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"T\""
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

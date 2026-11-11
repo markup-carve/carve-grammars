@@ -12,16 +12,24 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">"
   },
   {
     "scope": null,
-    "text": " First"
+    "text": "} First"
   },
   {
     "scope": "table-boundary",
     "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "{"
   },
   {
     "scope": "table-alignment",
@@ -29,7 +37,7 @@
   },
   {
     "scope": null,
-    "text": " Second"
+    "text": "} Second"
   },
   {
     "scope": "table-boundary",

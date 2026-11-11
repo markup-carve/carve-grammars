@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": ": +\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " li\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n    > quoted\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "    ```"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

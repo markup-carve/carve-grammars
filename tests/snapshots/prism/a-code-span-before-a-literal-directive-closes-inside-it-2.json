@@ -1,0 +1,10 @@
+[
+  {
+    "type": "code",
+    "text": "`{{ a @lines:0 }}`"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

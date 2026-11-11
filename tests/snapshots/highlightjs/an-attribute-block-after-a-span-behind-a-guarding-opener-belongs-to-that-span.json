@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/_a_{title=\"/"
+  },
+  {
+    "scope": null,
+    "text": "\"} b/\n"
+  }
+]

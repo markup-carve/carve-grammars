@@ -1,0 +1,14 @@
+[
+  {
+    "type": "code",
+    "text": "`a *{{ `"
+  },
+  {
+    "type": "mention>variable",
+    "text": "@lines"
+  },
+  {
+    "type": "text",
+    "text": ":1 }}*\n"
+  }
+]

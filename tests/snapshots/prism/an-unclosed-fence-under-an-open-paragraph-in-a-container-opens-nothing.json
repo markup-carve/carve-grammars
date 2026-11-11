@@ -12,7 +12,7 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\npara\n```\ncode\n"
   },
   {
@@ -20,7 +20,7 @@
     "text": "::::"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {

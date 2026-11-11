@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " - "
+  },
+  {
+    "scope": "code",
+    "text": "``` js\ntail\n"
+  }
+]

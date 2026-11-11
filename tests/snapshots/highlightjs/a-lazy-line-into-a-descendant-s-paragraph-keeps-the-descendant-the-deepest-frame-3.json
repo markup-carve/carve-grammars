@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "bullet",
+    "text": "1."
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "   -"
+  },
+  {
+    "scope": null,
+    "text": " b\n   c\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "     [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\ny\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "addition",
+    "text": "{+{-a+}"
+  },
+  {
+    "scope": null,
+    "text": "-} b+}\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "10. "
+  },
+  {
+    "type": "text",
+    "text": "a\n\n  \t  b\n"
+  }
+]

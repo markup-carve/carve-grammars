@@ -1,0 +1,38 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " [x][r"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\|"
+  },
+  {
+    "type": "table",
+    "text": "s] "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[r|s]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

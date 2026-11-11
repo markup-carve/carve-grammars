@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "p "
+  },
+  {
+    "scope": "comment",
+    "text": "{% a\n{lang=de}\nz %}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

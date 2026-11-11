@@ -4,6 +4,10 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
     "text": " a {% hidden %} b "
   },
@@ -12,32 +16,12 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
     "text": " c "
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
   },
   {
     "scope": "table-boundary",

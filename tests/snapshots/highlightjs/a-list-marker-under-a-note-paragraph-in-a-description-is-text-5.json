@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": ": note\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  *"
+  },
+  {
+    "scope": null,
+    "text": " child\n\nr"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

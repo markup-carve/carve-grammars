@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a ["
+  },
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": "x] y and a ["
+  },
+  {
+    "type": "typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "x] y\n"
+  }
+]

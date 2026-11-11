@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "x."
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": "strong>emphasis",
+    "text": "/\"q\"/"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " and x."
+  },
+  {
+    "scope": "built_in",
+    "text": "{^\"q\"^}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "list>punctuation>constant",
+    "text": "[x]"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "   "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " term"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "           : "
+  },
+  {
+    "type": "definition-list",
+    "text": "desc\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "           ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " next"
+  },
+  {
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": "           : "
+  },
+  {
+    "type": "definition-list",
+    "text": "body\n"
+  }
+]

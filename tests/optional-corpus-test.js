@@ -66,7 +66,11 @@ const MINIMUM_LOSSLESS = 12;
 // documents set a parse option the bridge does not model, the reason
 // `29-smart-typography-off` already needs the envelope. The ceiling had sat at
 // 9 over 6 measured since the tabs selection documents stopped needing it.
-const MAXIMUM_ENVELOPED = 10;
+//
+// 10 -> 11 with the engine at carve-js 7ba2cace and the spec at the 0.1.14 cut
+// (143df0b). The four new optional cases (99-102) need none; one existing case
+// moved with the engine, and every one still passes load/save above.
+const MAXIMUM_ENVELOPED = 11;
 
 console.log('optional corpus through the bridge:');
 

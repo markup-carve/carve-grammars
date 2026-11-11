@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*a*"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{_k=b_}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

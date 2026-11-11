@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "w"
+  },
+  {
+    "scope": "strong",
+    "text": "{*HTML*}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

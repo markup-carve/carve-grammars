@@ -1,0 +1,30 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " One"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "###"
+  },
+  {
+    "type": "title>important",
+    "text": " Three "
+  },
+  {
+    "type": "comment",
+    "text": "%% carve-lint-disable-line heading-level-skip"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

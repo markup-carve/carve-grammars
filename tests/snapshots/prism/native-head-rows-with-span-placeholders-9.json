@@ -1,0 +1,58 @@
+[
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " ^ "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " 1 "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " 2 "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "extension>function>function",
+    "text": ":foo"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "["
+  },
+  {
+    "type": "extension>function>extension-content>italic>italic",
+    "text": "/a "
+  },
+  {
+    "type": "extension>function>extension-content>italic>italic>bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "extension>function>extension-content>italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "extension>function>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

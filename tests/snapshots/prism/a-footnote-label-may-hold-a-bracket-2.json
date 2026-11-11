@@ -1,0 +1,26 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*["
+  },
+  {
+    "type": "bold>bold>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "bold>bold>inline-footnote>symbol",
+    "text": "g"
+  },
+  {
+    "type": "bold>bold>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "text",
+    "text": "] b*\n"
+  }
+]

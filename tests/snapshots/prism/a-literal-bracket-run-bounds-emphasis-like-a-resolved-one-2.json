@@ -1,0 +1,18 @@
+[
+  {
+    "type": "underline>underline",
+    "text": "_[_g_"
+  },
+  {
+    "type": "text",
+    "text": "] x_ and "
+  },
+  {
+    "type": "italic>italic",
+    "text": "/[/g/"
+  },
+  {
+    "type": "text",
+    "text": "] x/\n"
+  }
+]

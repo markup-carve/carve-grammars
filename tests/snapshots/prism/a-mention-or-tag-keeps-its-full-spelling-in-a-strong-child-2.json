@@ -1,0 +1,46 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*hi "
+  },
+  {
+    "type": "bold>bold>mention>variable",
+    "text": "@ann"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "span>string>span-text>tag>variable",
+    "text": "#tag"
+  },
+  {
+    "type": "span>string>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".x"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]
