@@ -1474,18 +1474,15 @@ export function serializeToCarve(doc, options = {}) {
             'bold', 'italic', 'underline', 'strike', 'highlight',
             'superscript', 'subscript', 'carveInsert', 'carveDelete',
         ]);
-        const normalized = (rawContent || []).map((node) => {
+        // An empty code span is an unclosed run, which takes the rest of the
+        // block (carve#3973 X5), so inside a mark it has no spelling.
+        const normalized = (rawContent || []).filter((node) => !(isEmptyCode(node) && (node.marks || []).length)).map((node) => {
             if (!node || node.type === 'text' || !(node.marks || []).length) return node;
-            // An empty code span is an unclosed run: only a braced closer of an
-            // enclosing mark ends it, so without one it has no spelling.
-            const openRun = isEmptyCode(node);
-            const closable = node.marks.some((mark) => groupableDelimitedMarks.has(mark.type));
             return {
                 type: 'text',
-                text: openRun && !closable ? '' : serializeInline([{ ...node, marks: [] }]),
+                text: serializeInline([{ ...node, marks: [] }]),
                 marks: node.marks,
                 carveVerbatim: true,
-                ...(openRun && closable ? { carveOpenRun: true } : {}),
             };
         });
         // ProseMirror splits one marked range whenever a nested mark begins or
@@ -1529,7 +1526,6 @@ export function serializeToCarve(doc, options = {}) {
                     text: serializeInline(inner),
                     marks: [outer],
                     carveVerbatim: true,
-                    ...(inner[inner.length - 1].carveOpenRun ? { carveOpenRun: true } : {}),
                 });
             } else {
                 content.push(node);
@@ -1697,10 +1693,6 @@ export function serializeToCarve(doc, options = {}) {
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
-                if (node.carveOpenRun && !marks.some((mark) => groupableDelimitedMarks.has(mark.type))
-                    && (marks.length || !openRunEnds || idx < content.length - 1)) {
-                    text = '';
-                }
 
                 // Check each mark type
                 const codeMark = marks.find(m => m.type === 'code');
@@ -1770,7 +1762,7 @@ export function serializeToCarve(doc, options = {}) {
                 // neighbors let it open and close.
                 const boldItalic = hasBold && hasItalic
                     && marks.find(m => m.type === 'bold')?.attrs?.carveBoldItalic
-                    && !node.carveOpenRun && !glued('*') && !glued('/');
+                    && !glued('*') && !glued('/');
                 let t;
                 if (writeAutolink) {
                     t = '<' + autoRaw + '>';
@@ -1879,10 +1871,6 @@ export function serializeToCarve(doc, options = {}) {
                 // is literal text, so both always serialize braced.
                 // Innermost, because the content is literal: any other mark
                 // has to wrap the whole `{# ... #}`, never sit inside it.
-                // An unclosed run ends at the FIRST braced mark closer around
-                // it, so only the innermost mark needs its forced form and
-                // every mark outside it follows the ordinary bare rules.
-                let runOpen = !!node.carveOpenRun;
                 if (hasCriticComment) t = '{#' + t + '#}';
                 if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '{^' + t + '^}';
@@ -1891,22 +1879,18 @@ export function serializeToCarve(doc, options = {}) {
                 // cannot round-trip - a Carve limitation, not fixable here.
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
-                // Every one of those is braced, so any of them already ended it.
-                if (hasCriticComment || hasSub || hasSup || hasInsert || hasDelete) runOpen = false;
                 // The outermost bare delimiter touches the neighboring text. Where
                 // the spec's bare_opener or bare_closer would refuse it there,
                 // only the forced form keeps the mark.
                 const outermost = link || carveSpan || abbr ? null
                     : hasBold ? '*' : hasItalic ? '/' : hasUnderline ? '_' : hasStrike && !hasDelete ? '~' : null;
                 const wrap = (delim) => {
-                    const forced = runOpen || (delim === outermost && glued(delim));
-                    runOpen = false;
+                    const forced = delim === outermost && glued(delim);
                     return forced ? '{' + delim + t + delim + '}' : delim + t + delim;
                 };
                 if (hasStrike && !hasDelete) t = wrap('~');
                 if (hasHighlight) {
-                    const forced = runOpen || !bareable('=');
-                    runOpen = false;
+                    const forced = !bareable('=');
                     t = forced ? '{=' + t + '=}' : '=' + t + '=';
                 }
                 if (hasUnderline) t = wrap('_');

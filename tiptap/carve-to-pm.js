@@ -1469,6 +1469,12 @@ function convertSpan(node, marks, ctx) {
         };
         return descend(node, [...marks, abbrMark], ctx);
     }
+    // A text node holds one carveSpan mark: ProseMirror refuses a second, so a
+    // nested span keeps the outermost one, which is also all the writer spells.
+    if (marks.some((m) => m.type === 'carveSpan')) {
+        record(ctx, 'degraded', 'span', 'a span nested in another span keeps only the outermost one');
+        return descend(node, marks, ctx);
+    }
     const attrs = convertAttrs(a) || {};
     return descend(node, [...marks, { type: 'carveSpan', attrs }], ctx);
 }

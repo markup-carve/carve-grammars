@@ -1,6 +1,6 @@
 /**
- * An empty code span is an unclosed backtick run: it ends only at the end of
- * the block or at the braced closer of an enclosing mark (PART 3 UNCLOSED RUN).
+ * An empty code span is an unclosed backtick run: it takes the rest of the
+ * block, an enclosing mark's braced closer included (carve#3973 X5).
  */
 import { carveToHtml } from '@markup-carve/carve';
 import assert from 'node:assert';
@@ -33,45 +33,35 @@ function mounted(source) {
     }
 }
 
+// Each source's backtick run takes the rest of the block, so the writer only
+// has to keep that reading: the `{~` before it is text, not a strike.
 const BRACED = [
-    ['{~` ~}', '{~``~}'],
-    ['a {~` ~} b', 'a {~``~} b'],
-    ['{*`  *}', '{*``*}'],
-    ['{~`~}', '{~``~}'],
-    ['{/` /}', '{/``/}'],
-    ['{_` _}', '{_``_}'],
-    ['{=` =}', '{=``=}'],
-    ['{^` ^}', '{^``^}'],
-    ['{~y` ~} z', '{~y``~} z'],
-    ['[{~` ~}](u)', '[{~``~}](u)'],
-    ['a ``', 'a ``'],
-    // Only the INNERMOST mark around the run needs its forced form: its braced
-    // closer ends the run, and every mark outside it is an ordinary mark.
-    ['{*{~` ~}*}', '*{~``~}*'],
-    ['{/{~` ~}/}', '/{~``~}/'],
-    ['{_{~` ~}_}', '_{~``~}_'],
-    ['{*{_{~` ~}_}*}', '*_{~``~}_*'],
-    ['a {*{~` ~}*} b', 'a *{~``~}* b'],
-    // Superscript has no bare form, so it is the braced closer that ends the
-    // run and the strong outside it goes bare.
-    ['{*{^` ^}*}', '*{^``^}*'],
-    // A bare closer glued to a word character is refused, so the outermost mark
-    // keeps its forced form on either side.
-    ['x{*{~` ~}*}', 'x{*{~``~}*}'],
-    ['{*{~` ~}*}x', '{*{~``~}*}x'],
-    // Highlight is not bareable beside the braced strike, so it stays forced.
-    ['{={~` ~}=}', '{={~``~}=}'],
+    '{~` ~}',
+    'a {~` ~} b',
+    '{*`  *}',
+    '{~`~}',
+    '{/` /}',
+    '{_` _}',
+    '{=` =}',
+    '{^` ^}',
+    '{~y` ~} z',
+    '[{~` ~}](u)',
+    'a ``',
+    '{*{~` ~}*}',
+    '{*{_{~` ~}_}*}',
+    'a {*{~` ~}*} b',
+    'x{*{~` ~}*}',
+    '{*{~` ~}*}x',
+    '{={~` ~}=}',
 ];
-for (const [source, want] of BRACED) {
-    assert.strictEqual(written(source), want, `written: ${source}`);
-    assert.strictEqual(mounted(source), want, `mounted: ${source}`);
-    assert.strictEqual(carveToHtml(want), carveToHtml(source), `${want} reads back differently from ${source}`);
+for (const source of BRACED) {
+    assert.match(carveToHtml(source), /<code>/, `the run is code: ${source}`);
+    assert.strictEqual(carveToHtml(written(source)), carveToHtml(source), `written: ${source}`);
+    assert.strictEqual(carveToHtml(mounted(source)), carveToHtml(source), `mounted: ${source}`);
 }
 
-assert.strictEqual(written('{~`a ~}'), '~`a`~', 'a filled span keeps the bare closer');
-
-// Trees only an editor can build: content after the empty span. The run would
-// swallow it, so the span is dropped instead.
+// Trees only an editor can build. Inside a mark, or with content after it, the
+// run would swallow what follows, so the span is dropped instead.
 const code = (...marks) => ({
     type: 'carveEmptyMark',
     attrs: { markType: 'code' },
@@ -82,9 +72,11 @@ const paragraph = (...content) => ({ type: 'doc', content: [{ type: 'paragraph',
 
 assert.strictEqual(serializeToCarve(paragraph(code('strike'), text('y', 'strike'))), '~y~');
 assert.strictEqual(serializeToCarve(paragraph(code(), text(' b'))), 'b');
-assert.strictEqual(serializeToCarve(paragraph(code('strike'), text(' b'))), '{~``~} b');
+assert.strictEqual(serializeToCarve(paragraph(code('strike'), text(' b'))), 'b');
+assert.strictEqual(serializeToCarve(paragraph(text('a '), code('strike'))), 'a');
+assert.strictEqual(serializeToCarve(paragraph(text('a '), code())), 'a ``');
 const cell = (...content) => ({ type: 'tableCell', content: [{ type: 'paragraph', content }] });
 const table = { type: 'doc', content: [{ type: 'table', content: [{ type: 'tableRow', content: [cell(code()), cell(text('b'))] }] }] };
 assert.strictEqual(carveToHtml(serializeToCarve(table)).includes('<td>b</td>'), true, 'the run swallowed the next cell');
 
-console.log(`empty code span: ${BRACED.length} source shapes, 4 editor-built trees`);
+console.log(`empty code span: ${BRACED.length} source shapes, 6 editor-built trees`);
