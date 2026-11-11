@@ -72,4 +72,13 @@ ok('a quoted definition keeps its quote prefix scoped', () => {
     assert.ok(prismTokens('> - *[HTML]: HyperText\n').some((t) => t.scope === 'blockquote>list>punctuation'));
 });
 
+// Prism's quoted list token takes no glued attribute block, as at the document level.
+ok('a glued attribute block on a quoted item marker in TextMate and highlight.js', () => {
+    for (const src of ['> -{#x} *[HTML]: HyperText\nHTML\n', '> 1.{.c} *[HTML]: HyperText\nHTML\n']) {
+        assert.ok(collected(src), 'carve-js collects the definition');
+        assert.ok(grammars.textmate(src), `textmate ${JSON.stringify(src)}`);
+        assert.ok(grammars['highlight.js'](src), `highlight.js ${JSON.stringify(src)}`);
+    }
+});
+
 console.log(`quoted abbreviation: ${passed} checks pass`);

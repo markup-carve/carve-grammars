@@ -1482,7 +1482,7 @@
     },
     "abbreviation_in_quote": {
       "comment": "A quoted line collects an abbreviation definition as the document does, behind the prefix and any item markers (carve-grammars#845).",
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -1516,7 +1516,7 @@
     },
     "abbreviation_in_quote_on_marker_line": {
       "comment": "The same on a list item's own marker line (`- > *[HTML]: X`).",
-      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
