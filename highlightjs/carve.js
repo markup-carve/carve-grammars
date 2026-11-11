@@ -373,8 +373,9 @@
     };
     // `08-attributes.ebnf` `continuation`, as on Prism's `attrLinePad`; `\\1` is
     // the opener line's indentation.
-    const attrLineIndentPad = '[ \\t]*(?:\\r?\\n\\1[ \\t]+)?';
-    const attrLineIndentSep = '(?:[ \\t]*\\r?\\n\\1[ \\t]+|[ \\t]+)';
+    const attrLineIndent = '(?:\\1[ \\t]+|(?!\\1) {0,3}\\t[ \\t]*)';
+    const attrLineIndentPad = '[ \\t]*(?:\\r?\\n' + attrLineIndent + ')?';
+    const attrLineIndentSep = '(?:[ \\t]*\\r?\\n' + attrLineIndent + '|[ \\t]+)';
     const ATTRIBUTE = {
         className: 'attr',
         // TWO ROLES, ONE TOKEN - see the note on Prism's `attributes`. A standalone

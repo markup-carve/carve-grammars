@@ -187,9 +187,11 @@
     var linkDestinationBeforeAttr = '(?:(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\[\\]\\\\\\n]|\\\\.){0,4096}\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\))|(?=\\{)(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[^\\[\\]\\r\\n]{0,4096}(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\)))';
     // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
     // non-blank line indented past its `{`, so `{.a` + newline + `.b}` is text.
-    // `indent` is a backreference to the opener line's indentation, or ''.
-    var attrLinePad = function (indent) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + indent + '[ \\t]+)?'; };
-    var attrLineSep = function (indent) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + indent + '[ \\t]+|[ \\t]+)'; };
+    // `indent` is a backreference to the opener line's indentation, or ''; a tab
+    // after fewer spaces than the opener's reaches column 4, past any such `{`.
+    var attrLineIndent = function (indent) { return indent ? '(?:' + indent + '[ \\t]+|(?!' + indent + ') {0,3}\\t[ \\t]*)' : '[ \\t]+'; };
+    var attrLinePad = function (indent) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + attrLineIndent(indent) + ')?'; };
+    var attrLineSep = function (indent) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + attrLineIndent(indent) + '|[ \\t]+)'; };
     var attributes = {
         // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
         // INLINE block glued to a construct may not - `attributes` pads and

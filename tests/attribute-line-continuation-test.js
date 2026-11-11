@@ -31,6 +31,8 @@ const ROWS = [
     // TextMate opens the multi-line rule only on an item, so a lone `{` line is not one there.
     { source: '{\n .a}\np\n', payload: '.a', attribute: true, skip: 'textmate' },
     { source: '{.a\n }\np\n', payload: '}', attribute: true },
+    { source: ' {.a\n\t.b}\np\n', payload: '.b', attribute: true, skip: 'textmate' },
+    { source: '  {.a\n  .b}\np\n', payload: '.b', attribute: false, skip: 'textmate' },
     { source: '{.a\n.b}\n\nparagraph\n', payload: '.b', attribute: false },
     { source: '{.a \n.b}\n\nparagraph\n', payload: '.b', attribute: false },
     { source: '{.a\n}\np\n', payload: '}', attribute: false },
