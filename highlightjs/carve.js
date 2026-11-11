@@ -1691,19 +1691,26 @@
         },
         relevance: 5,
     };
-    // An abbreviation definition on the description's own `: ` line. Only the
-    // `*[term]:` opener, so a `:` that is no marker leaves the rest of its line
-    // to the inline modes. Outside an entry it serves one an item's marker line
-    // opened, so it needs an indent there.
-    const abbreviationOnDescription = (indent) => ({
-        className: 'symbol',
-        begin: RegExp('(?=\\*\\[)(?<=^(?<![^\\r\\n])' + indent + ': +)\\*\\[[A-Za-z0-9]+\\]:(?= )'),
-        'on:begin': (match) => {
-            const marker = match.input.lastIndexOf(':', match.index - 1);
-            match.rule.scope = definitionListLines(match.input).markers.has(marker) ? 'symbol' : undefined;
-        },
-        relevance: 0,
-    });
+    // An abbreviation definition on the description's own `: ` line. The opener
+    // starts the inert expansion only behind a real marker, so a `:` that is no
+    // marker leaves the rest of its line to the inline modes (highlight.js reads
+    // `starts` when the opener ends). Outside an entry it serves one an item's
+    // marker line opened, so it needs an indent there.
+    const abbreviationOnDescription = (indent) => {
+        const expansion = { className: 'symbol', end: /$(?![^\r\n])/ };
+        return {
+            className: 'symbol',
+            begin: RegExp('(?=\\*\\[)(?<=^(?<![^\\r\\n])' + indent + ': +)\\*\\[[A-Za-z0-9]+\\]:(?= )'),
+            starts: expansion,
+            'on:begin': (match) => {
+                const marker = match.input.lastIndexOf(':', match.index - 1);
+                const isMarker = definitionListLines(match.input).markers.has(marker);
+                match.rule.scope = isMarker ? 'symbol' : undefined;
+                match.rule.starts = isMarker ? expansion : null;
+            },
+            relevance: 0,
+        };
+    };
     const DESCRIPTION_CONTINUATION = {
         className: 'punctuation',
         begin: /(?=\+)(?<=^(?<![^\r\n])[ \t]*: +)\+[ \t]*$(?![^\r\n])/,

@@ -64,6 +64,12 @@ for (const src of LITERAL) {
     });
 }
 
+ok('a definition on a marker line leaves its expansion inert in highlight.js', () => {
+    for (const src of [':: t\n: *[HTML]: HyperText /x/\n', '- :: t\n  : *[HTML]: HyperText /x/\n']) {
+        assert.ok(!hljsTokens(src).some((t) => t.scope === 'emphasis'), JSON.stringify(src));
+    }
+});
+
 ok('a ": " line that is no marker keeps its inline markup in highlight.js', () => {
     for (const src of ['a\n: *[HTML]: /x/\n', '- a\n  : *[HTML]: /x/\n']) {
         assert.ok(hljsTokens(src).some((t) => t.scope === 'emphasis' && t.text === '/x/'), JSON.stringify(src));
