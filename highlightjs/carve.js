@@ -1290,7 +1290,13 @@
                 const marker = before.endsWith(':') && before.length - 1;
                 const lines = definitionListLines(m.input);
                 const fenced = lines.fenced.has(before.lastIndexOf('\n') + 1);
-                m.rule.scope = !fenced && (marker === false || lines.markers.has(marker)) && !quotedMarkerIsParagraphText(m) ? 'symbol' : undefined;
+                // A quote opened on a marker line that continues a paragraph opens nothing (carve-grammars#856).
+                const start = lineStartBefore(m.input, m.index);
+                const above = previousLineStart(m.input, start);
+                const lazy = !/^﻿?[ \t]*>/.test(m.input.slice(start, m.index))
+                    && above !== -1 && !/^﻿?[ \t]*(?:>[ \t]*)*$/.test(lineAt(m.input, above))
+                    && markerIsParagraphText({ input: m.input, index: start });
+                m.rule.scope = !fenced && !lazy && (marker === false || lines.markers.has(marker)) && !quotedMarkerIsParagraphText(m) ? 'symbol' : undefined;
             },
             relevance: 0,
         },

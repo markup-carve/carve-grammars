@@ -329,9 +329,15 @@
     // block to the container, so neither starts a paragraph run.
     // A lookbehind matches right to left, so each line start is asserted right
     // after its `[^\n]*`: a mid-line split then fails at once.
+    // A quoted item's paragraph takes no unquoted marker line (carve-grammars#856).
+    var quotedItemLine = '>(?: ?>)* +' + markerLine;
+    // A deeper quote below one opens a paragraph of its own.
+    var deeperThanQuotedItem = '(?<![^\\r\\n])>[ \\t]+' + markerLine + '[^\\r\\n]{0,4096}(?:\\r\\n?|\\n)(?=>[ \\t]*>)'
+        + '|(?<![^\\r\\n])>[ \\t]*>[ \\t]+' + markerLine + '[^\\r\\n]{0,4096}(?:\\r\\n?|\\n)(?=>[ \\t]*>[ \\t]*>)';
     var notParagraphContinuation = '(?<!(?:(?<![\\s\\S])|(?<![^\\r\\n])[ \\t\\r>]*(?:\\r\\n?|\\n)'
-        + '|(?!' + lonePlusLine + ')(?!(?<=(?<![^\\r\\n])' + lonePlusLine + ')[ \\t]*\\{)(?=' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n))'
-        + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]+(?:\\r\\n?|\\n)'
+        + '|(?!' + lonePlusLine + ')(?!(?<=(?<![^\\r\\n])' + lonePlusLine + ')[ \\t]*\\{)(?=' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n)'
+        + '|' + deeperThanQuotedItem + ')'
+        + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + '|' + quotedItemLine + ')(?<![^\\r\\n])[^\\r\\n]+(?:\\r\\n?|\\n)'
         + '(?:(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n)){0,16})';
 
 
@@ -907,6 +913,8 @@
     var attrValueFree = '(?<!\\{[^{}\\r\\n]{0,512}=["\'][^"\'\\r\\n]{0,512})';
     var maximalRun = '(?<!`)`+(?!`)';
     var narrowRun = '(?<!`)`{1,2}(?!`)';
+    // A quote line interrupts a paragraph, so a paired span does not reach it.
+    var quoteOpener = '[ \\t]*>(?:[ \\t]|$(?![^\\r\\n]))';
     var unpartneredTail =
         '[^\\r\\n]{0,4096}(?:(?:\\r\\n?|\\n)(?![ \\t\\r]*$(?![^\\r\\n]))(?!' + otherBlockOpener + ')[^\\r\\n]{0,4096}){0,64}';
 
@@ -2392,6 +2400,17 @@
         // `task_state` is ` `, `x`, `X`, `-`, `_`, `/`, `!`, `>` or `?` (grammar.ebnf
         // `task_state`). Only `x`/`X` render checked; the rest are still task
         // markers, and corpus 06-task-lists-2 covers the named states.
+        // A marker line right after a quoted item with text is lazy: the item
+        // opens, but a definition on it defines nothing (corpus 383,
+        // carve-grammars#856).
+        'lazy-marker-definition': {
+            pattern: RegExp('^(?<![^\\r\\n])' + notParagraphContinuation
+                + '(?<=(?<![^\\r\\n])[ \\t]*>(?: ?>)*[ \\t]+(?!#{1,6} |\\||`{3}|~{3}|:{2,}|%%|\\{|\\^ |\\*?\\[[^\\]\\r\\n]{0,512}\\]: )[^ \\t\\r\\n][^\\r\\n]{0,4096}(?:\\r\\n?|\\n))'
+                + '[ \\t]*(?:(?:[-*] +)*[-*](?:\\{[^{}\\r\\n]{0,512}\\})? +(?:\\[[ xX\\-_>\\/!?]\\] +)?|(?:[0-9]+[.)]|[A-Za-z][.)])(?:\\{[^{}\\r\\n]{0,512}\\})? +)'
+                + '(?:> (?:(?:[-*]|[0-9]+[.)]) +)*)*(?=\\*\\[[A-Za-z0-9]+\\]: +[^ \\t\\r\\n])[^\\r\\n]{0,4096}', 'm'),
+            greedy: true,
+            inside: { 'punctuation': /^[^*]+/ },
+        },
         'list': {
             // A ROMAN RUN IS CASE-CONSISTENT: two classes, not one
             // `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text`
@@ -2769,14 +2788,16 @@
                  * the same statement about the opener - a run is entered at
                  * its own start, never one character in.
                  */
-                pattern: RegExp(attrValueFree + notEscaped + '(?<!`)(`{1,2})(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))){0,4096}?[^`])\\1(?!`)'),
+                pattern: RegExp(attrValueFree + notEscaped + '(?<!`)(`{1,2})(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + quoteOpener + ')){0,4096}?[^`])\\1(?!`)'),
                 greedy: true,
             },
             {
                 // A run of three or more is a fence spelling, and a fence's
                 // payload may hold a blank line. A narrow run may not: a code
                 // span ends with its paragraph (carve#2074).
-                pattern: RegExp(attrValueFree + notEscaped + '(?<!`)(`{3,16})(?:[^`]|[^`][\\s\\S]{0,4096}?[^`])\\1(?!`)'),
+                // A quote line ends the paragraph for both widths
+                // (carve-grammars#856).
+                pattern: RegExp(attrValueFree + notEscaped + '(?<!`)(`{3,16})(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?!' + quoteOpener + ')){0,4096}?[^`])\\1(?!`)'),
                 greedy: true,
             },
             {
