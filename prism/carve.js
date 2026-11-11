@@ -3580,11 +3580,20 @@
                 + '(?:(?:\\r\\n?|\\n)[ \\t]*\\1 \\2[ \\t]*$(?![^\\r\\n]))?', 'm'),
             greedy: true,
             inside: Object.assign({
-                'div-delimiter': {
-                    pattern: /(^\uFEFF?[ \t]*(?:> )*> ):{3,}(?: +\|)?[ \t]*$/m,
-                    lookbehind: true,
-                    inside: { 'punctuation': /:{3,}/, 'class-name': /\|/ },
-                },
+                // The opener and the token's last line only: a colon line of
+                // another width inside is text.
+                'div-delimiter': [
+                    {
+                        pattern: /(^\uFEFF?[ \t]*(?:> )*> ):{3,} +\|[ \t]*(?=[\r\n]|$)/,
+                        lookbehind: true,
+                        inside: { 'punctuation': /:{3,}/, 'class-name': /\|/ },
+                    },
+                    {
+                        pattern: /((?:\r\n?|\n)[ \t]*(?:> )*> ):{3,}[ \t]*$/,
+                        lookbehind: true,
+                        inside: { 'punctuation': /:{3,}/ },
+                    },
+                ],
                 'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
             }, inline),
         });

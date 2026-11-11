@@ -118,6 +118,12 @@ ok('inline markup and a comment block still read in a line block', () => {
         assert.ok(some(src, grammar, (t) => t.text.includes('hidden') && /comment/.test(t.scope)), `${grammar} comment`);
     }
 });
+ok('a colon line of another width in a quoted line block is text', () => {
+    const src = '> ::: |\n> :::: \n> :::\n';
+    assert.match(carveToHtml(src), /<p>::::/);
+    const colons = { textmate: /admonition/, prism: /div-delimiter/, 'highlight.js': /keyword/ };
+    for (const grammar of Object.keys(leaves)) assert.ok(!some(src, grammar, (t) => t.text.includes('::::') && colons[grammar].test(t.scope)), grammar);
+});
 ok('the block closes on its exact colon run and the document reads on', () => {
     const src = '::: |\na\n:::\n# after\n';
     for (const grammar of Object.keys(leaves)) assert.ok(some(src, grammar, (t) => t.text.includes('after') && block[grammar](t)), grammar);
