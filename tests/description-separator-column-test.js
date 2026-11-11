@@ -164,6 +164,8 @@ const MARKER = [
     '- [ ] :: t\n  : a\n',
     // The line after a `: +` belongs to the description, whatever its column.
     ':: t\n: +\nafter\n: b\n',
+    // A quote a `+` attaches keeps its list on the lines below.
+    '- x\n+\n> :: t\n> : d\n',
 ];
 const TEXT = [
     '- x\n  :: t\n  : d\n: e\n',
@@ -191,6 +193,8 @@ const TEXT = [
     '> - x\n>       :: t\n>    : d\n>      : e\n',
     // Three blank lines end the list.
     ':: t\n: x\n\n\n\n: d\n',
+    // A quoted line after a `+` at a quote's column opens a quote inside it.
+    '> :: t\n+\n> : d\n',
 ];
 
 const scopeAt = (tokens, at) => {

@@ -964,7 +964,6 @@
         }
         function endList(frame) {
             frame.list = null;
-            frame.shift = undefined;
         }
         function extend(to) {
             if (region) region[1] = to;
@@ -984,9 +983,11 @@
             var carry = 0;
             var reached = 0;
             var shifted = -1;
+            var starts = [0];
             for (var k = 1; k < frames.length; k++) {
                 var frame = frames[k];
-                var useShift = frame.shift !== undefined && frame.list && k !== plain && shifted === -1;
+                starts[k] = i;
+                var useShift = frame.shift !== undefined && (frame.list || k + 1 < frames.length) && k !== plain && shifted === -1;
                 if (frame.kind === 'quote') {
                     var q = /^[ \t]*>/.exec(line.slice(i));
                     if (!q) {
@@ -1018,7 +1019,7 @@
                 carry = col - need;
                 reached = k;
             }
-            return { i: i, carry: carry, reached: reached, shifted: shifted };
+            return { i: i, carry: carry, reached: reached, shifted: shifted, starts: starts };
         }
         function anyList() {
             for (var f = 0; f < frames.length; f++) if (frames[f].list) return true;
@@ -1043,7 +1044,7 @@
             var walked = walk(line, -1);
             if (walked.shifted !== -1) {
                 var shiftedRest = line.slice(walked.i).replace(/^[ \t]*/, '');
-                if (!(walked.reached > walked.shifted || /^::? +[^ \t]/.test(shiftedRest))) walked = walk(line, walked.shifted);
+                if (!(walked.reached > walked.shifted || (frames[walked.shifted].list && /^::? +[^ \t]/.test(shiftedRest)))) walked = walk(line, walked.shifted);
             }
             var i = walked.i;
             var carry = walked.carry;
@@ -1097,11 +1098,22 @@
             if (attach) {
                 var host = attach;
                 attach = null;
-                if (frames[host.depth] === host.frame && reached >= host.parent && reached < host.depth
+                if (host.frame.kind === 'quote' && frames[host.depth] === host.frame && reached >= host.depth) {
+                    // A quoted line after it is the quote's first block as written, marker and all.
+                    var from = walked.starts[host.depth];
+                    lead = /^[ \t]*/.exec(line.slice(from))[0];
+                    rest = line.slice(from + lead.length);
+                    restAt = at + from + lead.length;
+                    indent = 0;
+                    reached = host.depth;
+                    owner = host.frame;
+                    endList(owner);
+                    term = marker = false;
+                } else if (frames[host.depth] === host.frame && reached >= host.parent && reached < host.depth
                     && (reached > host.parent || indent >= host.column)
                     && !(host.frame.kind === 'description' && /^::? /.test(rest)) && !/^\{[^\r\n]*\}[ \t]*$/.test(rest)) {
-                    // An attached list keeps its members at the attached column.
-                    if (reached === host.parent && /^::? +[^ \t]/.test(rest)) host.frame.shift = host.frame.kind === 'quote' ? 0 : host.column;
+                    // An attached block keeps its later lines at the attached column.
+                    if (reached === host.parent) host.frame.shift = host.frame.kind === 'quote' ? 0 : host.column;
                     reached = host.depth;
                     owner = host.frame;
                     indent = 0;
