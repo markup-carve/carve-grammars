@@ -29,7 +29,11 @@
   },
   {
     "type": "blockquote",
-    "text": " %%%"
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "%%%"
   },
   {
     "type": "text",

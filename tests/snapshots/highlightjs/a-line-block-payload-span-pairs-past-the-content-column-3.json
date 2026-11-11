@@ -13,22 +13,10 @@
   },
   {
     "scope": null,
-    "text": "\n"
+    "text": "\n    "
   },
   {
-    "scope": "keyword",
-    "text": "    ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  :::"
-  },
-  {
-    "scope": null,
-    "text": "\n  para\ntail\n"
+    "scope": "code",
+    "text": "```\n  :::\n  para\ntail\n"
   }
 ]

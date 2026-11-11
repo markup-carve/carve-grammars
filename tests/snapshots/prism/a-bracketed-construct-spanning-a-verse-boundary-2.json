@@ -1,50 +1,50 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "line-block>div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "line-block>div>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": "\n"
   },
   {
-    "type": "div>span>string>punctuation",
+    "type": "line-block>div>span>string>punctuation",
     "text": "["
   },
   {
-    "type": "div>span>string>span-text",
+    "type": "line-block>div>span>string>span-text",
     "text": "Roses are red,\nViolets are blue."
   },
   {
-    "type": "div>span>string>punctuation",
+    "type": "line-block>div>span>string>punctuation",
     "text": "]"
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "line-block>div>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "div>attributes>attr-value>class-name",
+    "type": "line-block>div>attributes>attr-value>class-name",
     "text": ".verse"
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "line-block>div>attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

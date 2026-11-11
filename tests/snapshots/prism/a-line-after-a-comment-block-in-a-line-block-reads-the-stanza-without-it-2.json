@@ -12,23 +12,23 @@
     "text": "  - "
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "line-block>div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "line-block>div>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "text",
+    "type": "line-block>div",
     "text": "\n"
   },
   {
-    "type": "comment",
+    "type": "line-block>div>comment",
     "text": "    %%%\n    x\n    %%%"
   },
   {

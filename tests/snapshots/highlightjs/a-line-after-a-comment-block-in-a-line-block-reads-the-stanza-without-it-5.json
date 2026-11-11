@@ -1,22 +1,18 @@
 [
   {
     "scope": "quote",
-    "text": "> > ::: |"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> > "
+    "text": "> > ::: |\n> > "
   },
   {
     "scope": "quote>comment",
     "text": "%%%"
   },
   {
+    "scope": "quote",
+    "text": "\n"
+  },
+  {
     "scope": null,
-    "text": "\ny\n"
+    "text": "y\n"
   }
 ]

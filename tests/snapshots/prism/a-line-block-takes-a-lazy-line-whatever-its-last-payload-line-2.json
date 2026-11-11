@@ -29,19 +29,7 @@
   },
   {
     "type": "blockquote",
-    "text": " "
-  },
-  {
-    "type": "blockquote>title>important>punctuation",
-    "text": "#"
-  },
-  {
-    "type": "blockquote>title>important",
-    "text": " h"
-  },
-  {
-    "type": "blockquote",
-    "text": "\n"
+    "text": " # h\n"
   },
   {
     "type": "blockquote>punctuation",

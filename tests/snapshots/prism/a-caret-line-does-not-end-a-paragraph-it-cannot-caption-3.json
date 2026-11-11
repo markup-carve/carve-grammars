@@ -5,11 +5,7 @@
   },
   {
     "type": "blockquote",
-    "text": " Text"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " Text\n"
   },
   {
     "type": "blockquote>punctuation",

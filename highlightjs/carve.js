@@ -1195,6 +1195,12 @@
             '(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?=>)(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
             + '>(?= |$(?![^\\r\\n]))',
         ),
+        // A marker that continues a paragraph opens no quote (carve-grammars#851).
+        'on:begin': (m) => {
+            const start = lineStartBefore(m.input, m.index);
+            const text = m.input.slice(start, m.index).trim() !== '' && markerIsParagraphText({ input: m.input, index: start });
+            m.rule.scope = text ? undefined : 'quote';
+        },
         end: /$(?![^\r\n])/,
         // The ONE construct a quote line contains: a comment fence opened on
         // the marker line, which outlives the `$` that ends every other quote.
@@ -1202,6 +1208,32 @@
         // the marker line, which outlives the `$` that ends every other quote,
         // and the unterminated form of the same run, which does not (it is a
         // line comment, so it ends where the quote line does).
+        contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE, UNTERMINATED_BLOCK_COMMENT],
+        relevance: 0,
+    };
+    // A quoted line block (`> ::: |`) holds text lines, so no quoted block
+    // marker scopes in it (carve-grammars#853). It ends at its closer, at the
+    // same prefix, or with the quote.
+    const QUOTED_LINE_BLOCK = {
+        className: 'quote',
+        begin: RegExp(
+            '(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*|(?=>)(?<=' + LIST_MARKER_BEFORE_BLOCK + '))'
+            + '>((?: >)*) (:{3,}) +\\|[ \\t]*$(?![^\\r\\n])',
+        ),
+        // A marker line that continues a paragraph opens nothing: the mode
+        // then ends with its line, unscoped.
+        'on:begin': (m, resp) => {
+            resp.data.prefix = m[1];
+            resp.data.width = m[2].length;
+            resp.data.refused = quotedMarkerIsParagraphText(m);
+            m.rule.scope = resp.data.refused ? undefined : 'quote';
+        },
+        end: /\n|^(?<![^\r\n])[ \t]*>((?: >)*) (:{3,})[ \t]*$(?![^\r\n])/,
+        'on:end': (m, resp) => {
+            if (m[2] === undefined) {
+                if (!resp.data.refused && /^[ \t]*>/.test(m.input.slice(m.index + 1))) resp.ignoreMatch();
+            } else if (m[1] !== resp.data.prefix || m[2].length !== resp.data.width) resp.ignoreMatch();
+        },
         contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE, UNTERMINATED_BLOCK_COMMENT],
         relevance: 0,
     };
@@ -1218,9 +1250,9 @@
     const NO_EMPTY = '(?![ \\t]*$(?![^\\r\\n]))';
     BLOCKQUOTE.contains.push(
         { className: 'section', begin: RegExp('(?=#)' + QUOTED + '#{1,6}(?= )' + NO_EMPTY) },
-        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>\\/!?]\\](?= )' + NO_EMPTY) },
-        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
-        { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY) },
+        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>\\/!?]\\](?= )' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
+        { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
+        { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
         // The `+` continuation marker: after a quoted list marker always, and
         // a lone `+` in a quote where the lines around it prove it.
         {
@@ -1232,7 +1264,12 @@
         { className: 'punctuation', begin: RegExp(relativePlusSource(1)) },
         // A quoted definition list: the `::` of a term at any indent, and a `:`
         // that definitionListLines reads as a marker.
-        { className: 'punctuation', begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* [ \t]*)::(?= +[^ \t\r\n])/ },
+        {
+            className: 'punctuation',
+            begin: RegExp('(?=:)(?<=(?:' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*)>(?: >)* [ \\t]*'
+                + '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]) +)*)::(?= +[^ \\t\\r\\n])'),
+            'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'punctuation'; },
+        },
         {
             className: 'punctuation',
             begin: /(?=:)(?<=(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*>(?: >)* [ \t]*):(?= +[^ \t\r\n])/,
@@ -1245,7 +1282,7 @@
         {
             className: 'symbol',
             begin: RegExp('(?=\\*\\[)(?<=(?:' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*)>(?: >(?= ))*'
-                + '(?: [ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|[0-9]+[.)])\\{[^{}\\r\\n]*\\} +)*(:(?= ) +)?)? *)'
+                + '(?: [ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|[0-9]+[.)])\\{[^{}\\r\\n]*\\} +|> )*(:(?= ) +)?)? *)'
                 + '\\*\\[[A-Za-z0-9]+\\]: +(?=[^\\r\\n]*[^ \\t\\r\\n])[^\\r\\n]*'),
             end: /$(?![^\r\n])/,
             'on:begin': (m) => {
@@ -1253,7 +1290,7 @@
                 const marker = before.endsWith(':') && before.length - 1;
                 const lines = definitionListLines(m.input);
                 const fenced = lines.fenced.has(before.lastIndexOf('\n') + 1);
-                m.rule.scope = !fenced && (marker === false || lines.markers.has(marker)) ? 'symbol' : undefined;
+                m.rule.scope = !fenced && (marker === false || lines.markers.has(marker)) && !quotedMarkerIsParagraphText(m) ? 'symbol' : undefined;
             },
             relevance: 0,
         },
@@ -1351,12 +1388,47 @@
         const kind = lineKind(lineAt(m.input, above));
         return kind !== 'blank' && kind !== 'boundary' && outsideAnyItem(m.input, above);
     };
+    // A quoted marker line asks the same of the quote's content: the quoted
+    // lines above, prefixes stripped, at most 32 of them (carve-grammars#851).
+    const QUOTE_PREFIX = /^\uFEFF?[ \t]*>(?: ?>)* ?/;
+    const quotedMarkerIsParagraphText = (m) => {
+        const start = lineStartBefore(m.input, m.index);
+        const strip = (line) => line.replace(QUOTE_PREFIX, '');
+        const depth = (line) => (/^\uFEFF?[ \t]*>(?: ?>)*/.exec(line)?.[0].match(/>/g) ?? []).length;
+        const ownLine = lineAt(m.input, start);
+        const own = strip(ownLine);
+        if (!LIST_ITEM_LINE.test(own)) return false;
+        const lines = [own];
+        for (let at = start, n = 0; n < 32; n++) {
+            at = previousLineStart(m.input, at);
+            if (at === -1) break;
+            const line = lineAt(m.input, at);
+            // A deeper marker line opens a quote of its own.
+            if (depth(line) < depth(ownLine)) break;
+            lines.unshift(strip(line));
+        }
+        const input = lines.join('\n');
+        return markerIsParagraphText({ input, index: input.length - own.length });
+    };
 
     // Bullet list items: - or *
     // A BULLET MAY BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space
     // comes after the block - `-{#x} item` went uncoloured while LIST_NUMBER
     // already had the guard (#126). Same guard, spelled out rather than a
     // `\{[^}]*\}` run, because a quoted value may hold a `}`.
+    // An abbreviation definition on an item's marker line, behind a glued
+    // attribute block too (carve-grammars#850).
+    const ABBREVIATION_ON_MARKER_LINE = {
+        className: 'symbol',
+        begin: RegExp('(?=\\*\\[)(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + GLUED_MARKER + ')'
+            + '\\*\\[[A-Za-z0-9]+\\]:(?= +[^\\r\\n]*[^ \\t\\r\\n])'),
+        'on:begin': (m) => {
+            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'symbol';
+        },
+        end: /$(?![^\r\n])/,
+        relevance: 0,
+    };
+
     const LIST_BULLET = {
         className: 'bullet',
         // A marker line may carry several markers (`- - A`, corpus 103).
@@ -2243,6 +2315,19 @@
         relevance: 10,
     };
 
+    // A line block (`::: |`) holds lines of text with hard breaks, so its body
+    // is inline only (PART 9 line block, carve-grammars#853). It nests nothing,
+    // so the first colon line of the opener's exact length closes it.
+    const LINE_BLOCK = {
+        beginScope: 'keyword',
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,}) +\|[ \t]*$(?![^\r\n])/,
+        'on:begin': (m, resp) => { resp.data.width = m[1].length; },
+        endScope: 'keyword',
+        end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
+        'on:end': (m, resp) => { if (m[1].length !== resp.data.width) resp.ignoreMatch(); },
+        relevance: 10,
+    };
+
     // Composite figure block: a BARE `::: figure` opener through its matching
     // closer (PART 9 §4c, markup-carve/carve#1215).
     //
@@ -2364,7 +2449,7 @@
     // an indented bare fence of another width is a fence line that ends
     // nothing, and a folding opener keeps its text, drops its scope and ends
     // at its own line end.
-    const markerLineContainer = (scope, opener) => {
+    const markerLineContainer = (scope, opener, refused = () => false) => {
         const data = {};
         const closer = {
             scope,
@@ -2383,7 +2468,7 @@
             data,
             begin: RegExp('(?=:)(?<=' + LIST_MARKER_BEFORE_BLOCK + ')(:{3,})' + opener),
             'on:begin': (m) => {
-                const folds = foldsIntoItem(m);
+                const folds = foldsIntoItem(m) || refused(m);
                 m.rule.beginScope = folds ? undefined : { _wrap: scope };
                 fencesOf(data, m).push({ width: m[1].length, folds });
             },
@@ -2406,6 +2491,8 @@
         return [container, closer];
     };
     const [FIGURE_GROUP_ON_MARKER_LINE, FIGURE_GROUP_MARKER_LINE_CLOSER] = markerLineContainer('section', ' +figure[ \\t]*$(?![^\\r\\n])');
+    const [LINE_BLOCK_ON_MARKER_LINE, LINE_BLOCK_MARKER_LINE_CLOSER] = markerLineContainer('keyword', ' +\\|[ \\t]*$(?![^\\r\\n])',
+        (m) => markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }));
     // A trailing comment is left to the container's own modes, so it stays a
     // comment whether the opener holds or folds into the item as text.
     const MARKER_LINE_TAIL_COMMENT = '[ \\t]+%%|[ \\t]*\\{%';
@@ -3128,9 +3215,11 @@
         ...RAW_BLOCK_ON_MARKER_LINE,
         UNCLOSED_CODE_BLOCK,  // an unpaired fence at column 0: to the end of the document
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
+        LINE_BLOCK,        // Must be before DIV_BLOCK (both match `::: |`)
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
         DIV_BLOCK,
         BARE_DIV_BLOCK,    // document level only - every container list drops it
+        LINE_BLOCK_ON_MARKER_LINE,    // Must be before DIV_ON_MARKER_LINE, as above
         FIGURE_GROUP_ON_MARKER_LINE,  // Must be before DIV_ON_MARKER_LINE, as above
         DIV_ON_MARKER_LINE,
         HORIZONTAL_RULE,
@@ -3139,6 +3228,7 @@
         TABLE_CONTINUATION_ROW,
         TABLE_HEADER_ROW,
         TABLE_ROW,
+        QUOTED_LINE_BLOCK,  // Must be before BLOCKQUOTE (both match `> ::: |`)
         BLOCKQUOTE,
         CAPTION,
         TASK_LIST,         // Must be before LIST_BULLET
@@ -3151,6 +3241,7 @@
         abbreviationOnDescription('[ \\t]+'),
         FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
         ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
+        ABBREVIATION_ON_MARKER_LINE,
         REFERENCE_DEF,
 
         // Inline elements (order matters - more specific first)
@@ -3217,6 +3308,8 @@
     // A description body collects abbreviation definitions, on its `: ` line too (carve-grammars#842).
     DEFINITION_LIST_ENTRY.contains.push(ABBREVIATION_DEF, abbreviationOnDescription('[ \\t]*'), FOOTNOTE_DEF, REFERENCE_DEF, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
     FOOTNOTE_DEF.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
+    LINE_BLOCK.contains = CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE));
+    LINE_BLOCK_ON_MARKER_LINE.contains = [LINE_BLOCK_MARKER_LINE_CLOSER, ...LINE_BLOCK.contains];
 
     // A div's body holds the full top-level mode list, abbreviation definitions
     // included (markup-carve/carve#4874, carve-grammars#852), minus the

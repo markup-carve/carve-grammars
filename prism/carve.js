@@ -2132,6 +2132,33 @@
         // GROUPS DO NOT NEST: a bare `::: figure` inside an open group is a
         // generic container, which is what the `inside` composed after this
         // object literal arranges (the group's body holds no 'figure-group').
+        // A line block (`::: |`) holds lines of text with hard breaks, so its
+        // body is inline only (PART 9 line block, carve-grammars#853). It nests
+        // nothing: the first colon line of the opener's exact length closes it,
+        // and an unclosed one runs to the end. On a marker line its body ends
+        // at the first unindented line, with the item.
+        'line-block': {
+            pattern: RegExp(
+                '^(?<![^\\r\\n])' + notParagraphContinuation + '((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+                + '(?:(?:\\r\\n?|\\n)(?![ \\t]*\\2[ \\t]*$(?![^\\r\\n]))(?:[ \\t][^\\r\\n]*)?(?![^\\r\\n]))*(?:(?:\\r\\n?|\\n)[ \\t]+\\2[ \\t]*$(?![^\\r\\n]))?'
+                + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+                + '(?:(?:\\r\\n?|\\n)(?![ \\t]*\\3[ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*(?:(?:\\r\\n?|\\n)[ \\t]*\\3[ \\t]*$(?![^\\r\\n]))?',
+                'm',
+            ),
+            lookbehind: true,
+            greedy: true,
+            alias: 'div',
+            inside: Object.assign({
+                'div-delimiter': {
+                    pattern: /^\uFEFF?[ \t]*:{3,} +\|[ \t]*(?=[\r\n]|$)|(?<=[\r\n])[ \t]*:{3,}[ \t]*$/,
+                    inside: {
+                        'punctuation': /:{3,}/,
+                        'class-name': /\|/,
+                    },
+                },
+            }, inline),
+        },
+
         'figure-group': {
             pattern: containerPattern(' +figure[ \\t]*$(?![^\\r\\n])'),
             lookbehind: true,
@@ -2468,8 +2495,9 @@
         'blockquote': [
             {
                 // A closed code fence inside a quote, every line carrying the
-                // opener's marker run; its body stays verbatim.
-                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?([ \t]*(?:> )*>) ((`|~)\3{2,})(?:(?!\3)[^\r\n]){0,512}(?:(?:\r\n?|\n)\1(?: [^\r\n]*|\r)?(?![^\r\n]))*?(?:\r\n?|\n)\1 \2\3*[ \t]*$(?![^\r\n])/m,
+                // opener's marker run; its body stays verbatim. A line's own
+                // indent is its container's, as on a marker line (`- > ```).
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*((?:> )*>) ((`|~)\3{2,})(?:(?!\3)[^\r\n]){0,512}(?:(?:\r\n?|\n)[ \t]*\1(?: [^\r\n]*|\r)?(?![^\r\n]))*?(?:\r\n?|\n)[ \t]*\1 \2\3*[ \t]*$(?![^\r\n])/m,
                 greedy: true,
                 inside: {
                     'code-block': [
@@ -2492,6 +2520,42 @@
                         },
                         { pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>)[^\r\n]+(?=(?:\r\n?|\n))/, lookbehind: true },
                     ],
+                    'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+                },
+            },
+            {
+                // A closed fence behind an item marker inside a quote (`> - ```,
+                // carve-grammars#849). Its body lines are indented past the quote
+                // marker; a line back at the quote's content column ends the
+                // item, and then this does not match.
+                pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*((?:> )*>) (?:[-*](?: +\[[ xX\-_>\/!?]\])?|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}))) +((`|~)\3{2,})(?:(?!\3)[^\r\n]){0,512}(?:(?:\r\n?|\n)[ \t]*\1(?: {2}[^\r\n]*| ?\r?)(?![^\r\n]))*?(?:\r\n?|\n)[ \t]*\1 +\2\3*[ \t]*$(?![^\r\n])/m,
+                greedy: true,
+                inside: {
+                    'code-block': [
+                        {
+                            pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>) +(?:`{3,}|~{3,})[ \t]*$/,
+                            lookbehind: true,
+                            inside: { 'punctuation': /`{3,}|~{3,}/ },
+                        },
+                        {
+                            pattern: /(^\uFEFF?[ \t]*(?:> )*> [^ \t\r\n]+(?: +\[.\])? +)(?:`{3,}|~{3,})[^\r\n]*/,
+                            lookbehind: true,
+                            inside: {
+                                'language': {
+                                    pattern: /(^(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
+                                    lookbehind: true,
+                                    alias: 'class-name',
+                                },
+                                'punctuation': /^(?:`{3,}|~{3,})/,
+                            },
+                        },
+                        { pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>)[^\r\n]+(?=(?:\r\n?|\n))/, lookbehind: true },
+                    ],
+                    'list': {
+                        pattern: /(^\uFEFF?[ \t]*(?:> )*>) [^ \t\r\n]+(?: +\[.\])?(?= )/,
+                        lookbehind: true,
+                        inside: { 'punctuation': /[\s\S]+/ },
+                    },
                     'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
                 },
             },
@@ -2584,6 +2648,18 @@
                 },
                 'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*\*|\[|\]|:/,
             },
+        },
+
+        // The same after an item marker's glued attribute block (`-{#x} *[HTML]: X`,
+        // carve-grammars#850). The block stays for 'attributes'; `inside` is the
+        // definition's own, set below.
+        'glued-abbreviation-definition': {
+            pattern: RegExp('(?<=(?<![^\\r\\n])' + notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+                + '(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]))(\\{[^{}\\r\\n]*\\} +)'
+                + '\\*\\[[A-Za-z0-9]+\\]: +(?![ \\t]*$(?![^\\r\\n]))[^\\r\\n]*$(?![^\\r\\n])', 'm'),
+            lookbehind: true,
+            greedy: true,
+            alias: 'abbreviation-definition',
         },
 
         // Display + inline math: $$`...` and $`...`. Per grammar.ebnf PART 9
@@ -3356,7 +3432,7 @@
     // 'punctuation' has taken it, nested prefixes included. They go ahead of
     // the inline rules, as at the top level.
     {
-        const quoteLine = Prism.languages.carve.blockquote[1];
+        const quoteLine = Prism.languages.carve.blockquote[Prism.languages.carve.blockquote.length - 1];
         const rest = { ...quoteLine.inside };
         delete rest.punctuation;
         quoteLine.inside = Object.assign({
@@ -3419,16 +3495,29 @@
     // the `> ` prefix at any quote depth. A container needs its closer at the
     // same prefix, and a `: d` line counts only below a quoted `:: term`.
     {
-        const quoteLine = Prism.languages.carve.blockquote[1];
+        const quoteLine = Prism.languages.carve.blockquote[Prism.languages.carve.blockquote.length - 1];
         const own = { ...quoteLine.inside };
         // A quoted line collects an abbreviation definition as the document does,
         // behind the prefix and any item markers (carve-grammars#845).
+        // A glued attribute block after a quoted marker stays text for the
+        // attribute rules (carve-grammars#850).
         const quotedAbbreviation = {
-            pattern: /^(?<![^\r\n])[ \t]*\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+            pattern: /(^(?<![^\r\n])(?:\{[^{}\r\n]*\} +)?[ \t]*)\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+            lookbehind: true,
             inside: Prism.languages.carve['abbreviation-definition'].inside,
         };
+        // What a quoted item's marker leaves: a quote opened on it, a term.
         const head = {
             'punctuation': own.punctuation, 'title': own.title, 'list': own.list, 'continuation-marker': own['continuation-marker'],
+            'definition-term': {
+                pattern: /^(?<![^\r\n])::(?= +[^ \t\r\n])[^\r\n]*/m,
+                alias: 'title',
+                inside: Object.assign({ 'punctuation': /^::/ }, inline),
+            },
+            'nested-quote': {
+                pattern: /^(?<![^\r\n])>(?: >)*(?= +\*\[[A-Za-z0-9]+\]: +[^ \t\r\n])/m,
+                alias: 'punctuation',
+            },
             'abbreviation-definition': quotedAbbreviation,
         };
         quoteLine.inside = Object.assign(head, {
@@ -3458,6 +3547,13 @@
             pattern: definitionListLineMatcher(true),
             greedy: true,
             inside: Object.assign({
+                // An entry opened on a quoted item's marker line (carve-grammars#850).
+                'item-marker': {
+                    pattern: /(^\uFEFF?[ \t]*(?:>(?: ?>)*)? *)(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)[.)]) +)+(?=::)/m,
+                    lookbehind: true,
+                    alias: 'list',
+                    inside: { 'punctuation': /[^ ]+/ },
+                },
                 'definition-term': {
                     pattern: /(?=::)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:>(?: ?>)*)?[ \t]*)::[^\r\n]*/,
                     alias: 'title',
@@ -3469,6 +3565,60 @@
                 ],
                 'list': head.list,
                 'abbreviation-definition': quotedAbbreviation,
+            }, inline),
+        });
+    }
+
+    // A quoted line block's body is inline text behind its prefix
+    // (carve-grammars#853), ahead of the quoted colon container. An unclosed
+    // one ends with the quote.
+    {
+        const quote = Prism.languages.carve.blockquote;
+        Prism.languages.carve.blockquote.splice(1, 0, {
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*((?:> )*>) (:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+                + '(?:(?:\\r\\n?|\\n)[ \\t]*\\1(?! \\2[ \\t]*$(?![^\\r\\n]))(?: [^\\r\\n]*)?(?![^\\r\\n]))*'
+                + '(?:(?:\\r\\n?|\\n)[ \\t]*\\1 \\2[ \\t]*$(?![^\\r\\n]))?', 'm'),
+            greedy: true,
+            inside: Object.assign({
+                'div-delimiter': {
+                    pattern: /(^\uFEFF?[ \t]*(?:> )*> ):{3,}(?: +\|)?[ \t]*$/m,
+                    lookbehind: true,
+                    inside: { 'punctuation': /:{3,}/, 'class-name': /\|/ },
+                },
+                'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
+            }, inline),
+        });
+        // A quote opened on a list item's marker line: 'list' has taken the
+        // marker, so the block starts its own fragment, which a greedy pattern
+        // cannot see (carve-grammars#849).
+        quote.splice(1, 0, ...[quote[0], quote[1]].map((rule) => ({
+            pattern: RegExp(rule.pattern.source.replace('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?', '(?<![\\s\\S])'), 'm'),
+            inside: rule.inside,
+        })));
+    }
+
+    // A quoted paragraph holds the quoted list-marker lines below it as text:
+    // a list item does not interrupt a paragraph inside a quote either
+    // (carve-grammars#851). It runs over the quoted lines that continue it, at
+    // its depth or shallower, and matches only where one of them is a marker
+    // line; the quote-line rule reads every other paragraph.
+    {
+        const marker = '(?:[-*](?:[ \\t]|\\{|$)|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))';
+        const breaks = '(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\r\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\r\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)';
+        const opener = '(?:' + marker + '|\\^(?:[ \\t]|$)|' + breaks.slice(3, -1) + '|: |!\\[|\\$\\$`)';
+        // Quoted lines only: an unquoted line after a quote may be a lazy line
+        // or a sibling item of a `+`-attached quote, which no pattern can tell.
+        const lead = '[ \\t]*>(?!\\2 >)(?: >)* [ \\t]*';
+        const line = '(?:\\r\\n?|\\n)' + lead + '(?!' + breaks + ')[^ \\t\\r\\n>][^\\r\\n]*';
+        const markerLine = '(?:\\r\\n?|\\n)' + lead + '(?=' + marker + '|\\^(?:[ \\t]|$))[^\\r\\n]*';
+        const quote = Prism.languages.carve.blockquote;
+        quote.splice(quote.length - 1, 0, {
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)>((?: >)*) [ \\t]*(?!' + opener + ')[^ \\t\\r\\n>][^\\r\\n]*'
+                + '(?:' + line + '){0,64}?' + markerLine + '(?:' + line + ')*', 'm'),
+            greedy: true,
+            inside: Object.assign({
+                'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >)*/m,
+                'comment': Prism.languages.carve.comment,
             }, inline),
         });
     }
@@ -3510,6 +3660,14 @@
                 },
             },
         });
+    }
+
+    Prism.languages.carve['glued-abbreviation-definition'].inside = Prism.languages.carve['abbreviation-definition'].inside;
+    // A line block's lines are an inline run, multi-line spans included.
+    {
+        const keys = Object.keys(Prism.languages.carve);
+        const lineBlock = Prism.languages.carve['line-block'];
+        lineBlock.inside = Object.assign({ 'div-delimiter': lineBlock.inside['div-delimiter'] }, pick(['comment'].concat(keys.slice(keys.indexOf('math')))));
     }
 
     for (var markerFence of Prism.languages.carve['code-block-on-marker-line']) {

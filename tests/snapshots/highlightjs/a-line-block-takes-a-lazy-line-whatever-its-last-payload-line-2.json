@@ -1,34 +1,10 @@
 [
   {
     "scope": "quote",
-    "text": "> ::: |"
+    "text": "> ::: |\n> # h\n> x\n"
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> "
-  },
-  {
-    "scope": "quote>section",
-    "text": "#"
-  },
-  {
-    "scope": "quote",
-    "text": " h"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> x"
-  },
-  {
-    "scope": null,
-    "text": "\nafter\n"
+    "text": "after\n"
   }
 ]

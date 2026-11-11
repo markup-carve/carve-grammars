@@ -9,15 +9,7 @@
   },
   {
     "scope": "quote",
-    "text": "> "
-  },
-  {
-    "scope": "quote>bullet",
-    "text": "-"
-  },
-  {
-    "scope": "quote",
-    "text": " x"
+    "text": "> - x"
   },
   {
     "scope": null,

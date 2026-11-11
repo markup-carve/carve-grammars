@@ -4,12 +4,24 @@
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": " - "
+    "type": "blockquote",
+    "text": " "
   },
   {
-    "type": "blockquote",
-    "text": ":: t"
+    "type": "blockquote>item-marker>list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "blockquote>item-marker>list",
+    "text": " "
+  },
+  {
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " t"
   },
   {
     "type": "text",

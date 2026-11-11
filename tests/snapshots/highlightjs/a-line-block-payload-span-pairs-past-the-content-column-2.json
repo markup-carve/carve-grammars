@@ -13,19 +13,11 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "code>keyword",
-    "text": "    ```"
+    "text": "\n    "
   },
   {
     "scope": "code",
-    "text": "\n  :::\n"
-  },
-  {
-    "scope": "code>keyword",
-    "text": "    ```"
+    "text": "```\n  :::\n    ```"
   },
   {
     "scope": null,
