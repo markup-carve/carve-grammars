@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "    -"
-  },
-  {
-    "scope": null,
-    "text": " ~~~\n    x\nb\n"
+    "text": "\n    - ~~~\n    x\nb\n"
   }
 ]

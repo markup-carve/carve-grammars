@@ -40,6 +40,9 @@
       "include": "#caption_literal_after_container"
     },
     {
+      "include": "#line_block"
+    },
+    {
       "include": "#admonition"
     },
     {
@@ -527,6 +530,36 @@
       "match": "(?<=[ \\t])%%.*$",
       "name": "comment.line.percent.carve"
     },
+    "line_block": {
+      "comment": "A line block (`::: |`) holds lines of text with hard breaks, so its body offers only the inline rules (PART 9 line block, carve-grammars#853). It nests nothing, so the first colon line of the opener's exact length closes it.",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,}) +(\\|)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
+    },
     "admonition": {
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set. The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus the column-0 `#abbreviation`, whose in-container form reads the body (markup-carve/carve#4874, carve-grammars#852); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before.",
       "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
@@ -654,6 +687,9 @@
               "include": "#figure_group"
             },
             {
+              "include": "#line_block"
+            },
+            {
               "include": "#admonition"
             },
             {
@@ -696,6 +732,9 @@
               "include": "#inline"
             }
           ]
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition"
@@ -826,6 +865,9 @@
               "include": "#line_comment"
             },
             {
+              "include": "#line_block"
+            },
+            {
               "include": "#admonition_in_group"
             },
             {
@@ -868,6 +910,9 @@
               "include": "#inline"
             }
           ]
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition_in_group"
@@ -920,6 +965,9 @@
               "include": "#line_comment"
             },
             {
+              "include": "#line_block"
+            },
+            {
               "include": "#admonition_in_group"
             },
             {
@@ -962,6 +1010,9 @@
               "include": "#inline"
             }
           ]
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition_in_group"
@@ -1094,6 +1145,9 @@
         },
         {
           "include": "#quoted_verbatim_span"
+        },
+        {
+          "include": "#quoted_prose_continuation"
         },
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
@@ -1232,6 +1286,9 @@
             }
           },
           "name": "markup.quote.carve"
+        },
+        {
+          "include": "#quoted_prose_continuation"
         },
         {
           "match": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
@@ -1491,7 +1548,7 @@
     },
     "abbreviation_in_quote": {
       "comment": "A quoted line collects an abbreviation definition as the document does, behind the prefix and any item markers (carve-grammars#845).",
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -1523,9 +1580,34 @@
       },
       "name": "markup.quote.carve"
     },
+    "abbreviation_on_marker_line": {
+      "comment": "An abbreviation definition on a list item's own marker line (`- *[HTML]: X`), which carve-js collects (carve-grammars#850).",
+      "match": "\\G(?<=[ \\t])(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "3": {
+          "name": "entity.name.abbreviation.carve"
+        },
+        "4": {
+          "name": "punctuation.definition.abbreviation.carve"
+        },
+        "5": {
+          "name": "punctuation.separator.carve"
+        },
+        "6": {
+          "name": "string.unquoted.abbreviation.carve"
+        }
+      },
+      "name": "meta.abbreviation.carve"
+    },
     "abbreviation_in_quote_on_marker_line": {
       "comment": "The same on a list item's own marker line (`- > *[HTML]: X`).",
-      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -1870,6 +1952,37 @@
           "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
             {
+              "comment": "An abbreviation definition after a glued attribute block (`-{#x} *[HTML]: X`, carve-grammars#850).",
+              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "captures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#attributes"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "4": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "5": {
+                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+                },
+                "6": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "7": {
+                  "name": "meta.abbreviation.carve punctuation.separator.carve"
+                },
+                "8": {
+                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+                }
+              }
+            },
+            {
               "comment": "A glued attribute block keeps the task checkbox after it (`-{.c} [x] done`).",
               "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)(\\[)([ xX\\-_>/!?])(\\])(?= +\\S)",
               "captures": {
@@ -1980,6 +2093,37 @@
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
+            {
+              "comment": "An abbreviation definition after a glued attribute block (`-{#x} *[HTML]: X`, carve-grammars#850).",
+              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "captures": {
+                "1": {
+                  "patterns": [
+                    {
+                      "include": "#attributes"
+                    }
+                  ]
+                },
+                "3": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "4": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "5": {
+                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+                },
+                "6": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "7": {
+                  "name": "meta.abbreviation.carve punctuation.separator.carve"
+                },
+                "8": {
+                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+                }
+              }
+            },
             {
               "include": "#container_blocks"
             }
@@ -4304,6 +4448,233 @@
       "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
       "name": "comment.block.carve"
     },
+    "quoted_blocks_on_marker_line": {
+      "comment": "The multi-line blocks of `#quoted_blocks` in a quote opened on a list item's marker line.",
+      "patterns": [
+        {
+          "comment": "A fence opened in a quote on a list item's marker line (`- > ````); its body lines carry the quote prefix at the item's indent (carve-grammars#849).",
+          "begin": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.fenced.carve"
+            },
+            "4": {
+              "name": "fenced_code.block.language.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.fenced.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "match": ".+",
+              "name": "markup.raw.code.carve"
+            }
+          ]
+        },
+        {
+          "comment": "A quoted line block: its body lines are inline text behind their `>` prefix (carve-grammars#853).",
+          "begin": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)(:{3,}) +(\\|)[ \\t]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3)[ \\t]*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "include": "#quoted_line_inline"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "comment": "A definition list in a quote opened on a list item's marker line (`- > :: t`, carve-grammars#850).",
+          "begin": "\\G(?<=[ \\t])(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
+          "patterns": [
+            {
+              "match": "\\G(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "punctuation.definition.list.carve"
+                },
+                "4": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "6": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#quoted_line_inline"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "name": "markup.quote.carve"
+            },
+            {
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "punctuation.definition.list.carve"
+                },
+                "4": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "6": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#quoted_line_inline"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "name": "markup.quote.carve"
+            },
+            {
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "5": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "6": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "7": {
+                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
+                },
+                "8": {
+                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
+                },
+                "9": {
+                  "name": "meta.abbreviation.carve punctuation.separator.carve"
+                },
+                "10": {
+                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+                }
+              },
+              "name": "markup.quote.carve"
+            },
+            {
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(.*)$",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "3": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "5": {
+                  "name": "markup.quote.carve",
+                  "patterns": [
+                    {
+                      "include": "#quoted_line_inline"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "name": "markup.quote.carve"
+            }
+          ]
+        }
+      ]
+    },
     "blockquote_on_marker_line": {
       "comment": "A BLOCK QUOTE MAY OPEN ON A LIST ITEM'S OWN MARKER LINE (`- > x`, `1. > x`, `- - > x`, `- [ ] > x`), and it takes the rest of that line: carve-js renders `<ul><li><blockquote><p>x</p></blockquote></li></ul>`. Neither `#blockquote` nor `#blockquote_in_container` can reach it - both are anchored on ^, and the container's own begin match has already consumed the marker by the time this line is scanned - so the whole line fell through to the list rule and everything after the marker carried no quote scope at all (carve-grammars#259). Anchored on \\\\G with the same `(?<=[ \\\\t])` guard `#block_comment_on_marker_line` uses, for the reasons stated there. Reachable ONLY from `#container_blocks`, so a document-level line can never take it. The marker run is capture 1 and keeps its quote punctuation scope, which is tree-sitter-carve's split: the `block_quote` sits inside `list_item_content` beside the `list_marker_*` rather than over it.",
       "match": "\\G(?<=[ \\t])(>)(?= |$) ?((?:(?<=> )>(?= ) )*)(?:(\\+)[ \\t]*$|(.*)$)",
@@ -4377,6 +4748,9 @@
           "include": "#line_comment"
         },
         {
+          "include": "#line_block"
+        },
+        {
           "include": "#admonition_in_group_in_list"
         },
         {
@@ -4420,6 +4794,36 @@
         }
       ],
       "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
+    },
+    "line_block_on_marker_line": {
+      "comment": "A line block opened on a list item's marker line, as `#line_block`. A line below the item's indent ends it with the item.",
+      "begin": "\\G(?<=[ \\t])(:{3,}) +(\\|)[ \\t]*$",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.admonition.carve"
+        },
+        "2": {
+          "name": "entity.name.tag.admonition.carve"
+        }
+      },
+      "end": "^[ \\t]*\\1[ \\t]*$|^(?=[^ \\t\\n])",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.admonition.carve"
+        }
+      },
+      "name": "meta.admonition.carve",
+      "patterns": [
+        {
+          "include": "#block_comment"
+        },
+        {
+          "include": "#line_comment"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
     },
     "admonition_on_marker_line": {
       "begin": "\\G(?<=[ \\t])(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"[^\"\\n]*\"))?(?: +(\\[[^\\]\\n]*\\]))?| *(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*))?[ \\t]*$",
@@ -4540,6 +4944,9 @@
         },
         {
           "include": "#figure_group_in_list"
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition_in_list"
@@ -4707,6 +5114,9 @@
           "include": "#figure_group_in_list"
         },
         {
+          "include": "#line_block"
+        },
+        {
           "include": "#admonition_in_list"
         },
         {
@@ -4868,6 +5278,9 @@
           "include": "#line_comment"
         },
         {
+          "include": "#line_block"
+        },
+        {
           "include": "#admonition_in_group_in_list"
         },
         {
@@ -4949,6 +5362,9 @@
         },
         {
           "include": "#line_comment"
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition_in_group_in_list"
@@ -5172,13 +5588,22 @@
           "include": "#definition_list_on_marker_line"
         },
         {
+          "include": "#abbreviation_on_marker_line"
+        },
+        {
           "include": "#abbreviation_in_quote_on_marker_line"
+        },
+        {
+          "include": "#quoted_blocks_on_marker_line"
         },
         {
           "include": "#blockquote_on_marker_line"
         },
         {
           "include": "#figure_group_on_marker_line"
+        },
+        {
+          "include": "#line_block_on_marker_line"
         },
         {
           "include": "#admonition_on_marker_line"
@@ -5208,10 +5633,16 @@
           "include": "#figure_group_on_marker_line"
         },
         {
+          "include": "#line_block_on_marker_line"
+        },
+        {
           "include": "#admonition_on_marker_line"
         },
         {
           "include": "#figure_group_in_list"
+        },
+        {
+          "include": "#line_block"
         },
         {
           "include": "#admonition_in_list"
@@ -5363,7 +5794,8 @@
       "comment": "Blocks a quoted line can open that need more than one line or more than the inline run: a fenced code block, a table row, a container fence and a definition list. Each line still carries its own `>` prefix.",
       "patterns": [
         {
-          "begin": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "comment": "A fence opened behind an item marker inside a quote (`> - ````). Its body is the quoted lines indented past the quote marker; a line back at the quote's content column ends the item and the fence with it (carve-grammars#849).",
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -5372,13 +5804,16 @@
               "name": "punctuation.definition.quote.carve"
             },
             "3": {
+              "name": "punctuation.definition.list.carve"
+            },
+            "5": {
               "name": "punctuation.definition.fenced.carve"
             },
-            "4": {
+            "6": {
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?!>)|^(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2) +(\\5(?:(?<=`)`|(?<=~)~)*)[ \\t]*$|^(?=[ \\t]*> \\2[^ \\t\\n])",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -5393,7 +5828,54 @@
           "name": "markup.quote.carve",
           "patterns": [
             {
-              "match": "^(>) ?",
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "match": ".+",
+              "name": "markup.raw.code.carve"
+            }
+          ]
+        },
+        {
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.fenced.carve"
+            },
+            "4": {
+              "name": "fenced_code.block.language.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.fenced.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5425,6 +5907,56 @@
           ]
         },
         {
+          "comment": "A quoted line block: its body lines are inline text behind their `>` prefix (carve-grammars#853).",
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:{3,}) +(\\|)[ \\t]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3)[ \\t]*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "include": "#quoted_line_inline"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
           "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(:{3,})(?:( +)(\\||\\\\|>|[A-Za-z0-9_][\\w-]*))?(?=[ \\t]|$).*$",
           "captures": {
             "1": {
@@ -5443,11 +5975,11 @@
           "name": "markup.quote.carve"
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=>(?= ) (?:(?:>(?= ) )*):: +(?![ \\t]*$))",
-          "end": "^(?!>(?= ) (?:>(?= ) )*:{1,2} +(?![ \\t]*$))",
+          "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
-              "match": "^(>)(?= ) ((?:>(?= ) )*)(::)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5456,9 +5988,12 @@
                   "name": "punctuation.definition.quote.carve"
                 },
                 "3": {
+                  "name": "punctuation.definition.list.carve"
+                },
+                "4": {
                   "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
                 },
-                "5": {
+                "6": {
                   "name": "entity.name.tag.definition.term.carve",
                   "patterns": [
                     {
@@ -5473,7 +6008,7 @@
               "name": "markup.quote.carve"
             },
             {
-              "match": "^(>)(?= ) ((?:>(?= ) )*)(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5506,7 +6041,7 @@
               "name": "markup.quote.carve"
             },
             {
-              "match": "^(>)(?= ) ((?:>(?= ) )*)(:)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5538,6 +6073,57 @@
     "quoted_blocks_in_container": {
       "comment": "The in-container form of `#quoted_blocks`: leading whitespace is the container indent.",
       "patterns": [
+        {
+          "comment": "A fence opened behind an item marker inside a quote (`> - ````). Its body is the quoted lines indented past the quote marker; a line back at the quote's content column ends the item and the fence with it (carve-grammars#849).",
+          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.list.carve"
+            },
+            "5": {
+              "name": "punctuation.definition.fenced.carve"
+            },
+            "6": {
+              "name": "fenced_code.block.language.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2) +(\\5(?:(?<=`)`|(?<=~)~)*)[ \\t]*$|^(?=[ \\t]*> \\2[^ \\t\\n])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.fenced.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "match": ".+",
+              "name": "markup.raw.code.carve"
+            }
+          ]
+        },
         {
           "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
@@ -5601,6 +6187,56 @@
           ]
         },
         {
+          "comment": "A quoted line block: its body lines are inline text behind their `>` prefix (carve-grammars#853).",
+          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:{3,}) +(\\|)[ \\t]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            }
+          },
+          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3)[ \\t]*$",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            }
+          },
+          "name": "markup.quote.carve",
+          "patterns": [
+            {
+              "match": "^[ \\t]*(>) ?((?:>(?= ) ?)*)",
+              "captures": {
+                "1": {
+                  "name": "punctuation.definition.quote.carve"
+                },
+                "2": {
+                  "name": "punctuation.definition.quote.carve"
+                }
+              }
+            },
+            {
+              "include": "#quoted_line_inline"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
           "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:{3,})(?:( +)(\\||\\\\|>|[A-Za-z0-9_][\\w-]*))?(?=[ \\t]|$).*$",
           "captures": {
             "1": {
@@ -5619,11 +6255,11 @@
           "name": "markup.quote.carve"
         },
         {
-          "begin": "^[ \\t]*(?=>(?= ) (?:(?:>(?= ) )*):: +(?![ \\t]*$))",
-          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) )*:{1,2} +(?![ \\t]*$))",
+          "begin": "^[ \\t]*(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(::)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5632,9 +6268,12 @@
                   "name": "punctuation.definition.quote.carve"
                 },
                 "3": {
+                  "name": "punctuation.definition.list.carve"
+                },
+                "4": {
                   "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
                 },
-                "5": {
+                "6": {
                   "name": "entity.name.tag.definition.term.carve",
                   "patterns": [
                     {
@@ -5649,7 +6288,7 @@
               "name": "markup.quote.carve"
             },
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5682,7 +6321,7 @@
               "name": "markup.quote.carve"
             },
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)[ \\t]*(:)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -5818,6 +6457,9 @@
       "end": "^(?!\\G)(?![ \\t]*$|\\^(?:[ \\t]|$))",
       "patterns": [
         {
+          "include": "#line_block"
+        },
+        {
           "include": "#admonition"
         },
         {
@@ -5834,6 +6476,31 @@
           "include": "#prose_continuation"
         }
       ]
+    },
+    "quoted_prose_continuation": {
+      "comment": "A quoted paragraph runs on over the lines that continue it, quoted at its depth or shallower or lazy, so the list-marker and caption lines among them are text: a list item does not interrupt a paragraph inside a quote either (carve-grammars#851). A blank line, a deeper quote or a line that opens a block ends it and is read again.",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ((?:>(?= ) )*)[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))",
+      "end": "^(?!\\G)(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)(?!\\1)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
+      "patterns": [
+        {
+          "include": "#quoted_verbatim_span"
+        },
+        {
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            }
+          }
+        },
+        {
+          "include": "#inline"
+        }
+      ],
+      "name": "markup.quote.carve"
     },
     "quoted_verbatim_span": {
       "comment": "A verbatim span left open on a plain quote line runs on over the next quote lines until its closer or the end of the paragraph. The span carries the quote prefix; after the closer the line ends the rule, so nothing else crosses into the next line.",

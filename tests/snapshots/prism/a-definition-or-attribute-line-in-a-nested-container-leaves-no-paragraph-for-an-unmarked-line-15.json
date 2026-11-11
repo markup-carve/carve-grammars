@@ -20,8 +20,12 @@
     "text": ">"
   },
   {
+    "type": "blockquote",
+    "text": "   "
+  },
+  {
     "type": "blockquote>abbreviation-definition>punctuation",
-    "text": "   *"
+    "text": "*"
   },
   {
     "type": "blockquote>abbreviation-definition>punctuation",

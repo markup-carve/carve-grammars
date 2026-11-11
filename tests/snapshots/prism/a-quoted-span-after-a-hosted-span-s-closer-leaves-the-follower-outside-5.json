@@ -57,23 +57,15 @@
   },
   {
     "type": "blockquote",
-    "text": " x"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": " x\n"
   },
   {
     "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": " - "
-  },
-  {
     "type": "blockquote",
-    "text": "t"
+    "text": " - t"
   },
   {
     "type": "text",

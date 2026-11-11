@@ -17,15 +17,7 @@
   },
   {
     "scope": "quote",
-    "text": "> "
-  },
-  {
-    "scope": "quote>bullet",
-    "text": "-"
-  },
-  {
-    "scope": "quote",
-    "text": " %% c"
+    "text": "> - %% c"
   },
   {
     "scope": null,

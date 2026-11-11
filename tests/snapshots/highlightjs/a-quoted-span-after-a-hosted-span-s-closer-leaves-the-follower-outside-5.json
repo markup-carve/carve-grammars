@@ -45,15 +45,7 @@
   },
   {
     "scope": "quote",
-    "text": "> "
-  },
-  {
-    "scope": "quote>bullet",
-    "text": "-"
-  },
-  {
-    "scope": "quote",
-    "text": " t"
+    "text": "> - t"
   },
   {
     "scope": null,

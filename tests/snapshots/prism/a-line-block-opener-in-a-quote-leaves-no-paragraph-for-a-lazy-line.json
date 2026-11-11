@@ -9,7 +9,19 @@
   },
   {
     "type": "blockquote",
-    "text": " ::: |"
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "blockquote>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>class-name",
+    "text": "|"
   },
   {
     "type": "text",

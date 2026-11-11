@@ -4,20 +4,24 @@
     "text": "- "
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "line-block>div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "line-block>div>div-delimiter>class-name",
     "text": "|"
   },
   {
+    "type": "line-block>div",
+    "text": "\n  a"
+  },
+  {
     "type": "text",
-    "text": "\n  a\nlazy\n"
+    "text": "\nlazy\n"
   },
   {
     "type": "div>div-delimiter",

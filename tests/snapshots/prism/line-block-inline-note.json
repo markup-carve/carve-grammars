@@ -1,38 +1,38 @@
 [
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "line-block>div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "line-block>div>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": "\na "
   },
   {
-    "type": "div>inline-footnote>symbol>punctuation",
+    "type": "line-block>div>inline-footnote>symbol>punctuation",
     "text": "^["
   },
   {
-    "type": "div>inline-footnote>symbol",
+    "type": "line-block>div>inline-footnote>symbol",
     "text": "first\nsecond"
   },
   {
-    "type": "div>inline-footnote>symbol>punctuation",
+    "type": "line-block>div>inline-footnote>symbol>punctuation",
     "text": "]"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": " end\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

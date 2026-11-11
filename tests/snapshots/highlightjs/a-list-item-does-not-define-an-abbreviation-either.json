@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " *[HTML]: Hyper Text\n\nThe HTML spec.\n"
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "*[HTML]: Hyper Text"
+  },
+  {
+    "scope": null,
+    "text": "\n\nThe HTML spec.\n"
   }
 ]
