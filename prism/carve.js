@@ -1532,7 +1532,8 @@
             //   unmatched and `*b*` under it coloured as bold - a payload the
             //   engine keeps verbatim, scoped as markup.
             //
-            //   AT OR LEFT OF THE OPENER'S COLUMN, `(?!\1[ \t])`. A run indented
+            //   AT OR LEFT OF THE OPENER'S COLUMN: its own indent, or spaces not
+            //   past it (a tab may reach past the opener's column). A run indented
             //   past the opener is CONTENT, which is what lets a fence hold a fence as
             //   sample text - the shape every document describing Carve in
             //   Carve is made of. With `[ \t]*` the block ended at the
@@ -1541,7 +1542,7 @@
             // The width rule is the code fence's and not the colon fence's,
             // which wants an exact length (§12) - the same distinction
             // `fencedVerbatim` states next to highlight.js's copy of this rule.
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\r\n]{0,512}(?:\r\n?|\n)[\s\S]*?^(?<![^\r\n])(?!\1[ \t])[ \t]*\2\3*[ \t]*$(?![^\r\n])/m,
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?([ \t]*)((`|~)\3{2,})[ \t]*[^\r\n]{0,512}(?:\r\n?|\n)[\s\S]*?^(?<![^\r\n])(?:\1|(?!\1[ \t])[ ]*)\2\3*[ \t]*$(?![^\r\n])/m,
             greedy: true,
             inside: {
                 // An info string's quoted title and bracketed label, on the

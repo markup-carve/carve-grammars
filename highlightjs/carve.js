@@ -1755,7 +1755,7 @@
         // The closer, required ahead, on a line of its own: at or left of the
         // opener's indent (`\1`), then the same character (`\3`) at a length
         // at least the opener's (`\2`, then any number more of it).
-        + '(?=[\\s\\S]{0,32768}?\\n(?!\\1[ \\t])[ \\t]*\\2\\3*[ \\t]*$(?![^\\r\\n]))';
+        + '(?=[\\s\\S]{0,32768}?\\n(?:\\1|(?!\\1[ \\t])[ ]*)\\2\\3*[ \\t]*$(?![^\\r\\n]))';
 
     /*
      * THE BODY IS HIGHLIGHTED IN THE LANGUAGE ITS INFO STRING NAMES, when that
@@ -1835,7 +1835,8 @@
         const open = codeFence(m);
         // A closer at or left of a plain opener's column closes it; a marker-line
         // opener knows its item, so its closer sits at the item's content column.
-        const column = open.exact ? m[1] === open.indent : !(m[1].startsWith(open.indent) && m[1].length > open.indent.length);
+        const column = m[1] === open.indent
+            || (!open.exact && !m[1].includes('\t') && !(m[1].startsWith(open.indent) && m[1].length > open.indent.length));
         return column && m[2][0] === open.run[0] && m[2].length >= open.run.length;
     };
     // The opener line a body reads its language off, in a lookbehind checked
