@@ -373,10 +373,10 @@
     };
     // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
     // line indented past its `{` column, tabs expanded to stops of 4 (PART 7).
-    // One branch per opener column counts both lines exactly; a `{` past
-    // ATTR_LINE_COLUMNS takes any indent and `on:begin` checks the columns.
-    // `on:begin` cannot refuse every column: `ignoreMatch()` is banned here and a
-    // dropped scope would swallow a `#tag` on a refused continuation.
+    // One branch per opener column counts both lines exactly. A `{` past
+    // ATTR_LINE_COLUMNS takes any continuation past that column and `on:begin`
+    // checks the rest: it cannot veto (`ignoreMatch()` is banned here), and the
+    // scope it drops leaves that text unhighlighted, so the regex refuses first.
     const ATTR_LINE_COLUMNS = 16;
     const tabStops = (count) => count ? '(?: {4}| {0,3}\\t){' + count + '}' : '';
     const atColumn = (column) => tabStops(column >> 2) + (column & 3 ? ' {' + (column & 3) + '}' : '');
@@ -398,7 +398,7 @@
         + '(?:(?:[ \\t]*\\r?\\n' + indent + '|[ \\t]+)' + ATTR_ITEM + ')*'
         + '[ \\t]*(?:\\r?\\n' + indent + ')?\\}';
     const attrLineBlocks = Array.from({ length: ATTR_LINE_COLUMNS }, (_, column) => attrLineBlock(atColumn(column), pastColumn(column)))
-        .concat(attrLineBlock('(' + tabStops(ATTR_LINE_COLUMNS >> 2) + '[ \\t]*)', '[ \\t]+'))
+        .concat(attrLineBlock('(' + tabStops(ATTR_LINE_COLUMNS >> 2) + '[ \\t]*)', pastColumn(ATTR_LINE_COLUMNS)))
         .join('|');
     const ATTRIBUTE = {
         className: 'attr',

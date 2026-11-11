@@ -52,6 +52,13 @@ for (const [source, payload] of ROWS) {
     }
 }
 
+// A refused block past those columns keeps its inline markup.
+const refused = '                {.a\n a=*b*}\np\n';
+if (!hljsTokens(refused).some((t) => t.text === '*b*' && t.ancestors.includes('strong'))) {
+    failures++;
+    console.log(`  ✗ highlight.js: ${JSON.stringify(refused)} must scope *b* as strong`);
+}
+
 if (failures) {
     console.log(`attribute line tab column: ${failures} failure(s)`);
     process.exit(1);
