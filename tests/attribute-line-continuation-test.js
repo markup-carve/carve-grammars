@@ -33,6 +33,8 @@ const ROWS = [
     { source: '{.a\n }\np\n', payload: '}', attribute: true },
     { source: ' {.a\n\t.b}\np\n', payload: '.b', attribute: true, skip: 'textmate' },
     { source: '  {.a\n  .b}\np\n', payload: '.b', attribute: false, skip: 'textmate' },
+    { source: '\t{.a\n     .b}\np\n', payload: '.b', attribute: true, skip: 'textmate' },
+    { source: '\t{.a\n\t.b}\np\n', payload: '.b', attribute: false, skip: 'textmate' },
     { source: '{.a\n.b}\n\nparagraph\n', payload: '.b', attribute: false },
     { source: '{.a \n.b}\n\nparagraph\n', payload: '.b', attribute: false },
     { source: '{.a\n}\np\n', payload: '}', attribute: false },

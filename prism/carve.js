@@ -187,11 +187,13 @@
     var linkDestinationBeforeAttr = '(?:(?=\\{)(?<=(?<!\\\\)(?:\\\\\\\\){0,32}\\[(?:[^\\[\\]\\\\\\n]|\\\\.){0,4096}\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\))|(?=\\{)(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[^\\[\\]\\r\\n]{0,4096}(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)\\]\\((?:[^()\\r\\n]|\\([^()\\r\\n]{0,256}\\)|\\([^()\\r\\n]{0,256}\\([^()\\r\\n]{0,256}\\)[^()\\r\\n]{0,256}\\)){0,2048}\\)))';
     // `08-attributes.ebnf` `continuation`: an attribute line wraps only onto a
     // non-blank line indented past its `{`, so `{.a` + newline + `.b}` is text.
-    // `indent` is a backreference to the opener line's indentation, or ''; a tab
-    // after fewer spaces than the opener's reaches column 4, past any such `{`.
-    var attrLineIndent = function (indent) { return indent ? '(?:' + indent + '[ \\t]+|(?!' + indent + ') {0,3}\\t[ \\t]*)' : '[ \\t]+'; };
-    var attrLinePad = function (indent) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + attrLineIndent(indent) + ')?'; };
-    var attrLineSep = function (indent) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + attrLineIndent(indent) + '|[ \\t]+)'; };
+    // With `measured`, `\\1` is a space-only opener indentation and `\\2` one that
+    // holds a tab (an unset group matches empty). A line that does not repeat it
+    // is measured roughly: a tab reaches column 4, past a space-indented `{`, and
+    // five spaces pass a tab-indented one.
+    var attrLineIndent = function (measured) { return measured ? '(?:\\1\\2[ \\t]+|(?!\\1) {0,3}\\t[ \\t]*|(?!\\2) {5,})' : '[ \\t]+'; };
+    var attrLinePad = function (measured) { return '[ \\t]*(?:(?:\\r\\n?|\\n)' + attrLineIndent(measured) + ')?'; };
+    var attrLineSep = function (measured) { return '(?:[ \\t]*(?:\\r\\n?|\\n)' + attrLineIndent(measured) + '|[ \\t]+)'; };
     var attributes = {
         // TWO ROLES, ONE TOKEN. A standalone attribute LINE may span lines; an
         // INLINE block glued to a construct may not - `attributes` pads and
@@ -211,10 +213,10 @@
             // `(?=\{)` first: every branch starts at `{`, and checking it before the
             // line-prefix lookbehinds keeps a long run of spaces linear.
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
-            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))([ \\t]*))\\{(?!__\\})' + attrLinePad('\\1') + attrItem + '(?:' + attrLineSep('\\1') + attrItem + ')*' + attrLinePad('\\1') + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
+            '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))(?:( *)|([ \\t]*\\t[ \\t]*)))\\{(?!__\\})' + attrLinePad(true) + attrItem + '(?:' + attrLineSep(true) + attrItem + ')*' + attrLinePad(true) + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
             + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad('') + attrItem + '(?:' + attrLineSep('') + attrItem + ')*' + attrLinePad('') + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad(false) + attrItem + '(?:' + attrLineSep(false) + attrItem + ')*' + attrLinePad(false) + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
         ),
         greedy: true,
         alias: 'attr-value',
