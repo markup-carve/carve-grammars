@@ -191,7 +191,7 @@ export const CONSTRUCTS = [
     { name: "class after an escaped backslash", sample: "\\\\[x]{.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
     { name: "earlier unescaped bracket owns closing bracket", sample: "[a \\[x]{.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
     { name: "second span after escaped opener", sample: "\\[x]{.c} [y]{.d}", payload: ".d", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
-    { name: "closing bracket with earlier line opener", sample: "x]{.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "closing bracket with earlier line opener", sample: "[a\nx]{.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
     { name: "escaped opener after an escaped backslash", sample: "\\\\\\[x]{.c}", payload: ".c", textmate: "source.carve", textmateNot: "attributes", plain: true },
     { name: "escaped closing bracket stays literal", sample: "\\[x\\]{.c}", payload: ".c", textmate: "source.carve", textmateNot: "attributes", plain: true },
     { name: "link destination class", sample: "[x](u){.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
@@ -216,9 +216,9 @@ export const CONSTRUCTS = [
     { name: "class after an escaped link closer", sample: "[a\\](u){.c}", payload: ".c", textmate: "source.carve", textmateNot: "attributes", plain: true },
     { name: "link destination with nested parentheses", sample: "[x](a(b(c)d)e){.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
     { name: "link after an escaped image marker", sample: "\\![a](i){.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
-    { name: "link destination with earlier line text", sample: "x](u){.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
+    { name: "link destination with earlier line text", sample: "[a\nx](u){.c}", payload: ".c", textmate: "meta.attributes", attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
     { name: "link attribute kbd", sample: "[x](u){kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
-    { name: "reference link attribute kbd", sample: "[x][ref]{kbd}", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
+    { name: "reference link attribute kbd", sample: "[x][ref]{kbd}\n\n[ref]: u", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineAttr: { highlightjs: false }, engineScopes: { prism: ['attributes'], highlightjs: ['link'] } },
     { name: "block attribute kbd", sample: "{kbd}\n# H", payload: "kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
     { name: "data-kbd key", sample: "[x]{data-kbd=x}", payload: "data-kbd", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attr-name'], highlightjs: ['attr'] } },
     { name: "kbdx boolean", sample: "[x]{kbdx}", payload: "kbdx", textmate: "meta.attributes", textmateNot: "support.constant.attribute", engineScopesNot: { prism: ['builtin'], highlightjs: ['built_in'] }, attr: true, engineScopes: { prism: ['attributes'], highlightjs: ['attr'] } },
@@ -288,7 +288,7 @@ export const CONSTRUCTS = [
     },
     {
         name: "reference link whose text holds a bracket run",
-        sample: "a [t[z]][ref] b", payload: "t[z]", textmate: "string.other.link.title",
+        sample: "a [t[z]][ref] b\n\n[ref]: /u", payload: "t[z]", textmate: "string.other.link.title",
     },
     {
         // This entry used to read `string.other.link.title`, with a comment
@@ -298,7 +298,7 @@ export const CONSTRUCTS = [
         // (carve-grammars#307): the alt text is an image's, and the selector
         // says so.
         name: "reference image whose alt text holds a bracket run",
-        sample: "a ![t[z]][ref] b", payload: "t[z]", textmate: "string.other.image.alt",
+        sample: "a ![t[z]][ref] b\n\n[ref]: /i.png", payload: "t[z]", textmate: "string.other.image.alt",
     },
     {
         // Three levels in. The body is unrolled, not recursive, so depth is a
@@ -337,7 +337,9 @@ export const CONSTRUCTS = [
         name: "span whose text holds a bracket run",
         sample: "a [t[z]]{.c} b", payload: "t[z]", textmate: "string.other.link.title",
     },
-    { name: "footnote ref", sample: "text[^1] end", payload: "1", textmate: "constant.other.footnote" },
+    // A definition label differs from its use by a space run (resolution R1/R2 fold it), so
+    // the definition alone cannot satisfy a row; the collapsed reference rows do the same.
+    { name: "footnote ref", sample: "text[^a b] end\n\n[^a  b]: note", payload: "a b", textmate: "constant.other.footnote" },
     { name: "mention", sample: "hi @user here", payload: "@user", textmate: "mention" },
     { name: "tag", sample: "a #tagname here", payload: "#tagname", textmate: "tag" },
     /*
@@ -384,7 +386,7 @@ export const CONSTRUCTS = [
     { name: "inline extension with attrs", sample: "a :kbd[Ctrl]{.k} b", payload: "Ctrl", textmate: "string.unquoted.extension" },
     { name: "symbol shortcode", sample: "Great :rocket: end", payload: "rocket", textmate: "constant.language.symbol" },
     { name: "citation", sample: "see [@smith2020] here", payload: "smith2020", textmate: "variable.other.citation.key" },
-    { name: "code callout", sample: "<1> explains the line", payload: "1", textmate: "constant.numeric.callout" },
+    { name: "code callout", sample: "``` js\nx <2>\n```\n\n<1> explains the line", payload: "1", textmate: "constant.numeric.callout" },
     { name: "inline footnote", sample: "a ^[inline note] b", payload: "inline note", textmate: "string.other.footnote.inline" },
     /*
      * ONE ROW PER ALTERNATIVE, because one row reports one pass.
@@ -527,7 +529,7 @@ export const CONSTRUCTS = [
     { name: "inline literal punct", sample: "a !`/kaet/` b", payload: "!", textmate: "punctuation.definition.literal" },
     { name: "inline literal multi punct", sample: "a !``x ` y`` b", payload: "!", textmate: "punctuation.definition.literal" },
     { name: "link punct", sample: "[text](https://x.de)", payload: "[", textmate: "punctuation.definition.link" },
-    { name: "wiki link", sample: "[Page Name][]", payload: "Page Name", textmate: "string.other.link.title" },
+    { name: "wiki link", sample: "[Page Name][]\n\n[Page  Name]: /u", payload: "Page Name", textmate: "string.other.link.title" },
     { name: "cross-ref", sample: "see </#section-id> here", payload: "section-id", textmate: "markup.underline.link.cross-reference" },
     /*
      * The two reference IMAGE spellings, which had no entry here at all - so
@@ -538,11 +540,11 @@ export const CONSTRUCTS = [
      * claim them as.
      */
     {
-        name: "reference image", sample: "a ![alt][r] b", payload: "alt",
+        name: "reference image", sample: "a ![alt][r] b\n\n[r]: /i.png", payload: "alt",
         textmate: "string.other.image.alt",
     },
     {
-        name: "collapsed reference image", sample: "a ![alt][] b", payload: "alt",
+        name: "collapsed reference image", sample: "a ![alt text][] b\n\n[alt  text]: /i.png", payload: "alt text",
         textmate: "string.other.image.alt",
     },
     { name: "citation integral", sample: "see [+@smith2020] here", payload: "+", textmate: "keyword.operator.citation.integral" },
