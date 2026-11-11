@@ -71,6 +71,9 @@ const MARKER = [
     '1. x\n \t:: t\n\t: e\n',
     '1. x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n  \t: e\n',
+    // A marker line below a `: +` is a sibling, not the paragraph it refuses.
+    ':: t\n : +\n: e\n',
+    '> :: t\n>  : +\n> : e\n',
     // A leading blank line, and a list continued past a lazy or empty line.
     '\n- x\n  :: t\n  : e\n',
     '\n1. x\n   :: t\n   : e\n',
@@ -185,6 +188,8 @@ const TEXT = [
 // A lagging shape that starts agreeing fails, so the list only shrinks.
 const LAGGING = {
     prism: new Set([
+        ':: t\n : +\n: e\n',
+        '> :: t\n>  : +\n> : e\n',
         '- x\n  :: t\n  : d\n   : e\n',
         'x\n\n:: t\n  : d\n',
         '>   :: t\n>   : d\n>   : e\n',

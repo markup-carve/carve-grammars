@@ -1483,7 +1483,7 @@
     // marker, which then opens a paragraph outside the list.
     const refusesPlus = (line, below) => {
         const plus = /^([ \t]*): +\+[ \t]*$/.exec(line);
-        return plus !== null && below !== null && /[^ \t]/.test(below)
+        return plus !== null && below !== null && /[^ \t]/.test(below) && !/^[ \t]*::? +[^ \t]/.test(below)
             && indentColumns(/^[ \t]*/.exec(below)[0]) < indentColumns(plus[1]);
     };
     // A `:` line in the paragraph a refused `+` opened is its text.
