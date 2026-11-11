@@ -102,7 +102,11 @@ check('a bare fence of another width opens a nested container', () => {
     const source = ':::: outer\n::: inner\nx\n::::\ny\n::::\n:::\n::::\n\n*[A]: z\n';
     assert.equal((carveToHtml(source).match(/<div/g) || []).length, 3);
     assert.equal(scopeOf(source, '*[A]'), 'symbol');
-    assert.equal(scopeOf(':::: outer\n::: inner\nx\n::::\n*[A]: z\n', '*[A]'), null);
+    // A definition inside the nested div is a definition too (markup-carve/carve#4874), so the
+    // nesting is pinned by the inner `::::` opening a third container instead.
+    const unclosed = ':::: outer\n::: inner\nx\n::::\n*[A]: z\n';
+    assert.equal((carveToHtml(unclosed).match(/<div/g) || []).length, 3);
+    assert.equal(scopeOf(unclosed, '*[A]'), 'symbol');
     const typeless = ':::\nOuter\n\n::::\nInner\n::::\n:::\n\n*[A]: x\n';
     assert.equal(hljsTokens(typeless).filter((t) => t.scope === 'keyword').length, 4);
     assert.equal(scopeOf(typeless, '*[A]'), 'symbol');
