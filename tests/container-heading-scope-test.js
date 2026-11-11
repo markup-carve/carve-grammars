@@ -30,7 +30,8 @@ for (const [name, tokenize] of engines) {
             const tokens = tokenize(source);
             assert.equal(tokens.map(t => t.text).join(''), source);
             assert.ok(scopesAt(tokens, source, 'Heading').every(scope => /markup.heading/.test(scope)), `${name}: ${marker}${kind}`);
-            assert.ok(scopesAt(tokens, source, 'Outside').every(scope => !/markup.heading|admonition|figure-group/.test(scope)), `${name}: outside`);
+            // An indented heading after the container opens at the document level (markup-carve/carve#4506).
+            assert.ok(scopesAt(tokens, source, 'Outside').every(scope => /markup.heading/.test(scope) && !/admonition|figure-group/.test(scope)), `${name}: outside`);
         }
     }
     for (const [marker, indent] of [['- ', '  '], ['- [x] ', '  '], ['1. ', '   ']]) {
@@ -52,6 +53,6 @@ for (const [name, tokenize] of engines) {
         }
     }
     const nested = '::: figure\n::: note\n  # Nested\n:::\n:::\n';
-    assert.ok(scopesAt(tokenize(nested), nested, 'Nested').every(scope => !/markup.heading/.test(scope)), `${name}: top-level indented heading stays literal`);
+    assert.ok(scopesAt(tokenize(nested), nested, 'Nested').every(scope => /markup.heading/.test(scope)), `${name}: an indented heading in a top-level container opens`);
 }
-console.log('Container headings: indented headings retain scopes and document-level indentation stays literal.');
+console.log('Container headings: indented headings retain scopes in and outside containers.');

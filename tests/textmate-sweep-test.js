@@ -259,13 +259,21 @@ for (const [label, sample, badScope] of NEGATIVE) {
 console.log(`  ${negPass === NEGATIVE.length ? '✓' : '✗'} textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
 if (negPass !== NEGATIVE.length) process.exit(1)
 
-// At the 0.1.14 cut an indented opener at the document level opens its block.
-// Still text here (carve-grammars#841): ` # H` at the document level, and a
-// heading, fence, quote or abbreviation below a nested item's content column.
+// At the 0.1.14 cut an indented opener at the document level opens its block,
+// below a nested item's content column too (carve-grammars#841).
 const DOC_LEVEL_INDENTED = [
   [' ```js\n x\n ```\n', 'fenced_code'],
   [' > q\n', 'markup.quote'],
   [' *[HTML]: HyperText\n', 'meta.abbreviation'],
+  [' # H\n', 'markup.heading'],
+  ['    # H\n', 'markup.heading'],
+  ['p\n # H\n', 'markup.heading'],
+  ['- x\n # H\n', 'markup.heading'],
+  ['- x\n  - a\n # H\n', 'markup.heading'],
+  ['1. x\n  # H\n', 'markup.heading'],
+  ['- x\n  - a\n > q\n', 'markup.quote'],
+  ['- x\n  - a\n ```js\n y\n ```\n', 'fenced_code'],
+  ['- x\n  - a\n *[HTML]: HyperText\n', 'meta.abbreviation'],
 ]
 for (const [sample, scope] of DOC_LEVEL_INDENTED) {
   const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })

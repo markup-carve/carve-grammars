@@ -438,7 +438,7 @@
       ]
     },
     "heading": {
-      "begin": "^(?:\\A\\x{FEFF})?(#{1,6}) +(?![ \\t]*$)",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(#{1,6}) +(?![ \\t]*$)",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.heading.carve"
@@ -5466,6 +5466,25 @@
           "include": "#numbered_item"
         },
         {
+          "comment": "A line no item claims sits below every open content column, so an indented opener on it opens its block as at the document level (carve-grammars#841).",
+          "include": "#fenced_code_diff_attribute"
+        },
+        {
+          "include": "#fenced_code_languages"
+        },
+        {
+          "include": "#fenced_code"
+        },
+        {
+          "include": "#caption_literal_after_heading"
+        },
+        {
+          "include": "#blockquote"
+        },
+        {
+          "include": "#abbreviation"
+        },
+        {
           "include": "#block_comment"
         },
         {
@@ -5478,7 +5497,7 @@
     },
     "caption_literal_after_heading": {
       "comment": "A `^ ` line after a heading is literal text in the engine, blank lines between or not, so the heading holds such lines as a paragraph.",
-      "begin": "^(?=(?:\\A\\x{FEFF})?#{1,6} +(?![ \\t]*$))",
+      "begin": "^(?=(?:\\A\\x{FEFF})?[ \\t]*#{1,6} +(?![ \\t]*$))",
       "end": "^(?!\\G)(?![ \\t]*$|\\^(?:[ \\t]|$))",
       "patterns": [
         {
