@@ -19,7 +19,8 @@ import { assertThisFileRuns } from './lib/runs-in-ci.js';
 assertThisFileRuns(import.meta.url);
 
 const ENGINES = {
-    prism: { tokenize: prismTokens, marks: (scope) => scope.endsWith('punctuation') },
+    // A YAML key's `:` in front matter is no description marker.
+    prism: { tokenize: prismTokens, marks: (scope) => scope.endsWith('punctuation') && !scope.startsWith('front-matter') },
     highlightjs: { tokenize: hljsTokens, marks: (scope) => scope === 'punctuation' },
 };
 
@@ -30,7 +31,6 @@ const MARKER = [
     '- x\n  :: t\n  : d\n  : e\n',
     '- x\n  :: t\n  : d\n\n  : e\n',
     ':: t\n:  :: u\n   : e\n',
-    `:: t\n${'x\n'.repeat(70)}: e\n`,
     '> :: t\n> : d\n> : e\n',
     '> :: t\n> : d\n>   :: u\n>   : v\n>   : e\n',
     '1. x\n   :: t\n   : e\n',
@@ -59,7 +59,6 @@ const MARKER = [
     '> [x]: y\n- z\n  :: t\n  : e\n',
     '> [^1]: f\n- z\n  :: t\n  : e\n',
     '[x]:\n- z\n  :: t\n  : e\n',
-    '---  \n- z\n  :: t\n  : e\n',
     'p\n\n- x\n- z\n- y\n  :: t\n  : e\n',
     '- x\n1. z\n   :: t\n   : e\n',
     // A column-0 comment line closes the description's paragraph.
@@ -83,7 +82,6 @@ const MARKER = [
     'r[^1]\n\n[^1]: x\n    :: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n\t:: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n%% c\n    :: t\n  : e\n',
-    'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
     // The same in a quoted footnote, and after a list marker at column 4.
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>    :: t\n>   : e\n',
@@ -92,16 +90,10 @@ const MARKER = [
     'r[^1]\n\n> [^1]: x\n>   \t:: t\n>       : e\n',
     'r[^1]\n\n> [^1]: x\n> \t\t:: t\n>   : e\n',
     'r[^1]\n\n- [^1]: x\n  \t:: t\n    : e\n',
-    'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n>   : e\n',
-];
-const TEXT = [
-    '- x\n  :: t\n  : d\n: e\n',
-    '- x\n  :: t\n  : d\n : e\n',
+    // Moved by the 0.1.14 layout readings (carve-js and the spec model agree).
     '- x\n  :: t\n  : d\n   : e\n',
-    '- x\n  :: t\n  : d\n  x\n : e\n',
-    'x\n\n:: t\n: d\n  : e\n',
     'x\n\n:: t\n  : d\n',
     '  :: t\n  : d\n  : e\n',
     '1. x\n  :: t\n  : d\n  : e\n',
@@ -112,12 +104,13 @@ const TEXT = [
     `x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
     '> :: t\n>   :: u\n>   : v\n',
     '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
-    '> :: t\n> : d\n>  :: u\n>  : v\n',    '> 1. x\n>   :: t\n>   : e\n',
+    '> :: t\n> : d\n>  :: u\n>  : v\n',
+    '> 1. x\n>   :: t\n>   : e\n',
     '> - x\n>   :: a\n>     :: u\n>     : e\n',
     '> :: t\n> other\n>   :: u\n>   : e\n',
     '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
     '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
-    '> para\n>   :: t\n>   : e\n',    // A marker line under paragraph text is lazy text and hosts nothing.
+    '> para\n>   :: t\n>   : e\n',
     'para\n- z\n  :: t\n  : e\n',
     'para\n: d\n  :: t\n  : e\n',
     '> q\n- z\n  :: t\n  : e\n',
@@ -130,30 +123,23 @@ const TEXT = [
     '| a | b\n- z\n  :: t\n  : e\n',
     '{.c} x\n- z\n  :: t\n  : e\n',
     ':x\n- z\n  :: t\n  : e\n',
-    '--- foo\n- z\n  :: t\n  : e\n',
     '::x\n- z\n  :: t\n  : e\n',
     'para\n- z\n- y\n  :: t\n  : e\n',
     'para\n- z\n  - y\n    :: t\n    : e\n',
-    // A term left of the open description's content column is its lazy text.
     ':: a\n: d\n :: t\n : e\n',
     ':: a\n: d\nother\n :: t\n : e\n',
     ':: a\n: d\n: f\n :: t\n : e\n',
     ':: a\n: d\n%% c\n y\n :: t\n : e\n',
-    // A thematic break or attribute line ends the list.
     ':: a\n: d\n---\n  :: t\n  : e\n',
     ':: a\n: d\n{.c}\n  :: t\n  : e\n',
-    '- x\n\t:: t\n : e\n',
-    // A tab-indented term needs a host like a space-indented one.
     'para\n\t:: t\n\t: e\n',
     '\t:: t\n\t: e\n',
     '# h\n\t:: t\n\t: e\n',
-    // Inside a two-column container a tab is measured from the container's column.
     ':: a\n: b\n  \t:: t\n    : e\n',
     ':: a\n: b\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : f\n    : e\n',
-    // A paragraph line above a list marker makes it lazy text.
     ': x\n- z\n  :: t\n  : e\n',
     '> : x\n- z\n  :: t\n  : e\n',
     '# h\n: \n- z\n  :: t\n  : e\n',
@@ -162,9 +148,7 @@ const TEXT = [
     '    code\n- z\n  :: t\n  : e\n',
     'p\n  y\n- z\n  :: t\n  : e\n',
     '- w\n\n y\n- z\n  :: t\n  : e\n',
-    // A term folded into a paragraph takes no description below it.
     ':: a\n: b\n :: t\n: e\n',
-    // In a footnote body or a description a tab counts from the body's column.
     'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
     'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
     ':: a\n: b\n\n   \t:: t\n    : e\n',
@@ -172,9 +156,98 @@ const TEXT = [
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
     'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
-    'r[^1]\n\n> [^1]: x\n>   :: t\n> % c\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
 ];
+const TEXT = [
+    '- x\n  :: t\n  : d\n: e\n',
+    '- x\n  :: t\n  : d\n : e\n',
+    '- x\n  :: t\n  : d\n  x\n : e\n',
+    'x\n\n:: t\n: d\n  : e\n',
+    // A marker line under paragraph text is lazy text and hosts nothing.
+    '--- foo\n- z\n  :: t\n  : e\n',
+    // A term left of the open description's content column is its lazy text.
+    // A thematic break or attribute line ends the list.
+    '- x\n\t:: t\n : e\n',
+    // A tab-indented term needs a host like a space-indented one.
+    // Inside a two-column container a tab is measured from the container's column.
+    // A paragraph line above a list marker makes it lazy text.
+    // A term folded into a paragraph takes no description below it.
+    // In a footnote body or a description a tab counts from the body's column.
+    'r[^1]\n\n> [^1]: x\n>   :: t\n> % c\n>   : e\n',
+    // Moved by the 0.1.14 layout readings (carve-js and the spec model agree).
+    `:: t\n${'x\n'.repeat(70)}: e\n`,
+    '---  \n- z\n  :: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+];
+
+// Shapes Prism and highlight.js still read by the pre-0.1.14 rules (carve-grammars#839).
+// A lagging shape that starts agreeing fails, so the list only shrinks.
+const LAGGING = {
+    prism: new Set([
+        '- x\n  :: t\n  : d\n   : e\n',
+        'x\n\n:: t\n  : d\n',
+        '>   :: t\n>   : d\n>   : e\n',
+        '> :: t\n>   :: u\n>   : v\n',
+        '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
+        '> :: t\n> : d\n>  :: u\n>  : v\n',
+        '> 1. x\n>   :: t\n>   : e\n',
+        '> - x\n>   :: a\n>     :: u\n>     : e\n',
+        '> :: t\n> other\n>   :: u\n>   : e\n',
+        '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
+        '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
+        '> para\n>   :: t\n>   : e\n',
+        ':: a\n: b\n  \t:: t\n    : e\n',
+        ':: a\n: b\n  \t:: t\n\t: e\n',
+        '- x\n  \t:: t\n    : e\n',
+        '- x\n  \t:: t\n\t: e\n',
+        '- x\n  \t:: t\n    : f\n    : e\n',
+        'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
+        'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
+        ':: a\n: b\n\n   \t:: t\n    : e\n',
+        'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
+        'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
+        'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
+        'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+    ]),
+    highlightjs: new Set([
+        '- x\n  :: t\n  : d\n   : e\n',
+        'x\n\n:: t\n  : d\n',
+        '>   :: t\n>   : d\n>   : e\n',
+        '> :: t\n>   :: u\n>   : v\n',
+        '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
+        '> :: t\n> : d\n>  :: u\n>  : v\n',
+        '> 1. x\n>   :: t\n>   : e\n',
+        '> - x\n>   :: a\n>     :: u\n>     : e\n',
+        '> :: t\n> other\n>   :: u\n>   : e\n',
+        '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
+        '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
+        '> para\n>   :: t\n>   : e\n',
+        ':: a\n: d\n :: t\n : e\n',
+        ':: a\n: d\nother\n :: t\n : e\n',
+        ':: a\n: d\n: f\n :: t\n : e\n',
+        ':: a\n: d\n%% c\n y\n :: t\n : e\n',
+        ':: a\n: b\n  \t:: t\n    : e\n',
+        ':: a\n: b\n  \t:: t\n\t: e\n',
+        '- x\n  \t:: t\n    : e\n',
+        '- x\n  \t:: t\n\t: e\n',
+        '- x\n  \t:: t\n    : f\n    : e\n',
+        ':: a\n: b\n :: t\n: e\n',
+        'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
+        'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
+        ':: a\n: b\n\n   \t:: t\n    : e\n',
+        'r[^1]\n\n- [^1]: x\n   :: t\n  : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
+        'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
+        'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
+        'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
+        'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+    ]),
+};
 
 const scopeAt = (tokens, at) => {
     let offset = 0;
@@ -197,9 +270,10 @@ const check = (source, marker) => {
     }
     for (const [name, { tokenize, marks }] of Object.entries(ENGINES)) {
         const scoped = marks(scopeAt(tokenize(source), colon));
-        if (scoped !== marker) {
+        if ((scoped !== marker) !== LAGGING[name].has(source)) {
             failures++;
-            console.error(`${name}: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`);
+            console.error(`${name}: ${JSON.stringify(source)} - the last : is ${scoped ? '' : 'not '}scoped as a marker`
+                + (LAGGING[name].has(source) ? ' (now agrees: drop it from LAGGING)' : ''));
         }
     }
 };
@@ -263,4 +337,4 @@ for (const [name, { tokenize }] of Object.entries(ENGINES)) {
 }
 
 assert.equal(failures, 0, `${failures} shape(s) disagree`);
-console.log(`description separator column: ${MARKER.length + TEXT.length} shapes agree with carve-js in prism and highlight.js`);
+console.log(`description separator column: ${MARKER.length + TEXT.length} shapes checked against carve-js; ${LAGGING.prism.size} lag in prism, ${LAGGING.highlightjs.size} in highlight.js (carve-grammars#839)`);

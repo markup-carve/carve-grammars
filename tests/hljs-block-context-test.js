@@ -51,8 +51,8 @@ check('the closing dash line is the envelope, not the payload', () => {
 });
 
 console.log('list markers:');
-const LITERAL_MARKERS = ['para\n- not item\n', 'para\n1. no\n', 'para\n- [ ] no\n', 'para\n- x\n- y\n', '> q\n- a\n', ':: t\n: d\n- a\n', '::: note\npara\n- x\n:::\n'];
-const ITEM_MARKERS = ['- a\nlazy\n- b\n', '- a\n  more\n- b\n', '# H\n- a\n', 'x\n\n- a\n', '- x\n\n  > q\n- z\n', '- first\n\n  second\n  - nested\n', '> # h\n- item\n', '- a\n+\n> x\n- next\n'];
+const LITERAL_MARKERS = ['para\n- not item\n', 'para\n1. no\n', 'para\n- [ ] no\n', 'para\n- x\n- y\n', '> q\n- a\n', 'para\n: d\n- a\n', '::: note\npara\n- x\n:::\n'];
+const ITEM_MARKERS = ['- a\nlazy\n- b\n', '- a\n  more\n- b\n', '# H\n- a\n', 'x\n\n- a\n', '- x\n\n  > q\n- z\n', '- first\n\n  second\n  - nested\n', '> # h\n- item\n', '- a\n+\n> x\n- next\n', ':: t\n: d\n- a\n', ':: t\n: d\nmore\n1. a\n'];
 check('a marker on a paragraph line outside a list item is text', () => {
     for (const source of LITERAL_MARKERS) {
         assert.doesNotMatch(carveToHtml(source).replace(/<\/?ul>|<\/?ol>/g, ''), /<li>(?:not item|no|x|y|a)\b/, `engine: ${JSON.stringify(source)}`);
@@ -63,7 +63,7 @@ check('a marker that opens a list or the next item stays a bullet', () => {
     for (const source of ITEM_MARKERS) {
         const lines = source.trimEnd().split('\n');
         const text = lines.at(-1).replace(/^\s*(?:[-*]|\d+\.)\s+/, '');
-        assert.match(carveToHtml(source), new RegExp(`<li>${text}`), `engine: ${JSON.stringify(source)}`);
+        assert.match(carveToHtml(source), new RegExp(`<li>(?:<p>)?${text}`), `engine: ${JSON.stringify(source)}`);
         assert.equal(hljsTokens(source).filter((t) => t.scope === 'bullet').length, (source.match(/^\s*(?:[-*]|\d+\.) /gm) || []).length,
             `hljs: ${JSON.stringify(source)}`);
     }

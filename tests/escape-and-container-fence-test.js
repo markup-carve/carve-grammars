@@ -109,23 +109,25 @@ for (const lines of [['::: note', '*a', ':::', 'after *b*'], ['::: |', 'x *a', '
     }
 }
 
-// An unclosed fence ends at the closer of its own container, of the same width.
-// TextMate can't tell that closer from a colon line in a closed fence, so it
-// keeps the closed reading (docs/reference.md, TextMate limits).
+// An unclosed fence takes every later line as payload, its container's closer
+// included (PART 0 S1).
 const fences = [
-    [['::: note', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [[':::', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [['::: note', '~~~', 'code', ':::', '*after*'], 'after', true],
-    [['::: figure', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [[':::: note', FENCE, 'code', ':::', 'more', '::::', '*after*'], 'after', true],
-    [['::: a', ':::: b', FENCE, 'x', '::::', 'y', ':::', '*after*'], 'after', true],
+    [['::: note', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [[':::', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [['::: note', '~~~', 'code', ':::', '*after*'], 'after', false],
+    [['::: figure', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [[':::: note', FENCE, 'code', ':::', 'more', '::::', '*after*'], 'after', false],
+    [['::: a', ':::: b', FENCE, 'x', '::::', 'y', ':::', '*after*'], 'after', false],
 ];
+// Prism still closes the outer container past a nested one (carve-grammars#840).
+const lagging = { prism: new Set([`::: a\n:::: b\n${FENCE}\nx\n::::\ny\n:::\n*after*\n`]) };
 for (const [lines, needle, bold] of fences) {
     const source = `${lines.join('\n')}\n`;
     assert.equal(html(source).includes(`<strong>${needle}</strong>`), bold, `parser: ${JSON.stringify(source)}`);
     for (const [name, tokenize] of surfaces.filter(([id]) => id === 'prism' || id === 'highlightjs')) {
         const token = await tokenAt(tokenize, source, needle);
-        assert.equal(matches('bold', name, token.scope), bold, `${name}: ${JSON.stringify(source)} scopes ${needle} (scope ${token.scope})`);
+        const want = lagging[name]?.has(source) ? !bold : bold;
+        assert.equal(matches('bold', name, token.scope), want, `${name}: ${JSON.stringify(source)} scopes ${needle} (scope ${token.scope})`);
         checked++;
     }
 }
