@@ -12,15 +12,15 @@
     "text": "*A*"
   },
   {
-    "type": "title>important",
+    "type": "title>important>attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "title>important>tag>variable",
+    "type": "title>important>attributes>attr-value>id",
     "text": "#z"
   },
   {
-    "type": "title>important",
+    "type": "title>important>attributes>attr-value>punctuation",
     "text": "}"
   },
   {

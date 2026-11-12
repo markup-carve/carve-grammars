@@ -8,16 +8,8 @@
     "text": "*A*"
   },
   {
-    "scope": "section",
-    "text": "{"
-  },
-  {
-    "scope": "section>symbol",
-    "text": "#z"
-  },
-  {
-    "scope": "section",
-    "text": "}"
+    "scope": "section>attr",
+    "text": "{#z}"
   },
   {
     "scope": null,

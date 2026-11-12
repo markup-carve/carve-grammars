@@ -3605,6 +3605,8 @@
             lineVerbatim(),
             { 'escape': Prism.languages.carve['escape'] },
             pick(linkFamily),
+            // A block glued to an inline host is its attributes (`# *a b*{.q}`).
+            pick(['attributes']),
             own,
             pick(['mention', 'symbol', 'typography'])
         );

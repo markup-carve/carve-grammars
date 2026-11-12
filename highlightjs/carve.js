@@ -3236,7 +3236,8 @@
         HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, STRIKETHROUGH,
         FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, TYPOGRAPHY_FLAG, TYPOGRAPHY,
     ];
-    HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG, ...LINE_INLINE];
+    // A block glued to an inline host is its attributes (`# *a b*{.q}`); a trailing `{#id}` stays text.
+    HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG, ATTRIBUTE, ...LINE_INLINE];
     // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
     // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
