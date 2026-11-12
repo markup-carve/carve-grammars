@@ -716,8 +716,10 @@
             + ')';
         // The whitespace and letter cases must be disjoint: repeated `*a`
         // otherwise gives the closer search exponentially many partitions.
+        // An own delimiter between two word characters ends the run: no span
+        // forms (PART 9 §9 R2), so `*a*b*` and `_my_var_` stay text.
         var atom = '(?:\\\\[^\\r\\n]|' + bareCode + '|' + opaque
-            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|' + delimiter + '(?=[\\p{L}\\p{N}])';
+            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}]\\p{M}*)' + delimiter + '(?=[\\p{L}\\p{N}])';
         // One soft break, never a blank line or a line opening another block.
         var softBreak = '(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))(?!' + otherBlockOpener + ')';
         // A cheap scan for a possible closer on this line or the next, so an

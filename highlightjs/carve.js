@@ -223,7 +223,8 @@
     const bare = (d, opener) => {
         const opaque = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE, sameKindAtoms(d) + '|' + bracedSource(BRACED_KINDS.filter((kind) => kind !== d)));
         // Keep the whitespace and letter cases disjoint for repeated `*a`.
-        const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}(?!${LETTER_OR_DIGIT})|${d}(?=${LETTER_OR_DIGIT})`
+        // An own delimiter between two word characters ends the run (PART 9 §9 R2).
+        const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}(?!${LETTER_OR_DIGIT})|(?<!${LETTER_OR_DIGIT})${d}(?=${LETTER_OR_DIGIT})`
             + `${d === '=' ? '|[>!]=|<=(?![=>])' : ''}|(?!${opaque})[^${d}\\\\\\n\`]|\\n(?![ \\t]*\\n))`;
         // A plain scan for any closer runs first: the atom scan re-reads every
         // braced span from each opener, so openers with no closer went cubic.
