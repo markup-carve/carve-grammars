@@ -31,7 +31,12 @@ const changed = [];
 // Mounting JSON never validates it, but parsing the editor's own HTML does, so
 // a document the schema rejects loses or moves content there (#537).
 const invalid = [];
+let mounted = 0;
 for (const file of listCorpusFiles()) {
+    // Each mount leaves prosemirror-view's 20 ms DOMObserver flush timer pending, and
+    // the timer holds its destroyed editor until it fires; a loop that never yields
+    // keeps every editor alive (2 GB on Node 20, #879).
+    if (++mounted % 100 === 0) await new Promise((resolve) => setTimeout(resolve, 60));
     const editor = new Editor({
         extensions: [CarveKit],
         content: carveToProseMirror(file.source, { unsupported: 'preserve' }),
