@@ -1,3 +1,5 @@
+import { refusedAttribute } from '../url-policy.js';
+
 /**
  * The attribute slots an authored `{#id .class key=value}` run needs on a node
  * that accepts one.
@@ -38,6 +40,10 @@
  * read back as an authored pair.
  */
 const SHADOW = 'data-carve-reserved-kv';
+
+// A pair the HTML renderer drops or blanks (an `on*` handler, a denied scheme)
+// rides the same shadow attribute, so the editor DOM never carries it and the
+// run still round-trips (markup-carve/carve#6009).
 
 /** @param {Element} element @returns {object} the shadowed pairs, or none. */
 function readShadowed(element) {
@@ -83,7 +89,7 @@ export function attributeSlots(own = []) {
                 const out = {};
                 const shadowed = {};
                 for (const [name, value] of Object.entries(attributes.carveKeyValues || {})) {
-                    if (reserved.has(name.toLowerCase())) shadowed[name] = value;
+                    if (reserved.has(name.toLowerCase()) || refusedAttribute(name, value)) shadowed[name] = value;
                     else out[name] = value;
                 }
                 if (Object.keys(shadowed).length) out[SHADOW] = JSON.stringify(shadowed);

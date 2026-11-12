@@ -189,7 +189,8 @@ const htmlShapes = [
     ['[t][nope]', '[t][nope]'],
     ['[t][]', '[t][]'],
     ['x [t][nope]{#i .c k=v} y', 'x [t][nope]{#i .c k=v} y'],
-    ['[t][r]\n\n[r]: javascript:x', '[t][r]\n\n[r]: javascript:x'],
+    // A denied destination is blanked on the way in (PART 9 §25, carve#6009).
+    ['[t][r]\n\n[r]: javascript:x', '[t][r]\n\n[r]:'],
     ['*[HTML]: Hyper Text\n\nA HTML span.', '*[HTML]: Hyper Text\n\nA HTML span.'],
     ['A [HTML]{abbr="X"} span.', 'A [HTML]{abbr="X"} span.'],
     ['# a [x](/y) b\n\n[a [x](/y) b][]', '# a [x](/y) b\n\n[a x b][]'],
