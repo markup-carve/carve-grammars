@@ -16,23 +16,15 @@
     "text": "~}"
   },
   {
-    "scope": "attr",
-    "text": "{.k}"
-  },
-  {
     "scope": null,
-    "text": " c\n\n"
+    "text": "{.k} c\n\n"
   },
   {
     "scope": "comment",
     "text": "{#note#}"
   },
   {
-    "scope": "attr",
-    "text": "{.k}"
-  },
-  {
     "scope": null,
-    "text": " c\n"
+    "text": "{.k} c\n"
   }
 ]

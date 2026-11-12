@@ -416,16 +416,87 @@
         // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
         // keeps its match and drops the scope, as `scopeUnless` does.
         'on:begin': (m) => {
-            let past = true;
-            if (m[1] !== undefined) {
-                const opener = indentColumn(m[1], 0);
-                for (let at = m[0].indexOf('\n'); past && at !== -1; at = m[0].indexOf('\n', at + 1)) {
-                    past = indentColumn(m[0], at + 1) > opener;
-                }
-            }
-            m.rule.scope = past ? 'attr' : undefined;
+            m.rule.scope = attachedAttribute(m.input, m) ? 'attr' : undefined;
         },
         relevance: 5,
+    };
+    // A block glued to a `}` that closes no forced emphasis needs that `}` to
+    // close an attached block: `a}{.b}`, `x {.a}{.b}` and a refused `{.a` + `}`
+    // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
+    // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
+    const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
+    const CRITIC_SUBSTITUTION = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
+    const lineBefore = (source, at) => source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
+    // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
+    const blockOpener = (source, close) => {
+        let open = source.lastIndexOf('{', close - 1);
+        if (open === -1 || !/["']/.test(source.slice(open, close))) return open;
+        open = -1;
+        for (let i = Math.max(0, close - 4096); i < close; i++) {
+            const c = source.charAt(i);
+            if (c === '\\') { i++; continue; }
+            if (c === '{') { open = i; continue; }
+            if (c === '}') { open = -1; continue; }
+            if (open !== -1 && (c === '"' || c === "'")) {
+                let j = i + 1;
+                for (; j < close && source.charAt(j) !== c && source.charAt(j) !== '\n'; j++) {
+                    if (source.charAt(j) === '\\') j++;
+                }
+                if (source.charAt(j) === c) i = j;
+            }
+        }
+        return open;
+    };
+    // The `[` that opens the bracket closed by the `]` before `at`, -1 when none.
+    const bracketOpener = (source, at) => {
+        let depth = 0;
+        for (let i = at - 1, stop = Math.max(0, at - 4096); i >= stop && source.charAt(i) !== '\n'; i--) {
+            const c = source.charAt(i);
+            if (source.charAt(i - 1) === '\\' && source.charAt(i - 2) !== '\\') { i--; continue; }
+            if (c === '`') {
+                let run = 1;
+                while (source.charAt(i - run) === '`') run++;
+                const tick = source.lastIndexOf('`'.repeat(run), i - run);
+                const line = source.lastIndexOf('\n', i);
+                if (tick > line) { i = tick; continue; }
+                i -= run - 1;
+                continue;
+            }
+            if (c === ']') depth++;
+            else if (c === '[' && --depth === 0) return i;
+        }
+        return -1;
+    };
+    // A bracketed span, not a footnote reference or a reference link (`[a][r]`).
+    const closesSpan = (source, at) => {
+        const open = bracketOpener(source, at);
+        return open !== -1 && source.charAt(open + 1) !== '^' && !(source.charAt(open - 1) === ']' && bracketOpener(source, open) !== -1);
+    };
+    let hostMemo = { source: null, hosts: null };
+    // 'span', 'other', or null when the `}` before `at` closes nothing attached.
+    const attributeHost = (source, at) => {
+        if (hostMemo.source !== source) hostMemo = { source, hosts: new Map() };
+        if (!hostMemo.hosts.has(at)) hostMemo.hosts.set(at, findAttributeHost(source, at));
+        return hostMemo.hosts.get(at);
+    };
+    const findAttributeHost = (source, at) => {
+        if (source[at - 1] !== '}') return source[at - 1] === ']' && closesSpan(source, at) ? 'span' : 'other';
+        const brace = blockOpener(source, at - 1);
+        if (brace !== -1) {
+            if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return attributeHost(source, brace) === 'span' ? 'span' : null;
+            ATTRIBUTE_PROBE.lastIndex = brace;
+            const host = ATTRIBUTE_PROBE.exec(source);
+            if (host && brace + host[0].length === at) return attachedAttribute(source, host) ? attributeHost(source, brace) : null;
+        }
+        return /[*/_~=^,+-]/.test(source[at - 2] ?? '') && !CRITIC_SUBSTITUTION.test(lineBefore(source, at)) ? 'other' : null;
+    };
+    const attachedAttribute = (source, m) => {
+        if (m[1] === undefined) return attributeHost(source, m.index) !== null;
+        const opener = indentColumn(m[1], 0);
+        for (let at = m[0].indexOf('\n'); at !== -1; at = m[0].indexOf('\n', at + 1)) {
+            if (indentColumn(m[0], at + 1) <= opener) return false;
+        }
+        return true;
     };
 
     // Front matter is valid only at byte offset zero. Unlike the historical
