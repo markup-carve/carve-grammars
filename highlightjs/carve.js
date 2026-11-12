@@ -1474,21 +1474,35 @@
         return memo;
     };
     // Whether a `:: ` term reaches the `: ` line at `start`, so it is a
-    // description; with none above it is paragraph text.
+    // description; with none above it is paragraph text. Memoized per
+    // non-blank line, so the walk is linear in the document.
     const termAbove = (input, start) => {
+        const memo = memoFor(input);
+        const path = [];
+        let found = false;
         let at = previousLineStart(input, start);
         // Three blank lines end the list.
-        for (let walked = 0, blanks = 0; at !== -1 && walked < 64; walked++) {
+        for (let blanks = 0; at !== -1; ) {
             const line = lineAt(input, at);
-            if (/^\uFEFF?[ \t]*:: /.test(line)) return true;
-            const above = previousLineStart(input, at);
             const blank = lineKind(line) === 'blank';
+            if (!blank && memo.has('t' + at)) {
+                found = memo.get('t' + at);
+                break;
+            }
+            if (/^\uFEFF?[ \t]*:: /.test(line)) {
+                found = true;
+                path.push(at);
+                break;
+            }
+            const above = previousLineStart(input, at);
             blanks = blank ? blanks + 1 : 0;
             const lazy = /^\uFEFF?[^ \t\r\n]/.test(line) && above !== -1 && lineKind(lineAt(input, above)) !== 'blank';
-            if (blanks >= 3 || !(blank || /^\uFEFF?(?:[ \t]|: )/.test(line) || lazy)) return false;
+            if (blanks >= 3 || !(blank || /^\uFEFF?(?:[ \t]|: )/.test(line) || lazy)) break;
+            if (!blank) path.push(at);
             at = above;
         }
-        return false;
+        for (const line of path) memo.set('t' + line, found);
+        return found;
     };
     // Whether the paragraph holding line `start` sits outside any list item:
     // it opens at column 0 on a line that is no item, and no `+` above it
