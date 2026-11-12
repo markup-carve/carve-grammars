@@ -1,0 +1,66 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "-"
+  },
+  {
+    "scope": "quote",
+    "text": " "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "quote",
+    "text": " [^n]: a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">     %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": ">   z"
+  },
+  {
+    "scope": null,
+    "text": "\nplain\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -35,11 +35,11 @@ for (const file of listCorpusFiles()) {
     else assert.fail(`${file.name}: merged output matches neither authored nor editor semantics`);
 }
 
-// Counts measured at the carve 0.1.14 cut (143df0b). The canonical projections
+// Counts measured at the carve 0.1.14 tag (51c5631). The canonical projections
 // below are mostly unterminated fences and runs, where the appended paragraph
 // would land inside the open construct, so the editor's spelling wins.
-assert.strictEqual(envelopes, 1464, 'source-envelope population changed; audit the new projection differences');
-assert.strictEqual(authoredAppend, 1373, 'an append normalized authored layout in additional documents');
+assert.strictEqual(envelopes, 1471, 'source-envelope population changed; audit the new projection differences');
+assert.strictEqual(authoredAppend, 1380, 'an append normalized authored layout in additional documents');
 assert.strictEqual(canonicalAppend, 91, 'the set of structurally unterminated append conflicts changed');
 assert.deepStrictEqual(canonicalFiles, [
     '182-openers-past-the-nesting-cap-are-one-paragraph',

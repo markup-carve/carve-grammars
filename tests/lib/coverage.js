@@ -1559,6 +1559,11 @@ const TIPTAP_COVERED = [
     'blockquote-lazy-continuation',
     'colspan-marker-scans-left-past-a-consumed-cell',
     'unresolved-footnote-reference-with-a-trailing-attribute-stays-literal',
+
+    // Spec corpus 1075, added by the bump to the carve 0.1.14 tag (51c5631).
+    // Both files convert to rich nodes with no source envelope and reparse to
+    // the same AST.
+    'a-tab-led-attribute-line-in-a-note-a-nested-plus-passes-stays-the-note-s',
 ];
 
 // Categories that historically required the whole-document fallback. Their
@@ -1683,6 +1688,10 @@ const TIPTAP_SKIP = new Map([
     ['a-paragraph-in-a-held-container-does-not-loosen-the-item', 'with the source envelope removed `  :: term` comes back as ``, so the reparse differs'],
     ['a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note', 'with the source envelope removed `- [^n]: text` comes back as `after [^n]`, so the reparse differs'],
     ['a-tab-inside-a-line-is-content-in-a-label-and-after-a-definition-marker', 'with the source envelope removed a reference whose label holds a tab gains a second, space-spelled definition, so the reparse differs'],
+    // Spec corpus 1074, 1076 and 1077 (bump to the carve 0.1.14 tag 51c5631).
+    ['an-attribute-line-in-a-note-s-body-stays-the-note-s-under-a-plus', 'with the source envelope removed the `- +` item and the note\'s tab-led `{y}` line are not written back, so the reparse differs'],
+    ['a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open', 'with the source envelope removed the lazy `plain` line is written inside the quoted item, so 5 of 6 files reparse differently'],
+    ['a-column-after-an-astral-character-is-one-code-point', 'with the source envelope removed a line block\'s `😀\\tx` comes back as `😀   x`, so 1 of 4 files reparses differently'],
 ]);
 
 export const COVERAGE = {
