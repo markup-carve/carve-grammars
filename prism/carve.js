@@ -3523,7 +3523,12 @@
 
     // A quoted line's code, math and literal spans stay verbatim
     // (carve-grammars#858), ahead of the inline rules.
+    // A glued attribute block attaches on a quoted line too (carve-grammars#865),
+    // after the forced spans as at the top level.
     var quotedInline = Object.assign({ 'escape': Prism.languages.carve['escape'] }, inline);
+    quotedInline = Object.fromEntries(Object.entries(quotedInline).flatMap(function (entry) {
+        return entry[0] === 'bold-italic' ? [['attributes', Prism.languages.carve['attributes']], entry] : [entry];
+    }));
     var quotedRun = Object.assign(lineVerbatim(), quotedInline);
     // The same spans in a token that holds only paragraph lines: they cross
     // its lines, and the quote prefixes inside them are punctuation.

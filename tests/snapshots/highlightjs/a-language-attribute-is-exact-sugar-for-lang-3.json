@@ -9,7 +9,15 @@
   },
   {
     "scope": "quote",
-    "text": "> Der Titel ist [unbekannt]{:}."
+    "text": "> Der Titel ist [unbekannt]"
+  },
+  {
+    "scope": "quote>attr",
+    "text": "{:}"
+  },
+  {
+    "scope": "quote",
+    "text": "."
   },
   {
     "scope": null,

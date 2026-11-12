@@ -21,7 +21,23 @@
   },
   {
     "type": "blockquote",
-    "text": " Der Titel ist [unbekannt]{:}."
+    "text": " Der Titel ist [unbekannt]"
+  },
+  {
+    "type": "blockquote>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "blockquote>attributes>attr-value>language",
+    "text": ":"
+  },
+  {
+    "type": "blockquote>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "blockquote",
+    "text": "."
   },
   {
     "type": "text",
