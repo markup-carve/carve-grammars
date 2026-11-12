@@ -3195,6 +3195,12 @@
         end: /$(?![^\r\n])/,
         contains: [ESCAPE, ...ONE_LINE_VERBATIM, { ...LINE_COMMENT, begin: /(?<=[ \t])%%/ }],
     });
+    // A glued attribute block attaches on a quoted line too (carve-grammars#865);
+    // a verbatim span or an escape keeps its brace out of it, and stays unscoped.
+    BLOCKQUOTE.contains.push(
+        ...[ESCAPE, ...ONE_LINE_VERBATIM].map(({ className, ...sink }) => sink),
+        ATTRIBUTE_EMPTY, SPAN_ATTRIBUTE, ATTRIBUTE,
+    );
 
 
     const substitutionContent = (boundary, openCode) => [
