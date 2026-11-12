@@ -425,21 +425,30 @@
     // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
     // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
     const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
-    const CRITIC_SUBSTITUTION = /\{~(?:[^~]|~(?![>}])){0,4096}~>[\s\S]{0,4096}~\}$/;
-    const BRACKETED_SPAN = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]$/;
+    const CRITIC_SUBSTITUTION = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
+    const BRACKETED_SPAN = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]|\[(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]){0,4096}\]$/;
+    const lineBefore = (source, at) => source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
+    const QUOTED_VALUE = /"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'/g;
+    let hostMemo = { source: null, hosts: null };
     // 'span', 'other', or null when the `}` before `at` closes nothing attached.
     const attributeHost = (source, at) => {
+        if (hostMemo.source !== source) hostMemo = { source, hosts: new Map() };
+        if (!hostMemo.hosts.has(at)) hostMemo.hosts.set(at, findAttributeHost(source, at));
+        return hostMemo.hosts.get(at);
+    };
+    const findAttributeHost = (source, at) => {
         if (source[at - 1] !== '}') {
-            return source[at - 1] === ']' && BRACKETED_SPAN.test(source.slice(Math.max(0, at - 4100), at)) ? 'span' : 'other';
+            return source[at - 1] === ']' && BRACKETED_SPAN.test(lineBefore(source, at)) ? 'span' : 'other';
         }
-        if (/[*/_~=^,+-]/.test(source[at - 2] ?? '')) return CRITIC_SUBSTITUTION.test(source.slice(Math.max(0, at - 4096), at)) ? null : 'other';
-        for (let brace = at - 2, tries = 0; tries < 4 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+        for (let brace = at - 2, tries = 0; tries < 32 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+            // A `}` outside quotes between this `{` and the closer ends the search.
+            if (source.slice(brace + 1, at - 1).replace(QUOTED_VALUE, '').includes('}')) break;
             if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return attributeHost(source, brace) === 'span' ? 'span' : null;
             ATTRIBUTE_PROBE.lastIndex = brace;
             const host = ATTRIBUTE_PROBE.exec(source);
             if (host && brace + host[0].length === at) return attachedAttribute(source, host) ? attributeHost(source, brace) : null;
         }
-        return null;
+        return /[*/_~=^,+-]/.test(source[at - 2] ?? '') && !CRITIC_SUBSTITUTION.test(lineBefore(source, at)) ? 'other' : null;
     };
     const attachedAttribute = (source, m) => {
         if (m[1] === undefined) return attributeHost(source, m.index) !== null;

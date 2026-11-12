@@ -213,21 +213,32 @@
         var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
         var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
         var lineBreak = /\r\n?|\n/g;
-        var criticSubstitution = /\{~(?:[^~]|~(?![>}])){0,4096}~>[\s\S]{0,4096}~\}$/;
-        var bracketedSpan = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]$/;
+        var criticSubstitution = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
+        var bracketedSpan = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]|\[(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]){0,4096}\]$/;
+        var lineBefore = function (source, at) {
+            return source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
+        };
+        var quoted = /"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'/g;
+        var memo = { source: null, hosts: null };
         // 'span', 'other', or null when the `}` before `at` closes nothing attached.
         var hostOf = function (source, at) {
+            if (memo.source !== source) memo = { source: source, hosts: new Map() };
+            if (!memo.hosts.has(at)) memo.hosts.set(at, findHost(source, at));
+            return memo.hosts.get(at);
+        };
+        var findHost = function (source, at) {
             if (source.charAt(at - 1) !== '}') {
-                return source.charAt(at - 1) === ']' && bracketedSpan.test(source.slice(Math.max(0, at - 4100), at)) ? 'span' : 'other';
+                return source.charAt(at - 1) === ']' && bracketedSpan.test(lineBefore(source, at)) ? 'span' : 'other';
             }
-            if (/[*\/_~=^,+-]/.test(source.charAt(at - 2))) return criticSubstitution.test(source.slice(Math.max(0, at - 4096), at)) ? null : 'other';
-            for (var brace = at - 2, tries = 0; tries < 4 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+            for (var brace = at - 2, tries = 0; tries < 32 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+                // A `}` outside quotes between this `{` and the closer ends the search.
+                if (source.slice(brace + 1, at - 1).replace(quoted, '').includes('}')) break;
                 if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return hostOf(source, brace) === 'span' ? 'span' : null;
                 probe.lastIndex = brace;
                 var host = probe.exec(source);
                 if (host && brace + host[0].length === at) return valid(source, host) ? hostOf(source, brace) : null;
             }
-            return null;
+            return /[*\/_~=^,+-]/.test(source.charAt(at - 2)) && !criticSubstitution.test(lineBefore(source, at)) ? 'other' : null;
         };
         var valid = function (source, match) {
             if (match[1] === undefined) return hostOf(source, match.index) !== null;
