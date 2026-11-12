@@ -15,6 +15,7 @@
  */
 import { parse, toAstJson, toSourceLayout } from '@markup-carve/carve';
 import { serializeToCarve } from './serializer.js';
+import { isDeniedDestination } from './url-policy.js';
 
 export class UnsupportedNodeError extends Error {
     constructor(type, node = null) {
@@ -299,6 +300,18 @@ function record(ctx, bucket, type, reason) {
     if (!(type in into)) into[type] = reason;
 }
 
+/**
+ * `url`, or `''` when the HTML renderer blanks it (PART 9 §25). The editor JSON
+ * is read by whatever renders it next, so it carries the destination the HTML
+ * output carries (markup-carve/carve#6009).
+ */
+function destination(url, ctx) {
+    if (!isDeniedDestination(url)) return url;
+    record(ctx, 'degraded', 'destination-denied', 'a destination with a denied scheme is blanked, as the HTML renderer blanks it');
+
+    return '';
+}
+
 function unsupported(type, node, ctx) {
     if (ctx?.unsupported === 'preserve') {
         const carveSource = sourceFor(node, ctx);
@@ -578,7 +591,7 @@ function convertBlock(node, ctx) {
         case 'image':
             // A bare image as a block (figure-less) is serialized as a paragraph
             // by the serializer's block `image` case; mirror that.
-            return blockImage(node);
+            return blockImage(node, ctx);
 
         case 'table':
             return convertTable(node, ctx);
@@ -685,7 +698,7 @@ function convertBlock(node, ctx) {
             // definition line from the reference that resolved it. The
             // serializer registers the label as written so the reference
             // collector does not append a second copy at the end.
-            const attrs = { label: node.label || '', href: node.href || '' };
+            const attrs = { label: node.label || '', href: destination(node.href || '', ctx) };
             if (node.title != null) attrs.title = node.title;
             const authored = convertAttrs(node.attrs);
             if (authored) Object.assign(attrs, authored);
@@ -727,7 +740,7 @@ function convertFigure(node, ctx) {
     const target = node.target;
     let convertedTarget;
     if (target?.type === 'image') {
-        convertedTarget = blockImage(target);
+        convertedTarget = blockImage(target, ctx);
     } else if (target?.type === 'math') {
         convertedTarget = { type: 'paragraph', content: convertInlineNode(target, [], ctx) };
     } else if (target) {
@@ -775,8 +788,8 @@ function convertFigureGroup(node, ctx) {
     return group;
 }
 
-function blockImage(node) {
-    const attrs = { alt: node.alt || '', src: node.src || '' };
+function blockImage(node, ctx) {
+    const attrs = { alt: node.alt || '', src: destination(node.src || '', ctx) };
     if (node.title) attrs.title = node.title;
     if (typeof node.ref === 'string' && node.ref !== '') attrs.carveRef = node.ref;
     if (typeof node.rawRef === 'string' && node.rawRef !== '') attrs.carveRawRef = node.rawRef;
@@ -1164,7 +1177,7 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
         }
 
         case 'image': {
-            const attrs = { alt: node.alt || '', src: node.src || '' };
+            const attrs = { alt: node.alt || '', src: destination(node.src || '', ctx) };
             if (node.title) attrs.title = node.title;
             // An image written as a REFERENCE keeps its label, exactly as a
             // link does (PART 12 section 3a). carve-grammars#101 fixed this for
@@ -1227,7 +1240,7 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
             // Links never nest: an inner link renders as its text, and a second
             // link mark on the same text writes an `<a>` inside an `<a>`.
             if (marks.some((mark) => mark.type === 'link')) return descend(node, marks, ctx);
-            const attrs = { href: node.href || '' };
+            const attrs = { href: destination(node.href || '', ctx) };
             if (node.title) attrs.title = node.title;
             // A REFERENCE link is not an inline link, and PART 12 section 3a is
             // what says so: the tree stays pre-resolve, carrying `ref` and the
@@ -1257,7 +1270,7 @@ function convertInlineNode(node, marks, ctx, leadingCellWrap = false) {
             // An autolink takes an attribute run of its own
             // (`<https://e.com>{#id .c}` renders the id and class on the `<a>`).
             if (marks.some((mark) => mark.type === 'link')) return [{ type: 'text', text, marks }];
-            const attrs = { href: node.href || text, carveAutolink: true, ...(convertAttrs(node.attrs) || {}) };
+            const attrs = { href: destination(node.href || text, ctx), carveAutolink: true, ...(convertAttrs(node.attrs) || {}) };
             return [{ type: 'text', text, marks: [...marks, { type: 'link', attrs }] }];
         }
 
