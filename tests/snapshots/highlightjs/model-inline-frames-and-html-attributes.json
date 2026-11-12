@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[a](/u){href=/v}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

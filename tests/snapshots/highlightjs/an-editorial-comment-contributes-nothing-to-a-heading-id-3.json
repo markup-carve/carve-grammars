@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "section",
+    "text": "# Plan "
+  },
+  {
+    "scope": "section>comment",
+    "text": "{#draft#}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Plan"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

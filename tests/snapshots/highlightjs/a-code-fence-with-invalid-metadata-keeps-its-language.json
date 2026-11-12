@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "code",
+    "text": "```js {1,3}\na\n```"
+  },
+  {
+    "scope": null,
+    "text": "\n\ntext "
+  },
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>title",
+    "text": "py"
+  },
+  {
+    "scope": "code>language-python",
+    "text": "\nb\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n\nafter\n"
+  }
+]

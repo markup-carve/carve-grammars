@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": ": t\n  "
+  },
+  {
+    "scope": "comment",
+    "text": "%%"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    ~~~"
+  },
+  {
+    "scope": null,
+    "text": "\n    e\n]\n"
+  }
+]

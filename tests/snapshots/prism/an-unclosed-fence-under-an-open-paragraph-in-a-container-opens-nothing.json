@@ -12,31 +12,15 @@
     "text": "note"
   },
   {
-    "type": "div",
-    "text": "\npara\n```\ncode\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": "::::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
     "type": "text",
-    "text": "\nafter "
+    "text": "\npara\n"
   },
   {
-    "type": "bold>bold",
-    "text": "*b*"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n::::\n:::\nafter *b*\n"
   }
 ]

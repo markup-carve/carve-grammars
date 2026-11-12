@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "See "
+  },
+  {
+    "type": "tag>variable",
+    "text": "#a--"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#b-"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#c"
+  },
+  {
+    "type": "text",
+    "text": ", "
+  },
+  {
+    "type": "tag>variable",
+    "text": "#a-"
+  },
+  {
+    "type": "mention>variable",
+    "text": "@b"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "tag>variable",
+    "text": "#a"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

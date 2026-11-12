@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": "\na. alpha\n"
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "a."
+  },
+  {
+    "scope": null,
+    "text": "  alpha\n"
   }
 ]

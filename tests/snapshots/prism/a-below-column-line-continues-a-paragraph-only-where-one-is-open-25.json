@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n"
+    "text": "- a"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "title>important",

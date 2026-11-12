@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " :: term\n  : desc\n"
+    "text": " :: term\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " desc\n"
   },
   {
     "scope": "code>keyword",

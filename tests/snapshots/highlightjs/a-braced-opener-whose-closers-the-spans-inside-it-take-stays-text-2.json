@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "strong",
+    "text": "{*a "
+  },
+  {
+    "scope": "strong>strong",
+    "text": "{*b *}"
+  },
+  {
+    "scope": "strong",
+    "text": " c *}"
+  },
+  {
+    "scope": null,
+    "text": " {*d "
+  },
+  {
+    "scope": "strong",
+    "text": "{*e *}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

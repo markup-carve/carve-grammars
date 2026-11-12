@@ -42,15 +42,18 @@ row('quoted container with its closer', '> ::: note\n> x\n> :::\n', '<blockquote
     assert.match(scopeOf(source, ':::'), /^blockquote>div-delimiter>punctuation$/);
     assert.match(scopeOf(source, 'note'), /div-delimiter>class-name/);
 });
-row('an absorbed colon run in a quote stays text', '> quote\n> :::note\n> body\n> :::\ntail\n', '<p>quote:::notebody:::tail</p>', (source) => {
-    assert.ok(!prismTokens(source).some((t) => /div/.test(t.scope ?? '')));
+// A bare colon run interrupts the quote paragraph and opens a div to the quote's end; a glued one is text.
+row('a glued colon run in a quote stays text', '> quote\n> :::note\n> body\n> :::\ntail\n', '<p>quote:::notebody</p><div></div></blockquote><p>tail</p>', (source) => {
+    assert.deepEqual(prismTokens(source).filter((t) => /div/.test(t.scope ?? '')).map((t) => t.text), [':::']);
+    assert.equal(scopeOf(source, ':::note'), 'blockquote');
 });
 row('quoted definition list', '> :: t\n> : d *e*\n', '<dt>t</dt><dd>d <strong>e</strong>', (source) => {
     assert.match(scopeOf(source, '::'), /^blockquote>definition-term/);
     assert.equal(prismTokens(source).filter((t) => t.text === ':' && /punctuation/.test(t.scope ?? '')).length, 1);
 });
-row('quoted description after a lazy term line', '> :: term\n> lazy\n> : desc\n', '<dt>termlazy</dt><dd>desc</dd>', (source) => {
-    assert.equal(prismTokens(source).filter((t) => t.text === ':' && /punctuation/.test(t.scope ?? '')).length, 1);
+// A term takes no lazy line, so the line after it opens a paragraph that holds the `:` line.
+row('a quoted line after a term ends the list', '> :: term\n> lazy\n> : desc\n', '<dt>term</dt></dl><p>lazy: desc</p>', (source) => {
+    assert.equal(prismTokens(source).filter((t) => t.text === ':' && /punctuation/.test(t.scope ?? '')).length, 0);
 });
 row('a quoted description with no term', '> : lone\n', '<p>: lone</p>', (source) => {
     assert.ok(!prismTokens(source).some((t) => t.text === ':' && t.scope));

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "section",
+    "text": "# x "
+  },
+  {
+    "scope": "section>literal",
+    "text": "<=="
+  },
+  {
+    "scope": "section",
+    "text": "b and y"
+  },
+  {
+    "scope": "section>literal",
+    "text": "<=>"
+  },
+  {
+    "scope": "section",
+    "text": "z"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

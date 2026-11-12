@@ -12,63 +12,47 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "para\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "-"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": " "
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "{"
   },
   {
-    "type": "div>attributes>attr-value>id",
+    "type": "attributes>attr-value>id",
     "text": "#x"
   },
   {
-    "type": "div>attributes>attr-value>punctuation",
+    "type": "attributes>attr-value>punctuation",
     "text": "}"
   },
   {
-    "type": "div",
-    "text": "\n```\ncode\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": "::::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\nafter "
-  },
-  {
-    "type": "bold>bold",
-    "text": "*b*"
-  },
-  {
     "type": "text",
     "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n::::\n:::\nafter *b*\n"
   }
 ]

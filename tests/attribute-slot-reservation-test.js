@@ -129,7 +129,7 @@ const corpusPairs = [
         '-{title="😀"} [x] a\n\n              # h'],
     ['89-block-attribute-lines-2', '{#id2 key="val2" .foo .bar .baz}\nOkay'],
     ['90-list-item-attributes-2', '3.{#x k="v"} A numbered item with id and key-value.'],
-    ['289-a-structural-attribute-leads-the-author-s-own', '{k="v" .attr}\na. alpha'],
+    ['289-a-structural-attribute-leads-the-author-s-own', '{k="v" .attr}\na.  alpha'],
     ['11-fenced-code-6', '```php "src/Auth.php"\n$ok = true;\n```'],
     ['71-attribute-edge-cases-5', '![a](u){k="{y}"}'],
     ['42-admonitions-5', '{title="attr title"}\n::: note "opener title"\nBody.\n:::'],
@@ -172,7 +172,8 @@ console.log(`  ✓ ${authoredSources.length} authored runs survive on a node tha
 // A cell's alignment marker renders as `text-align`, which Tiptap 3's own
 // `align` attribute read back as an authored run (#532).
 const alignedTables = [
-    ['|= a |=> b |\n| c | d |', '|= a |=> b |\n| c | d |'],
+    // carve#5091 D3: the writer moves the deprecated glued marker into braces.
+    ['|= a |=> b |\n| c | d |', '|= a |={>} b |\n| c | d |'],
     ['| a |{align=right} b |', '| a |{align="right"} b |'],
 ];
 for (const [source, expected] of alignedTables) {
@@ -188,7 +189,8 @@ const htmlShapes = [
     ['[t][nope]', '[t][nope]'],
     ['[t][]', '[t][]'],
     ['x [t][nope]{#i .c k=v} y', 'x [t][nope]{#i .c k=v} y'],
-    ['[t][r]\n\n[r]: javascript:x', '[t][r]\n\n[r]: javascript:x'],
+    // A denied destination is blanked on the way in (PART 9 §25, carve#6009).
+    ['[t][r]\n\n[r]: javascript:x', '[t][r]\n\n[r]:'],
     ['*[HTML]: Hyper Text\n\nA HTML span.', '*[HTML]: Hyper Text\n\nA HTML span.'],
     ['A [HTML]{abbr="X"} span.', 'A [HTML]{abbr="X"} span.'],
     ['# a [x](/y) b\n\n[a [x](/y) b][]', '# a [x](/y) b\n\n[a x b][]'],

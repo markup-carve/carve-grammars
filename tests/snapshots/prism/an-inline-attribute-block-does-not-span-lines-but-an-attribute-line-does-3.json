@@ -1,42 +1,6 @@
 [
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".a"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n\nfirst\n\n"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".b"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n\nsecond\n"
+    "text": "{\n.a}\n\nfirst\n\n{.b\n}\n\nsecond\n"
   }
 ]

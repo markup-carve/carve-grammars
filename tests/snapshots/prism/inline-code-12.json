@@ -16,35 +16,35 @@
     "text": "\n\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {
-    "type": "div>div-delimiter",
+    "type": "line-block>div>div-delimiter",
     "text": " "
   },
   {
-    "type": "div>div-delimiter>class-name",
+    "type": "line-block>div>div-delimiter>class-name",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": "\nx"
   },
   {
-    "type": "div>forced-bold>bold",
+    "type": "line-block>div>forced-bold>bold",
     "text": "{*"
   },
   {
-    "type": "div>forced-bold>bold>code",
+    "type": "line-block>div>forced-bold>bold>code",
     "text": "`a\n*}"
   },
   {
-    "type": "div",
+    "type": "line-block>div",
     "text": "\n"
   },
   {
-    "type": "div>div-delimiter>punctuation",
+    "type": "line-block>div>div-delimiter>punctuation",
     "text": ":::"
   },
   {

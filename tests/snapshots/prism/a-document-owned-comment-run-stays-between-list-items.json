@@ -1,0 +1,50 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% c1"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% c2"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "c\n"
+  },
+  {
+    "type": "comment",
+    "text": "%% c3"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

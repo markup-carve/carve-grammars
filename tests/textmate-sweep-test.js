@@ -227,43 +227,6 @@ const NEGATIVE = [
   // (`see [t][r]`), so no definition was collected and the line is item text.
   ['def below a wide bullet content column is text', '-   a\n  [r]: /u\n', 'meta.link.reference.def'],
   ['def below an ordered content column is text', '10. a\n  [r]: /u\n', 'meta.link.reference.def'],
-  // The same column rule for a HEADING, which the corpus pins directly:
-  // `178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6` renders
-  // ` # H` below the nested item's content column as item TEXT. This grammar
-  // coloured it a heading until `#heading` was anchored at column 0 and
-  // `#heading_in_container` took over inside a container (carve-grammars#138).
-  //
-  // The positive half of the pair is in `constructs.js`: `heading` (column 0)
-  // and `heading in a list item` (at the item's content column). A rule that
-  // stopped matching everywhere would pass these negatives and fail those two,
-  // which is what makes the pair a pair.
-  ['heading below a nested content column is text', '- x\n  - a\n # H\n', 'markup.heading'],
-  ['heading indented at document level is text', ' # H\n', 'markup.heading'],
-  // The same column rule for the other three document-level anchors the
-  // container split made strict (carve-grammars#138). Every shape here was
-  // checked against the pinned engine before its anchor moved:
-  //
-  //   ` ```js` / ` x` / ` ``` `  -> <p><code>js x </code></p>
-  //   ` > q`                     -> <p>&gt; q</p>
-  //   ` *[HTML]: HyperText`      -> <p>*[HTML]: HyperText</p>, defining nothing
-  //
-  // and below every open content column each renders as item text, the corpus
-  // 178 shape. The fence sample keeps its CLOSER indented too: a flush-left
-  // ``` on the last line is itself a valid document-level opener, so a sample
-  // spelled ` ```js\nx\n``` ` would carry a fence scope for a reason that has
-  // nothing to do with the anchor under test.
-  //
-  // The positive halves are in `constructs.js` - `fenced code`, `blockquote`
-  // and `abbreviation` at column 0, and `fenced code in a list item`,
-  // `blockquote in a list item` and `abbreviation in a list item` at the item's
-  // content column. Pointing `#container_blocks` back at the strict rule passes
-  // every negative here and fails those three, which is what makes them pairs.
-  ['fence indented at document level is text', ' ```js\n x\n ```\n', 'fenced_code'],
-  ['fence below a nested content column is text', '- x\n  - a\n ```js\n y\n ```\n', 'fenced_code'],
-  ['blockquote indented at document level is text', ' > q\n', 'markup.quote'],
-  ['blockquote below a nested content column is text', '- x\n  - a\n > q\n', 'markup.quote'],
-  ['abbreviation indented at document level is text', ' *[HTML]: HyperText\n', 'meta.abbreviation'],
-  ['abbreviation below a nested content column is text', '- x\n  - a\n *[HTML]: HyperText\n', 'meta.abbreviation'],
 ]
 let negPass = 0
 const unknownSelectors = [
@@ -295,6 +258,32 @@ for (const [label, sample, badScope] of NEGATIVE) {
 // itself, and a reader skimming for ticks saw a pass.
 console.log(`  ${negPass === NEGATIVE.length ? '✓' : '✗'} textmate sweep: ${negPass}/${NEGATIVE.length} intraword-literal checks passed`)
 if (negPass !== NEGATIVE.length) process.exit(1)
+
+// At the 0.1.14 cut an indented opener at the document level opens its block,
+// below a nested item's content column too (carve-grammars#841).
+const DOC_LEVEL_INDENTED = [
+  [' ```js\n x\n ```\n', 'fenced_code'],
+  [' > q\n', 'markup.quote'],
+  [' *[HTML]: HyperText\n', 'meta.abbreviation'],
+  [' # H\n', 'markup.heading'],
+  ['    # H\n', 'markup.heading'],
+  ['p\n # H\n', 'markup.heading'],
+  ['- x\n # H\n', 'markup.heading'],
+  ['- x\n  - a\n # H\n', 'markup.heading'],
+  ['1. x\n  # H\n', 'markup.heading'],
+  ['- x\n  - a\n > q\n', 'markup.quote'],
+  ['- x\n  - a\n ```js\n y\n ```\n', 'fenced_code'],
+  ['- x\n  - a\n *[HTML]: HyperText\n', 'meta.abbreviation'],
+]
+for (const [sample, scope] of DOC_LEVEL_INDENTED) {
+  const { tokens } = hl.codeToTokens(sample, { lang: 'carve', theme: 'github-light', includeExplanation: 'scopeName' })
+  const scopes = tokens.flat().flatMap(tk => (tk.explanation ?? []).flatMap(e => e.scopes.map(s => s.scopeName)))
+  if (!scopes.some(s => s.includes(scope))) {
+    console.log(`FAIL(indented) ${scope} missing in "${sample}"`)
+    process.exit(1)
+  }
+}
+console.log(`  ✓ textmate sweep: ${DOC_LEVEL_INDENTED.length} indented document-level openers open their block`)
 
 // The shared counter-examples. Unlike NEGATIVE above, which is about scope
 // names this grammar alone declares, these shapes are prose in every grammar,

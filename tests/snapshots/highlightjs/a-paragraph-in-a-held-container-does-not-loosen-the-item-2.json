@@ -5,6 +5,14 @@
   },
   {
     "scope": null,
-    "text": " :: term\n  : body\n\n    text\n"
+    "text": " :: term\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " body\n\n    text\n"
   }
 ]

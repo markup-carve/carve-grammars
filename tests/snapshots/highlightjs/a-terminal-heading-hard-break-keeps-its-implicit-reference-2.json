@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "section",
+    "text": "# g\\"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[g][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

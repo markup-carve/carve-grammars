@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "b "
+  },
+  {
+    "scope": "strong",
+    "text": "*//*"
+  },
+  {
+    "scope": "attr",
+    "text": "{c_}"
+  },
+  {
+    "scope": null,
+    "text": "*/\n"
+  }
+]

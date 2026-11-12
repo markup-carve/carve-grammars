@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": ": +\n  para\n\nr"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> {{ a @code:a,b }}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "type": "math>string",
+    "text": "$$`x"
+  },
+  {
+    "type": "text",
+    "text": "\n^ p\n"
+  }
+]

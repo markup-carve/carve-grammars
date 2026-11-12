@@ -1,0 +1,30 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " quote"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "caption>title>punctuation",
+    "text": "^"
+  },
+  {
+    "type": "caption>title",
+    "text": " "
+  },
+  {
+    "type": "caption>title>code",
+    "text": "`open"
+  },
+  {
+    "type": "text",
+    "text": "\n {.x\n .y}\n ```\n z\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "forced-bold>bold",
+    "text": "{*a "
+  },
+  {
+    "type": "forced-bold>bold>forced-bold>bold",
+    "text": "{*b *}"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": " c *}"
+  },
+  {
+    "type": "text",
+    "text": " {*d "
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*e *}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

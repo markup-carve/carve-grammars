@@ -17,30 +17,14 @@
   },
   {
     "type": "definition-list",
-    "text": "d\n   "
+    "text": "d\n   {.k\n   "
   },
   {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "definition-list>attributes>attr-value>class-name",
-    "text": ".k"
-  },
-  {
-    "type": "definition-list>attributes>attr-value",
-    "text": "\n   "
-  },
-  {
-    "type": "definition-list>attributes>attr-value>id",
+    "type": "definition-list>tag>variable",
     "text": "#x"
   },
   {
-    "type": "definition-list>attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "definition-list",
-    "text": "\ntail\n"
+    "text": "}\ntail\n"
   }
 ]

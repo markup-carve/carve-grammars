@@ -21,7 +21,19 @@
   },
   {
     "scope": null,
-    "text": ": b\n   [r]: /url\n\nSee "
+    "text": ": b\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
   },
   {
     "scope": "link",

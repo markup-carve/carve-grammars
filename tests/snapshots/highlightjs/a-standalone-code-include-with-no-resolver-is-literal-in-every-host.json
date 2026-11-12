@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "x "
+  },
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "meta>string",
+    "text": "a"
+  },
+  {
+    "scope": "meta",
+    "text": " "
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@code"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "a,b"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

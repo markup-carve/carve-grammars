@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": "  "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^q]"
+  },
+  {
+    "scope": null,
+    "text": ": note\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "    *"
+  },
+  {
+    "scope": null,
+    "text": " child\ntail\n"
+  }
+]

@@ -1,11 +1,8 @@
 /**
- * A quote opened on its own line inside a list item takes the first-block
- * form (spec corpus 647): `- a` / `  > +` attaches lazy text at column 0 or a
- * block at the quote's column. Prism and highlight.js scope that `+` as the
- * marker; a quote below the item's content column, under another quote line,
- * or followed by a list stays text. An unclosed fence follows as lazy text,
- * and the host may sit in a quote or be a description. Each shape is checked
- * against carve-js too.
+ * A `+` alone on a quote's first line is the first-block marker whatever
+ * follows it (spec corpus 647 and the 0.1.14 layout readings): only a quote
+ * line of the same depth above makes it paragraph text. Prism and highlight.js
+ * scope that `+` as the marker. Each shape is checked against carve-js too.
  */
 import assert from 'node:assert/strict';
 
@@ -42,14 +39,12 @@ const MARKER = [
     '> - a\n>   > > +\n>     > b\n',
     '- a\n  > +\n```\nz\n> ```\n',
     '- a\n  > +\n```\nz\n```~\n',
-];
-const TEXT = [
+    // Moved by the 0.1.14 layout readings (carve-js and the spec model agree).
     '- a\n  > +\n   b\n',
     '- a\n  > +\n  - s\n',
     '- a\n  > +\n  > b\n',
     '- a\n  > +\n# h\n',
     '- a\n  > > q\n  > +\n  b\n',
-    '- > a\n    > +\nb\n',
     '1. a\n  > +\n  b\n',
     '- a\n > +\nb\n',
     'x\n  > +\n  b\n',
@@ -59,6 +54,9 @@ const TEXT = [
     '> - a\n>   > +\n>     - s\n',
     '> - a\n>   > +\n>   > b\n',
     '> - a\n>   > +\n```\nz\n```\n',
+];
+const TEXT = [
+    '- > a\n    > +\nb\n',
 ];
 
 const scopeAt = (tokens, at) => {

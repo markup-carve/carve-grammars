@@ -4,12 +4,37 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
-- The schema map lists `colwidth` under the new `layoutAttributes`: editor layout that a bridge leaves out of Carve without reporting a loss (markup-carve/carve-php#4948).
-- The diff helper finds captioned diff fences (`figure.diff > pre`) as well: `findDiffFences()`, `isDiffFence()`, `isDiffCodeBlock()` and `DIFF_FENCE_SELECTOR` (#824).
-- Highlight.js treats lone CR as a line end in context checks (#821).
-- Highlight lone CR line endings in Prism like LF (#823).
+The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 0.1.16 as the editor engine.
 
-- Add shared caption colors and separate highlight.js caption scopes (#819). The highlight.js scopes are `title.caption` and `punctuation.caption-marker`, so stock themes keep coloring captions as titles.
+### Changes
+
+- Front matter whose `---` opener has no closer runs to the end of the document in Prism, highlight.js and TextMate (markup-carve/carve#5016, #828).
+- Cell alignment in braces leads a cell's attribute block (`|={>} Qty |`, `|{> .num} 1 |`) and is scoped as alignment in all three grammars; the editor writes the braced form (markup-carve/carve#5091, #828).
+- The editor writes two spaces after a letter or roman list marker with a dot (`a.  item`), and a paragraph `a. alpha` stays unescaped (markup-carve/carve#4828, #828).
+- The `=` of `!=`, `<=` and `>=` neither opens nor closes a highlight (markup-carve/carve#4197, #828).
+- Prism, highlight.js and TextMate follow the 0.1.14 block readings: an indented `::` term opens a list without a host and takes no lazy line, a list marker interrupts a description body, a lone `+` on a quote's first line is the first-block marker, a bare `:::` interrupts a quote paragraph, an unclosed code fence takes every later line, and a fence closes at or left of its opener's column (#828).
+- Prism, highlight.js and TextMate no longer scope `->`, `<-`, `<->`, `(c)`, `(r)` or a one-space letter marker, which the 0.1.14 spec reads as text; an arrow needs its exact hyphen run (#831).
+- The editor kit writes a thematic break it inserts as `***`, and keeps an authored spelling (#829).
+- The schema map lists `colwidth` under the new `layoutAttributes`: editor layout that a bridge leaves out of Carve without reporting a loss (markup-carve/carve-php#4948, #836).
+
+### Fixes
+
+- An escaped space (`10\ kg`) is scoped as an escape in all three grammars (#828).
+- An unclosed code fence in a nested colon container keeps the outer closers as code in Prism too (#840).
+- Prism and highlight.js read a description marker by the container it reaches: it is a marker when that container holds a definition list, in quotes, footnote bodies and tab-indented lists too; a term is never folded into a description, and a `: +` description refuses a line left of its marker (#839).
+- TextMate opens an indented heading at the document level, and an indented heading, fence, quote or abbreviation definition below a nested list item's content column (#841).
+- An aligned cell after an escaped backslash (`| a \\|{>} b |`) keeps its alignment scope in Prism and highlight.js (#828).
+- The editor mounts nested spans as a valid document, keeping the outermost span, and drops an empty code span inside a mark, which has no spelling (#828).
+- A hyphen run that is a flag (`x --flag`, `a --. b`) stays text instead of a dash in all three grammars (#835).
+- Highlight.js and Prism treat a lone CR as a line end (#821, #823).
+- Padded link and image titles are highlighted (#816).
+- Definition markers take the theme's keyword color (#817).
+
+### Improvements
+
+- Shared light and dark syntax palette, with caption roles, for Shiki and `carve-code.css` (#818, #820).
+- Separate highlight.js caption scopes `title.caption` and `punctuation.caption-marker`, so stock themes keep coloring captions as titles (#819, #827).
+- The diff helper finds captioned diff fences (`figure.diff > pre`) as well: `findDiffFences()`, `isDiffFence()`, `isDiffCodeBlock()` and `DIFF_FENCE_SELECTOR` (#824).
 
 ## [0.1.22] - 2026-10-25
 

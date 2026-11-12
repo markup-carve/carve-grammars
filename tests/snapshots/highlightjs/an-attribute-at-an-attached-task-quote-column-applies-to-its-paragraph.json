@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- [ ]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> +"
+  },
+  {
+    "scope": null,
+    "text": "\n      "
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\n      p\n"
+  }
+]

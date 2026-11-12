@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "/"
+  },
+  {
+    "scope": "built_in",
+    "text": "{^a/{k=b^}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

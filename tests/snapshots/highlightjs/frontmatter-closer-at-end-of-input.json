@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "meta",
+    "text": "---"
+  },
+  {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "language-yaml>attr",
+    "text": "a:"
+  },
+  {
+    "scope": "language-yaml",
+    "text": " "
+  },
+  {
+    "scope": "language-yaml>number",
+    "text": "1"
+  },
+  {
+    "scope": "language-yaml",
+    "text": "\n"
+  },
+  {
+    "scope": "meta",
+    "text": "---"
+  }
+]

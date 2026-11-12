@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "addition",
+    "text": "{+"
+  },
+  {
+    "scope": "addition>symbol",
+    "text": "[^[g]"
+  },
+  {
+    "scope": "addition",
+    "text": "+}"
+  },
+  {
+    "scope": null,
+    "text": "] b+}\n"
+  }
+]

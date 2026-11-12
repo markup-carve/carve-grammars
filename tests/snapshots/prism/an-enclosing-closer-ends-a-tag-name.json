@@ -1,0 +1,26 @@
+[
+  {
+    "type": "deleted>deleted",
+    "text": "{-{"
+  },
+  {
+    "type": "deleted>deleted>tag>variable",
+    "text": "#x-"
+  },
+  {
+    "type": "deleted>deleted",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#x-"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

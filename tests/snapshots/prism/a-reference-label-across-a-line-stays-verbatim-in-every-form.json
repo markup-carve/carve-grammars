@@ -1,0 +1,22 @@
+[
+  {
+    "type": "reference-image>url>punctuation",
+    "text": "!["
+  },
+  {
+    "type": "reference-image>url",
+    "text": "x\ny"
+  },
+  {
+    "type": "reference-image>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "reference-image>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

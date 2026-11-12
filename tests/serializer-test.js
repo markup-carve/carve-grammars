@@ -506,7 +506,7 @@ check('table header row uses |=',
     const source = '|=> A|= B|\n|=< C|= D|\n|a|b|\n';
     const rows = carveToProseMirror(source).content[0].content;
     assert.strictEqual(rows[2].content[0].attrs.carveInheritedTextAlign, 'left');
-    assert.strictEqual(serializeToCarve({ type: 'doc', content: [{ type: 'table', content: rows }] }).includes('|=< C'), true);
+    assert.strictEqual(serializeToCarve({ type: 'doc', content: [{ type: 'table', content: rows }] }).includes('|={<} C'), true);
     passed++;
     console.log('  ✓ the last leading header marker sets the editor column default');
 }
@@ -832,13 +832,13 @@ check('an alphabetic marker keeps its style and its ordinal',
         listItem(null, para(text('x'))),
         listItem(null, para(text('y'))),
     ] }),
-    'b. x\nc. y');
+    'b.  x\nc.  y');
 
 check('a roman marker keeps its style',
     doc({ type: 'orderedList', attrs: { start: 4, carveOlType: 'i', carveDelim: '.' }, content: [
         listItem(null, para(text('x'))),
     ] }),
-    'iv. x');
+    'iv.  x');
 
 check('an UPPERCASE roman marker stays uppercase',
     doc({ type: 'orderedList', attrs: { start: 4, carveOlType: 'I', carveDelim: ')' }, content: [
@@ -860,7 +860,7 @@ check('the same token is written when a second item disambiguates it',
         listItem(null, para(text('x'))),
         listItem(null, para(text('y'))),
     ] }),
-    'v. x\nvi. y');
+    'v.  x\nvi.  y');
 
 check('a bare-dot marker keeps its bare form',
     doc({ type: 'orderedList', attrs: { start: 1, carveDelim: '.', carveBareMarker: true }, content: [

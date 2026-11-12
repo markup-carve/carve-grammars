@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "see"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": para\n"
+  },
+  {
+    "type": "thematic-break>punctuation",
+    "text": "  ---"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
+  }
+]

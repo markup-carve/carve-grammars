@@ -5,7 +5,35 @@
   },
   {
     "type": "blockquote",
-    "text": " *[HTML]: Hyper Text"
+    "text": " "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "blockquote>abbreviation-definition>symbol",
+    "text": "HTML"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>string",
+    "text": "Hyper Text"
   },
   {
     "type": "text",

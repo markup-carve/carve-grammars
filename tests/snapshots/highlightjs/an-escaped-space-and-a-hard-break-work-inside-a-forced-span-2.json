@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "addition",
+    "text": "{=a"
+  },
+  {
+    "scope": "addition>symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": "addition",
+    "text": "=}"
+  },
+  {
+    "scope": null,
+    "text": " and {=a"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\="
+  },
+  {
+    "scope": null,
+    "text": "}\n"
+  }
+]

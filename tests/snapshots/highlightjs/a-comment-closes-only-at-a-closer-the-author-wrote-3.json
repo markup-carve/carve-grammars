@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "code",
+    "text": "`{%`"
+  },
+  {
+    "scope": null,
+    "text": "^{"
+  },
+  {
+    "scope": "symbol",
+    "text": "#i"
+  },
+  {
+    "scope": null,
+    "text": " .c}~"
+  },
+  {
+    "scope": "comment",
+    "text": "{#c#}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

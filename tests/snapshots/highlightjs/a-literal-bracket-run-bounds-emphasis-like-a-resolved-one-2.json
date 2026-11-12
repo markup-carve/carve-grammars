@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_[_g_"
+  },
+  {
+    "scope": null,
+    "text": "] x_ and "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/[/g/"
+  },
+  {
+    "scope": null,
+    "text": "] x/\n"
+  }
+]

@@ -1,10 +1,10 @@
 [
   {
-    "type": "thematic-break>punctuation",
+    "type": "front-matter>frontmatter-delimiter>punctuation",
     "text": "---"
   },
   {
-    "type": "text",
+    "type": "front-matter",
     "text": "\n"
   }
 ]

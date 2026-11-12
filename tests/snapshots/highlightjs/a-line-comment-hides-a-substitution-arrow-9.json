@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~a %% b~>c\n~>d~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

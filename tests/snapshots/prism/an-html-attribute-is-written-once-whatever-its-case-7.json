@@ -1,0 +1,50 @@
+[
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>attr-name",
+    "text": "CLASS"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "z"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "line-block>div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "line-block>div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "line-block>div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\nverse\n"
+  },
+  {
+    "type": "line-block>div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

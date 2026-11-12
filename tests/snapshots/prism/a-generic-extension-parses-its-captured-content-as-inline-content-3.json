@@ -1,0 +1,22 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " :foo["
+  },
+  {
+    "type": "blockquote>bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "blockquote",
+    "text": "] and @ann"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

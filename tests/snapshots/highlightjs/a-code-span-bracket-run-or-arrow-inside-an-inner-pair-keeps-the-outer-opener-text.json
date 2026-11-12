@@ -1,0 +1,54 @@
+[
+  {
+    "scope": null,
+    "text": "{*a "
+  },
+  {
+    "scope": "strong",
+    "text": "{*b "
+  },
+  {
+    "scope": "strong>code",
+    "text": "`c`"
+  },
+  {
+    "scope": "strong",
+    "text": " *}"
+  },
+  {
+    "scope": null,
+    "text": " {*a "
+  },
+  {
+    "scope": "strong",
+    "text": "{*b "
+  },
+  {
+    "scope": "strong>code",
+    "text": "`c`"
+  },
+  {
+    "scope": "strong",
+    "text": " *}"
+  },
+  {
+    "scope": null,
+    "text": " {*a "
+  },
+  {
+    "scope": "strong",
+    "text": "{*b "
+  },
+  {
+    "scope": "strong>code",
+    "text": "`c`"
+  },
+  {
+    "scope": "strong",
+    "text": " *}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

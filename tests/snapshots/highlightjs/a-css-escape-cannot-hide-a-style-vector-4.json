@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{style=\"background:ex\\70 ression(x)\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

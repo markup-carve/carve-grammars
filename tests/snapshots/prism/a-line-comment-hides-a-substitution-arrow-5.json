@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "2"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": "{"
+  },
+  {
+    "type": "inserted>inserted>typography>constant",
+    "text": "+-"
+  },
+  {
+    "type": "inserted>inserted",
+    "text": "-x+}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

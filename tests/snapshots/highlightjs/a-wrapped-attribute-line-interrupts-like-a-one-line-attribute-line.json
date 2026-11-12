@@ -5,15 +5,7 @@
   },
   {
     "scope": null,
-    "text": " a\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{.c\n}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": " a\n{.c\n}\n"
   },
   {
     "scope": "code>keyword",

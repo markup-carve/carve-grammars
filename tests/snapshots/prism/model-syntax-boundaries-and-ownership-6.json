@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "{{"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-path>url",
+    "text": "c"
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-name>keyword",
+    "text": "@code"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "}}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

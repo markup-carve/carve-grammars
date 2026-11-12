@@ -1,0 +1,218 @@
+[
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " Price "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " Item "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " Size "
+  },
+  {
+    "type": "table>table-header>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-header",
+    "text": "="
+  },
+  {
+    "type": "table",
+    "text": " Mood "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " 12 "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "<"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " pen "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">^"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " big "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "~~"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " ok "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "?v"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " 3 "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " ink "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "table>attributes>attr-value>class-name",
+    "text": ".num"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " 9 "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " fine "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

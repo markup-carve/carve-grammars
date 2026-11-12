@@ -1,0 +1,54 @@
+[
+  {
+    "type": "text",
+    "text": "{*a "
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*b "
+  },
+  {
+    "type": "forced-bold>bold>code",
+    "text": "`c`"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": " *}"
+  },
+  {
+    "type": "text",
+    "text": " {*a "
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*b "
+  },
+  {
+    "type": "forced-bold>bold>code",
+    "text": "`c`"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": " *}"
+  },
+  {
+    "type": "text",
+    "text": " {*a "
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": "{*b "
+  },
+  {
+    "type": "forced-bold>bold>code",
+    "text": "`c`"
+  },
+  {
+    "type": "forced-bold>bold",
+    "text": " *}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

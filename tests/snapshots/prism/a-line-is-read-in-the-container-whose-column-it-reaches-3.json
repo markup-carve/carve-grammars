@@ -33,7 +33,11 @@
   },
   {
     "type": "definition-list",
-    "text": ": para\n"
+    "text": ": para"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "title>important",

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "link",
+    "text": "![alt](x.png)"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

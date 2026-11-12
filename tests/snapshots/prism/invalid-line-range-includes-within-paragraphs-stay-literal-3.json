@@ -1,0 +1,18 @@
+[
+  {
+    "type": "bold>bold",
+    "text": "*before {{ data/p2.csv "
+  },
+  {
+    "type": "bold>bold>mention>variable",
+    "text": "@lines"
+  },
+  {
+    "type": "bold>bold",
+    "text": ":2-1 }} after*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

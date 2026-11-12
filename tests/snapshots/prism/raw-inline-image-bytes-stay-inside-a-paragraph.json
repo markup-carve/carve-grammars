@@ -1,0 +1,10 @@
+[
+  {
+    "type": "raw-inline>string",
+    "text": "`<img a>`{=html}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

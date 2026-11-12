@@ -1,0 +1,78 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>attr-name",
+    "text": "colspan"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": "3 "
+  },
+  {
+    "type": "table>attributes>attr-value>class-name",
+    "text": ".k"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>table-span",
+    "text": " ^"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " d "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

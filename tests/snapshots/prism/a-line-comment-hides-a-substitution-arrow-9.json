@@ -1,0 +1,10 @@
+[
+  {
+    "type": "forced-strike>deleted",
+    "text": "{~a %% b~>c\n~>d~}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

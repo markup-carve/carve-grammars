@@ -1,0 +1,22 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " a "
+  },
+  {
+    "type": "title>important>raw-inline>string",
+    "text": "`<b>x</b>`{=html}"
+  },
+  {
+    "type": "title>important",
+    "text": " c"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

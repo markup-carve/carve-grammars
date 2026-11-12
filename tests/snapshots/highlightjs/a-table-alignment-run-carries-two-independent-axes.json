@@ -8,12 +8,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "~"
   },
   {
     "scope": null,
-    "text": " Item "
+    "text": "} Item "
   },
   {
     "scope": "table-boundary",
@@ -24,12 +28,16 @@
     "text": "="
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": ">^"
   },
   {
     "scope": null,
-    "text": " Qty "
+    "text": "} Qty "
   },
   {
     "scope": "table-boundary",
@@ -76,12 +84,16 @@
     "text": "|"
   },
   {
+    "scope": null,
+    "text": "{"
+  },
+  {
     "scope": "table-alignment",
     "text": "<v"
   },
   {
     "scope": null,
-    "text": " 12 "
+    "text": "} 12 "
   },
   {
     "scope": "table-boundary",

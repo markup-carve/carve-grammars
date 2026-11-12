@@ -12,47 +12,31 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "para\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "- "
   },
   {
-    "type": "div",
-    "text": "text\n```\ncode\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": "::::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
     "type": "text",
-    "text": "\nafter "
+    "text": "text\n"
   },
   {
-    "type": "bold>bold",
-    "text": "*b*"
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n::::\n:::\nafter *b*\n"
   }
 ]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "quote",
+    "text": " +"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]

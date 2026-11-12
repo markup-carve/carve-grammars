@@ -81,6 +81,7 @@ export const SCOPE_SAMPLES = {
     block_attributes: { sample: '{#id .class}\n# H\n', payload: '#id' },
     blank_line: { unscopable: 'a blank line carries no marker of its own' },
     escaped_char: { sample: 'a \\* b\n', payload: '\\*' },
+    escaped_space: { sample: 'a\\ b\n', payload: '\\ ' },
     raw_inline: { sample: 'a `<b>x</b>`{=html} z\n', payload: '{=html}' },
     literal_inline: { sample: 'a !`x` z\n', payload: '!`' },
     code_span: { sample: 'a `code` b\n', payload: 'code' },

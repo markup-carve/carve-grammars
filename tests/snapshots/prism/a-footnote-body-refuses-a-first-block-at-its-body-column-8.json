@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": ": +\n    flush\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": ": 10. a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  * "
+  },
+  {
+    "type": "text",
+    "text": "y\n tail\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^a]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

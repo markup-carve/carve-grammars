@@ -17,7 +17,11 @@
   },
   {
     "type": "definition-list",
-    "text": "A first paragraph,\n"
+    "text": "A first paragraph,"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "continuation-marker>punctuation",

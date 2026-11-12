@@ -1,0 +1,30 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote",
+    "text": "[^n]: "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n>   %%%\n>   z %}"
+  },
+  {
+    "type": "text",
+    "text": "\nplain\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " # H\n"
+  },
+  {
+    "scope": "section",
+    "text": "    # I"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

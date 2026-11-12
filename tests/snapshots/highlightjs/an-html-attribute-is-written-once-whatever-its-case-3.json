@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "![a](/u.png){alt=z}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

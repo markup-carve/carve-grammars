@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "title",
+    "text": ":: term"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": " item\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^c]:"
+  },
+  {
+    "scope": null,
+    "text": " para\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "   ```"
+  },
+  {
+    "scope": null,
+    "text": "\n\n  See"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^c]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

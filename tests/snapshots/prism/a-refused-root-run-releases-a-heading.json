@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "{.x\n.y}\n"
+  },
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " H"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

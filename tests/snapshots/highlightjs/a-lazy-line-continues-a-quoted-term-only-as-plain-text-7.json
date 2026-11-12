@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> "
+  },
+  {
+    "scope": "quote>bullet",
+    "text": "- -"
+  },
+  {
+    "scope": "quote",
+    "text": " "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " t"
+  },
+  {
+    "scope": null,
+    "text": "\n - x\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "emphasis>symbol",
+    "text": "[^[g]"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": null,
+    "text": "] b/\n"
+  }
+]

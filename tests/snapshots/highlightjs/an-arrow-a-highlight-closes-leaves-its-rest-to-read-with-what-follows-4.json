@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "addition",
+    "text": "=a<="
+  },
+  {
+    "scope": null,
+    "text": ">"
+  },
+  {
+    "scope": "strong",
+    "text": "*b*"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

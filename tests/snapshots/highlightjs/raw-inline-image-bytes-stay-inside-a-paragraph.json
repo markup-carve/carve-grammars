@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "code",
+    "text": "`<img a>`"
+  },
+  {
+    "scope": "meta",
+    "text": "{=html}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

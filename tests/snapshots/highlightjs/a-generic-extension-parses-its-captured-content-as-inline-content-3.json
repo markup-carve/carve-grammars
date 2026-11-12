@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "quote",
+    "text": "> :foo[*b*] and @ann"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

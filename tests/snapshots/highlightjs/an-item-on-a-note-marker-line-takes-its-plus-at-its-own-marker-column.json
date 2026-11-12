@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " - i\n      +\n      x\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

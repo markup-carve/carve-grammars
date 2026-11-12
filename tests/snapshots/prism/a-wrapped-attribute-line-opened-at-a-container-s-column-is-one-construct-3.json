@@ -5,30 +5,6 @@
   },
   {
     "type": "text",
-    "text": "a\n  "
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".c"
-  },
-  {
-    "type": "attributes>attr-value",
-    "text": "\n"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".d"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\npara\n"
+    "text": "a\n  {.c\n.d}\npara\n"
   }
 ]

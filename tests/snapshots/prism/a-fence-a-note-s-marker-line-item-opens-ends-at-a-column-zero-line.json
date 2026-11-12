@@ -1,0 +1,10 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": - ``` js\ntail\n"
+  }
+]

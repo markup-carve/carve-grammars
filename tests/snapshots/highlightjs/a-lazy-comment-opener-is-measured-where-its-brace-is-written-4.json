@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " p\n"
+  },
+  {
+    "scope": "title",
+    "text": "    :: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "    :"
+  },
+  {
+    "scope": null,
+    "text": " pre\n  \t"
+  },
+  {
+    "scope": "comment",
+    "text": "{% x\n     %}"
+  },
+  {
+    "scope": null,
+    "text": "\n\nx"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

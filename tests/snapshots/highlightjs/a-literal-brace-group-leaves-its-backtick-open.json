@@ -1,0 +1,10 @@
+[
+  {
+    "scope": null,
+    "text": "a{title=\""
+  },
+  {
+    "scope": "code",
+    "text": "`\"}\n{k=v}\nb\n"
+  }
+]

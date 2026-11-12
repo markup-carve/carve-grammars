@@ -13,6 +13,18 @@
   },
   {
     "scope": null,
-    "text": "  definition\n    [r]: /url\ntail\n"
+    "text": "  definition\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/url"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n"
   }
 ]

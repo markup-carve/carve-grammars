@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~"
+  },
+  {
+    "scope": "deletion>deletion",
+    "text": "{-b~>c-}"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

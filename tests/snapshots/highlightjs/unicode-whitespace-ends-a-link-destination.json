@@ -1,0 +1,46 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[okref]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "https://e.com/path"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "[t](u v)"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[ok](u-v)"
+  },
+  {
+    "scope": null,
+    "text": "\n\n[r]: https://e.com /path\n"
+  },
+  {
+    "scope": "link",
+    "text": "[text][r]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[text][okref]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

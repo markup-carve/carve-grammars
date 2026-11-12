@@ -171,7 +171,7 @@ export function generate(grammar) {
 }
 
 // [start, end) of the JSON value after `"key": ` at depth 2 (a repository entry).
-function valueSpan(text, key) {
+export function valueSpan(text, key) {
     const needle = `"${key}": `;
     let depth = 0;
     for (let i = 0; i < text.length; i++) {

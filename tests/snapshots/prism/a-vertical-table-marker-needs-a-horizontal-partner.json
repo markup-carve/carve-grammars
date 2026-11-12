@@ -8,8 +8,20 @@
     "text": "=^ Top |=v Bottom |="
   },
   {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": "<^"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "table",
-    "text": "<^ Paired "
+    "text": " Paired "
   },
   {
     "type": "table>table-boundary",

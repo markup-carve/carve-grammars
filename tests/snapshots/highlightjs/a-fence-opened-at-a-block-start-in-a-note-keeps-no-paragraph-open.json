@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^0]:"
+  },
+  {
+    "scope": null,
+    "text": " :::\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "code",
+    "text": "```\nx\n\n[^0]\n"
+  }
+]

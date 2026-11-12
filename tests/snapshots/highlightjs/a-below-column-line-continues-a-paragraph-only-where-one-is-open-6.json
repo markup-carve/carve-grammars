@@ -13,39 +13,19 @@
   },
   {
     "scope": null,
-    "text": " b\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "    |"
-  },
-  {
-    "scope": null,
-    "text": " h "
+    "text": " b\n    "
   },
   {
     "scope": "table-boundary",
     "text": "|"
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "    |"
+    "scope": "table-header",
+    "text": "="
   },
   {
     "scope": null,
-    "text": " "
-  },
-  {
-    "scope": "table-operator",
-    "text": "-"
-  },
-  {
-    "scope": null,
-    "text": " "
+    "text": " h "
   },
   {
     "scope": "table-boundary",

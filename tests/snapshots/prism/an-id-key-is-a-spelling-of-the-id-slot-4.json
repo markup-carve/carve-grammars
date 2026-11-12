@@ -1,0 +1,38 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>attr-name",
+    "text": "id"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value>string",
+    "text": "\"file:y\""
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " x "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

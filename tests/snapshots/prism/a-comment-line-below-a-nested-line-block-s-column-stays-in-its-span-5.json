@@ -1,0 +1,38 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- - "
+  },
+  {
+    "type": "line-block>div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "line-block>div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "line-block>div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\n    a\n"
+  },
+  {
+    "type": "line-block>div>comment",
+    "text": "    %%%"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "comment",
+    "text": "%%%%"
+  },
+  {
+    "type": "text",
+    "text": "\nz\n"
+  }
+]

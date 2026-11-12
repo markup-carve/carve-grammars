@@ -21,23 +21,15 @@
   },
   {
     "type": "blockquote",
-    "text": "   Q"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "   Q\n"
   },
   {
     "type": "blockquote>punctuation",
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": "   - "
-  },
-  {
     "type": "blockquote",
-    "text": "b"
+    "text": "   - b"
   },
   {
     "type": "text",

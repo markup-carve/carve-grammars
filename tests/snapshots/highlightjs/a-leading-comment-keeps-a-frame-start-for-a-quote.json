@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "addition",
+    "text": "{+"
+  },
+  {
+    "scope": "addition>comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "addition",
+    "text": "\"q\"+}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

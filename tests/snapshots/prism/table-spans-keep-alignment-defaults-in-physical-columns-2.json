@@ -17,7 +17,15 @@
   },
   {
     "type": "table",
-    "text": " <"
+    "text": " "
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\<"
+  },
+  {
+    "type": "table",
+    "text": " "
   },
   {
     "type": "table>table-boundary",
@@ -45,7 +53,15 @@
   },
   {
     "type": "table",
-    "text": " ^"
+    "text": " "
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\^"
+  },
+  {
+    "type": "table",
+    "text": " "
   },
   {
     "type": "table>table-boundary",

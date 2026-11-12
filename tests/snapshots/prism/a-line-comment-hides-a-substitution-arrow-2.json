@@ -1,0 +1,26 @@
+[
+  {
+    "type": "changed>important>punctuation",
+    "text": "{~"
+  },
+  {
+    "type": "changed>important>deleted",
+    "text": "alpha %% hidden"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~>"
+  },
+  {
+    "type": "changed>important>inserted",
+    "text": "word"
+  },
+  {
+    "type": "changed>important>punctuation",
+    "text": "~}"
+  },
+  {
+    "type": "text",
+    "text": " tail\n"
+  }
+]

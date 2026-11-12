@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " x\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "  -"
+  },
+  {
+    "scope": null,
+    "text": " a\n"
+  },
+  {
+    "scope": "quote",
+    "text": "    > m"
+  },
+  {
+    "scope": null,
+    "text": "\n    ::::e\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    :::"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "keyword",
+    "text": "    :::"
+  },
+  {
+    "scope": null,
+    "text": "\nl\n"
+  }
+]

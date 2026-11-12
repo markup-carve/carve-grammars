@@ -1,0 +1,26 @@
+[
+  {
+    "type": "italic>italic",
+    "text": "/["
+  },
+  {
+    "type": "italic>italic>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "italic>italic>inline-footnote>symbol",
+    "text": "g"
+  },
+  {
+    "type": "italic>italic>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "italic>italic",
+    "text": "/"
+  },
+  {
+    "type": "text",
+    "text": "] b/\n"
+  }
+]

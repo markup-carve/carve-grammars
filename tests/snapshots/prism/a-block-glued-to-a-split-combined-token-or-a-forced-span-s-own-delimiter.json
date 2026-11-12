@@ -1,0 +1,26 @@
+[
+  {
+    "type": "text",
+    "text": "b "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*//*"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value",
+    "text": "c_"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "*/\n"
+  }
+]

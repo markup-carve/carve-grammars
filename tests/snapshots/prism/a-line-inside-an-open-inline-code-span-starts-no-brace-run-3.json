@@ -1,0 +1,70 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " p"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "  "
+  },
+  {
+    "type": "blockquote>code",
+    "text": "`open\n"
+  },
+  {
+    "type": "blockquote>code>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code",
+    "text": "  {%\n"
+  },
+  {
+    "type": "blockquote>code>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code",
+    "text": "  c %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "  ```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": "  z"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

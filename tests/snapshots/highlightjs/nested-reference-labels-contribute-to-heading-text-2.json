@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "section",
+    "text": "# "
+  },
+  {
+    "scope": "section>link",
+    "text": "[[x][]][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

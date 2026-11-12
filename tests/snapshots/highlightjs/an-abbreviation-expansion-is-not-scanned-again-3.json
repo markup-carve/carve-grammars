@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: B"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[B]: C"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[C]: A"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA B C\n"
+  }
+]

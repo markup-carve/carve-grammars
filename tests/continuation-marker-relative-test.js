@@ -35,8 +35,6 @@ const ENGINES = {
 // without seeing the next line (carve-grammars#768).
 const WRONG = {
     textmate: [
-        '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6 L2',
-        '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7 L2',
         '629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-8 L2',
         '630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4 L2',
         '633-a-first-block-marker-on-an-indented-opener-reads-two-columns-39 L2',

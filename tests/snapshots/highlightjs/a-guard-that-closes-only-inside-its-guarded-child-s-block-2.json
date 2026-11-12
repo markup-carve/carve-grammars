@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_*a*{t=\"_"
+  },
+  {
+    "scope": null,
+    "text": "\"} "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/a/"
+  },
+  {
+    "scope": "attr",
+    "text": "{t=a_}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

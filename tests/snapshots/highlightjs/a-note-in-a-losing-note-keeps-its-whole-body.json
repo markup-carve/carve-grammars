@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " r\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " u\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "  [^g]:"
+  },
+  {
+    "scope": null,
+    "text": " mid\n\n    TAIL\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^g]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

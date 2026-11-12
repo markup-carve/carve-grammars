@@ -1,0 +1,46 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
+    "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": " "
+  },
+  {
+    "type": "table>attributes>attr-value>attr-name",
+    "text": "align"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "="
+  },
+  {
+    "type": "table>attributes>attr-value",
+    "text": "left"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

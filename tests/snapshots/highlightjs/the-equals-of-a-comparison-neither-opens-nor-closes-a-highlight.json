@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "addition",
+    "text": "=a "
+  },
+  {
+    "scope": "addition>literal",
+    "text": "<="
+  },
+  {
+    "scope": "addition",
+    "text": " b="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "addition",
+    "text": "=a "
+  },
+  {
+    "scope": "addition>literal",
+    "text": ">="
+  },
+  {
+    "scope": "addition",
+    "text": " b="
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

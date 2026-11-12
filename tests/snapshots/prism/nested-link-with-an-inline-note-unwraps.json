@@ -1,0 +1,38 @@
+[
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "[ "
+  },
+  {
+    "type": "url>link-text>inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "url>link-text>inline-footnote>symbol",
+    "text": "b"
+  },
+  {
+    "type": "url>link-text>inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "url",
+    "text": "]()"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]("
+  },
+  {
+    "type": "url>punctuation",
+    "text": ")"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

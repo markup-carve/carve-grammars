@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "addition",
+    "text": "{+x {~a+}"
+  },
+  {
+    "scope": "deletion",
+    "text": "~>c~"
+  },
+  {
+    "scope": null,
+    "text": "} b+}\n"
+  }
+]

@@ -29,6 +29,18 @@
   },
   {
     "scope": null,
-    "text": "\n    [r]: /u\n"
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\n"
   }
 ]

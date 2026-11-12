@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- -"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "keyword",
+    "text": "::: |"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "    %%%\nx\n    %%%"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n"
+  }
+]

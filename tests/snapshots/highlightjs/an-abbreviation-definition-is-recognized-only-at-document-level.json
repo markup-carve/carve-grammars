@@ -1,7 +1,11 @@
 [
   {
     "scope": "quote",
-    "text": "> *[HTML]: Hyper Text"
+    "text": "> "
+  },
+  {
+    "scope": "quote>symbol",
+    "text": "*[HTML]: Hyper Text"
   },
   {
     "scope": null,

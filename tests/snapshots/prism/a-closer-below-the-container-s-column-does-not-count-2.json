@@ -5,11 +5,15 @@
   },
   {
     "type": "text",
-    "text": "a\n  "
+    "text": "a\n"
   },
   {
-    "type": "code",
-    "text": "```\n  b\n y\n ```"
+    "type": "code-block",
+    "text": "  ```\n  b\n y\n "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

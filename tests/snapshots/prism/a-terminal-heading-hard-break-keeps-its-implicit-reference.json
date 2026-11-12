@@ -1,0 +1,34 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>url>link-text",
+    "text": "g"
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "title>important>url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "title>important",
+    "text": "\\"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

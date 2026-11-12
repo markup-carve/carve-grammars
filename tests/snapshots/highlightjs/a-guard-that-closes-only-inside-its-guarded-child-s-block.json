@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "emphasis",
+    "text": "_*a*{t=\"_"
+  },
+  {
+    "scope": null,
+    "text": "\"}\n"
+  }
+]

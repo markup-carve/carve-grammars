@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{type=text}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "a."
+  },
+  {
+    "scope": null,
+    "text": "  alpha\n"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "x "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "{{"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-path>url",
+    "text": "a"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-name>keyword",
+    "text": "@code"
+  },
+  {
+    "type": "include-directive>important>include-option>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-value>string",
+    "text": "a,b"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "}}"
+  },
+  {
+    "type": "text",
+    "text": " y\n"
+  }
+]

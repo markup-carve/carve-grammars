@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "~~~py {.x}\nb\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "~~~"
+  },
+  {
+    "scope": "code",
+    "text": "\n"
+  }
+]

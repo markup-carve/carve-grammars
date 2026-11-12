@@ -4,15 +4,27 @@
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": " - "
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>item-marker>list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "blockquote>item-marker>list",
+    "text": " "
+  },
+  {
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " term"
   },
   {
     "type": "blockquote",
-    "text": ":: term"
-  },
-  {
-    "type": "text",
     "text": "\n"
   },
   {
@@ -21,7 +33,15 @@
   },
   {
     "type": "blockquote",
-    "text": "   : definition"
+    "text": "   "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote",
+    "text": " definition"
   },
   {
     "type": "text",

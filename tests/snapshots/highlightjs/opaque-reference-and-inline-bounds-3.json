@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "see [m] here\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[m]: y"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

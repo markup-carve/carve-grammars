@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "p\n"
+  },
+  {
+    "type": "code",
+    "text": "`open\n{.x\n.y}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\nz\n"
+  }
+]

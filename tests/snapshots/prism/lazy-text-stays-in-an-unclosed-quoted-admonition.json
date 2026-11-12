@@ -1,0 +1,38 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "blockquote>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "blockquote>div-delimiter>class-name",
+    "text": "note"
+  },
+  {
+    "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " a"
+  },
+  {
+    "type": "text",
+    "text": "\nb\n"
+  }
+]

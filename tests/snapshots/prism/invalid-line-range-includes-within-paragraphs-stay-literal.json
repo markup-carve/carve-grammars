@@ -1,0 +1,62 @@
+[
+  {
+    "type": "text",
+    "text": "before "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "{{"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-path>url",
+    "text": "data/p2.csv"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-name>keyword",
+    "text": "@code"
+  },
+  {
+    "type": "include-directive>important>include-option>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-value>string",
+    "text": "csv"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-name>keyword",
+    "text": "@lines"
+  },
+  {
+    "type": "include-directive>important>include-option>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "include-directive>important>include-option>include-option-value>string",
+    "text": "01-2"
+  },
+  {
+    "type": "include-directive>important",
+    "text": " "
+  },
+  {
+    "type": "include-directive>important>punctuation",
+    "text": "}}"
+  },
+  {
+    "type": "text",
+    "text": " after\n"
+  }
+]

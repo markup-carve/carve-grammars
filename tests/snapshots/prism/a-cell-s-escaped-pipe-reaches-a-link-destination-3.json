@@ -1,0 +1,34 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " "
+  },
+  {
+    "type": "table>code",
+    "text": "`a\\|b`"
+  },
+  {
+    "type": "table",
+    "text": " and [x](/a"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\|"
+  },
+  {
+    "type": "table",
+    "text": "b) "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

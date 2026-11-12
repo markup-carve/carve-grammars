@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "link",
+    "text": "[a][a]{key=v}"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

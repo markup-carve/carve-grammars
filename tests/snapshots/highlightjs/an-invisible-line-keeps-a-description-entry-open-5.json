@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n"
+  },
+  {
+    "scope": "title",
+    "text": "  :: t2"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "  %%%\n  c\n  %%%"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": "  > a\n"
+  },
+  {
+    "scope": "quote",
+    "text": "     > b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

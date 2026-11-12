@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "strong",
+    "text": "*hi "
+  },
+  {
+    "scope": "strong>symbol",
+    "text": "@ann"
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "string",
+    "text": "[#tag]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.x}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

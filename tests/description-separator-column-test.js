@@ -1,17 +1,15 @@
 /**
- * A `:` description separator continues a definition list only at the column
- * of a term above it (markup-carve/carve#3458). Below or right of that column
- * it is paragraph or description text, so Prism and highlight.js must not
- * scope it as the marker. Each shape is checked against carve-js too. Prism
- * reads a term that starts its text as a fragment after a list marker, so the
- * TEXT shapes open below a paragraph. A term indented past column 0 needs a
- * list item or description whose content column it reaches, and a
- * quoted list takes its markers after the `> ` prefix.
+ * A `:` description separator is a marker when the deepest container it
+ * reaches holds a definition list (PART 0 CARVE-P0-003 and CARVE-P0-024 S2/S3,
+ * carve-grammars#839); anywhere else it is paragraph or description text, so
+ * Prism and highlight.js must not scope it as the marker. Each shape is checked
+ * against carve-js too.
  */
 import assert from 'node:assert/strict';
 
 import { parse, renderHtml } from '@markup-carve/carve';
 import { prismTokens, hljsTokens } from './lib/engines.js';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { textmateLineTokenizer } from './lib/textmate-lines.js';
 import { assertThisFileRuns } from './lib/runs-in-ci.js';
@@ -19,7 +17,8 @@ import { assertThisFileRuns } from './lib/runs-in-ci.js';
 assertThisFileRuns(import.meta.url);
 
 const ENGINES = {
-    prism: { tokenize: prismTokens, marks: (scope) => scope.endsWith('punctuation') },
+    // A YAML key's `:` in front matter is no description marker.
+    prism: { tokenize: prismTokens, marks: (scope) => scope.endsWith('punctuation') && !scope.startsWith('front-matter') },
     highlightjs: { tokenize: hljsTokens, marks: (scope) => scope === 'punctuation' },
 };
 
@@ -30,7 +29,6 @@ const MARKER = [
     '- x\n  :: t\n  : d\n  : e\n',
     '- x\n  :: t\n  : d\n\n  : e\n',
     ':: t\n:  :: u\n   : e\n',
-    `:: t\n${'x\n'.repeat(70)}: e\n`,
     '> :: t\n> : d\n> : e\n',
     '> :: t\n> : d\n>   :: u\n>   : v\n>   : e\n',
     '1. x\n   :: t\n   : e\n',
@@ -59,7 +57,6 @@ const MARKER = [
     '> [x]: y\n- z\n  :: t\n  : e\n',
     '> [^1]: f\n- z\n  :: t\n  : e\n',
     '[x]:\n- z\n  :: t\n  : e\n',
-    '---  \n- z\n  :: t\n  : e\n',
     'p\n\n- x\n- z\n- y\n  :: t\n  : e\n',
     '- x\n1. z\n   :: t\n   : e\n',
     // A column-0 comment line closes the description's paragraph.
@@ -72,6 +69,9 @@ const MARKER = [
     '1. x\n \t:: t\n\t: e\n',
     '1. x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n  \t: e\n',
+    // A marker line below a `: +` is a sibling, not the paragraph it refuses.
+    ':: t\n : +\n: e\n',
+    '> :: t\n>  : +\n> : e\n',
     // A leading blank line, and a list continued past a lazy or empty line.
     '\n- x\n  :: t\n  : e\n',
     '\n1. x\n   :: t\n   : e\n',
@@ -83,7 +83,6 @@ const MARKER = [
     'r[^1]\n\n[^1]: x\n    :: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n\t:: t\n  : e\n',
     'r[^1]\n\n[^1]: x\n%% c\n    :: t\n  : e\n',
-    'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
     // The same in a quoted footnote, and after a list marker at column 4.
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>    :: t\n>   : e\n',
@@ -92,16 +91,10 @@ const MARKER = [
     'r[^1]\n\n> [^1]: x\n>   \t:: t\n>       : e\n',
     'r[^1]\n\n> [^1]: x\n> \t\t:: t\n>   : e\n',
     'r[^1]\n\n- [^1]: x\n  \t:: t\n    : e\n',
-    'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n>   : e\n',
-];
-const TEXT = [
-    '- x\n  :: t\n  : d\n: e\n',
-    '- x\n  :: t\n  : d\n : e\n',
+    // Moved by the 0.1.14 layout readings (carve-js and the spec model agree).
     '- x\n  :: t\n  : d\n   : e\n',
-    '- x\n  :: t\n  : d\n  x\n : e\n',
-    'x\n\n:: t\n: d\n  : e\n',
     'x\n\n:: t\n  : d\n',
     '  :: t\n  : d\n  : e\n',
     '1. x\n  :: t\n  : d\n  : e\n',
@@ -112,12 +105,13 @@ const TEXT = [
     `x\n${' '.repeat(13)}:: t\n${' '.repeat(13)}: d\n`,
     '> :: t\n>   :: u\n>   : v\n',
     '> :: t\n> : d\n> \n> \n>   :: u\n>   : v\n',
-    '> :: t\n> : d\n>  :: u\n>  : v\n',    '> 1. x\n>   :: t\n>   : e\n',
+    '> :: t\n> : d\n>  :: u\n>  : v\n',
+    '> 1. x\n>   :: t\n>   : e\n',
     '> - x\n>   :: a\n>     :: u\n>     : e\n',
     '> :: t\n> other\n>   :: u\n>   : e\n',
     '> - x\n> \n> \n> other\n>   :: t\n>   : e\n',
     '> :: t\n> : d\n> \n> \n>   y\n>   :: u\n>   : e\n',
-    '> para\n>   :: t\n>   : e\n',    // A marker line under paragraph text is lazy text and hosts nothing.
+    '> para\n>   :: t\n>   : e\n',
     'para\n- z\n  :: t\n  : e\n',
     'para\n: d\n  :: t\n  : e\n',
     '> q\n- z\n  :: t\n  : e\n',
@@ -130,30 +124,23 @@ const TEXT = [
     '| a | b\n- z\n  :: t\n  : e\n',
     '{.c} x\n- z\n  :: t\n  : e\n',
     ':x\n- z\n  :: t\n  : e\n',
-    '--- foo\n- z\n  :: t\n  : e\n',
     '::x\n- z\n  :: t\n  : e\n',
     'para\n- z\n- y\n  :: t\n  : e\n',
     'para\n- z\n  - y\n    :: t\n    : e\n',
-    // A term left of the open description's content column is its lazy text.
     ':: a\n: d\n :: t\n : e\n',
     ':: a\n: d\nother\n :: t\n : e\n',
     ':: a\n: d\n: f\n :: t\n : e\n',
     ':: a\n: d\n%% c\n y\n :: t\n : e\n',
-    // A thematic break or attribute line ends the list.
     ':: a\n: d\n---\n  :: t\n  : e\n',
     ':: a\n: d\n{.c}\n  :: t\n  : e\n',
-    '- x\n\t:: t\n : e\n',
-    // A tab-indented term needs a host like a space-indented one.
     'para\n\t:: t\n\t: e\n',
     '\t:: t\n\t: e\n',
     '# h\n\t:: t\n\t: e\n',
-    // Inside a two-column container a tab is measured from the container's column.
     ':: a\n: b\n  \t:: t\n    : e\n',
     ':: a\n: b\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : e\n',
     '- x\n  \t:: t\n\t: e\n',
     '- x\n  \t:: t\n    : f\n    : e\n',
-    // A paragraph line above a list marker makes it lazy text.
     ': x\n- z\n  :: t\n  : e\n',
     '> : x\n- z\n  :: t\n  : e\n',
     '# h\n: \n- z\n  :: t\n  : e\n',
@@ -162,9 +149,7 @@ const TEXT = [
     '    code\n- z\n  :: t\n  : e\n',
     'p\n  y\n- z\n  :: t\n  : e\n',
     '- w\n\n y\n- z\n  :: t\n  : e\n',
-    // A term folded into a paragraph takes no description below it.
     ':: a\n: b\n :: t\n: e\n',
-    // In a footnote body or a description a tab counts from the body's column.
     'r[^1]\n\n[^1]: x\n  \t:: t\n    : e\n',
     'r[^1]\n\n[^1]: x\n   \t:: t\n\t: e\n',
     ':: a\n: b\n\n   \t:: t\n    : e\n',
@@ -172,8 +157,44 @@ const TEXT = [
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n    : e\n',
     'r[^1]\n\n[^1]: x\n  - y\n  \t:: t\n\t: e\n',
     'r[^1]\n\n> [^1]: x\n> :: t\n>   : e\n',
-    'r[^1]\n\n> [^1]: x\n>   :: t\n> % c\n>   : e\n',
     'r[^1]\n\n> [^1]: x\n>   :: t\n>   : a\n> c\n>   : e\n',
+    // The entry's column is its container's, not its term's (carve-grammars#839).
+    ' :: t\n: d\n: e\n',
+    '- x\n   :: t\n     :  d\n        x\n  : e\n',
+    '- [ ] :: t\n  : a\n',
+    // The line after a `: +` belongs to the description, whatever its column.
+    ':: t\n: +\nafter\n: b\n',
+    // A quote a `+` attaches keeps its list on the lines below.
+    '- x\n+\n> :: t\n> : d\n',
+];
+const TEXT = [
+    '- x\n  :: t\n  : d\n: e\n',
+    '- x\n  :: t\n  : d\n : e\n',
+    '- x\n  :: t\n  : d\n  x\n : e\n',
+    'x\n\n:: t\n: d\n  : e\n',
+    // A marker line under paragraph text is lazy text and hosts nothing.
+    '--- foo\n- z\n  :: t\n  : e\n',
+    // A term left of the open description's content column is its lazy text.
+    // A thematic break or attribute line ends the list.
+    '- x\n\t:: t\n : e\n',
+    // A tab-indented term needs a host like a space-indented one.
+    // Inside a two-column container a tab is measured from the container's column.
+    // A paragraph line above a list marker makes it lazy text.
+    // A term folded into a paragraph takes no description below it.
+    // In a footnote body or a description a tab counts from the body's column.
+    'r[^1]\n\n> [^1]: x\n>   :: t\n> % c\n>   : e\n',
+    // Moved by the 0.1.14 layout readings (carve-js and the spec model agree).
+    `:: t\n${'x\n'.repeat(70)}: e\n`,
+    '---  \n- z\n  :: t\n  : e\n',
+    'r[^1]\n\n[^1]: x\n  - y\n    :: t\n  : e\n',
+    'r[^1]\n\n> [^1]: x\n>   :: t\n>   c\n>   : e\n',
+    // Past the open description's content column a `:` is its text.
+    '  :: t\n : d\n      : e\n',
+    '> - x\n>       :: t\n>    : d\n>      : e\n',
+    // Three blank lines end the list.
+    ':: t\n: x\n\n\n\n: d\n',
+    // A quoted line after a `+` at a quote's column opens a quote inside it.
+    '> :: t\n+\n> : d\n',
 ];
 
 const scopeAt = (tokens, at) => {
@@ -262,5 +283,16 @@ for (const [name, { tokenize }] of Object.entries(ENGINES)) {
     }
 }
 
+// Both grammars carry the same definitionListLines.
+const ownerBlock = (path) => {
+    const text = readFileSync(new URL(path, import.meta.url), 'utf8');
+    const start = text.indexOf('     * DEFINITION-LIST LINES BY OWNER');
+    return text.slice(start, text.indexOf('        return result;\n    }\n', start));
+};
+if (ownerBlock('../prism/carve.js') !== ownerBlock('../highlightjs/carve.js')) {
+    failures++;
+    console.error('prism/carve.js and highlightjs/carve.js carry different definitionListLines blocks');
+}
+
 assert.equal(failures, 0, `${failures} shape(s) disagree`);
-console.log(`description separator column: ${MARKER.length + TEXT.length} shapes agree with carve-js in prism and highlight.js`);
+console.log(`description separator column: ${MARKER.length + TEXT.length} shapes checked against carve-js in prism and highlight.js`);

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": ": note\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  * "
+  },
+  {
+    "type": "text",
+    "text": "child\n\nr"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

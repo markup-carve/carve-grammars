@@ -801,9 +801,9 @@ assert.strictEqual(
 
 {
     // A mapped-but-source-sensitive document keeps its structured nodes and an
-    // edit-aware source envelope, including whitespace canonical serialization
-    // would otherwise discard.
-    const source = '   # literal heading\n';
+    // edit-aware source envelope, including spellings canonical serialization
+    // would otherwise change (an indented `#` line is a heading since carve#4506).
+    const source = '/usr/local/\n';
     const pm = carveToProseMirror(source, { unsupported: 'preserve' });
     assert.strictEqual(pm.content[0].type, 'paragraph');
     assert.strictEqual(pm.attrs.carveSource, source);
@@ -820,9 +820,9 @@ assert.strictEqual(
     // Editing merges the structured change into the authored source: stale
     // content never overwrites the user's change, while unrelated layout such
     // as the terminal newline remains intact.
-    pm.content[0].content[0].text = 'edited heading';
+    pm.content[0].content[0].text = 'edited paragraph';
     assert.notStrictEqual(serializeToCarve(pm), source);
-    assert.strictEqual(serializeToCarve(pm), 'edited heading\n');
+    assert.strictEqual(serializeToCarve(pm), 'edited paragraph\n');
 }
 
 {

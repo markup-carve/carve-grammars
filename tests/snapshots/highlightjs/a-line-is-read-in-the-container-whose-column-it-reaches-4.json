@@ -13,14 +13,14 @@
   },
   {
     "scope": null,
-    "text": " - para\n    "
+    "text": " - para\n"
   },
   {
     "scope": "symbol",
-    "text": "[^p]"
+    "text": "    [^p]:"
   },
   {
     "scope": null,
-    "text": ": n\nx\n"
+    "text": " n\nx\n"
   }
 ]

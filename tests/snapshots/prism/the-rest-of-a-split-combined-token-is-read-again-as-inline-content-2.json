@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "x a"
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*b~/*/"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*/*"
+  },
+  {
+    "type": "text",
+    "text": "/\n"
+  }
+]

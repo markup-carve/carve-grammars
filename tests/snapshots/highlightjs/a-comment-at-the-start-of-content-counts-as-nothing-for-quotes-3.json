@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "scope": "comment",
+    "text": "{% d %}"
+  },
+  {
+    "scope": null,
+    "text": "'word\n"
+  }
+]

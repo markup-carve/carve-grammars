@@ -1,0 +1,66 @@
+[
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[b]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /v {.ok}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "[a]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /u {#}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "a"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": " and "
+  },
+  {
+    "type": "url>punctuation",
+    "text": "["
+  },
+  {
+    "type": "url>link-text",
+    "text": "b"
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]["
+  },
+  {
+    "type": "url>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

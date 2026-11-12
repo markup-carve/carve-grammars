@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "code",
+    "text": "```js, foo\na\n```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

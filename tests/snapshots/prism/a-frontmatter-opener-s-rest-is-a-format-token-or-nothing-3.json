@@ -1,0 +1,18 @@
+[
+  {
+    "type": "typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": " é\nk: v\n"
+  },
+  {
+    "type": "thematic-break>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

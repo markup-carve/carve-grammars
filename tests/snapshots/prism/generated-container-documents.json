@@ -12,15 +12,7 @@
     "text": " t"
   },
   {
-    "type": "definition-list",
-    "text": "\n"
-  },
-  {
-    "type": "definition-list>punctuation",
-    "text": ":  "
-  },
-  {
-    "type": "definition-list",
-    "text": "head\n\n     a\n"
+    "type": "text",
+    "text": "\n:  head\n\n     a\n"
   }
 ]

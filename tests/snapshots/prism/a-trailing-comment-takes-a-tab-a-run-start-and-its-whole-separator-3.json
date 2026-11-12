@@ -5,14 +5,18 @@
   },
   {
     "type": "definition-list>definition-term>title",
-    "text": " a\t"
+    "text": " a\t%% hidden"
   },
   {
-    "type": "comment",
-    "text": "%% hidden"
+    "type": "definition-list",
+    "text": "\n"
   },
   {
-    "type": "text",
-    "text": "\n: d\n"
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "d\n"
   }
 ]

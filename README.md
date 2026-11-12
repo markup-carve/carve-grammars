@@ -1,6 +1,6 @@
 # Carve Grammars
 
-Editor and highlighting grammars for Carve, with Tiptap, Prism, highlight.js, and TextMate entry points. The package targets Carve 0.1.x and uses @markup-carve/carve 0.1.15 for its editor integration. Read the [Carve documentation](https://markup-carve.github.io/carve/) for the language syntax.
+Editor and highlighting grammars for Carve, with Tiptap, Prism, highlight.js, and TextMate entry points. The package targets Carve 0.1.x and uses @markup-carve/carve 0.1.16 for its editor integration. Read the [Carve documentation](https://markup-carve.github.io/carve/) for the language syntax.
 
 ## Install
 

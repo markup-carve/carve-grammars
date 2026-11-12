@@ -1,0 +1,38 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>item-marker>list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "blockquote>item-marker>list",
+    "text": " "
+  },
+  {
+    "type": "blockquote>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "blockquote>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " 1. "
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  }
+]

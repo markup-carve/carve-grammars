@@ -1,0 +1,70 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
+    "type": "blockquote>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "blockquote>abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>string",
+    "text": "b"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " text"
+  },
+  {
+    "type": "text",
+    "text": "\n\nA\n"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: t\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "symbol",
+    "text": "[^3]"
+  },
+  {
+    "scope": null,
+    "text": ": a\nz\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "          ```"
+  },
+  {
+    "scope": "code",
+    "text": "\n          c\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "          ```"
+  },
+  {
+    "scope": null,
+    "text": "\n  m\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^3]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "text",
+    "text": "p "
+  },
+  {
+    "type": "italic>italic",
+    "text": "/q "
+  },
+  {
+    "type": "italic>italic>bold-italic>important",
+    "text": "/*a b %% c d*/"
+  },
+  {
+    "type": "text",
+    "text": " e\n"
+  }
+]

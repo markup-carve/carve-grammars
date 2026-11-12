@@ -1,0 +1,22 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "{% a\n  >  b\n  >  z %}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[b]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/v"
+  },
+  {
+    "scope": "symbol",
+    "text": " {.ok}"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[a]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " {#}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "link",
+    "text": "[a][]"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "link",
+    "text": "[b][]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

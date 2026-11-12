@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{~alpha %% hidden"
+  },
+  {
+    "scope": "deletion>punctuation",
+    "text": "~>"
+  },
+  {
+    "scope": "deletion>addition",
+    "text": "word"
+  },
+  {
+    "scope": "deletion",
+    "text": "~}"
+  },
+  {
+    "scope": null,
+    "text": " tail\n"
+  }
+]

@@ -4,12 +4,20 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
     "text": " A "
   },
   {
     "scope": "table-boundary",
     "text": "|"
+  },
+  {
+    "scope": "table-header",
+    "text": "="
   },
   {
     "scope": null,
@@ -20,40 +28,12 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
     "text": " C "
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
   },
   {
     "scope": "table-boundary",

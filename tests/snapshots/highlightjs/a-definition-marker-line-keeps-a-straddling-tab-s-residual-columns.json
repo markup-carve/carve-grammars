@@ -21,6 +21,14 @@
   },
   {
     "scope": null,
-    "text": "\n  : zq\n"
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " zq\n"
   }
 ]

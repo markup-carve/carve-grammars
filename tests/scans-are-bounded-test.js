@@ -50,7 +50,7 @@ const BOUNDED = {
         ['inline footnote', "var noteText = noteChar + '{0,512}'", 1],
         ['autolink', 'a-zA-Z0-9+.-]*:[^>', 3],
         ['critic comment', 'pattern: RegExp(notEscaped + /\\{#(?!#\\})(?=', 3],
-        ['inline code', "(?<!`)(`{3,16})(?:[^`]|[^`][\\\\s\\\\S]", 2],
+        ['inline code', "(?<!`)(`{3,16})(?:[^`]|[^`](?:[^\\\\r\\\\n]", 2],
         ['raw inline', '\\1\\{=[A-Za-z_][\\w-]*\\}/', 2],
         ['fenced block info string', "[^\\r\\n]{0,512}(?:\\r\\n?|\\n)[\\s\\S]", 1],
         ['bracket label body', "var BRACKET_SCAN =", 1],

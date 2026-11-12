@@ -1,0 +1,54 @@
+[
+  {
+    "scope": null,
+    "text": "before "
+  },
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "meta>string",
+    "text": "data/p2.csv"
+  },
+  {
+    "scope": "meta",
+    "text": " "
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@code"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "csv"
+  },
+  {
+    "scope": "meta",
+    "text": " "
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@lines"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "01-2"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": null,
+    "text": " after\n"
+  }
+]

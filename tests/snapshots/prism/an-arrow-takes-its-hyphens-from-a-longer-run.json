@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "a<"
+  },
+  {
+    "type": "typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": "b\n\n<"
+  },
+  {
+    "type": "typography>constant",
+    "text": "---"
+  },
+  {
+    "type": "text",
+    "text": ">\n"
+  }
+]

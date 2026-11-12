@@ -1,0 +1,30 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "js"
+  },
+  {
+    "type": "code-block",
+    "text": " "
+  },
+  {
+    "type": "code-block>string",
+    "text": "\"T\""
+  },
+  {
+    "type": "code-block",
+    "text": " junk\na\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

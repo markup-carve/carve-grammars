@@ -1,18 +1,6 @@
 [
   {
-    "scope": "attr",
-    "text": "{\n.a}"
-  },
-  {
     "scope": null,
-    "text": "\n\nfirst\n\n"
-  },
-  {
-    "scope": "attr",
-    "text": "{.b\n}"
-  },
-  {
-    "scope": null,
-    "text": "\n\nsecond\n"
+    "text": "{\n.a}\n\nfirst\n\n{.b\n}\n\nsecond\n"
   }
 ]

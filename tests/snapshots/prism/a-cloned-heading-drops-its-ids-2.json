@@ -1,0 +1,70 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "title>important>bold>bold>span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "title>important>bold>bold>span>string>span-text",
+    "text": "b"
+  },
+  {
+    "type": "title>important>bold>bold>span>string>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "title>important>bold>bold",
+    "text": "{"
+  },
+  {
+    "type": "title>important>bold>bold>tag>variable",
+    "text": "#y"
+  },
+  {
+    "type": "title>important>bold>bold",
+    "text": " abbr=\"T\"}*"
+  },
+  {
+    "type": "title>important",
+    "text": "{"
+  },
+  {
+    "type": "title>important>tag>variable",
+    "text": "#z"
+  },
+  {
+    "type": "title>important",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "b"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

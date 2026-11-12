@@ -8,11 +8,7 @@
     "text": " t"
   },
   {
-    "type": "definition-list",
-    "text": "\n: \t"
-  },
-  {
     "type": "text",
-    "text": "\n\nflush\n"
+    "text": "\n: \t\n\nflush\n"
   }
 ]

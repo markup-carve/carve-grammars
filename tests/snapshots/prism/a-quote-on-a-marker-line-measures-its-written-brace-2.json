@@ -1,0 +1,18 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": ": > {.x\n         .y}\n\nx"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^q]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

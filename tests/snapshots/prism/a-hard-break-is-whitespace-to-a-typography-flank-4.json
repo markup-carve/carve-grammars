@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "\"a-\""
+  },
+  {
+    "type": "escape>constant",
+    "text": "\\ "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  }
+]

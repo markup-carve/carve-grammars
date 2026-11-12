@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "comment",
+    "text": "{% a\n > q\n z %}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "```\n +\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "````"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
+    "text": "\n"
+  }
+]

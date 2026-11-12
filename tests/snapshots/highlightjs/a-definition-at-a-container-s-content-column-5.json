@@ -13,7 +13,19 @@
   },
   {
     "scope": null,
-    "text": "  a\n   [r]: /u\ntail\n\n"
+    "text": "  a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "   [r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": null,
+    "text": "\ntail\n\n"
   },
   {
     "scope": "link",

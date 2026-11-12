@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "line-block>div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "line-block>div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "line-block>div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\nalpha\n: z\n"
+  }
+]

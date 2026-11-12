@@ -1,0 +1,30 @@
+[
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "n"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>id",
+    "text": "#x"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

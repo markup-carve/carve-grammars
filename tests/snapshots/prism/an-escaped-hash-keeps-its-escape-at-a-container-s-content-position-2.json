@@ -5,7 +5,15 @@
   },
   {
     "type": "blockquote",
-    "text": " \\# deep"
+    "text": " "
+  },
+  {
+    "type": "blockquote>escape>constant",
+    "text": "\\#"
+  },
+  {
+    "type": "blockquote",
+    "text": " deep"
   },
   {
     "type": "text",

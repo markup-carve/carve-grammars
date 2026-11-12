@@ -5,8 +5,9 @@
  *
  * Rows follow the carve spec model since the relative-column ruling
  * (markup-carve/carve#3445). After a list or description marker the `+` is a
- * marker whatever follows. After a quote or footnote marker, and on a line of
- * its own, it is a marker only when the next line starts at the right column.
+ * marker whatever follows, and after a quote marker too. After a footnote
+ * marker, and on a line of its own, it is a marker only when the next line
+ * starts at the right column.
  * TextMate cannot see the next line, so it leaves those forms unscoped; the
  * `textmate` misses below pin that.
  */
@@ -55,6 +56,12 @@ const MARKER = [
     '> > +\nx',
     '> +\n>x',
     '> > +\n>> x',
+    // A quote's first-line `+` is the marker whatever follows (0.1.14 layout readings).
+    '> +\n\nx',
+    '> +',
+    '> +\n> x',
+    '> +\n  x',
+    '> > +\n\nx',
     ['[^a]: +\nx', ['textmate']],
     ['[^a]: +\n```\nx\n```', ['textmate']],
     ['[^a]: +\n> q', ['textmate']],
@@ -104,12 +111,6 @@ const TEXT = [
     ['+ x'],
     [': +\nx'],
     ['> +x\ny'],
-    // TextMate scopes a quote's marker-line `+` without the next line (#768).
-    ['> +\n\nx', ['textmate']],
-    ['> +', ['textmate']],
-    ['> +\n> x', ['textmate']],
-    ['> +\n  x', ['textmate']],
-    ['> > +\n\nx', ['textmate']],
     // Every `>` before the `+` needs its space (markup-carve/carve#3421):
     // these lines are paragraph text, or `>+` inside a quote.
     ['>+\nx'],

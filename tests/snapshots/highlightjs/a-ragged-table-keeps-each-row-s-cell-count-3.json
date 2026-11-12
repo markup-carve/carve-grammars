@@ -4,24 +4,12 @@
     "text": "|"
   },
   {
+    "scope": "table-header",
+    "text": "="
+  },
+  {
     "scope": null,
     "text": " h "
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "table-boundary",
-    "text": "|"
-  },
-  {
-    "scope": "table-operator",
-    "text": "---"
   },
   {
     "scope": "table-boundary",

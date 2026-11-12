@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "addition",
+    "text": "{=a"
+  },
+  {
+    "scope": "addition>symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": "addition",
+    "text": "%% c=}"
+  },
+  {
+    "scope": null,
+    "text": " t and b "
+  },
+  {
+    "scope": "symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": "comment",
+    "text": "%% d"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

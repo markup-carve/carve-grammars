@@ -1,0 +1,46 @@
+[
+  {
+    "type": "text",
+    "text": "a "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "bold>bold>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "bold>bold",
+    "text": " x*"
+  },
+  {
+    "type": "text",
+    "text": " b, a "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*x"
+  },
+  {
+    "type": "bold>bold>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "bold>bold",
+    "text": "y*"
+  },
+  {
+    "type": "text",
+    "text": " b and 2*"
+  },
+  {
+    "type": "typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "text",
+    "text": "x\n"
+  }
+]

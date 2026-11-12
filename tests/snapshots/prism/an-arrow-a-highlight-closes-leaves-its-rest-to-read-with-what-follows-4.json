@@ -1,0 +1,22 @@
+[
+  {
+    "type": "highlight>important",
+    "text": "=a"
+  },
+  {
+    "type": "highlight>important>typography>constant",
+    "text": "<="
+  },
+  {
+    "type": "text",
+    "text": ">"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*b*"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

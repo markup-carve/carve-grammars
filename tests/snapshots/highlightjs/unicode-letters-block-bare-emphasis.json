@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Москва/Питер/Киев\n日本/中国/韩国\nснейк_кейс_тут\nä/ö/ü\n𐐀"
+  },
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": null,
+    "text": " and *x*𐐁\n日本"
+  },
+  {
+    "scope": "emphasis",
+    "text": "{/中国/}"
+  },
+  {
+    "scope": null,
+    "text": "韩国\n"
+  }
+]

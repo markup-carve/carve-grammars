@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{style=\"ur‮l(https://evil/x)\"}"
+  },
+  {
+    "scope": null,
+    "text": "\np\n"
+  }
+]

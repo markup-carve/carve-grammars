@@ -12,12 +12,24 @@
     "text": "|"
   },
   {
-    "type": "table>table-alignment",
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
     "text": "?^"
   },
   {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "table",
-    "text": " <"
+    "text": " "
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\<"
   },
   {
     "type": "table>table-boundary",

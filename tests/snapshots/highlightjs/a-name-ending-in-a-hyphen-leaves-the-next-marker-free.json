@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "x "
+  },
+  {
+    "scope": "symbol",
+    "text": "#a-"
+  },
+  {
+    "scope": "symbol",
+    "text": "#b"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "@a-"
+  },
+  {
+    "scope": "symbol",
+    "text": "@b"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

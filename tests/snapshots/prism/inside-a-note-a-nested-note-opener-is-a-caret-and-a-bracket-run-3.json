@@ -1,0 +1,34 @@
+[
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "^["
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "x ^"
+  },
+  {
+    "type": "inline-footnote>symbol>span>string>punctuation",
+    "text": "["
+  },
+  {
+    "type": "inline-footnote>symbol>span>string>span-text",
+    "text": "a"
+  },
+  {
+    "type": "inline-footnote>symbol>span>string>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "inline-footnote>symbol",
+    "text": "{.c} b"
+  },
+  {
+    "type": "inline-footnote>symbol>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

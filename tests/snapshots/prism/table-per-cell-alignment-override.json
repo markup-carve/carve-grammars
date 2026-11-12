@@ -12,16 +12,24 @@
     "text": " Item     "
   },
   {
-    "type": "table>table-boundary",
+    "type": "table>table-header>table-boundary",
     "text": "|"
   },
   {
-    "type": "table>table-alignment>table-header",
+    "type": "table>table-header",
     "text": "="
   },
   {
-    "type": "table>table-alignment",
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
     "text": ">"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
   },
   {
     "type": "table",
@@ -72,8 +80,16 @@
     "text": "|"
   },
   {
-    "type": "table>table-alignment",
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "table>attributes>attr-value>table-alignment",
     "text": "<"
+  },
+  {
+    "type": "table>attributes>attr-value>punctuation",
+    "text": "}"
   },
   {
     "type": "table",

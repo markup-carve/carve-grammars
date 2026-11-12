@@ -1,0 +1,22 @@
+[
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "code-block>language>class-name",
+    "text": "py"
+  },
+  {
+    "type": "code-block",
+    "text": " {.x}\nb\n"
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

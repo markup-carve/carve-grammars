@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> pre"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% b\nb %}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

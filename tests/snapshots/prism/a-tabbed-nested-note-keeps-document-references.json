@@ -1,0 +1,54 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": a\n  "
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "text",
+    "text": ": a\n"
+  },
+  {
+    "type": "line-block>div>div-delimiter",
+    "text": "  \t"
+  },
+  {
+    "type": "line-block>div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "line-block>div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "line-block>div>div-delimiter>class-name",
+    "text": "|"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\n"
+  },
+  {
+    "type": "line-block>div>footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\n\n"
+  },
+  {
+    "type": "line-block>div>footnote>symbol",
+    "text": "[^n]"
+  },
+  {
+    "type": "line-block>div",
+    "text": "\n"
+  }
+]

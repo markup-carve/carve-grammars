@@ -28,15 +28,15 @@
     "text": " c"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": "\n  "
   },
   {
-    "type": "definition-list>footnote>symbol",
+    "type": "footnote>symbol",
     "text": "[^n]"
   },
   {
-    "type": "definition-list",
+    "type": "text",
     "text": ": y\n"
   }
 ]

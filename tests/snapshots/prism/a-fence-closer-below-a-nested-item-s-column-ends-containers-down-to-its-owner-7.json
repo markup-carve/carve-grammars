@@ -21,11 +21,15 @@
   },
   {
     "type": "text",
-    "text": "c\n\n      "
+    "text": "c\n\n"
   },
   {
-    "type": "code",
-    "text": "```\n      p\n  ```"
+    "type": "code-block",
+    "text": "      ```\n      p\n  "
+  },
+  {
+    "type": "code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",

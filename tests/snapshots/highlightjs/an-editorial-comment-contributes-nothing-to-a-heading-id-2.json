@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- [ ]"
+  },
+  {
+    "scope": null,
+    "text": " x "
+  },
+  {
+    "scope": "comment",
+    "text": "{#c#}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "- [x]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "comment",
+    "text": "{# note #}"
+  },
+  {
+    "scope": null,
+    "text": "done\n"
+  }
+]

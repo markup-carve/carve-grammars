@@ -1,0 +1,38 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "strong",
+    "text": "{*"
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "x*}"
+  },
+  {
+    "scope": null,
+    "text": " b and a "
+  },
+  {
+    "scope": "addition",
+    "text": "{="
+  },
+  {
+    "scope": "addition>literal",
+    "text": "---"
+  },
+  {
+    "scope": "addition",
+    "text": "x=}"
+  },
+  {
+    "scope": null,
+    "text": " b\n"
+  }
+]

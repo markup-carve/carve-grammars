@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " :: u\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": "  ::: |\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "       [x]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/u"
+  },
+  {
+    "scope": "symbol",
+    "text": " "
+  },
+  {
+    "scope": "symbol>string",
+    "text": "\"t\""
+  },
+  {
+    "scope": null,
+    "text": "\nb\n"
+  }
+]

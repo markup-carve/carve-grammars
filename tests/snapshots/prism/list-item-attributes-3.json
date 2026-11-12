@@ -1,6 +1,22 @@
 [
   {
+    "type": "list>punctuation",
+    "text": "a."
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "attributes>attr-value>class-name",
+    "text": ".c"
+  },
+  {
+    "type": "attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "text",
-    "text": "a.{.c} An alpha item.\n"
+    "text": "  An alpha item.\n"
   }
 ]

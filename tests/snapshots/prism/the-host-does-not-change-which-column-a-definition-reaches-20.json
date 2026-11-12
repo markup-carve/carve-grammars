@@ -17,11 +17,23 @@
   },
   {
     "type": "definition-list",
-    "text": "- a\n     [r]: /url\n     more"
+    "text": "- a"
   },
   {
     "type": "text",
-    "text": "\n\nSee "
+    "text": "\n"
+  },
+  {
+    "type": "reference-definition>url>constant",
+    "text": "     [r]:"
+  },
+  {
+    "type": "reference-definition>url",
+    "text": " /url"
+  },
+  {
+    "type": "text",
+    "text": "\n     more\n\nSee "
   },
   {
     "type": "url>punctuation",

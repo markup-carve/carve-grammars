@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "link",
+    "text": "[a"
+  },
+  {
+    "scope": "link>symbol",
+    "text": "\\|"
+  },
+  {
+    "scope": "link",
+    "text": "b][m]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

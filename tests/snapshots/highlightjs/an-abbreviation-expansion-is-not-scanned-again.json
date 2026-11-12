@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "*[x]: y onmouseover=alert(1) z"
+  },
+  {
+    "scope": null,
+    "text": "\n\nA\n"
+  }
+]

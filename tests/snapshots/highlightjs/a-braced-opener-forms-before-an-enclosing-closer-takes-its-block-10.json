@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "*"
+  },
+  {
+    "scope": "comment",
+    "text": "{#a*{k=b#}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

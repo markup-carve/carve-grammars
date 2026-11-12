@@ -9,14 +9,6 @@
   },
   {
     "scope": null,
-    "text": "\nb \n"
-  },
-  {
-    "scope": "punctuation",
-    "text": ":"
-  },
-  {
-    "scope": null,
-    "text": "  d\n"
+    "text": "\nb \n:  d\n"
   }
 ]

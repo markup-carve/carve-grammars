@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "quote",
+    "text": "> /x /*a"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> b %% c*/ y"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

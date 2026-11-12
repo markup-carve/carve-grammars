@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "r"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^1]:"
+  },
+  {
+    "scope": null,
+    "text": " ::: |\n"
+  },
+  {
+    "scope": "section",
+    "text": "  # h"
+  },
+  {
+    "scope": null,
+    "text": "\nb\n"
+  }
+]

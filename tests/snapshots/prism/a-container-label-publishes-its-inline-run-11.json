@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": ":::[a "
+  },
+  {
+    "type": "code",
+    "text": "`]`"
+  },
+  {
+    "type": "text",
+    "text": " b]\nbody\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[—]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": "\"q\"\n"
+  }
+]

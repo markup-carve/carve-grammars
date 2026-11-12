@@ -1,0 +1,18 @@
+[
+  {
+    "type": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "%% t"
+  },
+  {
+    "type": "text",
+    "text": "\nb\n"
+  }
+]

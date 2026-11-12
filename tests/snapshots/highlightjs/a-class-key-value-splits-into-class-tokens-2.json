@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "string",
+    "text": "[x]"
+  },
+  {
+    "scope": "attr",
+    "text": "{class=\"a b\" .b}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

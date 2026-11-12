@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "string",
+    "text": "[a]"
+  },
+  {
+    "scope": "attr",
+    "text": "{title=\"`\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=v}"
+  },
+  {
+    "scope": null,
+    "text": "\nb\n"
+  }
+]

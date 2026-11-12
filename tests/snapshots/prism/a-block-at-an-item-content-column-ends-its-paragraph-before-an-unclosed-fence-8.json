@@ -12,63 +12,43 @@
     "text": "note"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>list>punctuation",
+    "type": "list>punctuation",
     "text": "10. "
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "para\n"
   },
   {
-    "type": "div>table",
+    "type": "table",
     "text": "   "
   },
   {
-    "type": "div>table>table-boundary",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "div>table",
+    "type": "table",
     "text": " t "
   },
   {
-    "type": "div>table>table-boundary",
+    "type": "table>table-boundary",
     "text": "|"
   },
   {
-    "type": "div",
+    "type": "text",
     "text": "\n"
   },
   {
-    "type": "div>code-block-unclosed>code-block>punctuation",
+    "type": "code-block-unclosed>code-block>punctuation",
     "text": "```"
   },
   {
-    "type": "div>code-block-unclosed>code-block",
-    "text": "\ncode\n::::"
-  },
-  {
-    "type": "div",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
-  },
-  {
-    "type": "text",
-    "text": "\nafter "
-  },
-  {
-    "type": "bold>bold",
-    "text": "*b*"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "type": "code-block-unclosed>code-block",
+    "text": "\ncode\n::::\n:::\nafter *b*\n"
   }
 ]

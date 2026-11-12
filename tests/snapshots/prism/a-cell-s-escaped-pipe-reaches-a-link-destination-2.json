@@ -1,0 +1,26 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " ![i](/a"
+  },
+  {
+    "type": "table>escape>constant",
+    "text": "\\|"
+  },
+  {
+    "type": "table",
+    "text": "b) "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

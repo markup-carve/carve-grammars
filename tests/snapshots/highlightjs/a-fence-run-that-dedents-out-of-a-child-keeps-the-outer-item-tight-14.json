@@ -24,15 +24,15 @@
     "text": " deep\n\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "      ```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\n      a\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```"
   },
   {

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "Before.\n\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "."
+  },
+  {
+    "scope": null,
+    "text": " first\n"
+  },
+  {
+    "scope": "bullet",
+    "text": "."
+  },
+  {
+    "scope": null,
+    "text": " second\n"
+  }
+]

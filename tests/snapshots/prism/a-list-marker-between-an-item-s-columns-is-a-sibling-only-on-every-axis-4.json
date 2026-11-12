@@ -1,0 +1,18 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": " i.  "
+  },
+  {
+    "type": "text",
+    "text": "b\n"
+  }
+]

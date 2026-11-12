@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "link",
+    "text": "[x](javascript:alert(1))"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

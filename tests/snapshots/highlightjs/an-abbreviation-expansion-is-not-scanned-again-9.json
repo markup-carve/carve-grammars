@@ -1,0 +1,62 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: x"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "=html"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": "</"
+  },
+  {
+    "scope": "code>language-xml>tag>name",
+    "text": "pre"
+  },
+  {
+    "scope": "code>language-xml>tag",
+    "text": ">"
+  },
+  {
+    "scope": "code>language-xml",
+    "text": "\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\nA\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "underline>underline",
+    "text": "_*"
+  },
+  {
+    "type": "underline>underline>code",
+    "text": "`a/`"
+  },
+  {
+    "type": "underline>underline",
+    "text": "/*{c}_"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

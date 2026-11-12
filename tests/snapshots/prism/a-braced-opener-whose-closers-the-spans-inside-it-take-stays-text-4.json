@@ -1,0 +1,26 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "-"
+  },
+  {
+    "type": "text",
+    "text": " {_a "
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "{_b _}"
+  },
+  {
+    "type": "text",
+    "text": " {_c "
+  },
+  {
+    "type": "forced-underline>underline",
+    "text": "{_d _}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

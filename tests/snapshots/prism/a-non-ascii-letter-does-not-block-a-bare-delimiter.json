@@ -1,0 +1,14 @@
+[
+  {
+    "type": "text",
+    "text": "é"
+  },
+  {
+    "type": "bold>bold",
+    "text": "*x*"
+  },
+  {
+    "type": "text",
+    "text": " y and a*x* y\ny *x*é and y *x*a\n"
+  }
+]

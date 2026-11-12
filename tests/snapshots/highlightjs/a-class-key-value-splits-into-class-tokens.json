@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{class=\"a b\" .a}"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]

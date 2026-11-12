@@ -9,7 +9,15 @@
   },
   {
     "scope": "quote",
-    "text": " :: term"
+    "text": " "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": "::"
+  },
+  {
+    "scope": "quote",
+    "text": " term"
   },
   {
     "scope": null,
@@ -17,7 +25,15 @@
   },
   {
     "scope": "quote",
-    "text": ">   : definition"
+    "text": ">   "
+  },
+  {
+    "scope": "quote>punctuation",
+    "text": ":"
+  },
+  {
+    "scope": "quote",
+    "text": " definition"
   },
   {
     "scope": null,

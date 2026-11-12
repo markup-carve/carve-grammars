@@ -1,14 +1,22 @@
 [
   {
-    "type": "text",
-    "text": ":: "
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
   },
   {
-    "type": "comment",
-    "text": "%% hidden"
+    "type": "definition-list>definition-term>title",
+    "text": " %% hidden"
   },
   {
-    "type": "text",
-    "text": "\n: d\n"
+    "type": "definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "definition-list",
+    "text": "d\n"
   }
 ]

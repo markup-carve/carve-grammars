@@ -1,0 +1,42 @@
+[
+  {
+    "scope": null,
+    "text": "*"
+  },
+  {
+    "scope": "link",
+    "text": "["
+  },
+  {
+    "scope": "link>strong",
+    "text": "*g*"
+  },
+  {
+    "scope": "link",
+    "text": "](u)"
+  },
+  {
+    "scope": null,
+    "text": " x* and *"
+  },
+  {
+    "scope": "string",
+    "text": "["
+  },
+  {
+    "scope": "string>strong",
+    "text": "*g*"
+  },
+  {
+    "scope": "string",
+    "text": "]"
+  },
+  {
+    "scope": "attr",
+    "text": "{.c}"
+  },
+  {
+    "scope": null,
+    "text": " x*\n"
+  }
+]

@@ -36,32 +36,59 @@ const leadingRun = (s, ch) => {
     return n;
 };
 
+// Since carve#5244 the generator writes one fixture per distinct input after
+// its modifiers, so two examples with the same input are one document.
+const fixtureInput = (carve, modifiers) => {
+    let out = `${carve}\n`;
+    if (modifiers.includes('no-final-newline')) out = out.slice(0, -1);
+    if (modifiers.includes('crlf')) out = out.replace(/\n/g, '\r\n');
+    if (modifiers.includes('cr')) out = out.replace(/\n/g, '\r');
+    if (modifiers.includes('bom')) out = `\ufeff${out}`;
+    if (modifiers.includes('nul')) out = out.replace(/\u2400/g, '\u0000');
+    return out;
+};
+
 /**
- * Count the corpus pairs one example page declares, mirroring the spec's
- * scripts/lib/example-pair-census.mjs: nothing inside a fence is markup.
+ * Collect the fixture inputs one example page declares into `inputs`, mirroring
+ * the spec's scripts/generate-corpus.mjs: nothing inside a fence is markup.
  * @param {string} text
- * @returns {number}
+ * @param {Set<string>} inputs
+ * @returns {number} the number of `carve` fences inside compare blocks
  */
-export function declaredPairsIn(text) {
+export function collectInputsIn(text, inputs) {
     let pairs = 0;
     let marker = null;
+    let modifiers = [];
     let fence = null;
+    let body = null;
     for (const line of text.split('\n')) {
         if (fence !== null) {
-            if (line.startsWith(fence) && line.slice(fence.length).trim() === '') fence = null;
+            if (line.startsWith(fence) && line.slice(fence.length).trim() === '') {
+                fence = null;
+                if (body !== null) inputs.add(fixtureInput(body.join('\n'), modifiers));
+                body = null;
+            } else if (body !== null) {
+                body.push(line);
+            }
             continue;
         }
         const ticks = leadingRun(line, '`');
         if (ticks >= 3) {
             fence = line.slice(0, ticks);
-            if (marker !== null && line.slice(ticks).trim() === 'carve') pairs += 1;
+            if (marker !== null && line.slice(ticks).trim() === 'carve') {
+                pairs += 1;
+                body = [];
+            }
             continue;
         }
         const trimmed = line.trim();
         const colons = leadingRun(trimmed, ':');
         if (colons < 3) continue;
         if (marker === null) {
-            if (/^[ \t]+compare(?:[ \t]|$)/.test(trimmed.slice(colons))) marker = trimmed.slice(0, colons);
+            if (/^[ \t]+compare(?:[ \t]|$)/.test(trimmed.slice(colons))) {
+                marker = trimmed.slice(0, colons);
+                modifiers = trimmed.split(/[ \t]+/).slice(2);
+            }
         } else if (trimmed === marker) {
             marker = null;
         }
@@ -70,25 +97,47 @@ export function declaredPairsIn(text) {
 }
 
 /**
- * How many corpus documents the pinned spec DECLARES.
+ * Count the corpus pairs one example page declares (every `carve` fence in a
+ * compare block, duplicates included).
+ * @param {string} text
+ * @returns {number}
+ */
+export function declaredPairsIn(text) {
+    return collectInputsIn(text, new Set());
+}
+
+/**
+ * How many corpus documents the pinned spec DECLARES: distinct fixture inputs.
  * @returns {number}
  */
 export function declaredCorpusSize() {
-    let declared = 0;
+    const inputs = new Set();
     for (const page of EXAMPLE_PAGES) {
         let text;
         try {
             text = readFileSync(`${EXAMPLES_DIR}/${page}`, 'utf8');
         } catch {
+            // carve#4132 stores each edge-case section in its own file under `edge-cases/`.
+            const dir = `${EXAMPLES_DIR}/${page.replace(/\.md$/, '')}`;
+            let sections = [];
+            try {
+                sections = readdirSync(dir).filter((f) => f.endsWith('.md')).sort();
+            } catch {
+                sections = [];
+            }
+            if (sections.length > 0) {
+                for (const section of sections) collectInputsIn(readFileSync(`${dir}/${section}`, 'utf8'), inputs);
+                continue;
+            }
             throw new Error(
                 `${EXAMPLES_DIR}/${page} is missing - the submodule is incomplete, or the ` +
                 'spec moved the corpus source pages. Without them there is nothing to ' +
                 'check the corpus size against.',
             );
         }
-        declared += declaredPairsIn(text);
+        collectInputsIn(text, inputs);
     }
-    return declared;
+    return inputs.size;
 }
 
 /**
@@ -118,8 +167,8 @@ export function listCorpusFiles() {
     //
     // The expectation is DERIVED rather than written down, so it moves with the
     // submodule and cannot go stale: spec/tests/corpus is generated from the
-    // `carve` fences in the `::: compare` blocks of spec/resources/examples/
-    // {core,extensions,edge-cases}.md, so counting them says how many documents
+    // distinct `carve` fence inputs in the `::: compare` blocks of
+    // spec/resources/examples/, so counting them says how many documents
     // the pin declares. A literal here would be one more number to forget on a bump,
     // and a floor cannot tell a whole corpus from a truncated one - which is
     // the only question worth asking.

@@ -1,0 +1,30 @@
+[
+  {
+    "type": "text",
+    "text": "(a --) b, "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*a --x*"
+  },
+  {
+    "type": "text",
+    "text": " b and "
+  },
+  {
+    "type": "bold>bold",
+    "text": "*"
+  },
+  {
+    "type": "bold>bold>typography>constant",
+    "text": "--"
+  },
+  {
+    "type": "bold>bold",
+    "text": "x*"
+  },
+  {
+    "type": "text",
+    "text": " b\n"
+  }
+]

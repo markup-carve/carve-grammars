@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "{.x\n.y}\n"
+  },
+  {
+    "scope": "code>keyword",
+    "text": "```"
+  },
+  {
+    "scope": "code",
+    "text": "\nwa\n> q\n  ```\n"
+  }
+]

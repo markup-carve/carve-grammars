@@ -1,0 +1,18 @@
+[
+  {
+    "scope": null,
+    "text": "_*"
+  },
+  {
+    "scope": "code",
+    "text": "`a/`"
+  },
+  {
+    "scope": "strong",
+    "text": "/*a*/"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

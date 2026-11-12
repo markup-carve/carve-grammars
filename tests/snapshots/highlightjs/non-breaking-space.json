@@ -1,6 +1,14 @@
 [
   {
     "scope": null,
-    "text": "10\\ kg\n"
+    "text": "10"
+  },
+  {
+    "scope": "symbol",
+    "text": "\\ "
+  },
+  {
+    "scope": null,
+    "text": "kg\n"
   }
 ]

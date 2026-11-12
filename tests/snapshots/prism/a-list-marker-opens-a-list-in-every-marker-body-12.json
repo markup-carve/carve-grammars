@@ -1,0 +1,14 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " p"
+  },
+  {
+    "type": "text",
+    "text": "\n- x\n"
+  }
+]

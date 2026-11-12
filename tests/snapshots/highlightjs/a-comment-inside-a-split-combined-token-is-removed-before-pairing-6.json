@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "emphasis",
+    "text": "/x /"
+  },
+  {
+    "scope": "emphasis>strong",
+    "text": "*a %% b*"
+  },
+  {
+    "scope": "emphasis",
+    "text": "/"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

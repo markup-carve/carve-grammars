@@ -49,7 +49,7 @@
   },
   {
     "scope": null,
-    "text": "\n\nDeprecated but still rendered: <- -> <->\n\nNot an arrow: key => value stays literal, and p "
+    "text": "\n\nRemoved, now text: <- -> <->\n\nNot an arrow: key => value stays literal, and p "
   },
   {
     "scope": "literal",

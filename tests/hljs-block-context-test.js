@@ -33,12 +33,12 @@ const scopeOf = (source, needle) => {
 };
 
 console.log('front matter:');
-check('an opener with no closer is a thematic break, not front matter', () => {
+// carve#5016: a first-line opener with no closer runs to the end of the document.
+check('an opener with no closer is front matter to the end of the document', () => {
     const source = '---\n\nPara *b*\n\n# Heading\n';
-    assert.match(carveToHtml(source), /^<hr>/);
-    assert.equal(scoped(source, /^language-/).length, 0);
-    assert.equal(scopeOf(source, '# Heading'), 'section');
-    assert.equal(scopeOf(source, '*b*'), 'strong');
+    assert.equal(carveToHtml(source), '');
+    assert.notEqual(scopeOf(source, '# Heading'), 'section');
+    assert.notEqual(scopeOf(source, '*b*'), 'strong');
 });
 check('the closing dash line is the envelope, not the payload', () => {
     for (const source of ['---toml\na = 1\n---\n\nx\n', '---\ntitle: x\n---\nbody\n', '---json\n{"a": 1}\n---\nx\n']) {
@@ -51,8 +51,8 @@ check('the closing dash line is the envelope, not the payload', () => {
 });
 
 console.log('list markers:');
-const LITERAL_MARKERS = ['para\n- not item\n', 'para\n1. no\n', 'para\n- [ ] no\n', 'para\n- x\n- y\n', '> q\n- a\n', ':: t\n: d\n- a\n', '::: note\npara\n- x\n:::\n'];
-const ITEM_MARKERS = ['- a\nlazy\n- b\n', '- a\n  more\n- b\n', '# H\n- a\n', 'x\n\n- a\n', '- x\n\n  > q\n- z\n', '- first\n\n  second\n  - nested\n', '> # h\n- item\n', '- a\n+\n> x\n- next\n'];
+const LITERAL_MARKERS = ['para\n- not item\n', 'para\n1. no\n', 'para\n- [ ] no\n', 'para\n- x\n- y\n', '> q\n- a\n', 'para\n: d\n- a\n', '::: note\npara\n- x\n:::\n'];
+const ITEM_MARKERS = ['- a\nlazy\n- b\n', '- a\n  more\n- b\n', '# H\n- a\n', 'x\n\n- a\n', '- x\n\n  > q\n- z\n', '- first\n\n  second\n  - nested\n', '> # h\n- item\n', '- a\n+\n> x\n- next\n', ':: t\n: d\n- a\n', ':: t\n: d\nmore\n1. a\n'];
 check('a marker on a paragraph line outside a list item is text', () => {
     for (const source of LITERAL_MARKERS) {
         assert.doesNotMatch(carveToHtml(source).replace(/<\/?ul>|<\/?ol>/g, ''), /<li>(?:not item|no|x|y|a)\b/, `engine: ${JSON.stringify(source)}`);
@@ -63,7 +63,7 @@ check('a marker that opens a list or the next item stays a bullet', () => {
     for (const source of ITEM_MARKERS) {
         const lines = source.trimEnd().split('\n');
         const text = lines.at(-1).replace(/^\s*(?:[-*]|\d+\.)\s+/, '');
-        assert.match(carveToHtml(source), new RegExp(`<li>${text}`), `engine: ${JSON.stringify(source)}`);
+        assert.match(carveToHtml(source), new RegExp(`<li>(?:<p>)?${text}`), `engine: ${JSON.stringify(source)}`);
         assert.equal(hljsTokens(source).filter((t) => t.scope === 'bullet').length, (source.match(/^\s*(?:[-*]|\d+\.) /gm) || []).length,
             `hljs: ${JSON.stringify(source)}`);
     }
@@ -102,7 +102,11 @@ check('a bare fence of another width opens a nested container', () => {
     const source = ':::: outer\n::: inner\nx\n::::\ny\n::::\n:::\n::::\n\n*[A]: z\n';
     assert.equal((carveToHtml(source).match(/<div/g) || []).length, 3);
     assert.equal(scopeOf(source, '*[A]'), 'symbol');
-    assert.equal(scopeOf(':::: outer\n::: inner\nx\n::::\n*[A]: z\n', '*[A]'), null);
+    // A definition inside the nested div is a definition too (markup-carve/carve#4874), so the
+    // nesting is pinned by the inner `::::` opening a third container instead.
+    const unclosed = ':::: outer\n::: inner\nx\n::::\n*[A]: z\n';
+    assert.equal((carveToHtml(unclosed).match(/<div/g) || []).length, 3);
+    assert.equal(scopeOf(unclosed, '*[A]'), 'symbol');
     const typeless = ':::\nOuter\n\n::::\nInner\n::::\n:::\n\n*[A]: x\n';
     assert.equal(hljsTokens(typeless).filter((t) => t.scope === 'keyword').length, 4);
     assert.equal(scopeOf(typeless, '*[A]'), 'symbol');

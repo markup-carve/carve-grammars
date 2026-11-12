@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#i id=j}"
+  },
+  {
+    "scope": null,
+    "text": "\npara\n"
+  }
+]

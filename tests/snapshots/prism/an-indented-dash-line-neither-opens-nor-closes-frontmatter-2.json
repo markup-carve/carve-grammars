@@ -1,0 +1,18 @@
+[
+  {
+    "type": "front-matter>frontmatter-delimiter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\na\n "
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\nx\n"
+  }
+]

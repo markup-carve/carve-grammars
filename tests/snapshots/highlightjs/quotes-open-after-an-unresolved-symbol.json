@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": ":a:"
+  },
+  {
+    "scope": null,
+    "text": "\"q\"\n"
+  },
+  {
+    "scope": "symbol",
+    "text": ":long-name:"
+  },
+  {
+    "scope": null,
+    "text": "'q'\n"
+  }
+]

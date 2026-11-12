@@ -13,6 +13,14 @@
   },
   {
     "scope": null,
-    "text": "  - a\n    *[HTML]: HyperText\n\nHTML here.\n"
+    "text": "  - a\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "    *[HTML]: HyperText"
+  },
+  {
+    "scope": null,
+    "text": "\n\nHTML here.\n"
   }
 ]

@@ -1,0 +1,42 @@
+[
+  {
+    "scope": null,
+    "text": "See "
+  },
+  {
+    "scope": "symbol",
+    "text": "#a--"
+  },
+  {
+    "scope": "symbol",
+    "text": "#b-"
+  },
+  {
+    "scope": "symbol",
+    "text": "#c"
+  },
+  {
+    "scope": null,
+    "text": ", "
+  },
+  {
+    "scope": "symbol",
+    "text": "#a-"
+  },
+  {
+    "scope": "symbol",
+    "text": "@b"
+  },
+  {
+    "scope": null,
+    "text": " and "
+  },
+  {
+    "scope": "symbol",
+    "text": "#a"
+  },
+  {
+    "scope": null,
+    "text": "#b\n"
+  }
+]

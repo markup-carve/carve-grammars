@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "quote",
+    "text": "> q"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " "
+  },
+  {
+    "scope": "title caption_>comment",
+    "text": "%% x"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -8,15 +8,15 @@
     "text": " h\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "  ```"
   },
   {
-    "scope": null,
+    "scope": "code",
     "text": "\n\n  b\n"
   },
   {
-    "scope": "keyword",
+    "scope": "code>keyword",
     "text": "```"
   },
   {

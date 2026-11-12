@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " - "
+  },
+  {
+    "scope": "code",
+    "text": "```js\n        a\n        ```"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "scope": "link",
+    "text": "[{{ x "
+  },
+  {
+    "scope": "link>symbol",
+    "text": "@code"
+  },
+  {
+    "scope": "link",
+    "text": " }} "
+  },
+  {
+    "scope": "link>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "link",
+    "text": "][r]"
+  },
+  {
+    "scope": null,
+    "text": " c\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/r"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

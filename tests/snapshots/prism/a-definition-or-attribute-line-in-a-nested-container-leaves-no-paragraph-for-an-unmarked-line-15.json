@@ -21,7 +21,35 @@
   },
   {
     "type": "blockquote",
-    "text": "   *[A]: b"
+    "text": "   "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "*"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "["
+  },
+  {
+    "type": "blockquote>abbreviation-definition>symbol",
+    "text": "A"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": "]"
+  },
+  {
+    "type": "blockquote>abbreviation-definition>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "blockquote>abbreviation-definition",
+    "text": " "
+  },
+  {
+    "type": "blockquote>abbreviation-definition>string",
+    "text": "b"
   },
   {
     "type": "text",

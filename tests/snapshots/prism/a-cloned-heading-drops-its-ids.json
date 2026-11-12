@@ -1,0 +1,46 @@
+[
+  {
+    "type": "title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "title>important",
+    "text": " "
+  },
+  {
+    "type": "title>important>bold>bold",
+    "text": "*A*"
+  },
+  {
+    "type": "title>important",
+    "text": "{"
+  },
+  {
+    "type": "title>important>tag>variable",
+    "text": "#z"
+  },
+  {
+    "type": "title>important",
+    "text": "}"
+  },
+  {
+    "type": "text",
+    "text": "\n\n"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": "</#"
+  },
+  {
+    "type": "cross-ref>url",
+    "text": "A"
+  },
+  {
+    "type": "cross-ref>url>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

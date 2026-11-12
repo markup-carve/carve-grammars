@@ -8,15 +8,7 @@
     "text": " term"
   },
   {
-    "type": "definition-list",
-    "text": "\nwrapped on\n"
-  },
-  {
-    "type": "definition-list>punctuation",
-    "text": ": "
-  },
-  {
-    "type": "definition-list",
-    "text": "definition\n"
+    "type": "text",
+    "text": "\nwrapped on\n: definition\n"
   }
 ]

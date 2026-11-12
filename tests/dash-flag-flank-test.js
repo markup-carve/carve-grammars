@@ -55,9 +55,11 @@ function dashRuns(tokens) {
     const out = [];
     let previous = false;
     for (const token of tokens) {
-        const scoped = TYPOGRAPHY.test(token.scope ?? '') && /^[-<>]+$/.test(token.text);
-        if (scoped && previous) out[out.length - 1] += token.text;
-        else if (scoped) out.push(token.text);
+        // Shiki merges same-colored neighbors, so a TextMate run can carry the escaped space after it.
+        const text = token.text.replace(/\\ $/, '');
+        const scoped = TYPOGRAPHY.test(token.scope ?? '') && /^[-<>]+$/.test(text);
+        if (scoped && previous) out[out.length - 1] += text;
+        else if (scoped) out.push(text);
         previous = scoped;
     }
 

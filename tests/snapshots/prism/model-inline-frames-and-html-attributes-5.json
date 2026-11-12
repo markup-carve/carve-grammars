@@ -1,0 +1,18 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "footnotes"
+  },
+  {
+    "type": "text",
+    "text": "\nx\ny\n"
+  }
+]

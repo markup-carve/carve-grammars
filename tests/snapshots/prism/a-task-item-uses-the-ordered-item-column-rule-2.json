@@ -1,0 +1,34 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "1000. "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "text",
+    "text": "\n      : a\n"
+  },
+  {
+    "type": "definition-list>definition-term>title>punctuation",
+    "text": "      ::"
+  },
+  {
+    "type": "definition-list>definition-term>title",
+    "text": " sibling"
+  },
+  {
+    "type": "text",
+    "text": "\n      tail\n"
+  }
+]

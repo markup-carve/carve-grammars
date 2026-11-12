@@ -1,0 +1,34 @@
+[
+  {
+    "type": "front-matter>frontmatter-delimiter>punctuation",
+    "text": "---"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>key>property",
+    "text": "a"
+  },
+  {
+    "type": "front-matter>punctuation",
+    "text": ":"
+  },
+  {
+    "type": "front-matter",
+    "text": " "
+  },
+  {
+    "type": "front-matter>number",
+    "text": "1"
+  },
+  {
+    "type": "front-matter",
+    "text": "\n"
+  },
+  {
+    "type": "front-matter>frontmatter-delimiter>punctuation",
+    "text": "---"
+  }
+]

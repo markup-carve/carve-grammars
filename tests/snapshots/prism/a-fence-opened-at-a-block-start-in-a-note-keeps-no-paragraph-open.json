@@ -1,0 +1,26 @@
+[
+  {
+    "type": "footnote>symbol",
+    "text": "[^0]"
+  },
+  {
+    "type": "text",
+    "text": ": :::\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "  - "
+  },
+  {
+    "type": "text",
+    "text": "```\nx\n\n"
+  },
+  {
+    "type": "footnote>symbol",
+    "text": "[^0]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

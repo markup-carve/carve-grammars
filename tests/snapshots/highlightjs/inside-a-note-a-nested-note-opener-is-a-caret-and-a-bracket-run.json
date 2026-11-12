@@ -1,0 +1,10 @@
+[
+  {
+    "scope": "symbol",
+    "text": "^[x ^[a](u) b]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

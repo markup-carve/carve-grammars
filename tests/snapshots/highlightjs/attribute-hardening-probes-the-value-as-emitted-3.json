@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "strong",
+    "text": "*x*"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=\"‮javascript:x\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

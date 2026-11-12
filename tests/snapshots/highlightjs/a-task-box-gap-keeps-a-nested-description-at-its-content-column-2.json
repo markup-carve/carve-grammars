@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- [x]"
+  },
+  {
+    "scope": null,
+    "text": "   - :: term\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "           :"
+  },
+  {
+    "scope": null,
+    "text": " desc\n"
+  },
+  {
+    "scope": "title",
+    "text": "           :: next"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "           :"
+  },
+  {
+    "scope": null,
+    "text": " body\n"
+  }
+]

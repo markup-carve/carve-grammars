@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "- [ ]"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "link",
+    "text": "![x][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "attr",
+    "text": "{id=q}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "section",
+    "text": "# Heading"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

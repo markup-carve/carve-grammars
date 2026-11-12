@@ -1,0 +1,18 @@
+[
+  {
+    "type": "math>string",
+    "text": "$$`a`"
+  },
+  {
+    "type": "text",
+    "text": " "
+  },
+  {
+    "type": "comment",
+    "text": "%% c"
+  },
+  {
+    "type": "text",
+    "text": "\n^ cap\n"
+  }
+]

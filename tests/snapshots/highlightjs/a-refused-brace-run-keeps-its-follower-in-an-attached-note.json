@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^a]:"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "punctuation",
+    "text": "+"
+  },
+  {
+    "scope": null,
+    "text": "\n{.x\n.y}\n"
+  },
+  {
+    "scope": "section",
+    "text": "# h"
+  },
+  {
+    "scope": null,
+    "text": "\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

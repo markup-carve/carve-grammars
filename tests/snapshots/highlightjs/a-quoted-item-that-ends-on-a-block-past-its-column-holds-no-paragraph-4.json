@@ -13,15 +13,7 @@
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "bullet",
-    "text": "  -"
-  },
-  {
-    "scope": null,
-    "text": " "
+    "text": "\n  - "
   },
   {
     "scope": "code",

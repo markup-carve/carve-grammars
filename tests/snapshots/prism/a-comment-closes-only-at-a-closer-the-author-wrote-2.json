@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "{% ^{"
+  },
+  {
+    "type": "tag>variable",
+    "text": "#i"
+  },
+  {
+    "type": "text",
+    "text": "}*-}"
+  },
+  {
+    "type": "critic-comment>comment",
+    "text": "{#c#}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

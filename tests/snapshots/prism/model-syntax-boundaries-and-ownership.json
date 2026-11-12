@@ -1,0 +1,22 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "e"
+  },
+  {
+    "type": "div>div-delimiter>invalid-metadata>error",
+    "text": "[]"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

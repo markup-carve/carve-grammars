@@ -5,7 +5,15 @@
   },
   {
     "scope": null,
-    "text": " :: t\n  : para\n "
+    "text": " :: t\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": "  :"
+  },
+  {
+    "scope": null,
+    "text": " para\n "
   },
   {
     "scope": "comment",

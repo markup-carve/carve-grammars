@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^n]:"
+  },
+  {
+    "scope": null,
+    "text": " # H\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "</#H>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "section",
+    "text": "# "
+  },
+  {
+    "scope": "section>strong",
+    "text": "*Setup*"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee "
+  },
+  {
+    "scope": "link",
+    "text": "</#Setup>"
+  },
+  {
+    "scope": null,
+    "text": ".\n"
+  }
+]

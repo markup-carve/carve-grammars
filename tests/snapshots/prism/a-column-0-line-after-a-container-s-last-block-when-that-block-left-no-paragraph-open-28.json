@@ -17,6 +17,10 @@
   },
   {
     "type": "definition-list",
-    "text": "a\n   + b |\ntail\n"
+    "text": "a"
+  },
+  {
+    "type": "text",
+    "text": "\n   + b |\ntail\n"
   }
 ]

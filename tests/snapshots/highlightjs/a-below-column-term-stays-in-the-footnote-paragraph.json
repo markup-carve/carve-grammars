@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "symbol",
+    "text": "[^f]:"
+  },
+  {
+    "scope": null,
+    "text": " alpha\n"
+  },
+  {
+    "scope": "title",
+    "text": " :: term"
+  },
+  {
+    "scope": null,
+    "text": "\n\nSee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^f]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

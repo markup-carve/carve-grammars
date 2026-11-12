@@ -1,0 +1,22 @@
+[
+  {
+    "scope": "link",
+    "text": "[a [b \"c\"][r] d][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/r"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

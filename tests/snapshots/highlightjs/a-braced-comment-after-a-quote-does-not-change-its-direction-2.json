@@ -1,0 +1,30 @@
+[
+  {
+    "scope": null,
+    "text": "\"Wait"
+  },
+  {
+    "scope": "literal",
+    "text": "---"
+  },
+  {
+    "scope": null,
+    "text": "\""
+  },
+  {
+    "scope": "comment",
+    "text": "{% c %}"
+  },
+  {
+    "scope": null,
+    "text": " he said. '"
+  },
+  {
+    "scope": "comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": null,
+    "text": "90s\n"
+  }
+]

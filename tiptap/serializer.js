@@ -550,7 +550,8 @@ export function serializeToCarve(doc, options = {}) {
                     // content, either literal text or a block-attribute line for
                     // what follows (corpus 90-list-item-attributes-7, 172).
                     const markerAttrs = serializeAttributes(item.attrs, ['checked', 'carveTaskState']);
-                    const prefix = marker + markerAttrs + ' ';
+                    // A letter or roman marker with a dot needs two spaces (carve#4828).
+                    const prefix = marker + markerAttrs + (/^[A-Za-z]+\.$/.test(marker) ? '  ' : ' ');
                     output += indent + prefix + taskBox;
                     // The content column is measured from the prefix ACTUALLY
                     // written, attributes included - that is how the engine this
@@ -1251,16 +1252,14 @@ export function serializeToCarve(doc, options = {}) {
             }
             let line = '';
             for (const c of out) {
-                // An empty left-aligned cell cannot be spelled `|< |`: it is
-                // a colspan marker. Left is the empty cell's default anyway.
-                const align = c.content === '' && c.align === 'left' ? ''
-                    : c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
+                const align = c.align === 'left' ? '<' : c.align === 'right' ? '>' : c.align === 'center' ? '~' : '';
                 const valign = c.valign === 'top' ? '^' : c.valign === 'middle' ? '~' : c.valign === 'bottom' ? 'v' : '';
-                const markerRun = (c.header ? '=' : '') + align + (valign ? (align ? '' : '?') + valign : '');
-                // Cell attributes bind after the kind/alignment markers.
-                const attrs = cellAttrsOf(c);
-                const literalSpan = !c.spanMarker && !markerRun && !attrs && (c.content === '<' || c.content === '^');
-                line += '|' + markerRun + attrs + ' ' + (literalSpan ? '\\' : '') + c.content + ' ';
+                const alignment = align + (valign ? (align ? '' : '?') + valign : '');
+                // Alignment symbols lead the cell's attribute block (carve#5091 D3).
+                const ordinary = cellAttrsOf(c);
+                const attrs = alignment ? '{' + alignment + (ordinary ? ' ' + ordinary.slice(1) : '}') : ordinary;
+                const literalSpan = !c.spanMarker && !attrs && (c.content === '<' || c.content === '^');
+                line += '|' + (c.header ? '=' : '') + attrs + ' ' + (literalSpan ? '\\' : '') + c.content + ' ';
             }
             output += line + '|' + rowAttrs + '\n';
             continuation();
@@ -1433,7 +1432,7 @@ export function serializeToCarve(doc, options = {}) {
     // valid). The escape goes on the punctuation, since a backslash before a
     // letter or digit is literal.
     const LEADING_BLOCK_OPENER =
-        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|(?:[0-9]+|[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=[.)] ))/;
+        /^(?:(?=#{1,6} +\S|[-*.] |>(?: |\n|$)|:: +\S|~{3,}|(?:-{3,}|\*{3,}|_{3,}|\|[^\n]*\||\{(?:[#.][^\s}]|:[A-Za-z][\w-]*[\s}]|[A-Za-z][\w-]*[=\s}])[^}\n]*\})[ \t]*(?:\n|$))|[0-9]+(?=[.)] )|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?=\.  |\) ))/;
     // On a list item's marker line, a following lazy line folds a colon
     // opener back into the paragraph, so only a one-line paragraph needs it.
     const LEADING_COLON_FENCE = /^(?=:{3,}(?: +(?:[A-Za-z0-9_][\w-]*|\|))? *(?:\n|$))/;
@@ -1475,18 +1474,15 @@ export function serializeToCarve(doc, options = {}) {
             'bold', 'italic', 'underline', 'strike', 'highlight',
             'superscript', 'subscript', 'carveInsert', 'carveDelete',
         ]);
-        const normalized = (rawContent || []).map((node) => {
+        // An empty code span is an unclosed run, which takes the rest of the
+        // block (carve#3973 X5), so inside a mark it has no spelling.
+        const normalized = (rawContent || []).filter((node) => !(isEmptyCode(node) && (node.marks || []).length)).map((node) => {
             if (!node || node.type === 'text' || !(node.marks || []).length) return node;
-            // An empty code span is an unclosed run: only a braced closer of an
-            // enclosing mark ends it, so without one it has no spelling.
-            const openRun = isEmptyCode(node);
-            const closable = node.marks.some((mark) => groupableDelimitedMarks.has(mark.type));
             return {
                 type: 'text',
-                text: openRun && !closable ? '' : serializeInline([{ ...node, marks: [] }]),
+                text: serializeInline([{ ...node, marks: [] }]),
                 marks: node.marks,
                 carveVerbatim: true,
-                ...(openRun && closable ? { carveOpenRun: true } : {}),
             };
         });
         // ProseMirror splits one marked range whenever a nested mark begins or
@@ -1530,7 +1526,6 @@ export function serializeToCarve(doc, options = {}) {
                     text: serializeInline(inner),
                     marks: [outer],
                     carveVerbatim: true,
-                    ...(inner[inner.length - 1].carveOpenRun ? { carveOpenRun: true } : {}),
                 });
             } else {
                 content.push(node);
@@ -1698,10 +1693,6 @@ export function serializeToCarve(doc, options = {}) {
             if (node.type === 'text') {
                 let text = node.text || '';
                 const marks = node.marks || [];
-                if (node.carveOpenRun && !marks.some((mark) => groupableDelimitedMarks.has(mark.type))
-                    && (marks.length || !openRunEnds || idx < content.length - 1)) {
-                    text = '';
-                }
 
                 // Check each mark type
                 const codeMark = marks.find(m => m.type === 'code');
@@ -1771,7 +1762,7 @@ export function serializeToCarve(doc, options = {}) {
                 // neighbors let it open and close.
                 const boldItalic = hasBold && hasItalic
                     && marks.find(m => m.type === 'bold')?.attrs?.carveBoldItalic
-                    && !node.carveOpenRun && !glued('*') && !glued('/');
+                    && !glued('*') && !glued('/');
                 let t;
                 if (writeAutolink) {
                     t = '<' + autoRaw + '>';
@@ -1880,10 +1871,6 @@ export function serializeToCarve(doc, options = {}) {
                 // is literal text, so both always serialize braced.
                 // Innermost, because the content is literal: any other mark
                 // has to wrap the whole `{# ... #}`, never sit inside it.
-                // An unclosed run ends at the FIRST braced mark closer around
-                // it, so only the innermost mark needs its forced form and
-                // every mark outside it follows the ordinary bare rules.
-                let runOpen = !!node.carveOpenRun;
                 if (hasCriticComment) t = '{#' + t + '#}';
                 if (hasSub) t = '{,' + t + ',}';
                 if (hasSup) t = '{^' + t + '^}';
@@ -1892,22 +1879,18 @@ export function serializeToCarve(doc, options = {}) {
                 // cannot round-trip - a Carve limitation, not fixable here.
                 if (hasInsert) t = '{+' + t + '+}';
                 if (hasDelete) t = '{-' + t + '-}';
-                // Every one of those is braced, so any of them already ended it.
-                if (hasCriticComment || hasSub || hasSup || hasInsert || hasDelete) runOpen = false;
                 // The outermost bare delimiter touches the neighboring text. Where
                 // the spec's bare_opener or bare_closer would refuse it there,
                 // only the forced form keeps the mark.
                 const outermost = link || carveSpan || abbr ? null
                     : hasBold ? '*' : hasItalic ? '/' : hasUnderline ? '_' : hasStrike && !hasDelete ? '~' : null;
                 const wrap = (delim) => {
-                    const forced = runOpen || (delim === outermost && glued(delim));
-                    runOpen = false;
+                    const forced = delim === outermost && glued(delim);
                     return forced ? '{' + delim + t + delim + '}' : delim + t + delim;
                 };
                 if (hasStrike && !hasDelete) t = wrap('~');
                 if (hasHighlight) {
-                    const forced = runOpen || !bareable('=');
-                    runOpen = false;
+                    const forced = !bareable('=');
                     t = forced ? '{=' + t + '=}' : '=' + t + '=';
                 }
                 if (hasUnderline) t = wrap('_');

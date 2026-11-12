@@ -1,0 +1,54 @@
+[
+  {
+    "scope": "attr",
+    "text": "{#f}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": " a "
+  },
+  {
+    "scope": "table-boundary",
+    "text": "|"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "title caption_>punctuation caption-marker_",
+    "text": "^"
+  },
+  {
+    "scope": "title caption_",
+    "text": " "
+  },
+  {
+    "scope": "title caption_>strong",
+    "text": "*Fig*"
+  },
+  {
+    "scope": "title caption_",
+    "text": "{#k} #"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "link",
+    "text": "</#f>"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

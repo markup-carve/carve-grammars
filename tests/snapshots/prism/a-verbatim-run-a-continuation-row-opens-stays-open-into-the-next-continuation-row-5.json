@@ -1,0 +1,58 @@
+[
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " a "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table",
+    "text": " b "
+  },
+  {
+    "type": "table>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "table-continuation>table-continuation-marker",
+    "text": "+"
+  },
+  {
+    "type": "table-continuation",
+    "text": " "
+  },
+  {
+    "type": "table-continuation>code",
+    "text": "``c |\n+ x ``"
+  },
+  {
+    "type": "table-continuation",
+    "text": " y "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "table-continuation",
+    "text": " z "
+  },
+  {
+    "type": "table-continuation>table-boundary",
+    "text": "|"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

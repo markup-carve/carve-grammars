@@ -1,0 +1,34 @@
+[
+  {
+    "scope": "quote",
+    "text": "> > [^a]: +"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> >   {#i"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "quote",
+    "text": "> >    .y}"
+  },
+  {
+    "scope": null,
+    "text": "\nnext\n\nsee"
+  },
+  {
+    "scope": "symbol",
+    "text": "[^a]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

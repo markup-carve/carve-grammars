@@ -13,14 +13,6 @@
   },
   {
     "scope": null,
-    "text": " - a\n    "
-  },
-  {
-    "scope": "attr",
-    "text": "{.c\n}"
-  },
-  {
-    "scope": null,
-    "text": "\npara\n"
+    "text": " - a\n    {.c\n}\npara\n"
   }
 ]

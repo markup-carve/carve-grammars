@@ -1,0 +1,22 @@
+[
+  {
+    "type": "text",
+    "text": "/x "
+  },
+  {
+    "type": "bold-italic>important",
+    "text": "/*a %% `b*/"
+  },
+  {
+    "type": "text",
+    "text": " c"
+  },
+  {
+    "type": "code",
+    "text": "` d"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

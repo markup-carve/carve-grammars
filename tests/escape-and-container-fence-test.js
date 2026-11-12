@@ -109,16 +109,21 @@ for (const lines of [['::: note', '*a', ':::', 'after *b*'], ['::: |', 'x *a', '
     }
 }
 
-// An unclosed fence ends at the closer of its own container, of the same width.
-// TextMate can't tell that closer from a colon line in a closed fence, so it
-// keeps the closed reading (docs/reference.md, TextMate limits).
+// An unclosed fence takes every later line as payload, its container's closer
+// included (PART 0 S1).
 const fences = [
-    [['::: note', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [[':::', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [['::: note', '~~~', 'code', ':::', '*after*'], 'after', true],
-    [['::: figure', FENCE, 'code', ':::', '*after*'], 'after', true],
-    [[':::: note', FENCE, 'code', ':::', 'more', '::::', '*after*'], 'after', true],
-    [['::: a', ':::: b', FENCE, 'x', '::::', 'y', ':::', '*after*'], 'after', true],
+    [['::: note', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [[':::', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [['::: note', '~~~', 'code', ':::', '*after*'], 'after', false],
+    [['::: figure', FENCE, 'code', ':::', '*after*'], 'after', false],
+    [[':::: note', FENCE, 'code', ':::', 'more', '::::', '*after*'], 'after', false],
+    [['::: a', ':::: b', FENCE, 'x', '::::', 'y', ':::', '*after*'], 'after', false],
+    // A nested body skips its closed fences and never closes past an unclosed one.
+    [['::: a', ':::: b', '~~~', 'x', '::::', 'y', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', 'p', FENCE, 'x', '::::', 'y', '', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', '::::: c', FENCE, 'x', ':::::', '::::', ':::', '*after*'], 'after', false],
+    [['::: a', ':::: b', FENCE, 'x', FENCE, '::::', ':::', '*after*'], 'after', true],
+    [['::: a', ':::: b', '~~~~', 'x', '::::', '~~~~', '::::', ':::', '*after*'], 'after', true],
 ];
 for (const [lines, needle, bold] of fences) {
     const source = `${lines.join('\n')}\n`;

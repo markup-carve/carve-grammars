@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "function",
+    "text": ":foo["
+  },
+  {
+    "scope": "function>emphasis",
+    "text": "/a "
+  },
+  {
+    "scope": "function>emphasis>strong",
+    "text": "*b*"
+  },
+  {
+    "scope": "function>emphasis",
+    "text": "/"
+  },
+  {
+    "scope": "function",
+    "text": "]"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

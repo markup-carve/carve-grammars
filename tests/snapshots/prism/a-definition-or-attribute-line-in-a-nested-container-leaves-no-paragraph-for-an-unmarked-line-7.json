@@ -33,7 +33,11 @@
   },
   {
     "type": "blockquote",
-    "text": " d\n"
+    "text": " d"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "blockquote>punctuation",

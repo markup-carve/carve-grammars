@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " pre\n"
+  },
+  {
+    "scope": "comment",
+    "text": "{% b\n b %}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

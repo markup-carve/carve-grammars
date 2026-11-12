@@ -1,0 +1,22 @@
+[
+  {
+    "scope": null,
+    "text": "x"
+  },
+  {
+    "scope": "deletion",
+    "text": "{-"
+  },
+  {
+    "scope": "deletion>comment",
+    "text": "{%%}"
+  },
+  {
+    "scope": "deletion",
+    "text": "\"q\"-}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

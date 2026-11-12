@@ -1,0 +1,30 @@
+[
+  {
+    "type": "list>punctuation",
+    "text": "1. "
+  },
+  {
+    "type": "list>punctuation",
+    "text": "- "
+  },
+  {
+    "type": "text",
+    "text": "a\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "     - "
+  },
+  {
+    "type": "text",
+    "text": "y\n"
+  },
+  {
+    "type": "list>punctuation",
+    "text": "      1. "
+  },
+  {
+    "type": "text",
+    "text": "~~~\nz\n"
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "scope": null,
+    "text": "a "
+  },
+  {
+    "scope": "strong",
+    "text": "*"
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": " x*"
+  },
+  {
+    "scope": null,
+    "text": " b, a "
+  },
+  {
+    "scope": "strong",
+    "text": "*x"
+  },
+  {
+    "scope": "strong>literal",
+    "text": "--"
+  },
+  {
+    "scope": "strong",
+    "text": "y*"
+  },
+  {
+    "scope": null,
+    "text": " b and 2*"
+  },
+  {
+    "scope": "literal",
+    "text": "--"
+  },
+  {
+    "scope": null,
+    "text": "x\n"
+  }
+]

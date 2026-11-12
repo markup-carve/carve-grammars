@@ -25,14 +25,14 @@
   },
   {
     "scope": null,
-    "text": "\n    "
+    "text": "\n"
   },
   {
     "scope": "symbol",
-    "text": "[^n]"
+    "text": "    [^n]:"
   },
   {
     "scope": null,
-    "text": ": y\n"
+    "text": " y\n"
   }
 ]

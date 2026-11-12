@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "link",
+    "text": "[a][a]{.c}"
+  },
+  {
+    "scope": "attr",
+    "text": "{#i}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

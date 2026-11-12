@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "title",
+    "text": ":: t"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  },
+  {
+    "scope": "punctuation",
+    "text": ":"
+  },
+  {
+    "scope": null,
+    "text": "   "
+  },
+  {
+    "scope": "comment",
+    "text": "{% a\n     {k=v}\n: next\nz %}"
+  },
+  {
+    "scope": null,
+    "text": " y\n"
+  }
+]

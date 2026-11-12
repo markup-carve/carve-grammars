@@ -1,0 +1,14 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+"
+  },
+  {
+    "type": "inserted>inserted>code",
+    "text": "`{#+}"
+  },
+  {
+    "type": "text",
+    "text": "#}\n"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "scope": "bullet",
+    "text": "-"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "quote",
+    "text": "> - a"
+  },
+  {
+    "scope": null,
+    "text": "\ng\n"
+  },
+  {
+    "scope": "quote",
+    "text": "  >   # h"
+  },
+  {
+    "scope": null,
+    "text": "\nl\n"
+  }
+]

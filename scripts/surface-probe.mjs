@@ -410,6 +410,7 @@ export const SIGNATURES = {
 
     // Inlines.
     escaped_char: ['escape', 'backslashescape'],
+    escaped_space: ['escape', 'backslashescape'],
     raw_inline: ['rawinline'],
     literal_inline: ['inlineliteral', 'literalinline', 'markuprawinlineliteral'],
     /*

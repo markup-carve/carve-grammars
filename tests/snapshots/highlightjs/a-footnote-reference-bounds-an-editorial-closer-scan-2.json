@@ -1,0 +1,18 @@
+[
+  {
+    "scope": "deletion",
+    "text": "{-"
+  },
+  {
+    "scope": "deletion>symbol",
+    "text": "[^[g]"
+  },
+  {
+    "scope": "deletion",
+    "text": "-}"
+  },
+  {
+    "scope": null,
+    "text": "] b-}\n"
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "scope": "link",
+    "text": "[a {{ x "
+  },
+  {
+    "scope": "link>symbol",
+    "text": "@lines"
+  },
+  {
+    "scope": "link",
+    "text": ":0 }} b][r]"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "symbol",
+    "text": "[r]: "
+  },
+  {
+    "scope": "symbol>link",
+    "text": "/r"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

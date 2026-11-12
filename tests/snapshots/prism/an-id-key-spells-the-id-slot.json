@@ -1,0 +1,34 @@
+[
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " {id=q}"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote",
+    "text": " "
+  },
+  {
+    "type": "blockquote>title>important>punctuation",
+    "text": "#"
+  },
+  {
+    "type": "blockquote>title>important",
+    "text": " Heading"
+  },
+  {
+    "type": "text",
+    "text": "\n"
+  }
+]

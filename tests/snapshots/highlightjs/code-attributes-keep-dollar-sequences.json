@@ -1,0 +1,14 @@
+[
+  {
+    "scope": "code",
+    "text": "`b`"
+  },
+  {
+    "scope": "attr",
+    "text": "{k=\"$`\"}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

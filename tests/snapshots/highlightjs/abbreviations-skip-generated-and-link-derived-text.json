@@ -1,0 +1,42 @@
+[
+  {
+    "scope": "symbol",
+    "text": "*[A]: expansion"
+  },
+  {
+    "scope": null,
+    "text": "\n\n"
+  },
+  {
+    "scope": "section",
+    "text": "# A"
+  },
+  {
+    "scope": null,
+    "text": "\n\n<"
+  },
+  {
+    "scope": "symbol",
+    "text": "#A"
+  },
+  {
+    "scope": null,
+    "text": "> "
+  },
+  {
+    "scope": "link",
+    "text": "</#A>"
+  },
+  {
+    "scope": null,
+    "text": " "
+  },
+  {
+    "scope": "link",
+    "text": "<https://example.test/A>"
+  },
+  {
+    "scope": null,
+    "text": " A\n"
+  }
+]

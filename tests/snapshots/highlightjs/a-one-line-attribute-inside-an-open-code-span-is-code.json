@@ -1,0 +1,14 @@
+[
+  {
+    "scope": null,
+    "text": "p\n"
+  },
+  {
+    "scope": "code",
+    "text": "`open\n{.x}\nclose`"
+  },
+  {
+    "scope": null,
+    "text": "\nz\n"
+  }
+]

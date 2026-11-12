@@ -1,0 +1,14 @@
+[
+  {
+    "type": "inserted>inserted",
+    "text": "{+x {~a+}"
+  },
+  {
+    "type": "strike>deleted",
+    "text": "~>c~"
+  },
+  {
+    "type": "text",
+    "text": "} b+}\n"
+  }
+]

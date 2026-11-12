@@ -1,0 +1,70 @@
+[
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "div>div-delimiter",
+    "text": " "
+  },
+  {
+    "type": "div>div-delimiter>class-name",
+    "text": "d"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>definition-list>definition-term>title>punctuation",
+    "text": "::"
+  },
+  {
+    "type": "div>definition-list>definition-term>title",
+    "text": " t"
+  },
+  {
+    "type": "div>definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "div>definition-list>punctuation",
+    "text": ": "
+  },
+  {
+    "type": "div>definition-list",
+    "text": "d\n"
+  },
+  {
+    "type": "div>definition-list>definition-term>title>punctuation",
+    "text": "  ::"
+  },
+  {
+    "type": "div>definition-list>definition-term>title",
+    "text": " u"
+  },
+  {
+    "type": "div>definition-list",
+    "text": "\n"
+  },
+  {
+    "type": "div>definition-list>punctuation",
+    "text": "  : "
+  },
+  {
+    "type": "div>definition-list>continuation-marker>punctuation",
+    "text": "+"
+  },
+  {
+    "type": "div",
+    "text": "\n"
+  },
+  {
+    "type": "div>div-delimiter>punctuation",
+    "text": ":::"
+  },
+  {
+    "type": "text",
+    "text": "\nafter\n"
+  }
+]

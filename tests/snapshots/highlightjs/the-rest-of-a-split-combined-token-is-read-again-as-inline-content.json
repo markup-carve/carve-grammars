@@ -1,0 +1,26 @@
+[
+  {
+    "scope": null,
+    "text": "x "
+  },
+  {
+    "scope": "strong",
+    "text": "*/*"
+  },
+  {
+    "scope": "deletion",
+    "text": "~"
+  },
+  {
+    "scope": "deletion>strong",
+    "text": "/**b a*/"
+  },
+  {
+    "scope": "deletion",
+    "text": "~"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "meta>string",
+    "text": "`"
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@lines"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "1"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": "meta",
+    "text": "{{ "
+  },
+  {
+    "scope": "meta>string",
+    "text": "`"
+  },
+  {
+    "scope": "meta>keyword",
+    "text": "@lines"
+  },
+  {
+    "scope": "meta",
+    "text": ":"
+  },
+  {
+    "scope": "meta>literal",
+    "text": "1"
+  },
+  {
+    "scope": "meta",
+    "text": " }}"
+  },
+  {
+    "scope": null,
+    "text": "\n"
+  }
+]
