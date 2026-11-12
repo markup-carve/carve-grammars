@@ -10,6 +10,11 @@ assertThisFileRuns(import.meta.url);
 const win = new Window({ url: 'http://localhost/' });
 globalThis.window = win;
 globalThis.document = win.document;
+for (const key of ['DOMParser', 'Node', 'Element', 'HTMLElement', 'navigator', 'getComputedStyle', 'MutationObserver']) {
+    if (globalThis[key] === undefined && win[key] !== undefined) {
+        try { globalThis[key] = win[key]; } catch { /* read-only global */ }
+    }
+}
 
 const CASES = [
     ['[[x]{#in}]{#out}\n', '[x]{#out}'],
