@@ -1,22 +1,14 @@
 [
   {
     "type": "text",
-    "text": "{%~"
+    "text": "{%~{"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>id",
+    "type": "tag>variable",
     "text": "#i"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "}\n"
   }
 ]

@@ -1,15 +1,7 @@
 [
   {
     "scope": null,
-    "text": "x*"
-  },
-  {
-    "scope": "attr",
-    "text": "{title=\"`\"}"
-  },
-  {
-    "scope": null,
-    "text": " y\n\n"
+    "text": "x*{title=\"`\"} y\n\n"
   },
   {
     "scope": "strong",

@@ -1,14 +1,6 @@
 [
   {
     "scope": null,
-    "text": "{%~"
-  },
-  {
-    "scope": "attr",
-    "text": "{#i}"
-  },
-  {
-    "scope": null,
-    "text": "\n"
+    "text": "{%~{#i}\n"
   }
 ]

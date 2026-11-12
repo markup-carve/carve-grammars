@@ -261,6 +261,57 @@
             var open = bracketOpener(source, at);
             return open !== -1 && source.charAt(open + 1) !== '^' && !(source.charAt(open - 1) === ']' && bracketOpener(source, open) !== -1);
         };
+        // A block glued to a bare delimiter needs a run of that kind to close
+        // there: `a*{.q}` and `x _a_ b_{.q}` are text (carve-grammars#867). A run
+        // crosses soft breaks, so the scan covers the paragraph.
+        var bareRunRules = { '*': ['bold', 'bold-italic'], '/': ['italic', 'bold-italic'], '_': ['underline'], '~': ['strike'], '=': ['highlight'] };
+        var paragraphStart = function (source, at) {
+            var start = source.lastIndexOf('\n', at - 1) + 1;
+            while (start > 0 && at - start < 8192) {
+                var previous = source.lastIndexOf('\n', start - 2) + 1;
+                if (/^[ \t\r]*$/.test(source.slice(previous, start - 1))) break;
+                start = previous;
+            }
+            return start;
+        };
+        var paragraphEnd = function (source, at) {
+            var blank = /\n[ \t\r]*(?:\n|$)/g;
+            blank.lastIndex = at;
+            var found = blank.exec(source);
+            return Math.min(found ? found.index : source.length, at + 8192);
+        };
+        // An escaped opener opens nothing: `x \*a*{.q}` is text.
+        var bareRunEnds = function (source, rule, from, to) {
+            var ends = [];
+            rule.lastIndex = from;
+            for (var run; (run = rule.exec(source)) && run.index < to;) {
+                var opener = run.index + (rule.guarded ? run[1].length : 0);
+                var slashes = 0;
+                while (source.charAt(opener - 1 - slashes) === '\\') slashes++;
+                if (slashes % 2) rule.lastIndex = opener + 1;
+                else ends.push(run.index + run[0].length);
+            }
+            return ends;
+        };
+        var runEnds = { source: null, windows: null };
+        var runRules = null;
+        var closesBareRun = function (source, at) {
+            if (runEnds.source !== source) runEnds = { source: source, windows: new Map() };
+            var from = paragraphStart(source, at);
+            var key = from + ':' + paragraphEnd(source, at);
+            if (!runEnds.windows.has(key)) {
+                runRules = runRules || ['bold', 'bold-italic', 'italic', 'underline', 'strike', 'highlight'].map(function (name) {
+                    var rule = RegExp(inline[name].pattern.source, inline[name].pattern.flags.replace('g', '') + 'g');
+                    rule.guarded = inline[name].lookbehind === true;
+                    return [name, rule];
+                });
+                runEnds.windows.set(key, new Set([].concat.apply([], runRules.map(function (entry) {
+                    return bareRunEnds(source, entry[1], from, +key.split(':')[1]).map(function (end) { return entry[0] + ':' + end; });
+                }))));
+            }
+            var ends = runEnds.windows.get(key);
+            return bareRunRules[source.charAt(at - 1)].some(function (name) { return ends.has(name + ':' + at); });
+        };
         var memo = { source: null, hosts: null };
         // 'span', 'other', or null when the `}` before `at` closes nothing attached.
         var hostOf = function (source, at) {
@@ -269,6 +320,8 @@
             return memo.hosts.get(at);
         };
         var findHost = function (source, at) {
+            // The `=` of a header cell marker (`|={.c}`) is no delimiter.
+            if (bareRunRules[source.charAt(at - 1)] && !/^\|=$/.test(source.slice(at - 2, at))) return closesBareRun(source, at) ? 'other' : null;
             if (source.charAt(at - 1) !== '}') return source.charAt(at - 1) === ']' && closesSpan(source, at) ? 'span' : 'other';
             var brace = blockOpener(source, at - 1);
             if (brace !== -1) {
