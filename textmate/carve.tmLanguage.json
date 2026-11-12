@@ -4441,35 +4441,44 @@
     },
     "block_comment_on_quote_marker_line": {
       "comment": "A COMMENT FENCE MAY OPEN ON A BLOCK-QUOTE MARKER LINE (`> %%%`) too, and the same rule hides its body: spec PART 9 section 24 S2 with section 28 make a comment's body verbatim and invisible WHEREVER the fence sits (corpus 70-blocks-that-render-to-nothing - `> q` / `> %%%` / `> x` / `> %%%` / `> body` renders the quote with `q` and `body` only, carve-grammars#245). `#block_comment` cannot reach it: its begin allows only whitespace before the run, so all three lines fell through to `#blockquote` and scoped as plain quote with nothing marked hidden. This rule leads `#blockquote` at every site that includes it, and the marker run is capture 1 so it keeps its quote scope - tree-sitter-carve splits it the same way, with the `fenced_comment_block` inside the quote's `content` beside the `block_quote_marker`. The end has TWO branches. The first is the closer, which repeats the opener's MARKER RUN as well as its fence width, so a fence opened at `> > ` is not closed at `> `. The second is a zero-width quote boundary: an UNMARKED line is where the quote can end, and the engine degrades an unclosed opener to a line comment rather than hiding anything (`> %%%` / `> c` / blank line leaves `c` VISIBLE). Unlike the Prism and highlight.js grammars this one cannot demand the closer up front - a TextMate begin sees one line - so an unclosed opener still hides the rest of its own quote here; the boundary branch is what keeps that from reaching the document below it. Anchored at COLUMN 0 for the same reason `#blockquote` is (carve-grammars#138): an indented marker at the top level is literal text, `  > %%%` renders `<p>&gt; ...</p>` against the pinned engine, so `#block_comment_on_quote_marker_line_in_container` takes over inside a container.",
-      "begin": "^(?:\\A\\x{FEFF})?((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "begin": "^(?:\\A\\x{FEFF})?(>)((?: >)*) [ \\t]*(%{3,})(?!%)[^\\n]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^\\1\\2(?!%)[^\\n]*$|^(?!>)",
+      "end": "^(?![ \\t]*>\\2 [ \\t]*>)(?:[ \\t]*>(?= ))*[ \\t]*\\3(?!%)[^\\n]*$|^(?![ \\t]*>\\2(?: |[ \\t]*$))",
       "name": "comment.block.carve"
     },
     "block_comment_on_quote_marker_line_in_container": {
       "comment": "The in-container form of `#block_comment_on_quote_marker_line` - see there for what it pins and why. Leading whitespace is the container's own indent, so it is allowed here and only here, exactly as `#blockquote_in_container` splits from `#blockquote`. Reached from `#container_blocks`, whose `end` has already established that an indented line inside the container sits at or beyond the item's content column.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)((?: >)*) [ \\t]*(%{3,})(?!%)[^\\n]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
+      "end": "^(?![ \\t]*>\\2 [ \\t]*>)(?:[ \\t]*>(?= ))*[ \\t]*\\3(?!%)[^\\n]*$|^(?![ \\t]*>\\2(?: |[ \\t]*$))",
       "name": "comment.block.carve"
     },
     "block_comment_on_quote_on_marker_line": {
       "comment": "A COMMENT FENCE MAY OPEN ON A QUOTE THAT ITSELF OPENED ON A LIST ITEM'S MARKER LINE (`- > %%%`). carve-grammars#246 left this shape out on the ground that a shape one grammar handles and two do not is drift, and Prism and highlight.js reach it now, so the reason has inverted (carve-grammars#259). Anchored on \\\\G rather than ^, exactly as `#block_comment_on_marker_line` is and for the same reason: \\\\G matches at the current scan position, which on a marker line is where the marker ended, and vscode-textmate resets it on every following line so this can never open one. The `(?<=[ \\\\t])` guard keeps it to a marker line specifically - a later match on the same line moves the \\\\G anchor too. It LEADS `#blockquote_on_marker_line` in `#container_blocks`, which would otherwise take the same position and leave the fence to `#trailing_comment` as a LINE comment, with the hidden body coming back as live syntax. The end is `#block_comment_on_quote_marker_line`'s, unchanged: the closer repeats the opener's marker run and fence width, and the second branch is a zero-width quote boundary so an unclosed opener cannot reach the document below.",
-      "begin": "\\G(?<=[ \\t])((?:> )+)(%{3,})(?!%)[^\\n]*$",
+      "begin": "\\G(?<=[ \\t])(>)((?: >)*) [ \\t]*(%{3,})(?!%)[^\\n]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^[ \\t]*\\1\\2(?!%)[^\\n]*$|^(?![ \\t]*>)",
+      "end": "^(?![ \\t]*>\\2 [ \\t]*>)(?:[ \\t]*>(?= ))*[ \\t]*\\3(?!%)[^\\n]*$|^(?![ \\t]*>\\2(?: |[ \\t]*$))",
       "name": "comment.block.carve"
     },
     "quoted_blocks_on_marker_line": {
@@ -4477,7 +4486,7 @@
       "patterns": [
         {
           "comment": "A fence opened in a quote on a list item's marker line (`- > ````); its body lines carry the quote prefix at the item's indent (carve-grammars#849).",
-          "begin": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "\\G(?<=[ \\t])(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -4485,14 +4494,14 @@
             "2": {
               "name": "punctuation.definition.quote.carve"
             },
-            "3": {
+            "4": {
               "name": "punctuation.definition.fenced.carve"
             },
-            "4": {
+            "5": {
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?![ \\t]*>\\2(?: |[ \\t]*$))|^[ \\t]*(>)(\\2) (?:\\3|(?!\\3) *)(\\4(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -5869,7 +5878,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -5877,14 +5886,14 @@
             "2": {
               "name": "punctuation.definition.quote.carve"
             },
-            "3": {
+            "4": {
               "name": "punctuation.definition.fenced.carve"
             },
-            "4": {
+            "5": {
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?![ \\t]*>\\2(?: |[ \\t]*$))|^[ \\t]*(>)(\\2) (?:\\3|(?!\\3) *)(\\4(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -6149,7 +6158,7 @@
           ]
         },
         {
-          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^[ \\t]*(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -6157,14 +6166,14 @@
             "2": {
               "name": "punctuation.definition.quote.carve"
             },
-            "3": {
+            "4": {
               "name": "punctuation.definition.fenced.carve"
             },
-            "4": {
+            "5": {
               "name": "fenced_code.block.language.carve"
             }
           },
-          "end": "^(?![ \\t]*>)|^[ \\t]*(>) (\\2)(\\3(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
+          "end": "^(?![ \\t]*>\\2(?: |[ \\t]*$))|^[ \\t]*(>)(\\2) (?:\\3|(?!\\3) *)(\\4(?:(?<=`)`|(?<=~)~)*)[ \\t]*$",
           "endCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
