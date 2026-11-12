@@ -1561,6 +1561,12 @@
      * @param {function(object): boolean} test - which fences to match.
      * @returns {RegExp} the matcher, for a greedy rule.
      */
+    var containerFenceOpener = RegExp('^(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$');
+    function lineEndAt(text, at) {
+        var stop = /[\r\n]/g;
+        stop.lastIndex = at;
+        return stop.exec(text) ? stop.lastIndex - 1 : text.length;
+    }
     function containerFenceMatcher(test) {
         var matcher = /(?:)/g;
         matcher.exec = function (text) {
@@ -1570,6 +1576,8 @@
             for (var n = firstAtOrAfter(lines.fenceStarts, this.lastIndex); n < runs.length; n++) {
                 var run = runs[n];
                 if (run.depth === 0 || !test(run)) continue;
+                // A code run opens only on a whole opener line; `  ```{x}` is a span.
+                if (run.ch !== '%' && !containerFenceOpener.test(text.slice(run.at, lineEndAt(text, run.at)))) continue;
                 var start = run.at;
                 var line = start;
                 while (line > 0 && text.charAt(line - 1) !== '\n' && text.charAt(line - 1) !== '\r') line--;
