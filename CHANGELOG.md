@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixes
+
+- highlight.js no longer scopes a list marker as a bullet under a `: x` paragraph line that no `::` term reaches, including in a quote opened behind a list marker (`- > - w`) (#885).
+
 ## [0.1.23] - 2026-11-12
 
 The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 0.1.16 as the editor engine.

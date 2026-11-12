@@ -1473,6 +1473,23 @@
         }
         return memo;
     };
+    // Whether a `:: ` term reaches the `: ` line at `start`, so it is a
+    // description; with none above it is paragraph text.
+    const termAbove = (input, start) => {
+        let at = previousLineStart(input, start);
+        // Three blank lines end the list.
+        for (let walked = 0, blanks = 0; at !== -1 && walked < 64; walked++) {
+            const line = lineAt(input, at);
+            if (/^\uFEFF?[ \t]*:: /.test(line)) return true;
+            const above = previousLineStart(input, at);
+            const blank = lineKind(line) === 'blank';
+            blanks = blank ? blanks + 1 : 0;
+            const lazy = /^\uFEFF?[^ \t\r\n]/.test(line) && above !== -1 && lineKind(lineAt(input, above)) !== 'blank';
+            if (blanks >= 3 || !(blank || /^\uFEFF?(?:[ \t]|: )/.test(line) || lazy)) return false;
+            at = above;
+        }
+        return false;
+    };
     // Whether the paragraph holding line `start` sits outside any list item:
     // it opens at column 0 on a line that is no item, and no `+` above it
     // attaches it to one. Inside an item a marker interrupts a paragraph.
@@ -1494,7 +1511,8 @@
                 let attach = above;
                 while (attach !== -1 && /^[ \t]*\{[^{}]*\}[ \t]*$/.test(lineAt(input, attach))) attach = previousLineStart(input, attach);
                 // A description body holds its paragraph like an item does.
-                kind = lineKind(line) === 'text' && !/^\uFEFF?(?:[ \t]|: )/.test(line)
+                kind = lineKind(line) === 'text' && !/^\uFEFF?[ \t]/.test(line)
+                    && !(/^\uFEFF?: /.test(line) && termAbove(input, at))
                     && !(attach !== -1 && /^\+[ \t]*$/.test(lineAt(input, attach)));
                 break;
             }
@@ -1526,7 +1544,12 @@
             if (at === -1) break;
             const line = lineAt(m.input, at);
             // A deeper marker line opens a quote of its own.
-            if (depth(line) < depth(ownLine)) break;
+            if (depth(line) < depth(ownLine)) {
+                // The quote's first line, behind an item marker (`- > :: t`).
+                const opener = line.replace(/^\uFEFF?[ \t]*(?:(?:[-*]|\d{1,9}[.)]) +)+/, '');
+                if (depth(opener) === depth(ownLine)) lines.unshift(strip(opener));
+                break;
+            }
             lines.unshift(strip(line));
         }
         const input = lines.join('\n');
