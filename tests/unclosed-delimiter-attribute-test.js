@@ -24,6 +24,7 @@ const rows = [
     ['x ~a~ b~{.q}', false],
     // TextMate reads no block a `}` closes (carve-grammars#847 left it out).
     ['a*{.q}{#i}', false, ['textmate']],
+    ['x \\*a*{.q}', false],
     ['*a*{.q}', true],
     ['/a/{.q}', true],
     ['_a_{.q}', true],
@@ -33,6 +34,10 @@ const rows = [
     ['*/a/*{.q}', true],
     ['x *a b*{.q} z', true],
     ['*a*{.q}{#i}', true],
+    // An escape or a code span holding the delimiter does not close the run.
+    ['*a \\* b*{.q}', true],
+    ['_a \\_ b_{.q}', true],
+    ['*a `x*y` b*{.q}', true],
 ];
 
 const surfaces = [
