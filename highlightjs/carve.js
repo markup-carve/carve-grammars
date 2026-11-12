@@ -218,6 +218,8 @@
             end: new RegExp(`${d}\\}`),
         };
     };
+    // A whole bare run per delimiter, for a block glued to its closer (carve-grammars#867).
+    const BARE_RUNS = [];
     const bare = (d, opener) => {
         const opaque = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE, sameKindAtoms(d) + '|' + bracedSource(BRACED_KINDS.filter((kind) => kind !== d)));
         // Keep the whitespace and letter cases disjoint for repeated `*a`.
@@ -228,6 +230,7 @@
         // Tempered on disjoint non-closer cases, so a failure costs one pass.
         const precheck = `(?:[^${d}\\n]|${d === '=' ? '[>!]=|<=(?![=>])|' : ''}\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})){0,4096}${bareCloser(d)}`;
         opener = new RegExp(`${opener.source}(?=${precheck})`);
+        BARE_RUNS.push([d.replace('\\', ''), new RegExp(`${opener.source}${atom}{1,4096}?${bareCloser(d)}`, 'g')]);
         return {
             begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?${bareCloser(d)})`),
             // A lookbehind in `end` never matches in highlight.js, so a delimiter
@@ -479,7 +482,30 @@
         if (!hostMemo.hosts.has(at)) hostMemo.hosts.set(at, findAttributeHost(source, at));
         return hostMemo.hosts.get(at);
     };
+    // A block glued to a bare delimiter needs a run of that kind to close there:
+    // `a*{.q}` and `x _a_ b_{.q}` are text (carve-grammars#867). A run crosses
+    // one soft break, so the scan starts at the line above.
+    let runEnds = { source: null, windows: null };
+    const closesBareRun = (source, at) => {
+        if (runEnds.source !== source) runEnds = { source, windows: new Map() };
+        const line = source.lastIndexOf('\n', at - 1);
+        const from = Math.max(line === -1 ? 0 : source.lastIndexOf('\n', line - 1) + 1, at - 8192);
+        let to = source.indexOf('\n', at);
+        if (to === -1) to = source.length;
+        const key = from + ':' + to;
+        if (!runEnds.windows.has(key)) {
+            const found = new Set();
+            for (const [d, rule] of BARE_RUNS) {
+                rule.lastIndex = from;
+                for (let run; (run = rule.exec(source)) && run.index < to;) found.add(d + (run.index + run[0].length));
+            }
+            runEnds.windows.set(key, found);
+        }
+        return runEnds.windows.get(key).has(source[at - 1] + at);
+    };
     const findAttributeHost = (source, at) => {
+        // The `=` of a header cell marker (`|={.c}`) is no delimiter.
+        if (/[*/_~=]/.test(source[at - 1] ?? '') && source.slice(at - 2, at) !== '|=') return closesBareRun(source, at) ? 'other' : null;
         if (source[at - 1] !== '}') return source[at - 1] === ']' && closesSpan(source, at) ? 'span' : 'other';
         const brace = blockOpener(source, at - 1);
         if (brace !== -1) {

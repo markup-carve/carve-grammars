@@ -261,6 +261,33 @@
             var open = bracketOpener(source, at);
             return open !== -1 && source.charAt(open + 1) !== '^' && !(source.charAt(open - 1) === ']' && bracketOpener(source, open) !== -1);
         };
+        // A block glued to a bare delimiter needs a run of that kind to close
+        // there: `a*{.q}` and `x _a_ b_{.q}` are text (carve-grammars#867). A run
+        // crosses one soft break, so the scan starts at the line above.
+        var bareRunRules = { '*': ['bold', 'bold-italic'], '/': ['italic', 'bold-italic'], '_': ['underline'], '~': ['strike'], '=': ['highlight'] };
+        var runEnds = { source: null, windows: null };
+        var runRules = null;
+        var closesBareRun = function (source, at) {
+            if (runEnds.source !== source) runEnds = { source: source, windows: new Map() };
+            var line = source.lastIndexOf('\n', at - 1);
+            var from = Math.max(line === -1 ? 0 : source.lastIndexOf('\n', line - 1) + 1, at - 8192);
+            var to = source.indexOf('\n', at);
+            if (to === -1) to = source.length;
+            var key = from + ':' + to;
+            if (!runEnds.windows.has(key)) {
+                runRules = runRules || ['bold', 'bold-italic', 'italic', 'underline', 'strike', 'highlight'].map(function (name) {
+                    return [name, RegExp(inline[name].pattern.source, inline[name].pattern.flags.replace('g', '') + 'g')];
+                });
+                var found = new Set();
+                runRules.forEach(function (entry) {
+                    entry[1].lastIndex = from;
+                    for (var run; (run = entry[1].exec(source)) && run.index < to;) found.add(entry[0] + ':' + (run.index + run[0].length));
+                });
+                runEnds.windows.set(key, found);
+            }
+            var ends = runEnds.windows.get(key);
+            return bareRunRules[source.charAt(at - 1)].some(function (name) { return ends.has(name + ':' + at); });
+        };
         var memo = { source: null, hosts: null };
         // 'span', 'other', or null when the `}` before `at` closes nothing attached.
         var hostOf = function (source, at) {
@@ -269,6 +296,8 @@
             return memo.hosts.get(at);
         };
         var findHost = function (source, at) {
+            // The `=` of a header cell marker (`|={.c}`) is no delimiter.
+            if (bareRunRules[source.charAt(at - 1)] && !/^\|=$/.test(source.slice(at - 2, at))) return closesBareRun(source, at) ? 'other' : null;
             if (source.charAt(at - 1) !== '}') return source.charAt(at - 1) === ']' && closesSpan(source, at) ? 'span' : 'other';
             var brace = blockOpener(source, at - 1);
             if (brace !== -1) {
