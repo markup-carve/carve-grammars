@@ -271,6 +271,8 @@ const TEXTMATE = [
     ['    :: t\n\t: e\n', true],
     ['  :: t\n\t: e\n', true],
     ['\t:: t\n\t  : e\n', true],
+    // Past the stops the begin rule counts, the indent is still compared as spelled.
+    [`${'\t'.repeat(9)}:: t\n${'\t'.repeat(9)}: e\n`, true],
 ];
 for (const [source, marker] of TEXTMATE) {
     const scoped = /punctuation\.definition\.list\.definition/.test(scopeAt(tm(source), source.lastIndexOf(':')));
