@@ -69,6 +69,20 @@ check('a marker that opens a list or the next item stays a bullet', () => {
     }
 });
 
+// carve-grammars#885: a `: ` line opens a description only under a term.
+const PARAGRAPH_COLON = [': x\n- a\n', ': x\n- a\nmore\n', '# h\n: x\n- a\n', ':: t\n\npara\n\n: x\n- a\n', '> q\n\n: x\n- a\n'];
+const DESCRIPTION_COLON = [':: t\n: x\n- a\n', ':: t\n\n: x\n- a\n', ':: t\n: d\n\n\n: x\n- a\n', ':: t\n: d\nlazy\n\n: x\n- a\n', ':: t\n: d\n  more\n\n: x\n- a\n'];
+check('a marker under a `: ` paragraph line with no term above is text', () => {
+    for (const source of PARAGRAPH_COLON) {
+        assert.doesNotMatch(carveToHtml(source), /<li>a\b/, `engine: ${JSON.stringify(source)}`);
+        assert.ok(!hljsTokens(source).some((t) => t.scope === 'bullet'), `hljs: ${JSON.stringify(source)}`);
+    }
+    for (const source of DESCRIPTION_COLON) {
+        assert.match(carveToHtml(source), /<li>a\b/, `engine: ${JSON.stringify(source)}`);
+        assert.equal(hljsTokens(source).filter((t) => t.scope === 'bullet').length, 1, `hljs: ${JSON.stringify(source)}`);
+    }
+});
+
 console.log('captions:');
 const NO_HOST = ['para text\n^ not caption\n', '- item\n^ no\n', '# H\n^ no\n', '::: note\nx\n:::\n^ no\n', '^ no\n', 'text\n![a](b.png)\n^ no\n', 'text\n$$`x`\n^ no\n'];
 const HOSTED = ['![a](b.png)\n^ cap\n', '| a |\n^ cap\n', '```\nc\n```\n^ cap\n', '> q\n^ cap\n', '$$`x`\n^ cap\n', '![a](b.png)\n\n^ cap\n', '::: figure\n![a](b)\n:::\n^ cap\n', '::: >\nq\n:::\n^ cap\n'];
