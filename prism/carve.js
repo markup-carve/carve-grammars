@@ -2537,7 +2537,7 @@
                                 'punctuation': /^ (?:`{3,}|~{3,})/,
                             },
                         },
-                        { pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>)[^\r\n]+(?=(?:\r\n?|\n))/, lookbehind: true },
+                        { pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>)(?! >)[^\r\n]+(?=[\r\n]|$)/, lookbehind: true },
                     ],
                     'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
                 },
@@ -3448,13 +3448,30 @@
     delimiterInside['string'] = { pattern: /"[^"\r\n]*"/, inside: { 'title-text': runBetween('^"', '"$'), 'punctuation': /"/ } };
     delimiterInside['symbol'] = { pattern: /\[[^\]\r\n]*\]/, inside: { 'label-text': runBetween('^\\[', '\\]$'), 'punctuation': /\[|\]/ } };
 
+    // A quoted line's code, math and literal spans stay verbatim
+    // (carve-grammars#858), ahead of the inline rules.
+    var quotedInline = Object.assign({ 'escape': Prism.languages.carve['escape'] }, inline);
+    var quotedRun = Object.assign(lineVerbatim(), quotedInline);
+    // The same spans in a token that holds only paragraph lines: they cross
+    // its lines, and the quote prefixes inside them are punctuation.
+    function quotedSpans() {
+        const prefix = { 'punctuation': { pattern: /((?:\r\n?|\n))[ \t]*>(?: >)*/, lookbehind: true } };
+        return ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
+            set[name] = [].concat(Prism.languages.carve[name]).map(function (entry) {
+                const source = entry.pattern.source.split(unpartneredTail).join('[\\s\\S]*').split('(?!' + quoteOpener + ')').join('');
+                return Object.assign({}, entry, { pattern: RegExp(source, entry.pattern.flags), greedy: false, inside: prefix });
+            });
+
+            return set;
+        }, {});
+    }
     // A quoted line's heading and list markers scope as they do outside a quote
     // (carve-grammars#683), matching what follows the `> ` prefix once
     // 'punctuation' has taken it, nested prefixes included. They go ahead of
     // the inline rules, as at the top level.
     {
         const quoteLine = Prism.languages.carve.blockquote[Prism.languages.carve.blockquote.length - 1];
-        const rest = { ...quoteLine.inside };
+        const rest = Object.assign({}, quotedRun, quoteLine.inside);
         delete rest.punctuation;
         quoteLine.inside = Object.assign({
             // A `>` glued to a `+` is text (`> >+`, markup-carve/carve#3421).
@@ -3533,7 +3550,7 @@
             'definition-term': {
                 pattern: /^(?<![^\r\n])::(?= +[^ \t\r\n])[^\r\n]*/m,
                 alias: 'title',
-                inside: Object.assign({ 'punctuation': /^::/ }, inline),
+                inside: Object.assign({ 'punctuation': /^::/ }, quotedRun),
             },
             'nested-quote': {
                 pattern: /^(?<![^\r\n])>(?: >)*(?= +\*\[[A-Za-z0-9]+\]: +[^ \t\r\n])/m,
@@ -3578,7 +3595,7 @@
                 'definition-term': {
                     pattern: /(?=::)(?<=(?<![^\r\n])\uFEFF?[ \t]*(?:>(?: ?>)*)?[ \t]*)::[^\r\n]*/,
                     alias: 'title',
-                    inside: Object.assign({ 'punctuation': /^::/ }, inline),
+                    inside: Object.assign({ 'punctuation': /^::/ }, quotedRun),
                 },
                 'punctuation': [
                     { pattern: entryMarkerMatcher('(?:\\uFEFF?[ \\t]*>(?: ?>)*)?[ \\t]*', true), greedy: true },
@@ -3586,9 +3603,12 @@
                 ],
                 'list': head.list,
                 'abbreviation-definition': quotedAbbreviation,
-            }, inline),
+            }, quotedRun),
         });
     }
+
+    // [content width, lookbehind source for the marker before it], filled below.
+    var quoteMarkerWidths = [];
 
     // A quoted line block's body is inline text behind its prefix
     // (carve-grammars#853), ahead of the quoted colon container. An unclosed
@@ -3615,16 +3635,49 @@
                         inside: { 'punctuation': /:{3,}/ },
                     },
                 ],
+            }, quotedSpans(), {
                 'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >(?= |$))*/m,
-            }, inline),
+                'comment': Prism.languages.carve.comment,
+            }, quotedInline),
         });
-        // A quote opened on a list item's marker line: 'list' has taken the
-        // marker, so the block starts its own fragment, which a greedy pattern
-        // cannot see (carve-grammars#849).
-        quote.splice(1, 0, ...[quote[0], quote[1]].map((rule) => ({
-            pattern: RegExp(rule.pattern.source.replace('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?', '(?<![\\s\\S])'), 'm'),
-            inside: rule.inside,
-        })));
+        // A quote opened on a list item's marker line (carve-grammars#849):
+        // 'list' has taken the marker, which the lookbehind reads (group 1 is
+        // the item's indent). Its lines stand at the item's content column; a
+        // line left of it ends the item (carve-grammars#859).
+        // A description's `: ` marker holds them too; a term above it is no
+        // paragraph (carve-grammars#859).
+        const widths = quoteMarkerWidths;
+        widths.push([2, '(?<=(?<![^\\r\\n])::? [^\\r\\n]*(?:\\r\\n?|\\n))(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*): ']);
+        const byWidth = {};
+        for (const form of markerCodeForms) (byWidth[form[1]] = byWidth[form[1]] || []).push(form[0]);
+        for (const width of Object.keys(byWidth)) {
+            widths.push([width, notParagraphContinuation + '(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(?:' + byWidth[width].join('|') + ')']);
+        }
+        const head = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+        const behindMarker = (rule) => widths.map(([width, marker]) => {
+            const source = rule.pattern.source.replace(/(?<!\\)\\([1-9])/g, (m, n) => '\\' + (Number(n) + 1));
+            if (!source.startsWith(head)) throw new Error('quote fence rule changed shape');
+            return {
+                pattern: RegExp('(?<=' + marker + ')'
+                    + source.slice(head.length).split('(?:\\r\\n?|\\n)[ \\t]*\\2').join('(?:\\r\\n?|\\n)\\1 {' + width + '}[ \\t]*\\2'), 'm'),
+                greedy: true,
+                inside: rule.inside,
+            };
+        });
+        quote.splice(1, 0, ...behindMarker(quote[0]), ...behindMarker(quote[1]));
+        // An unclosed code fence ends with the quote (carve-grammars#859). It
+        // comes after the blocks whose payload may hold a fence line.
+        const closer = '(?:\\r\\n?|\\n)[ \\t]*\\1 \\2\\3*[ \\t]*$(?![^\\r\\n])';
+        if (!quote[0].pattern.source.endsWith(closer)) throw new Error('quote fence rule changed shape');
+        // At column 0 only: an indented quote line's host is not in view.
+        const unclosed = {
+            pattern: RegExp(quote[0].pattern.source.slice(0, -closer.length).replace(/\*\?$/, '*') + '(?![^\\r\\n])(?!(?:\\r\\n?|\\n)[ \\t]*\\1(?: [^\\r\\n]*|\\r)?(?![^\\r\\n]))', 'm'),
+            greedy: true,
+            inside: quote[0].inside,
+        };
+        quote.splice(quote.length - 1, 0, Object.assign({}, unclosed, {
+            pattern: RegExp(unclosed.pattern.source.replace(head, head.slice(0, -'[ \\t]*'.length)), 'm'),
+        }), ...behindMarker(unclosed));
     }
 
     // A quoted paragraph holds the quoted list-marker lines below it as text:
@@ -3646,11 +3699,39 @@
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)>((?: >)*) [ \\t]*(?!' + opener + ')[^ \\t\\r\\n>][^\\r\\n]*'
                 + '(?:' + line + '){0,64}?' + markerLine + '(?:' + line + ')*', 'm'),
             greedy: true,
-            inside: Object.assign({
+            inside: Object.assign(quotedSpans(), {
                 'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*>(?: >)*/m,
                 'comment': Prism.languages.carve.comment,
-            }, inline),
+            }, quotedInline),
         });
+        // A code, math or literal span left open on a quoted paragraph line
+        // runs over the lines that continue the paragraph, to its closer or
+        // to the paragraph's end (carve-grammars#858). Group 3 steps over the
+        // spans the line closes itself, group 4 is the open run.
+        const notCloser = '(?:[^`\\r\\n]|(?!(?<!`)\\4(?!`))`)';
+        const quoteLine = quote[quote.length - 1];
+        const spanInside = Object.assign(quotedSpans(), { 'punctuation': quoteLine.inside.punctuation, 'comment': Prism.languages.carve.comment });
+        for (const name of Object.keys(quoteLine.inside)) if (!(name in spanInside)) spanInside[name] = quoteLine.inside[name];
+        // A `$$` line opens a math block, which this token reads as math too.
+        const spanOpener = opener.replace('|\\$\\$`', '');
+        // At the line start (group 1 the indent), or behind an item marker,
+        // whose lines stand at its content column.
+        // An item's own paragraph ends at a sibling marker line.
+        const openSpan = (start, indent, item) => ({
+            pattern: RegExp((start + '>((?: >)*) [ \\t]*' + (item ? '(?=' + marker + ')(?![^ \\t\\r\\n]+(?: +\\[.\\])? +(?:`{3,}|~{3,}))' : '(?!' + spanOpener + ')') + '(?=[^ \\t\\r\\n>])(?=[^\\r\\n`]*`)'
+                + '(?:(?!(?<=[ \\t])%%)[^\\r\\n`\\\\]|\\\\[^\\r\\n]|(?<!`)(`{1,16})(?!`)(?:[^\\r\\n`]|(?!(?<!`)\\3(?!`))`)*(?<!`)\\3(?!`))*?'
+                + '(?<!`)(`{1,16})(?!`)' + notCloser + '*CONT(?:' + notCloser + '|CONT)*?'
+                + '(?:(?<!`)\\4(?!`)[^\\r\\n]*|$(?![^\\r\\n])(?!CONT))').split('CONT').join(
+                '(?:\\r\\n?|\\n)' + indent + '[ \\t]*>(?!\\2 >)(?: >)* [ \\t]*(?!' + breaks + (item ? '|' + marker : '') + ')(?=[^ \\t\\r\\n>])'), 'm'),
+            // An item line's span stays in its own string: greedy, every match
+            // here re-runs the earlier rules over the rest of the document.
+            greedy: !item || start[0] !== '^',
+            inside: spanInside,
+        });
+        for (const item of [true, false]) {
+            quote.splice(quote.length - 1, 0, openSpan('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)', '\\1', item),
+                ...quoteMarkerWidths.map(([width, host]) => openSpan('(?<=' + host + ')', '\\1 {' + width + '}', item)));
+        }
     }
 
     // A term's lazy lines and a description's body are inline runs, read with

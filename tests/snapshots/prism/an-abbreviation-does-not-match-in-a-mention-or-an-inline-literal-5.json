@@ -37,7 +37,11 @@
   },
   {
     "type": "blockquote",
-    "text": " q !`A`"
+    "text": " q "
+  },
+  {
+    "type": "blockquote>literal>string",
+    "text": "!`A`"
   },
   {
     "type": "text",

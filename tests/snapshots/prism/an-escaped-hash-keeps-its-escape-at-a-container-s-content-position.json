@@ -5,7 +5,15 @@
   },
   {
     "type": "blockquote",
-    "text": " \\# heading"
+    "text": " "
+  },
+  {
+    "type": "blockquote>escape>constant",
+    "text": "\\#"
+  },
+  {
+    "type": "blockquote",
+    "text": " heading"
   },
   {
     "type": "text",
@@ -25,7 +33,15 @@
   },
   {
     "type": "blockquote",
-    "text": " C\\# is a language"
+    "text": " C"
+  },
+  {
+    "type": "blockquote>escape>constant",
+    "text": "\\#"
+  },
+  {
+    "type": "blockquote",
+    "text": " is a language"
   },
   {
     "type": "text",
