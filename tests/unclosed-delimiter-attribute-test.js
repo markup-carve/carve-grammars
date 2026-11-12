@@ -38,6 +38,8 @@ const rows = [
     ['*a \\* b*{.q}', true],
     ['_a \\_ b_{.q}', true],
     ['*a `x*y` b*{.q}', true],
+    ['\\*/a/{.q}', true],
+    [`_${'a'.repeat(1100)}_{.q}`, true],
 ];
 
 const surfaces = [

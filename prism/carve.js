@@ -285,7 +285,7 @@
             var ends = [];
             rule.lastIndex = from;
             for (var run; (run = rule.exec(source)) && run.index < to;) {
-                var opener = run.index + run[0].search(/[*\/_~=]/);
+                var opener = run.index + (rule.guarded ? run[1].length : 0);
                 var slashes = 0;
                 while (source.charAt(opener - 1 - slashes) === '\\') slashes++;
                 if (slashes % 2) rule.lastIndex = opener + 1;
@@ -301,7 +301,9 @@
             var key = from + ':' + paragraphEnd(source, at);
             if (!runEnds.windows.has(key)) {
                 runRules = runRules || ['bold', 'bold-italic', 'italic', 'underline', 'strike', 'highlight'].map(function (name) {
-                    return [name, RegExp(inline[name].pattern.source, inline[name].pattern.flags.replace('g', '') + 'g')];
+                    var rule = RegExp(inline[name].pattern.source, inline[name].pattern.flags.replace('g', '') + 'g');
+                    rule.guarded = inline[name].lookbehind === true;
+                    return [name, rule];
                 });
                 runEnds.windows.set(key, new Set([].concat.apply([], runRules.map(function (entry) {
                     return bareRunEnds(source, entry[1], from, +key.split(':')[1]).map(function (end) { return entry[0] + ':' + end; });
