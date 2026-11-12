@@ -1151,7 +1151,12 @@ export function serializeToCarve(doc, options = {}) {
                 const marker = cell.attrs?.carveSpanMarker || null;
                 const segments = segmentsOf(cell);
                 owners.push({ row: rowIndex, col, colspan, rowspan, marker, segments });
-                if (marker) out.push({ header, content: marker, spanMarker: true });
+                if (marker) out.push({
+                    header, content: marker, spanMarker: true,
+                    align: cell.attrs?.textAlign || null,
+                    valign: cell.attrs?.carveVerticalAlign || null,
+                    attrs: cell.attrs,
+                });
                 else out.push({
                     header,
                     content: cellText(segments[0].nodes),

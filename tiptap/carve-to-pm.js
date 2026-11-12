@@ -957,6 +957,7 @@ function convertTableCore(node, ctx) {
                     origin.attrs.carveCoverMarkers.push(markers);
                 }
                 origin.attrs.rowspan = (origin.attrs.rowspan || 1) + 1;
+                for (const marker of [cell, ...covered]) noteMergedMarker(marker, ctx);
                 for (let k = 0; k < width; k++) grid[col + k] = origin;
                 continue;
             }
@@ -967,6 +968,7 @@ function convertTableCore(node, ctx) {
                     continue;
                 }
                 origin.attrs.colspan = (origin.attrs.colspan || 1) + 1;
+                noteMergedMarker(cell, ctx);
                 grid[col] = origin;
                 continue;
             }
@@ -999,11 +1001,24 @@ function convertTableCore(node, ctx) {
 
 function orphanSpanCell(cell, marker, ctx) {
     const content = (cell.children || []).length ? convertInline(cell.children, ctx, true) : [];
+    const attrs = { ...(convertAttrs(cell.attrs) || {}), carveSpanMarker: marker };
+    if (cell.align) attrs.textAlign = cell.align;
+    if (cell.valign) attrs.carveVerticalAlign = cell.valign;
     return {
         type: cell.header ? 'tableHeader' : 'tableCell',
-        attrs: { carveSpanMarker: marker },
+        attrs,
         content: [content.length ? { type: 'paragraph', content } : { type: 'paragraph' }],
     };
+}
+
+// A marker merged into its origin's span leaves no cell, so its own content,
+// alignment, attributes or header flag have nowhere to go (as carve-rs reports).
+function noteMergedMarker(cell, ctx) {
+    const content = (cell.children || []).some(child => child.type !== 'text' || (child.value || '').trim());
+    if (cell.header || cell.align || cell.valign || convertAttrs(cell.attrs) || content) {
+        record(ctx, 'degraded', 'table_cell',
+            "a span marker's own content, alignment, attributes or header flag have no slot once it merges into a colspan or rowspan");
+    }
 }
 
 function convertInline(nodes, ctx, tableCell = false) {
