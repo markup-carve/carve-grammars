@@ -29,6 +29,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 - An abbreviation definition in a description body, on its `: ` line too, is scoped as a definition in all three grammars instead of bold (TextMate) or text (#842).
 - A standalone attribute line wraps only onto a non-blank line indented past its `{`: Prism and highlight.js no longer scope `{.a` over a flush-left `.b}` or across a blank line, and TextMate ends the run there (#843).
 - Prism and highlight.js compare an attribute line's continuation with its `{` by column, tabs expanded to stops of 4, so a mixed tab-and-space indent reads as in the engine (#846).
+- Prism and highlight.js attach a block glued to `}` only when that `}` closes forced emphasis or an attached block, so `{.b}` after a refused wrapped run, a literal `}`, a substitution or a critic comment stays text (#847, #863).
 - TextMate opens a definition list whose term is on a list item's marker line (`- :: t`), with its markers and a definition on its `: ` line (#844).
 - An abbreviation definition behind a quote prefix, an item marker inside a quote, or a quoted `: ` marker is scoped as a definition in all three grammars, and an empty expansion (`*[HTML]: `) stays text everywhere (#845).
 - An abbreviation definition inside a div, admonition or figure group is scoped as a definition in all three grammars, as in every other container (markup-carve/carve#4874, #852).
