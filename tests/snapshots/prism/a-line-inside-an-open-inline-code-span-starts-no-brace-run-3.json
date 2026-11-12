@@ -17,23 +17,27 @@
   },
   {
     "type": "blockquote",
-    "text": "  `open"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
     "text": "  "
   },
   {
-    "type": "comment",
-    "text": "{%\n>  c %}"
+    "type": "blockquote>code",
+    "text": "`open\n"
+  },
+  {
+    "type": "blockquote>code>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code",
+    "text": "  {%\n"
+  },
+  {
+    "type": "blockquote>code>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code",
+    "text": "  c %}"
   },
   {
     "type": "text",

@@ -5,7 +5,15 @@
   },
   {
     "type": "blockquote",
-    "text": " \\*[HTML]: Hyper Text"
+    "text": " "
+  },
+  {
+    "type": "blockquote>escape>constant",
+    "text": "\\*"
+  },
+  {
+    "type": "blockquote",
+    "text": "[HTML]: Hyper Text"
   },
   {
     "type": "text",
