@@ -4486,7 +4486,7 @@
       "patterns": [
         {
           "comment": "A fence opened in a quote on a list item's marker line (`- > ````); its body lines carry the quote prefix at the item's indent (carve-grammars#849).",
-          "begin": "\\G(?<=[ \\t])(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "\\G(?<=[ \\t])(>)(?= )((?: >(?= ))*) ([ \\t]*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -5878,7 +5878,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= )((?: >(?= ))*) ([ \\t]*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -6158,7 +6158,7 @@
           ]
         },
         {
-          "begin": "^[ \\t]*(>)(?= )((?: >(?= ))*) ( *)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^[ \\t]*(>)(?= )((?: >(?= ))*) ([ \\t]*)(`{3,}(?![^\\n]*`)|~{3,})[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"

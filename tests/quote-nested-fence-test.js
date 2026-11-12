@@ -37,6 +37,9 @@ const CASES = [
     ['the ticket reproduction', '> > ```\n> > w0\n> w1\n', ['w0'], ['w1']],
     ['the comment reproduction', '> > %%%\n> w0\nw1\n', [], ['w0', 'w1']],
     ['a bare shallower line ends the fence', '> > ```\n>\n> w1\n', [], ['w1']],
+    ['a tab-indented opener opens', '> \t```\n> w0\n> > ```\n> w1\n', ['w0', 'w1'], []],
+    ['a tab-indented opener closes at a shorter indent', '> \t```\n> w0\n>  ```\n> w1\n', ['w0'], ['w1']],
+    ['a tab-indented closer keeps a space-indented fence open', '>   ```\n> w0\n> \t```\n> w1\n', ['w0', 'w1'], []],
 ];
 for (const depth of [1, 2, 3]) {
     const p = pre(depth);
