@@ -4,18 +4,15 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
-### Fixes
-
-- TextMate scopes a description line under a tab-indented term (or a tab-indented description under a space-indented term) when the two sit at the same column, as in a footnote body (#888).
-- A bare span holding its own delimiter between two word characters (`*a*b*`, `_my_var_`, `/usr/local/`) is text in all three grammars, and a block glued to it is not attributes; a mirrored `*/b/c/*` is a bold run (#882).
-- A block glued to an inline host in a heading (`# *a b*{.q}`) is scoped as attributes in all three grammars (#882).
-- TextMate no longer scopes a block glued to punctuation that closes nothing (`*a*,{.q}`, `x.{.q}`) as attributes (#882).
-
 ## [0.1.24] - 2026-11-12
 
 ### Fixes
 
 - highlight.js no longer scopes a list marker as a bullet under a `: x` paragraph line that no `::` term reaches, including in a quote opened behind a list marker (`- > - w`) (#885, #886).
+- TextMate scopes a description line under a tab-indented term (or a tab-indented description under a space-indented term) when the two sit at the same column, as in a footnote body (#888, #890).
+- A bare span holding its own delimiter between two word characters (`*a*b*`, `_my_var_`, `/usr/local/`) is text in all three grammars, and a block glued to it is not attributes; a mirrored `*/b/c/*` is a bold run (#882, #892).
+- A block glued to an inline host in a heading (`# *a b*{.q}`) is scoped as attributes in all three grammars (#882, #892).
+- TextMate no longer scopes a block glued to punctuation that closes nothing (`*a*,{.q}`, `x.{.q}`) as attributes (#882, #892).
 
 ## [0.1.23] - 2026-11-12
 
