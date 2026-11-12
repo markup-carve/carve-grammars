@@ -46,6 +46,12 @@ const ROWS = [
     { source: '*a*{k=a~}{.c}\n', payload: '.c', attribute: true },
     { source: '[a [b]]{}{.c}\n', payload: '.c', attribute: true },
     { source: '[a]{k="{{{{"}{.c}\n', payload: '.c', attribute: true },
+    { source: '[x]{k="' + '{'.repeat(40) + '"}{.c}\n', payload: '.c', attribute: true },
+    { source: '[a [b [c]]]{}{.c}\n', payload: '.c', attribute: true },
+    { source: '[`]`]{}{.c}\n', payload: '.c', attribute: true },
+    { source: '[[w]]{}{.c}\n', payload: '.c', attribute: true },
+    { source: '[a][r]{}{.c}\n\n[r]: u\n', payload: '.c', attribute: false },
+    { source: 'x] y]{}{.c}\n', payload: '.c', attribute: false },
 ];
 
 let failures = 0;

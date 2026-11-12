@@ -426,9 +426,47 @@
     // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
     const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
     const CRITIC_SUBSTITUTION = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
-    const BRACKETED_SPAN = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]|\[(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]){0,4096}\]$/;
     const lineBefore = (source, at) => source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
-    const QUOTED_VALUE = /"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'/g;
+    // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
+    const blockOpener = (source, close) => {
+        let open = source.lastIndexOf('{', close - 1);
+        if (open === -1 || !/["']/.test(source.slice(open, close))) return open;
+        open = -1;
+        for (let i = Math.max(0, close - 4096); i < close; i++) {
+            const c = source.charAt(i);
+            if (c === '\\') { i++; continue; }
+            if (c === '{') { open = i; continue; }
+            if (c === '}') { open = -1; continue; }
+            if (open !== -1 && (c === '"' || c === "'")) {
+                let j = i + 1;
+                for (; j < close && source.charAt(j) !== c && source.charAt(j) !== '\n'; j++) {
+                    if (source.charAt(j) === '\\') j++;
+                }
+                if (source.charAt(j) === c) i = j;
+            }
+        }
+        return open;
+    };
+    // A `]` before `at` closes a bracketed span: not a footnote reference or a reference link.
+    const closesSpan = (source, at) => {
+        let depth = 0;
+        for (let i = at - 1, stop = Math.max(0, at - 4096); i >= stop && source.charAt(i) !== '\n'; i--) {
+            const c = source.charAt(i);
+            if (source.charAt(i - 1) === '\\' && source.charAt(i - 2) !== '\\') { i--; continue; }
+            if (c === '`') {
+                let run = 1;
+                while (source.charAt(i - run) === '`') run++;
+                const tick = source.lastIndexOf('`'.repeat(run), i - run);
+                const line = source.lastIndexOf('\n', i);
+                if (tick > line) { i = tick; continue; }
+                i -= run - 1;
+                continue;
+            }
+            if (c === ']') depth++;
+            else if (c === '[' && --depth === 0) return source.charAt(i + 1) !== '^' && source.charAt(i - 1) !== ']';
+        }
+        return false;
+    };
     let hostMemo = { source: null, hosts: null };
     // 'span', 'other', or null when the `}` before `at` closes nothing attached.
     const attributeHost = (source, at) => {
@@ -437,12 +475,9 @@
         return hostMemo.hosts.get(at);
     };
     const findAttributeHost = (source, at) => {
-        if (source[at - 1] !== '}') {
-            return source[at - 1] === ']' && BRACKETED_SPAN.test(lineBefore(source, at)) ? 'span' : 'other';
-        }
-        for (let brace = at - 2, tries = 0; tries < 32 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
-            // A `}` outside quotes between this `{` and the closer ends the search.
-            if (source.slice(brace + 1, at - 1).replace(QUOTED_VALUE, '').includes('}')) break;
+        if (source[at - 1] !== '}') return source[at - 1] === ']' && closesSpan(source, at) ? 'span' : 'other';
+        const brace = blockOpener(source, at - 1);
+        if (brace !== -1) {
             if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return attributeHost(source, brace) === 'span' ? 'span' : null;
             ATTRIBUTE_PROBE.lastIndex = brace;
             const host = ATTRIBUTE_PROBE.exec(source);

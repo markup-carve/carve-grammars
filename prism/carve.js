@@ -214,11 +214,48 @@
         var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
         var lineBreak = /\r\n?|\n/g;
         var criticSubstitution = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
-        var bracketedSpan = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]|\[(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]){0,4096}\]$/;
         var lineBefore = function (source, at) {
             return source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
         };
-        var quoted = /"(?:\\.|[^"\\\r\n])*"|'(?:\\.|[^'\\\r\n])*'/g;
+        // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
+        var blockOpener = function (source, close) {
+            var open = source.lastIndexOf('{', close - 1);
+            if (open === -1 || !/["']/.test(source.slice(open, close))) return open;
+            open = -1;
+            for (var i = Math.max(0, close - 4096); i < close; i++) {
+                var c = source.charAt(i);
+                if (c === '\\') { i++; continue; }
+                if (c === '{') { open = i; continue; }
+                if (c === '}') { open = -1; continue; }
+                if (open !== -1 && (c === '"' || c === "'")) {
+                    for (var j = i + 1; j < close && source.charAt(j) !== c && source.charAt(j) !== '\n'; j++) {
+                        if (source.charAt(j) === '\\') j++;
+                    }
+                    if (source.charAt(j) === c) i = j;
+                }
+            }
+            return open;
+        };
+        // A `]` before `at` closes a bracketed span: not a footnote reference or a reference link.
+        var closesSpan = function (source, at) {
+            var depth = 0;
+            for (var i = at - 1, stop = Math.max(0, at - 4096); i >= stop && source.charAt(i) !== '\n'; i--) {
+                var c = source.charAt(i);
+                if (source.charAt(i - 1) === '\\' && source.charAt(i - 2) !== '\\') { i--; continue; }
+                if (c === '`') {
+                    var run = 1;
+                    while (source.charAt(i - run) === '`') run++;
+                    var tick = source.lastIndexOf('`'.repeat(run), i - run);
+                    var line = source.lastIndexOf('\n', i);
+                    if (tick > line) { i = tick; continue; }
+                    i -= run - 1;
+                    continue;
+                }
+                if (c === ']') depth++;
+                else if (c === '[' && --depth === 0) return source.charAt(i + 1) !== '^' && source.charAt(i - 1) !== ']';
+            }
+            return false;
+        };
         var memo = { source: null, hosts: null };
         // 'span', 'other', or null when the `}` before `at` closes nothing attached.
         var hostOf = function (source, at) {
@@ -227,12 +264,9 @@
             return memo.hosts.get(at);
         };
         var findHost = function (source, at) {
-            if (source.charAt(at - 1) !== '}') {
-                return source.charAt(at - 1) === ']' && bracketedSpan.test(lineBefore(source, at)) ? 'span' : 'other';
-            }
-            for (var brace = at - 2, tries = 0; tries < 32 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
-                // A `}` outside quotes between this `{` and the closer ends the search.
-                if (source.slice(brace + 1, at - 1).replace(quoted, '').includes('}')) break;
+            if (source.charAt(at - 1) !== '}') return source.charAt(at - 1) === ']' && closesSpan(source, at) ? 'span' : 'other';
+            var brace = blockOpener(source, at - 1);
+            if (brace !== -1) {
                 if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return hostOf(source, brace) === 'span' ? 'span' : null;
                 probe.lastIndex = brace;
                 var host = probe.exec(source);
