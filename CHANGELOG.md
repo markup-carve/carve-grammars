@@ -4,6 +4,10 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Fixes
+
+- TextMate scopes a description line under a tab-indented term (or a tab-indented description under a space-indented term) when the two sit at the same column, as in a footnote body (#888).
+
 ## [0.1.24] - 2026-11-12
 
 ### Fixes
