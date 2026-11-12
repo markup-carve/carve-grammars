@@ -41,6 +41,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 - A tab-indented run no longer closes a fence opened after two spaces in Prism, highlight.js and TextMate (#828).
 - An aligned cell after an escaped backslash (`| a \\|{>} b |`) keeps its alignment scope in Prism and highlight.js (#828).
 - The editor mounts nested spans as a valid document, keeping the outermost span, and drops an empty code span inside a mark, which has no spelling (#828).
+- The editor bridge keeps a blocked span marker's own alignment, and reports `degraded.table_cell` when a merged marker's alignment, attributes or header flag has no slot (#862, #864).
 - A hyphen run that is a flag (`x --flag`, `a --. b`) stays text instead of a dash in all three grammars (#835).
 - Highlight.js and Prism treat a lone CR as a line end (#821, #823).
 - Padded link and image titles are highlighted (#816).
