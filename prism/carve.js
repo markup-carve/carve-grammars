@@ -236,8 +236,8 @@
             }
             return open;
         };
-        // A `]` before `at` closes a bracketed span: not a footnote reference or a reference link.
-        var closesSpan = function (source, at) {
+        // The `[` that opens the bracket closed by the `]` before `at`, -1 when none.
+        var bracketOpener = function (source, at) {
             var depth = 0;
             for (var i = at - 1, stop = Math.max(0, at - 4096); i >= stop && source.charAt(i) !== '\n'; i--) {
                 var c = source.charAt(i);
@@ -252,9 +252,14 @@
                     continue;
                 }
                 if (c === ']') depth++;
-                else if (c === '[' && --depth === 0) return source.charAt(i + 1) !== '^' && source.charAt(i - 1) !== ']';
+                else if (c === '[' && --depth === 0) return i;
             }
-            return false;
+            return -1;
+        };
+        // A bracketed span, not a footnote reference or a reference link (`[a][r]`).
+        var closesSpan = function (source, at) {
+            var open = bracketOpener(source, at);
+            return open !== -1 && source.charAt(open + 1) !== '^' && !(source.charAt(open - 1) === ']' && bracketOpener(source, open) !== -1);
         };
         var memo = { source: null, hosts: null };
         // 'span', 'other', or null when the `}` before `at` closes nothing attached.

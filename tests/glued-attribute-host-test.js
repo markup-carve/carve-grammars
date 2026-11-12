@@ -52,6 +52,8 @@ const ROWS = [
     { source: '[[w]]{}{.c}\n', payload: '.c', attribute: true },
     { source: '[a][r]{}{.c}\n\n[r]: u\n', payload: '.c', attribute: false },
     { source: 'x] y]{}{.c}\n', payload: '.c', attribute: false },
+    { source: '][a]{}{.c}\n', payload: '.c', attribute: true },
+    { source: '[x][a]{}{.c}\n', payload: '.c', attribute: false },
 ];
 
 let failures = 0;
