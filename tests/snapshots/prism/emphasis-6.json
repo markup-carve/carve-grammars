@@ -1,10 +1,6 @@
 [
   {
-    "type": "italic>italic",
-    "text": "/usr/local/"
-  },
-  {
     "type": "text",
-    "text": "\n"
+    "text": "/usr/local/\n"
   }
 ]

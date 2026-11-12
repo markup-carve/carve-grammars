@@ -1,14 +1,14 @@
 [
   {
     "type": "text",
-    "text": "Exclude \"\\"
+    "text": "Exclude \""
   },
   {
-    "type": "italic>italic",
-    "text": "/trunk/app/config/"
+    "type": "escape>constant",
+    "text": "\\/"
   },
   {
     "type": "text",
-    "text": "\".\n\nsee \"https://example.org/\" here\n\nthe 'tmp/' folder, and/\"or\" too\n"
+    "text": "trunk/app/config/\".\n\nsee \"https://example.org/\" here\n\nthe 'tmp/' folder, and/\"or\" too\n"
   }
 ]

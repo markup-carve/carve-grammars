@@ -44,8 +44,20 @@
     "text": "_F_"
   },
   {
+    "type": "caption>title>attributes>attr-value>punctuation",
+    "text": "{"
+  },
+  {
+    "type": "caption>title>attributes>attr-value>id",
+    "text": "#k"
+  },
+  {
+    "type": "caption>title>attributes>attr-value>punctuation",
+    "text": "}"
+  },
+  {
     "type": "caption>title",
-    "text": "{#k} #"
+    "text": " #"
   },
   {
     "type": "text",

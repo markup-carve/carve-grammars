@@ -716,8 +716,10 @@
             + ')';
         // The whitespace and letter cases must be disjoint: repeated `*a`
         // otherwise gives the closer search exponentially many partitions.
+        // An own delimiter between two word characters ends the run: no span
+        // forms (PART 9 §9 R2), so `*a*b*` and `_my_var_` stay text.
         var atom = '(?:\\\\[^\\r\\n]|' + bareCode + '|' + opaque
-            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|' + delimiter + '(?=[\\p{L}\\p{N}])';
+            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}]\\p{M}*)' + delimiter + '(?=[\\p{L}\\p{N}])';
         // One soft break, never a blank line or a line opening another block.
         var softBreak = '(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))(?!' + otherBlockOpener + ')';
         // A cheap scan for a possible closer on this line or the next, so an
@@ -762,13 +764,12 @@
         //     `a <strong>/b</strong>/* c`, while `a */*b/* c` IS combined - so
         //     it is the character before the closer that decides.
         //
-        // BOTH BODIES ARE TEMPERED, BY DIFFERENT AMOUNTS (carve-grammars#382),
-        // and the asymmetry was measured rather than chosen. The canonical body
-        // admits any `*` that does not start the closer. The MIRRORED body may
-        // not do the same: a `/` that does not start the closer is still
-        // ambiguous with a canonical opener, so its `/` is admitted only
-        // BETWEEN TWO WORD CHARACTERS, which is what lets `a */b/c/* d` read as
-        // the combined run the engine renders while `x *///* y` stays bold.
+        // THE CANONICAL BODY IS TEMPERED (carve-grammars#382): it admits any `*`
+        // that does not start the closer. The MIRRORED body admits no `/`: one
+        // between two word characters stops the inner italic from forming
+        // (PART 9 §9 R2), so `a */b/c/* d` is a bold run, and any other is
+        // ambiguous with a canonical opener (carve-grammars#882). The table
+        // below measured the word-flanked temper this removed.
         //
         // The opener's `(?!\*[\s*])` is what pays for it. Over all 21,844
         // documents `x */ body /* y` for every body of up to seven characters
@@ -793,7 +794,7 @@
         // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
         // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)(?:[^*\r\n]|\*(?!\/)|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?!\*[\s*])(?:[^/\r\n]|(?<=\w)\/(?=\w)|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<![\s*])\/\*(?!\w)/,
+            pattern: /\/\*(?=\S)(?:[^*\r\n]|\*(?!\/)|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?!\*[\s*])(?:[^/\r\n]|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<![\s*])\/\*(?!\w)/,
             alias: 'important',
         },
         // Bare runs require non-space flanks. Forced runs do not: braces make
@@ -3604,6 +3605,8 @@
             lineVerbatim(),
             { 'escape': Prism.languages.carve['escape'] },
             pick(linkFamily),
+            // A block glued to an inline host is its attributes (`# *a b*{.q}`).
+            pick(['attributes']),
             own,
             pick(['mention', 'symbol', 'typography'])
         );

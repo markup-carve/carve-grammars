@@ -8,24 +8,12 @@
     "text": "[b]"
   },
   {
-    "scope": "section",
-    "text": "{"
-  },
-  {
-    "scope": "section>symbol",
-    "text": "#y"
+    "scope": "section>attr",
+    "text": "{#y abbr=\"T\"}"
   },
   {
     "scope": "section",
-    "text": " abbr=\"T\"}*{"
-  },
-  {
-    "scope": "section>symbol",
-    "text": "#z"
-  },
-  {
-    "scope": "section",
-    "text": "}"
+    "text": "*{#z}"
   },
   {
     "scope": null,
