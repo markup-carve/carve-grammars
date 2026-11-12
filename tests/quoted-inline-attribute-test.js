@@ -12,7 +12,7 @@ import { assertThisFileRuns } from './lib/runs-in-ci.js';
 
 assertThisFileRuns(import.meta.url);
 
-// [line, the block, attaches]
+// [line, the block, attaches, surfaces the row does not hold]
 const rows = [
     ['*a*{.q}', '{.q}', true],
     ['_a_{.q}', '{.q}', true],
@@ -28,6 +28,8 @@ const rows = [
     ['a {.c} b', '{.c}', false],
     ['\\*{.c}', '{.c}', false],
     ['`x*{.c}`', '{.c}', false],
+    // A `_` that closes no underline (carve-grammars#867 for the other two).
+    ['_a_ z_{.c}', '{.c}', false, ['prism', 'highlightjs']],
 ];
 
 const surfaces = [
@@ -45,7 +47,8 @@ const scopeAt = (tokens, at) => {
 
 let checked = 0;
 for (const [name, tokenize, isAttr] of surfaces) {
-    for (const [line, block, attaches] of rows) {
+    for (const [line, block, attaches, pending = []] of rows) {
+        if (pending.includes(name)) continue;
         const sources = ['> ', '> > ', '> > > '].map((prefix) => prefix + line);
         // A lazy line continues the quoted paragraph above it.
         if (!line.startsWith('- ')) sources.push(`> x\n${line}`, `> > x\n${line}`);
