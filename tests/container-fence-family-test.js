@@ -47,9 +47,6 @@ const CONTAINERS = [
     ['note', '::: note\n- x\n\n', '  ', ''],
     ['quote in a note', '::: note\n', '> ', ''],
 ];
-// TextMate has no item column inside a quote; the quote's markers are all it reads.
-const TEXTMATE_SKIPS = new Set(['item in a quote']);
-
 const shapes = (p, up, o, f) => [
     ['unclosed, to the end of the text', `${o}\n${p}w0\n${p}w1\n`],
     ['closed', `${o}\n${p}w0\n${p}${f}\n${p}w1\n`],
@@ -67,7 +64,6 @@ for (const [name, before, p, up] of CONTAINERS) {
                 const src = before + body + (before.startsWith(':::') ? ':::\nw9\n' : '');
                 const expected = new Map([...new Set(src.match(/w\d+/g))].map((w) => [w, engineVerbatim(src, w)]));
                 for (const [engine, tokens] of ENGINES) {
-                    if (engine === 'textmate' && TEXTMATE_SKIPS.has(name)) continue;
                     const got = verbatimWords(tokens(src));
                     for (const [w, verbatim] of expected) {
                         assert.equal(got.get(w), verbatim,
