@@ -3728,7 +3728,7 @@
             greedy: !item || start[0] !== '^',
             inside: spanInside,
         });
-        for (const item of [false, true]) {
+        for (const item of [true, false]) {
             quote.splice(quote.length - 1, 0, openSpan('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)', '\\1', item),
                 ...quoteMarkerWidths.map(([width, host]) => openSpan('(?<=' + host + ')', '\\1 {' + width + '}', item)));
         }

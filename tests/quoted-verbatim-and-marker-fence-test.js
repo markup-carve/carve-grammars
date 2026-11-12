@@ -40,6 +40,8 @@ for (const src of [
     '- > p\n  > `x\n> w *q*`\n',
     '> a `x\n> y` %% c\n> *q*\n',
     '> - `x\n> - *q*\n',
+    '> - a `x\n> y ` z\n> *q*\n',
+    '> - a ``x\n> y `` z\n> *q*\n',
 ]) {
     ok(`the span ends where the paragraph does: ${JSON.stringify(src)}`, () => {
         assert.equal(strong(src), true, 'carve-js reads markup');
