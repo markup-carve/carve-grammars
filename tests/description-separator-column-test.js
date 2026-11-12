@@ -262,6 +262,15 @@ const TEXTMATE = [
     ['- x\n  :: t\n  : d\n  : e\n', true],
     ['- x\n  :: t\n  : d\n: e\n', false],
     ['- x\n  :: t\n  : d\n   : e\n', false],
+    // Columns count in tab stops, whichever way the indent is spelled (carve-grammars#888).
+    ['x[^1]\n\n[^1]: x\n  \t:: t\n    : zq\n', true],
+    ['r[^1]\n\n[^1]: x\n\t:: t\n    : e\n', true],
+    ['r[^1]\n\n[^1]: x\n    :: t\n\t: e\n', true],
+    ['r[^1]\n\n[^1]: x\n  \t:: t\n\t: e\n', true],
+    ['\t:: t\n    : e\n', true],
+    ['    :: t\n\t: e\n', true],
+    ['  :: t\n\t: e\n', true],
+    ['\t:: t\n\t  : e\n', true],
 ];
 for (const [source, marker] of TEXTMATE) {
     const scoped = /punctuation\.definition\.list\.definition/.test(scopeAt(tm(source), source.lastIndexOf(':')));
