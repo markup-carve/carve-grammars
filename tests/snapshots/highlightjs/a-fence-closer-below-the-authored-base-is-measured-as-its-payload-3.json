@@ -8,19 +8,11 @@
     "text": " item\n\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ````"
+    "scope": "code",
+    "text": "    ````\n    a\n   ```\n\n  tail"
   },
   {
     "scope": null,
-    "text": "\n    a\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "   ```"
-  },
-  {
-    "scope": null,
-    "text": "\n\n  tail\n"
+    "text": "\n"
   }
 ]

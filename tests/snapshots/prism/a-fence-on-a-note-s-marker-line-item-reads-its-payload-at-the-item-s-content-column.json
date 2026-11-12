@@ -20,8 +20,16 @@
     "text": ": - "
   },
   {
-    "type": "code",
-    "text": "```js\n        a\n        ```"
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block>language>class-name",
+    "text": "js"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n        a\n        ```"
   },
   {
     "type": "text",

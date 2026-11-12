@@ -9,10 +9,10 @@
   },
   {
     "type": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  hidden"
   },
   {
     "type": "text",
-    "text": "\n  hidden\noutside\n"
+    "text": "\noutside\n"
   }
 ]

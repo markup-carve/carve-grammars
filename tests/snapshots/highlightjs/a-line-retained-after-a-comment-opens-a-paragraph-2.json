@@ -25,7 +25,11 @@
   },
   {
     "scope": "quote",
-    "text": ">     %%%"
+    "text": ">     "
+  },
+  {
+    "scope": "quote>comment",
+    "text": "%%%\n>     hidden\n>     %%%"
   },
   {
     "scope": null,
@@ -33,31 +37,11 @@
   },
   {
     "scope": "quote",
-    "text": ">     hidden"
+    "text": ">    "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">     %%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">    ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">    code"
+    "scope": "quote>code",
+    "text": "```\n>    code"
   },
   {
     "scope": null,

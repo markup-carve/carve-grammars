@@ -41,7 +41,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n>     hidden\n>     %%%"
   },
   {
     "type": "text",
@@ -52,39 +52,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
-    "text": "     hidden"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
-    "text": "     "
-  },
-  {
-    "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "    ```"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -92,7 +64,7 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": "    code"
   },
   {

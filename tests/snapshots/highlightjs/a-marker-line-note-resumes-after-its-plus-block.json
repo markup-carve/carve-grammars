@@ -16,20 +16,12 @@
     "text": ": +\n  p\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ``` x"
+    "scope": "code",
+    "text": "    ``` x\n    [^z]: code"
   },
   {
     "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "symbol",
-    "text": "    [^z]:"
-  },
-  {
-    "scope": null,
-    "text": " code\n\nsee"
+    "text": "\n\nsee"
   },
   {
     "scope": "symbol",

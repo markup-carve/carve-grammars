@@ -13,7 +13,19 @@
   },
   {
     "type": "text",
-    "text": "z\n    ~~~\nq\n\n"
+    "text": "z\n"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "    "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\nq\n\n"
   },
   {
     "type": "footnote>symbol",

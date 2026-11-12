@@ -9,7 +9,11 @@
   },
   {
     "scope": "quote",
-    "text": "> ```"
+    "text": "> "
+  },
+  {
+    "scope": "quote>code",
+    "text": "```\n  > x\n  > ```"
   },
   {
     "scope": null,
@@ -17,39 +21,11 @@
   },
   {
     "scope": "quote",
-    "text": "  > x"
+    "text": "  > "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > ```"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > ~~~"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > z"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "    > y"
+    "scope": "quote>code",
+    "text": "~~~\n  > z\n    > y"
   },
   {
     "scope": null,

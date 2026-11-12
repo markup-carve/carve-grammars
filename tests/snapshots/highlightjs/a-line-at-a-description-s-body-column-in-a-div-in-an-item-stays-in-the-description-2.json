@@ -32,12 +32,12 @@
     "text": " a\n\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ~~~"
+    "scope": "code",
+    "text": "    ~~~\n    x"
   },
   {
     "scope": null,
-    "text": "\n    x\n"
+    "text": "\n"
   },
   {
     "scope": "keyword",

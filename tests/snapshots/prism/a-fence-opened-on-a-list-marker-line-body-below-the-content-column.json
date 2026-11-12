@@ -4,11 +4,19 @@
     "text": "- "
   },
   {
-    "type": "code",
-    "text": "```\nx\n```"
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
   },
   {
     "type": "text",
+    "text": "\nx\n"
+  },
+  {
+    "type": "code-block-unclosed>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-unclosed>code-block",
     "text": "\n"
   }
 ]

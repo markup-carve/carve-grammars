@@ -33,10 +33,10 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  c"
   },
   {
     "scope": null,
-    "text": "\n  c\n"
+    "text": "\n"
   }
 ]

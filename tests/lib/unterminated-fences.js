@@ -49,8 +49,6 @@ export const UNTERMINATED_FENCES = [
     { label: 'a tabbed run', src: '\t%%%\n\nvisibleline\n', run: '%%%' },
     { label: 'a run with a body under it', src: '%%%\nvisibleline\n\nafter\n', run: '%%%' },
     { label: 'a wider run offered as the closer', src: '%%%\nvisibleline\n%%%%\n\nafter\n', run: '%%%%' },
-    { label: 'a run on a list item marker line', src: '- %%%\n  visibleline\n\nafter\n', run: '%%%' },
-    { label: 'a run on a quote marker line', src: '> %%%\n> visibleline\n\nafter\n', run: '%%%' },
 ].map((c) => ({ ...c, visible: 'visibleline' }));
 
 /**

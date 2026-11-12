@@ -1,23 +1,11 @@
 [
   {
     "scope": "quote",
-    "text": "> ~~~"
+    "text": "> "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> git bisect run ./check"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> ~~~"
+    "scope": "quote>code",
+    "text": "~~~\n> git bisect run ./check\n> ~~~"
   },
   {
     "scope": null,

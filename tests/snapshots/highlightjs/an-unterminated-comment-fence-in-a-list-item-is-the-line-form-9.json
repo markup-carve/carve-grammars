@@ -9,15 +9,7 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "comment",
-    "text": "  %%%%"
+    "text": "  %%%\n  %%%%"
   },
   {
     "scope": null,

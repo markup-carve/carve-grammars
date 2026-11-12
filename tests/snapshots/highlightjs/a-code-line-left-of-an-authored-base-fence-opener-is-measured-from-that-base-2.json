@@ -16,16 +16,8 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
-    "text": "     ```"
-  },
-  {
-    "scope": null,
-    "text": "\n       z\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "  :::"
+    "scope": "code",
+    "text": "     ```\n       z\n  :::"
   },
   {
     "scope": null,

@@ -13,10 +13,10 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n    n"
   },
   {
     "type": "text",
-    "text": "\n    n\n>>\n"
+    "text": "\n>>\n"
   }
 ]

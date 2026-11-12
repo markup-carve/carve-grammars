@@ -33,7 +33,11 @@
   },
   {
     "scope": "quote",
-    "text": "> >   %%%"
+    "text": "> >   "
+  },
+  {
+    "scope": "quote>comment",
+    "text": "%%%"
   },
   {
     "scope": null,

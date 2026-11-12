@@ -16,11 +16,11 @@
     "text": "  definition\n"
   },
   {
-    "scope": "keyword",
-    "text": "   ```"
+    "scope": "code",
+    "text": "   ```\n   c"
   },
   {
     "scope": null,
-    "text": "\n   c\ntail\n"
+    "text": "\ntail\n"
   }
 ]

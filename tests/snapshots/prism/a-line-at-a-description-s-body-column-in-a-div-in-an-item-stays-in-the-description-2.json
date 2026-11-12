@@ -33,7 +33,23 @@
   },
   {
     "type": "div",
-    "text": "\n\n    ~~~\n    x\n"
+    "text": "\n\n"
+  },
+  {
+    "type": "div>code-block-in-container>code-block",
+    "text": "    "
+  },
+  {
+    "type": "div>code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "div>code-block-in-container>code-block",
+    "text": "\n    x"
+  },
+  {
+    "type": "div",
+    "text": "\n"
   },
   {
     "type": "div>div-delimiter",

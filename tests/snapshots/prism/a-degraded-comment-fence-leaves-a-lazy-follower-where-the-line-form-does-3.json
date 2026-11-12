@@ -9,10 +9,10 @@
   },
   {
     "type": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  body"
   },
   {
     "type": "text",
-    "text": "\n  body\ny\n"
+    "text": "\ny\n"
   }
 ]

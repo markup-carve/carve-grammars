@@ -41,18 +41,18 @@
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "\n  "
   },
   {
     "type": "blockquote>punctuation",
-    "text": "  >"
+    "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": " ~~~"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -60,11 +60,11 @@
     "text": "  >"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": " z"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -72,7 +72,7 @@
     "text": "    >"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": " y"
   },
   {

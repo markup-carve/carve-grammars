@@ -17,11 +17,11 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n    n"
   },
   {
     "type": "text",
-    "text": "\n    n\n  zz\n"
+    "text": "\n  zz\n"
   },
   {
     "type": "comment",

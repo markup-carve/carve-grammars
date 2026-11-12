@@ -25,10 +25,10 @@
   },
   {
     "type": "comment",
-    "text": "     %%%"
+    "text": "     %%%\n     a"
   },
   {
     "type": "text",
-    "text": "\n     a\n"
+    "text": "\n"
   }
 ]

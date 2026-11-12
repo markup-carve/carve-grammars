@@ -12,8 +12,12 @@
     "text": "  1. "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
     "type": "text",
-    "text": "~~~\ny\n\n"
+    "text": "\ny\n\n"
   },
   {
     "type": "footnote>symbol",

@@ -5,15 +5,7 @@
   },
   {
     "scope": "quote>comment",
-    "text": "%%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> x"
+    "text": "%%%\n> x"
   },
   {
     "scope": null,

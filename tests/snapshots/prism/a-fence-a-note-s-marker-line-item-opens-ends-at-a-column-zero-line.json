@@ -5,6 +5,22 @@
   },
   {
     "type": "text",
-    "text": ": - ``` js\ntail\n"
+    "text": ": - "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": " "
+  },
+  {
+    "type": "code-block-in-container>code-block>language>class-name",
+    "text": "js"
+  },
+  {
+    "type": "text",
+    "text": "\ntail\n"
   }
 ]

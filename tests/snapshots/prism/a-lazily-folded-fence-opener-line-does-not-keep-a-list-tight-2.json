@@ -5,7 +5,23 @@
   },
   {
     "type": "text",
-    "text": "text\n  ~~~\n  x\n\n  cap\n"
+    "text": "text\n"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "  "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n  x\n\n  cap"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   },
   {
     "type": "list>punctuation",

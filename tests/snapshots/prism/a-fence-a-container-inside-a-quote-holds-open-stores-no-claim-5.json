@@ -4,15 +4,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": " - "
+    "type": "blockquote>code-block",
+    "text": " - ```"
   },
   {
     "type": "blockquote",
-    "text": "```"
-  },
-  {
-    "type": "text",
     "text": "\n"
   },
   {
@@ -20,7 +16,7 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": "   x"
   },
   {

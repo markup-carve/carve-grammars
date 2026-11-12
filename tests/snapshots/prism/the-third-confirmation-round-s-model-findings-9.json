@@ -9,11 +9,11 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n  x"
   },
   {
     "type": "text",
-    "text": "\n  x\ny\n"
+    "text": "\ny\n"
   },
   {
     "type": "comment",

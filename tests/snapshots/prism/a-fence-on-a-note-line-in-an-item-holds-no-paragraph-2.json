@@ -13,6 +13,14 @@
   },
   {
     "type": "text",
-    "text": ": ~~~\nc\n"
+    "text": ": "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "text",
+    "text": "\nc\n"
   }
 ]

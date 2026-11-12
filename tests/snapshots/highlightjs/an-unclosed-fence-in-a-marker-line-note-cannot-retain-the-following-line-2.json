@@ -24,11 +24,11 @@
     "text": "\n\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ~~~"
+    "scope": "code",
+    "text": "    ~~~\n    e"
   },
   {
     "scope": null,
-    "text": "\n    e\n]\n"
+    "text": "\n]\n"
   }
 ]

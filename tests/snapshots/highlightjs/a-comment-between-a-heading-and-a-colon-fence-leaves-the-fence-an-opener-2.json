@@ -17,15 +17,7 @@
   },
   {
     "scope": "comment",
-    "text": "      %%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "keyword",
-    "text": "      :::"
+    "text": "      %%%\n      :::"
   },
   {
     "scope": null,

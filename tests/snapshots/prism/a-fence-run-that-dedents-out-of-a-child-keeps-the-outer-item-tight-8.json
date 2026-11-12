@@ -44,11 +44,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "     ```"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -56,7 +56,7 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block",
     "text": "     a"
   },
   {
@@ -68,19 +68,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "   ```"
   },
   {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -89,6 +81,14 @@
   },
   {
     "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code-block",
     "text": "   tail"
   },
   {

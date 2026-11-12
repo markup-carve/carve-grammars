@@ -42,6 +42,7 @@ The grammars and the editor kit follow the carve 0.1.14 readings, with carve-js 
 - An inline attribute block glued to a construct on a quoted line (`> *a*{.q}`) is scoped as attributes in Prism and highlight.js, and TextMate scopes a block after an underline (`_a_{.q}`) (#865).
 - TextMate ends a fence inside a nested quote at its own depth: a code fence takes no lazy line and stops at a line with fewer quote markers, a comment fence closes on a `%%%` behind at most its own markers, and both open behind an indent (#868).
 - A block glued to a `*`, `/`, `_`, `~` or `=` that closes no span (`a*{.q}`, `x _a_ b_{.q}`) is text in all three grammars (#867).
+- Prism and highlight.js end a fence inside a list item, quote or note with its container: an unclosed code or comment fence takes the container's later lines and no lazy line, a fence opens behind a quote marker at any indent, and highlight.js scopes a quoted code fence as code (#871, #872, #873, #874).
 - A tab-indented run no longer closes a fence opened after two spaces in Prism, highlight.js and TextMate (#828).
 - An aligned cell after an escaped backslash (`| a \\|{>} b |`) keeps its alignment scope in Prism and highlight.js (#828).
 - The editor mounts nested spans as a valid document, keeping the outermost span, and drops an empty code span inside a mark, which has no spelling (#828).

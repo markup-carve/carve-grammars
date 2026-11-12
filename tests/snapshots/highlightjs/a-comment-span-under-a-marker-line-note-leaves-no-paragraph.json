@@ -17,15 +17,11 @@
   },
   {
     "scope": "quote",
-    "text": ">   %%%"
+    "text": ">   "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">   z %}"
+    "scope": "quote>comment",
+    "text": "%%%\n>   z %}"
   },
   {
     "scope": null,

@@ -9,27 +9,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": "> >"
-  },
-  {
-    "type": "blockquote",
-    "text": " secret"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n> > secret\n%%%"
   },
   {
     "type": "text",

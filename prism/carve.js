@@ -1105,7 +1105,10 @@
      * that frame ends it. One forward pass per input, memoized; a tab in the
      * indentation counts from each frame's column (PART 9 §24 C5).
      * `terms` and `markers` hold the offsets of the `::` and `:`, and `lists`
-     * the [start, end) of each outermost list from its first term.
+     * the [start, end) of each outermost list from its first term. `fences`
+     * holds each fence the walk opened: its run's offset, the end of its last
+     * line, its character, whether it closed and whether a quote marker
+     * stands before it on its line.
      * Keep this block identical in prism/carve.js and highlightjs/carve.js.
      */
     var definitionListMemo = [];
@@ -1113,13 +1116,17 @@
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set() };
+        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set(), fences: [] };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
         var frames = [{ kind: 'document', width: 0, list: null }];
         var para = -1;
         var fence = null;
+        // A line block's span pairing is not modeled here, so a fence after
+        // one in the same frame is not reported in `fences`; nor is one in a
+        // frame a `+` shifted.
+        var lineBlock = null;
         var region = null;
         // A `+` that hands the next visible line to a frame, and the blank run.
         var attach = null;
@@ -1231,10 +1238,18 @@
             var restAt = at + i + lead.length;
 
             if (fence) {
-                if (blank || reached >= fence.owner || fence.ch === '%') {
-                    var closer = /^(`{3,}|~{3,}|%{3,})[ \t]*$/.exec(rest);
-                    if (closer && closer[1].charAt(0) === fence.ch && closer[1].length >= fence.len
-                        && (fence.ch === '%' || (reached === fence.owner && indent <= fence.indent))) fence = null;
+                // A fence ends with its frame. A comment fence closes on an
+                // exact-width run anywhere, a lazy one included.
+                var closes = fence.ch === '%'
+                    ? /^%{3,}/.test(rest) && /^%+/.exec(rest)[0].length === fence.len
+                    : reached === fence.owner && indent <= fence.indent && /^(`{3,}|~{3,})[ \t]*$/.test(rest)
+                        && rest.charAt(0) === fence.ch && /^[`~]+/.exec(rest)[0].length >= fence.len;
+                if (reached >= fence.owner || closes) {
+                    if (!blank) fence.run.end = end;
+                    if (closes) {
+                        fence.run.closed = true;
+                        fence = null;
+                    }
                     result.fenced.add(at);
                     if (anyList()) extend(end);
                     continue;
@@ -1248,7 +1263,9 @@
             }
             // A `%%%` comment span ends the paragraph and leaves every frame open.
             if (/^%{3,}/.test(rest)) {
-                fence = { owner: frames.length - 1, indent: indent, ch: '%', len: /^%+/.exec(rest)[0].length };
+                fence = { owner: reached, indent: indent, ch: '%', len: /^%+/.exec(rest)[0].length };
+                fence.run = { at: restAt, end: end, ch: '%', closed: false, quoted: line.slice(0, restAt - at).indexOf('>') !== -1, depth: reached };
+                result.fences.push(fence.run);
                 para = -1;
                 blanks = 0;
                 if (anyList()) extend(end);
@@ -1397,10 +1414,15 @@
                     // A `%%%` comment span is invisible to the list around it.
                     if (fenceOpen[1].charAt(0) !== '%') endList(owner);
                     fence = { owner: depth, indent: indent, ch: fenceOpen[1].charAt(0), len: fenceOpen[1].length };
+                    fence.run = { at: restAt, end: end, ch: fence.ch, closed: false, quoted: line.slice(0, restAt - at).indexOf('>') !== -1, depth: depth };
+                    var shiftedFrame = false;
+                    for (var sf = 0; sf <= depth; sf++) if (frames[sf].shift !== undefined) shiftedFrame = true;
+                    if (!shiftedFrame && !(lineBlock && frames[lineBlock.owner] === lineBlock.frame && lineBlock.owner <= depth)) result.fences.push(fence.run);
                     para = -1;
                     break;
                 }
                 if (opener.test(rest) || /^\{[^\r\n]*\}[ \t]*$/.test(rest)) {
+                    if (/^:{3,} +\|[ \t]*$/.test(rest)) lineBlock = { owner: depth, frame: owner };
                     endList(owner);
                     para = -1;
                     break;
@@ -1522,6 +1544,53 @@
                 match.input = text;
                 this.lastIndex = end;
                 lastEntry = { text: match[0], base: start, markers: lines.markers };
+                return match;
+            }
+            this.lastIndex = 0;
+            return null;
+        };
+        return matcher;
+    }
+
+    /**
+     * The fences inside a container (an item, a description, a footnote or a
+     * quote), as definitionListLines reads them: each runs to its closer or to
+     * the end of its container and takes no lazy line (PART 0 S1, S2). Used
+     * after the regex rules, for the fences they miss.
+     *
+     * @param {function(object): boolean} test - which fences to match.
+     * @returns {RegExp} the matcher, for a greedy rule.
+     */
+    var containerFenceOpener = RegExp('^(?:`{3,}|~{3,})(?: ?(?:' + codeFenceInfo + '))?[ \\t]*$');
+    function lineEndAt(text, at) {
+        var stop = /[\r\n]/g;
+        stop.lastIndex = at;
+        return stop.exec(text) ? stop.lastIndex - 1 : text.length;
+    }
+    function containerFenceMatcher(test) {
+        var matcher = /(?:)/g;
+        matcher.exec = function (text) {
+            var lines = definitionListLines(text);
+            var runs = lines.fences;
+            if (!lines.fenceStarts) lines.fenceStarts = runs.map(function (run) { return run.at; });
+            for (var n = firstAtOrAfter(lines.fenceStarts, this.lastIndex); n < runs.length; n++) {
+                var run = runs[n];
+                if (run.depth === 0 || !test(run)) continue;
+                // A code run opens only on a whole opener line; `  ```{x}` is a span.
+                if (run.ch !== '%' && !containerFenceOpener.test(text.slice(run.at, lineEndAt(text, run.at)))) continue;
+                var start = run.at;
+                var line = start;
+                while (line > 0 && text.charAt(line - 1) !== '\n' && text.charAt(line - 1) !== '\r') line--;
+                // A quoted code fence starts at its line's first quote marker,
+                // an indented fence at its line start: a later line-anchored
+                // greedy rule would take the line over otherwise.
+                if (run.quoted && run.ch !== '%') start = text.indexOf('>', line);
+                else if (/^[ \t]*$/.test(text.slice(line, start))) start = line;
+                if (start < this.lastIndex) continue;
+                var match = [text.slice(start, run.end)];
+                match.index = start;
+                match.input = text;
+                this.lastIndex = run.end;
                 return match;
             }
             this.lastIndex = 0;
@@ -1954,6 +2023,11 @@
             },
             {
                 pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*%%(?!%)[^\r\n]*$(?![^\r\n])/m,
+                greedy: true,
+            },
+            {
+                // A comment fence in a container ends with it (carve-grammars#873).
+                pattern: containerFenceMatcher(function (run) { return run.ch === '%'; }),
                 greedy: true,
             },
             {
@@ -2407,6 +2481,12 @@
                 'punctuation': /^\uFEFF?(?:`{3,}|~{3,})/,
             },
         },
+        // A code fence in a container ends with it (carve-grammars#871).
+        'code-block-in-container': {
+            pattern: containerFenceMatcher(function (run) { return run.ch !== '%' && !run.quoted; }),
+            greedy: true,
+            alias: 'code-block',
+        },
         'table-separator': {
             pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|(?: *:?-+:? *\|)+[ \t]*$(?![^\r\n])/m,
             inside: {
@@ -2647,7 +2727,7 @@
                 inside: {
                     'code-block': [
                         {
-                            pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>) (?:`{3,}|~{3,})[ \t]*$/,
+                            pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>) [ \t]*(?:`{3,}|~{3,})[ \t]*$/,
                             lookbehind: true,
                             inside: { 'punctuation': /`{3,}|~{3,}/ },
                         },
@@ -2656,11 +2736,11 @@
                             lookbehind: true,
                             inside: {
                                 'language': {
-                                    pattern: /(^ (?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
+                                    pattern: /(^ [ \t]*(?:`{3,}|~{3,})[ \t]*)[^\s`~]+/,
                                     lookbehind: true,
                                     alias: 'class-name',
                                 },
-                                'punctuation': /^ (?:`{3,}|~{3,})/,
+                                'punctuation': /^ [ \t]*(?:`{3,}|~{3,})/,
                             },
                         },
                         { pattern: /((?:\r\n?|\n)[ \t]*(?:> )*>)(?! >)[^\r\n]+(?=[\r\n]|$)/, lookbehind: true },
@@ -3914,6 +3994,20 @@
 
     for (var markerFence of Prism.languages.carve['code-block-on-marker-line']) {
         markerFence.inside = Prism.languages.carve['code-block'].inside;
+    }
+    Prism.languages.carve['code-block-in-container'].inside = {
+        'language': { pattern: /(^[ \t]*(?:`{3,}|~{3,}) ?)[A-Za-z0-9_+#.\/=-]+/, lookbehind: true, alias: 'class-name' },
+        'punctuation': { pattern: /(^[ \t]*)(?:`{3,}|~{3,})/, lookbehind: true },
+    };
+    // A quoted code fence the rules above missed, read from the container
+    // model (carve-grammars#871, #872).
+    {
+        const quote = Prism.languages.carve.blockquote;
+        quote.splice(quote.length - 1, 0, {
+            pattern: containerFenceMatcher(function (run) { return run.ch !== '%' && run.quoted; }),
+            greedy: true,
+            inside: quote.find(function (rule) { return rule.inside && rule.inside['code-block'] && !rule.inside.list; }).inside,
+        });
     }
 
     // Allow Carve to be embedded and to embed itself (e.g. inside ```carve).

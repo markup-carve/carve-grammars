@@ -8,27 +8,11 @@
     "text": " a\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ```"
-  },
-  {
-    "scope": null,
-    "text": "\n\n"
-  },
-  {
-    "scope": "code>keyword",
-    "text": "  ~~~"
-  },
-  {
     "scope": "code",
-    "text": "\n  code\n"
-  },
-  {
-    "scope": "code>keyword",
-    "text": "  ~~~"
+    "text": "    ```\n\n  ~~~\n  code\n  ~~~\n  more"
   },
   {
     "scope": null,
-    "text": "\n  more\nafter\n"
+    "text": "\nafter\n"
   }
 ]

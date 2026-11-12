@@ -16,11 +16,11 @@
     "text": " child\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ```"
+    "scope": "code",
+    "text": "    ```\n    code"
   },
   {
     "scope": null,
-    "text": "\n    code\nafter\n"
+    "text": "\nafter\n"
   }
 ]

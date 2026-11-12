@@ -24,15 +24,15 @@
     "text": "- "
   },
   {
-    "type": "text",
-    "text": "```\n"
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "list>punctuation",
-    "text": "  - "
+    "type": "code-block-in-container>code-block",
+    "text": "\n  - nest"
   },
   {
     "type": "text",
-    "text": "nest\n\ny\n"
+    "text": "\n\ny\n"
   }
 ]

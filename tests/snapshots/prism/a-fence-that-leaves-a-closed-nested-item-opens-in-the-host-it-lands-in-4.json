@@ -36,19 +36,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "     ```"
   },
   {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": ">"
-  },
-  {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -57,10 +49,18 @@
   },
   {
     "type": "blockquote",
+    "text": "\n"
+  },
+  {
+    "type": "blockquote>punctuation",
+    "text": ">"
+  },
+  {
+    "type": "blockquote>code-block",
     "text": "       ```"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -68,8 +68,12 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
-    "text": "   ~~~"
+    "type": "blockquote>code-block",
+    "text": "   "
+  },
+  {
+    "type": "blockquote>code-block>punctuation",
+    "text": "~~~"
   },
   {
     "type": "text",

@@ -21,15 +21,19 @@
   },
   {
     "type": "text",
-    "text": ": para\n          more\n   ~~~\n\n  See"
+    "text": ": para\n          more\n"
   },
   {
-    "type": "footnote>symbol",
-    "text": "[^c]"
+    "type": "code-block-in-container>code-block",
+    "text": "   "
   },
   {
-    "type": "footnote>symbol",
-    "text": "[^d]"
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "~~~"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n\n  See[^c][^d]"
   },
   {
     "type": "text",

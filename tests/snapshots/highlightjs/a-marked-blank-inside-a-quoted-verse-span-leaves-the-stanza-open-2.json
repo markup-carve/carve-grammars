@@ -41,23 +41,11 @@
   },
   {
     "scope": "quote",
-    "text": "> >   %%%"
+    "text": "> >   "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> >"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> >   %%%"
+    "scope": "quote>comment",
+    "text": "%%%\n> >\n> >   %%%"
   },
   {
     "scope": null,

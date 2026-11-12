@@ -21,6 +21,18 @@
   },
   {
     "type": "text",
-    "text": "\nh\n  ```\nz\n"
+    "text": "\nh\n"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "  "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\nz\n"
   }
 ]

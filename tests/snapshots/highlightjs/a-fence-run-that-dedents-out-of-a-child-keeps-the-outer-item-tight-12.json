@@ -32,11 +32,11 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
-    "text": "  ```"
+    "scope": "code",
+    "text": "  ```\n  b\n\n  c"
   },
   {
     "scope": null,
-    "text": "\n  b\n\n  c\n"
+    "text": "\n"
   }
 ]
