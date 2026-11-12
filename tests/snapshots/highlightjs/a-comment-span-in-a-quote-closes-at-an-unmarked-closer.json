@@ -5,23 +5,7 @@
   },
   {
     "scope": "quote>comment",
-    "text": "%%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> secret"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "comment",
-    "text": "%%%"
+    "text": "%%%\n> secret\n%%%"
   },
   {
     "scope": null,

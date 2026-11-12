@@ -8,12 +8,12 @@
     "text": " text\n"
   },
   {
-    "scope": "keyword",
-    "text": "  ```"
+    "scope": "code",
+    "text": "  ```\n  x\n  cap"
   },
   {
     "scope": null,
-    "text": "\n  x\n  cap\n"
+    "text": "\n"
   },
   {
     "scope": "bullet",

@@ -84,11 +84,11 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "     ```"
   },
   {
-    "type": "text",
+    "type": "blockquote",
     "text": "\n"
   },
   {
@@ -96,12 +96,8 @@
     "text": ">"
   },
   {
-    "type": "blockquote>list>punctuation",
-    "text": "     - "
-  },
-  {
-    "type": "blockquote",
-    "text": "x"
+    "type": "blockquote>code-block",
+    "text": "     - x"
   },
   {
     "type": "text",

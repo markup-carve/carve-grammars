@@ -13,15 +13,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n    n\n\n"
-  },
-  {
-    "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n    n\n\n%%%"
   },
   {
     "type": "text",

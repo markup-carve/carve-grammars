@@ -5,6 +5,22 @@
   },
   {
     "type": "text",
-    "text": "d\n   ```\n\n  l\n"
+    "text": "d\n"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "   "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n\n  l"
+  },
+  {
+    "type": "text",
+    "text": "\n"
   }
 ]

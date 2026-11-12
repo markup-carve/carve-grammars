@@ -13,7 +13,19 @@
   },
   {
     "type": "text",
-    "text": "li\n  ```\n+\n  p\n\nsee"
+    "text": "li\n"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "  "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "text",
+    "text": "\n+\n  p\n\nsee"
   },
   {
     "type": "footnote>symbol",

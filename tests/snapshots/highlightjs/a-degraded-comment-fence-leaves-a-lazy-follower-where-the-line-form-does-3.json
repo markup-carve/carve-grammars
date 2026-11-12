@@ -9,10 +9,10 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  body"
   },
   {
     "scope": null,
-    "text": "\n  body\ny\n"
+    "text": "\ny\n"
   }
 ]

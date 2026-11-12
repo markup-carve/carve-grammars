@@ -76,7 +76,7 @@
     "text": ">"
   },
   {
-    "type": "blockquote",
+    "type": "blockquote>code-block>punctuation",
     "text": "   ```"
   },
   {

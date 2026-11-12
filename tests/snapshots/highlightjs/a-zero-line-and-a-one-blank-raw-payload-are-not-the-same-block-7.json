@@ -17,7 +17,11 @@
   },
   {
     "scope": "quote",
-    "text": "> ```=html"
+    "text": "> "
+  },
+  {
+    "scope": "quote>code",
+    "text": "```=html"
   },
   {
     "scope": null,

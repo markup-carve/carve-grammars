@@ -13,23 +13,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": "> >"
-  },
-  {
-    "type": "blockquote",
-    "text": "  "
-  },
-  {
-    "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n> >  %%%"
   },
   {
     "type": "text",
@@ -45,7 +29,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n> > x"
   },
   {
     "type": "text",
@@ -53,19 +37,15 @@
   },
   {
     "type": "blockquote>punctuation",
-    "text": "> >"
-  },
-  {
-    "type": "blockquote",
-    "text": " x\n"
-  },
-  {
-    "type": "blockquote>punctuation",
     "text": ">"
   },
   {
+    "type": "blockquote>list>punctuation",
+    "text": " - "
+  },
+  {
     "type": "blockquote",
-    "text": " - t"
+    "text": "t"
   },
   {
     "type": "text",

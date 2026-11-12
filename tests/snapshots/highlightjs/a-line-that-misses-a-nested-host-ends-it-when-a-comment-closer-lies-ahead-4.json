@@ -13,15 +13,7 @@
   },
   {
     "scope": "quote>comment",
-    "text": "%%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > n"
+    "text": "%%%\n  > n"
   },
   {
     "scope": null,

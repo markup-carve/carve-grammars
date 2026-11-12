@@ -1,15 +1,11 @@
 [
   {
     "scope": "quote",
-    "text": "> > ```"
+    "text": "> > "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> > x"
+    "scope": "quote>code",
+    "text": "```\n> > x"
   },
   {
     "scope": null,

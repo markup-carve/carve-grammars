@@ -17,15 +17,7 @@
   },
   {
     "scope": "quote",
-    "text": "> >  %%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> > "
+    "text": "> >  "
   },
   {
     "scope": "quote>comment",
@@ -37,7 +29,11 @@
   },
   {
     "scope": "quote",
-    "text": "> > x"
+    "text": "> > "
+  },
+  {
+    "scope": "quote>comment",
+    "text": "%%%\n> > x"
   },
   {
     "scope": null,

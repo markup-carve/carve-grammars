@@ -41,10 +41,10 @@
   },
   {
     "type": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  c"
   },
   {
     "type": "text",
-    "text": "\n  c\n"
+    "text": "\n"
   }
 ]

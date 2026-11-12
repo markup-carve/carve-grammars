@@ -9,22 +9,6 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "blockquote>punctuation",
-    "text": "> >"
-  },
-  {
-    "type": "blockquote",
-    "text": " "
-  },
-  {
-    "type": "comment",
     "text": "%%%\n> > %%%"
   },
   {
@@ -41,7 +25,7 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n> > %%%"
   },
   {
     "type": "text",

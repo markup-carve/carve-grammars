@@ -4,7 +4,11 @@
     "text": "- "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
     "type": "text",
-    "text": "```\n+\n  x\n"
+    "text": "\n+\n  x\n"
   }
 ]

@@ -9,19 +9,7 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "symbol",
-    "text": "  [r]: "
-  },
-  {
-    "scope": "symbol>link",
-    "text": "/url"
+    "text": "  %%%\n  [r]: /url"
   },
   {
     "scope": null,

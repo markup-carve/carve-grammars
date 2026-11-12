@@ -24,20 +24,8 @@
     "text": ": para\n          more\n"
   },
   {
-    "scope": "keyword",
-    "text": "   ~~~"
-  },
-  {
-    "scope": null,
-    "text": "\n\n  See"
-  },
-  {
-    "scope": "symbol",
-    "text": "[^c]"
-  },
-  {
-    "scope": "symbol",
-    "text": "[^d]"
+    "scope": "code",
+    "text": "   ~~~\n\n  See[^c][^d]"
   },
   {
     "scope": null,

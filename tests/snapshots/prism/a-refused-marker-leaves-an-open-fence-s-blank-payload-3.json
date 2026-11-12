@@ -4,7 +4,15 @@
     "text": "- "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n  a"
+  },
+  {
     "type": "text",
-    "text": "```\n  a\n+\n  x\n"
+    "text": "\n+\n  x\n"
   }
 ]

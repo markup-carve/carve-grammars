@@ -378,8 +378,9 @@ if (realPrism) {
         .filter((t) => typeof t !== 'string' && t.type === 'comment')
         .map((t) => String(t.content));
 
-    ok('prism: an UNCLOSED marker-line fence stays one line, body visible', () => {
-        assert.deepStrictEqual(comments(`- %%%\n${'  x\n'.repeat(8)}\nafter\n`), ['%%%']);
+    // carve-js 0.1.16 and corpus 512-a-comment-span-s-closer-column-does-not-move-the-item-s-ownership-11.
+    ok('prism: an UNCLOSED marker-line fence hides its body to the end of the item', () => {
+        assert.deepStrictEqual(comments(`- %%%\n${'  x\n'.repeat(8)}\nafter\n`), ['%%%\n' + Array(8).fill('  x').join('\n')]);
     });
     ok('prism: a CLOSED marker-line fence still hides its body', () => {
         assert.deepStrictEqual(

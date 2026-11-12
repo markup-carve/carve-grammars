@@ -9,15 +9,15 @@
   },
   {
     "type": "comment",
-    "text": "%%%"
+    "text": "%%%\n%%%"
   },
   {
     "type": "text",
-    "text": "\n"
+    "text": "\nx\n"
   },
   {
     "type": "comment",
-    "text": "%%%\nx\n%%%"
+    "text": "%%%"
   },
   {
     "type": "text",

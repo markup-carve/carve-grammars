@@ -9,23 +9,11 @@
   },
   {
     "scope": "quote",
-    "text": "  > ```"
+    "text": "  > "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > code"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "  > ```"
+    "scope": "quote>code",
+    "text": "```\n  > code\n  > ```"
   },
   {
     "scope": null,

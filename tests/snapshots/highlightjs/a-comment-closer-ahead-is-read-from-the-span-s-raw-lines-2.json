@@ -9,11 +9,11 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  n"
   },
   {
     "scope": null,
-    "text": "\n  n\nzz\n"
+    "text": "\nzz\n"
   },
   {
     "scope": "code>keyword",

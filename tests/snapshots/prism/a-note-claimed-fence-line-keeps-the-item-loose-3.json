@@ -29,11 +29,19 @@
   },
   {
     "type": "text",
-    "text": ": para\n   ```\n\n  See"
+    "text": ": para\n"
   },
   {
-    "type": "footnote>symbol",
-    "text": "[^c]"
+    "type": "code-block-in-container>code-block",
+    "text": "   "
+  },
+  {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n\n  See[^c]"
   },
   {
     "type": "text",

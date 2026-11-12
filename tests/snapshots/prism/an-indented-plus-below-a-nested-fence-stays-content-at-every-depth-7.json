@@ -4,11 +4,15 @@
     "text": "- "
   },
   {
-    "type": "list>punctuation",
+    "type": "text",
     "text": "1. "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
     "type": "text",
-    "text": "```\n\n\n  +\ntail\n"
+    "text": "\n\n\n  +\ntail\n"
   }
 ]

@@ -16,19 +16,19 @@
     "text": " head\n"
   },
   {
-    "scope": "keyword",
-    "text": "     ````"
+    "scope": "code",
+    "text": "     ````\n     a"
   },
   {
     "scope": null,
-    "text": "\n     a\n"
+    "text": "\n"
   },
   {
-    "scope": "keyword",
-    "text": "  ```"
+    "scope": "code",
+    "text": "  ```\n\n    tail"
   },
   {
     "scope": null,
-    "text": "\n\n    tail\n"
+    "text": "\n"
   }
 ]

@@ -17,23 +17,11 @@
   },
   {
     "scope": "quote",
-    "text": ">   %%%"
+    "text": ">   "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">   hidden"
-  },
-  {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": ">   %%%"
+    "scope": "quote>comment",
+    "text": "%%%\n>   hidden\n>   %%%"
   },
   {
     "scope": null,

@@ -25,15 +25,11 @@
   },
   {
     "scope": "quote",
-    "text": "> >     ```=html"
+    "text": "> >     "
   },
   {
-    "scope": null,
-    "text": "\n"
-  },
-  {
-    "scope": "quote",
-    "text": "> >     x"
+    "scope": "quote>code",
+    "text": "```=html\n> >     x"
   },
   {
     "scope": null,

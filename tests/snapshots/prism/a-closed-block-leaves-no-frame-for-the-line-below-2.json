@@ -5,23 +5,19 @@
   },
   {
     "type": "text",
-    "text": "a\n    ```\n\n"
+    "text": "a\n"
   },
   {
-    "type": "thematic-break>punctuation",
-    "text": "  ---"
+    "type": "code-block-in-container>code-block",
+    "text": "    "
   },
   {
-    "type": "text",
-    "text": "\n"
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
   },
   {
-    "type": "code-block",
-    "text": "  ~~~\n  code\n  "
-  },
-  {
-    "type": "code-block>punctuation",
-    "text": "~~~"
+    "type": "code-block-in-container>code-block",
+    "text": "\n\n  ---\n  ~~~\n  code\n  ~~~"
   },
   {
     "type": "text",

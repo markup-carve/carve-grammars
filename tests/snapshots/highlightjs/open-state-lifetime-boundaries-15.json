@@ -9,10 +9,10 @@
   },
   {
     "scope": "comment",
-    "text": "  %%%"
+    "text": "  %%%\n  hidden"
   },
   {
     "scope": null,
-    "text": "\n  hidden\noutside\n"
+    "text": "\noutside\n"
   }
 ]

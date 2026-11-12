@@ -12,8 +12,12 @@
     "text": "  - "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
     "type": "text",
-    "text": "```\n  "
+    "text": "\n  "
   },
   {
     "type": "continuation-marker>punctuation",

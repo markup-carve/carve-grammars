@@ -17,19 +17,7 @@
   },
   {
     "type": "comment",
-    "text": "      %%%"
-  },
-  {
-    "type": "text",
-    "text": "\n"
-  },
-  {
-    "type": "div>div-delimiter",
-    "text": "      "
-  },
-  {
-    "type": "div>div-delimiter>punctuation",
-    "text": ":::"
+    "text": "      %%%\n      :::"
   },
   {
     "type": "text",

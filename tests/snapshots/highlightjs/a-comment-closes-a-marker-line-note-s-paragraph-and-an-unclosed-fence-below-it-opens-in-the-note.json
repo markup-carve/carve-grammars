@@ -24,12 +24,12 @@
     "text": "\n"
   },
   {
-    "scope": "keyword",
-    "text": "    ~~~"
+    "scope": "code",
+    "text": "    ~~~\n    code"
   },
   {
     "scope": null,
-    "text": "\n    code\nafter "
+    "text": "\nafter "
   },
   {
     "scope": "symbol",

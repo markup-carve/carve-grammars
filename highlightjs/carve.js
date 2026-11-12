@@ -1610,7 +1610,10 @@
      * that frame ends it. One forward pass per input, memoized; a tab in the
      * indentation counts from each frame's column (PART 9 §24 C5).
      * `terms` and `markers` hold the offsets of the `::` and `:`, and `lists`
-     * the [start, end) of each outermost list from its first term.
+     * the [start, end) of each outermost list from its first term. `fences`
+     * holds each fence the walk opened: its run's offset, the end of its last
+     * line, its character, whether it closed and whether a quote marker
+     * stands before it on its line.
      * Keep this block identical in prism/carve.js and highlightjs/carve.js.
      */
     var definitionListMemo = [];
@@ -1618,13 +1621,17 @@
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set() };
+        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set(), fences: [] };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
         var frames = [{ kind: 'document', width: 0, list: null }];
         var para = -1;
         var fence = null;
+        // A line block's span pairing is not modeled here, so a fence after
+        // one in the same frame is not reported in `fences`; nor is one in a
+        // frame a `+` shifted.
+        var lineBlock = null;
         var region = null;
         // A `+` that hands the next visible line to a frame, and the blank run.
         var attach = null;
@@ -1736,10 +1743,18 @@
             var restAt = at + i + lead.length;
 
             if (fence) {
-                if (blank || reached >= fence.owner || fence.ch === '%') {
-                    var closer = /^(`{3,}|~{3,}|%{3,})[ \t]*$/.exec(rest);
-                    if (closer && closer[1].charAt(0) === fence.ch && closer[1].length >= fence.len
-                        && (fence.ch === '%' || (reached === fence.owner && indent <= fence.indent))) fence = null;
+                // A fence ends with its frame. A comment fence closes on an
+                // exact-width run anywhere, a lazy one included.
+                var closes = fence.ch === '%'
+                    ? /^%{3,}/.test(rest) && /^%+/.exec(rest)[0].length === fence.len
+                    : reached === fence.owner && indent <= fence.indent && /^(`{3,}|~{3,})[ \t]*$/.test(rest)
+                        && rest.charAt(0) === fence.ch && /^[`~]+/.exec(rest)[0].length >= fence.len;
+                if (reached >= fence.owner || closes) {
+                    if (!blank) fence.run.end = end;
+                    if (closes) {
+                        fence.run.closed = true;
+                        fence = null;
+                    }
                     result.fenced.add(at);
                     if (anyList()) extend(end);
                     continue;
@@ -1753,7 +1768,9 @@
             }
             // A `%%%` comment span ends the paragraph and leaves every frame open.
             if (/^%{3,}/.test(rest)) {
-                fence = { owner: frames.length - 1, indent: indent, ch: '%', len: /^%+/.exec(rest)[0].length };
+                fence = { owner: reached, indent: indent, ch: '%', len: /^%+/.exec(rest)[0].length };
+                fence.run = { at: restAt, end: end, ch: '%', closed: false, quoted: line.slice(0, restAt - at).indexOf('>') !== -1, depth: reached };
+                result.fences.push(fence.run);
                 para = -1;
                 blanks = 0;
                 if (anyList()) extend(end);
@@ -1902,10 +1919,15 @@
                     // A `%%%` comment span is invisible to the list around it.
                     if (fenceOpen[1].charAt(0) !== '%') endList(owner);
                     fence = { owner: depth, indent: indent, ch: fenceOpen[1].charAt(0), len: fenceOpen[1].length };
+                    fence.run = { at: restAt, end: end, ch: fence.ch, closed: false, quoted: line.slice(0, restAt - at).indexOf('>') !== -1, depth: depth };
+                    var shiftedFrame = false;
+                    for (var sf = 0; sf <= depth; sf++) if (frames[sf].shift !== undefined) shiftedFrame = true;
+                    if (!shiftedFrame && !(lineBlock && frames[lineBlock.owner] === lineBlock.frame && lineBlock.owner <= depth)) result.fences.push(fence.run);
                     para = -1;
                     break;
                 }
                 if (opener.test(rest) || /^\{[^\r\n]*\}[ \t]*$/.test(rest)) {
+                    if (/^:{3,} +\|[ \t]*$/.test(rest)) lineBlock = { owner: depth, frame: owner };
                     endList(owner);
                     para = -1;
                     break;
@@ -3333,6 +3355,49 @@
         ...substitutionContent('~>', []),
     ];
 
+    /*
+     * A fence inside a container (an item, a description, a footnote or a
+     * quote), as definitionListLines reads it: it runs to its closer or to the
+     * end of its container and takes no lazy line (PART 0 S1, S2;
+     * carve-grammars#871, #873, #874). `quoted` picks the fences behind a quote
+     * marker, reached through BLOCKQUOTE; the others begin at their line start,
+     * so they outrank LONE_CODE_FENCE and UNTERMINATED_BLOCK_COMMENT there.
+     */
+    const containerFenceRun = (m, at, quoted) => {
+        const lines = definitionListLines(m.input);
+        if (!lines.fenceIndex) lines.fenceIndex = new Map(lines.fences.map((run) => [run.at, run]));
+        const run = lines.fenceIndex.get(at);
+        return run && run.depth > 0 && run.quoted === quoted && (quoted || !run.closed) ? run : null;
+    };
+    const CODE_FENCE_LINE = '(?:`{3,}|~{3,})(?: ?(?:' + CODE_FENCE_INFO + '|' + RAW_FENCE_INFO + '))?[ \\t]*$(?![^\\r\\n])';
+    const CONTAINER_FENCE_LINE = '(?:' + CODE_FENCE_LINE + '|%{3,})';
+    // A fence the walk did not report keeps its line, scoped as the line-only
+    // rules would scope it (no `on:begin` veto, see hljs-block-context-test).
+    const containerFence = (quoted, line) => ({
+        className: 'code',
+        begin: RegExp(quoted
+            ? '(?=[`~%])(?<=>[ \\t]*)' + line
+            : '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + line),
+        'on:begin': (m, resp) => {
+            const at = m.index + m[0].search(/[`~%]/);
+            const run = containerFenceRun(m, at, quoted);
+            const comment = m.input.charAt(at) === '%';
+            m.rule.scope = run ? (comment ? 'comment' : 'code') : (comment ? 'comment' : quoted ? undefined : 'keyword');
+            resp.data.fenceEnd = run ? run.end : -1;
+        },
+        // The line break is left to the quote, which ends there.
+        end: /\r?\n|\r|$(?![\s\S])/,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            if (m.index < resp.data.fenceEnd) resp.ignoreMatch();
+        },
+        relevance: 0,
+    });
+    const CONTAINER_FENCE = containerFence(false, CODE_FENCE_LINE);
+    // After BLOCK_COMMENT, which takes a closed comment fence first.
+    const CONTAINER_COMMENT_FENCE = containerFence(false, '%{3,}');
+    BLOCKQUOTE.contains.splice(BLOCKQUOTE.contains.indexOf(UNTERMINATED_BLOCK_COMMENT), 0, containerFence(true, CONTAINER_FENCE_LINE));
+
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)
         ...FRONT_MATTER,
@@ -3342,6 +3407,7 @@
         ...CODE_BLOCK_ON_MARKER_LINE,
         ...RAW_BLOCK_ON_MARKER_LINE,
         UNCLOSED_CODE_BLOCK,  // an unpaired fence at column 0: to the end of the document
+        CONTAINER_FENCE,   // an unclosed fence in a container: to the end of it
         LONE_CODE_FENCE,   // a fence line neither of those paired: the line only
         LINE_BLOCK,        // Must be before DIV_BLOCK (both match `::: |`)
         FIGURE_GROUP_BLOCK,  // Must be before DIV_BLOCK (both match `::: figure`)
@@ -3392,6 +3458,7 @@
         DELETE,            // {-text-}
         BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
         BLOCK_COMMENT_ON_MARKER_LINE,  // `- %%%` - the marker is left to the list rules
+        CONTAINER_COMMENT_FENCE,       // an unclosed `%%%` run in a container: to the end of it
         UNTERMINATED_BLOCK_COMMENT,    // a `%%%` run with no closer - AFTER both fences
         DELIMITED_COMMENT, // {% ... %}
         LINE_COMMENT,      // %% to end of line

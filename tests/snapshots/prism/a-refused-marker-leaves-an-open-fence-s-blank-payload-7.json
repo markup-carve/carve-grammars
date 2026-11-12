@@ -4,7 +4,19 @@
     "text": "- "
   },
   {
+    "type": "code-block-in-container>code-block>punctuation",
+    "text": "```"
+  },
+  {
+    "type": "code-block-in-container>code-block>language>class-name",
+    "text": "=html"
+  },
+  {
+    "type": "code-block-in-container>code-block",
+    "text": "\n  x"
+  },
+  {
     "type": "text",
-    "text": "```=html\n  x\n+\n\ntail\n"
+    "text": "\n+\n\ntail\n"
   }
 ]
