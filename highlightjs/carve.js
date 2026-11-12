@@ -416,16 +416,38 @@
         // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
         // keeps its match and drops the scope, as `scopeUnless` does.
         'on:begin': (m) => {
-            let past = true;
-            if (m[1] !== undefined) {
-                const opener = indentColumn(m[1], 0);
-                for (let at = m[0].indexOf('\n'); past && at !== -1; at = m[0].indexOf('\n', at + 1)) {
-                    past = indentColumn(m[0], at + 1) > opener;
-                }
-            }
-            m.rule.scope = past ? 'attr' : undefined;
+            m.rule.scope = attachedAttribute(m.input, m) ? 'attr' : undefined;
         },
         relevance: 5,
+    };
+    // A block glued to a `}` that closes no forced emphasis needs that `}` to
+    // close an attached block: `a}{.b}`, `x {.a}{.b}` and a refused `{.a` + `}`
+    // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
+    // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
+    const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
+    const CRITIC_SUBSTITUTION = /\{~(?:[^~]|~(?![>}])){0,4096}~>[\s\S]{0,4096}~\}$/;
+    const BRACKETED_SPAN = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]$/;
+    // 'span', 'other', or null when the `}` before `at` closes nothing attached.
+    const attributeHost = (source, at) => {
+        if (source[at - 1] !== '}') {
+            return source[at - 1] === ']' && BRACKETED_SPAN.test(source.slice(Math.max(0, at - 4100), at)) ? 'span' : 'other';
+        }
+        if (/[*/_~=^,+-]/.test(source[at - 2] ?? '')) return CRITIC_SUBSTITUTION.test(source.slice(Math.max(0, at - 4096), at)) ? null : 'other';
+        for (let brace = at - 2, tries = 0; tries < 4 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+            if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return attributeHost(source, brace) === 'span' ? 'span' : null;
+            ATTRIBUTE_PROBE.lastIndex = brace;
+            const host = ATTRIBUTE_PROBE.exec(source);
+            if (host && brace + host[0].length === at) return attachedAttribute(source, host) ? attributeHost(source, brace) : null;
+        }
+        return null;
+    };
+    const attachedAttribute = (source, m) => {
+        if (m[1] === undefined) return attributeHost(source, m.index) !== null;
+        const opener = indentColumn(m[1], 0);
+        for (let at = m[0].indexOf('\n'); at !== -1; at = m[0].indexOf('\n', at + 1)) {
+            if (indentColumn(m[0], at + 1) <= opener) return false;
+        }
+        return true;
     };
 
     // Front matter is valid only at byte offset zero. Unlike the historical

@@ -205,21 +205,44 @@
     // Group 1 is the opener's indentation, set only on the line-anchored branch:
     // a match is kept when every line it wraps onto sits past the `{` column
     // (tab stops of 4, PART 7), else the search resumes after its `{`.
+    // A block glued to a `}` that closes no forced emphasis needs that `}` to
+    // close an attached block: `a}{.b}`, `x {.a}{.b}` and a refused `{.a` + `}`
+    // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
+    // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
     function pastOpenerColumn(pattern) {
         var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
         var lineBreak = /\r\n?|\n/g;
+        var criticSubstitution = /\{~(?:[^~]|~(?![>}])){0,4096}~>[\s\S]{0,4096}~\}$/;
+        var bracketedSpan = /(?<!(?<!\\)(?:\\\\){0,32}\\)\[(?!\^)(?:[^\[\]\\\r\n]|\\[^\r\n]){0,4096}\]$/;
+        // 'span', 'other', or null when the `}` before `at` closes nothing attached.
+        var hostOf = function (source, at) {
+            if (source.charAt(at - 1) !== '}') {
+                return source.charAt(at - 1) === ']' && bracketedSpan.test(source.slice(Math.max(0, at - 4100), at)) ? 'span' : 'other';
+            }
+            if (/[*\/_~=^,+-]/.test(source.charAt(at - 2))) return criticSubstitution.test(source.slice(Math.max(0, at - 4096), at)) ? null : 'other';
+            for (var brace = at - 2, tries = 0; tries < 4 && (brace = source.lastIndexOf('{', brace)) !== -1 && at - brace <= 4096; brace--, tries++) {
+                if (/^\{[ \t]*\}$/.test(source.slice(brace, at))) return hostOf(source, brace) === 'span' ? 'span' : null;
+                probe.lastIndex = brace;
+                var host = probe.exec(source);
+                if (host && brace + host[0].length === at) return valid(source, host) ? hostOf(source, brace) : null;
+            }
+            return null;
+        };
+        var valid = function (source, match) {
+            if (match[1] === undefined) return hostOf(source, match.index) !== null;
+            var opener = indentColumn(match[1], 0);
+            var end = match.index + match[0].length;
+            lineBreak.lastIndex = match.index;
+            for (var found; (found = lineBreak.exec(source)) && found.index < end;) {
+                if (indentColumn(source, lineBreak.lastIndex) <= opener) return false;
+            }
+            return true;
+        };
         gated.exec = function (source) {
             var match;
             while ((match = RegExp.prototype.exec.call(this, source))) {
-                if (match[1] === undefined) return match;
-                var opener = indentColumn(match[1], 0);
-                var end = match.index + match[0].length;
-                var past = true;
-                lineBreak.lastIndex = match.index;
-                for (var found; past && (found = lineBreak.exec(source)) && found.index < end;) {
-                    past = indentColumn(source, lineBreak.lastIndex) > opener;
-                }
-                if (past) return match;
+                if (valid(source, match)) return match;
                 this.lastIndex = match.index + 1;
             }
             return null;

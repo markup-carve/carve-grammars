@@ -20,39 +20,15 @@
     "text": "~}"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".k"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": " c\n\n"
+    "text": "{.k} c\n\n"
   },
   {
     "type": "critic-comment>comment",
     "text": "{#note#}"
   },
   {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".k"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
     "type": "text",
-    "text": " c\n"
+    "text": "{.k} c\n"
   }
 ]

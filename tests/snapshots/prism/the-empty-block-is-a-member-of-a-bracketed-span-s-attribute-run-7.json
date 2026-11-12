@@ -5,22 +5,6 @@
   },
   {
     "type": "text",
-    "text": "{}"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "{"
-  },
-  {
-    "type": "attributes>attr-value>class-name",
-    "text": ".b"
-  },
-  {
-    "type": "attributes>attr-value>punctuation",
-    "text": "}"
-  },
-  {
-    "type": "text",
-    "text": "\n"
+    "text": "{}{.b}\n"
   }
 ]
