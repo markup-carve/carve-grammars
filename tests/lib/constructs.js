@@ -110,17 +110,13 @@ export const CONSTRUCTS = [
         textmate: "markup.bold.italic",
         engineScopes: { prism: ['bold-italic'] },
     },
-    // AND THE MIRRORED BODY MAY HOLD A SLASH BETWEEN TWO WORD CHARACTERS
-    // (carve-grammars#382). `a */b/c/* d` is a combined run in the engine and
-    // was declined by a body spelled "anything but the closer's own first
-    // character". The temper here is NARROWER than the canonical one, and the
-    // narrowing is what makes it pay: admitting any slash that does not start
-    // the closer reads five times as many documents wrongly. The numbers, and
-    // the guard that pays for this one, are at the rule in both grammars.
+    // A MIRRORED BODY HOLDING A SLASH BETWEEN TWO WORD CHARACTERS is a bold
+    // run: the inner italic holds its own delimiter, so it does not form
+    // (PART 9 §9 R2, carve-grammars#882); carve-js renders `<strong>/b/c/</strong>`.
     {
         name: "bold-italic mirrored holding a slash", sample: "a */b/c/* d", payload: "b/c",
-        textmate: "markup.bold.italic",
-        engineScopes: { prism: ['bold-italic'], highlightjs: ['strong', 'emphasis'] },
+        textmate: "markup.bold",
+        engineScopes: { prism: ['bold'], highlightjs: ['strong'] },
     },
     // AND THE TEMPER MUST NOT REACH PAST ITS OWN CLOSER, which is the other
     // direction and the one a widened body gets wrong: two runs on one line

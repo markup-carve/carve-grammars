@@ -1,10 +1,6 @@
 [
   {
-    "scope": "emphasis",
-    "text": "/usr/local/"
-  },
-  {
     "scope": null,
-    "text": "\n"
+    "text": "/usr/local/\n"
   }
 ]
