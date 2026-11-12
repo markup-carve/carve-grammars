@@ -113,29 +113,47 @@ for (const [source, markup] of SHAPES) {
 
 // Each `+` line looks at the lines above it, so the lookback has to stay bounded:
 // a document of `+` lines would otherwise rescan everything above every line.
+// The check is the growth from a tenth to half of each size (5x if linear, 25x if
+// quadratic), not wall clock, which a loaded runner moves by 50% (#879).
 const script = `
     import { prismTokens } from './tests/lib/engines.js';
-    for (const source of [
-        '+\\n'.repeat(20000),
-        '+\\n\\n'.repeat(15000),
-        '+\\nx\\n'.repeat(15000),
-        '- a\\n' + '+\\nx\\n'.repeat(15000),
-        '- a\\n' + '\\n  i\\n+\\n'.repeat(10000),
-        '+ b |\\n'.repeat(15000),
-        '> +\\n'.repeat(15000),
-        '> - a\\n' + '> +\\n> x\\n'.repeat(10000),
-        '> + b |\\n'.repeat(15000),
-        '  | a |\\n  + b |\\n'.repeat(10000),
+    const time = (source, runs) => {
+        let best = Infinity;
+        for (let run = 0; run < runs; run++) {
+            const started = performance.now();
+            if (prismTokens(source).map((token) => token.text).join('') !== source) process.exit(1);
+            best = Math.min(best, performance.now() - started);
+        }
+        return Math.max(best, 1);
+    };
+    const growth = [];
+    for (const [make, size] of [
+        [(n) => '+\\n'.repeat(n), 20000],
+        [(n) => '+\\n\\n'.repeat(n), 15000],
+        [(n) => '+\\nx\\n'.repeat(n), 15000],
+        [(n) => '- a\\n' + '+\\nx\\n'.repeat(n), 15000],
+        [(n) => '- a\\n' + '\\n  i\\n+\\n'.repeat(n), 10000],
+        [(n) => '+ b |\\n'.repeat(n), 15000],
+        [(n) => '> +\\n'.repeat(n), 15000],
+        [(n) => '> - a\\n' + '> +\\n> x\\n'.repeat(n), 10000],
+        [(n) => '> + b |\\n'.repeat(n), 15000],
+        [(n) => '  | a |\\n  + b |\\n'.repeat(n), 10000],
     ]) {
-        if (prismTokens(source).map((token) => token.text).join('') !== source) process.exit(1);
+        const small = make(size / 10);
+        time(small, 1);
+        growth.push([make(1), time(make(size / 2), 2) / time(small, 3)]);
     }
+    console.log(JSON.stringify(growth));
 `;
 const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
     cwd: new URL('..', import.meta.url),
-    timeout: 15000,
+    timeout: 120000,
     encoding: 'utf8',
 });
-assert.equal(result.error, undefined, 'prism: a document of + lines exceeded fifteen seconds');
+assert.equal(result.error, undefined, 'prism: a document of + lines did not finish in two minutes');
 assert.equal(result.status, 0, `prism: ${result.stderr || `unexpected tokens (exit ${result.status})`}`);
+for (const [shape, factor] of JSON.parse(result.stdout)) {
+    assert.ok(factor < 10, `prism: ${JSON.stringify(shape)} took ${factor.toFixed(1)}x as long for 5x the lines`);
+}
 assertThisFileRuns(import.meta.url);
 console.log(`  ✓ prism reads ${SHAPES.length} + line shapes as carve does, in linear time`);
