@@ -94,6 +94,10 @@ export default function carve2(hljs) {
         }
     }
     adapt(grammar);
+    const hashHeading = grammar.contains.find(mode => mode?.className === 'section' && mode.begin?.source.includes('#{1,6}'));
+    hashHeading['on:begin'] = (match) => {
+        match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
+    };
     grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
     grammar.contains.unshift(

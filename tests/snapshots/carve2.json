@@ -3,22 +3,10 @@
     "prism": [
       [
         "text",
-        "Some text\n"
-      ],
-      [
-        "title>punctuation",
-        "#"
-      ],
-      [
-        "title",
-        " Heading"
-      ],
-      [
-        "text",
-        "\n"
+        "Some text\n# Heading\n"
       ]
     ],
-    "highlightjs": "Some text\n<span class=\"hljs-section\"># Heading</span>\n",
+    "highlightjs": "Some text\n# Heading\n",
     "textmate": [
       [
         "source.carve2",

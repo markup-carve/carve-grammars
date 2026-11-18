@@ -199,5 +199,12 @@ for (const source of ['- item\n  ```js\n  code\n  ```\n', '> ```js\n> code\n> ``
 for (const source of [' # H\n', ' = H\n']) {
     assert.ok(hasTextMate(source, 'markup.heading.carve'), `TextMate indented 0.2 heading: ${source}`);
 }
+assert.ok(!hasPrism('text\n# Heading\n', 'title'));
+assert.ok(!hasHljs('text\n# Heading\n', 'section'));
+assert.ok(hasPrism('text\n\n# Heading\n', 'title'));
+assert.ok(hasHljs('text\n\n# Heading\n', 'section'));
+assert.ok(prismLeaves('# First\n# Second\n').some(([scope, text]) =>
+    scope.startsWith('title') && text.includes('Second')));
+assert.ok(hljs.highlight('# First\n# Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section"># Second</span>'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 154 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 160 scope assertions passed`);

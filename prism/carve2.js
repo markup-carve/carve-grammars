@@ -110,7 +110,7 @@ if (Prism?.languages.carve) {
         titleScan.lastIndex = 0;
         let match;
         while ((match = titleScan.exec(source))) {
-            if (!match[0].trimStart().startsWith('=') || !inParagraph(source, match.index)) return match;
+            if (!inParagraph(source, match.index)) return match;
         }
         return null;
     };
