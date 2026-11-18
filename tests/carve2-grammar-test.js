@@ -224,4 +224,73 @@ const theme = readFileSync('themes/carve-code.css', 'utf8');
 assert.ok(theme.includes(':where(code.language-carve2, .language-carve2 > code) > .hljs-title'));
 assert.ok(theme.includes(':where(.language-carve2) .token.caption'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 166 scope assertions passed`);
+// C2-B-081: a definition stands at column 0 outside every container.
+let definitionAssertions = 0;
+const definitionScope = /meta\.link\.reference\.def\.carve|meta\.abbreviation\.carve/;
+const scoped = (source, pattern) => tokenizeTextMate(source).some(({ scope, text }) => pattern.test(scope) && text.trim());
+for (const source of [
+    '- a\n\n  [r]: /u\n', ' [a]: /u\n', '  *[HTML]: Hyper\n', '- a\n\n  *[HTML]: Hyper\n', '- *[HTML]: Hyper\n',
+    '- a\n[r]: /u\n', '- a\n  [r]: /u\n', '1. a\n\n   [r]: /u\n', '- [ ] a\n[r]: /u\n', '- a\n\n  b\n[r]: /u\n',
+    '> *[HTML]: Hyper\n', '::: note\n[r]: /u\n:::\n', '[^n]: x\n\n    [r]: /u\n', 'text\n[r]: /u\n',
+]) {
+    assert.ok(!scoped(source, definitionScope), `TextMate definition in a container is text: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+for (const source of ['[r]: /u\n', '*[HTML]: Hyper\n', '- a\n\n[r]: /u\n', '- a\n\n  b\n\n[r]: /u\n', '- [ ] a\n\n[r]: /u\n', '1. a\n\n*[HTML]: Hyper\n']) {
+    assert.ok(scoped(source, definitionScope), `TextMate document definition: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+assert.ok(!scoped('- a\n\n  [^n]: x\n', /punctuation\.separator\.carve/), 'TextMate footnote definition in an item is text');
+assert.ok(scoped('- a\n\n[^n]: x\n', /punctuation\.separator\.carve/), 'TextMate footnote definition after a list');
+definitionAssertions += 2;
+for (const [source, text] of [['- a\n\n  [r]: /u\n', true], ['- [r]: /u\n', true], ['- *[A]: b\n', true], ['::: note\n[r]: /u\n:::\n', true], ['text\n[r]: /u\n', true], ['- a\n\n[r]: /u\n', false], ['[r]: /u\n[s]: /v\n', false]]) {
+    const prismHit = hasPrism(source, 'reference-definition') || hasPrism(source, 'abbreviation-definition');
+    const html = hljs.highlight(source, { language: 'carve2' }).value;
+    const hljsHit = html.includes('hljs-symbol">[') || html.includes('hljs-symbol">*[');
+    assert.equal(prismHit, !text, `Prism definition placement: ${JSON.stringify(source)}`);
+    assert.equal(hljsHit, !text, `highlight.js definition placement: ${JSON.stringify(source)}`);
+    definitionAssertions += 2;
+}
+assert.ok(prismLeaves('[r]: /u\n[s]: /v\n').filter(([scope]) => scope.startsWith('reference-definition')).length > 1);
+definitionAssertions++;
+
+// A star break on a marker line or after a blank line in an item is a break.
+for (const source of ['- ***\n', '1. ***\n', '- - ***\n', '- [ ] ***\n', '- a\n\n  ***\n', '- a\n\n  - b\n\n    ***\n']) {
+    assert.ok(hasTextMate(source, 'meta.separator.thematic-break.carve'), `TextMate break in an item: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+for (const source of ['- ***x\n', '- a ***\n']) {
+    assert.ok(!hasTextMate(source, 'meta.separator.thematic-break.carve'), `TextMate no break: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+// A description list after a blank line in an item keeps its marks.
+for (const source of ['- outer\n\n  :: t\n  : x\n', '- outer\n\n  :: t\n  : ```js\n    code\n    ```\n', '1. outer\n\n   :: t\n\n   : x\n', '- a\n\n:: t\n: x\n']) {
+    const marks = covered(tokenizeTextMate, source, 'punctuation.definition.list.definition.carve');
+    assert.ok(marks.includes('::') && marks.includes(':'), `TextMate description marks: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+for (const source of ['- a\n:: t\n: x\n', '- [ ] a\n:: t\n: x\n']) {
+    assert.ok(!hasTextMate(source, 'punctuation.definition.list.definition.carve'), `TextMate lazy description marks are text: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+assert.ok(hasTextMate('- a\n\n  ```js\n  x\n  ```\n', 'markup.fenced_code.block.carve'));
+definitionAssertions++;
+
+// C2-B-040: an uppercase marker with a dot needs two spaces, every other marker one.
+const markerScope = 'punctuation.definition.list.numbered.carve';
+for (const [source, marker] of [
+    ['J. R. R. Tolkien wrote it\n', false], ['A. Smith went home.\n', false], ['II. Background\n', false], ['A.{.c} x\n', false], ['> A. x\n', false],
+    ['A.  Smith\n', true], ['IV.  x\n', true], ['iv. one space\n', true], ['a. alpha\n', true], ['A) one\n', true], ['a.{.c} x\n', true], ['A.{.c}  x\n', true], ['> a. x\n', true], ['> A.  x\n', true],
+]) {
+    assert.equal(hasTextMate(source, markerScope), marker, `TextMate marker: ${JSON.stringify(source)}`);
+    if (!source.startsWith('>') && !source.includes('{') && !source.includes(')')) {
+        assert.equal(hasPrism(source, 'letter-list-marker'), marker, `Prism marker: ${JSON.stringify(source)}`);
+        assert.equal(hasHljs(source, 'bullet'), marker, `highlight.js marker: ${JSON.stringify(source)}`);
+        definitionAssertions += 2;
+    }
+    definitionAssertions++;
+}
+assert.ok(!hasTextMate('- a\n\n  B. x\n', markerScope));
+definitionAssertions++;
+
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and ${166 + definitionAssertions} scope assertions passed`);

@@ -100,9 +100,53 @@ export default function carve2(hljs) {
     };
     grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+    // C2-B-081: a definition stands at column 0 outside every container and
+    // is text below a paragraph line.
+    function definitionAllowed(source, offset) {
+        let start = offset;
+        while (start > 0) {
+            const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            if (!/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) break;
+            start = previous;
+        }
+        return !inParagraph(source, start);
+    }
+    const isDefinition = mode => /\\\]:/.test(mode?.begin?.source || '');
+    const seen = new WeakSet();
+    function dropNestedDefinitions(mode) {
+        if (!mode || typeof mode !== 'object' || seen.has(mode) || mode instanceof RegExp) return;
+        seen.add(mode);
+        for (const value of Object.values(mode)) {
+            if (Array.isArray(value)) {
+                for (let i = value.length - 1; i >= 0; i--) {
+                    if (isDefinition(value[i])) value.splice(i, 1);
+                    else dropNestedDefinitions(value[i]);
+                }
+            } else dropNestedDefinitions(value);
+        }
+    }
+    grammar.contains = grammar.contains.filter((mode) => {
+        if (!isDefinition(mode)) return true;
+        if (!mode.begin.source.startsWith('^(?<![^\\r\\n])')) return false;
+        const originalBegin = mode['on:begin'];
+        mode['on:begin'] = (match, response) => {
+            if (/^\uFEFF?[ \t]/.test(match.input.slice(match.index)) || !definitionAllowed(match.input, match.index)) {
+                response.ignoreMatch();
+                return;
+            }
+            originalBegin?.(match, response);
+        };
+        return true;
+    });
+    for (const mode of grammar.contains) {
+        if (!isDefinition(mode)) dropNestedDefinitions(mode);
+    }
+    // C2-B-040: an uppercase marker with a dot needs two spaces, a lowercase one needs one.
+    const letterMarker = '(?:(?:[a-z]|[ivxlcdm]{2,9})\\.(?= \\S)|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?= {2}\\S))';
     grammar.contains.unshift(
         { className: 'comment', begin: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$') },
-        { className: 'bullet', begin: new RegExp(lineStart + '[A-Za-z]\\.(?= \\S)') },
+        { className: 'bullet', begin: new RegExp(lineStart + letterMarker) },
         { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$'), 'on:begin': (match) => {
             match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
         } },
