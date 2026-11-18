@@ -33,7 +33,18 @@ if (Prism?.languages.carve) {
     visit(grammar);
 
     // C2-B-100: a block attribute run is one line in 0.2.
-    grammar.attributes[1].pattern = /(?<!\\)\{[ \t]*(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?)(?:[ \t]+(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?))*[ \t]*\}/;
+    const attributePattern = grammar.attributes[1].pattern;
+    const singleLineAttributes = new RegExp(attributePattern.source, attributePattern.flags);
+    const originalExec = attributePattern.exec;
+    singleLineAttributes.exec = function (source) {
+        let match;
+        while ((match = originalExec.call(this, source))) {
+            if (!/[\r\n]/.test(match[0])) return match;
+            this.lastIndex = match.index + 1;
+        }
+        return null;
+    };
+    grammar.attributes[1].pattern = singleLineAttributes;
     const commentFence = grammar.comment[3];
     commentFence.pattern = new RegExp(commentFence.pattern.source.replace('\\1(?!%)[^\\r\\n]*$', '\\1(?!%)[ \\t]*$'), commentFence.pattern.flags);
 

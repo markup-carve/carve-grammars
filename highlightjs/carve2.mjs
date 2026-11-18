@@ -34,7 +34,14 @@ export default function carve2(hljs) {
             }
         }
         if (node.className === 'attr' && node.begin instanceof RegExp && node.begin.source.includes('\\r?\\n')) {
-            node.begin = /\{[ \t]*(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?)(?:[ \t]+(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?))*[ \t]*\}/;
+            const originalBegin = node['on:begin'];
+            node['on:begin'] = (match, response) => {
+                if (/[\r\n]/.test(match[0])) {
+                    match.rule.scope = undefined;
+                    return;
+                }
+                originalBegin?.(match, response);
+            };
         }
         if (node.className === 'comment' && node.end instanceof RegExp && node.end.source.includes('%{3,}')) {
             node.end = new RegExp(node.end.source.replace('[^\\n]*$', '[ \\t]*$'), node.end.flags);

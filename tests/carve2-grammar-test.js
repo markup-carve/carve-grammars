@@ -103,9 +103,13 @@ for (const source of ['{:fr}\np', '{.a :fr}\np']) {
     assert.ok(hasPrism(source, 'attributes'), `Prism language attributes: ${source}`);
     assert.ok(hasHljs(source, 'attr'), `highlight.js language attributes: ${source}`);
 }
+for (const source of ['{:a--b}\np', '{:abcdefghij}\np', 'hello {foo} world', 'hello {.a} world']) {
+    assert.ok(!hasPrism(source, 'attributes'), `Prism refused attributes: ${source}`);
+    assert.ok(!hasHljs(source, 'attr'), `highlight.js refused attributes: ${source}`);
+}
 assert.ok(hasPrism('```js\nx\n````\n*bold*\n', 'bold'));
 assert.ok(!hasPrism('````js\nx\n```\n*bold*\n````\n', 'bold'));
 assert.ok(hasPrism('```\n*bold*\n', 'code-block-unclosed'));
 assert.ok(!hasPrism('```\n*bold*\n', 'bold'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 74 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 82 scope assertions passed`);
