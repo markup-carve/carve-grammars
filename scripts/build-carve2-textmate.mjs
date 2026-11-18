@@ -46,6 +46,38 @@ for (const name of ['heading', 'heading_in_container']) {
     heading.beginCaptures = { '2': heading.beginCaptures['1'] };
     heading.end = '^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)';
 }
+// A heading-shaped line without a blank line continues an open list or quote
+// paragraph (C2-B-012, C2-B-154). Keep those states alive for lazy lines.
+grammar.repository.list_block.while = grammar.repository.list_block.while
+    .replace('(?=[ \\t]*$|\\1[ \\t]|', '(?=[ \\t]*$|\\1[ \\t]|[=#](?= )|')
+    .replace('|#(?![# \\t]|$)|', '|#(?= )|=(?= )|#(?![# \\t]|$)|');
+for (const name of ['list_item', 'numbered_item']) {
+    for (const item of grammar.repository[name].patterns) {
+        if (item.while) item.while = item.while
+            .replace('[ \\t]*$|', '')
+            .replace('^(?=', '^(?=[=#](?= )|');
+        item.patterns?.unshift({
+            begin: '^[ \\t]*[=#]{1,6} +',
+            end: '$',
+            patterns: [{ include: '#inline' }],
+        });
+    }
+}
+for (const item of grammar.repository.quoted_item_context.patterns) {
+    if (!item.end) continue;
+    item.end = item.end.replace('^(?!\\G)', '^(?!\\G)(?![=#]{1,6} )');
+    item.patterns?.unshift({
+        begin: '^[ \\t]*[=#]{1,6} +',
+        end: '$',
+        patterns: [{ include: '#inline' }],
+    });
+}
+for (const [name, rule] of Object.entries(grammar.repository)) {
+    if (name.startsWith('quoted_prose_continuation') && rule.end) {
+        rule.end = rule.end.replace('(?:#{1,6}|={1,6})(?: |$)|', '')
+            .replace('|(?![ \\t]*>)(?!\\1)', '');
+    }
+}
 grammar.repository.hr.match = '^(?:\\A\\x{FEFF})?[ \\t]*\\*{3,}[ \\t]*$';
 for (const [name, rule] of Object.entries(grammar.repository)) {
     if (name.startsWith('block_comment') && rule.end) {
