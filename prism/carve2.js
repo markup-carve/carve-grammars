@@ -3,6 +3,36 @@ import './carve.js';
 
 const Prism = globalThis.Prism;
 if (Prism?.languages.carve) {
+    let paragraphCacheSource;
+    const paragraphCache = new Map();
+    function inParagraph(source, offset) {
+        if (source !== paragraphCacheSource) {
+            paragraphCacheSource = source;
+            paragraphCache.clear();
+        }
+        let end = offset - 1;
+        const visited = [];
+        let result = false;
+        while (end >= 0) {
+            if (paragraphCache.has(end)) {
+                result = paragraphCache.get(end);
+                break;
+            }
+            visited.push(end);
+            const start = source.lastIndexOf('\n', end - 1) + 1;
+            const line = source.slice(start, end).trim();
+            if (!line) break;
+            if (/^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/.test(line)
+                || /^(?:#{1,6}|={1,6}) +\S/.test(line)) {
+                end = start - 1;
+                continue;
+            }
+            result = !/^\*{3,}$|^`{3,}|^\|.*\||^%%[ \t]*#(?:region|endregion)\b|^%{3,}/.test(line);
+            break;
+        }
+        for (const position of visited) paragraphCache.set(position, result);
+        return result;
+    }
     const grammar = Prism.util.clone(Prism.languages.carve);
     const visited = new WeakSet();
     const removed = new Set(['underline', 'strike', 'changed', 'table-separator', 'table-alignment', 'continuation-marker']);
@@ -45,16 +75,27 @@ if (Prism?.languages.carve) {
         return null;
     };
     grammar.attributes[1].pattern = singleLineAttributes;
-    const commentFence = grammar.comment[3];
-    commentFence.pattern = new RegExp(commentFence.pattern.source.replace('\\1(?!%)[^\\r\\n]*$', '\\1(?!%)[ \\t]*$'), commentFence.pattern.flags);
+    for (const commentFence of grammar.comment.slice(1, 4)) {
+        commentFence.pattern = new RegExp(commentFence.pattern.source.replace('[^\\r\\n]*$', '[ \\t]*$'), commentFence.pattern.flags);
+    }
 
     // C2-B-152, C2-B-108, C2-B-171, C2-I-046.
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
     grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
+    const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm');
+    const titleScan = new RegExp(titlePattern.source, 'gm');
+    titlePattern.exec = function (source) {
+        titleScan.lastIndex = 0;
+        let match;
+        while ((match = titleScan.exec(source))) {
+            if (!match[0].trimStart().startsWith('=') || !inParagraph(source, match.index)) return match;
+        }
+        return null;
+    };
     grammar.title = {
         ...grammar.title,
-        pattern: new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm'),
+        pattern: titlePattern,
         inside: {
             ...grammar.title.inside,
             punctuation: /^(?<![^\r\n])\uFEFF?(?:#{1,6}|={1,6})/,

@@ -158,5 +158,20 @@ assert.ok(tokenizeTextMate('= H\n%% note\n  cont\n').some(({ scope, text }) =>
 assert.ok(!tokenizeTextMate('= H\n%% #region x\n  cont\n').some(({ scope, text }) =>
     text.includes('cont') && scope.includes('markup.heading.carve')));
 assert.ok(hasTextMate('= H\n  ***\nafter\n', 'meta.separator.thematic-break.carve'));
+const falseQuotedCommentCloser = '> %%%\n> hidden\n> %%% visible?\n> after\n> %%%\n';
+assert.ok(prismLeaves(falseQuotedCommentCloser).some(([scope, text]) =>
+    scope.includes('comment') && text.includes('after')));
+assert.ok(!hasPrism('text\n= Heading\n', 'title'));
+assert.ok(!hasHljs('text\n= Heading\n', 'section'));
+assert.ok(hasPrism('text\n\n= Heading\n', 'title'));
+assert.ok(hasHljs('text\n\n= Heading\n', 'section'));
+assert.ok(prismLeaves('# First\n= Second\n').some(([scope, text]) =>
+    scope.startsWith('title') && text.includes('Second')));
+assert.ok(hljs.highlight('# First\n= Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section">= Second</span>'));
+assert.ok(!hasPrism('text\n= fake\n= fake2\n', 'title'));
+assert.ok(!hasHljs('text\n= fake\n= fake2\n', 'section'));
+assert.ok(prismLeaves('= First\n= Second\n').some(([scope, text]) =>
+    scope.startsWith('title') && text.includes('Second')));
+assert.ok(hljs.highlight('= First\n= Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section">= Second</span>'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 117 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 128 scope assertions passed`);
