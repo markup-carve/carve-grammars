@@ -173,7 +173,7 @@ assert.ok(!hasHljs('text\n= fake\n= fake2\n', 'section'));
 assert.ok(prismLeaves('= First\n= Second\n').some(([scope, text]) =>
     scope.startsWith('title') && text.includes('Second')));
 assert.ok(hljs.highlight('= First\n= Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section">= Second</span>'));
-for (const source of ['- item\n= Heading\n', '- item\n# Heading\n', '1. item\n= Heading\n', 'a. item\n= Heading\n', '> quote\n= Heading\n', '> quote\n# Heading\n', '> - item\n= Heading\n', '> - item\n# Heading\n']) {
+for (const source of ['- item\n= Heading\n', '- item\n# Heading\n', '- item\n== Heading\n', '- item\n## Heading\n', '1. item\n= Heading\n', 'a. item\n= Heading\n', '> quote\n= Heading\n', '> quote\n# Heading\n', '> - item\n= Heading\n', '> - item\n# Heading\n', '> - item\n== Heading\n', '> - item\n## Heading\n']) {
     assert.ok(!hasTextMate(source, 'markup.heading.carve'), `TextMate lazy heading: ${source}`);
 }
 for (const source of ['- item\n\n= Heading\n', '> quote\n\n= Heading\n']) {
@@ -207,4 +207,4 @@ assert.ok(prismLeaves('# First\n# Second\n').some(([scope, text]) =>
     scope.startsWith('title') && text.includes('Second')));
 assert.ok(hljs.highlight('# First\n# Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section"># Second</span>'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 160 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 164 scope assertions passed`);

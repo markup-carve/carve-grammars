@@ -49,15 +49,15 @@ for (const name of ['heading', 'heading_in_container']) {
 // A heading-shaped line without a blank line continues an open list or quote
 // paragraph (C2-B-012, C2-B-154). Keep those states alive for lazy lines.
 grammar.repository.list_block.while = grammar.repository.list_block.while
-    .replace('(?=[ \\t]*$|\\1[ \\t]|', '(?=[ \\t]*$|\\1[ \\t]|[=#](?= )|')
-    .replace('|#(?![# \\t]|$)|', '|#(?= )|=(?= )|#(?![# \\t]|$)|');
+    .replace('(?=[ \\t]*$|\\1[ \\t]|', '(?=[ \\t]*$|\\1[ \\t]|(?:#{1,6}|={1,6})(?= )|')
+    .replace('|#(?![# \\t]|$)|', '|#{1,6}(?= )|={1,6}(?= )|#(?![# \\t]|$)|');
 for (const name of ['list_item', 'numbered_item']) {
     for (const item of grammar.repository[name].patterns) {
         if (item.while) item.while = item.while
             .replace('[ \\t]*$|', '')
-            .replace('^(?=', '^(?=[=#](?= )|');
+            .replace('^(?=', '^(?=(?:#{1,6}|={1,6})(?= )|');
         item.patterns?.unshift({
-            begin: '^[ \\t]*[=#]{1,6} +',
+            begin: '^[ \\t]*(?:#{1,6}|={1,6}) +',
             end: '$',
             patterns: [{ include: '#inline' }],
         });
@@ -65,9 +65,9 @@ for (const name of ['list_item', 'numbered_item']) {
 }
 for (const item of grammar.repository.quoted_item_context.patterns) {
     if (!item.end) continue;
-    item.end = item.end.replace('^(?!\\G)', '^(?!\\G)(?![=#]{1,6} )');
+    item.end = item.end.replace('^(?!\\G)', '^(?!\\G)(?!(?:#{1,6}|={1,6}) )');
     item.patterns?.unshift({
-        begin: '^[ \\t]*[=#]{1,6} +',
+        begin: '^[ \\t]*(?:#{1,6}|={1,6}) +',
         end: '$',
         patterns: [{ include: '#inline' }],
     });
