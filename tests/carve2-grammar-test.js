@@ -147,5 +147,16 @@ assert.ok(!tokenizeTextMate(letterItemWithFence).some(({ scope, text }) =>
 const quotedCommentWithFalseCloser = '> %%%\n> hidden\n> %%% visible?\n> after\n> %%%\n';
 assert.ok(tokenizeTextMate(quotedCommentWithFalseCloser).some(({ scope, text }) =>
     text.includes('after') && scope.includes('comment.block.carve')));
+assert.ok(!tokenizeTextMate('```\nx\n```\nafter\n').some(({ scope, text }) =>
+    text.includes('after') && scope.includes('markup.raw.code.carve')));
+assert.ok(tokenizeTextMate('= H\n  cont\n').some(({ scope, text }) =>
+    text.includes('cont') && scope.includes('markup.heading.carve')));
+assert.ok(!tokenizeTextMate('= H\nplain\n').some(({ scope, text }) =>
+    text.includes('plain') && scope.includes('markup.heading.carve')));
+assert.ok(tokenizeTextMate('= H\n%% note\n  cont\n').some(({ scope, text }) =>
+    text.includes('cont') && scope.includes('markup.heading.carve')));
+assert.ok(!tokenizeTextMate('= H\n%% #region x\n  cont\n').some(({ scope, text }) =>
+    text.includes('cont') && scope.includes('markup.heading.carve')));
+assert.ok(hasTextMate('= H\n  ***\nafter\n', 'meta.separator.thematic-break.carve'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 111 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 117 scope assertions passed`);

@@ -30,7 +30,7 @@ function adapt(node) {
                 .replaceAll('(`{3,}|~{3,})', '(`{3,})')
                 .replaceAll('(`|~)', '(`)')
                 .replaceAll('[`~]', '`')
-                .replaceAll('(?<=~)~', '(?!)')
+                .replaceAll('|(?<=~)~', '')
                 .replaceAll('~{3,}', '(?!)')
                 .replaceAll('#{1,6}', '(?:#{1,6}|={1,6})')
                 .replaceAll('(?= {2}|', '(?= +|')
@@ -39,6 +39,13 @@ function adapt(node) {
     }
 }
 adapt(grammar);
+for (const name of ['heading', 'heading_in_container']) {
+    const heading = grammar.repository[name];
+    const bom = name === 'heading' ? '(?:\\A\\x{FEFF})?' : '';
+    heading.begin = '^' + bom + '([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)';
+    heading.beginCaptures = { '2': heading.beginCaptures['1'] };
+    heading.end = '^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)';
+}
 grammar.repository.hr.match = '^(?:\\A\\x{FEFF})?[ \\t]*\\*{3,}[ \\t]*$';
 for (const [name, rule] of Object.entries(grammar.repository)) {
     if (name.startsWith('block_comment') && rule.end) {
