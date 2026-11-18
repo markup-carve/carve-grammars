@@ -78,11 +78,13 @@
     "./diagrams/d2": "./diagrams/d2.js",
     "./diagrams/*": "./diagrams/*",
     "./prism/carve.js": "./prism/carve.js",
+    "./prism/carve2.js": "./prism/carve2.js",
     "./prism/*": "./prism/*",
     "./highlightjs/carve.js": {
       "import": "./highlightjs/carve.mjs",
       "default": "./highlightjs/carve.js"
     },
+    "./highlightjs/carve2.js": "./highlightjs/carve2.mjs",
     "./highlightjs/delimited.js": {
       "import": "./highlightjs/delimited.mjs",
       "default": "./highlightjs/delimited.js"
@@ -107,6 +109,7 @@
     },
     "./diff/carve-diff.css": "./diff/carve-diff.css",
     "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
+    "./textmate/carve2.tmLanguage.json": "./textmate/carve2.tmLanguage.json",
     "./textmate/csv.tmLanguage.json": "./textmate/csv.tmLanguage.json",
     "./textmate/tsv.tmLanguage.json": "./textmate/tsv.tmLanguage.json",
     "./fence-languages.json": "./fence-languages/fence-languages.json",
