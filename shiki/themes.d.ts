@@ -48,3 +48,9 @@ export const carveDarkTheme: ThemeRegistrationRaw
  * highlight) with `data-carve-*` attributes; pair with `shiki/carve.css`.
  */
 export const carveStylingTransformer: ShikiTransformer
+
+/** Feed blank source lines to TextMate when tokenizing with Shiki. */
+export function sourceForShiki(source: string): string
+
+/** Restore empty HTML lines after Shiki has tokenized them. */
+export const carveBlankLineTransformer: ShikiTransformer
