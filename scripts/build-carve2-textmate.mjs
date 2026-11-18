@@ -32,14 +32,19 @@ function adapt(node) {
                 .replaceAll('[`~]', '`')
                 .replaceAll('(?<=~)~', '(?!)')
                 .replaceAll('~{3,}', '(?!)')
-                .replaceAll('#{1,6}', '(?:#{1,6}|={1,6})');
+                .replaceAll('#{1,6}', '(?:#{1,6}|={1,6})')
+                .replaceAll('(?= {2}|', '(?= +|')
+                .replaceAll('\\} {2}', '\\} +');
         } else adapt(value);
     }
 }
 adapt(grammar);
 grammar.repository.hr.match = '^(?:\\A\\x{FEFF})?[ \\t]*\\*{3,}[ \\t]*$';
-grammar.repository.block_comment.end = grammar.repository.block_comment.end.replace('[^\\n]*$', '[ \\t]*$');
-grammar.repository.block_comment_on_marker_line.end = grammar.repository.block_comment_on_marker_line.end.replace('[^\\n]*$', '[ \\t]*$');
+for (const [name, rule] of Object.entries(grammar.repository)) {
+    if (name.startsWith('block_comment') && rule.end) {
+        rule.end = rule.end.replaceAll('[^\\n]*$', '[ \\t]*$');
+    }
+}
 // A heading, quote, definition or attribute line directly below prose is
 // paragraph content in 0.2 (U-001 through U-005). Keep that paragraph open
 // until a blank line or one of the block shapes that may interrupt it.
@@ -56,15 +61,6 @@ grammar.repository.region_marker = {
     match: '^(?:\\A\\x{FEFF})?[ \\t]*%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$',
     name: 'comment.line.percent.carve',
 };
-grammar.repository.letter_list_marker = {
-    match: '^(?:\\A\\x{FEFF})?[ \\t]*[A-Za-z]\\.(?= \\S)',
-    name: 'punctuation.definition.list.numbered.carve',
-};
-for (const patterns of [grammar.patterns, grammar.repository.container_blocks?.patterns]) {
-    if (!patterns) continue;
-    const index = patterns.findIndex(pattern => pattern.include === '#list_block');
-    if (index !== -1) patterns.splice(index, 0, { include: '#letter_list_marker' });
-}
 const result = JSON.stringify(grammar, null, 2) + '\n';
 if (process.argv.includes('--check')) {
     if (!fs.existsSync(target) || fs.readFileSync(target, 'utf8') !== result) {
