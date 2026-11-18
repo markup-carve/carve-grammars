@@ -99,5 +99,13 @@ const commentWithFalseCloser = '%%%\nhidden\n%%% visible?\nafter\n%%%\n';
 assert.ok(prismLeaves(commentWithFalseCloser).some(([scope, text]) => scope === 'comment' && text.includes('after')));
 assert.ok(hljs.highlight(commentWithFalseCloser, { language: 'carve2' }).value.includes('after\n%%%'));
 assert.ok(covered(tokenizeTextMate, commentWithFalseCloser, 'comment.block.carve').includes('after'));
+for (const source of ['{:fr}\np', '{.a :fr}\np']) {
+    assert.ok(hasPrism(source, 'attributes'), `Prism language attributes: ${source}`);
+    assert.ok(hasHljs(source, 'attr'), `highlight.js language attributes: ${source}`);
+}
+assert.ok(hasPrism('```js\nx\n````\n*bold*\n', 'bold'));
+assert.ok(!hasPrism('````js\nx\n```\n*bold*\n````\n', 'bold'));
+assert.ok(hasPrism('```\n*bold*\n', 'code-block-unclosed'));
+assert.ok(!hasPrism('```\n*bold*\n', 'bold'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 66 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 74 scope assertions passed`);

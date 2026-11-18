@@ -408,12 +408,12 @@
   "U-049": {
     "prism": [
       [
-        "code",
-        "```\ncode\n   ```"
+        "code-block-unclosed>punctuation",
+        "```"
       ],
       [
-        "text",
-        "\nafter\n"
+        "code-block-unclosed",
+        "\ncode\n   ```\nafter\n"
       ]
     ],
     "highlightjs": "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span>\ncode\n   ```\nafter\n</span>",

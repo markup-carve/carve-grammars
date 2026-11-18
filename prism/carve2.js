@@ -33,7 +33,7 @@ if (Prism?.languages.carve) {
     visit(grammar);
 
     // C2-B-100: a block attribute run is one line in 0.2.
-    grammar.attributes[1].pattern = /(?<!\\)\{[ \t]*(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?)(?:[ \t]+(?:[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?))*[ \t]*\}/;
+    grammar.attributes[1].pattern = /(?<!\\)\{[ \t]*(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?)(?:[ \t]+(?::[A-Za-z0-9-]*|[.#][A-Za-z_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s{}]+))?))*[ \t]*\}/;
     const commentFence = grammar.comment[3];
     commentFence.pattern = new RegExp(commentFence.pattern.source.replace('\\1(?!%)[^\\r\\n]*$', '\\1(?!%)[ \\t]*$'), commentFence.pattern.flags);
 
@@ -44,14 +44,6 @@ if (Prism?.languages.carve) {
         ...grammar.title,
         pattern: /^[ \t]*(?:#{1,6}|={1,6}) +\S[^\r\n]*$/m,
     };
-    grammar['code-block'] = {
-        pattern: /^([ \t]*)(`{3,})[^\r\n]*(?:\r\n?|\n)[\s\S]*?^\1\2[ \t]*$/m,
-        greedy: true,
-        alias: 'code',
-        inside: grammar['code-block']?.inside,
-    };
-    delete grammar['code-block-unclosed'];
-    delete grammar['code-block-in-container'];
     const region = {
         pattern: /^[ \t]*%%[ \t]*#(?:region[ \t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \t]*$/m,
         greedy: true,
