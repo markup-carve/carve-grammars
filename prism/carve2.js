@@ -105,6 +105,8 @@ if (Prism?.languages.carve) {
 
     // C2-B-152, C2-B-108, C2-B-171, C2-I-046.
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+    // C2-B-040: an uppercase marker with a dot needs two spaces, a lowercase one needs one.
+    const letterMarker = '(?:(?:[a-z]|[ivxlcdm]{2,9})\\.(?= \\S)|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?= {2}\\S))';
     grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
     const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm');
@@ -130,9 +132,57 @@ if (Prism?.languages.carve) {
         greedy: true,
         alias: 'comment',
     };
+    // C2-B-081: a definition stands at column 0 outside every container and
+    // is text below a paragraph line.
+    const nested = new WeakSet();
+    function dropNestedDefinitions(node) {
+        if (!node || typeof node !== 'object' || nested.has(node) || node instanceof RegExp) return;
+        nested.add(node);
+        for (const [key, value] of Object.entries(node)) {
+            if (key === 'inside' && value && typeof value === 'object') {
+                delete value['reference-definition'];
+                delete value['abbreviation-definition'];
+                delete value['glued-abbreviation-definition'];
+            }
+            dropNestedDefinitions(value);
+        }
+    }
+    dropNestedDefinitions(grammar);
+    delete grammar['glued-abbreviation-definition'];
+    function definitionAllowed(source, offset) {
+        let start = offset;
+        while (start > 0) {
+            const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            if (!/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) break;
+            start = previous;
+        }
+        return !inParagraph(source, start);
+    }
+    for (const name of ['reference-definition', 'abbreviation-definition']) {
+        const pattern = grammar[name].pattern;
+        const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g';
+        const scan = new RegExp(pattern.source, flags);
+        const atColumnZero = new RegExp(pattern.source, flags);
+        // Greedy, so Prism scans the whole text and a marker before the
+        // definition stays visible.
+        atColumnZero.exec = function (source) {
+            scan.lastIndex = this.lastIndex;
+            let match;
+            while ((match = scan.exec(source))) {
+                if (/^\uFEFF?[^ \t]/.test(match[0]) && definitionAllowed(source, match.index)) {
+                    this.lastIndex = scan.lastIndex;
+                    return match;
+                }
+            }
+            this.lastIndex = 0;
+            return null;
+        };
+        grammar[name] = { ...grammar[name], pattern: atColumnZero, greedy: true };
+    }
     Prism.languages.carve2 = {
         'region-marker': region,
-        'letter-list-marker': { pattern: new RegExp(lineStart + '[A-Za-z]\\.(?= \\S)', 'm'), alias: 'bullet' },
+        'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },
         ...grammar,
     };
 }

@@ -11926,12 +11926,6 @@
               "include": "#blockquote"
             },
             {
-              "include": "#abbreviation_in_container"
-            },
-            {
-              "include": "#link_ref_def_in_container"
-            },
-            {
               "include": "#caption"
             },
             {
@@ -12107,12 +12101,6 @@
               "include": "#blockquote"
             },
             {
-              "include": "#abbreviation_in_container"
-            },
-            {
-              "include": "#link_ref_def_in_container"
-            },
-            {
               "include": "#caption"
             },
             {
@@ -12210,12 +12198,6 @@
               "include": "#blockquote"
             },
             {
-              "include": "#abbreviation_in_container"
-            },
-            {
-              "include": "#link_ref_def_in_container"
-            },
-            {
               "include": "#caption"
             },
             {
@@ -12288,9 +12270,6 @@
           "include": "#quoted_blocks"
         },
         {
-          "include": "#abbreviation_in_quote"
-        },
-        {
           "comment": "A `+` as the whole rest of a quote's own marker line (`> +`, `> > +`) is the continuation marker. Whether it attaches depends on the next line, which a line grammar cannot see, so it is scoped regardless.",
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
           "captures": {
@@ -12308,7 +12287,7 @@
         },
         {
           "comment": "A `+` as the whole rest of a quoted list item's marker line is the continuation marker. A bare `> +` is a marker only when the next line starts at the right column (markup-carve/carve#3445), which a line grammar cannot see, so it stays text.",
-          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -12405,7 +12384,7 @@
           "include": "#quoted_item_lazy_marker_line"
         },
         {
-          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
+          "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -12454,9 +12433,6 @@
           "include": "#quoted_blocks_in_container"
         },
         {
-          "include": "#abbreviation_in_quote"
-        },
-        {
           "comment": "A quote's own marker-line `+`, as in `#blockquote`.",
           "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
           "captures": {
@@ -12474,7 +12450,7 @@
         },
         {
           "comment": "The quoted list-marker form of the `+` continuation marker, as in `#blockquote`.",
-          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
+          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])( +)|((?:[-*] +)*[-*])( +)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)( +)|((?:[-*] +)*[-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +))(\\+)[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -12568,7 +12544,7 @@
           "include": "#quoted_item_lazy_marker_line_in_container"
         },
         {
-          "match": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
+          "match": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))?(.*)$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -12668,7 +12644,7 @@
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
     },
     "abbreviation": {
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "^(?:\\A\\x{FEFF})?(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
@@ -12691,31 +12667,6 @@
       },
       "name": "meta.abbreviation.carve",
       "comment": "The DOCUMENT-LEVEL abbreviation definition, anchored at column 0 (carve-grammars#138). An indented definition at the top level is literal text - verified against the pinned engine, ` *[HTML]: HyperText` renders `<p>*[HTML]: HyperText</p>` and defines nothing - so this rule refuses it and `#abbreviation_in_container` takes over inside a container."
-    },
-    "abbreviation_in_container": {
-      "match": "^[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "3": {
-          "name": "entity.name.abbreviation.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "5": {
-          "name": "punctuation.separator.carve"
-        },
-        "6": {
-          "name": "string.unquoted.abbreviation.carve"
-        }
-      },
-      "name": "meta.abbreviation.carve",
-      "comment": "The in-container abbreviation definition: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` and every div body reach this: an abbreviation definition is a definition in every container (markup-carve/carve#4874, carve-grammars#852). NOTE the standing over-colour this variant keeps: the pinned engine does not collect an abbreviation inside a list item either - `- item\\n\\n  *[HTML]: HyperText` renders the definition line as item text - so this is the same rare-wrong-answer trade carve-grammars#89 chose, kept here rather than widened or narrowed by a ticket about document-level anchors."
     },
     "definition_list_on_marker_line": {
       "comment": "A definition list opened on a list item's own marker line (`- :: t`), which carve-js nests in the item (carve-grammars#844). Its later lines are the document-level entry's.",
@@ -12785,9 +12736,6 @@
               "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.[ \\t]))",
               "patterns": [
                 {
-                  "include": "#abbreviation_in_description"
-                },
-                {
                   "comment": "A list marker opening the description body (`:  - item`).",
                   "match": "\\G[ \\t]*(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])|([-*])|(\\d+[.)]|[a-zA-Z](?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))(?= +\\S)",
                   "captures": {
@@ -12822,124 +12770,6 @@
           ]
         }
       ]
-    },
-    "abbreviation_in_quote": {
-      "comment": "A quoted line collects an abbreviation definition as the document does, behind the prefix and any item markers (carve-grammars#845).",
-      "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.quote.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.quote.carve"
-        },
-        "3": {
-          "name": "punctuation.definition.list.carve"
-        },
-        "4": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "5": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "6": {
-          "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
-        },
-        "7": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "8": {
-          "name": "meta.abbreviation.carve punctuation.separator.carve"
-        },
-        "9": {
-          "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
-        }
-      },
-      "name": "markup.quote.carve"
-    },
-    "abbreviation_on_marker_line": {
-      "comment": "An abbreviation definition on a list item's own marker line (`- *[HTML]: X`), which carve-js collects (carve-grammars#850).",
-      "match": "\\G(?<=[ \\t])(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "3": {
-          "name": "entity.name.abbreviation.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "5": {
-          "name": "punctuation.separator.carve"
-        },
-        "6": {
-          "name": "string.unquoted.abbreviation.carve"
-        }
-      },
-      "name": "meta.abbreviation.carve"
-    },
-    "abbreviation_in_quote_on_marker_line": {
-      "comment": "The same on a list item's own marker line (`- > *[HTML]: X`).",
-      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.quote.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.quote.carve"
-        },
-        "3": {
-          "name": "punctuation.definition.list.carve"
-        },
-        "4": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "5": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "6": {
-          "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
-        },
-        "7": {
-          "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-        },
-        "8": {
-          "name": "meta.abbreviation.carve punctuation.separator.carve"
-        },
-        "9": {
-          "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
-        }
-      },
-      "name": "markup.quote.carve"
-    },
-    "abbreviation_in_description": {
-      "match": "(?:^|\\G)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "3": {
-          "name": "entity.name.abbreviation.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.abbreviation.carve"
-        },
-        "5": {
-          "name": "punctuation.separator.carve"
-        },
-        "6": {
-          "name": "string.unquoted.abbreviation.carve"
-        }
-      },
-      "name": "meta.abbreviation.carve",
-      "comment": "A description body collects abbreviation definitions like the document does, on the `: ` marker line (`\\G`) and on any later body line at any indent (carve-grammars#842)."
     },
     "link_ref_def": {
       "match": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:)(?: [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?)?(?=[ \\t]*$)",
@@ -12987,52 +12817,6 @@
       },
       "name": "meta.link.reference.def.carve",
       "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column."
-    },
-    "link_ref_def_in_container": {
-      "match": "^([ \\t]*)(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:)(?: [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?)?(?=[ \\t]*$)",
-      "captures": {
-        "2": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "3": {
-          "name": "constant.other.reference.link.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "5": {
-          "name": "punctuation.separator.carve"
-        },
-        "6": {
-          "name": "markup.underline.link.carve"
-        },
-        "7": {
-          "name": "string.quoted.link.title.carve"
-        },
-        "8": {
-          "name": "meta.attributes.carve",
-          "patterns": [
-            {
-              "include": "#attribute_parts"
-            }
-          ]
-        },
-        "9": {
-          "name": "punctuation.definition.attributes.carve"
-        },
-        "10": {
-          "name": "meta.attributes.carve",
-          "patterns": [
-            {
-              "include": "#attribute_parts"
-            }
-          ]
-        },
-        "11": {
-          "name": "punctuation.definition.attributes.carve"
-        }
-      },
-      "name": "meta.link.reference.def.carve"
     },
     "table_row": {
       "begin": "(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
@@ -13178,8 +12962,26 @@
           "name": "punctuation.definition.checkbox.carve"
         }
       },
-      "while": "^(?=[ \\t]*$|\\1[ \\t]{2})",
+      "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2})",
       "patterns": [
+        {
+          "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "begin": "^:{1,2} ",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
         {
           "include": "#container_blocks"
         }
@@ -13214,10 +13016,19 @@
               "name": "punctuation.definition.list.unnumbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13237,7 +13048,7 @@
               "name": "punctuation.definition.list.unnumbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t]{2,})",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2,})",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
@@ -13249,35 +13060,13 @@
               ]
             },
             {
-              "comment": "An abbreviation definition after a glued attribute block (`-{#x} *[HTML]: X`, carve-grammars#850).",
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-              "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
-                "3": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "4": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "5": {
-                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
-                },
-                "6": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "7": {
-                  "name": "meta.abbreviation.carve punctuation.separator.carve"
-                },
-                "8": {
-                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+              "begin": "^:{1,2} ",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
                 }
-              }
+              ]
             },
             {
               "comment": "A glued attribute block keeps the task checkbox after it (`-{.c} [x] done`).",
@@ -13318,10 +13107,19 @@
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13335,16 +13133,25 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d[.)]|(?:[A-Za-z])(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t][ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13358,16 +13165,25 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{2}[.)]|(?:[ivxlcdm]{2}|[IVXLCDM]{2})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13381,16 +13197,25 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{3}[.)]|(?:[ivxlcdm]{3}|[IVXLCDM]{3})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13404,16 +13229,25 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{4,}[.)]|(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            {
+              "begin": "^:{1,2} ",
               "end": "$",
               "patterns": [
                 {
@@ -13427,13 +13261,13 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
             }
           },
-          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\1[ \\t]{2,})",
+          "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2,})",
           "patterns": [
             {
               "begin": "^[ \\t]*(?:#{1,6}|={1,6}) +",
@@ -13445,35 +13279,13 @@
               ]
             },
             {
-              "comment": "An abbreviation definition after a glued attribute block (`-{#x} *[HTML]: X`, carve-grammars#850).",
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-              "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
-                "3": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "4": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "5": {
-                  "name": "meta.abbreviation.carve entity.name.abbreviation.carve"
-                },
-                "6": {
-                  "name": "meta.abbreviation.carve punctuation.definition.abbreviation.carve"
-                },
-                "7": {
-                  "name": "meta.abbreviation.carve punctuation.separator.carve"
-                },
-                "8": {
-                  "name": "meta.abbreviation.carve string.unquoted.abbreviation.carve"
+              "begin": "^:{1,2} ",
+              "end": "$",
+              "patterns": [
+                {
+                  "include": "#inline"
                 }
-              }
+              ]
             },
             {
               "include": "#container_blocks"
@@ -15599,9 +15411,6 @@
                   "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.[ \\t]))",
                   "patterns": [
                     {
-                      "include": "#abbreviation_in_description"
-                    },
-                    {
                       "comment": "A list marker opening the description body (`:  - item`).",
                       "match": "\\G[ \\t]*(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])|([-*])|(\\d+[.)]|[a-zA-Z](?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))(?= +\\S)",
                       "captures": {
@@ -15877,11 +15686,11 @@
         },
         {
           "comment": "A definition list in a quote opened on a list item's marker line (`- > :: t`, carve-grammars#850).",
-          "begin": "\\G(?<=[ \\t])(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
-          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
+          "begin": "\\G(?<=[ \\t])(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
-              "match": "\\G(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "match": "\\G(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -15910,7 +15719,7 @@
               "name": "markup.quote.carve"
             },
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -16087,12 +15896,6 @@
         },
         {
           "include": "#blockquote"
-        },
-        {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
         },
         {
           "include": "#caption"
@@ -16293,12 +16096,6 @@
           "include": "#blockquote"
         },
         {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
-        },
-        {
           "include": "#caption"
         },
         {
@@ -16464,12 +16261,6 @@
           "include": "#blockquote"
         },
         {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
-        },
-        {
           "include": "#caption"
         },
         {
@@ -16631,12 +16422,6 @@
           "include": "#blockquote"
         },
         {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
-        },
-        {
           "include": "#caption"
         },
         {
@@ -16718,12 +16503,6 @@
         },
         {
           "include": "#blockquote"
-        },
-        {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
         },
         {
           "include": "#caption"
@@ -21937,6 +21716,10 @@
       "comment": "Block patterns shared by list-item bodies. Frontmatter remains document-start only. The list item's zero-width while condition checks its content column before child rules run. Marker-line variants recognize comment fences, quotes, generic containers, and composite figures at the scan position after a list marker. Indented link-reference definitions use the container variant.",
       "patterns": [
         {
+          "match": "\\G(?<=[ \\t])\\*{3,}[ \\t]*$",
+          "name": "meta.separator.thematic-break.carve"
+        },
+        {
           "include": "#fenced_code_languages_on_marker_line_common"
         },
         {
@@ -21956,12 +21739,6 @@
         },
         {
           "include": "#definition_list_on_marker_line"
-        },
-        {
-          "include": "#abbreviation_on_marker_line"
-        },
-        {
-          "include": "#abbreviation_in_quote_on_marker_line"
         },
         {
           "include": "#quoted_blocks_on_marker_line"
@@ -22025,12 +21802,6 @@
         },
         {
           "include": "#blockquote_in_container"
-        },
-        {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
         },
         {
           "include": "#caption"
@@ -22168,7 +21939,7 @@
       "patterns": [
         {
           "comment": "A fence opened behind an item marker inside a quote (`> - ````). Its body is the quoted lines indented past the quote marker; a line back at the quote's content column ends the item and the fence with it (carve-grammars#849).",
-          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|(?!))[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|(?!))[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -22348,11 +22119,11 @@
           "name": "markup.quote.carve"
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
-          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
+          "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -22448,7 +22219,7 @@
       "patterns": [
         {
           "comment": "A fence opened behind an item marker inside a quote (`> - ````). Its body is the quoted lines indented past the quote marker; a line back at the quote's content column ends the item and the fence with it (carve-grammars#849).",
-          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|(?!))[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
+          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))))( +)(`{3,}(?![^\\n]*`)|(?!))[ \\t]*(=?[A-Za-z0-9_-]*)[^\\n]*$",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -22628,11 +22399,11 @@
           "name": "markup.quote.carve"
         },
         {
-          "begin": "^[ \\t]*(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
-          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
+          "begin": "^[ \\t]*(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
+          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
-              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +)*)(::)( +)(.*)$",
+              "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*)(::)( +)(.*)$",
               "captures": {
                 "1": {
                   "name": "punctuation.definition.quote.carve"
@@ -22769,8 +22540,8 @@
     },
     "list_block": {
       "comment": "A list is held open across a lazy line, so a marker after one is a sibling item and the next block ends it. The item itself pops on that line with its containers, so nothing inside it stays open. A `^ ` line here is text: the engine reads it as literal after a list. A `%%%` line stays in so a comment fence opened below the content column closes.",
-      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)(?:([-*]) +(\\[)([ xX\\-_>/!?])(\\]) +(?![ \\t]*$)|([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|(\\.)( +)(?![ \\t]*$)|((?:\\d[.)]|(?:[A-Za-z])(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|((?:\\d{2}[.)]|(?:[ivxlcdm]{2}|[IVXLCDM]{2})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|((?:\\d{3}[.)]|(?:[ivxlcdm]{3}|[IVXLCDM]{3})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|((?:\\d{4,}[.)]|(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|((?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])))",
-      "while": "^(?=[ \\t]*$|\\1[ \\t]|(?:#{1,6}|={1,6})(?= )|(?![ \\t])(?!(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))(?:[ \\t]|\\{|$))(?:[\\p{L}\\p{N}(\\\"'/\\\\]|\\*(?![ \\t*\\[{]|$)|_(?!_)|`(?!``)|\\[(?!\\^)(?![^\\]\\n]*\\]:)|~(?!~~)|=(?!==)|#{1,6}(?= )|={1,6}(?= )|#(?![# \\t]|$)|@)|\\^(?:[ \\t]|$)|%{3,})",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)(?:([-*]) +(\\[)([ xX\\-_>/!?])(\\]) +(?![ \\t]*$)|([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|(\\.)( +)(?![ \\t]*$)|((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])))",
+      "while": "^(?=[ \\t]*$|\\1[ \\t]|(?:#{1,6}|={1,6})(?= )|:{1,2}(?= )|(?![ \\t])(?!(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$))(?:[\\p{L}\\p{N}(\\\"'/\\\\]|\\*(?![ \\t*{]|$)|_(?!_)|`(?!``)|\\[|~(?!~~)|=(?!==)|#{1,6}(?= )|={1,6}(?= )|#(?![# \\t]|$)|@)|\\^(?:[ \\t]|$)|%{3,})",
       "patterns": [
         {
           "include": "#task_item"
@@ -22780,6 +22551,9 @@
         },
         {
           "include": "#numbered_item"
+        },
+        {
+          "include": "#list_item_resume"
         },
         {
           "comment": "A line no item claims sits below every open content column, so an indented opener on it opens its block as at the document level (carve-grammars#841).",
@@ -22799,6 +22573,15 @@
         },
         {
           "include": "#abbreviation"
+        },
+        {
+          "include": "#footnote_def"
+        },
+        {
+          "include": "#link_ref_def"
+        },
+        {
+          "include": "#definition_list"
         },
         {
           "include": "#block_comment"
@@ -22855,7 +22638,7 @@
     },
     "quoted_prose_continuation": {
       "comment": "A quoted paragraph runs on over the lines that continue it, quoted at its depth or shallower or lazy, so the list-marker and caption lines among them are text: a list item does not interrupt a paragraph inside a quote either (carve-grammars#851). A blank line, a deeper quote or a line that opens a block ends it and is read again.",
-      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ((?:>(?= ) )*)[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ((?:>(?= ) )*)[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
       "beginCaptures": {
         "3": {
           "name": "punctuation.definition.quote.carve"
@@ -22888,7 +22671,7 @@
     },
     "quoted_verbatim_span": {
       "comment": "A verbatim span left open on a plain quote line runs on over the next quote lines until its closer or the end of the paragraph. The span carries the quote prefix; after the closer the line ends the rule, so nothing else crosses into the next line.",
-      "begin": "^(?:\\A\\x{FEFF})?(>) (?![ \\t]*$)(?!(?:>|[-*]|\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(?: |\\{|$)|(?:#{1,6}|={1,6}) |[ \\t]*(?:`{3,}))(?=(?:[^`\\n\\\\]|\\\\.)*(?:\\$\\$?|!)?(`+)(?!`)(?![^\\n]*?(?<!`)\\2(?!`)))",
+      "begin": "^(?:\\A\\x{FEFF})?(>) (?![ \\t]*$)(?!(?:>|[-*]|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?: |\\{|$)|(?:#{1,6}|={1,6}) |[ \\t]*(?:`{3,}))(?=(?:[^`\\n\\\\]|\\\\.)*(?:\\$\\$?|!)?(`+)(?!`)(?![^\\n]*?(?<!`)\\2(?!`)))",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -23076,7 +22859,7 @@
     },
     "quoted_prose_continuation_depth_3": {
       "comment": "The quoted paragraph at depth 3: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
-      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) (> > )[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) (> > )[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
       "beginCaptures": {
         "3": {
           "name": "punctuation.definition.quote.carve"
@@ -23194,7 +22977,7 @@
     },
     "quoted_prose_continuation_depth_2": {
       "comment": "The quoted paragraph at depth 2: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
-      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) (> )[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) (> )[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
       "beginCaptures": {
         "3": {
           "name": "punctuation.definition.quote.carve"
@@ -23312,7 +23095,7 @@
     },
     "quoted_prose_continuation_depth_1": {
       "comment": "The quoted paragraph at depth 1: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
-      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ()[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
+      "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ()[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
       "beginCaptures": {
         "3": {
           "name": "punctuation.definition.quote.carve"
@@ -23378,7 +23161,7 @@
     },
     "quoted_item_lazy_marker_line_in_container": {
       "comment": "A column-0 marker line right after a quoted item with text is lazy: carve-js opens the item, but a definition on it defines nothing (corpus 383, carve-grammars#856). The begin takes the end of line, so \\G holds only at the next line start; once that item ends the rule ends too.",
-      "begin": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))(?![ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$))(.*)$\\n?",
+      "begin": "^[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))(?![ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$))(.*)$\\n?",
       "beginCaptures": {
         "0": {
           "name": "markup.quote.carve"
@@ -23419,7 +23202,7 @@
           ]
         }
       },
-      "end": "^(?!\\G)|^\\G(?!()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)|()([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|()([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|()(\\.)( +)(?![ \\t]*$)|()((?:\\d[.)]|(?:[A-Za-z])(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{2}[.)]|(?:[ivxlcdm]{2}|[IVXLCDM]{2})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{3}[.)]|(?:[ivxlcdm]{3}|[IVXLCDM]{3})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{4,}[.)]|(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))",
+      "end": "^(?!\\G)|^\\G(?!()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)|()([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|()([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|()(\\.)( +)(?![ \\t]*$)|()((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))",
       "patterns": [
         {
           "include": "#lazy_task_item"
@@ -23434,7 +23217,7 @@
     },
     "quoted_item_lazy_marker_line": {
       "comment": "A column-0 marker line right after a quoted item with text is lazy: carve-js opens the item, but a definition on it defines nothing (corpus 383, carve-grammars#856). The begin takes the end of line, so \\G holds only at the next line start; once that item ends the rule ends too.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))(?![ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$))(.*)$\\n?",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)(?:([-*])( +)(\\[)([ xX\\-_>/!?])(\\])(?= )(?![ \\t]*$)|((?:[-*] +)*[-*])(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$)|(\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))(?![ \\t]*$))(?![ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$))(.*)$\\n?",
       "beginCaptures": {
         "0": {
           "name": "markup.quote.carve"
@@ -23475,7 +23258,7 @@
           ]
         }
       },
-      "end": "^(?!\\G)|^\\G(?!()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)|()([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|()([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|()(\\.)( +)(?![ \\t]*$)|()((?:\\d[.)]|(?:[A-Za-z])(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{2}[.)]|(?:[ivxlcdm]{2}|[IVXLCDM]{2})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{3}[.)]|(?:[ivxlcdm]{3}|[IVXLCDM]{3})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d{4,}[.)]|(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)|()((?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))",
+      "end": "^(?!\\G)|^\\G(?!()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)|()([-*])( +)(?![ \\t]*$)((?:[-*] +)*)|()([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])|()(\\.)( +)(?![ \\t]*$)|()((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)|()((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n]))",
       "patterns": [
         {
           "include": "#lazy_task_item"
@@ -23539,15 +23322,6 @@
           "include": "#blockquote"
         },
         {
-          "include": "#abbreviation"
-        },
-        {
-          "include": "#footnote_def"
-        },
-        {
-          "include": "#link_ref_def"
-        },
-        {
           "include": "#caption_literal_at_start"
         },
         {
@@ -23580,7 +23354,7 @@
       "comment": "A list item inside a column-0 quote keeps its content column past its marker line, so a fence in it ends with the item (carve-grammars#881). Generated by scripts/generate-quoted-item-rules.mjs.",
       "patterns": [
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{1} )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{1} )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {3}))",
           "patterns": [
             {
@@ -23655,7 +23429,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{2} |[^ ]{1}  | [^ ]{1} )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{2} |[^ ]{1}  | [^ ]{1} )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {4}))",
           "patterns": [
             {
@@ -23730,7 +23504,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{3} |[^ ]{2}  |[^ ]{1}   | [^ ]{2} | [^ ]{1}  |  [^ ]{1} )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{3} |[^ ]{2}  |[^ ]{1}   | [^ ]{2} | [^ ]{1}  |  [^ ]{1} )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {5}))",
           "patterns": [
             {
@@ -23805,7 +23579,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{4} |[^ ]{3}  |[^ ]{2}   |[^ ]{1}    | [^ ]{3} | [^ ]{2}  | [^ ]{1}   |  [^ ]{2} |  [^ ]{1}  |   [^ ]{1} )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{4} |[^ ]{3}  |[^ ]{2}   |[^ ]{1}    | [^ ]{3} | [^ ]{2}  | [^ ]{1}   |  [^ ]{2} |  [^ ]{1}  |   [^ ]{1} )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {6}))",
           "patterns": [
             {
@@ -23880,7 +23654,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{5} |[^ ]{4}  |[^ ]{3}   |[^ ]{2}    | [^ ]{4} | [^ ]{3}  | [^ ]{2}   | [^ ]{1}    |  [^ ]{3} |  [^ ]{2}  |  [^ ]{1}   |   [^ ]{2} |   [^ ]{1}  )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{5} |[^ ]{4}  |[^ ]{3}   |[^ ]{2}    | [^ ]{4} | [^ ]{3}  | [^ ]{2}   | [^ ]{1}    |  [^ ]{3} |  [^ ]{2}  |  [^ ]{1}   |   [^ ]{2} |   [^ ]{1}  )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {7}))",
           "patterns": [
             {
@@ -23955,7 +23729,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{6} |[^ ]{5}  |[^ ]{4}   |[^ ]{3}    | [^ ]{5} | [^ ]{4}  | [^ ]{3}   | [^ ]{2}    |  [^ ]{4} |  [^ ]{3}  |  [^ ]{2}   |  [^ ]{1}    |   [^ ]{3} |   [^ ]{2}  |   [^ ]{1}   )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{6} |[^ ]{5}  |[^ ]{4}   |[^ ]{3}    | [^ ]{5} | [^ ]{4}  | [^ ]{3}   | [^ ]{2}    |  [^ ]{4} |  [^ ]{3}  |  [^ ]{2}   |  [^ ]{1}    |   [^ ]{3} |   [^ ]{2}  |   [^ ]{1}   )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {8}))",
           "patterns": [
             {
@@ -24030,7 +23804,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{7} |[^ ]{6}  |[^ ]{5}   |[^ ]{4}    | [^ ]{6} | [^ ]{5}  | [^ ]{4}   | [^ ]{3}    |  [^ ]{5} |  [^ ]{4}  |  [^ ]{3}   |  [^ ]{2}    |   [^ ]{4} |   [^ ]{3}  |   [^ ]{2}   |   [^ ]{1}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{7} |[^ ]{6}  |[^ ]{5}   |[^ ]{4}    | [^ ]{6} | [^ ]{5}  | [^ ]{4}   | [^ ]{3}    |  [^ ]{5} |  [^ ]{4}  |  [^ ]{3}   |  [^ ]{2}    |   [^ ]{4} |   [^ ]{3}  |   [^ ]{2}   |   [^ ]{1}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {9}))",
           "patterns": [
             {
@@ -24105,7 +23879,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{8} |[^ ]{7}  |[^ ]{6}   |[^ ]{5}    | [^ ]{7} | [^ ]{6}  | [^ ]{5}   | [^ ]{4}    |  [^ ]{6} |  [^ ]{5}  |  [^ ]{4}   |  [^ ]{3}    |   [^ ]{5} |   [^ ]{4}  |   [^ ]{3}   |   [^ ]{2}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{8} |[^ ]{7}  |[^ ]{6}   |[^ ]{5}    | [^ ]{7} | [^ ]{6}  | [^ ]{5}   | [^ ]{4}    |  [^ ]{6} |  [^ ]{5}  |  [^ ]{4}   |  [^ ]{3}    |   [^ ]{5} |   [^ ]{4}  |   [^ ]{3}   |   [^ ]{2}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {10}))",
           "patterns": [
             {
@@ -24180,7 +23954,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{9} |[^ ]{8}  |[^ ]{7}   |[^ ]{6}    | [^ ]{8} | [^ ]{7}  | [^ ]{6}   | [^ ]{5}    |  [^ ]{7} |  [^ ]{6}  |  [^ ]{5}   |  [^ ]{4}    |   [^ ]{6} |   [^ ]{5}  |   [^ ]{4}   |   [^ ]{3}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{9} |[^ ]{8}  |[^ ]{7}   |[^ ]{6}    | [^ ]{8} | [^ ]{7}  | [^ ]{6}   | [^ ]{5}    |  [^ ]{7} |  [^ ]{6}  |  [^ ]{5}   |  [^ ]{4}    |   [^ ]{6} |   [^ ]{5}  |   [^ ]{4}   |   [^ ]{3}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {11}))",
           "patterns": [
             {
@@ -24255,7 +24029,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{10} |[^ ]{9}  |[^ ]{8}   |[^ ]{7}    | [^ ]{9} | [^ ]{8}  | [^ ]{7}   | [^ ]{6}    |  [^ ]{8} |  [^ ]{7}  |  [^ ]{6}   |  [^ ]{5}    |   [^ ]{7} |   [^ ]{6}  |   [^ ]{5}   |   [^ ]{4}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{10} |[^ ]{9}  |[^ ]{8}   |[^ ]{7}    | [^ ]{9} | [^ ]{8}  | [^ ]{7}   | [^ ]{6}    |  [^ ]{8} |  [^ ]{7}  |  [^ ]{6}   |  [^ ]{5}    |   [^ ]{7} |   [^ ]{6}  |   [^ ]{5}   |   [^ ]{4}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {12}))",
           "patterns": [
             {
@@ -24330,7 +24104,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{11} |[^ ]{10}  |[^ ]{9}   |[^ ]{8}    | [^ ]{10} | [^ ]{9}  | [^ ]{8}   | [^ ]{7}    |  [^ ]{9} |  [^ ]{8}  |  [^ ]{7}   |  [^ ]{6}    |   [^ ]{8} |   [^ ]{7}  |   [^ ]{6}   |   [^ ]{5}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{11} |[^ ]{10}  |[^ ]{9}   |[^ ]{8}    | [^ ]{10} | [^ ]{9}  | [^ ]{8}   | [^ ]{7}    |  [^ ]{9} |  [^ ]{8}  |  [^ ]{7}   |  [^ ]{6}    |   [^ ]{8} |   [^ ]{7}  |   [^ ]{6}   |   [^ ]{5}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {13}))",
           "patterns": [
             {
@@ -24405,7 +24179,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{12} |[^ ]{11}  |[^ ]{10}   |[^ ]{9}    | [^ ]{11} | [^ ]{10}  | [^ ]{9}   | [^ ]{8}    |  [^ ]{10} |  [^ ]{9}  |  [^ ]{8}   |  [^ ]{7}    |   [^ ]{9} |   [^ ]{8}  |   [^ ]{7}   |   [^ ]{6}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{12} |[^ ]{11}  |[^ ]{10}   |[^ ]{9}    | [^ ]{11} | [^ ]{10}  | [^ ]{9}   | [^ ]{8}    |  [^ ]{10} |  [^ ]{9}  |  [^ ]{8}   |  [^ ]{7}    |   [^ ]{9} |   [^ ]{8}  |   [^ ]{7}   |   [^ ]{6}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {14}))",
           "patterns": [
             {
@@ -24480,7 +24254,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{13} |[^ ]{12}  |[^ ]{11}   |[^ ]{10}    | [^ ]{12} | [^ ]{11}  | [^ ]{10}   | [^ ]{9}    |  [^ ]{11} |  [^ ]{10}  |  [^ ]{9}   |  [^ ]{8}    |   [^ ]{10} |   [^ ]{9}  |   [^ ]{8}   |   [^ ]{7}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{13} |[^ ]{12}  |[^ ]{11}   |[^ ]{10}    | [^ ]{12} | [^ ]{11}  | [^ ]{10}   | [^ ]{9}    |  [^ ]{11} |  [^ ]{10}  |  [^ ]{9}   |  [^ ]{8}    |   [^ ]{10} |   [^ ]{9}  |   [^ ]{8}   |   [^ ]{7}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {15}))",
           "patterns": [
             {
@@ -24555,7 +24329,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{14} |[^ ]{13}  |[^ ]{12}   |[^ ]{11}    | [^ ]{13} | [^ ]{12}  | [^ ]{11}   | [^ ]{10}    |  [^ ]{12} |  [^ ]{11}  |  [^ ]{10}   |  [^ ]{9}    |   [^ ]{11} |   [^ ]{10}  |   [^ ]{9}   |   [^ ]{8}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{14} |[^ ]{13}  |[^ ]{12}   |[^ ]{11}    | [^ ]{13} | [^ ]{12}  | [^ ]{11}   | [^ ]{10}    |  [^ ]{12} |  [^ ]{11}  |  [^ ]{10}   |  [^ ]{9}    |   [^ ]{11} |   [^ ]{10}  |   [^ ]{9}   |   [^ ]{8}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {16}))",
           "patterns": [
             {
@@ -24630,7 +24404,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{15} |[^ ]{14}  |[^ ]{13}   |[^ ]{12}    | [^ ]{14} | [^ ]{13}  | [^ ]{12}   | [^ ]{11}    |  [^ ]{13} |  [^ ]{12}  |  [^ ]{11}   |  [^ ]{10}    |   [^ ]{12} |   [^ ]{11}  |   [^ ]{10}   |   [^ ]{9}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{15} |[^ ]{14}  |[^ ]{13}   |[^ ]{12}    | [^ ]{14} | [^ ]{13}  | [^ ]{12}   | [^ ]{11}    |  [^ ]{13} |  [^ ]{12}  |  [^ ]{11}   |  [^ ]{10}    |   [^ ]{12} |   [^ ]{11}  |   [^ ]{10}   |   [^ ]{9}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {17}))",
           "patterns": [
             {
@@ -24705,7 +24479,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{16} |[^ ]{15}  |[^ ]{14}   |[^ ]{13}    | [^ ]{15} | [^ ]{14}  | [^ ]{13}   | [^ ]{12}    |  [^ ]{14} |  [^ ]{13}  |  [^ ]{12}   |  [^ ]{11}    |   [^ ]{13} |   [^ ]{12}  |   [^ ]{11}   |   [^ ]{10}    )[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?(?=(>)((?: >)*) (?= *(?:[-*]|\\d{1,9}[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +[^ \\t\\n])(?:[^ ]{16} |[^ ]{15}  |[^ ]{14}   |[^ ]{13}    | [^ ]{15} | [^ ]{14}  | [^ ]{13}   | [^ ]{12}    |  [^ ]{14} |  [^ ]{13}  |  [^ ]{12}   |  [^ ]{11}    |   [^ ]{13} |   [^ ]{12}  |   [^ ]{11}   |   [^ ]{10}    )[^ \\t\\n])",
           "end": "^(?!\\G)(?!(?:#{1,6}|={1,6}) )(?!>\\2(?:[ \\t]*$| {18}))",
           "patterns": [
             {
@@ -24798,7 +24572,7 @@
           ]
         },
         {
-          "begin": "^()((?:\\d[.)]|(?:[A-Za-z])(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
@@ -24812,7 +24586,7 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{2}[.)]|(?:[ivxlcdm]{2}|[IVXLCDM]{2})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
@@ -24826,7 +24600,7 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{3}[.)]|(?:[ivxlcdm]{3}|[IVXLCDM]{3})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
@@ -24840,7 +24614,7 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{4,}[.)]|(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
@@ -24854,7 +24628,7 @@
           ]
         },
         {
-          "begin": "^()((?:\\d+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^()((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
@@ -25015,7 +24789,7 @@
       ]
     },
     "lazy_abbreviation_in_quote_on_marker_line": {
-      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)((?:(?:[-*] +\\[[ xX\\-_>/!?]\\] +|[-*] +|(?:\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +|(?:[-*]|\\d+[.)])\\{[^{}\\n]*\\} +|>(?= ) ))*)[ \\t]*(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
       "captures": {
         "1": {
           "name": "punctuation.definition.quote.carve"
@@ -25151,12 +24925,6 @@
           "include": "#blockquote_in_container"
         },
         {
-          "include": "#abbreviation_in_container"
-        },
-        {
-          "include": "#link_ref_def_in_container"
-        },
-        {
           "include": "#caption"
         },
         {
@@ -25182,6 +24950,33 @@
         },
         {
           "include": "#inline"
+        }
+      ]
+    },
+    "list_item_resume": {
+      "begin": "^(?=([ \\t]+)\\S)",
+      "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1)",
+      "patterns": [
+        {
+          "begin": "^(?:#{1,6}|={1,6}) +",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "begin": "^:{1,2} ",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "include": "#container_blocks"
         }
       ]
     },
