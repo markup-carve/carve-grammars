@@ -65,6 +65,23 @@ if (Prism?.languages.carve) {
         }
     }
     visit(grammar);
+    function withoutTildeFence(pattern) {
+        const originalExec = pattern.exec;
+        pattern.exec = function (source) {
+            let match;
+            while ((match = originalExec.call(this, source))) {
+                const opener = match[0].split(/\r\n|\r|\n/, 1)[0];
+                if (!/^[ \t]*(?:> ?)*~{3,}/.test(opener)) return match;
+            }
+            return null;
+        };
+    }
+    withoutTildeFence(grammar['code-block-in-container'].pattern);
+    for (const rule of grammar.blockquote) {
+        if (rule?.pattern?.source === '(?:)' && Object.hasOwn(rule.pattern, 'exec')) {
+            withoutTildeFence(rule.pattern);
+        }
+    }
 
     // C2-B-100: a block attribute run is one line in 0.2.
     const attributePattern = grammar.attributes[1].pattern;

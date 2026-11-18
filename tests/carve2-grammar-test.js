@@ -190,5 +190,14 @@ for (const eol of ['\r', '\r\n']) {
 assert.ok(prismLeaves('text\n= fake\n\n= real\n').some(([scope, text]) =>
     scope.startsWith('title') && text.includes('real')));
 assert.ok(hljs.highlight('text\n= fake\n\n= real\n', { language: 'carve2' }).value.includes('<span class="hljs-section">= real</span>'));
+for (const source of ['- item\n  ~~~js\n  code\n  ~~~\n', '> ~~~js\n> code\n> ~~~\n']) {
+    assert.ok(!hasPrism(source, 'code-block-in-container'), `Prism removed tilde container fence: ${source}`);
+}
+for (const source of ['- item\n  ```js\n  code\n  ```\n', '> ```js\n> code\n> ```\n']) {
+    assert.ok(hasPrism(source, 'code-block-in-container') || hasPrism(source, 'code-block'), `Prism backtick container fence: ${source}`);
+}
+for (const source of [' # H\n', ' = H\n']) {
+    assert.ok(hasTextMate(source, 'markup.heading.carve'), `TextMate indented 0.2 heading: ${source}`);
+}
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 148 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 154 scope assertions passed`);
