@@ -111,5 +111,18 @@ assert.ok(hasPrism('```js\nx\n````\n*bold*\n', 'bold'));
 assert.ok(!hasPrism('````js\nx\n```\n*bold*\n````\n', 'bold'));
 assert.ok(hasPrism('```\n*bold*\n', 'code-block-unclosed'));
 assert.ok(!hasPrism('```\n*bold*\n', 'bold'));
+for (const [source, scope] of [
+    ['\uFEFF# Heading\n', 'title'],
+    ['\uFEFF= Heading\n', 'title'],
+    ['\uFEFF***\n', 'thematic-break'],
+    ['\uFEFF%% #region name\n', 'region-marker'],
+    ['\uFEFFa. one\n', 'letter-list-marker'],
+]) {
+    assert.ok(hasPrism(source, scope), `Prism document-start BOM ${scope}: ${source}`);
+    assert.ok(!hasPrism(`text\n\n${source}`, scope), `Prism later BOM ${scope}: ${source}`);
+}
+assert.ok(!prismLeaves('{=open\n\n# Heading\ntext=}').some(([scope, text]) =>
+    scope.includes('highlight') && text.includes('# Heading')));
+assert.ok(hasPrism('{=open\ncontinued=}', 'highlight'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 82 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 94 scope assertions passed`);

@@ -23,7 +23,7 @@ if (Prism?.languages.carve) {
                 if (source !== old.source) node[key] = new RegExp(source, old.flags);
             }
             else if (key === 'highlight' && node[key]?.pattern) {
-                node[key].pattern = /(?<!\\)\{=(?!=\})[\s\S]{1,4096}?=\}/;
+                node[key].pattern = /(?<!\\)\{=(?!=\})(?:[^\r\n]|\r?\n(?![ \t\r]*\r?\n)){1,4096}?=\}/;
                 if (node[key].inside) delete node[key].inside.highlight;
                 visit(node[key]);
             }
@@ -49,20 +49,21 @@ if (Prism?.languages.carve) {
     commentFence.pattern = new RegExp(commentFence.pattern.source.replace('\\1(?!%)[^\\r\\n]*$', '\\1(?!%)[ \\t]*$'), commentFence.pattern.flags);
 
     // C2-B-152, C2-B-108, C2-B-171, C2-I-046.
-    grammar['thematic-break'] = { pattern: /^[ \t]*\*{3,}[ \t]*$/m, alias: 'punctuation' };
+    const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+    grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
     grammar.title = {
         ...grammar.title,
-        pattern: /^[ \t]*(?:#{1,6}|={1,6}) +\S[^\r\n]*$/m,
+        pattern: new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm'),
     };
     const region = {
-        pattern: /^[ \t]*%%[ \t]*#(?:region[ \t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \t]*$/m,
+        pattern: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$', 'm'),
         greedy: true,
         alias: 'comment',
     };
     Prism.languages.carve2 = {
         'region-marker': region,
-        'letter-list-marker': { pattern: /^[ \t]*[A-Za-z]\.(?= \S)/m, alias: 'bullet' },
+        'letter-list-marker': { pattern: new RegExp(lineStart + '[A-Za-z]\\.(?= \\S)', 'm'), alias: 'bullet' },
         ...grammar,
     };
 }
