@@ -494,7 +494,7 @@
                   "include": "#callout_marker"
                 },
                 {
-                  "include": "source.carve"
+                  "include": "source.carve2"
                 }
               ]
             },
@@ -3299,7 +3299,7 @@
                   "include": "#callout_marker"
                 },
                 {
-                  "include": "source.carve"
+                  "include": "source.carve2"
                 }
               ]
             },
@@ -6091,7 +6091,7 @@
               "include": "#callout_marker"
             },
             {
-              "include": "source.carve"
+              "include": "source.carve2"
             }
           ]
         },
@@ -8891,7 +8891,7 @@
               "include": "#callout_marker"
             },
             {
-              "include": "source.carve"
+              "include": "source.carve2"
             }
           ]
         },
@@ -16716,7 +16716,7 @@
               "include": "#callout_marker"
             },
             {
-              "include": "source.carve"
+              "include": "source.carve2"
             }
           ]
         },
@@ -19064,7 +19064,7 @@
               "include": "#callout_marker"
             },
             {
-              "include": "source.carve"
+              "include": "source.carve2"
             }
           ]
         },
@@ -22691,7 +22691,7 @@
     "prose_continuation": {
       "comment": "A list marker or a `^ ` caption marker does not interrupt a paragraph, so a paragraph holds such lines as text; every other line ends it and is read again from the top. A line opening with an image or display math or holding only an attribute block opens no paragraph, so a caption or a list can still follow it.",
       "begin": "^(?=[ \\t]*\\S)(?![ \\t]*(?:!\\[|\\$\\$`|\\{[^\\n]*\\}[ \\t]*$))",
-      "end": "^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)",
+      "end": "^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{2,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)",
       "patterns": [
         {
           "include": "#inline"

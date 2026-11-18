@@ -136,5 +136,10 @@ for (const [source, scope] of [
 }
 assert.ok(hasTextMate('\uFEFFa. one\n', 'punctuation.definition.list.numbered.carve'));
 assert.ok((await import('@markup-carve/carve-grammars/highlightjs/carve2.mjs')).default);
+assert.ok(hasTextMate('text\n%%%\nhidden\n%%%\n', 'comment.block.carve'));
+assert.ok(hasTextMate('text\n%% note\n', 'comment.line.percent.carve'));
+const textmateGrammar = JSON.parse(readFileSync('textmate/carve2.tmLanguage.json', 'utf8'));
+assert.ok(JSON.stringify(textmateGrammar).includes('source.carve2'));
+assert.ok(!JSON.stringify(textmateGrammar).includes('"include":"source.carve"'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 105 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 109 scope assertions passed`);

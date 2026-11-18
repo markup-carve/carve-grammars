@@ -23,7 +23,9 @@ function adapt(node) {
         return;
     }
     for (const [key, value] of Object.entries(node)) {
-        if (typeof value === 'string' && ['begin', 'end', 'match', 'while'].includes(key)) {
+        if (key === 'include' && value === 'source.carve') {
+            node[key] = 'source.carve2';
+        } else if (typeof value === 'string' && ['begin', 'end', 'match', 'while'].includes(key)) {
             node[key] = value.replaceAll('`{3,}|~{3,}', '`{3,}')
                 .replaceAll('(`{3,}|~{3,})', '(`{3,})')
                 .replaceAll('(`|~)', '(`)')
@@ -41,7 +43,7 @@ grammar.repository.block_comment_on_marker_line.end = grammar.repository.block_c
 // A heading, quote, definition or attribute line directly below prose is
 // paragraph content in 0.2 (U-001 through U-005). Keep that paragraph open
 // until a blank line or one of the block shapes that may interrupt it.
-grammar.repository.prose_continuation.end = '^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)';
+grammar.repository.prose_continuation.end = '^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{2,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)';
 grammar.repository.highlight.patterns.splice(1);
 grammar.repository.table_row.patterns = grammar.repository.table_row.patterns.filter((pattern) => {
     const source = pattern.match || '';
