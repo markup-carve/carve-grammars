@@ -206,5 +206,8 @@ assert.ok(hasHljs('text\n\n# Heading\n', 'section'));
 assert.ok(prismLeaves('# First\n# Second\n').some(([scope, text]) =>
     scope.startsWith('title') && text.includes('Second')));
 assert.ok(hljs.highlight('# First\n# Second\n', { language: 'carve2' }).value.includes('<span class="hljs-section"># Second</span>'));
+const theme = readFileSync('themes/carve-code.css', 'utf8');
+assert.ok(theme.includes(':where(code.language-carve2, .language-carve2 > code) > .hljs-title'));
+assert.ok(theme.includes(':where(.language-carve2) .token.caption'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 164 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 166 scope assertions passed`);

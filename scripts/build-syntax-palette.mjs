@@ -24,6 +24,13 @@ const outputs = new Map([
     ['themes/carve-code.css', `/* Generated from themes/palette.json. Load after the Prism or highlight.js theme. */\n:root, .light, .vscode-light, [data-theme="light"] {\n${variables(palette.light)}\n}\n\n.dark, .vscode-dark, [data-theme="dark"] {\n${variables(palette.dark)}\n}\n\n:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title,\n:where(.language-carve, .language-crv) .token.definition-term { color: var(--carve-syntax-definition); }\n:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title.caption_ { color: var(--carve-syntax-caption-text); font-style: italic; }\n:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-title.caption_ > .hljs-punctuation.caption-marker_,\n:where(.language-carve, .language-crv) .token.caption > .token.punctuation { color: var(--carve-syntax-caption-marker); font-weight: 700; font-style: normal; }\n:where(.language-carve, .language-crv) .token.caption { color: var(--carve-syntax-caption-text); font-style: italic; }\n:where(code.language-carve, code.language-crv, .language-carve > code, .language-crv > code) > .hljs-bullet,\n:where(.language-carve, .language-crv) .token.list.punctuation { color: var(--carve-syntax-list); font-weight: 700; }\n:where(.language-carve, .language-crv) .token.definition-term .token.punctuation,\n:where(.language-carve, .language-crv) .token.definition-list > .token.punctuation { color: var(--carve-syntax-definition); }\n:where(.language-carve, .language-crv) .token.list .token.constant { color: var(--carve-syntax-task); }\n:where(.language-carve, .language-crv) .token.code-block > .token.punctuation,\n:where(.language-carve, .language-crv) .hljs-code > .hljs-keyword { color: var(--carve-syntax-muted); }\n:where(.language-carve, .language-crv) .token.code-block > .token.language,\n:where(.language-carve, .language-crv) .hljs-code > .hljs-title { color: var(--carve-syntax-language); }\n`],
 ])
 
+const codeCss = outputs.get('themes/carve-code.css')
+const syntaxRules = codeCss.slice(codeCss.indexOf(':where(code.language-carve'))
+const carve2Rules = syntaxRules
+    .replaceAll('code.language-carve, code.language-crv, .language-carve > code, .language-crv > code', 'code.language-carve2, .language-carve2 > code')
+    .replaceAll('.language-carve, .language-crv', '.language-carve2')
+outputs.set('themes/carve-code.css', codeCss + '\n' + carve2Rules)
+
 for (const [path, content] of outputs) {
     const target = resolve(root, path)
     if (check) {

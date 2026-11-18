@@ -50,3 +50,19 @@
 :where(.language-carve, .language-crv) .hljs-code > .hljs-keyword { color: var(--carve-syntax-muted); }
 :where(.language-carve, .language-crv) .token.code-block > .token.language,
 :where(.language-carve, .language-crv) .hljs-code > .hljs-title { color: var(--carve-syntax-language); }
+
+:where(code.language-carve2, .language-carve2 > code) > .hljs-title,
+:where(.language-carve2) .token.definition-term { color: var(--carve-syntax-definition); }
+:where(code.language-carve2, .language-carve2 > code) > .hljs-title.caption_ { color: var(--carve-syntax-caption-text); font-style: italic; }
+:where(code.language-carve2, .language-carve2 > code) > .hljs-title.caption_ > .hljs-punctuation.caption-marker_,
+:where(.language-carve2) .token.caption > .token.punctuation { color: var(--carve-syntax-caption-marker); font-weight: 700; font-style: normal; }
+:where(.language-carve2) .token.caption { color: var(--carve-syntax-caption-text); font-style: italic; }
+:where(code.language-carve2, .language-carve2 > code) > .hljs-bullet,
+:where(.language-carve2) .token.list.punctuation { color: var(--carve-syntax-list); font-weight: 700; }
+:where(.language-carve2) .token.definition-term .token.punctuation,
+:where(.language-carve2) .token.definition-list > .token.punctuation { color: var(--carve-syntax-definition); }
+:where(.language-carve2) .token.list .token.constant { color: var(--carve-syntax-task); }
+:where(.language-carve2) .token.code-block > .token.punctuation,
+:where(.language-carve2) .hljs-code > .hljs-keyword { color: var(--carve-syntax-muted); }
+:where(.language-carve2) .token.code-block > .token.language,
+:where(.language-carve2) .hljs-code > .hljs-title { color: var(--carve-syntax-language); }
