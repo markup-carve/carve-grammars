@@ -55,7 +55,7 @@ grammar.repository.region_marker = {
     name: 'comment.line.percent.carve',
 };
 grammar.repository.letter_list_marker = {
-    match: '^[ \\t]*[A-Za-z]\\.(?= \\S)',
+    match: '^(?:\\A\\x{FEFF})?[ \\t]*[A-Za-z]\\.(?= \\S)',
     name: 'punctuation.definition.list.numbered.carve',
 };
 for (const patterns of [grammar.patterns, grammar.repository.container_blocks?.patterns]) {

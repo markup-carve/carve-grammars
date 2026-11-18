@@ -124,5 +124,17 @@ for (const [source, scope] of [
 assert.ok(!prismLeaves('{=open\n\n# Heading\ntext=}').some(([scope, text]) =>
     scope.includes('highlight') && text.includes('# Heading')));
 assert.ok(hasPrism('{=open\ncontinued=}', 'highlight'));
+assert.ok(prismLeaves('= Heading\n').some(([scope, text]) => scope === 'title>punctuation' && text === '='));
+for (const [source, scope] of [
+    ['\uFEFF= Heading\n', 'section'],
+    ['\uFEFF***\n', 'meta'],
+    ['\uFEFFa. one\n', 'bullet'],
+    ['\uFEFF%% #region name\n', 'comment'],
+]) {
+    assert.ok(hasHljs(source, scope), `highlight.js document-start BOM ${scope}: ${source}`);
+    assert.ok(!hasHljs(`text\n\n${source}`, scope), `highlight.js later BOM ${scope}: ${source}`);
+}
+assert.ok(hasTextMate('\uFEFFa. one\n', 'punctuation.definition.list.numbered.carve'));
+assert.ok((await import('@markup-carve/carve-grammars/highlightjs/carve2.mjs')).default);
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 94 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 105 scope assertions passed`);

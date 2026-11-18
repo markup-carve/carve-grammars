@@ -61,11 +61,12 @@ export default function carve2(hljs) {
     }
     adapt(grammar);
     grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
+    const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
     grammar.contains.unshift(
-        { className: 'comment', begin: /^[ \t]*%%[ \t]*#(?:region[ \t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \t]*$/ },
-        { className: 'bullet', begin: /^[ \t]*[A-Za-z]\.(?= \S)/ },
-        { className: 'section', begin: /^[ \t]*={1,6} +\S[^\r\n]*$/ },
-        { className: 'meta', begin: /^[ \t]*\*{3,}[ \t]*$/ },
+        { className: 'comment', begin: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$') },
+        { className: 'bullet', begin: new RegExp(lineStart + '[A-Za-z]\\.(?= \\S)') },
+        { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$') },
+        { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
     return grammar;
 }

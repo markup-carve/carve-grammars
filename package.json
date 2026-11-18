@@ -84,7 +84,7 @@
       "import": "./highlightjs/carve.mjs",
       "default": "./highlightjs/carve.js"
     },
-    "./highlightjs/carve2.js": "./highlightjs/carve2.mjs",
+    "./highlightjs/carve2.mjs": "./highlightjs/carve2.mjs",
     "./highlightjs/delimited.js": {
       "import": "./highlightjs/delimited.mjs",
       "default": "./highlightjs/delimited.js"

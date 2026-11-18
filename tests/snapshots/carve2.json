@@ -1094,8 +1094,12 @@
   "U-101": {
     "prism": [
       [
+        "title>punctuation",
+        "="
+      ],
+      [
         "title",
-        "= 4 is the answer"
+        " 4 is the answer"
       ],
       [
         "text",

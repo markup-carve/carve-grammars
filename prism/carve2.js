@@ -55,6 +55,10 @@ if (Prism?.languages.carve) {
     grammar.title = {
         ...grammar.title,
         pattern: new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm'),
+        inside: {
+            ...grammar.title.inside,
+            punctuation: /^(?<![^\r\n])\uFEFF?(?:#{1,6}|={1,6})/,
+        },
     };
     const region = {
         pattern: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$', 'm'),
