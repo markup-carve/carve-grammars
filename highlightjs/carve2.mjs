@@ -10,21 +10,25 @@ export default function carve2(hljs) {
             paragraphCacheSource = source;
             paragraphCache.clear();
         }
-        let end = offset - 1;
+        let end = offset;
         const visited = [];
         let result = false;
-        while (end >= 0) {
+        while (end > 0) {
             if (paragraphCache.has(end)) {
                 result = paragraphCache.get(end);
                 break;
             }
             visited.push(end);
-            const start = source.lastIndexOf('\n', end - 1) + 1;
+            if (source[end - 1] === '\n') {
+                end--;
+                if (source[end - 1] === '\r') end--;
+            } else if (source[end - 1] === '\r') end--;
+            const start = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
             const line = source.slice(start, end).trim();
             if (!line) break;
             if (/^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/.test(line)
                 || /^(?:#{1,6}|={1,6}) +\S/.test(line)) {
-                end = start - 1;
+                end = start;
                 continue;
             }
             result = !/^\*{3,}$|^`{3,}|^\|.*\||^%%[ \t]*#(?:region|endregion)\b|^%{3,}/.test(line);
@@ -95,8 +99,8 @@ export default function carve2(hljs) {
     grammar.contains.unshift(
         { className: 'comment', begin: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$') },
         { className: 'bullet', begin: new RegExp(lineStart + '[A-Za-z]\\.(?= \\S)') },
-        { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$'), 'on:begin': (match, response) => {
-            if (inParagraph(match.input, match.index)) response.ignoreMatch();
+        { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$'), 'on:begin': (match) => {
+            match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
         } },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );

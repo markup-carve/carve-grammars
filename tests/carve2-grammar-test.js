@@ -179,5 +179,16 @@ for (const source of ['- item\n= Heading\n', '- item\n# Heading\n', '1. item\n= 
 for (const source of ['- item\n\n= Heading\n', '> quote\n\n= Heading\n']) {
     assert.ok(hasTextMate(source, 'markup.heading.carve'), `TextMate heading after blank line: ${source}`);
 }
+for (const eol of ['\r', '\r\n']) {
+    const paragraph = `text${eol}= Heading${eol}`;
+    const separated = `text${eol}${eol}= Heading${eol}`;
+    assert.ok(!hasPrism(paragraph, 'title'), `Prism paragraph with ${JSON.stringify(eol)}`);
+    assert.ok(!hasHljs(paragraph, 'section'), `highlight.js paragraph with ${JSON.stringify(eol)}`);
+    assert.ok(hasPrism(separated, 'title'), `Prism heading with ${JSON.stringify(eol)}`);
+    assert.ok(hasHljs(separated, 'section'), `highlight.js heading with ${JSON.stringify(eol)}`);
+}
+assert.ok(prismLeaves('text\n= fake\n\n= real\n').some(([scope, text]) =>
+    scope.startsWith('title') && text.includes('real')));
+assert.ok(hljs.highlight('text\n= fake\n\n= real\n', { language: 'carve2' }).value.includes('<span class="hljs-section">= real</span>'));
 
-console.log(`Carve 0.2: ${cases.length} spec case snapshots and 138 scope assertions passed`);
+console.log(`Carve 0.2: ${cases.length} spec case snapshots and 148 scope assertions passed`);
