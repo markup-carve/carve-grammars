@@ -66,8 +66,10 @@ if (Prism?.languages.carve) {
     }
     visit(grammar);
     function withoutTildeFence(pattern) {
+        // Prism's clone keeps RegExp instances shared with the 0.1 grammar.
+        const independent = new RegExp(pattern.source, pattern.flags);
         const originalExec = pattern.exec;
-        pattern.exec = function (source) {
+        independent.exec = function (source) {
             let match;
             while ((match = originalExec.call(this, source))) {
                 const opener = match[0].split(/\r\n|\r|\n/, 1)[0];
@@ -75,11 +77,12 @@ if (Prism?.languages.carve) {
             }
             return null;
         };
+        return independent;
     }
-    withoutTildeFence(grammar['code-block-in-container'].pattern);
+    grammar['code-block-in-container'].pattern = withoutTildeFence(grammar['code-block-in-container'].pattern);
     for (const rule of grammar.blockquote) {
         if (rule?.pattern?.source === '(?:)' && Object.hasOwn(rule.pattern, 'exec')) {
-            withoutTildeFence(rule.pattern);
+            rule.pattern = withoutTildeFence(rule.pattern);
         }
     }
 

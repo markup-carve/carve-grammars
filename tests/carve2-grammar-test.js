@@ -9,7 +9,21 @@ import carve2 from '../highlightjs/carve2.mjs';
 import { covered, textmateLineTokenizer } from './lib/textmate-lines.js';
 
 globalThis.Prism = Prism;
+await import('../prism/carve.js');
+const v1ContainerMatcher = Prism.languages.carve['code-block-in-container'].pattern;
+const v1ContainerExec = v1ContainerMatcher.exec;
+const v1QuoteMatchers = Prism.languages.carve.blockquote
+    .filter(rule => rule?.pattern?.source === '(?:)' && Object.hasOwn(rule.pattern, 'exec'))
+    .map(rule => [rule.pattern, rule.pattern.exec]);
+const v1FenceSource = '- item\n  ~~~\n  *x*\n  ~~~\n';
+const v1TokensBefore = JSON.stringify(Prism.tokenize(v1FenceSource, Prism.languages.carve));
 await import('../prism/carve2.js');
+assert.strictEqual(v1ContainerMatcher.exec, v1ContainerExec, '0.1 container matcher stays unchanged');
+for (const [pattern, exec] of v1QuoteMatchers) {
+    assert.strictEqual(pattern.exec, exec, '0.1 quote matcher stays unchanged');
+}
+assert.equal(JSON.stringify(Prism.tokenize(v1FenceSource, Prism.languages.carve)), v1TokensBefore,
+    '0.1 nested tilde fence stays unchanged after loading 0.2');
 hljs.registerLanguage('carve2', carve2);
 const tokenizeTextMate = await textmateLineTokenizer(resolve('textmate/carve2.tmLanguage.json'));
 const cases = JSON.parse(readFileSync(new URL('./carve2-spec-cases.json', import.meta.url), 'utf8'));
