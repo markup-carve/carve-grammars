@@ -146,6 +146,20 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     assert.ok(carve.treesEqual(carve.parse(out), proseMirrorToTree(json)), out)
 }
 
+// Table edits: a column added to a ragged table stays in every row, and new empty cells are valid.
+{
+    const source = '|= a |= b |\n| short |\n'
+    editor.commands.setCarveContent(carveToProseMirror(source, { engine }), { emitUpdate: false })
+    editor.commands.setTextSelection(4)
+    assert.ok(editor.commands.addColumnAfter())
+    const tree = proseMirrorToTree(editor.getJSON())
+    carve.validateTree(tree)
+    const rows = tree.children[0].children.flatMap((section) => section.children)
+    assert.deepStrictEqual(rows.map((row) => row.children.length), [3, 2])
+    const out = serializeToCarve(editor.getJSON(), { engine, source })
+    assert.ok(carve.treesEqual(carve.parse(out), carve.parse(carve.write(tree))), out)
+}
+
 // Content typed into a fresh editor writes as Carve.
 {
     editor.commands.setContent('<h2>Title</h2><p>Some <strong>bold</strong> text.</p><ul><li><p>item</p></li></ul>')

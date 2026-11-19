@@ -269,8 +269,10 @@ function loadTable(node, state) {
     if (rows.length === 0 || rows.some((row) => row.content.length === 0)) return blockAtom(node);
     // Tiptap pads short rows with empty cells; a ragged row records its own width.
     if (rows.some((row) => row.content.length !== rows[0].content.length)) {
+        const width = Math.max(...rows.map((row) => row.content.length));
         for (const row of rows) {
             row.attrs.carve.$cells = row.content.length;
+            row.attrs.carve.$padding = width - row.content.length;
             for (const cell of row.content) cell.attrs.carve = { ...cell.attrs.carve, $loaded: true };
         }
     }
@@ -281,9 +283,11 @@ function loadCell(cell, state) {
     const content = (cell.children ?? []).map((child) => child.type === 'cell_paragraph'
         ? loadTextblock({ ...child, type: 'paragraph' }, state, { $type: 'cell_paragraph' })
         : loadBlock(child, state));
+    const carve = fields(cell, ['children', 'header']);
+    if (content.length === 0) carve.$empty = true;
     return {
         type: cell.header ? 'tableHeader' : 'tableCell',
-        attrs: { carve: carveAttr(fields(cell, ['children', 'header'])) },
+        attrs: { carve: carveAttr(carve) },
         content: content.length > 0 ? content : [{ ...PLACEHOLDER }],
     };
 }
@@ -477,7 +481,8 @@ function saveTable(pm) {
         let content = row.content ?? [];
         if (Number.isInteger(rowCarve.$cells) && content.length > rowCarve.$cells) {
             const padding = (cell) => carveOf(cell).$loaded !== true && (cell.content ?? []).every(isPlaceholder);
-            let extra = content.length - rowCarve.$cells;
+            // Only as many cells as Tiptap padded; an empty column the author added stays.
+            let extra = Math.min(content.length - rowCarve.$cells, Number.isInteger(rowCarve.$padding) ? rowCarve.$padding : 0);
             content = content.filter((cell) => !(extra > 0 && padding(cell) && extra-- > 0));
         }
         const cells = content.map(saveCell);
@@ -513,6 +518,8 @@ function saveCell(pm) {
         if (child.type === 'paragraph' && carveOf(child).$type === undefined && single) node.type = 'cell_paragraph';
         children.push(node);
     }
+    // A cell the editor created empty still needs content; an empty cell reads as one empty cell paragraph.
+    if (children.length === 0 && carveOf(pm).$empty !== true) children.push({ type: 'cell_paragraph', children: [] });
     return { type: 'table_cell', ...treeFields(carveOf(pm)), header: pm.type === 'tableHeader', children };
 }
 
