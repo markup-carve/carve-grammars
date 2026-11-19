@@ -3,10 +3,9 @@ import { readFileSync } from 'node:fs'
 import { createHighlighter } from 'shiki'
 import { carveBlankLineTransformer, sourceForShiki } from '../shiki/themes.js'
 
-const grammars = ['carve'].map(name => ({
-    ...JSON.parse(readFileSync(new URL(`../textmate/${name}.tmLanguage.json`, import.meta.url), 'utf8')),
-    name,
-}))
+// Shiki registers a TextMate grammar under its `name`, so consumers load it as `carve`.
+const grammars = ['carve'].map(name => JSON.parse(readFileSync(new URL(`../textmate/${name}.tmLanguage.json`, import.meta.url), 'utf8')))
+assert.deepStrictEqual(grammars.map(grammar => grammar.name), ['carve'])
 const highlighter = await createHighlighter({ themes: ['github-light'], langs: grammars })
 
 function scopes(source, lang) {
