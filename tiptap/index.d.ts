@@ -104,7 +104,7 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     carveAttributes: {
       /** `setContent` that also sets the document's own fields, which `setContent` leaves on the old doc node. */
-      setCarveContent: (content: JSONContent, options?: Record<string, unknown>) => ReturnType;
+      setCarveContent: (content: JSONContent, options?: { emitUpdate?: boolean }) => ReturnType;
     };
   }
 }

@@ -62,9 +62,13 @@ export const CarveAttributes = Extension.create({
     addCommands() {
         return {
             // `setContent` keeps the attributes of the current doc node, which hold the document's own fields.
-            setCarveContent: (content, options = {}) => ({ tr, commands, dispatch }) => {
-                if (!commands.setContent(content, options)) return false;
-                if (dispatch) tr.setDocAttribute('carve', content?.attrs?.carve ?? null);
+            // Built on the transaction, since Tiptap 2 and 3 disagree on `setContent`'s second argument.
+            setCarveContent: (content, options = {}) => ({ tr, dispatch, editor }) => {
+                const doc = editor.schema.nodeFromJSON(content);
+                if (dispatch) {
+                    tr.replaceWith(0, tr.doc.content.size, doc.content).setDocAttribute('carve', doc.attrs.carve ?? null);
+                    if (options.emitUpdate === false) tr.setMeta('preventUpdate', true);
+                }
                 return true;
             },
         };
