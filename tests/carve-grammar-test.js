@@ -15,6 +15,7 @@ assert.equal(Prism.languages.carve2, undefined);
 assert.ok(hljs.getLanguage('crv'));
 assert.equal(hljs.getLanguage('carve2'), undefined);
 const tokenizeTextMate = await textmateLineTokenizer(resolve('textmate/carve.tmLanguage.json'));
+assert.equal(covered(tokenizeTextMate, '/a b/', 'markup.italic.carve'), 'a b');
 const cases = JSON.parse(readFileSync(new URL('./carve-spec-cases.json', import.meta.url), 'utf8'));
 
 function prismLeaves(source) {
