@@ -6,7 +6,7 @@
 - `treeToProseMirror(tree)` and `carveToProseMirror(source, { engine })`: the loader from the carve-js tree to ProseMirror JSON.
 - `proseMirrorToTree(json)` and `serializeToCarve(json, { engine, source })`: the way back to the tree, written to source by the carve-js writer.
 
-The kit does not import carve-js. You pass it the engine you already bundle (`import * as carve from '@markup-carve/carve'`). The kit needs `parse`, `write` and `treesEqual`.
+The kit does not import carve-js. You pass it the engine you already bundle (`import * as carve from '@markup-carve/carve'`). The kit needs `parse`, `write` and `treesEqual`, and uses `parseWithLayout` when the engine has it.
 
 ## Loading and saving
 
@@ -26,7 +26,7 @@ To replace the content of a running editor, use `editor.commands.setCarveContent
 With `source`:
 
 - An unedited document returns `source` byte for byte.
-- After an edit, the top-level blocks the edit did not touch keep their original text. The carve-js writer writes the changed blocks. If the spliced result does not read back as the writer's own output, the kit returns the writer's output for the whole tree instead.
+- After an edit, the top-level blocks the edit did not touch keep their original text. The carve-js writer writes the changed blocks. A changed block that stands where an original block of the same type stood is written with that block's layout (the engine's `parseWithLayout`), so the writer keeps its fence and marker spelling where it can. If the spliced result does not read back as the writer's own output, the kit returns the writer's output for the whole tree instead.
 
 Without `source`, `serializeToCarve` returns the writer's output. When the writer cannot spell an edited tree, the engine's `CarveWriteError` is thrown, for example for text typed directly against a symbol.
 
@@ -48,6 +48,6 @@ Without `source`, `serializeToCarve` returns the writer's output. When the write
 | `insert`, `delete`, `small_caps`, `span`, `inline_footnote`, `inline_extension` | the marks `carveInsert`, `carveDelete`, `carveSmallCaps`, `carveSpan`, `carveInlineFootnote`, `carveInlineExtension` |
 | any other node | `carveBlock` or `carveInline`, an atom that keeps the whole node |
 
-Every node and mark has a `carve` attribute. It holds the tree fields the editor does not edit: attributes, list markers, task marks (`data-task-state` in the HTML), keys, captions' short forms. A task item keeps its mark (`[?]`, `[-]`) until its checkbox is toggled, which writes `[x]` or `[ ]`. Splitting a node does not copy `carve`, so a new paragraph does not inherit an id.
+Every node and mark has a `carve` attribute. It holds the tree fields the editor does not edit: attributes, list markers, task marks (`data-task-state` in the HTML), keys, captions' short forms. A task item keeps its mark (`[?]`, `[-]`) until its checkbox is toggled, which writes `[x]` or `[ ]`. Splitting a node does not copy `carve`, so a new paragraph does not inherit an id. A list item or caption the editor leaves empty (what Enter or a list toggle leaves behind) is not written, unless the loaded document had it empty.
 
 The loader and the serializer round-trip every 0.2 conformance example and clause case: parse, load, edit nothing, serialize gives the same tree.
