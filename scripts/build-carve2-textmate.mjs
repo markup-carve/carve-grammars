@@ -82,6 +82,29 @@ grammar.repository.container_blocks.patterns.unshift({
     match: '\\G(?<=[ \\t])\\*{3,}[ \\t]*$',
     name: 'meta.separator.thematic-break.carve',
 });
+// A star break behind a quote prefix of any depth, optionally behind item
+// markers, at a line start or after a consumed item marker (C2-B-159).
+const breakMarker = '(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))';
+grammar.repository.quoted_hr = {
+    match: `(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G(?<=[ \\t]))(>(?= )(?: [ \\t]*(?:${breakMarker} +)*>(?= ))* [ \\t]*(?:${breakMarker} +)*)(\\*{3,})[ \\t]*$`,
+    name: 'markup.quote.carve',
+    captures: {
+        1: {
+            patterns: [
+                { match: '>', name: 'punctuation.definition.quote.carve' },
+                { match: '[-*](?= )', name: 'punctuation.definition.list.unnumbered.carve' },
+                { match: '\\[[ xX\\-_>/!?]\\]', name: 'constant.language.checkbox.carve' },
+                { match: '[^ \\t>]+', name: 'punctuation.definition.list.numbered.carve' },
+            ],
+        },
+        2: { name: 'meta.separator.thematic-break.carve' },
+    },
+};
+grammar.repository.blockquote.patterns.splice(1, 0, { include: '#quoted_hr' });
+grammar.repository.blockquote_in_container.patterns.splice(1, 0, { include: '#quoted_hr' });
+for (const name of ['container_blocks', 'lazy_container_blocks']) {
+    grammar.repository[name].patterns.unshift({ include: '#quoted_hr' });
+}
 {
     const patterns = grammar.repository.list_block.patterns;
     patterns.splice(patterns.findIndex(pattern => pattern.include === '#numbered_item') + 1, 0, { include: '#list_item_resume' });

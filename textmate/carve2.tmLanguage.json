@@ -12270,6 +12270,9 @@
           "include": "#quoted_blocks"
         },
         {
+          "include": "#quoted_hr"
+        },
+        {
           "comment": "A `+` as the whole rest of a quote's own marker line (`> +`, `> > +`) is the continuation marker. Whether it attaches depends on the next line, which a line grammar cannot see, so it is scoped regardless.",
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= ) ((?:>(?= ) )*)(\\+)[ \\t]*$",
           "captures": {
@@ -12431,6 +12434,9 @@
       "patterns": [
         {
           "include": "#quoted_blocks_in_container"
+        },
+        {
+          "include": "#quoted_hr"
         },
         {
           "comment": "A quote's own marker-line `+`, as in `#blockquote`.",
@@ -21716,6 +21722,9 @@
       "comment": "Block patterns shared by list-item bodies. Frontmatter remains document-start only. The list item's zero-width while condition checks its content column before child rules run. Marker-line variants recognize comment fences, quotes, generic containers, and composite figures at the scan position after a list marker. Indented link-reference definitions use the container variant.",
       "patterns": [
         {
+          "include": "#quoted_hr"
+        },
+        {
           "match": "\\G(?<=[ \\t])\\*{3,}[ \\t]*$",
           "name": "meta.separator.thematic-break.carve"
         },
@@ -24835,6 +24844,9 @@
     "lazy_container_blocks": {
       "patterns": [
         {
+          "include": "#quoted_hr"
+        },
+        {
           "include": "#fenced_code_languages_on_marker_line_common"
         },
         {
@@ -24979,6 +24991,35 @@
           "include": "#container_blocks"
         }
       ]
+    },
+    "quoted_hr": {
+      "match": "(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G(?<=[ \\t]))(>(?= )(?: [ \\t]*(?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2})) +)*>(?= ))* [ \\t]*(?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2})) +)*)(\\*{3,})[ \\t]*$",
+      "name": "markup.quote.carve",
+      "captures": {
+        "1": {
+          "patterns": [
+            {
+              "match": ">",
+              "name": "punctuation.definition.quote.carve"
+            },
+            {
+              "match": "[-*](?= )",
+              "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            {
+              "match": "\\[[ xX\\-_>/!?]\\]",
+              "name": "constant.language.checkbox.carve"
+            },
+            {
+              "match": "[^ \\t>]+",
+              "name": "punctuation.definition.list.numbered.carve"
+            }
+          ]
+        },
+        "2": {
+          "name": "meta.separator.thematic-break.carve"
+        }
+      }
     },
     "region_marker": {
       "match": "^(?:\\A\\x{FEFF})?[ \\t]*%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$",
