@@ -243,6 +243,20 @@ for (const source of ['[r]: /u\n', '*[HTML]: Hyper\n', '- a\n\n[r]: /u\n', '- a\
 assert.ok(!scoped('- a\n\n  [^n]: x\n', /punctuation\.separator\.carve/), 'TextMate footnote definition in an item is text');
 assert.ok(scoped('- a\n\n[^n]: x\n', /punctuation\.separator\.carve/), 'TextMate footnote definition after a list');
 definitionAssertions += 2;
+// A footnote body is a container too: a nested footnote definition is body text.
+const lineScoped = (source, line, pattern) => {
+    const lines = [[]];
+    for (const leaf of tokenizeTextMate(source)) {
+        if (leaf.scope === '' && /^[\r\n]+$/.test(leaf.text)) lines.push([]);
+        else lines.at(-1).push(leaf);
+    }
+    return lines[line].some(({ scope, text }) => pattern.test(scope) && text.trim());
+};
+for (const [source, line] of [['[^m]: x\n\n    [^n]: note\n', 2], ['[^m]: x\n\n  [^n]: note\n', 2], ['[^m]: x\n  [^n]: note\n', 1]]) {
+    assert.ok(lineScoped(source, 0, /punctuation\.separator\.carve/), `TextMate footnote host: ${JSON.stringify(source)}`);
+    assert.ok(!lineScoped(source, line, /punctuation\.separator\.carve/), `TextMate footnote definition in a footnote body is text: ${JSON.stringify(source)}`);
+    definitionAssertions += 2;
+}
 for (const [source, text] of [['- a\n\n  [r]: /u\n', true], ['- [r]: /u\n', true], ['- *[A]: b\n', true], ['::: note\n[r]: /u\n:::\n', true], ['text\n[r]: /u\n', true], ['- a\n\n[r]: /u\n', false], ['[r]: /u\n[s]: /v\n', false]]) {
     const prismHit = hasPrism(source, 'reference-definition') || hasPrism(source, 'abbreviation-definition');
     const html = hljs.highlight(source, { language: 'carve2' }).value;
