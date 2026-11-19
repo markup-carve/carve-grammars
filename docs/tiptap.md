@@ -6,7 +6,7 @@
 - `treeToProseMirror(tree)` and `carveToProseMirror(source, { engine })`: the loader from the carve-js tree to ProseMirror JSON.
 - `proseMirrorToTree(json)` and `serializeToCarve(json, { engine, source })`: the way back to the tree, written to source by the carve-js writer.
 
-The kit does not import carve-js. You pass it the engine you already bundle (`import * as carve from '@markup-carve/carve'`). The kit needs `parse`, `write` and `treesEqual`, and uses `parseWithLayout` when the engine has it.
+The kit does not import carve-js. You pass it the engine you already bundle (`import * as carve from '@markup-carve/carve'`). The kit needs `parse` and `write`, and uses `treesEqual` and `parseWithLayout` when the engine has them.
 
 ## Loading and saving
 

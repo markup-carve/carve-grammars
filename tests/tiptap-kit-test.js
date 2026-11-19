@@ -105,6 +105,14 @@ for (const entry of clauseCases) {
 }
 console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the editor`)
 
+// An engine without treesEqual still gets the source kept.
+{
+    const { treesEqual: _unused, ...older } = carve
+    for (const [, source] of corpus.slice(0, 200)) {
+        assert.strictEqual(serializeToCarve(carveToProseMirror(source, { engine }), { engine: older, source }), source)
+    }
+}
+
 // Task states: an unchanged state keeps its mark, a toggled one writes the checked state.
 {
     const source = '- [?] maybe\n- [ ] open\n'

@@ -9,6 +9,34 @@ function requireEngine(engine, names) {
     return engine;
 }
 
+const POSITIONS = new Set(['pos', 'segments', 'srcByteLength']);
+
+/** Adjacent text nodes compare as one (C2-A-040). */
+function coalesced(list) {
+    const out = [];
+    for (const item of list) {
+        const last = out[out.length - 1];
+        if (item?.type === 'text' && last?.type === 'text') out[out.length - 1] = { ...last, value: `${last.value ?? ''}${item.value ?? ''}` };
+        else out.push(item);
+    }
+    return out;
+}
+
+/** Structural equality of two trees without positions, for engines that have no `treesEqual`. */
+function sameTree(a, b) {
+    if (Array.isArray(a)) {
+        if (!Array.isArray(b)) return false;
+        const left = coalesced(a);
+        const right = coalesced(b);
+        return left.length === right.length && left.every((item, index) => sameTree(item, right[index]));
+    }
+    if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return a === b;
+    const keys = (value) => Object.keys(value).filter((key) => value[key] !== undefined && !POSITIONS.has(key)).sort();
+    const left = keys(a);
+    const right = keys(b);
+    return left.length === right.length && left.every((key, index) => key === right[index] && sameTree(a[key], b[key]));
+}
+
 /**
  * ProseMirror JSON of Carve 0.2 source, read by the engine the host passes (carve-js `parse`).
  *
@@ -113,18 +141,20 @@ function splice(tree, original, layout, source, engine, writeOptions) {
  * edited block is written with its original layout, so the writer keeps its spelling where it can.
  *
  * @param {object} doc
- * @param {{ engine: { parse: Function, write: Function, treesEqual: Function, parseWithLayout?: Function }, source?: string, parse?: object, write?: object }} options
+ * @param {{ engine: { parse: Function, write: Function, treesEqual?: Function, parseWithLayout?: Function }, source?: string, parse?: object, write?: object }} options
  */
 export function serializeToCarve(doc, options = {}) {
     const engine = requireEngine(options.engine, ['write']);
     const tree = proseMirrorToTree(doc);
     if (typeof options.source !== 'string') return engine.write(tree, options.write);
-    requireEngine(engine, ['parse', 'treesEqual']);
+    requireEngine(engine, ['parse']);
+    const equal = typeof engine.treesEqual === 'function' ? engine.treesEqual : sameTree;
+    const host = { ...engine, treesEqual: equal };
     const withLayout = typeof engine.parseWithLayout === 'function' ? engine.parseWithLayout(options.source, options.parse) : null;
     const original = withLayout?.document ?? engine.parse(options.source, options.parse);
-    if (engine.treesEqual(tree, original)) return options.source;
+    if (equal(tree, original)) return options.source;
     const full = engine.write(tree, options.write);
-    const spliced = splice(tree, original, withLayout?.layout ?? null, options.source, engine, options.write);
+    const spliced = splice(tree, original, withLayout?.layout ?? null, options.source, host, options.write);
     if (spliced === null || spliced === full) return full;
-    return engine.treesEqual(engine.parse(spliced, options.parse), engine.parse(full, options.parse)) ? spliced : full;
+    return equal(engine.parse(spliced, options.parse), engine.parse(full, options.parse)) ? spliced : full;
 }

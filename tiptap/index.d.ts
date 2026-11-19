@@ -25,11 +25,12 @@ export interface CarveParser {
   parse(source: string, options?: object): CarveTreeNode;
 }
 
-/** The engine functions `serializeToCarve` calls; `parse` and `treesEqual` only with `source`. */
+/** The engine functions `serializeToCarve` calls; `parse` only with `source`. Without `treesEqual` the kit compares trees itself. */
 export interface CarveWriter {
   write(tree: never, options?: object): string;
   parse?(source: string, options?: object): CarveTreeNode;
   treesEqual?(a: never, b: never): boolean;
+  parseWithLayout?(source: string, options?: object): { document: CarveTreeNode; layout: object };
 }
 
 export interface CarveLoadOptions {
@@ -40,7 +41,7 @@ export interface CarveLoadOptions {
 
 export interface CarveSerializeOptions {
   engine: CarveWriter;
-  /** The source the document was loaded from: returned unchanged when nothing was edited, kept per block otherwise. Needs `parse` and `treesEqual`. */
+  /** The source the document was loaded from: returned unchanged when nothing was edited, kept per block otherwise. Needs `parse`. */
   source?: string;
   /** Passed to the engine's `parse()`. */
   parse?: object;
