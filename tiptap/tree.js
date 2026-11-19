@@ -136,10 +136,15 @@ function withMarks(pm, marks) {
 export function treeToProseMirror(tree) {
     if (tree?.type !== 'document') throw new TypeError('treeToProseMirror expects a Carve document tree');
     const state = { id: 0 };
+    const content = loadBlocks(tree.children ?? [], state);
+    // Each top-level node knows which block of the loaded tree it is, so the source of that block can be kept.
+    if ((tree.children ?? []).length > 0) {
+        for (const [index, node] of content.entries()) node.attrs = { ...node.attrs, carve: { ...node.attrs?.carve, $index: index } };
+    }
     return {
         type: 'doc',
         attrs: { carve: carveAttr(fields(tree, ['children'])) },
-        content: loadBlocks(tree.children ?? [], state),
+        content,
     };
 }
 
@@ -371,13 +376,32 @@ function loadLeaf(node, marks, open, state) {
  * @returns {object} a `document` node
  */
 export function proseMirrorToTree(doc) {
+    return proseMirrorToTreeWithOrigins(doc).tree;
+}
+
+/**
+ * The tree of `doc`, and for each top-level block the index of the loaded block it came from
+ * (`undefined` for a block the editor added).
+ */
+export function proseMirrorToTreeWithOrigins(doc) {
     if (doc?.type !== 'doc') throw new TypeError('proseMirrorToTree expects a ProseMirror doc node');
-    return { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children: saveBlocks(doc.content ?? []) };
+    const children = [];
+    const origins = [];
+    for (const pm of doc.content ?? []) {
+        if (isPlaceholder(pm)) continue;
+        const node = saveBlock(pm);
+        if (node === null) continue;
+        children.push(node);
+        const index = carveOf(pm).$index;
+        origins.push(Number.isInteger(index) ? index : undefined);
+    }
+    return { tree: { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children }, origins };
 }
 
 /** An empty paragraph with nothing carried is editor state (a placeholder, a fresh line), not content. */
 function isPlaceholder(pm) {
-    return pm.type === 'paragraph' && (pm.content ?? []).length === 0 && Object.keys(carveOf(pm)).length === 0;
+    return pm.type === 'paragraph' && (pm.content ?? []).length === 0 &&
+        Object.keys(carveOf(pm)).every((key) => key === '$index');
 }
 
 function saveBlocks(content) {
@@ -404,7 +428,10 @@ function saveBlock(pm) {
             if (node !== null && !empty) node.caption = saveBlock(caption);
             return node;
         }
-        case 'carveBlock': return clean(carve);
+        case 'carveBlock': {
+            const { $index: _index, ...node } = carve;
+            return clean(node);
+        }
         case 'codeBlock': {
             const node = { type: 'code_block', ...treeFields(carve), value: textOf(pm) + (carve.$newline === false ? '' : '\n') };
             const language = pm.attrs?.language;
@@ -484,14 +511,26 @@ function saveList(pm) {
 
 function saveTable(pm) {
     const carve = carveOf(pm);
-    const sections = Array.isArray(carve.$sections) && carve.$sections.length > 0 ? carve.$sections : [{ type: 'table_body' }];
+    const sections = Array.isArray(carve.$sections) && carve.$sections.length > 0 ? [...carve.$sections] : [{ type: 'table_body' }];
+    // A body row added after a head that has no body behind it needs one; loaded rows keep their sections.
+    const head = sections.findIndex((section) => section.type === 'table_head');
+    let added = -1;
+    if (head >= 0 && !sections.some((section, index) => index > head && section.type === 'table_body')) {
+        sections.splice(head + 1, 0, { type: 'table_body' });
+        added = head + 1;
+    }
+    const sectionOf = (index) => (added >= 0 && index >= added ? index + 1 : index);
     const rowsOf = sections.map(() => []);
     let current = sections.findIndex((section) => section.type === 'table_body');
     if (current < 0) current = sections.findIndex((section) => section.$node === undefined);
     let width = 0;
     for (const row of pm.content ?? []) {
         const rowCarve = carveOf(row);
-        if (Number.isInteger(rowCarve.$section) && rowsOf[rowCarve.$section] !== undefined) current = rowCarve.$section;
+        if (Number.isInteger(rowCarve.$section) && rowsOf[sectionOf(rowCarve.$section)] !== undefined) {
+            current = sectionOf(rowCarve.$section);
+        } else if (sections[current]?.type === 'table_head' && !(row.content ?? []).every((cell) => cell.type === 'tableHeader')) {
+            current = sections.findIndex((section, index) => index > current && section.type === 'table_body');
+        }
         const content = (row.content ?? []).filter((cell) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder));
         const cells = content.map(saveCell);
         width = Math.max(width, cells.length);

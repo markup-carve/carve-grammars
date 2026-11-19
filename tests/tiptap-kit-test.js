@@ -174,6 +174,26 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     assert.deepStrictEqual(before[1].children.map((cell) => cell.children[0].children.map((inline) => inline.value).join('')), ['', 'short'])
 }
 
+// A body row added under the head row goes to the body and writes.
+{
+    for (const source of ['|= a |= b |\n| 1 | 2 |\n', '|= a |= b |\n']) {
+        editor.commands.setCarveContent(carveToProseMirror(source, { engine }), { emitUpdate: false })
+        editor.commands.setTextSelection(4)
+        assert.ok(editor.commands.addRowAfter())
+        const sections = proseMirrorToTree(editor.getJSON()).children[0].children
+        assert.deepStrictEqual(sections.map((section) => section.type), ['table_head', 'table_body'], source)
+        assert.strictEqual(typeof serializeToCarve(editor.getJSON(), { engine, source }), 'string')
+    }
+}
+
+// Deleting the first of two blocks with the same tree keeps the survivor's own spelling.
+{
+    const source = '```\nx\n```\n\n````\nx\n````\n'
+    const json = carveToProseMirror(source, { engine })
+    json.content.shift()
+    assert.strictEqual(serializeToCarve(json, { engine, source }), '````\nx\n````\n')
+}
+
 // A loaded empty paragraph is content, not a placeholder.
 {
     const tree = { type: 'document', astVersion: '2.0', children: [{ type: 'paragraph', children: [] }, { type: 'paragraph', children: [{ type: 'text', value: 'x' }] }] }

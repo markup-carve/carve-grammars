@@ -15,7 +15,7 @@
  *
  * @module @markup-carve/carve-grammars/tiptap
  */
-export { proseMirrorToTree, treeToProseMirror } from './tree.js';
+export { proseMirrorToTree, proseMirrorToTreeWithOrigins, treeToProseMirror } from './tree.js';
 export { carveToProseMirror, serializeToCarve } from './source.js';
 export {
     CARVE_MARKS, CARVE_NODES, CarveAdmonition, CarveAttributes, CarveBlock, CarveBlockExtension, CarveCaption,

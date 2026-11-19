@@ -1,4 +1,4 @@
-import { proseMirrorToTree, treeToProseMirror } from './tree.js';
+import { proseMirrorToTreeWithOrigins, treeToProseMirror } from './tree.js';
 
 function requireEngine(engine, names) {
     for (const name of names) {
@@ -84,21 +84,18 @@ function runLayout(layout, from, count) {
  * run that stands where as many original blocks of the same types stood is written with their
  * layout, so the writer keeps their spelling (fences, markers) where it can.
  */
-function splice(tree, original, layout, source, engine, writeOptions) {
+function splice(tree, origins, original, layout, source, engine, writeOptions) {
     const before = original.children ?? [];
     const after = tree.children ?? [];
     if (before.length === 0 || before.some((node) => node.pos?.startOffset === undefined)) return null;
     const offsets = stringOffsets(source);
+    // A block keeps its source when it is the loaded block it came from, unchanged and in order.
     const matches = [];
     let cursor = 0;
-    for (const node of after) {
-        let match = -1;
-        for (let index = cursor; index < before.length && index < cursor + 8; index++) {
-            if (engine.treesEqual(node, before[index])) {
-                match = index;
-                break;
-            }
-        }
+    for (const [at, node] of after.entries()) {
+        const origin = origins[at];
+        const match = Number.isInteger(origin) && origin >= cursor && origin < before.length &&
+            engine.treesEqual(node, before[origin]) ? origin : -1;
         matches.push(match);
         if (match >= 0) cursor = match + 1;
     }
@@ -145,7 +142,7 @@ function splice(tree, original, layout, source, engine, writeOptions) {
  */
 export function serializeToCarve(doc, options = {}) {
     const engine = requireEngine(options.engine, ['write']);
-    const tree = proseMirrorToTree(doc);
+    const { tree, origins } = proseMirrorToTreeWithOrigins(doc);
     if (typeof options.source !== 'string') return engine.write(tree, options.write);
     requireEngine(engine, ['parse']);
     const equal = typeof engine.treesEqual === 'function' ? engine.treesEqual : sameTree;
@@ -154,7 +151,7 @@ export function serializeToCarve(doc, options = {}) {
     const original = withLayout?.document ?? engine.parse(options.source, options.parse);
     if (equal(tree, original)) return options.source;
     const full = engine.write(tree, options.write);
-    const spliced = splice(tree, original, withLayout?.layout ?? null, options.source, host, options.write);
+    const spliced = splice(tree, origins, original, withLayout?.layout ?? null, options.source, host, options.write);
     if (spliced === null || spliced === full) return full;
     return equal(engine.parse(spliced, options.parse), engine.parse(full, options.parse)) ? spliced : full;
 }
