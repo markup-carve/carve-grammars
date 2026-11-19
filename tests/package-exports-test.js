@@ -19,6 +19,7 @@ const modules = {
     '/prism/carve.js': [],
     '/highlightjs/carve.mjs': ['default'],
     '/highlightjs/delimited.mjs': ['csv', 'tsv'],
+    '/tiptap': ['CarveKit', 'carveToProseMirror', 'serializeToCarve', 'treeToProseMirror', 'proseMirrorToTree'],
 }
 for (const [path, members] of Object.entries(modules)) {
     const mod = await import(name + path)
@@ -38,11 +39,11 @@ for (const [path, file] of Object.entries(files)) {
 const table = (await import(`${name}/fence-languages.json`, { with: { type: 'json' } })).default
 assert.deepStrictEqual(table.languages[0].textmate, ['source.carve'], 'the Carve row names the 0.2 grammar scope')
 
-// 0.1 editor surfaces stay removed.
-for (const path of ['/tiptap', '/tiptap/editor.css', '/tiptap/schema-map.json', '/editor']) {
+// 0.1 editor surfaces stay removed; `/tiptap` is the 0.2 kit (carve-grammars#906).
+for (const path of ['/tiptap/editor.css', '/tiptap/schema-map.json', '/editor']) {
     assert.throws(() => require.resolve(name + path), { code: 'ERR_PACKAGE_PATH_NOT_EXPORTED' }, `${path} is not exported`)
 }
 
-for (const dir of ['diagrams/', 'diff/', 'fence-languages/']) {
+for (const dir of ['diagrams/', 'diff/', 'fence-languages/', 'tiptap/']) {
     assert.ok(manifest.files.includes(dir), `${dir} ships in the package`)
 }
