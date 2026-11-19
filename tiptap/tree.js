@@ -172,7 +172,10 @@ function loadBlock(node, state) {
 
 function loadTextblock(node, state, extra = {}) {
     const { node: name, owned } = TEXTBLOCK_OF_TREE.get(node.type);
-    const attrs = { carve: carveAttr({ ...fields(node, ['children', ...owned]), ...extra }) };
+    const carve = { ...fields(node, ['children', ...owned]), ...extra };
+    // A loaded empty paragraph is content; only one the editor made is a placeholder.
+    if ((node.children ?? []).length === 0 && Object.keys(carve).length === 0) carve.$empty = true;
+    const attrs = { carve: carveAttr(carve) };
     for (const key of owned) attrs[key] = node[key];
     const content = loadInlines(node.children ?? [], state);
     const pm = { type: name, attrs };
@@ -274,13 +277,11 @@ function loadTable(node, state) {
         if (!(section.children ?? []).some((row) => row.type !== 'comment')) entry.$empty = true;
     }
     if (rows.length === 0 || rows.some((row) => row.content.length === 0)) return blockAtom(node);
-    // Tiptap pads short rows with empty cells; a ragged row records its own width.
-    if (rows.some((row) => row.content.length !== rows[0].content.length)) {
-        const width = Math.max(...rows.map((row) => row.content.length));
-        for (const row of rows) {
-            row.attrs.carve.$cells = row.content.length;
-            row.attrs.carve.$padding = width - row.content.length;
-            for (const cell of row.content) cell.attrs.carve = { ...cell.attrs.carve, $loaded: true };
+    // ProseMirror tables are rectangular: short rows get marked padding cells, which the way back drops while empty.
+    const width = Math.max(...rows.map((row) => row.content.length));
+    for (const row of rows) {
+        while (row.content.length < width) {
+            row.content.push({ type: 'tableCell', attrs: { carve: { $pad: true } }, content: [{ ...PLACEHOLDER }] });
         }
     }
     return { type: 'table', attrs: { carve: { ...fields(node, ['children']), $sections: sections } }, content: rows };
@@ -491,13 +492,7 @@ function saveTable(pm) {
     for (const row of pm.content ?? []) {
         const rowCarve = carveOf(row);
         if (Number.isInteger(rowCarve.$section) && rowsOf[rowCarve.$section] !== undefined) current = rowCarve.$section;
-        let content = row.content ?? [];
-        if (Number.isInteger(rowCarve.$cells) && content.length > rowCarve.$cells) {
-            const padding = (cell) => carveOf(cell).$loaded !== true && (cell.content ?? []).every(isPlaceholder);
-            // Only as many cells as Tiptap padded; an empty column the author added stays.
-            let extra = Math.min(content.length - rowCarve.$cells, Number.isInteger(rowCarve.$padding) ? rowCarve.$padding : 0);
-            content = content.filter((cell) => !(extra > 0 && padding(cell) && extra-- > 0));
-        }
+        const content = (row.content ?? []).filter((cell) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder));
         const cells = content.map(saveCell);
         width = Math.max(width, cells.length);
         if (Array.isArray(rowCarve.$before)) rowsOf[current].push(...rowCarve.$before);

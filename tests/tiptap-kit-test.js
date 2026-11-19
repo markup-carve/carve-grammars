@@ -158,6 +158,18 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     assert.deepStrictEqual(rows.map((row) => row.children.length), [3, 2])
     const out = serializeToCarve(editor.getJSON(), { engine, source })
     assert.ok(carve.treesEqual(carve.parse(out), carve.parse(carve.write(tree))), out)
+    // A column added in front keeps the short row's text in its column.
+    editor.commands.setCarveContent(carveToProseMirror(source, { engine }), { emitUpdate: false })
+    editor.commands.setTextSelection(4)
+    assert.ok(editor.commands.addColumnBefore())
+    const before = proseMirrorToTree(editor.getJSON()).children[0].children.flatMap((section) => section.children)
+    assert.deepStrictEqual(before[1].children.map((cell) => cell.children[0].children.map((inline) => inline.value).join('')), ['', 'short'])
+}
+
+// A loaded empty paragraph is content, not a placeholder.
+{
+    const tree = { type: 'document', astVersion: '2.0', children: [{ type: 'paragraph', children: [] }, { type: 'paragraph', children: [{ type: 'text', value: 'x' }] }] }
+    assert.ok(carve.treesEqual(proseMirrorToTree(treeToProseMirror(tree)), tree))
 }
 
 // Toolbar list commands convert in place.
