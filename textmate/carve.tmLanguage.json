@@ -12825,7 +12825,7 @@
       "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column."
     },
     "table_row": {
-      "begin": "(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
+      "begin": "(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?(?:[ \\t]+%%[^\\n]*)?[ \\t]*$)",
       "end": "$",
       "patterns": [
         {
@@ -22042,7 +22042,7 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?(?:[ \\t]+%%[^\\n]*)?[ \\t]*$)",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -22322,7 +22322,7 @@
           ]
         },
         {
-          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?[ \\t]*$)",
+          "begin": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?(?:[ \\t]+%%[^\\n]*)?[ \\t]*$)",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.quote.carve"

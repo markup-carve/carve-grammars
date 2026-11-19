@@ -309,4 +309,13 @@ for (const [source, marker] of [
 assert.ok(!hasTextMate('- a\n\n  B. x\n', markerScope));
 definitionAssertions++;
 
+// C2-B-167: a row may end in a line comment after whitespace; C2-B-168: glued, the line is text.
+for (const source of ['| a | %% c\n', '> | a |  %% c\n', '- x\n\n  | a | %% c\n']) {
+    assert.equal(covered(tokenizeTextMate, source, 'punctuation.separator.table.carve'), '||', `TextMate row pipes: ${JSON.stringify(source)}`);
+    assert.equal(covered(tokenizeTextMate, source, 'comment.line.percent.carve'), '%% c', `TextMate row comment: ${JSON.stringify(source)}`);
+    definitionAssertions += 2;
+}
+assert.ok(!hasTextMate('| a |%% x\n', 'punctuation.separator.table.carve'));
+definitionAssertions++;
+
 console.log(`Carve 0.2: ${cases.length} spec case snapshots and ${166 + definitionAssertions} scope assertions passed`);
