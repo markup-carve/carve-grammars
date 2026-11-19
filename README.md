@@ -1,12 +1,6 @@
 # Carve Grammars
 
-Editor and highlighting grammars for Carve, with Tiptap, Prism, highlight.js, and TextMate entry points. The package targets Carve 0.1.x and uses @markup-carve/carve 0.1.16 for its editor integration. Read the [Carve documentation](https://markup-carve.github.io/carve/) for the language syntax.
-
-Carve 0.2 highlighting is available from `prism/carve2.js`,
-`highlightjs/carve2.mjs`, and `textmate/carve2.tmLanguage.json` on the `next2`
-branch. These entries use `carve2` as the language id while retaining the
-existing token scopes for constructs that remain in 0.2. The Tiptap editor
-and serializer still use the 0.1 engine.
+Syntax highlighting for Carve 0.2 in Prism, highlight.js, TextMate, and Shiki. The language name is `carve`; `crv` is its file extension alias. These grammars replace the 0.1 grammars. The package no longer includes the 0.1 Tiptap editor kit or serializer.
 
 ## Install
 
@@ -14,7 +8,7 @@ and serializer still use the 0.1 engine.
 npm install @markup-carve/carve-grammars prismjs
 ```
 
-## Usage
+## Prism
 
 ```js
 import Prism from 'prismjs'
@@ -23,12 +17,6 @@ import '@markup-carve/carve-grammars/prism/carve.js'
 Prism.highlight(source, Prism.languages.carve, 'carve')
 ```
 
-## Documentation
+For highlight.js, import `@markup-carve/carve-grammars/highlightjs/carve.js` and register it as `carve`. For TextMate, load `textmate/carve.tmLanguage.json`. For Shiki, import `carveMarkdown` or `carveGrammar` from the package root or `@markup-carve/carve-grammars/shiki`.
 
-- [Carve documentation](https://markup-carve.github.io/carve/)
-- [Documentation index](docs/README.md)
-- [Development](docs/development.md)
-
-## License
-
-[MIT](LICENSE)
+See the [migration guide](docs/migration-0.2.md) for every renamed path and removed surface.

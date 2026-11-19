@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { createHighlighter } from 'shiki'
 import { carveBlankLineTransformer, sourceForShiki } from '../shiki/themes.js'
 
-const grammars = ['carve', 'carve2'].map(name => ({
+const grammars = ['carve'].map(name => ({
     ...JSON.parse(readFileSync(new URL(`../textmate/${name}.tmLanguage.json`, import.meta.url), 'utf8')),
     name,
 }))
@@ -16,8 +16,8 @@ function scopes(source, lang) {
         (token.explanation ?? []).flatMap(entry => entry.scopes.map(scope => scope.scopeName))))
 }
 
-for (const lang of ['carve', 'carve2']) {
-    const heading = lang === 'carve2' ? '= Heading' : '# Heading'
+for (const lang of ['carve']) {
+    const heading = '= Heading'
     for (const [block, scope] of [
         [heading, 'markup.heading.carve'],
         ['- [x] done', 'punctuation.definition.checkbox.carve'],
@@ -31,11 +31,11 @@ for (const lang of ['carve', 'carve2']) {
         })
         assert.match(html, /<span class="line"><\/span>/, `${lang}: blank line stays empty in HTML`)
     }
-    if (lang === 'carve2') {
+    {
         assert.ok(!scopes(`Paragraph.\n${heading}\n`, lang).includes('markup.heading.carve'),
             `${lang}: heading without separator stays paragraph text`)
     }
 }
 
 assert.equal(sourceForShiki('a\r\n\r\n- b\n'), 'a\r\n \r\n- b\n ')
-console.log('Shiki blank-line state: 0.1 and 0.2 block scopes passed')
+console.log('Shiki blank-line state: 0.2 block scopes passed')
