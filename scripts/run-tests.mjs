@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 for (const file of [
     'tests/carve-grammar-test.js',
+    'tests/closed-inline-time-test.js',
     'tests/shiki-blank-lines-test.js',
     'tests/package-exports-test.js',
     'tests/fence-languages-test.js',
