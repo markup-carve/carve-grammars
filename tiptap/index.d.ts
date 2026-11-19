@@ -1,36 +1,55 @@
 import type { Extension, JSONContent, Mark, Node } from '@tiptap/core';
 
+// The stock extensions the kit configures, so their commands (toggleBold, setLink, ...) are typed for hosts.
+export type {} from '@tiptap/starter-kit';
+export type {} from '@tiptap/extension-code-block';
+export type {} from '@tiptap/extension-highlight';
+export type {} from '@tiptap/extension-image';
+export type {} from '@tiptap/extension-link';
+export type {} from '@tiptap/extension-subscript';
+export type {} from '@tiptap/extension-superscript';
+export type {} from '@tiptap/extension-table';
+export type {} from '@tiptap/extension-task-item';
+export type {} from '@tiptap/extension-task-list';
+export type {} from '@tiptap/extension-underline';
+export type {} from '@tiptap/extension-bullet-list';
+export type {} from '@tiptap/extension-ordered-list';
+
 /** A node of the Carve 0.2 tree, as carve-js `parse` returns it. */
 export interface CarveTreeNode {
   type: string;
-  [field: string]: unknown;
 }
 
-/** The carve-js functions the kit calls. Pass the engine module: `import * as carve from '@markup-carve/carve'`. */
-export interface CarveEngine {
-  parse(source: string, options?: Record<string, unknown>): CarveTreeNode;
-  write(tree: CarveTreeNode, options?: Record<string, unknown>): string;
-  treesEqual(a: CarveTreeNode, b: CarveTreeNode): boolean;
+/** The engine's `parse`. Pass the engine module: `import * as carve from '@markup-carve/carve'`. */
+export interface CarveParser {
+  parse(source: string, options?: object): CarveTreeNode;
+}
+
+/** The engine functions `serializeToCarve` calls; `parse` and `treesEqual` only with `source`. */
+export interface CarveWriter {
+  write(tree: never, options?: object): string;
+  parse?(source: string, options?: object): CarveTreeNode;
+  treesEqual?(a: never, b: never): boolean;
 }
 
 export interface CarveLoadOptions {
-  engine: Pick<CarveEngine, 'parse'>;
+  engine: CarveParser;
   /** Passed to the engine's `parse()`. */
-  parse?: Record<string, unknown>;
+  parse?: object;
 }
 
 export interface CarveSerializeOptions {
-  engine: Pick<CarveEngine, 'write'> & Partial<CarveEngine>;
+  engine: CarveWriter;
   /** The source the document was loaded from: returned unchanged when nothing was edited, kept per block otherwise. Needs `parse` and `treesEqual`. */
   source?: string;
   /** Passed to the engine's `parse()`. */
-  parse?: Record<string, unknown>;
+  parse?: object;
   /** Passed to the engine's `write()`. */
-  write?: Record<string, unknown>;
+  write?: object;
 }
 
 export function treeToProseMirror(tree: CarveTreeNode): JSONContent;
-export function proseMirrorToTree(doc: JSONContent): CarveTreeNode;
+export function proseMirrorToTree(doc: JSONContent): CarveTreeNode & Record<string, unknown>;
 export function carveToProseMirror(source: string, options: CarveLoadOptions): JSONContent;
 /** Throws the engine's `CarveWriteError` when the writer cannot spell the edited tree. */
 export function serializeToCarve(doc: JSONContent, options: CarveSerializeOptions): string;

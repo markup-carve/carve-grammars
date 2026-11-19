@@ -11,6 +11,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
+        with:
+          # The Tiptap kit test reads the 0.2 conformance corpus from the spec submodule.
+          submodules: true
       - uses: actions/setup-node@v7
         with:
           node-version: '22'

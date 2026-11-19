@@ -152,7 +152,9 @@ function loadBlocks(children, state) {
 function loadBlock(node, state) {
     if (node.caption !== undefined && node.type !== 'caption') {
         const { caption, ...rest } = node;
-        return { type: 'carveCaptioned', content: [loadBlock(rest, state), loadContainer(caption, state)] };
+        const captionNode = loadContainer(caption, state);
+        if ((caption.children ?? []).length === 0) captionNode.attrs.carve = { ...captionNode.attrs.carve, $empty: true };
+        return { type: 'carveCaptioned', content: [loadBlock(rest, state), captionNode] };
     }
     if (TEXTBLOCK_OF_TREE.has(node.type)) return loadTextblock(node, state);
     if (CONTAINER_OF_TREE.has(node.type)) return loadContainer(node, state);
@@ -224,9 +226,14 @@ function loadList(node, state) {
         type,
         attrs,
         content: items.map((item) => {
-            const itemAttrs = { carve: carveAttr(fields(item, ['children'])) };
+            const itemFields = fields(item, ['children']);
+            if ((item.children ?? []).length === 0) itemFields.$empty = true;
+            const itemAttrs = { carve: carveAttr(itemFields) };
             if (tasks) itemAttrs.checked = taskChecked(item.task);
-            return { type: tasks ? 'taskItem' : 'listItem', attrs: itemAttrs, content: loadBlocks(item.children ?? [], state) };
+            // Tiptap items start with a paragraph; an empty one, which the way back drops, leads any other block.
+            const content = loadBlocks(item.children ?? [], state);
+            if (content[0].type !== 'paragraph') content.unshift({ ...PLACEHOLDER });
+            return { type: tasks ? 'taskItem' : 'listItem', attrs: itemAttrs, content };
         }),
     };
 }
@@ -376,7 +383,8 @@ function saveBlocks(content) {
     const out = [];
     for (const pm of content) {
         if (isPlaceholder(pm)) continue;
-        out.push(saveBlock(pm));
+        const node = saveBlock(pm);
+        if (node !== null) out.push(node);
     }
     return out;
 }
@@ -390,7 +398,9 @@ function saveBlock(pm) {
         case 'carveCaptioned': {
             const [body, caption] = pm.content ?? [];
             const node = saveBlock(body);
-            if (caption !== undefined) node.caption = saveBlock(caption);
+            // An empty caption the editor made (to fill the wrapper) is no caption.
+            const empty = caption === undefined || (carveOf(caption).$empty !== true && (caption.content ?? []).every(isPlaceholder));
+            if (node !== null && !empty) node.caption = saveBlock(caption);
             return node;
         }
         case 'carveBlock': return clean(carve);
@@ -450,12 +460,15 @@ function saveList(pm) {
     if (pm.type === 'orderedList' && Number.isInteger(pm.attrs?.start) && pm.attrs.start !== (marker.start ?? 1)) {
         marker = { ...marker, start: pm.attrs.start };
     }
+    // An item with nothing in it is what Enter or a toggle leaves behind, unless it was loaded empty.
+    const items = (pm.content ?? []).filter((item) => carveOf(item).$empty === true || !(item.content ?? []).every(isPlaceholder));
+    if (items.length === 0) return null;
     return {
         type: 'list',
         spacing: 'tight',
         ...fieldsOf,
         marker,
-        children: (pm.content ?? []).map((item) => {
+        children: items.map((item) => {
             const itemFields = treeFields(carveOf(item));
             const node = { type: 'list_item', ...itemFields };
             if (item.type === 'taskItem') {
@@ -515,6 +528,7 @@ function saveCell(pm) {
     for (const child of content) {
         if (isPlaceholder(child)) continue;
         const node = saveBlock(child);
+        if (node === null) continue;
         if (child.type === 'paragraph' && carveOf(child).$type === undefined && single) node.type = 'cell_paragraph';
         children.push(node);
     }

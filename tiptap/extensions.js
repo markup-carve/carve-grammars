@@ -275,10 +275,9 @@ export const CarveKit = Extension.create({
             CodeBlock.configure(options.codeBlock),
             BulletList,
             OrderedList,
-            // A Carve item may start with any block, or be empty.
-            ListItem.extend({ content: 'block+' }),
+            ListItem,
             TaskList,
-            TaskItem.extend({ content: 'block+' }).configure({ nested: true, ...options.taskItem }),
+            TaskItem.configure({ nested: true, ...options.taskItem }),
             Underline,
             Link.configure({ openOnClick: false, autolink: false, ...options.link }),
             Highlight,

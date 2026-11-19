@@ -160,6 +160,18 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     assert.ok(carve.treesEqual(carve.parse(out), carve.parse(carve.write(tree))), out)
 }
 
+// Toolbar list commands convert in place.
+{
+    editor.commands.setCarveContent(carveToProseMirror('- alpha\n- beta\n', { engine }), { emitUpdate: false })
+    editor.commands.selectAll()
+    assert.ok(editor.commands.toggleTaskList())
+    assert.strictEqual(serializeToCarve(editor.getJSON(), { engine }), '- [ ] alpha\n- [ ] beta\n')
+    editor.commands.setCarveContent(carveToProseMirror('alpha\n\nbeta\n', { engine }), { emitUpdate: false })
+    editor.commands.selectAll()
+    assert.ok(editor.commands.toggleOrderedList())
+    assert.ok(carve.parse(serializeToCarve(editor.getJSON(), { engine })).children[0].marker.kind === 'ordered')
+}
+
 // Content typed into a fresh editor writes as Carve.
 {
     editor.commands.setContent('<h2>Title</h2><p>Some <strong>bold</strong> text.</p><ul><li><p>item</p></li></ul>')
