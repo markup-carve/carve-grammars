@@ -318,4 +318,26 @@ for (const source of ['| a | %% c\n', '> | a |  %% c\n', '- x\n\n  | a | %% c\n'
 assert.ok(!hasTextMate('| a |%% x\n', 'punctuation.separator.table.carve'));
 definitionAssertions++;
 
+// A line of unclosed inline openers tokenizes in linear time (vscode-carve#452):
+// eight times the input may take at most 24 times as long, and nothing but the
+// bare bold run, which runs to the blank line, is styled.
+for (const unit of ['/*a ', '{*a {/b ', '{/a {*b ', '/a ', '{^a ', '{,a ']) {
+    const line = (n) => unit.repeat(Math.ceil(n / unit.length)).slice(0, n) + '\n';
+    const time = (source) => {
+        let best = Infinity;
+        for (let run = 0; run < 3; run++) {
+            const start = performance.now();
+            tokenizeTextMate(source);
+            best = Math.min(best, performance.now() - start);
+        }
+        return best;
+    };
+    const short = time(line(2000));
+    const long = time(line(16000));
+    const growth = long / Math.max(short, 2);
+    assert.ok(growth < 24, `TextMate ${JSON.stringify(unit)}: ${short.toFixed(1)} ms at 2,000 characters, ${long.toFixed(1)} ms at 16,000, ${growth.toFixed(1)}x`);
+    assert.ok(!tokenizeTextMate(line(2000)).some(({ scope }) => /italic|underline|strikethrough|highlight|superscript|subscript/.test(scope)), `TextMate ${JSON.stringify(unit)} stays unstyled`);
+    definitionAssertions += 2;
+}
+
 console.log(`Carve 0.2: ${cases.length} spec case snapshots and ${166 + definitionAssertions} scope assertions passed`);
