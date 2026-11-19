@@ -8,6 +8,7 @@ for (const file of [
     'tests/shiki-diff-test.js',
     'tests/client-diagram-test.js',
     'tests/kroki-test.js',
+    'tests/restored-helpers-test.js',
 ]) {
     const result = spawnSync(process.execPath, [file], { stdio: 'inherit' });
     if (result.status !== 0) process.exit(result.status ?? 1);

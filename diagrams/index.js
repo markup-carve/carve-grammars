@@ -21,9 +21,9 @@ export { renderGraphvizDiagrams, GRAPHVIZ_CLASSES } from './graphviz.js';
 export { renderD2Diagrams, D2_CLASSES } from './d2.js';
 export { renderKrokiDiagrams, KROKI_DIAGRAM_TYPES } from './kroki.js';
 
-import { renderGraphvizDiagrams } from './graphviz.js';
-import { renderD2Diagrams } from './d2.js';
-import { renderKrokiDiagrams } from './kroki.js';
+import { renderGraphvizDiagrams, GRAPHVIZ_CLASSES } from './graphviz.js';
+import { renderD2Diagrams, D2_CLASSES } from './d2.js';
+import { renderKrokiDiagrams, KROKI_DIAGRAM_TYPES } from './kroki.js';
 
 /**
  * Render the offline diagram types (Graphviz, D2) under `container`, and -
@@ -38,11 +38,17 @@ import { renderKrokiDiagrams } from './kroki.js';
  */
 export async function renderDiagrams(container, options = {}) {
     const tasks = [];
+    // A class in the Kroki type map belongs to Kroki alone; both renderers would replace the same <pre>.
+    const krokiClasses = options.kroki ? Object.keys(options.kroki.types ?? KROKI_DIAGRAM_TYPES) : [];
+    const offline = (opts, defaults) => ({
+        ...opts,
+        classes: (opts.classes ?? defaults).filter((cls) => !krokiClasses.includes(cls)),
+    });
     if (options.graphviz !== false) {
-        tasks.push(renderGraphvizDiagrams(container, options.graphviz || {}));
+        tasks.push(renderGraphvizDiagrams(container, offline(options.graphviz || {}, GRAPHVIZ_CLASSES)));
     }
     if (options.d2 !== false) {
-        tasks.push(renderD2Diagrams(container, options.d2 || {}));
+        tasks.push(renderD2Diagrams(container, offline(options.d2 || {}, D2_CLASSES)));
     }
     if (options.kroki) {
         tasks.push(renderKrokiDiagrams(container, options.kroki));
