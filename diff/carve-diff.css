@@ -1,0 +1,47 @@
+/* Companion CSS for carve-grammars/diff (the highlighter-agnostic helper).
+ *
+ * Frames the `{.diff}` presentation for output from renderLanguageDiff() /
+ * applyLanguageDiff() - a `<pre class="diff has-diff">` whose lines are
+ * `<span class="line diff add|remove">` prefixed with a `.diff-marker`. Keyed on
+ * `.has-diff` rather than a highlighter class, so it works with highlight.js,
+ * Prism, or no highlighter. The Shiki path has its own `../shiki/carve.css`.
+ *
+ * Hosts may override the variables without depending on a site framework; a
+ * VS Code / JetBrains webview points them at the editor's own diff theme. */
+pre.has-diff {
+  --carve-diff-add-background: rgb(46 160 67 / 15%);
+  --carve-diff-add-marker: #1a7f37;
+  --carve-diff-remove-background: rgb(248 81 73 / 15%);
+  --carve-diff-remove-marker: #cf222e;
+}
+
+pre.has-diff code {
+  display: block;
+}
+
+pre.has-diff .line {
+  display: inline-block;
+  width: 100%;
+}
+
+pre.has-diff .line.diff.add {
+  background: var(--carve-diff-add-background);
+}
+
+pre.has-diff .line.diff.remove {
+  background: var(--carve-diff-remove-background);
+}
+
+pre.has-diff .diff-marker {
+  display: inline-block;
+  width: 1ch;
+  font-weight: 700;
+}
+
+pre.has-diff .line.diff.add .diff-marker {
+  color: var(--carve-diff-add-marker);
+}
+
+pre.has-diff .line.diff.remove .diff-marker {
+  color: var(--carve-diff-remove-marker);
+}
