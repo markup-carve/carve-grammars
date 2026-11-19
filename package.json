@@ -1,25 +1,14 @@
 {
   "name": "@markup-carve/carve-grammars",
   "version": "0.1.24",
-  "description": "Grammars for the Carve markup language: Tiptap editor kit + serializer, plus Prism, highlight.js and TextMate syntax-highlighting grammars",
+  "description": "Carve 0.2 syntax grammars for Prism, highlight.js, TextMate, and Shiki",
   "type": "module",
-  "main": "tiptap/index.js",
   "scripts": {
-    "test": "npm run test:types && node scripts/run-tests.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:grammar": "node tests/carve-grammar-test.js",
+    "test:shiki": "node tests/shiki-blank-lines-test.js",
     "syntax-palette:build": "node scripts/build-syntax-palette.mjs",
-    "syntax-palette:check": "node scripts/build-syntax-palette.mjs --check",
-    "test:serial": "npm run test:types && node scripts/run-tests.mjs --serial",
-    "test:types": "tsc -p tsconfig.types.json && node tests/source-merge-test.js",
-    "test:citations": "node tests/spec-citations-test.js",
-    "test:coverage": "node tests/coverage-test.js",
-    "test:snapshot": "node tests/snapshot-test.js",
-    "test:roundtrip": "node tests/roundtrip-test.js",
-    "snapshots:update": "UPDATE_SNAPSHOTS=1 node tests/snapshot-test.js",
-    "test:schema-map": "node tests/schema-map-test.js && node tests/schema-attributes-test.js",
-    "test:cross-runtime": "node scripts/cross-runtime-check.mjs",
-    "test:authored-spelling": "node tests/authored-spelling-test.js",
-    "perf:sweep": "node scripts/scan-superlinear.mjs",
-    "fence-languages": "node scripts/generate-fence-languages.mjs"
+    "syntax-palette:check": "node scripts/build-syntax-palette.mjs --check"
   },
   "repository": {
     "type": "git",
@@ -27,16 +16,14 @@
   },
   "keywords": [
     "carve",
-    "tiptap",
-    "prosemirror",
-    "wysiwyg",
-    "serializer",
     "markup",
     "syntax-highlighting",
     "prism",
     "prismjs",
     "highlight.js",
-    "hljs"
+    "hljs",
+    "textmate",
+    "shiki"
   ],
   "author": "markup-carve",
   "license": "MIT",
@@ -45,227 +32,59 @@
   },
   "homepage": "https://github.com/markup-carve/carve-grammars#readme",
   "files": [
-    "tiptap/",
-    "diagrams/",
     "prism/",
     "highlightjs/",
     "shiki/",
     "themes/",
-    "diff/",
     "textmate/",
-    "fence-languages/",
     "README.md",
     "LICENSE"
   ],
   "exports": {
-    ".": {
-      "types": "./tiptap/index.d.ts",
-      "default": "./tiptap/index.js"
-    },
-    "./tiptap": {
-      "types": "./tiptap/index.d.ts",
-      "default": "./tiptap/index.js"
-    },
-    "./tiptap/editor.css": "./tiptap/editor.css",
-    "./editor": {
-      "types": "./tiptap/carve-editor.d.ts",
-      "default": "./tiptap/carve-editor.js"
-    },
-    "./tiptap/*": "./tiptap/*",
-    "./diagrams": "./diagrams/index.js",
-    "./diagrams/kroki": "./diagrams/kroki.js",
-    "./diagrams/graphviz": "./diagrams/graphviz.js",
-    "./diagrams/d2": "./diagrams/d2.js",
-    "./diagrams/*": "./diagrams/*",
+    ".": "./shiki/index.js",
     "./prism/carve.js": "./prism/carve.js",
-    "./prism/carve2.js": "./prism/carve2.js",
-    "./prism/*": "./prism/*",
     "./highlightjs/carve.js": {
       "import": "./highlightjs/carve.mjs",
       "default": "./highlightjs/carve.js"
     },
-    "./highlightjs/carve2.mjs": "./highlightjs/carve2.mjs",
+    "./highlightjs/carve.mjs": "./highlightjs/carve.mjs",
     "./highlightjs/delimited.js": {
       "import": "./highlightjs/delimited.mjs",
       "default": "./highlightjs/delimited.js"
     },
-    "./highlightjs/*": "./highlightjs/*",
     "./shiki": "./shiki/index.js",
-    "./shiki/diff": {
-      "types": "./shiki/diff.d.ts",
-      "default": "./shiki/diff.js"
-    },
-    "./shiki/themes": {
-      "types": "./shiki/themes.d.ts",
-      "default": "./shiki/themes.js"
-    },
+    "./shiki/themes": "./shiki/themes.js",
     "./shiki/carve.css": "./shiki/carve.css",
     "./shiki/table-tokens.css": "./shiki/table-tokens.css",
     "./themes/palette.json": "./themes/palette.json",
     "./themes/carve-code.css": "./themes/carve-code.css",
-    "./diff": {
-      "types": "./diff/index.d.ts",
-      "default": "./diff/index.js"
-    },
-    "./diff/carve-diff.css": "./diff/carve-diff.css",
     "./textmate/carve.tmLanguage.json": "./textmate/carve.tmLanguage.json",
-    "./textmate/carve2.tmLanguage.json": "./textmate/carve2.tmLanguage.json",
     "./textmate/csv.tmLanguage.json": "./textmate/csv.tmLanguage.json",
     "./textmate/tsv.tmLanguage.json": "./textmate/tsv.tmLanguage.json",
-    "./fence-languages.json": "./fence-languages/fence-languages.json",
-    "./tiptap/schema-map.json": "./tiptap/schema-map.json",
     "./package.json": "./package.json"
   },
-  "dependencies": {
-    "@markup-carve/carve": "0.1.17",
-    "node-diff3": "^3.2.1"
-  },
+  "dependencies": {},
   "peerDependencies": {
-    "@shikijs/themes": "^2 || ^3 || ^4",
-    "@shikijs/types": "^2 || ^3 || ^4",
-    "@terrastruct/d2": "^0.1",
-    "@tiptap/core": "^2 || ^3",
-    "@tiptap/extension-bullet-list": "^2 || ^3",
-    "@tiptap/extension-code": "^2 || ^3",
-    "@tiptap/extension-code-block": "^2 || ^3",
-    "@tiptap/extension-hard-break": "^2 || ^3",
-    "@tiptap/extension-heading": "^2 || ^3",
-    "@tiptap/extension-highlight": "^2 || ^3",
-    "@tiptap/extension-image": "^2 || ^3",
-    "@tiptap/extension-link": "^2 || ^3",
-    "@tiptap/extension-list-item": "^2 || ^3",
-    "@tiptap/extension-ordered-list": "^2 || ^3",
-    "@tiptap/extension-subscript": "^2 || ^3",
-    "@tiptap/extension-superscript": "^2 || ^3",
-    "@tiptap/extension-table": "^2 || ^3",
-    "@tiptap/extension-table-cell": "^2 || ^3",
-    "@tiptap/extension-table-header": "^2 || ^3",
-    "@tiptap/extension-table-row": "^2 || ^3",
-    "@tiptap/extension-task-item": "^2 || ^3",
-    "@tiptap/extension-task-list": "^2 || ^3",
-    "@tiptap/extension-underline": "^2 || ^3",
-    "@tiptap/pm": "^2 || ^3",
-    "@tiptap/starter-kit": "^2 || ^3",
-    "@viz-js/viz": "^3",
+    "@shikijs/themes": "^4",
     "highlight.js": "^11",
     "prismjs": "^1"
   },
   "peerDependenciesMeta": {
-    "@tiptap/core": {
-      "optional": true
-    },
-    "@tiptap/extension-heading": {
-      "optional": true
-    },
-    "@tiptap/starter-kit": {
-      "optional": true
-    },
-    "@tiptap/extension-underline": {
-      "optional": true
-    },
-    "@tiptap/extension-bullet-list": {
-      "optional": true
-    },
-    "@tiptap/extension-code": {
-      "optional": true
-    },
-    "@tiptap/extension-code-block": {
-      "optional": true
-    },
-    "@tiptap/extension-hard-break": {
-      "optional": true
-    },
-    "@tiptap/extension-highlight": {
-      "optional": true
-    },
-    "@tiptap/extension-image": {
-      "optional": true
-    },
-    "@tiptap/extension-link": {
-      "optional": true
-    },
-    "@tiptap/extension-list-item": {
-      "optional": true
-    },
-    "@tiptap/extension-ordered-list": {
-      "optional": true
-    },
-    "@tiptap/extension-subscript": {
-      "optional": true
-    },
-    "@tiptap/extension-superscript": {
-      "optional": true
-    },
-    "@tiptap/extension-table": {
-      "optional": true
-    },
-    "@tiptap/extension-table-cell": {
-      "optional": true
-    },
-    "@tiptap/extension-table-header": {
-      "optional": true
-    },
-    "@tiptap/extension-table-row": {
-      "optional": true
-    },
-    "@tiptap/extension-task-item": {
-      "optional": true
-    },
-    "@tiptap/extension-task-list": {
-      "optional": true
-    },
-    "@tiptap/pm": {
-      "optional": true
-    },
-    "prismjs": {
+    "@shikijs/themes": {
       "optional": true
     },
     "highlight.js": {
       "optional": true
     },
-    "@shikijs/themes": {
-      "optional": true
-    },
-    "@shikijs/types": {
-      "optional": true
-    },
-    "@viz-js/viz": {
-      "optional": true
-    },
-    "@terrastruct/d2": {
+    "prismjs": {
       "optional": true
     }
   },
   "devDependencies": {
     "@shikijs/themes": "^4.4.3",
-    "@shikijs/types": "^4.4.3",
-    "@tiptap/core": "^3.29.2",
-    "@tiptap/extension-bullet-list": "^3.29.2",
-    "@tiptap/extension-code": "^3.29.2",
-    "@tiptap/extension-code-block": "^3.29.2",
-    "@tiptap/extension-hard-break": "^3.29.2",
-    "@tiptap/extension-heading": "^3.29.2",
-    "@tiptap/extension-highlight": "^3.29.2",
-    "@tiptap/extension-image": "^3.29.2",
-    "@tiptap/extension-link": "^3.29.2",
-    "@tiptap/extension-list-item": "^3.29.2",
-    "@tiptap/extension-ordered-list": "^3.29.2",
-    "@tiptap/extension-subscript": "^3.29.2",
-    "@tiptap/extension-superscript": "^3.29.2",
-    "@tiptap/extension-table": "^3.29.2",
-    "@tiptap/extension-table-cell": "^3.29.2",
-    "@tiptap/extension-table-header": "^3.29.2",
-    "@tiptap/extension-table-row": "^3.29.2",
-    "@tiptap/extension-task-item": "^3.29.2",
-    "@tiptap/extension-task-list": "^3.29.2",
-    "@tiptap/extension-underline": "^3.29.2",
-    "@tiptap/pm": "^3.29.2",
-    "@tiptap/starter-kit": "^3.29.2",
-    "happy-dom": "^20.10.6",
     "highlight.js": "^11.11.1",
     "prismjs": "^1.30.0",
-    "shiki": "^4.3.1",
-    "typescript": "^5.9.3"
+    "shiki": "^4.3.1"
   },
   "publishConfig": {
     "access": "public"

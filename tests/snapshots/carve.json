@@ -1,0 +1,1724 @@
+{
+  "U-001": {
+    "prism": [
+      [
+        "text",
+        "Some text\n# Heading\n"
+      ]
+    ],
+    "highlightjs": "Some text\n# Heading\n",
+    "textmate": [
+      [
+        "source.carve",
+        "Some text"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "# Heading"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-014": {
+    "prism": [
+      [
+        "list",
+        "- "
+      ],
+      [
+        "text",
+        "step one\n+\n"
+      ],
+      [
+        "blockquote>punctuation",
+        ">"
+      ],
+      [
+        "blockquote",
+        " a note"
+      ],
+      [
+        "text",
+        "\n"
+      ],
+      [
+        "list",
+        "- "
+      ],
+      [
+        "text",
+        "step two\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-bullet\">-</span> step one\n+\n<span class=\"hljs-quote\">&gt; a note</span>\n<span class=\"hljs-bullet\">-</span> step two\n",
+    "textmate": [
+      [
+        "source.carve punctuation.definition.list.unnumbered.carve",
+        "-"
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve",
+        "step one"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "+"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "> a note"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "- step two"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-031": {
+    "prism": [
+      [
+        "attributes>punctuation",
+        "{"
+      ],
+      [
+        "attributes>class-name",
+        ".note"
+      ],
+      [
+        "attributes>punctuation",
+        "}"
+      ],
+      [
+        "text",
+        "\n\nParagraph.\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-attr\">{.note}</span>\n\nParagraph.\n",
+    "textmate": [
+      [
+        "source.carve meta.attributes.carve punctuation.definition.attributes.carve",
+        "{"
+      ],
+      [
+        "source.carve meta.attributes.carve entity.other.attribute-name.class.carve",
+        ".note"
+      ],
+      [
+        "source.carve meta.attributes.carve punctuation.definition.attributes.carve",
+        "}"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "Paragraph."
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-032": {
+    "prism": [
+      [
+        "text",
+        "{.a\n .b}\nParagraph.\n"
+      ]
+    ],
+    "highlightjs": "{.a\n .b}\nParagraph.\n",
+    "textmate": [
+      [
+        "source.carve",
+        "{.a"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        " .b}"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "Paragraph."
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-044": {
+    "prism": [
+      [
+        "text",
+        "para\n\n"
+      ],
+      [
+        "typography",
+        "---"
+      ],
+      [
+        "text",
+        "\n\nnext\n\n___\n\n"
+      ],
+      [
+        "typography",
+        "---"
+      ],
+      [
+        "typography",
+        "--"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "para\n\n<span class=\"hljs-literal\">---</span>\n\nnext\n\n___\n\n<span class=\"hljs-literal\">---</span><span class=\"hljs-literal\">--</span>\n",
+    "textmate": [
+      [
+        "source.carve",
+        "para"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve constant.other.smart_typography.carve",
+        "---"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "next"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "___"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve constant.other.smart_typography.carve",
+        "---"
+      ],
+      [
+        "source.carve constant.other.smart_typography.carve",
+        "--"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-045": {
+    "prism": [
+      [
+        "list",
+        "* * "
+      ],
+      [
+        "text",
+        "*\n\n"
+      ],
+      [
+        "list",
+        "- - "
+      ],
+      [
+        "text",
+        "-\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-bullet\">* *</span> *\n\n<span class=\"hljs-bullet\">- -</span> -\n",
+    "textmate": [
+      [
+        "source.carve punctuation.definition.list.unnumbered.carve",
+        "*"
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve punctuation.definition.list.unnumbered.carve",
+        "* "
+      ],
+      [
+        "source.carve",
+        "*"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve punctuation.definition.list.unnumbered.carve",
+        "-"
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve punctuation.definition.list.unnumbered.carve",
+        "- "
+      ],
+      [
+        "source.carve",
+        "-"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-049": {
+    "prism": [
+      [
+        "code-block-unclosed>punctuation",
+        "```"
+      ],
+      [
+        "code-block-unclosed",
+        "\ncode\n   ```\nafter\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-code\"><span class=\"hljs-keyword\">```</span>\ncode\n   ```\nafter\n</span>",
+    "textmate": [
+      [
+        "source.carve markup.fenced_code.block.carve punctuation.definition.fenced.carve",
+        "```"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve markup.raw.code.carve",
+        "code"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve markup.raw.code.carve",
+        "   ```"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve markup.raw.code.carve",
+        "after"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve markup.raw.code.carve",
+        ""
+      ]
+    ]
+  },
+  "U-050": {
+    "prism": [
+      [
+        "comment",
+        "%%%"
+      ],
+      [
+        "text",
+        "\nhidden\n"
+      ],
+      [
+        "comment",
+        "%%% visible?"
+      ],
+      [
+        "text",
+        "\nafter\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-comment\">%%%\nhidden\n%%% visible?\nafter\n</span>",
+    "textmate": [
+      [
+        "source.carve comment.block.carve",
+        "%%%"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve comment.block.carve",
+        "hidden"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve comment.block.carve",
+        "%%% visible?"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve comment.block.carve",
+        "after"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve comment.block.carve",
+        ""
+      ]
+    ]
+  },
+  "U-055": {
+    "prism": [
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " a "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " b "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        "---"
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        "--:"
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " 1 "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " 2 "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span> a <span class=\"hljs-table-boundary\">|</span> b <span class=\"hljs-table-boundary\">|</span>\n<span class=\"hljs-table-boundary\">|</span><span class=\"hljs-literal\">---</span><span class=\"hljs-table-boundary\">|</span><span class=\"hljs-literal\">--</span>:<span class=\"hljs-table-boundary\">|</span>\n<span class=\"hljs-table-boundary\">|</span> 1 <span class=\"hljs-table-boundary\">|</span> 2 <span class=\"hljs-table-boundary\">|</span>\n",
+    "textmate": [
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " a "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " b "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve constant.other.smart_typography.carve",
+        "---"
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve constant.other.smart_typography.carve",
+        "--"
+      ],
+      [
+        "source.carve",
+        ":"
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " 1 "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " 2 "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-056": {
+    "prism": [
+      [
+        "table>table-header>table-boundary",
+        "|"
+      ],
+      [
+        "table>table-header",
+        "="
+      ],
+      [
+        "table",
+        "< a "
+      ],
+      [
+        "table>table-header>table-boundary",
+        "|"
+      ],
+      [
+        "table>table-header",
+        "="
+      ],
+      [
+        "table",
+        "> b "
+      ],
+      [
+        "table>table-header>table-boundary",
+        "|"
+      ],
+      [
+        "table>table-header",
+        "="
+      ],
+      [
+        "table",
+        "~ c "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " 1 "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " 2 "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " 3 "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span><span class=\"hljs-table-header\">=</span>&lt; a <span class=\"hljs-table-boundary\">|</span><span class=\"hljs-table-header\">=</span>&gt; b <span class=\"hljs-table-boundary\">|</span><span class=\"hljs-table-header\">=</span>~ c <span class=\"hljs-table-boundary\">|</span>\n<span class=\"hljs-table-boundary\">|</span> 1 <span class=\"hljs-table-boundary\">|</span> 2 <span class=\"hljs-table-boundary\">|</span> 3 <span class=\"hljs-table-boundary\">|</span>\n",
+    "textmate": [
+      [
+        "source.carve keyword.operator.table.header.carve",
+        "|="
+      ],
+      [
+        "source.carve markup.bold.table.header.carve",
+        "< a "
+      ],
+      [
+        "source.carve keyword.operator.table.header.carve",
+        "|="
+      ],
+      [
+        "source.carve markup.bold.table.header.carve",
+        "> b "
+      ],
+      [
+        "source.carve keyword.operator.table.header.carve",
+        "|="
+      ],
+      [
+        "source.carve markup.bold.table.header.carve",
+        "~ c "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " 1 "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " 2 "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " 3 "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-063": {
+    "prism": [
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " a "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " b "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n\n"
+      ],
+      [
+        "caption>punctuation",
+        "^"
+      ],
+      [
+        "caption",
+        " Caption"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span> a <span class=\"hljs-table-boundary\">|</span> b <span class=\"hljs-table-boundary\">|</span>\n\n<span class=\"hljs-title caption_\"><span class=\"hljs-punctuation caption-marker_\">^</span> Caption</span>\n",
+    "textmate": [
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " a "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " b "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve meta.caption.carve punctuation.definition.caption.carve",
+        "^"
+      ],
+      [
+        "source.carve meta.caption.carve",
+        " "
+      ],
+      [
+        "source.carve meta.caption.carve markup.caption.carve",
+        "Caption"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-065": {
+    "prism": [
+      [
+        "text",
+        "an _underlined_ word and snake_case and _id\n"
+      ]
+    ],
+    "highlightjs": "an _underlined_ word and snake_case and _id\n",
+    "textmate": [
+      [
+        "source.carve",
+        "an _underlined_ word and snake_case and _id"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-066": {
+    "prism": [
+      [
+        "text",
+        "a ~struck~ word and ~/config\n"
+      ]
+    ],
+    "highlightjs": "a ~struck~ word and ~/config\n",
+    "textmate": [
+      [
+        "source.carve",
+        "a ~struck~ word and ~/config"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-067": {
+    "prism": [
+      [
+        "text",
+        "a =marked= word and x =1, y= 2\n"
+      ]
+    ],
+    "highlightjs": "a =marked= word and x =1, y= 2\n",
+    "textmate": [
+      [
+        "source.carve",
+        "a =marked= word and x =1, y= 2"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-068": {
+    "prism": [
+      [
+        "bold-italic",
+        "/*bold italic*/"
+      ],
+      [
+        "text",
+        " and "
+      ],
+      [
+        "bold-italic",
+        "*/bold italic/*"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-strong\">/*bold italic*/</span> and <span class=\"hljs-strong\">*<span class=\"hljs-emphasis\">/bold italic/</span>*</span>\n",
+    "textmate": [
+      [
+        "source.carve punctuation.definition.bold-italic.carve",
+        "/*"
+      ],
+      [
+        "source.carve markup.bold.italic.carve",
+        "bold italic"
+      ],
+      [
+        "source.carve punctuation.definition.bold-italic.carve",
+        "*/"
+      ],
+      [
+        "source.carve",
+        " and "
+      ],
+      [
+        "source.carve punctuation.definition.bold-italic.carve",
+        "*/"
+      ],
+      [
+        "source.carve markup.bold.italic.carve",
+        "bold italic"
+      ],
+      [
+        "source.carve punctuation.definition.bold-italic.carve",
+        "/*"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-069": {
+    "prism": [
+      [
+        "forced-strike",
+        "{~old~>new~}"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-deletion\">{~old~&gt;new~}</span>\n",
+    "textmate": [
+      [
+        "source.carve punctuation.definition.strike.carve",
+        "{~"
+      ],
+      [
+        "source.carve markup.strikethrough.carve",
+        "old"
+      ],
+      [
+        "source.carve markup.strikethrough.carve",
+        "~"
+      ],
+      [
+        "source.carve markup.strikethrough.carve",
+        ">new"
+      ],
+      [
+        "source.carve punctuation.definition.strike.carve",
+        "~}"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-101": {
+    "prism": [
+      [
+        "title>punctuation",
+        "="
+      ],
+      [
+        "title",
+        " 4 is the answer"
+      ],
+      [
+        "text",
+        "\nand more.\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-section\">= 4 is the answer</span>\nand more.\n",
+    "textmate": [
+      [
+        "source.carve markup.heading.carve punctuation.definition.heading.carve",
+        "="
+      ],
+      [
+        "source.carve markup.heading.carve",
+        " "
+      ],
+      [
+        "source.carve markup.heading.carve entity.name.section.carve",
+        "4 is the answer"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "and more."
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-103": {
+    "prism": [
+      [
+        "letter-list-marker",
+        "a."
+      ],
+      [
+        "text",
+        " one\n"
+      ],
+      [
+        "letter-list-marker",
+        "b."
+      ],
+      [
+        "text",
+        " two\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-bullet\">a.</span> one\n<span class=\"hljs-bullet\">b.</span> two\n",
+    "textmate": [
+      [
+        "source.carve punctuation.definition.list.numbered.carve",
+        "a."
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve",
+        "one"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve punctuation.definition.list.numbered.carve",
+        "b."
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve",
+        "two"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-104": {
+    "prism": [
+      [
+        "text",
+        "::: > \"T\"\nquoted\n"
+      ],
+      [
+        "div>div-delimiter>punctuation",
+        ":::"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "::: &gt; &quot;T&quot;\nquoted\n<span class=\"hljs-keyword\">:::</span>\n",
+    "textmate": [
+      [
+        "source.carve",
+        "::: > \"T\""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "quoted"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ":::"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-105": {
+    "prism": [
+      [
+        "code-block>punctuation",
+        "```"
+      ],
+      [
+        "code-block>language",
+        "=html"
+      ],
+      [
+        "code-block",
+        " "
+      ],
+      [
+        "code-block>string",
+        "\"T\""
+      ],
+      [
+        "code-block",
+        "\n<b>x</b>\n"
+      ],
+      [
+        "code-block>punctuation",
+        "```"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-code\">```=html &quot;T&quot;\n&lt;b&gt;x&lt;/b&gt;\n```</span>\n",
+    "textmate": [
+      [
+        "source.carve markup.fenced_code.block.carve punctuation.definition.fenced.carve",
+        "```"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve fenced_code.block.language.carve",
+        "=html"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve",
+        " "
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve string.quoted.double.fenced.title.carve",
+        "\"T\""
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve markup.raw.code.carve meta.embedded.block.html",
+        "<b>x</b>"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve markup.fenced_code.block.carve punctuation.definition.fenced.carve",
+        "```"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-106": {
+    "prism": [
+      [
+        "definition-list>definition-term>punctuation",
+        "::"
+      ],
+      [
+        "definition-list>definition-term",
+        " term"
+      ],
+      [
+        "text",
+        "\nmore term text\n: first description\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-title\">:: term</span>\nmore term text\n: first description\n",
+    "textmate": [
+      [
+        "source.carve keyword.control.definition.carve punctuation.definition.list.definition.carve",
+        "::"
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve entity.name.tag.definition.term.carve",
+        "term"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "more term text"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve keyword.control.definition.carve punctuation.definition.list.definition.carve",
+        ":"
+      ],
+      [
+        "source.carve",
+        " "
+      ],
+      [
+        "source.carve",
+        "first description"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-107": {
+    "prism": [
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " a "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "table",
+        " b "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ],
+      [
+        "caption>punctuation",
+        "^"
+      ],
+      [
+        "caption",
+        " first"
+      ],
+      [
+        "text",
+        "\n^ second\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span> a <span class=\"hljs-table-boundary\">|</span> b <span class=\"hljs-table-boundary\">|</span>\n<span class=\"hljs-title caption_\"><span class=\"hljs-punctuation caption-marker_\">^</span> first</span>\n^ second\n",
+    "textmate": [
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " a "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "source.carve",
+        " b "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve meta.caption.carve punctuation.definition.caption.carve",
+        "^"
+      ],
+      [
+        "source.carve meta.caption.carve",
+        " "
+      ],
+      [
+        "source.carve meta.caption.carve markup.caption.carve",
+        "first"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve meta.caption.carve punctuation.definition.caption.carve",
+        "^"
+      ],
+      [
+        "source.carve meta.caption.carve",
+        " "
+      ],
+      [
+        "source.carve meta.caption.carve markup.caption.carve",
+        "second"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "U-289": {
+    "prism": [
+      [
+        "include-directive>punctuation",
+        "{{"
+      ],
+      [
+        "include-directive",
+        " "
+      ],
+      [
+        "include-directive>include-path",
+        "a.crv"
+      ],
+      [
+        "include-directive",
+        " "
+      ],
+      [
+        "include-directive>include-option>include-option-name",
+        "@shift"
+      ],
+      [
+        "include-directive>include-option>punctuation",
+        ":"
+      ],
+      [
+        "include-directive>include-option>include-option-value",
+        "1"
+      ],
+      [
+        "include-directive",
+        " "
+      ],
+      [
+        "include-directive>punctuation",
+        "}}"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-meta\">{{ <span class=\"hljs-string\">a.crv</span> <span class=\"hljs-keyword\">@shift</span>:<span class=\"hljs-literal\">1</span> }}</span>\n",
+    "textmate": [
+      [
+        "source.carve meta.directive.include.carve punctuation.definition.directive.begin.carve",
+        "{{"
+      ],
+      [
+        "source.carve meta.directive.include.carve",
+        " "
+      ],
+      [
+        "source.carve meta.directive.include.carve string.other.link.include.carve",
+        "a.crv"
+      ],
+      [
+        "source.carve meta.directive.include.carve",
+        " "
+      ],
+      [
+        "source.carve meta.directive.include.carve variable.parameter.include.carve",
+        "@shift"
+      ],
+      [
+        "source.carve meta.directive.include.carve punctuation.separator.include.carve",
+        ":"
+      ],
+      [
+        "source.carve meta.directive.include.carve constant.other.include.carve",
+        "1"
+      ],
+      [
+        "source.carve meta.directive.include.carve",
+        " "
+      ],
+      [
+        "source.carve meta.directive.include.carve punctuation.definition.directive.end.carve",
+        "}}"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "CC-112": {
+    "prism": [
+      [
+        "text",
+        "a\n"
+      ],
+      [
+        "region-marker",
+        "%% #region x"
+      ],
+      [
+        "text",
+        "\nb"
+      ]
+    ],
+    "highlightjs": "a\n<span class=\"hljs-comment\">%% #region x</span>\nb",
+    "textmate": [
+      [
+        "source.carve",
+        "a"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve comment.line.percent.carve",
+        "%% #region x"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        "b"
+      ]
+    ]
+  },
+  "CC-893": {
+    "prism": [
+      [
+        "table>table-header>table-boundary",
+        "|"
+      ],
+      [
+        "table>table-header",
+        "="
+      ],
+      [
+        "table",
+        "< a "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span><span class=\"hljs-table-header\">=</span>&lt; a <span class=\"hljs-table-boundary\">|</span>\n",
+    "textmate": [
+      [
+        "source.carve keyword.operator.table.header.carve",
+        "|="
+      ],
+      [
+        "source.carve markup.bold.table.header.carve",
+        "< a "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  },
+  "CC-894": {
+    "prism": [
+      [
+        "table>table-header>table-boundary",
+        "|"
+      ],
+      [
+        "table>table-header",
+        "="
+      ],
+      [
+        "table>attributes>punctuation",
+        "{"
+      ],
+      [
+        "table>attributes",
+        "<"
+      ],
+      [
+        "table>attributes>punctuation",
+        "}"
+      ],
+      [
+        "table",
+        " a "
+      ],
+      [
+        "table>table-boundary",
+        "|"
+      ],
+      [
+        "text",
+        "\n"
+      ]
+    ],
+    "highlightjs": "<span class=\"hljs-table-boundary\">|</span><span class=\"hljs-table-header\">=</span>{<span class=\"hljs-table-alignment\">&lt;</span>} a <span class=\"hljs-table-boundary\">|</span>\n",
+    "textmate": [
+      [
+        "source.carve keyword.operator.table.header.carve",
+        "|="
+      ],
+      [
+        "source.carve markup.bold.table.header.carve meta.attributes.carve punctuation.definition.attributes.carve",
+        "{"
+      ],
+      [
+        "source.carve markup.bold.table.header.carve meta.attributes.carve keyword.operator.table.alignment.carve",
+        "<"
+      ],
+      [
+        "source.carve markup.bold.table.header.carve meta.attributes.carve punctuation.definition.attributes.carve",
+        "}"
+      ],
+      [
+        "source.carve markup.bold.table.header.carve",
+        " a "
+      ],
+      [
+        "source.carve punctuation.separator.table.carve",
+        "|"
+      ],
+      [
+        "",
+        "\n"
+      ],
+      [
+        "source.carve",
+        ""
+      ]
+    ]
+  }
+}

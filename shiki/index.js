@@ -54,7 +54,6 @@ export {
     carveBlankLineTransformer,
     sourceForShiki,
 } from './themes.js'
-export { diffCodeTransformer } from './diff.js'
 
 /**
  * Everything a VitePress `markdown` config needs, in one spreadable

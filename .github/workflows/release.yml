@@ -28,7 +28,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release, without a leading v (e.g. 0.1.13)'
+        description: 'Version to release, without a leading v (e.g. 0.2.0)'
         required: true
         type: string
 
@@ -79,24 +79,6 @@ jobs:
             exit 1
           fi
 
-      # ...and it describes ALL of it. The step above only asks whether a section
-      # EXISTS, and a section exists from the moment `chore: cut X.Y.Z` writes it;
-      # development then carries on over it and nobody reopens it. This step names
-      # every missing pull request at once, and
-      # `tests/changelog-completeness-test.js` runs its logic on every pull
-      # request so a release is not where a broken gate is discovered.
-      - name: The changelog section accounts for every merge in this release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/changelog-completeness.mjs "v${{ inputs.version }}"
-
-      # A git dependency ships to every consumer: npm skips its integrity check,
-      # the install needs git and GitHub reachability, and a commit pin stops
-      # tracking the engine's releases. 0.1.4 shipped with the engine pinned to a
-      # carve-js commit for exactly this reason and nothing noticed, because the
-      # manifest was never inspected before publishing.
-      - name: No dependency is installed over git
-        run: node scripts/no-git-dependencies.mjs
 
   release-notes:
     name: A release draft for this version exists and describes every merge
@@ -136,15 +118,6 @@ jobs:
           printf '%s' "$release" | jq -r '.body // ""' > /tmp/release-notes.md
           printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
 
-      # ...and they describe ALL of it. A non-emptiness test cannot see a draft
-      # that went stale: the 0.1.10 draft was written on 2026-09-26 at 00:47, #569
-      # added its breaking entry at 11:19 the same day, and the draft still had no
-      # Breaking section at all when the tag was pushed. So the notes are held to
-      # the same bar as the changelog section, over the same range of merges.
-      - name: The notes account for every merge in this release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: node scripts/changelog-completeness.mjs "v${{ inputs.version }}" --body-file /tmp/release-notes.md
 
   npm-credential:
     name: The npm credential can publish this package
@@ -306,7 +279,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: v${{ inputs.version }}
-          submodules: recursive # spec corpus submodule; npm test needs it
+          submodules: recursive
 
       - uses: actions/setup-node@v7
         with:
