@@ -263,6 +263,21 @@ for (const source of ['- ***x\n', '- a ***\n']) {
     assert.ok(!hasTextMate(source, 'meta.separator.thematic-break.carve'), `TextMate no break: ${JSON.stringify(source)}`);
     definitionAssertions++;
 }
+// C2-B-159: a star break behind a quote prefix of any depth, with or without item markers.
+for (const source of [
+    '> ***\n', '> > ***\n', '> > > ****  \n', ' > ***\n', '>  ***\n', '> - ***\n', '> 1. ***\n', '> A.  ***\n', '> - [ ] ***\n',
+    '> - - ***\n', '> a\n> ***\n', '> > a\n> > ***\n', '> - a\n> ***\n', '> - a\n>   ***\n', '> - a\n>\n>   ***\n',
+    '- > ***\n', '1. > ***\n', '- [ ] > ***\n', '> - > ***\n', '- a\n\n  > ***\n', '> # H\n> ***\n',
+]) {
+    assert.ok(hasTextMate(source, 'meta.separator.thematic-break.carve'), `TextMate break in a quote: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+for (const source of ['> ***x\n', '> *** x\n', '> * * *\n', '> a ***\n', '>> ***\n', '>\t***\n', '> ---\n', '> ___\n', '> **\n', '> ```\n> ***\n> ```\n']) {
+    assert.ok(!hasTextMate(source, 'meta.separator.thematic-break.carve'), `TextMate no break in a quote: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+assert.equal(covered(tokenizeTextMate, '> - [ ] ***\n', 'punctuation.definition.quote.carve'), '>');
+definitionAssertions++;
 // A description list after a blank line in an item keeps its marks.
 for (const source of ['- outer\n\n  :: t\n  : x\n', '- outer\n\n  :: t\n  : ```js\n    code\n    ```\n', '1. outer\n\n   :: t\n\n   : x\n', '- a\n\n:: t\n: x\n']) {
     const marks = covered(tokenizeTextMate, source, 'punctuation.definition.list.definition.carve');
