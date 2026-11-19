@@ -63,16 +63,14 @@
     "./textmate/tsv.tmLanguage.json": "./textmate/tsv.tmLanguage.json",
     "./package.json": "./package.json"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@shikijs/themes": "^4.4.3"
+  },
   "peerDependencies": {
-    "@shikijs/themes": "^4",
     "highlight.js": "^11",
     "prismjs": "^1"
   },
   "peerDependenciesMeta": {
-    "@shikijs/themes": {
-      "optional": true
-    },
     "highlight.js": {
       "optional": true
     },
@@ -81,7 +79,6 @@
     }
   },
   "devDependencies": {
-    "@shikijs/themes": "^4.4.3",
     "highlight.js": "^11.11.1",
     "prismjs": "^1.30.0",
     "shiki": "^4.3.1"
