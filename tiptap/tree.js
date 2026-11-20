@@ -215,7 +215,7 @@ function loadCodeLike(node, name, field) {
 function loadCodeBlock(node) {
     const value = node.value ?? '';
     const newline = value.endsWith('\n');
-    const text = newline ? value.slice(0, -1) : value;
+    const text = newline && !value.endsWith('\n\n') ? value.slice(0, -1) : value;
     const carve = fields(node, ['value', 'syntax']);
     if (!newline) carve.$newline = false;
     const pm = { type: 'codeBlock', attrs: { language: node.syntax ?? null, carve: carveAttr(carve) } };
@@ -518,7 +518,8 @@ function saveBlock(pm) {
             return clean(node);
         }
         case 'codeBlock': {
-            const node = { type: 'code_block', ...treeFields(carve), value: textOf(pm) + (carve.$newline === false ? '' : '\n') };
+            const text = textOf(pm);
+            const node = { type: 'code_block', ...treeFields(carve), value: text + (carve.$newline === false || text.endsWith('\n') ? '' : '\n') };
             const language = pm.attrs?.language;
             if (typeof language === 'string' && language !== '') node.syntax = language;
             return node;
