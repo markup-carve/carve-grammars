@@ -67,3 +67,38 @@ The way back also reads what a Tiptap setup without the kit's own content makes:
 `proseMirrorToTreeWithOrigins(json).ignored` lists every attribute the save did not read, as `{ path, type, attribute, value }` with `path` a JSON pointer into `json`, for example the `textAlign` of a TextAlign extension, a link's `target` or the `colwidth` of a resized column. Null values and the defaults the kit's Link gives every link are not listed. A host that must not lose editor state can refuse a save when the list is not empty.
 
 The loader and the serializer round-trip every 0.2 conformance example and clause case: parse, load, edit nothing, serialize gives the same tree.
+
+## Application nodes and marks
+
+A node or mark of the host's own extensions, with no Carve node in the kit, is an error on save (`no Carve node for the ProseMirror inline "placeholderToken"`). Pass `mapping` to give it one. The same table goes to the way in and the way back: `treeToProseMirror(tree, { mapping })`, `carveToProseMirror(source, { engine, mapping })`, `proseMirrorToTree(json, { mapping })` and `serializeToCarve(json, { engine, mapping })`.
+
+```js
+const mapping = {
+    nodes: {
+        placeholderToken: { as: 'span', class: 'placeholder', attributes: ['name'] },
+        poll: { as: 'div', class: 'poll', attributes: ['question'] },
+    },
+    marks: { textStyle: { as: 'span', class: 'text-style', attributes: ['color'] } },
+}
+const source = serializeToCarve(editor.getJSON(), { engine: carve, mapping })
+// Dear []{.placeholder name=first} [red]{.text-style color=#f00}
+```
+
+A declared entry saves the node or mark as a `span` (inline) or `div` (block) with its `class`. Each listed attribute that has a value becomes a key/value pair: a string as it is, any other value as JSON. On load it is a string. A declared node is an atom; give it `content: true` to keep its content (inlines in a span, blocks in a div). A mark is always a `span` around the text it covers. Only a span or div of exactly that shape loads back as the host type: one class, the listed keys and nothing else. Any other span or div stays a kit node, so nothing it carries is lost.
+
+For anything else, an entry is a pair of callbacks. `toTree(pm, { position, blocks, inlines })` returns the tree node; `blocks(pm.content)` and `inlines(pm.content)` convert its content. `fromTree(node, { position, blocks, inlines })` returns the ProseMirror node, or `null` for a tree node that is not its own; there `blocks` and `inlines` load tree children. For a mark, `toTree(mark)` returns the inline container without `children`, and `fromTree(node)` returns the mark or `null`.
+
+A type that is neither in the kit nor in `mapping` still throws. `ignored` lists an attribute of a declared node that its entry does not name.
+
+## Editor positions for findings
+
+`proseMirrorToTreeWithOrigins(json).pointers` maps each tree path to the JSON pointer of the ProseMirror node or mark the tree node came from. A lint finding of the saved source carries the tree path of its node, so `proseMirrorPointer(pointers, finding.path)` gives the editor node to mark:
+
+```js
+const { tree, pointers } = proseMirrorToTreeWithOrigins(editor.getJSON())
+for (const finding of carve.lint(carve.write(tree))) {
+    const pointer = proseMirrorPointer(pointers, finding.path) // '/content/2' for the third top-level node
+}
+```
+
+A tree node with no ProseMirror node of its own (a span mark cell, a table section, the content of a `carveBlock`) gets the pointer of its nearest ancestor that has one. An inline container made from a mark points at that mark on the first text it covers (`/content/1/content/3/marks/0`).

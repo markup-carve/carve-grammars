@@ -127,6 +127,128 @@ function withMarks(pm, marks) {
 }
 
 // ---------------------------------------------------------------------------
+// Application nodes and marks
+// ---------------------------------------------------------------------------
+
+/** The host's `mapping` option, checked: `nodes` and `marks`, each a Map from ProseMirror name to entry. */
+function mappingOf(mapping) {
+    const out = { nodes: new Map(), marks: new Map() };
+    if (mapping === undefined || mapping === null) return out;
+    for (const kind of ['nodes', 'marks']) {
+        for (const [name, entry] of Object.entries(mapping[kind] ?? {})) out[kind].set(name, mappingEntry(kind, name, entry));
+    }
+    return out;
+}
+
+function mappingEntry(kind, name, entry) {
+    if (typeof entry?.toTree === 'function' || typeof entry?.fromTree === 'function') return entry;
+    const allowed = kind === 'marks' ? ['span'] : ['span', 'div'];
+    const attributes = entry?.attributes ?? [];
+    if (!allowed.includes(entry?.as) || typeof entry.class !== 'string' || entry.class === '' ||
+        !Array.isArray(attributes) || !attributes.every((attribute) => typeof attribute === 'string') ||
+        (entry.content !== undefined && typeof entry.content !== 'boolean')) {
+        throw new TypeError(`mapping: the ${kind === 'marks' ? 'mark' : 'node'} "${name}" needs "as" (${allowed.join(' or ')}), a "class" and string "attributes", or "toTree" and "fromTree"`);
+    }
+    // A declared node is an atom unless it has `content: true`.
+    return { as: entry.as, class: entry.class, attributes, content: entry.content === true };
+}
+
+/** The Carve attributes of a declared node or mark: its class, and each declared attribute with a value as a key/value pair. */
+function mappedAttrs(entry, attrs) {
+    const keyValues = [];
+    for (const name of entry.attributes) {
+        const value = attrs?.[name];
+        if (value !== null && value !== undefined) keyValues.push([name, typeof value === 'string' ? value : JSON.stringify(value)]);
+    }
+    return keyValues.length > 0 ? { classes: [entry.class], keyValues } : { classes: [entry.class] };
+}
+
+/** Whether `node` is exactly what a declared entry saves, so loading it as the host type loses nothing. */
+function declared(entry, node, type, atom = false) {
+    if (entry.as !== type || node.type !== type || Object.keys(fields(node, ['children', 'attrs'])).length > 0) return false;
+    if (atom && (node.children ?? []).length > 0) return false;
+    const attrs = node.attrs ?? {};
+    if (Object.keys(attrs).some((key) => key !== 'classes' && key !== 'keyValues')) return false;
+    if (!Array.isArray(attrs.classes) || attrs.classes.length !== 1 || attrs.classes[0] !== entry.class) return false;
+    const seen = new Set();
+    return (attrs.keyValues ?? []).every(([key, value]) => entry.attributes.includes(key) && typeof value === 'string' && !seen.has(key) && seen.add(key));
+}
+
+function declaredAttrs(node) {
+    const attrs = Object.fromEntries(node.attrs?.keyValues ?? []);
+    return Object.keys(attrs).length > 0 ? attrs : undefined;
+}
+
+/** The host node a tree node loads as, or undefined. */
+function loadMapped(node, position, state) {
+    for (const [name, entry] of state.mapping.nodes) {
+        if (entry.as === undefined) {
+            const pm = entry.fromTree?.(node, {
+                position,
+                blocks: (children) => loadBlocks(children ?? [], state),
+                inlines: (children) => loadInlines(children ?? [], state),
+            });
+            if (pm !== null && pm !== undefined) return pm;
+            continue;
+        }
+        if (!declared(entry, node, position === 'block' ? 'div' : 'span', !entry.content)) continue;
+        const pm = { type: name };
+        const attrs = declaredAttrs(node);
+        if (attrs !== undefined) pm.attrs = attrs;
+        const children = node.children ?? [];
+        if (children.length > 0) pm.content = position === 'block' ? loadBlocks(children, state) : loadInlines(children, state);
+        return pm;
+    }
+    return undefined;
+}
+
+/** The host mark an inline container loads as, or undefined. */
+function loadMappedMark(node, state) {
+    for (const [name, entry] of state.mapping.marks) {
+        if (entry.as === undefined) {
+            const mark = entry.fromTree?.(node);
+            if (mark !== null && mark !== undefined) return mark;
+            continue;
+        }
+        if (!declared(entry, node, 'span')) continue;
+        const mark = { type: name };
+        const attrs = declaredAttrs(node);
+        if (attrs !== undefined) mark.attrs = attrs;
+        return mark;
+    }
+    return undefined;
+}
+
+/** The tree node of a host node. */
+function saveMapped(pm, entry, position, ctx, ptr) {
+    if (entry.as === undefined) {
+        if (typeof entry.toTree !== 'function') throw new TypeError(`proseMirrorToTree: the mapping of the ProseMirror node "${pm.type}" has no toTree`);
+        return entry.toTree(pm, {
+            position,
+            blocks: (content) => saveBlocks(content ?? [], ctx, ptr),
+            inlines: (content) => saveInlines(content ?? [], ctx, ptr),
+        });
+    }
+    const want = position === 'block' ? 'div' : 'span';
+    if (entry.as !== want) {
+        throw new TypeError(`proseMirrorToTree: the ProseMirror node "${pm.type}" is mapped to a ${entry.as} and cannot stand as ${position === 'block' ? 'a block' : 'an inline'}`);
+    }
+    const content = pm.content ?? [];
+    if (!entry.content && content.length > 0) {
+        throw new TypeError(`proseMirrorToTree: the ProseMirror node "${pm.type}" has content; map it with content: true`);
+    }
+    return { type: want, attrs: mappedAttrs(entry, pm.attrs), children: position === 'block' ? saveBlocks(content, ctx, ptr) : saveInlines(content, ctx, ptr) };
+}
+
+function saveMappedMark(mark, entry) {
+    if (entry.as === undefined) {
+        if (typeof entry.toTree !== 'function') throw new TypeError(`proseMirrorToTree: the mapping of the ProseMirror mark "${mark.type}" has no toTree`);
+        return { ...entry.toTree(mark), children: [] };
+    }
+    return { type: 'span', attrs: mappedAttrs(entry, mark.attrs), children: [] };
+}
+
+// ---------------------------------------------------------------------------
 // Tree to ProseMirror
 // ---------------------------------------------------------------------------
 
@@ -134,16 +256,19 @@ function withMarks(pm, marks) {
  * ProseMirror JSON of a Carve 0.2 document tree (the result of carve-js `parse`).
  *
  * @param {object} tree a `document` node
- * @param {{ urlPolicy?: { deny?: readonly string[], allow?: readonly string[] } }} [options]
+ * @param {{ urlPolicy?: { deny?: readonly string[], allow?: readonly string[] }, mapping?: object }} [options] `mapping`: the host's own nodes and marks
  * @returns {object} a ProseMirror `doc` node as JSON
  */
 export function treeToProseMirror(tree, options = {}) {
     if (tree?.type !== 'document') throw new TypeError('treeToProseMirror expects a Carve document tree');
-    const state = { id: 0, urlPolicy: options.urlPolicy ?? {} };
+    const state = { id: 0, urlPolicy: options.urlPolicy ?? {}, mapping: mappingOf(options.mapping) };
     const content = loadBlocks(tree.children ?? [], state);
     // Each top-level node knows which block of the loaded tree it is, so the source of that block can be kept.
     if ((tree.children ?? []).length > 0) {
-        for (const [index, node] of content.entries()) node.attrs = { ...node.attrs, carve: { ...node.attrs?.carve, $index: index } };
+        for (const [index, node] of content.entries()) {
+            // A host node has no `carve` attribute in its schema.
+            if (!state.mapping.nodes.has(node.type)) node.attrs = { ...node.attrs, carve: { ...node.attrs?.carve, $index: index } };
+        }
     }
     return {
         type: 'doc',
@@ -165,6 +290,8 @@ function loadBlock(node, state) {
         if ((caption.children ?? []).length === 0) captionNode.attrs.carve = { ...captionNode.attrs.carve, $empty: true };
         return { type: 'carveCaptioned', content: [loadBlock(rest, state), captionNode] };
     }
+    const mapped = loadMapped(node, 'block', state);
+    if (mapped !== undefined) return mapped;
     if (TEXTBLOCK_OF_TREE.has(node.type)) return loadTextblock(node, state);
     if (CONTAINER_OF_TREE.has(node.type)) return loadContainer(node, state);
     if (CODE_OF_TREE.has(node.type)) return loadCodeLike(node, CODE_OF_TREE.get(node.type), 'value');
@@ -349,6 +476,18 @@ function loadInlines(children, state) {
 
 function pushInlines(children, marks, open, out, state) {
     for (const child of children) {
+        const hostMark = Array.isArray(child.children) && child.children.length > 0 ? loadMappedMark(child, state) : undefined;
+        if (hostMark !== undefined && !open.has(hostMark.type)) {
+            const inner = new Set(open);
+            inner.add(hostMark.type);
+            pushInlines(child.children, [...marks, hostMark], inner, out, state);
+            continue;
+        }
+        const hostNode = loadMapped(child, 'inline', state);
+        if (hostNode !== undefined) {
+            out.push(withMarks(hostNode, marks));
+            continue;
+        }
         const spec = MARK_OF_TREE.get(child.type);
         if (spec !== undefined && Array.isArray(child.children) && child.children.length > 0 && !open.has(spec.mark)) {
             const attrs = { carve: { ...fields(child, ['children', ...spec.owned]), $id: ++state.id, $depth: marks.length } };
@@ -421,29 +560,74 @@ function loadLeaf(node, marks, open, state) {
  * (`editor.getJSON()`), ready for carve-js `write`.
  *
  * @param {object} doc a ProseMirror `doc` node as JSON
+ * @param {{ mapping?: object }} [options] `mapping`: the host's own nodes and marks
  * @returns {object} a `document` node
  */
-export function proseMirrorToTree(doc) {
-    return proseMirrorToTreeWithOrigins(doc).tree;
+export function proseMirrorToTree(doc, options = {}) {
+    return proseMirrorToTreeWithOrigins(doc, options).tree;
 }
 
 /**
- * The tree of `doc`, and for each top-level block the index of the loaded block it came from
- * (`undefined` for a block the editor added).
+ * The tree of `doc`; for each top-level block the index of the loaded block it came from
+ * (`undefined` for a block the editor added); by tree path, the JSON pointer of the ProseMirror
+ * node or mark each tree node came from (`pointers`); and the attributes the save did not read.
  */
-export function proseMirrorToTreeWithOrigins(doc) {
+export function proseMirrorToTreeWithOrigins(doc, options = {}) {
     if (doc?.type !== 'doc') throw new TypeError('proseMirrorToTree expects a ProseMirror doc node');
+    const ctx = { mapping: mappingOf(options.mapping), from: new WeakMap() };
     const children = [];
     const origins = [];
-    for (const pm of doc.content ?? []) {
+    for (const [at, pm] of (doc.content ?? []).entries()) {
         if (isPlaceholder(pm)) continue;
-        const node = saveBlock(pm);
+        const node = saveBlock(pm, ctx, `/content/${at}`);
         if (node === null) continue;
         children.push(node);
         const index = carveOf(pm).$index;
         origins.push(Number.isInteger(index) ? index : undefined);
     }
-    return { tree: { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children }, origins, ignored: ignoredAttributes(doc) };
+    const tree = { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children };
+    ctx.from.set(tree, '');
+    return { tree, origins, pointers: pointersOf(tree, ctx.from), ignored: ignoredAttributes(doc, ctx.mapping) };
+}
+
+/** Each tree path with the pointer of the ProseMirror node or mark its node came from. */
+function pointersOf(tree, from) {
+    const out = {};
+    const visit = (node, path) => {
+        if (from.has(node)) out[path] = from.get(node);
+        for (const [key, value] of Object.entries(node)) {
+            if (Array.isArray(value)) {
+                for (const [index, item] of value.entries()) if (typeof item?.type === 'string') visit(item, `${path}/${key}/${index}`);
+            } else if (typeof value?.type === 'string') {
+                visit(value, `${path}/${key}`);
+            }
+        }
+    };
+    visit(tree, '');
+    return out;
+}
+
+/**
+ * The ProseMirror JSON pointer for a tree path, such as the `path` of a lint finding on the
+ * saved document: the pointer of that node, or of its nearest ancestor that came from one
+ * (a span mark cell, a table section). Null when no ancestor did.
+ *
+ * @param {Record<string, string>} pointers the `pointers` of `proseMirrorToTreeWithOrigins`
+ * @param {string} path
+ * @returns {string | null}
+ */
+export function proseMirrorPointer(pointers, path) {
+    let at = path;
+    for (;;) {
+        if (Object.hasOwn(pointers, at)) return pointers[at];
+        if (at === '') return null;
+        at = at.slice(0, at.lastIndexOf('/'));
+    }
+}
+
+function tag(node, ctx, ptr) {
+    if (node !== null && typeof node === 'object' && !ctx.from.has(node)) ctx.from.set(node, ptr);
+    return node;
 }
 
 /** The attributes each node and mark reads; any other attribute with a value is reported as ignored. */
@@ -465,10 +649,12 @@ const READ = {
 const STOCK = { link: { target: '_blank', rel: 'noopener noreferrer nofollow' } };
 
 /** Each attribute of `doc` the save did not read, with the JSON pointer of its node or mark. */
-function ignoredAttributes(doc) {
+function ignoredAttributes(doc, mapping) {
     const out = [];
     const visit = (pm, path) => {
-        const read = READ[pm.type] ?? [];
+        const host = /\/marks\/\d+$/.test(path) ? mapping.marks.get(pm.type) : mapping.nodes.get(pm.type);
+        // A declared mapping reads its attributes; a callback reads what it needs.
+        const read = host !== undefined ? host.attributes ?? Object.keys(pm.attrs ?? {}) : READ[pm.type] ?? [];
         for (const [attribute, value] of Object.entries(pm.attrs ?? {})) {
             if (attribute === 'carve' || value === null || value === undefined || read.includes(attribute)) continue;
             if (STOCK[pm.type]?.[attribute] === value) continue;
@@ -491,28 +677,35 @@ function isPlaceholder(pm) {
         Object.keys(carveOf(pm)).every((key) => key === '$index');
 }
 
-function saveBlocks(content) {
+/** `content` is the content of the node at `base`, from index `offset` on. */
+function saveBlocks(content, ctx, base, offset = 0) {
     const out = [];
-    for (const pm of content) {
+    for (const [index, pm] of content.entries()) {
         if (isPlaceholder(pm)) continue;
-        const node = saveBlock(pm);
+        const node = saveBlock(pm, ctx, `${base}/content/${index + offset}`);
         if (node !== null) out.push(node);
     }
     return out;
 }
 
-function saveBlock(pm) {
+function saveBlock(pm, ctx, ptr) {
+    return tag(saveBlockOf(pm, ctx, ptr), ctx, ptr);
+}
+
+function saveBlockOf(pm, ctx, ptr) {
     const carve = carveOf(pm);
-    if (TREE_OF_TEXTBLOCK.has(pm.type)) return saveTextblock(pm);
-    if (TREE_OF_CONTAINER.has(pm.type)) return saveContainer(pm);
+    const host = ctx.mapping.nodes.get(pm.type);
+    if (host !== undefined) return saveMapped(pm, host, 'block', ctx, ptr);
+    if (TREE_OF_TEXTBLOCK.has(pm.type)) return saveTextblock(pm, ctx, ptr);
+    if (TREE_OF_CONTAINER.has(pm.type)) return saveContainer(pm, ctx, ptr);
     if (TREE_OF_CODE.has(pm.type)) return { type: TREE_OF_CODE.get(pm.type), ...treeFields(carve), value: textOf(pm) };
     switch (pm.type) {
         case 'carveCaptioned': {
             const [body, caption] = pm.content ?? [];
-            const node = saveBlock(body);
+            const node = saveBlock(body, ctx, `${ptr}/content/0`);
             // An empty caption the editor made (to fill the wrapper) is no caption.
             const empty = caption === undefined || (carveOf(caption).$empty !== true && (caption.content ?? []).every(isPlaceholder));
-            if (node !== null && !empty) node.caption = saveBlock(caption);
+            if (node !== null && !empty) node.caption = saveBlock(caption, ctx, `${ptr}/content/1`);
             return node;
         }
         case 'carveBlock': {
@@ -529,12 +722,12 @@ function saveBlock(pm) {
         case 'horizontalRule': return { type: 'thematic_break', ...treeFields(carve) };
         case 'bulletList':
         case 'orderedList':
-        case 'taskList': return saveList(pm);
-        case 'carveDefinitionList': return { type: 'definition_list', ...treeFields(carve), children: saveBlocks(pm.content ?? []) };
-        case 'carveLineBlock': return { type: 'line_block', ...treeFields(carve), children: saveBlocks(pm.content ?? []) };
-        case 'table': return saveTable(pm);
+        case 'taskList': return saveList(pm, ctx, ptr);
+        case 'carveDefinitionList': return { type: 'definition_list', ...treeFields(carve), children: saveBlocks(pm.content ?? [], ctx, ptr) };
+        case 'carveLineBlock': return { type: 'line_block', ...treeFields(carve), children: saveBlocks(pm.content ?? [], ctx, ptr) };
+        case 'table': return saveTable(pm, ctx, ptr);
         // A block image, as Tiptap's Image extension makes by default, is an image paragraph (C2-A-136, C2-H-020).
-        case 'image': return { type: 'paragraph', role: 'image', children: [saveLeaf(pm)] };
+        case 'image': return { type: 'paragraph', role: 'image', children: [saveLeaf(pm, ctx, ptr)] };
         default: throw new TypeError(`proseMirrorToTree: no Carve node for the ProseMirror node "${pm.type}"`);
     }
 }
@@ -543,26 +736,28 @@ function textOf(pm) {
     return (pm.content ?? []).map((child) => child.text ?? '').join('');
 }
 
-function saveTextblock(pm) {
+function saveTextblock(pm, ctx, ptr) {
     const { tree, owned } = TREE_OF_TEXTBLOCK.get(pm.type);
     const carve = carveOf(pm);
     const node = { type: carve.$type ?? tree, ...treeFields(carve) };
     for (const key of owned) if (pm.attrs?.[key] !== undefined && pm.attrs[key] !== null) node[key] = pm.attrs[key];
-    node.children = saveInlines(pm.content ?? []);
+    node.children = saveInlines(pm.content ?? [], ctx, ptr);
     return node;
 }
 
-function saveContainer(pm) {
+function saveContainer(pm, ctx, ptr) {
     const { tree, owned } = TREE_OF_CONTAINER.get(pm.type);
     const node = { type: tree, ...treeFields(carveOf(pm)) };
     for (const key of owned) if (pm.attrs?.[key] !== undefined && pm.attrs[key] !== null) node[key] = pm.attrs[key];
     let content = pm.content ?? [];
+    let offset = 0;
     if (content[0]?.type === 'carveTitle') {
-        const title = saveInlines(content[0].content ?? []);
+        const title = saveInlines(content[0].content ?? [], ctx, `${ptr}/content/0`);
         if (title.length > 0) node.title = title;
         content = content.slice(1);
+        offset = 1;
     }
-    node.children = saveBlocks(content);
+    node.children = saveBlocks(content, ctx, ptr, offset);
     return node;
 }
 
@@ -570,7 +765,7 @@ function defaultMarker(type) {
     return type === 'orderedList' ? { kind: 'ordered', style: '1', delimiter: '.' } : { kind: 'bullet', char: '-' };
 }
 
-function saveList(pm) {
+function saveList(pm, ctx, ptr) {
     const fieldsOf = treeFields(carveOf(pm));
     let marker = fieldsOf.marker;
     const wanted = pm.type === 'orderedList' ? 'ordered' : pm.type === 'bulletList' ? 'bullet' : null;
@@ -579,33 +774,41 @@ function saveList(pm) {
         marker = { ...marker, start: pm.attrs.start };
     }
     // An item with nothing in it is what Enter or a toggle leaves behind, unless it was loaded empty.
-    const items = (pm.content ?? []).filter((item) => carveOf(item).$empty === true || !(item.content ?? []).every(isPlaceholder));
+    const items = [...(pm.content ?? []).entries()]
+        .filter(([, item]) => carveOf(item).$empty === true || !(item.content ?? []).every(isPlaceholder));
     if (items.length === 0) return null;
     return {
         type: 'list',
         spacing: 'tight',
         ...fieldsOf,
         marker,
-        children: items.map((item) => {
+        children: items.map(([at, item]) => {
+            const itemPtr = `${ptr}/content/${at}`;
             const itemFields = treeFields(carveOf(item));
-            const node = { type: 'list_item', ...itemFields };
+            const node = tag({ type: 'list_item', ...itemFields }, ctx, itemPtr);
             if (item.type === 'taskItem') {
                 const checked = item.attrs?.checked === true;
                 if (itemFields.task === undefined || taskChecked(itemFields.task) !== checked) node.task = { mark: checked ? 'x' : ' ' };
             }
-            node.children = saveBlocks(item.content ?? []);
+            node.children = saveBlocks(item.content ?? [], ctx, itemPtr);
             return node;
         }),
     };
 }
 
-function saveTable(pm) {
+function saveTable(pm, ctx, ptr) {
     const carve = carveOf(pm);
     const sections = Array.isArray(carve.$sections) && carve.$sections.length > 0 ? [...carve.$sections] : [{ type: 'table_body' }];
-    const pmRows = (pm.content ?? []).map((row) => ({
-        carve: carveOf(row),
-        cells: (row.content ?? []).filter((cell) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder)),
-    }));
+    const pmRows = (pm.content ?? []).map((row, at) => {
+        const kept = [...(row.content ?? []).entries()]
+            .filter(([, cell]) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder));
+        return {
+            carve: carveOf(row),
+            cells: kept.map(([, cell]) => cell),
+            ptr: `${ptr}/content/${at}`,
+            cellPtrs: kept.map(([index]) => `${ptr}/content/${at}/content/${index}`),
+        };
+    });
     // C2-B-178: in a table without a head, the leading rows of header cells are the head; a row loaded so stays.
     let lead = 0;
     if (!sections.some((section) => section.type === 'table_head')) {
@@ -643,7 +846,7 @@ function saveTable(pm) {
         placed.push({ ...row, section: current });
     }
     const rowsOf = sections.map(() => []);
-    const width = spanRows(placed, carve.$bareSpans === true, rowsOf);
+    const width = spanRows(placed, carve.$bareSpans === true, rowsOf, ctx);
     const children = [];
     for (const [index, section] of sections.entries()) {
         if (section.$node !== undefined) {
@@ -678,7 +881,7 @@ const ROWSPAN_MARK = { type: 'table_cell', header: false, span: 'rowspan', child
  * cells it covers (C2-B-172 to C2-B-174): a row span stops at the end of its group, and a cell that spans both ways
  * keeps its columns, since a `^` below a cell of more than one column joins nothing.
  */
-function spanRows(placed, bare, rowsOf) {
+function spanRows(placed, bare, rowsOf, ctx) {
     let below = [];
     let width = 0;
     for (const [index, row] of placed.entries()) {
@@ -693,9 +896,9 @@ function spanRows(placed, bare, rowsOf) {
                 column++;
             }
         };
-        for (const pmCell of row.cells) {
+        for (const [at, pmCell] of row.cells.entries()) {
             covered();
-            const cell = saveCell(pmCell);
+            const cell = saveCell(pmCell, ctx, row.cellPtrs[at]);
             const colspan = spanCount(pmCell.attrs?.colspan);
             let rowspan = Math.min(spanCount(pmCell.attrs?.rowspan), left);
             if (colspan > 1 && rowspan > 1 && !bare) rowspan = 1;
@@ -710,18 +913,18 @@ function spanRows(placed, bare, rowsOf) {
         width = Math.max(width, column);
         below = below.map((count) => Math.max(0, (count ?? 0) - 1));
         if (Array.isArray(row.carve.$before)) rowsOf[row.section].push(...row.carve.$before);
-        rowsOf[row.section].push({ type: 'table_row', ...treeFields(row.carve), children: cells });
+        rowsOf[row.section].push(tag({ type: 'table_row', ...treeFields(row.carve), children: cells }, ctx, row.ptr));
     }
     return width;
 }
 
-function saveCell(pm) {
+function saveCell(pm, ctx, ptr) {
     const content = pm.content ?? [];
     const single = content.filter((child) => !isPlaceholder(child)).length === 1;
     const children = [];
-    for (const child of content) {
+    for (const [at, child] of content.entries()) {
         if (isPlaceholder(child)) continue;
-        const node = saveBlock(child);
+        const node = saveBlock(child, ctx, `${ptr}/content/${at}`);
         if (node === null) continue;
         if ((child.type === 'paragraph' || child.type === 'image') && carveOf(child).$type === undefined && single) {
             node.type = 'cell_paragraph';
@@ -732,7 +935,7 @@ function saveCell(pm) {
     // A cell the editor created empty still needs content; an empty cell reads as one empty cell paragraph.
     if (children.length === 0 && carveOf(pm).$empty !== true) children.push({ type: 'cell_paragraph', children: [] });
     const { colspan: _colspan, rowspan: _rowspan, ...carved } = treeFields(carveOf(pm));
-    return { type: 'table_cell', ...carved, header: pm.type === 'tableHeader', children };
+    return tag({ type: 'table_cell', ...carved, header: pm.type === 'tableHeader', children }, ctx, ptr);
 }
 
 /** A mark's identity: the loaded node it came from, or for a mark the editor added, its type and attributes. */
@@ -741,10 +944,12 @@ function markKey(mark) {
     return id !== undefined ? `#${id}` : `${mark.type}:${JSON.stringify(mark.attrs ?? {})}`;
 }
 
-function saveInlines(content) {
-    const leaves = content.map((pm) => {
-        const marks = (pm.marks ?? []).filter((mark) => mark.type !== 'code');
-        return { pm, marks, keys: marks.map(markKey) };
+function saveInlines(content, ctx, base) {
+    const leaves = content.map((pm, at) => {
+        const ptr = `${base}/content/${at}`;
+        const kept = [...(pm.marks ?? []).entries()].filter(([, mark]) => mark.type !== 'code');
+        const marks = kept.map(([, mark]) => mark);
+        return { pm, ptr, marks, markPtrs: kept.map(([index]) => `${ptr}/marks/${index}`), keys: marks.map(markKey) };
     });
     // How far each mark runs from each leaf: a longer run opens outside a shorter one.
     const runs = leaves.map(() => new Map());
@@ -759,22 +964,24 @@ function saveInlines(content) {
         stack.length = keep;
         const opened = new Set(stack.map((entry) => entry.key));
         const fresh = leaf.marks
-            .map((mark, order) => ({ mark, order, key: leaf.keys[order] }))
+            .map((mark, order) => ({ mark, order, key: leaf.keys[order], ptr: leaf.markPtrs[order] }))
             .filter((entry) => !opened.has(entry.key))
             .sort((a, b) => runs[index].get(b.key) - runs[index].get(a.key) ||
                 (a.mark.attrs?.carve?.$depth ?? Infinity) - (b.mark.attrs?.carve?.$depth ?? Infinity) ||
                 a.order - b.order);
         for (const entry of fresh) {
-            const node = markNode(entry.mark);
+            const node = tag(markNode(entry.mark, ctx), ctx, entry.ptr);
             (stack[stack.length - 1]?.node ?? root).children.push(node);
             stack.push({ key: entry.key, node });
         }
-        (stack[stack.length - 1]?.node ?? root).children.push(saveLeaf(leaf.pm));
+        (stack[stack.length - 1]?.node ?? root).children.push(saveLeaf(leaf.pm, ctx, leaf.ptr));
     }
     return root.children;
 }
 
-function markNode(mark) {
+function markNode(mark, ctx) {
+    const host = ctx.mapping.marks.get(mark.type);
+    if (host !== undefined) return saveMappedMark(mark, host);
     const spec = TREE_OF_MARK.get(mark.type);
     if (spec === undefined) throw new TypeError(`proseMirrorToTree: no Carve node for the ProseMirror mark "${mark.type}"`);
     const node = { type: spec.tree, ...treeFields(mark.attrs?.carve) };
@@ -783,7 +990,13 @@ function markNode(mark) {
     return node;
 }
 
-function saveLeaf(pm) {
+function saveLeaf(pm, ctx, ptr) {
+    return tag(saveLeafOf(pm, ctx, ptr), ctx, ptr);
+}
+
+function saveLeafOf(pm, ctx, ptr) {
+    const host = ctx.mapping.nodes.get(pm.type);
+    if (host !== undefined) return saveMapped(pm, host, 'inline', ctx, ptr);
     const carve = carveOf(pm);
     switch (pm.type) {
         case 'text': {
