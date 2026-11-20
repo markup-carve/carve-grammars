@@ -403,6 +403,9 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     assert.deepStrictEqual(proseMirrorToTreeWithOrigins(editor.getJSON()).ignored, [])
     editor.commands.setCarveContent(carveToProseMirror('|= a | b |\n| [x](https://a) | ![i](i.png) |\n', { engine }), { emitUpdate: false })
     assert.deepStrictEqual(proseMirrorToTreeWithOrigins(editor.getJSON()).ignored, [], 'a loaded document reports nothing')
+    // A resized column has a width Carve does not keep.
+    const resized = { type: 'doc', content: [{ type: 'table', content: [{ type: 'tableRow', content: [cell('tableCell', 'a', { colwidth: [120] })] }] }] }
+    assert.deepStrictEqual(proseMirrorToTreeWithOrigins(resized).ignored, [{ path: '/content/0/content/0/content/0', type: 'tableCell', attribute: 'colwidth', value: [120] }])
 }
 
 editor.destroy()

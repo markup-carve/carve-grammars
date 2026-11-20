@@ -62,6 +62,6 @@ The way back also reads what a Tiptap setup without the kit's own content makes:
 - In a table without a head, the leading rows whose cells are all `tableHeader` are the head, as they are when the written source is parsed.
 - A block-level `image` (Tiptap's Image default) is an image paragraph, the tree of `![alt](src)`.
 
-`proseMirrorToTreeWithOrigins(json).ignored` lists every attribute the save did not read, as `{ path, type, attribute, value }` with `path` a JSON pointer into `json`, for example the `textAlign` of a TextAlign extension or a link's `target`. Null values and the defaults the kit's Link gives every link are not listed. A host that must not lose editor state can refuse a save when the list is not empty.
+`proseMirrorToTreeWithOrigins(json).ignored` lists every attribute the save did not read, as `{ path, type, attribute, value }` with `path` a JSON pointer into `json`, for example the `textAlign` of a TextAlign extension, a link's `target` or the `colwidth` of a resized column. Null values and the defaults the kit's Link gives every link are not listed. A host that must not lose editor state can refuse a save when the list is not empty.
 
 The loader and the serializer round-trip every 0.2 conformance example and clause case: parse, load, edit nothing, serialize gives the same tree.
