@@ -479,7 +479,7 @@ function ignoredAttributes(doc) {
         for (const [index, mark] of (pm.marks ?? []).entries()) visit(mark, `${path}/marks/${index}`);
         for (const [index, child] of (pm.content ?? []).entries()) visit(child, `${path}/content/${index}`);
     };
-    for (const [index, child] of (doc.content ?? []).entries()) visit(child, `/content/${index}`);
+    visit(doc, '');
     return out;
 }
 
