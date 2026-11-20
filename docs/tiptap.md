@@ -47,7 +47,7 @@ A link `href` or image `src` that the HTML renderer's URL policy denies (`javasc
 | `definition_list` | `carveDefinitionList` with `carveDefinitionTerm` and `carveDefinitionDescription` |
 | `line_block`, `line` | `carveLineBlock`, `carveLine` |
 | `comment`, `raw_block`, `frontmatter` | `carveComment`, `carveRawBlock`, `carveFrontmatter`, edited as plain text |
-| `math`, `footnote_ref`, `image`, `hard_break` | `carveMath` (`value`, `display`), `carveFootnoteRef` (`key`), `image`, `hardBreak` |
+| `math`, `footnote_ref`, `image`, `hard_break` | `carveMath` (`value`, `display`), `carveFootnoteRef` (`key`, shown as a superscript label), `image`, `hardBreak` |
 | `strong`, `emphasis`, `underline`, `strike`, `highlight`, `superscript`, `subscript`, `code`, `link` | the marks `bold`, `italic`, `underline`, `strike`, `highlight`, `superscript`, `subscript`, `code`, `link` |
 | `insert`, `delete`, `small_caps`, `span`, `inline_footnote`, `inline_extension` | the marks `carveInsert`, `carveDelete`, `carveSmallCaps`, `carveSpan`, `carveInlineFootnote`, `carveInlineExtension` |
 | any other node | `carveBlock` or `carveInline`, an atom that keeps the whole node |
