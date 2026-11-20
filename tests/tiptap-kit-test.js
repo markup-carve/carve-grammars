@@ -315,5 +315,18 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     }
 }
 
+// A footnote reference shows its label as a superscript, as the HTML target does, and keeps the source spelling for text.
+{
+    const source = 'A note[^n] here.\n\n[^n]: The note.\n'
+    editor.commands.setCarveContent(carveToProseMirror(source, { engine }), { emitUpdate: false })
+    const html = editor.getHTML()
+    assert.match(html, /<sup[^>]*class="carve-footnote-ref"[^>]*>n<\/sup>/, html)
+    assert.match(html, /<aside[^>]*data-key="n"[^>]*class="carve-footnote"/, html)
+    assert.ok(editor.getText().includes('A note[^n] here.'), editor.getText())
+    const back = new Editor({ extensions: [CarveKit], content: html })
+    assert.deepStrictEqual(proseMirrorToTree(back.getJSON()).children[0].children[1], { type: 'footnote_ref', number: 1, key: 'n', namespace: 'footnote' })
+    back.destroy()
+}
+
 editor.destroy()
 console.log('tiptap kit: ok')

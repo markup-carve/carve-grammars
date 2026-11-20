@@ -87,7 +87,7 @@ function plainAttribute(name, fallback = null) {
     };
 }
 
-function containerNode(name, treeType, { content = 'block+', group = 'block', tag = 'div', extra = {}, className } = {}) {
+function containerNode(name, treeType, { content = 'block+', group = 'block', tag = 'div', extra = {}, className, dataOf } = {}) {
     return Node.create({
         name,
         ...(group ? { group } : {}),
@@ -95,7 +95,12 @@ function containerNode(name, treeType, { content = 'block+', group = 'block', ta
         defining: true,
         addAttributes: carveAttributes(extra),
         parseHTML: () => [{ tag: `${tag}[data-carve-type="${treeType}"]` }],
-        renderHTML: ({ HTMLAttributes }) => [tag, { ...HTMLAttributes, 'data-carve-type': treeType, class: [className ?? `carve-${treeType.replace(/_/g, '-')}`, HTMLAttributes.class].filter(Boolean).join(' ') }, 0],
+        renderHTML: ({ HTMLAttributes, node }) => [tag, {
+            ...HTMLAttributes,
+            ...dataOf?.(node),
+            'data-carve-type': treeType,
+            class: [className ?? `carve-${treeType.replace(/_/g, '-')}`, HTMLAttributes.class].filter(Boolean).join(' '),
+        }, 0],
     });
 }
 
@@ -153,7 +158,10 @@ export const CarveDirective = containerNode('carveDirective', 'directive', { con
 export const CarveSection = containerNode('carveSection', 'section', { tag: 'section' });
 export const CarveFigureGroup = containerNode('carveFigureGroup', 'figure_group', { tag: 'figure' });
 export const CarveBlockExtension = containerNode('carveBlockExtension', 'block_extension');
-export const CarveFootnote = containerNode('carveFootnote', 'footnote', { tag: 'aside' });
+export const CarveFootnote = containerNode('carveFootnote', 'footnote', {
+    tag: 'aside',
+    dataOf: (node) => (typeof node.attrs.carve?.key === 'string' ? { 'data-key': node.attrs.carve.key } : {}),
+});
 export const CarveCaption = containerNode('carveCaption', 'caption', { group: '', tag: 'figcaption' });
 /** A block with its caption: the tree keeps the caption as a field of the block. */
 export const CarveCaptioned = containerNode('carveCaptioned', 'captioned', { content: 'block carveCaption', tag: 'figure' });
@@ -229,8 +237,10 @@ export const CarveFootnoteRef = Node.create({
     atom: true,
     selectable: true,
     addAttributes: carveAttributes({ key: plainAttribute('key', '') }),
-    parseHTML: () => [{ tag: 'sup[data-carve-type="footnote_ref"]' }],
-    renderHTML: ({ HTMLAttributes, node }) => ['sup', { ...HTMLAttributes, 'data-carve-type': 'footnote_ref', class: 'carve-footnote-ref' }, `[^${node.attrs.key}]`],
+    // Above Superscript, which claims every <sup>.
+    parseHTML: () => [{ tag: 'sup[data-carve-type="footnote_ref"]', priority: 60 }],
+    // Shown as the HTML target shows a reference, a superscript label; the source spelling is for renderText.
+    renderHTML: ({ HTMLAttributes, node }) => ['sup', { ...HTMLAttributes, 'data-carve-type': 'footnote_ref', class: 'carve-footnote-ref', title: `[^${node.attrs.key}]` }, String(node.attrs.key)],
     renderText: ({ node }) => `[^${node.attrs.key}]`,
 });
 
