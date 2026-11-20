@@ -2,7 +2,7 @@
   "$comment": "Which grammar a fenced code block embeds, keyed by the word after the fence opener, for every grammar format that embeds by a fixed list. Editor-specific facts stay in the editor repositories. Read README.md beside this file before adding a row.",
   "version": 1,
   "languages": [
-    {"words": ["carve", "crv"], "language": "carve", "textmate": ["text.carve"], "sublime": "document"},
+    {"words": ["carve", "crv"], "language": "carve", "textmate": ["source.carve"], "sublime": "document"},
     {"words": ["js", "javascript", "mjs", "cjs", "node"], "language": "javascript", "textmate": ["source.js"], "sublime": "scope:source.js"},
     {"words": ["jsx"], "language": "javascriptreact", "textmate": ["source.js.jsx"], "sublime": "scope:source.jsx"},
     {"words": ["ts", "typescript", "mts", "cts"], "language": "typescript", "textmate": ["source.ts"], "sublime": "scope:source.ts"},

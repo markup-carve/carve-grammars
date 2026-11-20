@@ -1,101 +1,57 @@
 /**
- * The URL sink policy of carve-js's HTML renderer (PART 9 §25), for the places
- * this package writes a destination or an authored attribute.
- *
- * carve-js does not export these from its public entry, so they are mirrored
- * here. `tests/url-policy-test.js` imports the renderer's own definitions from
- * the installed engine and fails when the two differ.
+ * The URL sink test of the carve-js HTML renderer (C2-H-159, C2-H-160, C2-H-173), mirrored because
+ * the kit does not import the engine. `tests/tiptap-kit-test.js` checks it against the installed
+ * engine's `isUrlAllowed` and `DEFAULT_DENIED_SCHEMES`.
  */
 
-/** carve-js `DANGEROUS_URL_SCHEMES`. */
-export const DENIED_URL_SCHEMES = Object.freeze([
-    'javascript',
-    'vbscript',
-    'data',
-    'file',
-    'ms-msdt',
-    'ms-office',
-    'ms-word',
-    'ms-excel',
-    'ms-powerpoint',
-    'ms-access',
-    'ms-visio',
-    'ms-project',
-    'ms-publisher',
-    'ms-infopath',
-    'ms-spd',
-    'ms-search',
-    'search-ms',
-    'ms-cxh',
-    'ms-cxh-full',
-    'shell',
-    'vscode',
-    'vscode-insiders',
-    'jar',
+/** carve-js `DEFAULT_DENIED_SCHEMES`. */
+export const DEFAULT_DENIED_SCHEMES = Object.freeze([
+    'javascript', 'vbscript', 'data', 'file', 'ms-msdt', 'ms-office', 'ms-word', 'ms-excel', 'ms-powerpoint',
+    'ms-access', 'ms-visio', 'ms-project', 'ms-publisher', 'ms-infopath', 'ms-spd', 'ms-search', 'search-ms',
+    'ms-cxh', 'ms-cxh-full', 'shell', 'vscode', 'vscode-insiders', 'jar',
 ]);
 
-/** carve-js `SCHEME_PROBE_STRIP_RE`: every control and whitespace character. */
-export const SCHEME_PROBE_STRIP_RE = /[\u0000-\u0008\u000e-\u001f\u007f-\u009f\s]+/gu;
+/** C2-H-159: the code ranges the scheme probe removes. */
+const PROBE_REMOVED = [
+    [0x0000, 0x0020], [0x007f, 0x00a0], [0x1680, 0x1680], [0x2000, 0x200a], [0x2028, 0x2029], [0x202a, 0x202e],
+    [0x202f, 0x202f], [0x205f, 0x205f], [0x2066, 0x2069], [0x3000, 0x3000], [0xfeff, 0xfeff], [0xfffd, 0xfffd],
+];
 
-const DENIED = new Set(DENIED_URL_SCHEMES);
+function isProbeRemoved(code) {
+    if (code > 0x20 && code < 0x7f) return false;
+    return PROBE_REMOVED.some(([from, to]) => code >= from && code <= to);
+}
+
+function isAsciiLetter(code) {
+    return (code >= 0x41 && code <= 0x5a) || (code >= 0x61 && code <= 0x7a);
+}
+
+function isSchemeCharacter(code) {
+    return isAsciiLetter(code) || (code >= 0x30 && code <= 0x39) || code === 0x2b || code === 0x2d || code === 0x2e;
+}
+
+/** The lowercased scheme of `url`, or the empty string when it has none. */
+export function urlScheme(url) {
+    let scheme = '';
+    for (let at = 0; at < url.length; at++) {
+        const code = url.charCodeAt(at);
+        if (isProbeRemoved(code)) continue;
+        if (code === 0x3a) return scheme.toLowerCase();
+        if (scheme === '' ? !isAsciiLetter(code) : !isSchemeCharacter(code)) return '';
+        scheme += url[at];
+    }
+    return '';
+}
 
 /**
- * Whether the renderer blanks `url` as a link, autolink or image destination
- * (carve-js `sanitizeUrl` under its default policy).
+ * Whether `url` passes `policy` (`{ deny }` or `{ allow }`, the default deny list when neither is given).
  *
  * @param {string} url
- * @returns {boolean}
+ * @param {{ deny?: readonly string[], allow?: readonly string[] }} [policy]
  */
-export function isDeniedDestination(url) {
-    if (typeof url !== 'string' || url === '') return false;
-    const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(url.replace(SCHEME_PROBE_STRIP_RE, ''));
-
-    return scheme !== null && DENIED.has(scheme[1].toLowerCase());
-}
-
-const ASCII_WHITESPACE = '\\t\\n\\f\\r ';
-const URL_LIST_SEPARATORS = new Map([
-    ['srcset', new RegExp(`[,${ASCII_WHITESPACE}]+`)],
-    ['imagesrcset', new RegExp(`[,${ASCII_WHITESPACE}]+`)],
-    ['ping', new RegExp(`[${ASCII_WHITESPACE}]+`)],
-    ['attributionsrc', new RegExp(`[${ASCII_WHITESPACE}]+`)],
-]);
-
-function hasDeniedValueScheme(value) {
-    const colon = value.indexOf(':');
-    if (colon === -1) return false;
-
-    return DENIED.has(value.slice(0, colon).replace(SCHEME_PROBE_STRIP_RE, '').toLowerCase());
-}
-
-/**
- * Whether the renderer drops or blanks an authored `name="value"` pair: an
- * event handler or other script-sink name, a denied scheme at the head of the
- * value or of any URL-list candidate, or a script-bearing `style`.
- *
- * The `style` test is wider than the renderer's: any backslash counts, since
- * this side does not decode CSS escapes. Callers shadow a refused pair rather
- * than drop it, so the wider test costs only the editor's styling.
- *
- * @param {string} name
- * @param {unknown} value
- * @returns {boolean}
- */
-export function refusedAttribute(name, value) {
-    const n = String(name).toLowerCase();
-    if (n.startsWith('on') || n === 'srcdoc' || n === 'formaction') return true;
-    if (typeof value !== 'string') return false;
-    if (hasDeniedValueScheme(value)) return true;
-    const separator = URL_LIST_SEPARATORS.get(n);
-    if (separator && value.split(separator).some((token) => token !== '' && hasDeniedValueScheme(token))) {
-        return true;
-    }
-    if (n === 'style') {
-        const compact = value.replace(/\/\*[\s\S]*?\*\//g, '').toLowerCase().replace(/\s+/g, '');
-
-        return compact.includes('\\') || ['expression(', 'url(', '@import', 'behavior:', '-moz-binding']
-            .some((needle) => compact.includes(needle));
-    }
-
-    return false;
+export function isUrlAllowed(url, policy = {}) {
+    const scheme = urlScheme(url);
+    if (scheme === '') return true;
+    if (policy.allow !== undefined) return policy.allow.some((allowed) => allowed.toLowerCase() === scheme);
+    return !(policy.deny ?? DEFAULT_DENIED_SCHEMES).some((denied) => denied.toLowerCase() === scheme);
 }

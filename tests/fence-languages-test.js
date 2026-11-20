@@ -45,3 +45,36 @@ assert.strictEqual(
     'the table is importable by consumers',
 )
 assert.ok(exported.files.includes('fence-languages/'), 'the table ships in the package')
+
+// Every row's words open a fence in the TextMate grammar that embeds the row's scopes.
+const grammar = JSON.parse(readFileSync(new URL('../textmate/carve.tmLanguage.json', import.meta.url), 'utf8'))
+const embeds = new Map()
+const includesOf = (node, out) => {
+    if (Array.isArray(node)) node.forEach((child) => includesOf(child, out))
+    else if (node && typeof node === 'object') {
+        if (typeof node.include === 'string' && /^(source|text)\./.test(node.include)) out.add(node.include)
+        Object.values(node).forEach((child) => includesOf(child, out))
+    }
+    return out
+}
+const walk = (node) => {
+    if (Array.isArray(node)) return node.forEach(walk)
+    if (!node || typeof node !== 'object') return
+    const words = typeof node.begin === 'string' && node.name?.startsWith('markup.fenced_code')
+        ? node.begin.match(/\(\(\?i:([^)]*)\)\)/)
+        : null
+    if (words) {
+        for (const word of words[1].split('|').map((w) => w.replace(/\\(.)/g, '$1'))) {
+            embeds.set(word, includesOf(node.patterns, embeds.get(word) ?? new Set()))
+        }
+    }
+    Object.values(node).forEach(walk)
+}
+walk(grammar)
+for (const row of table.languages) {
+    if (row.textmate === null) continue
+    for (const word of row.words) {
+        assert.ok(embeds.has(word), `${word}: no fence rule in textmate/carve.tmLanguage.json`)
+        for (const name of row.textmate) assert.ok(embeds.get(word).has(name), `${word}: the fence does not embed ${name}`)
+    }
+}

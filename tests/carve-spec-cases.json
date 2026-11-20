@@ -1,0 +1,132 @@
+[
+  {
+    "id": "U-001",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "Some text\n# Heading\n"
+  },
+  {
+    "id": "U-014",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "- step one\n+\n> a note\n- step two\n"
+  },
+  {
+    "id": "U-031",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "{.note}\n\nParagraph.\n"
+  },
+  {
+    "id": "U-032",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "{.a\n .b}\nParagraph.\n"
+  },
+  {
+    "id": "U-044",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "para\n\n---\n\nnext\n\n___\n\n-----\n"
+  },
+  {
+    "id": "U-045",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "* * *\n\n- - -\n"
+  },
+  {
+    "id": "U-049",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "```\ncode\n   ```\nafter\n"
+  },
+  {
+    "id": "U-050",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "%%%\nhidden\n%%% visible?\nafter\n"
+  },
+  {
+    "id": "U-055",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "| a | b |\n|---|--:|\n| 1 | 2 |\n"
+  },
+  {
+    "id": "U-056",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "|=< a |=> b |=~ c |\n| 1 | 2 | 3 |\n"
+  },
+  {
+    "id": "U-063",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "| a | b |\n\n^ Caption\n"
+  },
+  {
+    "id": "U-065",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "an _underlined_ word and snake_case and _id\n"
+  },
+  {
+    "id": "U-066",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "a ~struck~ word and ~/config\n"
+  },
+  {
+    "id": "U-067",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "a =marked= word and x =1, y= 2\n"
+  },
+  {
+    "id": "U-068",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "/*bold italic*/ and */bold italic/*\n"
+  },
+  {
+    "id": "U-069",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "{~old~>new~}\n"
+  },
+  {
+    "id": "U-101",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "= 4 is the answer\nand more.\n"
+  },
+  {
+    "id": "U-103",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "a. one\nb. two\n"
+  },
+  {
+    "id": "U-104",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "::: > \"T\"\nquoted\n:::\n"
+  },
+  {
+    "id": "U-105",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "```=html \"T\"\n<b>x</b>\n```\n"
+  },
+  {
+    "id": "U-106",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": ":: term\nmore term text\n: first description\n"
+  },
+  {
+    "id": "U-107",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "| a | b |\n^ first\n^ second\n"
+  },
+  {
+    "id": "U-289",
+    "source": "spec/0.2/data/upgrade-map.json",
+    "input": "{{ a.crv @shift:1 }}\n"
+  },
+  {
+    "id": "CC-112",
+    "source": "spec/0.2/conformance/clause-cases.json",
+    "input": "a\n%% #region x\nb"
+  },
+  {
+    "id": "CC-893",
+    "source": "spec/0.2/conformance/clause-cases.json",
+    "input": "|=< a |\n"
+  },
+  {
+    "id": "CC-894",
+    "source": "spec/0.2/conformance/clause-cases.json",
+    "input": "|={<} a |\n"
+  }
+]

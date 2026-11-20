@@ -6,10 +6,9 @@ editor grammar that embeds by a fixed table: vscode-carve and intellij-carve
 read the `textmate` column, sublime-carve the `sublime` column. Each of them
 vendors a copy of this file and fails CI when the copy drifts.
 
-This package's own TextMate grammar reads the `textmate` column too:
-`scripts/generate-fence-languages.mjs` writes one rule per row into
-`textmate/carve.tmLanguage.json`, and `npm test` fails while the generated rules
-are stale. Re-run the script after changing a row.
+This package's own TextMate grammar embeds by the `textmate` column too:
+`tests/fence-languages-test.js` fails when a row's words do not open a fence
+that embeds the row's scopes in `textmate/carve.tmLanguage.json`.
 
 Editors that embed by the info string itself (tree-sitter in Zed, Helix and
 Neovim; Emacs' `<word>-mode` lookup) do not need it. They highlight a `csv` or

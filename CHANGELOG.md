@@ -4,6 +4,11 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+### Breaking changes
+
+- Carve 0.2 replaces the 0.1 grammars at the `carve` and `crv` names. The `prism/carve2.js`, `highlightjs/carve2.mjs`, and `textmate/carve2.tmLanguage.json` entries move to their `carve` paths; TextMate uses `source.carve`.
+- Remove the 0.1 Tiptap editor kit (`tiptap`, `editor`, `editor.css`, `schema-map.json`), its serializer, tests, and build scripts. The package root now exports the Shiki setup. `diagrams`, `diff`, `shiki/diff` and `fence-languages.json` stay at their paths. See `docs/migration-0.2.md`.
+
 ## [0.1.24] - 2026-11-12
 
 ### Fixes

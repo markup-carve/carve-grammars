@@ -1,5 +1,6 @@
-# carve-grammars documentation
+# Carve Grammars documentation
 
+- [0.2 migration guide](migration-0.2.md)
 - [Development](development.md)
 - [Reference](reference.md)
-- [Spec Engine Audit 20260930](spec-engine-audit-20260930.md)
+- [Tiptap kit](tiptap.md)
