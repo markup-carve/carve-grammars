@@ -90,6 +90,19 @@ For anything else, an entry is a pair of callbacks. `toTree(pm, { position, bloc
 
 A type that is neither in the kit nor in `mapping` still throws. `ignored` lists an attribute of a declared node that its entry does not name.
 
+With `source`, `serializeToCarve` keeps the text of the top-level blocks an edit left alone. It knows a loaded block by its place in the source, which the loader keeps in the node's `carve` attribute. A host node type has no such attribute, so a host block counts as new and is written again by the writer. To keep its text, give the host extension a `carve` attribute and set `carve: true` on its entry:
+
+```js
+const Poll = Node.create({
+    name: 'poll',
+    group: 'block',
+    atom: true,
+    addAttributes: () => ({ question: { default: null }, carve: { default: null, rendered: false, keepOnSplit: false } }),
+    renderHTML: ({ HTMLAttributes }) => ['div', HTMLAttributes],
+})
+const mapping = { nodes: { poll: { as: 'div', class: 'poll', attributes: ['question'], carve: true } } }
+```
+
 ## Editor positions for findings
 
 `proseMirrorToTreeWithOrigins(json).pointers` maps each tree path to the JSON pointer of the ProseMirror node or mark the tree node came from. A lint finding of the saved source carries the tree path of its node, so `proseMirrorPointer(pointers, finding.path)` gives the editor node to mark:

@@ -141,6 +141,7 @@ function mappingOf(mapping) {
 }
 
 function mappingEntry(kind, name, entry) {
+    if (entry?.carve !== undefined && typeof entry.carve !== 'boolean') throw new TypeError(`mapping: "carve" of "${name}" must be a boolean`);
     if (typeof entry?.toTree === 'function' || typeof entry?.fromTree === 'function') return entry;
     const allowed = kind === 'marks' ? ['span'] : ['span', 'div'];
     const attributes = entry?.attributes ?? [];
@@ -150,7 +151,7 @@ function mappingEntry(kind, name, entry) {
         throw new TypeError(`mapping: the ${kind === 'marks' ? 'mark' : 'node'} "${name}" needs "as" (${allowed.join(' or ')}), a "class" and string "attributes", or "toTree" and "fromTree"`);
     }
     // A declared node is an atom unless it has `content: true`.
-    return { as: entry.as, class: entry.class, attributes, content: entry.content === true };
+    return { as: entry.as, class: entry.class, attributes, content: entry.content === true, carve: entry.carve === true };
 }
 
 /** The Carve attributes of a declared node or mark: its class, and each declared attribute with a value as a key/value pair. */
@@ -266,8 +267,8 @@ export function treeToProseMirror(tree, options = {}) {
     // Each top-level node knows which block of the loaded tree it is, so the source of that block can be kept.
     if ((tree.children ?? []).length > 0) {
         for (const [index, node] of content.entries()) {
-            // A host node has no `carve` attribute in its schema.
-            if (!state.mapping.nodes.has(node.type)) node.attrs = { ...node.attrs, carve: { ...node.attrs?.carve, $index: index } };
+            // A host node keeps its place only when its schema has the `carve` attribute.
+            if (!state.mapping.nodes.has(node.type) || state.mapping.nodes.get(node.type).carve === true) node.attrs = { ...node.attrs, carve: { ...node.attrs?.carve, $index: index } };
         }
     }
     return {

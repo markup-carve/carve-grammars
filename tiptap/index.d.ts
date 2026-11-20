@@ -60,10 +60,14 @@ export interface CarveDeclaredMapping {
   attributes?: readonly string[];
   /** A node with content (inlines in a span, blocks in a div); without it the node is an atom. Not for marks. */
   content?: boolean;
+  /** The host node type has a `carve` attribute, so a top-level node keeps its place in the loaded source. */
+  carve?: boolean;
 }
 
 /** A host node or mark converted by the host: `fromTree` returns `null` for a tree node that is not its own. */
 export interface CarveCallbackMapping {
+  /** The host node type has a `carve` attribute, so a top-level node keeps its place in the loaded source. */
+  carve?: boolean;
   toTree?(pm: JSONContent, helpers: CarveMappingHelpers): CarveTreeNode;
   fromTree?(node: CarveTreeNode & Record<string, unknown>, helpers: CarveMappingHelpers): JSONContent | null;
 }

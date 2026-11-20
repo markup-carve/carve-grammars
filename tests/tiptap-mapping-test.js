@@ -159,6 +159,30 @@ assert.deepEqual(treeToProseMirror(carve.parse(callbackSource, { positions: fals
     { type: 'callout', content: [{ type: 'paragraph', attrs: { carve: null }, content: [{ type: 'text', text: 'Note' }] }] },
 ])
 
+// A host block keeps its source text after an edit elsewhere only when its type has the `carve` attribute.
+{
+    const KeptPoll = Node.create({
+        name: 'keptPoll',
+        group: 'block',
+        atom: true,
+        addAttributes: () => ({ question: { default: null }, carve: { default: null, rendered: false, keepOnSplit: false } }),
+        renderHTML: ({ HTMLAttributes }) => ['div', { 'data-poll': '', ...HTMLAttributes }],
+    })
+    const kept = [CarveKit, KeptPoll]
+    const keptEditor = new Editor({ extensions: kept })
+    const source = '{.poll question=Lunch?}\n:::\n:::\n\nText.\n'
+    for (const [carveAttr, expected] of [[true, '{.poll question=Lunch?}\n:::\n:::\n\nEdited.\n'], [false, '{question=Lunch?}\n::: poll\n\n:::\n\nEdited.\n']]) {
+        const keptMapping = { nodes: { keptPoll: { as: 'div', class: 'poll', attributes: ['question'], carve: carveAttr } } }
+        const json = carveToProseMirror(source, { engine: carve, mapping: keptMapping })
+        PMNode.fromJSON(getSchema(carveAttr ? kept : [CarveKit, KeptPoll.extend({ addAttributes: () => ({ question: { default: null } }) })]), json).check()
+        keptEditor.commands.setCarveContent(json, { emitUpdate: false })
+        const edited = JSON.parse(JSON.stringify(keptEditor.getJSON()))
+        edited.content[1].content[0].text = 'Edited.'
+        assert.deepEqual(proseMirrorToTreeWithOrigins(edited, { mapping: keptMapping }).origins, [carveAttr ? 0 : undefined, 1])
+        assert.equal(serializeToCarve(edited, { engine: carve, mapping: keptMapping, source }), expected)
+    }
+}
+
 // Pointers: a lint finding on the saved document maps to the editor node it came from.
 const outline = {
     type: 'doc',
