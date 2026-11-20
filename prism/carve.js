@@ -4081,7 +4081,8 @@ if (Prism?.languages.carve) {
             return;
         }
         for (const key of Object.keys(node)) {
-            if (removed.has(key)) delete node[key];
+            // 0.2 drops the glued `|=<` alignment; braced `{<}` keeps its own scope.
+            if (removed.has(key) && !(key === 'table-alignment' && !Array.isArray(node[key]))) delete node[key];
             else if (node[key] instanceof RegExp) {
                 const old = node[key];
                 const source = old.source.replaceAll('~{3,}', '(?!)')

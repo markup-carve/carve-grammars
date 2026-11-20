@@ -98,6 +98,12 @@ assert.ok(hasTextMate('a. one\nb. two\n', 'punctuation.definition.list.numbered.
 assert.ok(hasPrism('|={>} a |', 'attributes'));
 assert.ok(hasHljs('|={>} a |', 'table-alignment'));
 assert.ok(hasTextMate('|={>} a |', 'keyword.operator.table.alignment.carve'));
+for (const [source, mark] of [['|={>} Qty |\n', '>'], ['|{<} 12 |\n', '<'], ['|{~ .num} 1 |\n', '~']]) {
+    assert.ok(prismLeaves(source).some(([scope, text]) => scope.endsWith('table-alignment') && text === mark), `Prism braced alignment: ${source}`);
+    assert.ok(hasHljs(source, 'table-alignment'), `highlight.js braced alignment: ${source}`);
+    assert.ok(hasTextMate(source, 'keyword.operator.table.alignment.carve'), `TextMate braced alignment: ${source}`);
+}
+assert.ok(!hasPrism('|=> a | b |', 'table-alignment'));
 const commentWithFalseCloser = '%%%\nhidden\n%%% visible?\nafter\n%%%\n';
 assert.ok(prismLeaves(commentWithFalseCloser).some(([scope, text]) => scope === 'comment' && text.includes('after')));
 assert.ok(hljs.highlight(commentWithFalseCloser, { language: 'carve' }).value.includes('after\n%%%'));
