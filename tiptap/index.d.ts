@@ -118,6 +118,7 @@ export const CarveLineBlock: Node;
 export const CarveMath: Node;
 export const CarveRawBlock: Node;
 export const CarveSection: Node;
+export const CarveSoftBreak: Node;
 export const CarveTitle: Node;
 
 export const CarveDelete: Mark;

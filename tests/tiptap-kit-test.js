@@ -5,7 +5,7 @@ import * as carve from '@markup-carve/carve'
 import { Node as PMNode } from '@tiptap/pm/model'
 
 const window = new Window()
-for (const name of ['window', 'document', 'navigator', 'Node', 'HTMLElement', 'Element', 'DOMParser', 'MutationObserver', 'getComputedStyle']) {
+for (const name of ['window', 'document', 'navigator', 'Node', 'HTMLElement', 'Element', 'DOMParser', 'MutationObserver', 'getComputedStyle', 'ClipboardEvent']) {
     if (globalThis[name] === undefined) {
         Object.defineProperty(globalThis, name, { value: name === 'window' ? window : window[name], configurable: true, writable: true })
     }
@@ -408,6 +408,57 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     // A resized column has a width Carve does not keep.
     const resized = { type: 'doc', content: [{ type: 'table', content: [{ type: 'tableRow', content: [cell('tableCell', 'a', { colwidth: [120] })] }] }] }
     assert.deepStrictEqual(proseMirrorToTreeWithOrigins(resized).ignored, [{ path: '/content/0/content/0/content/0', type: 'tableCell', attribute: 'colwidth', value: [120] }])
+}
+
+// A soft break is a `carveSoftBreak` leaf the cursor passes as one space; edits around it keep it (carve#6268).
+{
+    const source = 'one\ntwo\n'
+    const load = () => editor.commands.setCarveContent(carveToProseMirror(source, { engine }), { emitUpdate: false })
+    load()
+    assert.deepStrictEqual(JSON.parse(JSON.stringify(editor.getJSON().content[0].content)), [
+        { type: 'text', text: 'one' }, { type: 'carveSoftBreak', attrs: { carve: null } }, { type: 'text', text: 'two' },
+    ])
+    assert.match(editor.getHTML(), />one<span data-carve-soft-break=""> <\/span>two<\/p>/, editor.getHTML())
+    assert.strictEqual(editor.getText(), 'one two')
+    assert.strictEqual(editor.state.doc.textContent, 'one two', 'leafText')
+    const save = () => serializeToCarve(editor.getJSON(), { engine })
+    // Positions: 1-4 "one", 4-5 the break, 5-8 "two".
+    editor.chain().setTextSelection(4).insertContent('X').run()
+    editor.chain().setTextSelection(6).insertContent('Y').run()
+    assert.strictEqual(save(), 'oneX\nYtwo\n', 'typed before and after')
+    load()
+    editor.chain().setTextSelection({ from: 3, to: 6 }).deleteSelection().run()
+    assert.strictEqual(save(), 'onwo\n', 'deleted across')
+    load()
+    editor.chain().setTextSelection(5).run()
+    assert.ok(editor.commands.deleteRange({ from: 4, to: 5 }))
+    assert.strictEqual(save(), 'onetwo\n', 'the break alone deletes as one position')
+    load()
+    editor.commands.setContent(editor.getJSON())
+    assert.strictEqual(save(), source, 'getJSON then setContent')
+    editor.commands.setContent(editor.getHTML())
+    assert.strictEqual(save(), source, 'getHTML then setContent')
+    // Copy and paste inside the editor goes through the kit's HTML.
+    load()
+    const { view } = editor
+    const { dom, text } = view.serializeForClipboard(editor.state.doc.slice(1, 8))
+    assert.strictEqual(text, 'one two')
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+    assert.ok(view.pasteHTML(dom.innerHTML))
+    assert.strictEqual(save(), 'one\ntwoone\ntwo\n', 'pasted HTML keeps the break')
+    // Plain text from outside has no break to keep: the space is a space.
+    load()
+    editor.commands.setTextSelection(editor.state.doc.content.size - 1)
+    assert.ok(view.pasteText(' one two'))
+    assert.strictEqual(save(), 'one\ntwo one two\n')
+    // Under marks, in headings and table cells the break loads and saves the same way.
+    let breaks = 0
+    for (const wrapped of ['*a\nb*\n', '[a\nb](u)\n', '- a\n  b\n', '> a\n> b\n', ':: a\n  b\n: c\n  d\n', '::: note\na\nb\n:::\n']) {
+        const json = assertRoundTrip(wrapped)
+        assert.strictEqual(types(json).has('carveSoftBreak'), JSON.stringify(carve.parse(wrapped)).includes('"soft_break"'), wrapped)
+        if (types(json).has('carveSoftBreak')) breaks++
+    }
+    assert.ok(breaks >= 4, `${breaks} wrapped shapes hold a break`)
 }
 
 editor.destroy()
