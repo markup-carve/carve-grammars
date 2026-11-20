@@ -264,6 +264,9 @@ function loadMixed(node, name, state) {
 function loadTable(node, state) {
     const sections = [];
     const rows = [];
+    // Counts with no mark cells describe an imported span (C2-A-093); they save back without marks.
+    const cells = (node.children ?? []).flatMap((section) => (section.children ?? []).flatMap((row) => row.children ?? []));
+    const bare = !cells.some((cell) => cell.span !== undefined) && cells.some((cell) => cell.colspan > 1 || cell.rowspan > 1);
     for (const [index, section] of (node.children ?? []).entries()) {
         if (section.type === 'comment') {
             sections.push({ $node: clean(section) });
@@ -280,31 +283,60 @@ function loadTable(node, state) {
             const carve = { ...fields(row, ['children']), $section: index };
             if (before.length > 0) carve.$before = before;
             before = [];
-            rows.push({ type: 'tableRow', attrs: { carve }, content: (row.children ?? []).map((cell) => loadCell(cell, state)) });
+            // ProseMirror has no cell where a span mark stands: the covering cell's counts span it.
+            const content = (row.children ?? []).filter((cell) => cell.span === undefined).map((cell) => loadCell(cell, state));
+            if (section.type !== 'table_head' && content.length > 0 && content.every((cell) => cell.type === 'tableHeader')) carve.$th = true;
+            rows.push({ type: 'tableRow', attrs: { carve }, content });
         }
         if (before.length > 0) entry.$after = before;
         if (!(section.children ?? []).some((row) => row.type !== 'comment')) entry.$empty = true;
     }
     if (rows.length === 0 || rows.some((row) => row.content.length === 0)) return blockAtom(node);
     // ProseMirror tables are rectangular: short rows get marked padding cells, which the way back drops while empty.
-    const width = Math.max(...rows.map((row) => row.content.length));
-    for (const row of rows) {
-        while (row.content.length < width) {
+    const widths = gridWidths(rows.map((row) => row.content.map((cell) => [cell.attrs.colspan ?? 1, cell.attrs.rowspan ?? 1])));
+    const width = Math.max(...widths);
+    for (const [index, row] of rows.entries()) {
+        for (let column = widths[index]; column < width; column++) {
             row.content.push({ type: 'tableCell', attrs: { carve: { $pad: true } }, content: [{ ...PLACEHOLDER }] });
         }
     }
-    return { type: 'table', attrs: { carve: { ...fields(node, ['children']), $sections: sections } }, content: rows };
+    const carve = { ...fields(node, ['children']), $sections: sections };
+    if (bare) carve.$bareSpans = true;
+    return { type: 'table', attrs: { carve }, content: rows };
+}
+
+/** The width of each row of `rows` ([colspan, rowspan] per cell), row spans from above included. */
+function gridWidths(rows) {
+    const below = [];
+    return rows.map((cells) => {
+        const taken = below.map((count) => count > 0);
+        let column = 0;
+        for (const [colspan, rowspan] of cells) {
+            while (taken[column]) column++;
+            for (let offset = 0; offset < colspan; offset++) {
+                if (rowspan > 1) below[column + offset] = Math.max(below[column + offset] ?? 0, rowspan);
+                taken[column + offset] = true;
+            }
+            column += colspan;
+        }
+        const width = Math.max(column, taken.length);
+        for (let index = 0; index < below.length; index++) below[index] = Math.max(0, (below[index] ?? 0) - 1);
+        return width;
+    });
 }
 
 function loadCell(cell, state) {
     const content = (cell.children ?? []).map((child) => child.type === 'cell_paragraph'
         ? loadTextblock({ ...child, type: 'paragraph' }, state, { $type: 'cell_paragraph' })
         : loadBlock(child, state));
-    const carve = fields(cell, ['children', 'header']);
+    const carve = fields(cell, ['children', 'header', 'colspan', 'rowspan']);
     if (content.length === 0) carve.$empty = true;
+    const attrs = { carve: carveAttr(carve) };
+    if (cell.colspan > 1) attrs.colspan = cell.colspan;
+    if (cell.rowspan > 1) attrs.rowspan = cell.rowspan;
     return {
         type: cell.header ? 'tableHeader' : 'tableCell',
-        attrs: { carve: carveAttr(carve) },
+        attrs,
         content: content.length > 0 ? content : [{ ...PLACEHOLDER }],
     };
 }
@@ -409,7 +441,46 @@ export function proseMirrorToTreeWithOrigins(doc) {
         const index = carveOf(pm).$index;
         origins.push(Number.isInteger(index) ? index : undefined);
     }
-    return { tree: { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children }, origins };
+    return { tree: { type: 'document', astVersion: '2.0', ...treeFields(carveOf(doc)), children }, origins, ignored: ignoredAttributes(doc) };
+}
+
+/** The attributes each node and mark reads; any other attribute with a value is reported as ignored. */
+const READ = {
+    heading: ['level'],
+    codeBlock: ['language'],
+    orderedList: ['start'],
+    taskItem: ['checked'],
+    tableCell: ['colspan', 'rowspan'],
+    tableHeader: ['colspan', 'rowspan'],
+    image: ['src', 'alt', 'title'],
+    link: ['href'],
+    carveAdmonition: ['kind'],
+    carveMath: ['value', 'display'],
+    carveFootnoteRef: ['key'],
+};
+
+/** Values the kit's own extensions give every node or mark of a type, which carry nothing to lose. */
+const STOCK = { link: { target: '_blank', rel: 'noopener noreferrer nofollow' } };
+
+/** Each attribute of `doc` the save did not read, with the JSON pointer of its node or mark. */
+function ignoredAttributes(doc) {
+    const out = [];
+    const visit = (pm, path) => {
+        const read = READ[pm.type] ?? [];
+        for (const [attribute, value] of Object.entries(pm.attrs ?? {})) {
+            if (attribute === 'carve' || value === null || value === undefined || read.includes(attribute)) continue;
+            if (STOCK[pm.type]?.[attribute] === value) continue;
+            out.push({ path, type: pm.type, attribute, value });
+        }
+        // A `^` below a cell of more than one column joins nothing (C2-B-172), so such a cell keeps only its columns.
+        if ((pm.type === 'tableCell' || pm.type === 'tableHeader') && spanCount(pm.attrs?.colspan) > 1 && spanCount(pm.attrs?.rowspan) > 1) {
+            out.push({ path, type: pm.type, attribute: 'rowspan', value: pm.attrs.rowspan });
+        }
+        for (const [index, mark] of (pm.marks ?? []).entries()) visit(mark, `${path}/marks/${index}`);
+        for (const [index, child] of (pm.content ?? []).entries()) visit(child, `${path}/content/${index}`);
+    };
+    for (const [index, child] of (doc.content ?? []).entries()) visit(child, `/content/${index}`);
+    return out;
 }
 
 /** An empty paragraph with nothing carried is editor state (a placeholder, a fresh line), not content. */
@@ -459,6 +530,8 @@ function saveBlock(pm) {
         case 'carveDefinitionList': return { type: 'definition_list', ...treeFields(carve), children: saveBlocks(pm.content ?? []) };
         case 'carveLineBlock': return { type: 'line_block', ...treeFields(carve), children: saveBlocks(pm.content ?? []) };
         case 'table': return saveTable(pm);
+        // A block image, as Tiptap's Image extension makes by default, is an image paragraph (C2-A-136, C2-H-020).
+        case 'image': return { type: 'paragraph', role: 'image', children: [saveLeaf(pm)] };
         default: throw new TypeError(`proseMirrorToTree: no Carve node for the ProseMirror node "${pm.type}"`);
     }
 }
@@ -526,6 +599,21 @@ function saveList(pm) {
 function saveTable(pm) {
     const carve = carveOf(pm);
     const sections = Array.isArray(carve.$sections) && carve.$sections.length > 0 ? [...carve.$sections] : [{ type: 'table_body' }];
+    const pmRows = (pm.content ?? []).map((row) => ({
+        carve: carveOf(row),
+        cells: (row.content ?? []).filter((cell) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder)),
+    }));
+    // C2-B-178: in a table without a head, the leading rows of header cells are the head; a row loaded so stays.
+    let lead = 0;
+    if (!sections.some((section) => section.type === 'table_head')) {
+        while (lead < pmRows.length && pmRows[lead].carve.$th !== true && headerRow(pmRows[lead].cells)) lead++;
+    }
+    let shift = 0;
+    if (lead > 0) {
+        const first = sections.findIndex((section) => section.$node === undefined);
+        sections.splice(Math.max(first, 0), 0, { type: 'table_head' });
+        shift = Math.max(first, 0);
+    }
     // A body row added after a head that has no body behind it needs one; loaded rows keep their sections.
     const head = sections.findIndex((section) => section.type === 'table_head');
     let added = -1;
@@ -533,24 +621,26 @@ function saveTable(pm) {
         sections.splice(head + 1, 0, { type: 'table_body' });
         added = head + 1;
     }
-    const sectionOf = (index) => (added >= 0 && index >= added ? index + 1 : index);
-    const rowsOf = sections.map(() => []);
+    const sectionOf = (index) => {
+        let at = lead > 0 && index >= shift ? index + 1 : index;
+        if (added >= 0 && at >= added) at++;
+        return at;
+    };
     let current = sections.findIndex((section) => section.type === 'table_body');
     if (current < 0) current = sections.findIndex((section) => section.$node === undefined);
-    let width = 0;
-    for (const row of pm.content ?? []) {
-        const rowCarve = carveOf(row);
-        if (Number.isInteger(rowCarve.$section) && rowsOf[sectionOf(rowCarve.$section)] !== undefined) {
-            current = sectionOf(rowCarve.$section);
-        } else if (sections[current]?.type === 'table_head' && !(row.content ?? []).every((cell) => cell.type === 'tableHeader')) {
-            current = sections.findIndex((section, index) => index > current && section.type === 'table_body');
+    const placed = [];
+    for (const [index, row] of pmRows.entries()) {
+        if (index < lead) {
+            current = head;
+        } else if (Number.isInteger(row.carve.$section) && sections[sectionOf(row.carve.$section)] !== undefined) {
+            current = sectionOf(row.carve.$section);
+        } else if (sections[current]?.type === 'table_head' && !headerRow(row.cells)) {
+            current = sections.findIndex((section, at) => at > current && section.type === 'table_body');
         }
-        const content = (row.content ?? []).filter((cell) => carveOf(cell).$pad !== true || !(cell.content ?? []).every(isPlaceholder));
-        const cells = content.map(saveCell);
-        width = Math.max(width, cells.length);
-        if (Array.isArray(rowCarve.$before)) rowsOf[current].push(...rowCarve.$before);
-        rowsOf[current].push({ type: 'table_row', ...treeFields(rowCarve), children: cells });
+        placed.push({ ...row, section: current });
     }
+    const rowsOf = sections.map(() => []);
+    const width = spanRows(placed, carve.$bareSpans === true, rowsOf);
     const children = [];
     for (const [index, section] of sections.entries()) {
         if (section.$node !== undefined) {
@@ -569,6 +659,59 @@ function saveTable(pm) {
     return node;
 }
 
+function headerRow(cells) {
+    return cells.length > 0 && cells.every((cell) => cell.type === 'tableHeader');
+}
+
+function spanCount(value) {
+    return Number.isInteger(value) && value > 1 ? value : 1;
+}
+
+const COLSPAN_MARK = { type: 'table_cell', header: false, span: 'colspan', children: [] };
+const ROWSPAN_MARK = { type: 'table_cell', header: false, span: 'rowspan', children: [] };
+
+/**
+ * Saves the rows into `rowsOf`; returns the width of the widest row. A span becomes the cell's counts and the mark
+ * cells it covers (C2-B-172 to C2-B-174): a row span stops at the end of its group, and a cell that spans both ways
+ * keeps its columns, since a `^` below a cell of more than one column joins nothing.
+ */
+function spanRows(placed, bare, rowsOf) {
+    let below = [];
+    let width = 0;
+    for (const [index, row] of placed.entries()) {
+        if (index > 0 && placed[index - 1].section !== row.section) below = [];
+        const groupLeft = placed.slice(index).findIndex((later) => later.section !== row.section);
+        const left = groupLeft < 0 ? placed.length - index : groupLeft;
+        const cells = [];
+        let column = 0;
+        const covered = () => {
+            while ((below[column] ?? 0) > 0) {
+                if (!bare) cells.push({ ...ROWSPAN_MARK });
+                column++;
+            }
+        };
+        for (const pmCell of row.cells) {
+            covered();
+            const cell = saveCell(pmCell);
+            const colspan = spanCount(pmCell.attrs?.colspan);
+            let rowspan = Math.min(spanCount(pmCell.attrs?.rowspan), left);
+            if (colspan > 1 && rowspan > 1 && !bare) rowspan = 1;
+            if (colspan > 1) cell.colspan = colspan;
+            if (rowspan > 1) cell.rowspan = rowspan;
+            cells.push(cell);
+            for (let offset = 1; offset < colspan; offset++) if (!bare) cells.push({ ...COLSPAN_MARK });
+            for (let offset = 0; offset < colspan; offset++) if (rowspan > 1) below[column + offset] = rowspan;
+            column += colspan;
+        }
+        covered();
+        width = Math.max(width, column);
+        below = below.map((count) => Math.max(0, (count ?? 0) - 1));
+        if (Array.isArray(row.carve.$before)) rowsOf[row.section].push(...row.carve.$before);
+        rowsOf[row.section].push({ type: 'table_row', ...treeFields(row.carve), children: cells });
+    }
+    return width;
+}
+
 function saveCell(pm) {
     const content = pm.content ?? [];
     const single = content.filter((child) => !isPlaceholder(child)).length === 1;
@@ -577,12 +720,16 @@ function saveCell(pm) {
         if (isPlaceholder(child)) continue;
         const node = saveBlock(child);
         if (node === null) continue;
-        if (child.type === 'paragraph' && carveOf(child).$type === undefined && single) node.type = 'cell_paragraph';
+        if ((child.type === 'paragraph' || child.type === 'image') && carveOf(child).$type === undefined && single) {
+            node.type = 'cell_paragraph';
+            delete node.role;
+        }
         children.push(node);
     }
     // A cell the editor created empty still needs content; an empty cell reads as one empty cell paragraph.
     if (children.length === 0 && carveOf(pm).$empty !== true) children.push({ type: 'cell_paragraph', children: [] });
-    return { type: 'table_cell', ...treeFields(carveOf(pm)), header: pm.type === 'tableHeader', children };
+    const { colspan: _colspan, rowspan: _rowspan, ...carved } = treeFields(carveOf(pm));
+    return { type: 'table_cell', ...carved, header: pm.type === 'tableHeader', children };
 }
 
 /** A mark's identity: the loaded node it came from, or for a mark the editor added, its type and attributes. */

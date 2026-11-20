@@ -11,7 +11,7 @@ for (const name of ['window', 'document', 'navigator', 'Node', 'HTMLElement', 'E
     }
 }
 const { Editor, getSchema } = await import('@tiptap/core')
-const { CarveKit, carveToProseMirror, proseMirrorToTree, serializeToCarve, treeToProseMirror } = await import('@markup-carve/carve-grammars/tiptap')
+const { CarveKit, carveToProseMirror, proseMirrorToTree, proseMirrorToTreeWithOrigins, serializeToCarve, treeToProseMirror } = await import('@markup-carve/carve-grammars/tiptap')
 
 const engine = carve
 const schema = getSchema([CarveKit])
@@ -326,6 +326,86 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     const back = new Editor({ extensions: [CarveKit], content: html })
     assert.deepStrictEqual(proseMirrorToTree(back.getJSON()).children[0].children[1], { type: 'footnote_ref', number: 1, key: 'n', namespace: 'footnote' })
     back.destroy()
+}
+
+// Stock Tiptap shapes a 0.1 host saves: cell spans, a typed header row, a block image, attributes the kit does not read
+// (carve-grammars#922 to #925).
+{
+    const cell = (type, text, attrs = {}) => ({ type, attrs, content: [{ type: 'paragraph', content: [{ type: 'text', text }] }] })
+    const saved = (doc) => {
+        editor.commands.setCarveContent(doc, { emitUpdate: false })
+        return proseMirrorToTree(editor.getJSON())
+    }
+    const agrees = (tree, label) => {
+        const written = carve.write(tree)
+        assert.ok(carve.treesEqual(carve.parse(written), tree), `${label}: the tree is the parse of its source\n${written}`)
+        return written
+    }
+    const merged = { type: 'doc', content: [{ type: 'table', content: [
+        { type: 'tableRow', content: [cell('tableHeader', 'a'), cell('tableHeader', 'b')] },
+        { type: 'tableRow', content: [cell('tableCell', 'merged', { colspan: 2, rowspan: 1 })] },
+    ] }] }
+    const tree = saved(merged)
+    assert.deepStrictEqual(tree.children[0].children.map((group) => group.type), ['table_head', 'table_body'])
+    assert.strictEqual(agrees(tree, 'merged'), '|= a |= b |\n| merged | < |\n')
+    assert.match(carve.render(carve.write(tree)), /<td colspan="2">merged<\/td>/)
+
+    // Load: the counts are the editor's attributes, and a mark cell has no ProseMirror cell.
+    const rows = treeToProseMirror(carve.parse('| a | < |\n| b | c |\n| ^ | d |\n')).content[0].content
+    assert.deepStrictEqual(rows.map((row) => row.content.map((c) => [c.attrs.colspan ?? 1, c.attrs.rowspan ?? 1])), [[[2, 1]], [[1, 2], [1, 1]], [[1, 1]]])
+
+    // Every span grid of up to three rows and three columns the editor can make saves as the source that parses to it.
+    let grids = 0
+    for (let seed = 0; seed < 400; seed++) {
+        let state = seed * 2654435761 % 4294967296
+        const next = (n) => {
+            state = (state * 1103515245 + 12345) % 2147483648
+            return state % n
+        }
+        const height = 1 + next(3)
+        const width = 1 + next(3)
+        const taken = Array.from({ length: height }, () => Array(width).fill(false))
+        const content = []
+        for (let r = 0; r < height; r++) {
+            const cells = []
+            for (let c = 0; c < width; c++) {
+                if (taken[r][c]) continue
+                let colspan = 1
+                while (c + colspan < width && !taken[r][c + colspan] && next(3) === 0) colspan++
+                const rowspan = 1 + (next(3) === 0 ? next(height - r) : 0)
+                for (let y = r; y < r + rowspan; y++) for (let x = c; x < c + colspan; x++) taken[y][x] = true
+                cells.push(cell(r === 0 && seed % 2 === 0 ? 'tableHeader' : 'tableCell', `c${r}${c}`, { colspan, rowspan }))
+            }
+            content.push({ type: 'tableRow', content: cells })
+        }
+        if (content.some((row) => row.content.length === 0)) continue
+        agrees(saved({ type: 'doc', content: [{ type: 'table', content }] }), `grid ${seed}`)
+        grids++
+    }
+    assert.ok(grids > 300, `${grids} span grids`)
+    console.log(`tiptap kit: ${grids} editor span grids save as the source that parses to them`)
+
+    // A block image, Tiptap's default (the kit's own image is inline), is an image paragraph.
+    const image = proseMirrorToTree({ type: 'doc', content: [{ type: 'image', attrs: { src: 'a.png', alt: 'A' } }] })
+    assert.ok(carve.treesEqual(image, carve.parse('![A](a.png)\n')))
+    assert.strictEqual(carve.write(proseMirrorToTree({ type: 'doc', content: [{ type: 'blockquote', content: [{ type: 'image', attrs: { src: 'a.png', alt: 'A' } }] }] })), '> ![A](a.png)\n')
+
+    // Attributes the save does not read are reported, not dropped in silence.
+    const foreign = { type: 'doc', content: [{ type: 'paragraph', attrs: { textAlign: 'center' }, content: [
+        { type: 'text', text: 'x', marks: [{ type: 'link', attrs: { href: 'https://a', target: '_self', rel: 'noopener noreferrer nofollow', class: null } }] },
+    ] }] }
+    const { tree: plain, ignored } = proseMirrorToTreeWithOrigins(foreign)
+    assert.strictEqual(carve.write(plain), '[x](https://a)\n')
+    assert.deepStrictEqual(ignored, [
+        { path: '/content/0', type: 'paragraph', attribute: 'textAlign', value: 'center' },
+        { path: '/content/0/content/0/marks/0', type: 'link', attribute: 'target', value: '_self' },
+    ])
+    assert.deepStrictEqual(proseMirrorToTreeWithOrigins(editor.getJSON()).ignored, [])
+    editor.commands.setCarveContent(carveToProseMirror('|= a | b |\n| [x](https://a) | ![i](i.png) |\n', { engine }), { emitUpdate: false })
+    assert.deepStrictEqual(proseMirrorToTreeWithOrigins(editor.getJSON()).ignored, [], 'a loaded document reports nothing')
+    // A resized column has a width Carve does not keep.
+    const resized = { type: 'doc', content: [{ type: 'table', content: [{ type: 'tableRow', content: [cell('tableCell', 'a', { colwidth: [120] })] }] }] }
+    assert.deepStrictEqual(proseMirrorToTreeWithOrigins(resized).ignored, [{ path: '/content/0/content/0/content/0', type: 'tableCell', attribute: 'colwidth', value: [120] }])
 }
 
 editor.destroy()
