@@ -211,6 +211,24 @@ export const CarveInline = Node.create({
     renderText: ({ node }) => atomLabel(node.attrs.carve),
 });
 
+/**
+ * A source line end inside a paragraph (`soft_break`), shown and copied as the space HTML shows. Not a text "\n":
+ * ProseMirror turns that into a space on the next edit or paste next to it (carve#6268).
+ */
+export const CarveSoftBreak = Node.create({
+    name: 'carveSoftBreak',
+    group: 'inline',
+    inline: true,
+    atom: true,
+    selectable: false,
+    addAttributes: carveAttributes(),
+    // `leafText` is what ProseMirror's own text paths (textContent, the clipboard's text/plain) use.
+    extendNodeSchema: (extension) => (extension.name === 'carveSoftBreak' ? { leafText: () => ' ' } : {}),
+    parseHTML: () => [{ tag: 'span[data-carve-soft-break]' }],
+    renderHTML: ({ HTMLAttributes }) => ['span', { ...HTMLAttributes, 'data-carve-soft-break': '' }, ' '],
+    renderText: () => ' ',
+});
+
 export const CarveMath = Node.create({
     name: 'carveMath',
     group: 'inline',
@@ -255,7 +273,7 @@ export const CARVE_NODES = [
     CarveDiv, CarveAdmonition, CarveDirective, CarveSection, CarveFigureGroup, CarveBlockExtension, CarveFootnote,
     CarveCaption, CarveCaptioned, CarveDefinitionList, CarveDefinitionTerm, CarveDefinitionDescription, CarveLineBlock,
     CarveLine, CarveTitle, CarveCitationDefinition, CarveComment, CarveRawBlock, CarveFrontmatter, CarveBlock,
-    CarveInline, CarveMath, CarveFootnoteRef,
+    CarveInline, CarveSoftBreak, CarveMath, CarveFootnoteRef,
 ];
 export const CARVE_MARKS = [CarveInsert, CarveDelete, CarveSmallCaps, CarveSpan, CarveInlineFootnote, CarveInlineExtension];
 

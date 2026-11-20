@@ -383,6 +383,8 @@ function loadLeaf(node, marks, open, state) {
             };
         case 'hard_break':
             return withMarks({ type: 'hardBreak', attrs: { carve: carveAttr(fields(node)) } }, marks);
+        case 'soft_break':
+            return withMarks({ type: 'carveSoftBreak', attrs: { carve: carveAttr(fields(node)) } }, marks);
         case 'image': {
             const blank = denied(node.src, state);
             return withMarks({
@@ -790,6 +792,7 @@ function saveLeaf(pm) {
             return { type: 'text', value: pm.text };
         }
         case 'hardBreak': return { type: 'hard_break', ...treeFields(carve) };
+        case 'carveSoftBreak': return { type: 'soft_break', ...treeFields(carve) };
         case 'image': {
             const node = { type: 'image', ...treeFields(carve) };
             for (const [attr, key] of [['src', 'src'], ['alt', 'alt'], ['title', 'tooltip']]) {

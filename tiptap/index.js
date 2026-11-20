@@ -22,5 +22,5 @@ export {
     CarveCaptioned, CarveCitationDefinition, CarveComment, CarveDefinitionDescription, CarveDefinitionList,
     CarveDefinitionTerm, CarveDelete, CarveDirective, CarveDiv, CarveFigureGroup, CarveFootnote, CarveFootnoteRef,
     CarveFrontmatter, CarveInline, CarveInlineExtension, CarveInlineFootnote, CarveInsert, CarveKit, CarveLine,
-    CarveLineBlock, CarveMath, CarveRawBlock, CarveSection, CarveSmallCaps, CarveSpan, CarveTitle,
+    CarveLineBlock, CarveMath, CarveRawBlock, CarveSection, CarveSmallCaps, CarveSoftBreak, CarveSpan, CarveTitle,
 } from './extensions.js';

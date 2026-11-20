@@ -47,10 +47,12 @@ A link `href` or image `src` that the HTML renderer's URL policy denies (`javasc
 | `definition_list` | `carveDefinitionList` with `carveDefinitionTerm` and `carveDefinitionDescription` |
 | `line_block`, `line` | `carveLineBlock`, `carveLine` |
 | `comment`, `raw_block`, `frontmatter` | `carveComment`, `carveRawBlock`, `carveFrontmatter`, edited as plain text |
-| `math`, `footnote_ref`, `image`, `hard_break` | `carveMath` (`value`, `display`), `carveFootnoteRef` (`key`, shown as a superscript label), `image`, `hardBreak` |
+| `math`, `footnote_ref`, `image`, `hard_break`, `soft_break` | `carveMath` (`value`, `display`), `carveFootnoteRef` (`key`, shown as a superscript label), `image`, `hardBreak`, `carveSoftBreak` |
 | `strong`, `emphasis`, `underline`, `strike`, `highlight`, `superscript`, `subscript`, `code`, `link` | the marks `bold`, `italic`, `underline`, `strike`, `highlight`, `superscript`, `subscript`, `code`, `link` |
 | `insert`, `delete`, `small_caps`, `span`, `inline_footnote`, `inline_extension` | the marks `carveInsert`, `carveDelete`, `carveSmallCaps`, `carveSpan`, `carveInlineFootnote`, `carveInlineExtension` |
 | any other node | `carveBlock` or `carveInline`, an atom that keeps the whole node |
+
+A `soft_break`, the line end inside a wrapped paragraph, is the inline leaf `carveSoftBreak`. It renders as `<span data-carve-soft-break> </span>`, so the editor shows a space where HTML shows one, and the cursor passes it as one character. `getText()` and the plain-text clipboard give a space. Copy and paste inside the editor goes through that span and keeps the break. Plain text pasted from outside has no break to keep: its spaces and line ends are text, so the pasted paragraph saves as one line.
 
 Every node and mark has a `carve` attribute. It holds the tree fields the editor does not edit: attributes, list markers, task marks (`data-task-state` in the HTML), keys, captions' short forms. A task item keeps its mark (`[?]`, `[-]`) until its checkbox is toggled, which writes `[x]` or `[ ]`. Splitting a node does not copy `carve`, so a new paragraph does not inherit an id. A list item or caption the editor leaves empty (what Enter or a list toggle leaves behind) is not written, unless the loaded document had it empty.
 
