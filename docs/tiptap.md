@@ -54,4 +54,14 @@ A link `href` or image `src` that the HTML renderer's URL policy denies (`javasc
 
 Every node and mark has a `carve` attribute. It holds the tree fields the editor does not edit: attributes, list markers, task marks (`data-task-state` in the HTML), keys, captions' short forms. A task item keeps its mark (`[?]`, `[-]`) until its checkbox is toggled, which writes `[x]` or `[ ]`. Splitting a node does not copy `carve`, so a new paragraph does not inherit an id. A list item or caption the editor leaves empty (what Enter or a list toggle leaves behind) is not written, unless the loaded document had it empty.
 
+## Content from a stock Tiptap editor
+
+The way back also reads what a Tiptap setup without the kit's own content makes:
+
+- A cell's `colspan` and `rowspan` attributes are the Carve spans: the cell's counts and the `<` and `^` marks of the cells it covers. On load the counts go to those attributes, so the editor shows the merged cell. A row span stops at the end of its table group, and a cell that spans rows and columns keeps only its columns, since a `^` below a cell of more than one column joins nothing.
+- In a table without a head, the leading rows whose cells are all `tableHeader` are the head, as they are when the written source is parsed.
+- A block-level `image` (Tiptap's Image default) is an image paragraph, the tree of `![alt](src)`.
+
+`proseMirrorToTreeWithOrigins(json).ignored` lists every attribute the save did not read, as `{ path, type, attribute, value }` with `path` a JSON pointer into `json`, for example the `textAlign` of a TextAlign extension or a link's `target`. Null values and the defaults the kit's Link gives every link are not listed. A host that must not lose editor state can refuse a save when the list is not empty.
+
 The loader and the serializer round-trip every 0.2 conformance example and clause case: parse, load, edit nothing, serialize gives the same tree.

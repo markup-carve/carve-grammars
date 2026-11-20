@@ -62,8 +62,22 @@ export interface CarveSerializeOptions {
 
 export function treeToProseMirror(tree: CarveTreeNode, options?: CarveTreeLoadOptions): JSONContent;
 export function proseMirrorToTree(doc: JSONContent): CarveTreeNode & Record<string, unknown>;
-/** The tree, and for each top-level block the index of the loaded block it came from (`undefined` for a new one). */
-export function proseMirrorToTreeWithOrigins(doc: JSONContent): { tree: CarveTreeNode & Record<string, unknown>; origins: (number | undefined)[] };
+/** An attribute the save did not read: `path` is the JSON pointer of its node or mark in the saved document. */
+export interface CarveIgnoredAttribute {
+  path: string;
+  type: string;
+  attribute: string;
+  value: unknown;
+}
+/**
+ * The tree, for each top-level block the index of the loaded block it came from (`undefined` for a new one), and the
+ * attributes the save did not read.
+ */
+export function proseMirrorToTreeWithOrigins(doc: JSONContent): {
+  tree: CarveTreeNode & Record<string, unknown>;
+  origins: (number | undefined)[];
+  ignored: CarveIgnoredAttribute[];
+};
 export function carveToProseMirror(source: string, options: CarveLoadOptions): JSONContent;
 /** Throws the engine's `CarveWriteError` when the writer cannot spell the edited tree. */
 export function serializeToCarve(doc: JSONContent, options: CarveSerializeOptions): string;
