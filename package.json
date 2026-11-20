@@ -199,7 +199,7 @@
     }
   },
   "devDependencies": {
-    "@markup-carve/carve": "github:markup-carve/carve-js#de566edf",
+    "@markup-carve/carve": "github:markup-carve/carve-js#eb2ffc1a18943bc3a865639c6481a4c0bc3b87c5",
     "@shikijs/types": "^4.4.3",
     "@tiptap/core": "^3.34.0",
     "@tiptap/extension-bullet-list": "^3.34.0",
