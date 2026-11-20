@@ -38,6 +38,40 @@ export interface CarveLoadOptions {
   /** Passed to the engine's `parse()`. */
   parse?: object;
   urlPolicy?: CarveUrlPolicy;
+  mapping?: CarveMapping;
+}
+
+/** Converts the content of the host node to tree children, or tree children to its content. */
+export interface CarveMappingHelpers {
+  /** Where the node stands. */
+  position: 'block' | 'inline';
+  blocks(content: unknown[]): unknown[];
+  inlines(content: unknown[]): unknown[];
+}
+
+/**
+ * A host node or mark saved as a Carve `span` (inline) or `div` (block) with one class; each listed attribute with a
+ * value becomes a key/value pair (strings as they are, other values as JSON) and loads back as a string. Only a node
+ * that is exactly that shape loads back as the host type.
+ */
+export interface CarveDeclaredMapping {
+  as: 'span' | 'div';
+  class: string;
+  attributes?: readonly string[];
+  /** A node with content (inlines in a span, blocks in a div); without it the node is an atom. Not for marks. */
+  content?: boolean;
+}
+
+/** A host node or mark converted by the host: `fromTree` returns `null` for a tree node that is not its own. */
+export interface CarveCallbackMapping {
+  toTree?(pm: JSONContent, helpers: CarveMappingHelpers): CarveTreeNode;
+  fromTree?(node: CarveTreeNode & Record<string, unknown>, helpers: CarveMappingHelpers): JSONContent | null;
+}
+
+/** The host's own ProseMirror nodes and marks by name. A mark maps to a `span` only; its children come from the text it covers. */
+export interface CarveMapping {
+  nodes?: Record<string, CarveDeclaredMapping | CarveCallbackMapping>;
+  marks?: Record<string, (CarveDeclaredMapping & { as: 'span' }) | CarveCallbackMapping>;
 }
 
 /** The URL policy of the HTML renderer: a link or image destination it denies is `null` in the editor and kept in `carve`. */
@@ -48,10 +82,16 @@ export interface CarveUrlPolicy {
 
 export interface CarveTreeLoadOptions {
   urlPolicy?: CarveUrlPolicy;
+  mapping?: CarveMapping;
+}
+
+export interface CarveTreeSaveOptions {
+  mapping?: CarveMapping;
 }
 
 export interface CarveSerializeOptions {
   engine: CarveWriter;
+  mapping?: CarveMapping;
   /** The source the document was loaded from: returned unchanged when nothing was edited, kept per block otherwise. Needs `parse`. */
   source?: string;
   /** Passed to the engine's `parse()`. */
@@ -61,7 +101,7 @@ export interface CarveSerializeOptions {
 }
 
 export function treeToProseMirror(tree: CarveTreeNode, options?: CarveTreeLoadOptions): JSONContent;
-export function proseMirrorToTree(doc: JSONContent): CarveTreeNode & Record<string, unknown>;
+export function proseMirrorToTree(doc: JSONContent, options?: CarveTreeSaveOptions): CarveTreeNode & Record<string, unknown>;
 /** An attribute the save did not read: `path` is the JSON pointer of its node or mark in the saved document. */
 export interface CarveIgnoredAttribute {
   path: string;
@@ -70,14 +110,17 @@ export interface CarveIgnoredAttribute {
   value: unknown;
 }
 /**
- * The tree, for each top-level block the index of the loaded block it came from (`undefined` for a new one), and the
- * attributes the save did not read.
+ * The tree, for each top-level block the index of the loaded block it came from (`undefined` for a new one), the
+ * ProseMirror JSON pointer each tree node came from by tree path, and the attributes the save did not read.
  */
-export function proseMirrorToTreeWithOrigins(doc: JSONContent): {
+export function proseMirrorToTreeWithOrigins(doc: JSONContent, options?: CarveTreeSaveOptions): {
   tree: CarveTreeNode & Record<string, unknown>;
   origins: (number | undefined)[];
+  pointers: Record<string, string>;
   ignored: CarveIgnoredAttribute[];
 };
+/** The pointer of the tree node at `path` (a finding's `path`), or of its nearest ancestor that has one. */
+export function proseMirrorPointer(pointers: Record<string, string>, path: string): string | null;
 export function carveToProseMirror(source: string, options: CarveLoadOptions): JSONContent;
 /** Throws the engine's `CarveWriteError` when the writer cannot spell the edited tree. */
 export function serializeToCarve(doc: JSONContent, options: CarveSerializeOptions): string;

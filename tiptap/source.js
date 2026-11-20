@@ -41,12 +41,12 @@ function sameTree(a, b) {
  * ProseMirror JSON of Carve 0.2 source, read by the engine the host passes (carve-js `parse`).
  *
  * @param {string} source
- * @param {{ engine: { parse: Function }, parse?: object, urlPolicy?: object }} options
+ * @param {{ engine: { parse: Function }, parse?: object, urlPolicy?: object, mapping?: object }} options
  */
 export function carveToProseMirror(source, options = {}) {
     const engine = requireEngine(options.engine, ['parse']);
     const tree = engine.parse(String(source ?? ''), { ...options.parse, positions: false });
-    return treeToProseMirror(tree, { urlPolicy: options.urlPolicy });
+    return treeToProseMirror(tree, { urlPolicy: options.urlPolicy, mapping: options.mapping });
 }
 
 /** Byte offsets of a parse are UTF-8; the string offsets of the same places. */
@@ -139,11 +139,11 @@ function splice(tree, origins, original, layout, source, engine, writeOptions) {
  * edited block is written with its original layout, so the writer keeps its spelling where it can.
  *
  * @param {object} doc
- * @param {{ engine: { parse: Function, write: Function, treesEqual?: Function, parseWithLayout?: Function }, source?: string, parse?: object, write?: object }} options
+ * @param {{ engine: { parse: Function, write: Function, treesEqual?: Function, parseWithLayout?: Function }, source?: string, parse?: object, write?: object, mapping?: object }} options
  */
 export function serializeToCarve(doc, options = {}) {
     const engine = requireEngine(options.engine, ['write']);
-    const { tree, origins } = proseMirrorToTreeWithOrigins(doc);
+    const { tree, origins } = proseMirrorToTreeWithOrigins(doc, { mapping: options.mapping });
     if (typeof options.source !== 'string') return engine.write(tree, options.write);
     requireEngine(engine, ['parse']);
     const equal = typeof engine.treesEqual === 'function' ? engine.treesEqual : sameTree;
