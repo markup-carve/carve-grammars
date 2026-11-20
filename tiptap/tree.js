@@ -4,8 +4,11 @@
  * Each ProseMirror node and mark keeps the tree fields the editor does not own in its `carve`
  * attribute, so `proseMirrorToTree(treeToProseMirror(tree))` gives the same tree for any
  * document. A node the content model cannot hold becomes an atom that carries the whole node.
+ * A link or image destination the URL policy denies is `null` in the editor attribute and kept in `carve`.
  * `$`-prefixed keys of `carve` are the kit's own bookkeeping; no tree field starts with `$`.
  */
+
+import { isUrlAllowed } from './url-policy.js';
 
 const DROPPED = new Set(['type', 'pos', 'segments', 'srcByteLength']);
 
@@ -131,11 +134,12 @@ function withMarks(pm, marks) {
  * ProseMirror JSON of a Carve 0.2 document tree (the result of carve-js `parse`).
  *
  * @param {object} tree a `document` node
+ * @param {{ urlPolicy?: { deny?: readonly string[], allow?: readonly string[] } }} [options]
  * @returns {object} a ProseMirror `doc` node as JSON
  */
-export function treeToProseMirror(tree) {
+export function treeToProseMirror(tree, options = {}) {
     if (tree?.type !== 'document') throw new TypeError('treeToProseMirror expects a Carve document tree');
-    const state = { id: 0 };
+    const state = { id: 0, urlPolicy: options.urlPolicy ?? {} };
     const content = loadBlocks(tree.children ?? [], state);
     // Each top-level node knows which block of the loaded tree it is, so the source of that block can be kept.
     if ((tree.children ?? []).length > 0) {
@@ -317,6 +321,10 @@ function pushInlines(children, marks, open, out, state) {
         if (spec !== undefined && Array.isArray(child.children) && child.children.length > 0 && !open.has(spec.mark)) {
             const attrs = { carve: { ...fields(child, ['children', ...spec.owned]), $id: ++state.id, $depth: marks.length } };
             for (const key of spec.owned) attrs[key] = child[key] ?? null;
+            if (spec.mark === 'link' && denied(attrs.href, state)) {
+                attrs.carve.href = attrs.href;
+                attrs.href = null;
+            }
             const inner = new Set(open);
             inner.add(spec.mark);
             pushInlines(child.children, [...marks, { type: spec.mark, attrs }], inner, out, state);
@@ -324,6 +332,10 @@ function pushInlines(children, marks, open, out, state) {
         }
         out.push(loadLeaf(child, marks, open, state));
     }
+}
+
+function denied(url, state) {
+    return typeof url === 'string' && !isUrlAllowed(url, state.urlPolicy);
 }
 
 function loadLeaf(node, marks, open, state) {
@@ -339,16 +351,18 @@ function loadLeaf(node, marks, open, state) {
             };
         case 'hard_break':
             return withMarks({ type: 'hardBreak', attrs: { carve: carveAttr(fields(node)) } }, marks);
-        case 'image':
+        case 'image': {
+            const blank = denied(node.src, state);
             return withMarks({
                 type: 'image',
                 attrs: {
-                    src: node.src ?? null,
+                    src: blank ? null : node.src ?? null,
                     alt: node.alt ?? null,
                     title: node.tooltip ?? null,
-                    carve: carveAttr(fields(node, ['src', 'alt', 'tooltip'])),
+                    carve: carveAttr(fields(node, blank ? ['alt', 'tooltip'] : ['src', 'alt', 'tooltip'])),
                 },
             }, marks);
+        }
         case 'math':
             return withMarks({
                 type: 'carveMath',

@@ -272,5 +272,48 @@ console.log(`tiptap kit: ${treeCases} supplied trees round-trip through the edit
     console.log(`tiptap kit: ${count} generated documents round-trip, ${edits} edited ones write back, ${refused} edits the writer refuses`)
 }
 
+// A destination the URL policy denies is null in the editor attribute and kept in `carve` (carve-grammars#918).
+{
+    const leaves = (source, options) => treeToProseMirror(carve.parse(source, { positions: false }), options).content[0].content
+    const [image, , link] = leaves('![a](data:text/html,x) [x](javascript:alert(1))\n')
+    assert.deepStrictEqual(image, { type: 'image', attrs: { src: null, alt: 'a', title: null, carve: { src: 'data:text/html,x' } } })
+    assert.deepStrictEqual(link.marks, [{ type: 'link', attrs: { carve: { $id: 1, $depth: 0, href: 'javascript:alert(1)' }, href: null } }])
+    for (const source of [
+        '![a](data:text/html,x) [x](javascript:alert(1))\n',
+        '# [h](VBScript:x) ![i](file:///etc/passwd "t")\n\n|= [c](jar:x) |\n| ![d](ms-word:x) |\n',
+        '*[a /[b](data:x)/ c](javascript:y)*\n',
+        '![a](data:x)\n^ Caption with [l](javascript:y).\n',
+    ]) {
+        const json = assertRoundTrip(source)
+        const sinks = []
+        const walk = (node) => {
+            if (node.type === 'image') sinks.push(node.attrs.src)
+            for (const mark of node.marks ?? []) if (mark.type === 'link') sinks.push(mark.attrs.href)
+            for (const child of node.content ?? []) walk(child)
+        }
+        walk(json)
+        assert.ok(sinks.length > 0 && sinks.every((value) => value === null), `${JSON.stringify(source)}: denied sinks are null (${JSON.stringify(sinks)})`)
+    }
+    // An allowed destination stays live; a policy narrows or widens what counts as denied.
+    assert.strictEqual(leaves('![a](https://e.com/a.png)\n')[0].attrs.src, 'https://e.com/a.png')
+    assert.strictEqual(leaves('![a](data:x)\n', { urlPolicy: { deny: [] } })[0].attrs.src, 'data:x')
+    assert.strictEqual(leaves('![a](http://e.com)\n', { urlPolicy: { allow: ['https'] } })[0].attrs.src, null)
+    assert.strictEqual(carveToProseMirror('![a](data:x)\n', { engine, urlPolicy: { deny: [] } }).content[0].content[0].attrs.src, 'data:x')
+}
+
+// The kit's URL test matches the engine's.
+{
+    const { DEFAULT_DENIED_SCHEMES, isUrlAllowed } = await import('../tiptap/url-policy.js')
+    assert.deepStrictEqual([...DEFAULT_DENIED_SCHEMES], [...carve.DEFAULT_DENIED_SCHEMES])
+    const urls = ['', 'x', ':x', 'a:b', 'JavaScript:x', ' javascript:x', 'java\tscript:x', 'java script:x', 'java script:x',
+        'java﻿script:x', 'java\u0000script:x', 'data:x', 'DATA:x', '1data:x', 'da-ta:x', 'ms-cxh-full:x', 'https://e.com/a:b',
+        '/path:x', '#a:b', '?q=javascript:x', 'javáscript:x', 'vscode-insiders:x', 'search-ms:x', 'shell:x', 'mailto:a@b']
+    for (const url of urls) {
+        for (const policy of [undefined, { deny: ['https'] }, { allow: ['https', 'MAILTO'] }, { deny: [] }]) {
+            assert.strictEqual(isUrlAllowed(url, policy), carve.isUrlAllowed(url, policy), `${JSON.stringify(url)} under ${JSON.stringify(policy)}`)
+        }
+    }
+}
+
 editor.destroy()
 console.log('tiptap kit: ok')

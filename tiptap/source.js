@@ -41,11 +41,12 @@ function sameTree(a, b) {
  * ProseMirror JSON of Carve 0.2 source, read by the engine the host passes (carve-js `parse`).
  *
  * @param {string} source
- * @param {{ engine: { parse: Function }, parse?: object }} options
+ * @param {{ engine: { parse: Function }, parse?: object, urlPolicy?: object }} options
  */
 export function carveToProseMirror(source, options = {}) {
     const engine = requireEngine(options.engine, ['parse']);
-    return treeToProseMirror(engine.parse(String(source ?? ''), { ...options.parse, positions: false }));
+    const tree = engine.parse(String(source ?? ''), { ...options.parse, positions: false });
+    return treeToProseMirror(tree, { urlPolicy: options.urlPolicy });
 }
 
 /** Byte offsets of a parse are UTF-8; the string offsets of the same places. */
