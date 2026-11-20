@@ -30,6 +30,10 @@ With `source`:
 
 Without `source`, `serializeToCarve` returns the writer's output. When the writer cannot spell an edited tree, the engine's `CarveWriteError` is thrown, for example for text typed directly against a symbol.
 
+## Denied destinations
+
+A link `href` or image `src` that the HTML renderer's URL policy denies (`javascript:`, `data:` and the rest of the engine's `DEFAULT_DENIED_SCHEMES`) is `null` in the editor attribute, so the editor never renders it. The value stays in the node's `carve` attribute, and the way back restores it, so the tree and the source are unchanged. Pass `urlPolicy` (`{ deny }` or `{ allow }`, as for carve-js `render`) to `treeToProseMirror(tree, { urlPolicy })` or `carveToProseMirror(source, { engine, urlPolicy })` to change the policy.
+
 ## What the editor shows
 
 | Carve 0.2 node | ProseMirror |

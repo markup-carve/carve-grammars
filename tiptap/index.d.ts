@@ -37,6 +37,17 @@ export interface CarveLoadOptions {
   engine: CarveParser;
   /** Passed to the engine's `parse()`. */
   parse?: object;
+  urlPolicy?: CarveUrlPolicy;
+}
+
+/** The URL policy of the HTML renderer: a link or image destination it denies is `null` in the editor and kept in `carve`. */
+export interface CarveUrlPolicy {
+  deny?: readonly string[];
+  allow?: readonly string[];
+}
+
+export interface CarveTreeLoadOptions {
+  urlPolicy?: CarveUrlPolicy;
 }
 
 export interface CarveSerializeOptions {
@@ -49,7 +60,7 @@ export interface CarveSerializeOptions {
   write?: object;
 }
 
-export function treeToProseMirror(tree: CarveTreeNode): JSONContent;
+export function treeToProseMirror(tree: CarveTreeNode, options?: CarveTreeLoadOptions): JSONContent;
 export function proseMirrorToTree(doc: JSONContent): CarveTreeNode & Record<string, unknown>;
 /** The tree, and for each top-level block the index of the loaded block it came from (`undefined` for a new one). */
 export function proseMirrorToTreeWithOrigins(doc: JSONContent): { tree: CarveTreeNode & Record<string, unknown>; origins: (number | undefined)[] };
