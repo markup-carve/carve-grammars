@@ -26,6 +26,7 @@ for (const [format, source, payload, name] of [
 
 assert.equal(covered(tokenize, '---\na: b\n---\n\n---yaml\nb: c\n---\n', opening), '------', 'leading bare opener and later typed opener');
 assert.equal(covered(tokenize, 'Text\n\n---\nAfter\n', opening), '', 'later bare delimiter stays text');
+assert.equal(covered(tokenize, 'Text\n---yaml\nMore text\n', opening), '', 'typed opener does not interrupt a paragraph');
 for (const opener of ['-----', '---x-y', '---x_y']) {
     assert.equal(covered(tokenize, `Text\n\n${opener}\nAfter\n`, opening), '', `${opener} is not a typed opener`);
 }
@@ -37,8 +38,7 @@ assert.equal(covered(tokenize, '> ---yaml\n> a: b\n> ---\n', opening), '', 'quot
 assert.equal(covered(tokenize, '- item\n\n  ---yaml\n  a: b\n  ---\n', opening), '', 'list item opener stays text');
 assert.equal(covered(tokenize, '::: note\n\n---yaml\na: b\n---\n:::\n', opening), '', 'div opener stays text');
 
-// C2-B-232 requires a blank line or pending attributes. TextMate cannot inspect
-// the previous line across all editors, nor reliably determine every enclosing
-// div. These tests pin the scopes it can distinguish, including column 0 and
-// explicit container prefixes; the spec model decides the remaining cases.
+// C2-B-232 requires a blank line or pending attributes. TextMate's line-local
+// rules cannot enforce every preceding-line and container boundary. These tests
+// pin the scopes it can distinguish; the spec model decides the remaining cases.
 console.log('TextMate later metadata block scopes passed');
