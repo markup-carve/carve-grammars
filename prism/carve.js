@@ -4173,6 +4173,19 @@ if (Prism?.languages.carve) {
         };
         grammar[name] = { ...grammar[name], pattern: atColumnZero, greedy: true };
     }
+    // A heading on a list marker line (`- # T`, `1. ## T`, carve-grammars#945):
+    // after 'list', the rest of the line is a fragment that starts at the hashes.
+    {
+        const entries = Object.entries(grammar);
+        const at = entries.findIndex(([key]) => key === 'list') + 1;
+        entries.splice(at, 0, ['title-on-marker-line', {
+            pattern: /^(?<![\s\S])(?:#{1,6}|={1,6}) +\S[^\r\n]*$/m,
+            alias: ['title', 'important'],
+            inside: grammar.title.inside,
+        }]);
+        for (const key of Object.keys(grammar)) delete grammar[key];
+        Object.assign(grammar, Object.fromEntries(entries));
+    }
     Prism.languages.carve = {
         'region-marker': region,
         'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },

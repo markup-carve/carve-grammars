@@ -22115,6 +22115,9 @@
           "include": "#admonition_on_marker_line"
         },
         {
+          "include": "#heading_on_marker_line"
+        },
+        {
           "include": "#fenced_code_diff_attribute_in_container"
         },
         {
@@ -22283,6 +22286,72 @@
         }
       ],
       "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138)."
+    },
+    "heading_on_marker_line": {
+      "comment": "A heading may open on a list item's marker line (`- # Title`, `1. ## Sub`, `- [ ] # T`): carve-js next2 renders it as a heading inside the item (carve-grammars#945). `#heading_in_container` is anchored on ^ and cannot reach text after the marker, so this one is anchored on \\G after the marker's separator. It ends with its line: the next line at the item's content column is a new block. `- #tag` has no space after the hashes and stays a tag.",
+      "begin": "\\G(?<=[ \\t])(#{1,6}|={1,6}) +(?![ \\t]*$)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.heading.carve"
+        }
+      },
+      "end": "$",
+      "name": "markup.heading.carve",
+      "contentName": "entity.name.section.carve",
+      "patterns": [
+        {
+          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+          "include": "#escape"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#math_inline_multi"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#math_inline_unpartnered_line"
+        },
+        {
+          "include": "#literal_inline_unpartnered_line"
+        },
+        {
+          "include": "#code_inline_unpartnered_line"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
+          "include": "#heading_tag"
+        },
+        {
+          "include": "#line_bounded_openers"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
     },
     "quoted_line_inline": {
       "patterns": [
@@ -24984,6 +25053,9 @@
         },
         {
           "include": "#admonition_on_marker_line"
+        },
+        {
+          "include": "#heading_on_marker_line"
         },
         {
           "include": "#fenced_code_diff_attribute_in_container"
