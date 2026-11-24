@@ -128,5 +128,10 @@
     "id": "CC-894",
     "source": "spec/0.2/conformance/clause-cases.json",
     "input": "|={<} a |\n"
+  },
+  {
+    "id": "CC-011",
+    "source": "spec/0.2/conformance/clause-cases.json",
+    "input": ".  . a"
   }
 ]

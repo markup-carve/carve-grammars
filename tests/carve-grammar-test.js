@@ -316,6 +316,23 @@ for (const [source, marker] of [
 assert.ok(!hasTextMate('- a\n\n  B. x\n', markerScope));
 definitionAssertions++;
 
+// C2-B-043: a bare dot is no marker when the text behind its space starts with a dot and a space.
+for (const [source, marker] of [
+    ['.  . a\n', false], ['. . a\n', false], ['.{.c} . a\n', false], ['. . \n', false], ['. \t. a\n', false],
+    ['. a\n', true], ['. .a\n', true], ['. .\n', true], ['. ..\n', true], ['. [x] . x\n', true],
+]) {
+    assert.equal(hasTextMate(source, markerScope), marker, `TextMate bare dot: ${JSON.stringify(source)}`);
+    assert.equal(hasPrism(source, 'list'), marker, `Prism bare dot: ${JSON.stringify(source)}`);
+    assert.equal(hasHljs(source, 'bullet'), marker, `highlight.js bare dot: ${JSON.stringify(source)}`);
+    definitionAssertions += 3;
+}
+for (const [source, marker] of [['- . . a\n', ''], ['1. . . a\n', '1.'], ['- .  . a\n', '']]) {
+    assert.equal(covered(tokenizeTextMate, source, markerScope).trim(), marker, `TextMate nested bare dot: ${JSON.stringify(source)}`);
+    definitionAssertions++;
+}
+assert.ok(!hasTextMate('> . . a\n', markerScope));
+definitionAssertions++;
+
 // C2-B-167: a row may end in a line comment after whitespace; C2-B-168: glued, the line is text.
 for (const source of ['| a | %% c\n', '> | a |  %% c\n', '- x\n\n  | a | %% c\n']) {
     assert.equal(covered(tokenizeTextMate, source, 'punctuation.separator.table.carve'), '||', `TextMate row pipes: ${JSON.stringify(source)}`);
