@@ -53,4 +53,20 @@ for (const host of hosts) {
     count++;
 }
 
+// #934: the format word is one word of ASCII letters and digits.
+for (const opener of ['--- foo_bar', '---foo_bar', '--- x-y', '---x-y', '---é', '--- a b', '---  toml', '--- toml x', '---toml!']) {
+    const source = `${opener}\na: 1\n---\n\n# H\n`;
+    const leaked = tokenize(source).filter(({ scope }) => scope.includes('meta.frontmatter')).map(({ text }) => text);
+    assert.deepEqual(leaked, [], `${opener} opens no frontmatter`);
+    assert.equal(covered(tokenize, source, 'markup.heading.carve').trim(), '# H', `${opener}: heading after it`);
+    count++;
+}
+for (const [opener, word] of [['---toml', 'toml'], ['--- toml', 'toml'], ['---JSON', 'JSON'], ['---1', '1'], ['---Yaml2', 'Yaml2'], ['---', ''], ['--- yaml', 'yaml']]) {
+    const source = `${opener}\na: 1\n---\n# H\n`;
+    assert.equal(covered(tokenize, source, 'punctuation.definition.frontmatter.begin.carve'), '---', `${opener} opens frontmatter`);
+    assert.equal(covered(tokenize, source, 'entity.name.type.frontmatter.carve'), word, `${opener} format word`);
+    assert.equal(covered(tokenize, source, 'punctuation.definition.frontmatter.end.carve'), '---', `${opener} closes`);
+    count++;
+}
+
 console.log(`textmate text runs: ${count} assertion groups passed`);

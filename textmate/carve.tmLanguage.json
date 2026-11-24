@@ -368,7 +368,7 @@
           ]
         },
         {
-          "begin": "\\A\\x{FEFF}?(---)(?: ?)([A-Za-z0-9_-]+)[ \\t]*$",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)([A-Za-z0-9]+)[ \\t]*$",
           "end": "^(---)[ \\t]*$",
           "name": "meta.frontmatter.unknown.carve",
           "contentName": "meta.embedded.block.frontmatter",
