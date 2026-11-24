@@ -386,7 +386,9 @@
             // Anchored on an item start, so `.3` in `widths=33.3` stays value.
             'id': { pattern: /(^(?<![^\r\n])|[\s{])#[A-Za-z0-9_][\w-]*/, lookbehind: true },
             'class-name': { pattern: /(^(?<![^\r\n])|[\s{])\.[A-Za-z0-9_][\w-]*/, lookbehind: true },
-            'attr-name': /[A-Za-z_][\w-]*(?==)/,
+            // Only the first letter of a name run may start a match: a later one shares
+            // its end, and retrying each of them was quadratic on a long run (#951).
+            'attr-name': /(?<![A-Za-z_][\d-]*)[A-Za-z_][\w-]*(?==)/,
             'language': {
                 pattern: /(^(?<![^\r\n])|[\s{]):(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?/,
                 lookbehind: true,
