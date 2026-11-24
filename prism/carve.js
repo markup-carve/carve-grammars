@@ -4102,7 +4102,7 @@ if (Prism?.languages.carve) {
     const letterMarker = '(?:(?:[a-z]|[ivxlcdm]{2,9})\\.(?= \\S)|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?= {2}\\S))';
     grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
-    const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) +\\S[^\\r\\n]*$', 'm');
+    const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$', 'm');
     const titleScan = new RegExp(titlePattern.source, 'gm');
     titlePattern.exec = function (source) {
         titleScan.lastIndex = 0;
@@ -4172,6 +4172,19 @@ if (Prism?.languages.carve) {
             return null;
         };
         grammar[name] = { ...grammar[name], pattern: atColumnZero, greedy: true };
+    }
+    // A heading on a list marker line (`- # T`, `1. ## T`, carve-grammars#945):
+    // after 'list', the rest of the line is a fragment that starts at the hashes.
+    {
+        const entries = Object.entries(grammar);
+        const at = entries.findIndex(([key]) => key === 'list') + 1;
+        entries.splice(at, 0, ['title-on-marker-line', {
+            pattern: /^(?<![\s\S])(?:#{1,6}|={1,6}) [ \t]*\S[^\r\n]*$/m,
+            alias: ['title', 'important'],
+            inside: grammar.title.inside,
+        }]);
+        for (const key of Object.keys(grammar)) delete grammar[key];
+        Object.assign(grammar, Object.fromEntries(entries));
     }
     Prism.languages.carve = {
         'region-marker': region,

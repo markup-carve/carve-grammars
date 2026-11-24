@@ -93,7 +93,9 @@ function adaptGrammar(grammar, hljs) {
     }
     adapt(grammar);
     const hashHeading = grammar.contains.find(mode => mode?.className === 'section' && mode.begin?.source.includes('#{1,6}'));
-    hashHeading['on:begin'] = (match) => {
+    const markerLineHeading = hashHeading['on:begin'];
+    hashHeading['on:begin'] = (match, response) => {
+        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return markerLineHeading(match, response);
         match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
     };
     grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
@@ -748,7 +750,18 @@ function adaptGrammar(grammar, hljs) {
         className: 'section',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} (?![ \t]*$(?![^\r\n]))/,
+        // Or right after a list marker the list rules took (`- # T`, `1. = T`,
+        // carve-grammars#945); an uppercase dot marker needs two spaces (C2-B-040).
+        begin: RegExp('(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*#{1,6}'
+            + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+            + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
+            + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.|\\.) +'
+            + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.  +))(?:#{1,6}|={1,6}))'
+            + ' (?![ \\t]*$(?![^\\r\\n]))'),
+        // A marker that continues a paragraph opens no heading.
+        'on:begin': (m) => {
+            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'section';
+        },
         end: /$(?![^\r\n])/,
         relevance: 10,
     };

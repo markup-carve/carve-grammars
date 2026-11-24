@@ -117,6 +117,23 @@ for (const [source, construct, inside, outside] of [
     ['# Title\n  :::\n  :::\n', 'heading', '#Title', ':::'],
     ['- item\n\n  # Title\n    :::\n    :::\n', 'heading', '#Title', ':::'],
     ['# Title\n  %%%\n  x\n  %%%\n', 'heading', '#Title', 'x'],
+    // Heading on a list marker line; it ends with its line (carve-grammars#945).
+    ['- # Title\n', 'heading', '#Title', '-'],
+    ['* ## T\n', 'heading', '##T', '*'],
+    ['1. ## Sub\n', 'heading', '##Sub', '1.'],
+    ['1) # T\n', 'heading', '#T', '1)'],
+    ['a. # T\n', 'heading', '#T', 'a.'],
+    ['- [ ] # T\n', 'heading', '#T', '['],
+    ['- - # T\n', 'heading', '#T', '-'],
+    ['- = T\n', 'heading', '=T', '-'],
+    ['- ###### T\n', 'heading', '######T', '-'],
+    ['- # T\n  more\n', 'heading', '#T', 'more'],
+    ['- # T\n- # U\n', 'heading', '#T#U', '-'],
+    ['- # \tT\n', 'heading', '#T', '-'],
+    ['# \tT\n', 'heading', '#T', ''],
+    ['- #tag\n', 'heading', '', ''],
+    ['- ####### T\n', 'heading', '', ''],
+    ['p\n- # T\n', 'heading', '', ''],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
