@@ -12912,6 +12912,9 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#line_bounded_openers"
         },
         {
@@ -15391,7 +15394,7 @@
       }
     },
     "line_bounded_openers": {
-      "comment": "Openers in a one-line block whose closer is not on the line, consumed as text: a `*`, and a `{` that would open an attribute block, a `{#` or `{%` comment. A heading or caption takes no attribute block, so `{#id}` stays text with its `#id` a tag (corpus 213). A `{` glued to an inline host is that host's attribute block, which a title takes (`# *a b*{.q}`, carve-grammars#882).",
+      "comment": "Openers in a one-line block whose closer is not on the line, consumed as text: a `*`, and a `{` that would open an attribute block, a `{#` or `{%` comment. A heading or caption takes no attribute block of its own; a valid one that attaches to nothing is consumed before this as one literal atom (C2-I-035). A `{` glued to an inline host is that host's attribute block, which a title takes (`# *a b*{.q}`, carve-grammars#882).",
       "patterns": [
         {
           "match": "(?<![\\w*])\\*(?![\\s*}])(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}]))"
@@ -15469,7 +15472,7 @@
       ]
     },
     "math_inline": {
-      "match": "(\\$\\$?)(`)(?!`)([^`\\n]*)(`)(?!`)",
+      "match": "(\\$\\$?)(`)(?!`)((?:[^`\\n]|``+)*?)(?<!`)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.math.carve"
@@ -15538,7 +15541,7 @@
       "match": "(?<!`)!`+"
     },
     "literal_inline": {
-      "match": "(!)(`)(?!`)([^`\\n]*)(`)(?!`)",
+      "match": "(!)(`)(?!`)((?:[^`\\n]|``+)*?)(?<!`)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.literal.carve"

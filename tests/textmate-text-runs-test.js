@@ -40,6 +40,8 @@ for (const host of hosts) {
         ['!`x %% b` c', 'x %% b'],
         ['$`x %% b` c', 'x %% b'],
         ['$$`x %% b` c', 'x %% b'],
+        ['$` a `` b ` c', ' a `` b '],
+        ['!` a `` b ` c', ' a `` b '],
     ]) {
         const source = host + body + '\n';
         assert.ok(verbatim(source).includes(code), `closed span stays verbatim: ${JSON.stringify(source)}`);
@@ -74,6 +76,7 @@ const tag = (source) => covered(tokenize, source, 'variable.other.tag.carve') + 
 for (const source of [
     'x {#id} y', 'Hi *bold* @mark {#id}', '{#id} x', 'x {.c #id} y', 'x {#id .c k=v}', 'x {#id}',
     '# Hi {#id}', '# Hi {#id} there', '> x {#id}', '- x {#id}', '1. x {#id}', '| a {#id} |', '::: note\nx {#id}\n:::',
+    '![a](x.png)\n^ cap {#id}', '![a](x.png)\n^ cap {#id}``',
     'a *b* {#id}', 'a {#a} {#b}', 'x {_a_ #id}', '{=m {#id} m=}', '{_u {#id} u_}',
 ]) {
     assert.equal(tag(source), '', `no tag in an unattached block: ${JSON.stringify(source)}`);
