@@ -82,7 +82,8 @@ for (const source of [
     assert.equal(tag(source), '', `no tag in an unattached block: ${JSON.stringify(source)}`);
     count++;
 }
-for (const [source, id] of [['see #id', 'id'], ['# A see #id', 'id'], ['a {#id} and #tag', 'tag'], ['> see #id', 'id']]) {
+// An unquoted value holds no pipe or backslash (C2-I-032), so these blocks are invalid and their `#id` is read.
+for (const [source, id] of [['x {k=a|#id} y', 'id'], ['x {k=a\\b #id} y', 'id'], ['see #id', 'id'], ['# A see #id', 'id'], ['a {#id} and #tag', 'tag'], ['> see #id', 'id']]) {
     assert.equal(covered(tokenize, source, 'variable.other.tag.carve'), id, `tag outside braces: ${JSON.stringify(source)}`);
     count++;
 }
