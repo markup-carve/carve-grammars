@@ -4,6 +4,7 @@ for (const file of [
     'tests/textmate-metadata-block-test.js',
     'tests/textmate-text-runs-test.js',
     'tests/prism-hljs-text-runs-test.js',
+    'tests/continuation-labels-test.js',
     'tests/attribute-value-class-test.js',
     'tests/closed-inline-time-test.js',
     'tests/shiki-blank-lines-test.js',

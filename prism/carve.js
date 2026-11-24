@@ -476,6 +476,21 @@
     // the closer of a `::: figure` group or a `::: >` quote. 'caption' is
     // greedy so this reads the real lines above it.
     var captionNl = '(?:\\r\\n|\\r(?!\\n)|\\n)';
+    // A fence, a table row, a `***` break or a block comment ends a label even when indented (C2-B-234).
+    var labelEnd = '(?:`{3,}|:{3,}|%|\\|[^\\r\\n]*\\||\\*{3,}[ \\t]*$(?![^\\r\\n]))';
+    // The lines a label holds below its marker line: indented past the marker,
+    // whose indent the named group holds, with comment-only lines between.
+    var refDestination = ' [^\\S\\r\\n]*(?:\\S|\\uFEFF)+';
+    var refTitle = '(?:"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\')';
+    var refAttrs = '\\{[^{}\\r\\n]*\\}';
+    // One indented tail line of a link definition.
+    function refTail(shape) {
+        return '(?:' + captionNl + '[ \\t]+(?:' + shape + ')[ \\t]*$(?![^\\r\\n]))';
+    }
+    function labelLines(indent) {
+        return '(?:' + captionNl + '(?:[ \\t]*%%(?!%)(?![ \\t]*#(?:region|endregion)\\b)[^\\r\\n]*' + captionNl + ')*'
+            + '\\k<' + indent + '>[ \\t]+(?![ \\t]|' + labelEnd + '|$(?![^\\r\\n]))[^\\r\\n]*)*';
+    }
     // The image's alt text may span lines; its destination or label may not.
     var captionImage = '!\\[(?:[^\\[\\]\\r\\n]|\\[[^\\[\\]\\r\\n]*\\]|' + captionNl + '(?![ \\t]*' + captionNl + ')){0,1024}\\]'
         + '(?:\\([^\\r\\n)]*\\)|\\[[^\\]\\r\\n]*\\])(?:\\{[^\\r\\n]*\\})?[ \\t]*';
@@ -989,13 +1004,38 @@
         };
     }
 
+    // A term line and the lines definitionListLines gave the term (C2-B-069).
+    function termLinesMatcher() {
+        var matcher = /(?:)/g;
+        // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
+        var line = /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/gm;
+        matcher.exec = function (text) {
+            line.lastIndex = this.lastIndex;
+            var found = line.exec(text);
+            if (!found) {
+                this.lastIndex = 0;
+                return null;
+            }
+            var stop = found.index + found[0].length;
+            var entry = lastEntry && lastEntry.text === text ? lastEntry : null;
+            var to = entry && entry.termEnds.get(entry.base + text.indexOf('::', found.index));
+            if (to !== undefined && to !== null && to - entry.base > stop) stop = to - entry.base;
+            var match = [text.slice(found.index, stop)];
+            match.index = found.index;
+            match.input = text;
+            this.lastIndex = stop;
+            return match;
+        };
+        return matcher;
+    }
+
     // Definition-list term: `:: term` (grammar.ebnf `definition_term`).
     // Reused as a nested rule inside 'definition-list' below - not registered
     // as a top-level token, so it only ever colors a term that
     // 'definition-list' has already decided is inside a real entry.
     var definitionTerm = {
-        // MARKER REQUIRES CONTENT: `::<space>` with nothing after it is prose.
-        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+        pattern: termLinesMatcher(),
+        greedy: true,
         alias: 'title',
         inside: Object.assign({
             'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*::/,
@@ -1073,13 +1113,15 @@
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set(), fences: [] };
+        var result = { text: text, terms: new Set(), markers: new Set(), termEnds: new Map(), termLines: new Set(), lists: [], fenced: new Set(), fences: [] };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
         var frames = [{ kind: 'document', width: 0, list: null }];
         var para = -1;
         var fence = null;
+        // The open term: its frame, the column of its `::` and the offset of the mark.
+        var openTerm = null;
         // A line block's span pairing is not modeled here, so a fence after
         // one in the same frame is not reported in `fences`; nor is one in a
         // frame a `+` shifted.
@@ -1093,6 +1135,8 @@
         lineRe.lastIndex = start;
         var listMarker = /^(?:[-*.]|[0-9]+[.)]|[A-Za-z]+\)|[A-Za-z]+\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))( +(?=[^ \t])|$)/;
         var opener = /^(?:#{1,6}(?:[ \t]|$)|`{3,}|~{3,}|%{3,}|:{3,}|>|\[\^[^\]\r\n]+\]:|\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$|\^ |(?:-[ \t]*){3,}$|(?:\*[ \t]*){3,}$|(?:_[ \t]*){3,}$)/;
+        // The lines that end a label even indented past its marker (C2-B-234).
+        var labelEnd = /^(?:`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
         var line, at, end;
         // Closerless front matter runs to the end of the text.
         var frontMatter = start === lineRe.lastIndex && /^\uFEFF?---(?: ?[A-Za-z0-9]+)?[ \t]*(?:\r\n|\r|\n|$)/.test(text.slice(start));
@@ -1213,6 +1257,20 @@
                 }
                 fence = null;
             }
+            // A term holds the lines indented past its `::`; a comment-only line between is not seen (C2-B-069, C2-B-234).
+            if (openTerm && /^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/.test(rest)) openTerm.comments.push(at);
+            else if (openTerm) {
+                if (!blank && rest && reached >= openTerm.depth && indent > openTerm.indent && !labelEnd.test(rest)) {
+                    result.termEnds.set(openTerm.at, end);
+                    openTerm.comments.push(at);
+                    openTerm.comments.forEach(function (line) { result.termLines.add(line); });
+                    openTerm.comments = [];
+                    blanks = 0;
+                    extend(end);
+                    continue;
+                }
+                openTerm = null;
+            }
             // S1: a line comment and a one-line link definition are erased.
             if (/^%%(?!%)/.test(rest) || /^\[(?!\^)[^\]\r\n]+\]:(?:[ \t]+[^ \t]+)?[ \t]*$/.test(rest)) {
                 blanks = 0;
@@ -1296,6 +1354,7 @@
                 if (termMatch) {
                     openList(owner, restAt);
                     result.terms.add(restAt);
+                    openTerm = { depth: depth, indent: indent, at: restAt, comments: [] };
                     para = -1;
                     break;
                 }
@@ -1472,6 +1531,11 @@
                 markerAt(lineStart, end);
                 for (var at = nextLine(end); at < limit;) {
                     var stop = lineEnd(at);
+                    if (lines.termLines.has(at)) {
+                        end = stop;
+                        at = nextLine(stop);
+                        continue;
+                    }
                     var body = text.slice(at, stop);
                     var lead = prefix.exec(body)[0];
                     if ((lead.indexOf('>') !== -1) !== quoted) break;
@@ -1500,7 +1564,7 @@
                 match.index = start;
                 match.input = text;
                 this.lastIndex = end;
-                lastEntry = { text: match[0], base: start, markers: lines.markers };
+                lastEntry = { text: match[0], base: start, markers: lines.markers, termEnds: lines.termEnds };
                 return match;
             }
             this.lastIndex = 0;
@@ -2535,13 +2599,14 @@
             // start alternative is a token boundary too, so it needs the `>`
             // right there (a quote line can end in a comment token).
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?(?=[ \\t]*\\^ )' + captionHost
-                + /(?<!(?:(?<![\s\S])\uFEFF?|(?:\r\n|\r(?!\n)|\n)[ \t]*(?:\r\n|\r(?!\n)|\n))(?:>[ \t]*(?:\r\n|\r(?!\n)|\n))+(?:[ \t]*(?:\r\n|\r(?!\n)|\n))*)[ \t]*\^ +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/.source, 'm'),
+                + /(?<!(?:(?<![\s\S])\uFEFF?|(?:\r\n|\r(?!\n)|\n)[ \t]*(?:\r\n|\r(?!\n)|\n))(?:>[ \t]*(?:\r\n|\r(?!\n)|\n))+(?:[ \t]*(?:\r\n|\r(?!\n)|\n))*)(?<capIndent>[ \t]*)\^ +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/.source
+                + labelLines('capIndent'), 'm'),
             alias: 'title',
             greedy: true,
             inside: Object.assign({
                 // Greedy, so a trailing comment the top-level rule found is
                 // reclaimed; the same walk as the heading's restores it.
-                'comment': { pattern: RegExp(commentAfterPrefix + '[^\\r\\n]*$(?![^\\r\\n])'), lookbehind: true, greedy: true },
+                'comment': { pattern: RegExp(commentAfterPrefix + '[^\\r\\n]*$(?![^\\r\\n])', 'm'), lookbehind: true, greedy: true },
                 'punctuation': { pattern: /^(?<![^\r\n])(\uFEFF?[ \t]*)\^/, lookbehind: true },
             }, inline),
         },
@@ -2789,14 +2854,20 @@
         // Anchored at end of line (grammar.ebnf `reference_definition`):
         // `[a]: /u zzz` is prose, not a definition (#533).
         'reference-definition': {
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])(?!\^\]:[ \t]*$)[^\]]+\]:(?: [^\S\r\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\r\n]*\})?)?[ \t]*$(?![^\r\n])/m,
+            // The indented lines below it continue it while they hold the rest of
+            // its tail: a title, an attribute block, at most one of each, in that
+            // order (C2-B-083).
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*\\[(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)[^\\]]+\\]:(?:'
+                + refDestination + '[ \\t]*$(?![^\\r\\n])(?:' + refTail(refTitle) + refTail(refAttrs) + '?|' + refTail(refTitle + ' ' + refAttrs + '|' + refAttrs) + ')?'
+                + '|' + refDestination + ' ' + refTitle + '[ \\t]*$(?![^\\r\\n])' + refTail(refAttrs) + '?'
+                + '|(?:' + refDestination + '(?: ' + refTitle + ')?(?: ' + refAttrs + ')?)?[ \\t]*$(?![^\\r\\n]))', 'm'),
             alias: 'url',
             inside: {
                 'constant': /^(?<![^\r\n])\uFEFF?[ \t]*\[[^\]]+\]:/,
                 // `link_title`, one space after the destination, scoped as an
                 // inline link's title is rather than as part of the URL (#523).
                 'string': {
-                    pattern: /(^(?<![^\r\n]) [^\S\r\n]*(?:\S|\uFEFF)+ )(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\r\n]*\})?[ \t]*$(?![^\r\n]))/,
+                    pattern: /(^(?<![^\r\n]) [^\S\r\n]*(?:\S|\uFEFF)+ |[\r\n][ \t]+)(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\r\n]*\})?[ \t]*$(?![^\r\n]))/m,
                     lookbehind: true,
                 },
             },
@@ -2808,7 +2879,10 @@
         'abbreviation-definition': {
             // Anchored `^[ \t]*` on purpose - no container model here, see the
             // indented-block-openers note in the module docblock (carve-grammars#138).
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/m,
+            // Every line below it indented past its `*` continues the expansion; a
+            // block line or a comment-only line ends it (C2-B-084).
+            pattern: RegExp(/^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?(?<abbrIndent>[ \t]*)\*\[[A-Za-z0-9]+\]: +(?![ \t]*$(?![^\r\n]))[^\r\n]*$(?![^\r\n])/.source
+                + '(?:' + captionNl + '\\k<abbrIndent>[ \\t]+(?![ \\t]|' + labelEnd + '|$(?![^\\r\\n]))[^\\r\\n]*)*', 'm'),
             inside: {
                 // BEFORE punctuation, and anchored to the brackets. Prism
                 // applies these in order, so a punctuation rule that eats `*[`
@@ -2825,7 +2899,7 @@
                 // and this grammar left it to whatever the term rule spilled
                 // onto it.
                 'string': {
-                    pattern: /(\]:[ \t]+)[^\r\n]+$(?![^\r\n])/,
+                    pattern: /(\]:[ \t]+|[\r\n][ \t]+)[^\r\n]+/,
                     lookbehind: true,
                 },
                 'punctuation': /^(?<![^\r\n])\uFEFF?[ \t]*\*|\[|\]|:/,
@@ -3526,7 +3600,11 @@
         { 'extension-content': runBetween('\\[', '\\]$') },
         Prism.languages.carve['extension'].inside
     );
-    definitionTerm.inside = Object.assign({ 'punctuation': definitionTerm.inside['punctuation'] }, inlineRun);
+    definitionTerm.inside = Object.assign({
+        // A comment-only line among the term's lines.
+        'comment': { pattern: /([\r\n][ \t]*)%%(?!%)[^\r\n]*/, lookbehind: true, greedy: true },
+        'punctuation': definitionTerm.inside['punctuation'],
+    }, inlineRun);
     // A note's content recognizes no note of either kind.
     Prism.languages.carve['inline-footnote'].inside = Object.assign(
         { 'punctuation': Prism.languages.carve['inline-footnote'].inside['punctuation'] },

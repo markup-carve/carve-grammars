@@ -12864,13 +12864,13 @@
       ]
     },
     "caption": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(\\^) +(?![ \\t]*$)",
+      "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\^) +(?![ \\t]*$)",
       "beginCaptures": {
-        "1": {
+        "2": {
           "name": "punctuation.definition.caption.carve"
         }
       },
-      "end": "$",
+      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
       "name": "meta.caption.carve",
       "contentName": "markup.caption.carve",
       "patterns": [
@@ -12921,11 +12921,11 @@
           "include": "#inline"
         }
       ],
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision."
+      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision. A caption is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
     },
     "abbreviation": {
-      "match": "^(?:\\A\\x{FEFF})?(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
-      "captures": {
+      "begin": "^(?:\\A\\x{FEFF})?(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.abbreviation.carve"
         },
@@ -12945,8 +12945,19 @@
           "name": "string.unquoted.abbreviation.carve"
         }
       },
+      "end": "^(?=[ \\t]*$|[ \\t]*%%|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\|)|^(?![ \\t])",
       "name": "meta.abbreviation.carve",
-      "comment": "The DOCUMENT-LEVEL abbreviation definition, anchored at column 0 (carve-grammars#138). An indented definition at the top level is literal text - verified against the pinned engine, ` *[HTML]: HyperText` renders `<p>*[HTML]: HyperText</p>` and defines nothing - so this rule refuses it and `#abbreviation_in_container` takes over inside a container."
+      "patterns": [
+        {
+          "match": "^[ \\t]+(.*)$",
+          "captures": {
+            "1": {
+              "name": "string.unquoted.abbreviation.carve"
+            }
+          }
+        }
+      ],
+      "comment": "The DOCUMENT-LEVEL abbreviation definition, anchored at column 0 (carve-grammars#138). An indented definition at the top level is literal text - verified against the pinned engine, ` *[HTML]: HyperText` renders `<p>*[HTML]: HyperText</p>` and defines nothing - so this rule refuses it and `#abbreviation_in_container` takes over inside a container. Every following line indented past column 0 continues the expansion; a fence, a table row, a `***` break, a comment-only line or a line at column 0 ends it (C2-B-084, carve#6507, carve#6524)."
     },
     "definition_list_on_marker_line": {
       "comment": "A definition list opened on a list item's own marker line (`- :: t`), which carve-js nests in the item (carve-grammars#844). Its later lines are the document-level entry's.",
@@ -12984,12 +12995,14 @@
               ]
             }
           },
-          "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.[ \\t]))",
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
           "patterns": [
             {
               "include": "#inline"
             }
-          ]
+          ],
+          "contentName": "entity.name.tag.definition.term.carve",
+          "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
         },
         {
           "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
@@ -13052,51 +13065,151 @@
       ]
     },
     "link_ref_def": {
-      "match": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:)(?: [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?)?(?=[ \\t]*$)",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "2": {
-          "name": "constant.other.reference.link.carve"
-        },
-        "3": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "4": {
-          "name": "punctuation.separator.carve"
-        },
-        "5": {
-          "name": "markup.underline.link.carve"
-        },
-        "6": {
-          "name": "string.quoted.link.title.carve"
-        },
-        "7": {
-          "name": "meta.attributes.carve",
-          "patterns": [
-            {
-              "include": "#attribute_parts"
+      "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column. The line directly below that is indented past column 0 continues the definition when it holds exactly the rest of its tail: a title, an attribute block, or both, at most one of each and in that order (C2-B-083, carve#6507). Any other line, a comment-only line too, ends it. A title alone on the first tail line ends the rule, since a child rule cannot end its parent: an attribute line below it reads as an attribute line, with the same scopes but outside `meta.link.reference.def`.",
+      "patterns": [
+        {
+          "begin": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:) [^\\S\\n]*(\\S+)(?=[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.separator.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
             }
-          ]
-        },
-        "8": {
-          "name": "punctuation.definition.attributes.carve"
-        },
-        "9": {
-          "name": "meta.attributes.carve",
-          "patterns": [
-            {
-              "include": "#attribute_parts"
+          },
+          "end": "^[ \\t]+(\"(?:[^\"\\\\]|\\\\.)*\"|\\'(?:[^\\'\\\\]|\\\\.)*\\')(?: ((\\{)[^{}\\n]*(\\})))?[ \\t]*$|^[ \\t]+((\\{)[^{}\\n]*(\\}))[ \\t]*$|^(?![ \\t]+(?:\"(?:[^\"\\\\]|\\\\.)*\"|\\'(?:[^\\'\\\\]|\\\\.)*\\')[ \\t]*$)",
+          "name": "meta.link.reference.def.carve",
+          "endCaptures": {
+            "1": {
+              "name": "string.quoted.link.title.carve"
+            },
+            "2": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute_parts"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.attributes.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.attributes.carve"
+            },
+            "5": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute_parts"
+                }
+              ]
+            },
+            "6": {
+              "name": "punctuation.definition.attributes.carve"
+            },
+            "7": {
+              "name": "punctuation.definition.attributes.carve"
             }
-          ]
+          }
         },
-        "10": {
-          "name": "punctuation.definition.attributes.carve"
+        {
+          "begin": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:) [^\\S\\n]*(\\S+) (\"(?:[^\"\\\\]|\\\\.)*\"|\\'(?:[^\\'\\\\]|\\\\.)*\\')(?=[ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.separator.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "string.quoted.link.title.carve"
+            }
+          },
+          "end": "^[ \\t]+((\\{)[^{}\\n]*(\\}))[ \\t]*$|^(?![ \\t]+\\{[^{}\\n]*\\}[ \\t]*$)",
+          "name": "meta.link.reference.def.carve",
+          "endCaptures": {
+            "1": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute_parts"
+                }
+              ]
+            },
+            "2": {
+              "name": "punctuation.definition.attributes.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.attributes.carve"
+            }
+          }
+        },
+        {
+          "match": "^(?:\\A\\x{FEFF})?(\\[)(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)([^\\]]+)(\\])(:)(?: [^\\S\\n]*(\\S+)(?: (\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'))?(?: ((\\{)([^{}\\n]*)(\\})))?)?(?=[ \\t]*$)",
+          "name": "meta.link.reference.def.carve",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.separator.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "string.quoted.link.title.carve"
+            },
+            "7": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute_parts"
+                }
+              ]
+            },
+            "8": {
+              "name": "punctuation.definition.attributes.carve"
+            },
+            "9": {
+              "name": "meta.attributes.carve",
+              "patterns": [
+                {
+                  "include": "#attribute_parts"
+                }
+              ]
+            },
+            "10": {
+              "name": "punctuation.definition.attributes.carve"
+            }
+          }
         }
-      },
-      "name": "meta.link.reference.def.carve",
-      "comment": "At document level a link-reference definition is flush-left. Indented definitions are reached through container patterns, where the container's begin/end rule has already established that the line is at that block's content column."
+      ]
     },
     "table_row": {
       "begin": "(?:^(?:\\A\\x{FEFF})?[ \\t]*|\\G)(?=\\|[^\\n]*\\|(?:\\{[^\\n]*\\})?(?:[ \\t]+%%[^\\n]*)?[ \\t]*$)",
@@ -15620,12 +15733,14 @@
                   ]
                 }
               },
-              "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.[ \\t]))",
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
               "patterns": [
                 {
                   "include": "#inline"
                 }
-              ]
+              ],
+              "contentName": "entity.name.tag.definition.term.carve",
+              "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
             },
             {
               "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
