@@ -257,6 +257,13 @@ function adaptGrammar(grammar, hljs) {
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
     const ATTR_ITEM = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // The parts of C2-I-029 to C2-I-032: an unquoted value holds no pipe or backslash.
+    const STRICT_ATTR_ITEM = /(?::(?:[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)?|[.#][\w-]+|[A-Za-z_][\w-]*=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'\\|}]+)|[A-Za-z][\w-]*)/.source;
+    // A valid block glued to no host is one literal atom (C2-I-035, C2-I-036).
+    const ATTRIBUTE_UNATTACHED = {
+        begin: new RegExp('(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)\\{[ \\t]*' + STRICT_ATTR_ITEM + '(?:[ \\t]+' + STRICT_ATTR_ITEM + ')*[ \\t]*\\}'),
+        relevance: 0,
+    };
     // A LIST MARKER MAY BE GLUED TO AN ATTRIBUTE BLOCK (`-{#x} item`), so the
     // marker rules have to look past a whole block to decide there is a marker
     // at all. That lookahead spelled the item alternation out again, and the
@@ -733,7 +740,7 @@ function adaptGrammar(grammar, hljs) {
         // `toml` is an alias, but subLanguage resolution requires the key.
         delegatedFrontMatter(' ?toml', 'ini'),
         delegatedFrontMatter('(?: ?(?:yaml|yml))?', 'yaml'),
-        frontMatter(' ?[A-Za-z0-9_]+'),
+        frontMatter(' ?[A-Za-z0-9]+'),
     ];
 
     // Headings: # to ######
@@ -910,56 +917,21 @@ function adaptGrammar(grammar, hljs) {
      */
     function verbatimFence({ className, sigil = '', relevance = 0 }) {
         const RUN = '(?<!`)`+(?!`)';
-        /*
-         * A PARAGRAPH BREAK ALSO ENDS THE SPAN.
-         *
-         * An unpartnered run has no closer to find, and a mode with no closer
-         * ahead runs to END OF FILE - so `unclosed `code here`, a blank line,
-         * and the rest of the document came back scoped as code. That is the
-         * runaway carve-grammars#81 took out of every emphasis mode, still in
-         * this one because a verbatim run has no `illegal` to trip on.
-         *
-         * The engine ends the run at the same place: an unpartnered run is a
-         * code span reaching to the end of its PARAGRAPH, and the paragraph
-         * stops at the blank line. So this is where the span stops rather than
-         * where it is abandoned, and the text before the break keeps its
-         * scope. `tests/unclosed-delimiter-test.js` drives it.
-         *
-         * AT A RUN OF ONE OR TWO ONLY, for the reason the Prism grammar bounds
-         * its own unpartnered run the same way: a run of three or more is
-         * fence-shaped, and a fence carried on a list marker (`- ```) lands in
-         * THIS mode, because the block rule above is anchored at the start of
-         * a line and cannot reach it. Such a block may legitimately hold a
-         * blank line - corpus 75-list-nesting-and-looseness-5 is a fence whose
-         * body is two paragraphs - so ending it at the break would put the
-         * second half of its payload back in play.
-         */
-        // The `\r` is there so a CRLF document gets the same answer: a blank
-        // line is `\r\n\r\n`, and without it the span ran past the break to
-        // end of file on exactly the input this guard exists for.
+        // A run of one or two cannot cross a paragraph break. A run of three or
+        // more is fence-shaped: a fence on a list marker (`- ```) lands in this
+        // mode, and its payload may hold a blank line (corpus
+        // 75-list-nesting-and-looseness-5). The `\r` keeps CRLF input the same.
         //
         // Named BREAK and not PARAGRAPH_BREAK: the construct ledger's probe reads
-        // this file's UPPER_CASE constants as its vocabulary, and a constant
-        // holding the word `paragraph` would seed `paragraph` as a rule this
-        // grammar has (tests/construct-ledger-test.js).
+        // this file's UPPER_CASE constants as its vocabulary (tests/construct-ledger-test.js).
         const BREAK = '\\n[ \\t\\r]*\\n';
-        // The width is read off match[0], NOT a capture group: highlight.js
-        // concatenates every sibling mode's `begin` into one alternation, so
-        // group NUMBERS shift with unrelated modes and an index-based read
-        // silently grabs the wrong group (it threw here, which made the mode
-        // disappear entirely rather than fail loudly).
-        const widthOf = (text) => /`*$(?![^\r\n])/.exec(text)[0].length;
         return {
             className,
             begin: new RegExp(sigil + RUN),
-            'on:begin': (m, resp) => {
-                resp.data._fenceWidth = widthOf(m[0]);
-            },
+            'on:begin': runOpener((width) => (width >= 3 ? null : PARAGRAPH_END)),
             end: new RegExp(RUN + '|' + BREAK),
             'on:end': (m, resp) => {
-                // The paragraph break is an end in its own right, not a
-                // candidate closer, so it is never width-checked - but it only
-                // ends a run too narrow to be a fence.
+                // The paragraph break only ends a run too narrow to be a fence.
                 if (!m[0].includes('`')) {
                     if (resp.data._fenceWidth >= 3) resp.ignoreMatch();
 
@@ -969,6 +941,50 @@ function adaptGrammar(grammar, hljs) {
             },
             relevance,
         };
+    }
+
+    /*
+     * A run with no closing run of its width later in the same content opens
+     * nothing, and a `!`, `$` or `$$` glued before it is text too (C2-I-017).
+     * highlight.js has no begin-to-end backreference, so the closer is looked for
+     * here. The walk visits each later run once and stops at `stop`, so it costs
+     * the distance to the closer or to the end of the content.
+     */
+    // The width is read off match[0], NOT a capture group: highlight.js
+    // concatenates every sibling mode's `begin` into one alternation, so
+    // group NUMBERS shift with unrelated modes.
+    const widthOf = (text) => /`*$(?![^\r\n])/.exec(text)[0].length;
+    const PARAGRAPH_END = /\n[ \t\r]*\n/y;
+    const LINE_END = /\n/y;
+    // A table cell's content ends at its row, unless a continuation row follows.
+    const TABLE_ROW_END = /\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n]))/my;
+    function runOpener(stopFor) {
+        return (m, resp) => {
+            const width = widthOf(m[0]);
+            if (!closerAhead(m.input, m.index + m[0].length, width, stopFor(width))) {
+                resp.ignoreMatch();
+
+                return;
+            }
+            resp.data._fenceWidth = width;
+        };
+    }
+    function closerAhead(input, from, width, stop) {
+        const scan = /`+|\n/g;
+        scan.lastIndex = from;
+        let m;
+        while ((m = scan.exec(input))) {
+            if (m[0] === '\n') {
+                if (stop) {
+                    stop.lastIndex = m.index;
+                    if (stop.test(input)) return false;
+                }
+                continue;
+            }
+            if (m[0].length === width) return true;
+        }
+
+        return false;
     }
 
     // Math: $$`...` (display) and $`...` (inline). Per grammar.ebnf PART 9 SS18
@@ -992,6 +1008,7 @@ function adaptGrammar(grammar, hljs) {
     const TABLE_INLINE_CODE = {
         ...INLINE_CODE,
         end: /(?<!`)`+(?!`)|(?=\n(?![ \t]*\+(?:\\.|[^\\\n])*\|[ \t]*$(?![^\r\n])))/,
+        'on:begin': runOpener(() => TABLE_ROW_END),
         'on:end': (match, response) => {
             if (match[0] === '') return;
             INLINE_CODE['on:end'](match, response);
@@ -3368,6 +3385,7 @@ function adaptGrammar(grammar, hljs) {
         // line, so the child popped past the parent's `$` and carried the block
         // scope onward.
         end: new RegExp(`(?=\\n)|${mode.end.source}`),
+        'on:begin': runOpener(() => LINE_END),
         'on:end': (match, response) => {
             // The line boundary is an end in its own right, never width-checked.
             if (match[0] === '') return;
@@ -3743,6 +3761,27 @@ function adaptGrammar(grammar, hljs) {
     DIV_ON_MARKER_LINE.contains = [DIV_MARKER_LINE_CLOSER, ...IN_CONTAINER];
     FIGURE_GROUP_ON_MARKER_LINE.contains = [FIGURE_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
     DIV_ON_MARKER_LINE_IN_GROUP.contains = [DIV_IN_GROUP_MARKER_LINE_CLOSER, ...IN_GROUP];
+
+    // Every inline list that reads a tag reads an unattached block as one atom
+    // first: after the attached-block rules, before a sink that takes a lone `{`.
+    {
+        const attached = [ATTRIBUTE, ATTRIBUTE_EMPTY, SPAN_ATTRIBUTE];
+        const tagish = [TAG, HEADING_TAG, MENTION];
+        const braceSink = (mode) => mode && !mode.className && mode.begin instanceof RegExp && mode.begin.source.startsWith('\\{(?=(');
+        const seen = new Set();
+        const visit = (mode) => {
+            if (!mode || typeof mode !== 'object' || seen.has(mode)) return;
+            seen.add(mode);
+            for (const child of [].concat(mode.contains || [], mode.starts || [], mode.variants || [])) visit(child);
+            const list = mode.contains;
+            if (!Array.isArray(list) || list.includes(ATTRIBUTE_UNATTACHED) || !list.some((m) => tagish.includes(m))) return;
+            const last = Math.max(...attached.map((m) => list.indexOf(m)));
+            const first = list.findIndex((m) => tagish.includes(m) || braceSink(m));
+            list.splice(last >= 0 ? last + 1 : first, 0, ATTRIBUTE_UNATTACHED);
+        };
+        CONTAINS.forEach(visit);
+        visit({ contains: CONTAINS });
+    }
 
     return {
         // `crv` is the canonical file extension, and every surface this package
