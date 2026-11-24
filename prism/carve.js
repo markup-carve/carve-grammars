@@ -2658,8 +2658,8 @@
             // quote, and `{title="a}b"} x` is a valid item (#85).
             pattern: RegExp(
                 '^(?<![^\\r\\n])' + notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +)*[-*](?:(?= )|' + gluedAttrBlock
-                + ')(?: *(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>\\/!?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$(?![^\\r\\n]))|(?:(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?:(?= )|'
-                + gluedAttrBlock + ')(?: *(?![ {])|(?= *\\{))(?![ \\t]*$(?![^\\r\\n])))'
+                + ')(?: *(?![ {])|' + gluedAttrRun + ' +(?![ {])|(?= *\\{))(?:\\[[ xX\\-_>\\/!?]\\](?: +(?![ {])|(?= +\\{)))?(?![ \\t]*$(?![^\\r\\n]))|(?:(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?:(?= )|'
+                + gluedAttrBlock + ')(?: *(?![ {])|' + gluedAttrRun + ' +(?![ {])|(?= *\\{))(?![ \\t]*$(?![^\\r\\n])))'
                 // A marker whose whole content is a comment takes the comment
                 // with it, so the marker keeps its scope and the comment is
                 // coloured by the set below. The top-level comment rule steps
@@ -2672,6 +2672,9 @@
             greedy: true,
             inside: {
                 'comment': { pattern: /%%(?!%)[^\r\n]*$(?![^\r\n])/, greedy: true },
+                // A glued block is taken with its marker, so the rest of the
+                // line starts at the content (carve-grammars#947).
+                'attributes': { pattern: RegExp(gluedAttrRun), alias: 'attr-value', inside: attributes.inside },
                 'constant': /\[[ xX\-_>\/!?]\]/,
             },
         },
@@ -4175,16 +4178,36 @@ if (Prism?.languages.carve) {
     }
     // A heading on a list marker line (`- # T`, `1. ## T`, carve-grammars#945):
     // after 'list', the rest of the line is a fragment that starts at the hashes.
+    // Markers 'list' leaves (0.2 letter markers, C2-B-040) go first, so
+    // `1. a. # T` and `> a. # T` reach it too (carve-grammars#947).
     {
-        const entries = Object.entries(grammar);
-        const at = entries.findIndex(([key]) => key === 'list') + 1;
-        entries.splice(at, 0, ['title-on-marker-line', {
+        const glued = grammar.list[0].inside.attributes;
+        const nestedMarkers = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.'
+            + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + glued.pattern.source + ')? {2}))(?:' + glued.pattern.source + ')? +)+(?=\\S)';
+        const titleOnMarkerLine = {
             pattern: /^(?<![\s\S])(?:#{1,6}|={1,6}) [ \t]*\S[^\r\n]*$/m,
             alias: ['title', 'important'],
             inside: grammar.title.inside,
-        }]);
+        };
+        const entries = Object.entries(grammar);
+        entries.splice(entries.findIndex(([key]) => key === 'list') + 1, 0,
+            ['nested-list', { pattern: RegExp('^(?<![\\s\\S])' + nestedMarkers, 'm'), alias: 'punctuation', inside: { attributes: glued } }],
+            ['title-on-marker-line', titleOnMarkerLine]);
         for (const key of Object.keys(grammar)) delete grammar[key];
         Object.assign(grammar, Object.fromEntries(entries));
+        // The same inside a quote (`> - # T`, `> - > x`): after the quoted
+        // line's 'list', the fragment starts at the content.
+        for (const rule of grammar.blockquote) {
+            const inside = rule.inside;
+            if (!inside?.list || !inside.title) continue;
+            const keys = Object.entries(inside);
+            keys.splice(keys.findIndex(([key]) => key === 'list') + 1, 0,
+                ['nested-list', { pattern: RegExp('^(?<![\\s\\S])[ \\t]*' + nestedMarkers, 'm'), alias: 'punctuation', inside: { attributes: glued } }],
+                ['title-on-marker-line', titleOnMarkerLine],
+                ['quote-on-marker-line', { pattern: /^(?<![\s\S])>(?: >)*(?= |$(?![^\r\n]))/m, alias: 'punctuation' }]);
+            for (const key of Object.keys(inside)) delete inside[key];
+            Object.assign(inside, Object.fromEntries(keys));
+        }
     }
     Prism.languages.carve = {
         'region-marker': region,

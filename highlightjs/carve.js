@@ -280,6 +280,14 @@ function adaptGrammar(grammar, hljs) {
     const GLUED_MARKER =
         '(?:[-*] +)*(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)'
         + '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\} +';
+    // The markers a block on a marker line may follow: any chain of bullet,
+    // ordered and task markers, each optionally glued to an attribute block
+    // (`- # T`, `1. - # T`, `-{.c} > x`, carve-grammars#947). An uppercase dot
+    // marker needs two spaces (C2-B-040). Read through lookbehinds only.
+    const GLUED_ATTR_RUN = '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}';
+    const MARKER_LINE_PREFIX = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.'
+        + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + GLUED_ATTR_RUN + ')? {2})|\\.)'
+        + '(?:' + GLUED_ATTR_RUN + ')? +(?:\\[[ xX\\-_>\\/!?]\\] +)?)+';
     // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
     // bracketed span. See the long note on Prism's `bracketText`, which this
     // mirrors; the short version is that the spec closes a label at the
@@ -753,10 +761,7 @@ function adaptGrammar(grammar, hljs) {
         // Or right after a list marker the list rules took (`- # T`, `1. = T`,
         // carve-grammars#945); an uppercase dot marker needs two spaces (C2-B-040).
         begin: RegExp('(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*#{1,6}'
-            + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-            + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
-            + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.|\\.) +'
-            + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.  +))(?:#{1,6}|={1,6}))'
+            + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + MARKER_LINE_PREFIX + ')(?:#{1,6}|={1,6}))'
             + ' (?![ \\t]*$(?![^\\r\\n]))'),
         // A marker that continues a paragraph opens no heading.
         'on:begin': (m) => {
@@ -1443,10 +1448,7 @@ function adaptGrammar(grammar, hljs) {
     // marker-line fence, and with the quote rules sharing the prefix it coloured
     // `-<TAB>> q` as a quote on a line the language renders as prose
     // (carve-grammars#259).
-    const LIST_MARKER_BEFORE_BLOCK =
-        '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
-        + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
-        + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\. +)';
+    const LIST_MARKER_BEFORE_BLOCK = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + MARKER_LINE_PREFIX;
 
     // The lookbehinds built from this prefix are variable length. The modes
     // below check their sentinel before reading the prefix, so irrelevant
@@ -1593,7 +1595,7 @@ function adaptGrammar(grammar, hljs) {
     const QUOTED = '(?<=(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*>(?: >)* )';
     const NO_EMPTY = '(?![ \\t]*$(?![^\\r\\n]))';
     BLOCKQUOTE.contains.push(
-        { className: 'section', begin: RegExp('(?=#)' + QUOTED + '#{1,6}(?= )' + NO_EMPTY) },
+        { className: 'section', begin: RegExp('(?=[#=])' + QUOTED.slice(0, -1) + '(?:' + MARKER_LINE_PREFIX + ')?)(?:#{1,6}|={1,6})(?= )' + NO_EMPTY) },
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>\\/!?]\\](?= )' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
         { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },

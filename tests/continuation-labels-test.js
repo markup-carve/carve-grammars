@@ -55,6 +55,7 @@ const SCOPES = {
     term: { TextMate: 'entity.name.tag.definition.term.carve', Prism: 'definition-term', 'highlight.js': 'title' },
     description: { TextMate: 'punctuation.definition.list.definition.carve', Prism: 'punctuation', 'highlight.js': 'punctuation' },
     heading: { TextMate: 'markup.heading.carve', Prism: 'title', 'highlight.js': 'section' },
+    quote: { TextMate: 'markup.quote.carve', Prism: 'blockquote', 'highlight.js': 'quote' },
 };
 function covered(engine, source, construct) {
     const scope = SCOPES[construct][engine];
@@ -134,6 +135,29 @@ for (const [source, construct, inside, outside] of [
     ['- #tag\n', 'heading', '', ''],
     ['- ####### T\n', 'heading', '', ''],
     ['p\n- # T\n', 'heading', '', ''],
+    // A block on a quoted, attribute-glued or nested marker line
+    // (carve-grammars#947). A quoted heading scopes only its run in highlight.js.
+    ['> - # T\n', 'heading', '#', '-'],
+    ['> 1. - # T\n', 'heading', '#', '1.'],
+    ['> a. # T\n', 'heading', '#', 'a.'],
+    ['> - = T\n', 'heading', '=', '-'],
+    ['> -{.c} # T\n', 'heading', '#', '{'],
+    ['-{.c} # T\n', 'heading', '#T', '{'],
+    ['1.{.c} # T\n', 'heading', '#T', '{'],
+    ['-{.c} - # T\n', 'heading', '#T', '{'],
+    ['1. - # T\n', 'heading', '#T', '1.'],
+    ['- 1. # T\n', 'heading', '#T', '1.'],
+    ['1. a. # T\n', 'heading', '#T', 'a.'],
+    ['- - [ ] # T\n', 'heading', '#T', '['],
+    ['-{.c} > x\n', 'quote', 'x', '{'],
+    ['1. - > x\n', 'quote', 'x', '1.'],
+    ['-{title="a}b"} # T\n', 'heading', '#T', '{'],
+    ['-{title="a}b"} > x\n', 'quote', 'x', '{'],
+    ['- a.{.c} # T\n', 'heading', '#T', '{'],
+    ['- a.{.c} > x\n', 'quote', 'x', '{'],
+    ['-{+a+} # T\n', 'heading', '', ''],
+    ['- {.c} # T\n', 'heading', '', ''],
+    ['> A. # T\n', 'heading', '', ''],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
