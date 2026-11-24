@@ -54,6 +54,7 @@ const SCOPES = {
     caption: { TextMate: 'meta.caption.carve', Prism: 'caption', 'highlight.js': 'caption' },
     term: { TextMate: 'entity.name.tag.definition.term.carve', Prism: 'definition-term', 'highlight.js': 'title' },
     description: { TextMate: 'punctuation.definition.list.definition.carve', Prism: 'punctuation', 'highlight.js': 'punctuation' },
+    heading: { TextMate: 'markup.heading.carve', Prism: 'title', 'highlight.js': 'section' },
 };
 function covered(engine, source, construct) {
     const scope = SCOPES[construct][engine];
@@ -110,6 +111,12 @@ for (const [source, construct, inside, outside] of [
     [':: T\n  | t |\n', 'term', 'T', 't'],
     ['- x\n\n  :: Term\n    more\n  : desc\n', 'term', 'Termmore', 'desc'],
     ['- x\n\n  :: Term\n    more\n  : desc\n', 'description', ':', ''],
+    // Heading: a `:::` fence or a `%%%` block comment ends it (carve-grammars#943).
+    ['# Title\n  ::: note\n  body\n  :::\n', 'heading', '#Title', ':::'],
+    ['# Title\n  ::: note\n  body\n  :::\n', 'heading', '#Title', 'body'],
+    ['# Title\n  :::\n  :::\n', 'heading', '#Title', ':::'],
+    ['- item\n\n  # Title\n    :::\n    :::\n', 'heading', '#Title', ':::'],
+    ['# Title\n  %%%\n  x\n  %%%\n', 'heading', '#Title', 'x'],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);

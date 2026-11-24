@@ -11932,7 +11932,7 @@
           "name": "punctuation.definition.heading.carve"
         }
       },
-      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
       "name": "markup.heading.carve",
       "contentName": "entity.name.section.carve",
       "patterns": [
@@ -22225,7 +22225,7 @@
           "name": "punctuation.definition.heading.carve"
         }
       },
-      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
       "name": "markup.heading.carve",
       "contentName": "entity.name.section.carve",
       "patterns": [
