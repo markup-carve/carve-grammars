@@ -1010,7 +1010,7 @@
     var quoteOpener = '[ \\t]*>(?:[ \\t]|$(?![^\\r\\n]))';
     // A sigil span opens on a maximal run and closes on a run of the same width in its
     // paragraph. A run with no partner opens nothing, sigil included (C2-I-017).
-    var sigilSpan = '(`{1,16})(?!`)(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + quoteOpener + ')){0,4096}?[^`])(?<!`)\\1(?!`)';
+    var sigilSpan = '(`+)(?!`)(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + quoteOpener + '))*?[^`])(?<!`)\\1(?!`)';
 
     /**
      * One PART of an include directive - what sits between two spaces inside
