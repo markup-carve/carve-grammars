@@ -11974,6 +11974,12 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#heading_tag"
         },
         {
@@ -13688,6 +13694,9 @@
           "include": "#attributes"
         },
         {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#bold_italic"
         },
         {
@@ -14235,6 +14244,9 @@
               "include": "#attributes"
             },
             {
+              "include": "#attributes_unattached"
+            },
+            {
               "include": "#autolink"
             },
             {
@@ -14371,6 +14383,9 @@
             },
             {
               "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
             },
             {
               "include": "#autolink"
@@ -14807,6 +14822,9 @@
           "include": "#attributes"
         },
         {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#autolink"
         },
         {
@@ -15022,6 +15040,9 @@
         },
         {
           "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
         },
         {
           "include": "#autolink"
@@ -22128,6 +22149,12 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#heading_tag"
         },
         {
@@ -24976,6 +25003,10 @@
     "region_marker": {
       "match": "^(?:\\A\\x{FEFF})?[ \\t]*%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$",
       "name": "comment.line.percent.carve"
+    },
+    "attributes_unattached": {
+      "comment": "A VALID ATTRIBUTE BLOCK THAT ATTACHES TO NOTHING IS ONE LITERAL ATOM (C2-I-035, C2-I-036, carve-grammars#935): tried after `#attributes`, so a glued block keeps its scopes, and nothing inside it is read as a tag, mention or emphasis.",
+      "match": "(?:\\{)(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(?:\\})"
     }
   }
 }

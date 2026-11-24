@@ -69,4 +69,23 @@ for (const [opener, word] of [['---toml', 'toml'], ['--- toml', 'toml'], ['---JS
     count++;
 }
 
+// #935: an unattached attribute block holds no tag.
+const tag = (source) => covered(tokenize, source, 'variable.other.tag.carve') + covered(tokenize, source, 'punctuation.definition.tag.carve');
+for (const source of [
+    'x {#id} y', 'Hi *bold* @mark {#id}', '{#id} x', 'x {.c #id} y', 'x {#id .c k=v}', 'x {#id}',
+    '# Hi {#id}', '# Hi {#id} there', '> x {#id}', '- x {#id}', '1. x {#id}', '| a {#id} |', '::: note\nx {#id}\n:::',
+    'a *b* {#id}', 'a {#a} {#b}', 'x {_a_ #id}', '{=m {#id} m=}', '{_u {#id} u_}',
+]) {
+    assert.equal(tag(source), '', `no tag in an unattached block: ${JSON.stringify(source)}`);
+    count++;
+}
+for (const [source, id] of [['see #id', 'id'], ['# A see #id', 'id'], ['a {#id} and #tag', 'tag'], ['> see #id', 'id']]) {
+    assert.equal(covered(tokenize, source, 'variable.other.tag.carve'), id, `tag outside braces: ${JSON.stringify(source)}`);
+    count++;
+}
+for (const source of ['[a]{#id}', '`c`{#id}', '*b*{#id}', '{=m=}{#id}', '# A [a]{#id}', '[a]{#id} and x {#id}']) {
+    assert.match(covered(tokenize, source, 'meta.attributes.carve'), /^\{?#id\}?$/, `glued block keeps its scope: ${JSON.stringify(source)}`);
+    count++;
+}
+
 console.log(`textmate text runs: ${count} assertion groups passed`);
