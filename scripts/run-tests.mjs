@@ -7,6 +7,7 @@ for (const file of [
     'tests/continuation-labels-test.js',
     'tests/attribute-value-class-test.js',
     'tests/closed-inline-time-test.js',
+    'tests/prism-attribute-time-test.js',
     'tests/shiki-blank-lines-test.js',
     'tests/package-exports-test.js',
     'tests/fence-languages-test.js',
