@@ -368,7 +368,7 @@
           ]
         },
         {
-          "begin": "\\A\\x{FEFF}?(---)(?: ?)([A-Za-z0-9_-]+)[ \\t]*$",
+          "begin": "\\A\\x{FEFF}?(---)(?: ?)([A-Za-z0-9]+)[ \\t]*$",
           "end": "^(---)[ \\t]*$",
           "name": "meta.frontmatter.unknown.carve",
           "contentName": "meta.embedded.block.frontmatter",
@@ -11974,6 +11974,12 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#heading_tag"
         },
         {
@@ -12637,9 +12643,6 @@
           "name": "markup.quote.carve"
         },
         {
-          "include": "#quoted_verbatim_span"
-        },
-        {
           "include": "#quoted_prose_continuation_depth_1"
         },
         {
@@ -12907,6 +12910,9 @@
         },
         {
           "include": "#trailing_comment"
+        },
+        {
+          "include": "#attributes_unattached"
         },
         {
           "include": "#line_bounded_openers"
@@ -13691,6 +13697,9 @@
           "include": "#attributes"
         },
         {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#bold_italic"
         },
         {
@@ -13746,38 +13755,16 @@
       "name": "markup.raw.inline.carve"
     },
     "code_inline_unpartnered_line": {
-      "comment": "AN UNPARTNERED RUN ON A ONE-LINE BLOCK'S LINE IS A CODE SPAN TO THE END OF THAT LINE. `#code_inline` and `#code_inline_multi` both need a closer, so on `# a `x %% hidden` neither claimed the run and `#trailing_comment` scoped the payload as a comment - where the engine keeps it as span content. `#code_inline_unpartnered` answers the same question at document level, but it is a begin/end rule that runs to the next blank line, and a begin/end rule reached from a heading pushes state a one-line block should never own (markup-carve/intellij-carve#222). This is MATCH-ONLY and ends at the line, which is where the block ends too, so it cannot outlive its host. Used by `#heading`, `#heading_in_container` and `#caption`, never at document level.",
-      "match": "(`+)([^\\n]*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        },
-        "2": {
-          "name": "markup.raw.inline.carve"
-        }
-      },
-      "name": "markup.raw.inline.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)`+"
     },
     "code_inline_unpartnered": {
-      "comment": "AN UNPARTNERED RUN IS A CODE SPAN TO THE END OF ITS PARAGRAPH, which is what the engine does with it and what Prism was taught in carve-grammars#312. Without this rule the run was not a code span at all here, so `a `*b*` coloured a strong inside a verbatim payload - 75 of 111 generated documents, and 37 of 73 on a wide run (carve-grammars#320). Tried AFTER the two closed-span rules, so a run that finds its partner on its own line is still the closed span; this one only sees the runs those cannot match. A BLANK LINE ENDS IT: the paragraph is where the engine stops the span, and a TextMate begin has no way to look ahead for a closer it already knows is not there. The opener is `+ rather than a single backtick so a wide unpartnered run is one opener rather than an opener plus payload.",
-      "begin": "(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\1)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,})",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "name": "markup.raw.inline.carve",
-      "contentName": "markup.raw.inline.carve"
+      "comment": "AN UNPARTNERED RUN IS TEXT (C2-I-017, carve-grammars#933): a run with no closing run of its length opens nothing, and a `!`, `$` or `$$` glued before it is text too. Tried after the closed-span rules; it consumes the whole run so a shorter or longer run behind it can still open its own span. TextMate cannot see a closer on a later line, so a span wrapped over two lines of a paragraph is not scoped.",
+      "match": "(?<!`)`+"
     },
     "code_inline": {
       "comment": "A DELIMITER RUN IS ENTERED AT ITS OWN START and closed by a WHOLE run of the same width (carve-grammars#601, the reading Prism was given in carve-grammars#312). Without the guards a single backtick could be one character into a wider run, which is content.",
-      "match": "(?<!`)(`)([^`\\n]+)(`)(?!`)",
+      "match": "(?<!`)(`)(?!`)((?:[^`\\n]|``+)+?)(?<!`)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.raw.carve"
@@ -13795,7 +13782,7 @@
       "comment": "A code span glued to `{=format}` is raw output for that format (grammar.ebnf `raw_inline`).",
       "patterns": [
         {
-          "match": "(?<!`)(`{2,})(?!`)(.+?)(?<!`)(\\1)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+          "match": "(?<!`)(`{2,})(?!`)((?:(?!(?<!`)\\1(?!`)).)+?)(?<!`)(\\1)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
           "name": "markup.other.raw.inline.carve",
           "captures": {
             "1": {
@@ -14260,6 +14247,9 @@
               "include": "#attributes"
             },
             {
+              "include": "#attributes_unattached"
+            },
+            {
               "include": "#autolink"
             },
             {
@@ -14396,6 +14386,9 @@
             },
             {
               "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
             },
             {
               "include": "#autolink"
@@ -14603,7 +14596,7 @@
       "comment": "A standalone attribute line may span physical lines, but only through continuations indented past the `{` (08-attributes.ebnf `continuation`): a flush-left or blank line ends it. Anchoring the opener at column zero keeps an inline trailing attribute block line-local."
     },
     "attributes": {
-      "match": "(?:(?<![^`>}:\\]$<|\\s])|(?<=\\]\\([^()\\n]{0,2048}\\))|(?<=\\)[^()\\n]{0,2048}\\))|(?<=^[-+*]|[ \\t][-+*]|^\\d[.)]|[ \\t]\\d[.)]|\\d\\d[.)]|^[A-Za-z][.)]|[ \\t][A-Za-z][.)])|(?<=(?:^|[^\\w_/\\\\])_[^\\s_](?:[^\\n_]{0,4096}[^\\s_])?_)|(?<=(?:^|[^\\w_/\\\\])_[^\\s_](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n_\\\\`]){0,1024}[^\\s_])?_)|(?<=(?:^|[^\\w\\*\\\\])\\*[^\\s\\*](?:[^\\n\\*]{0,4096}[^\\s\\*])?\\*)|(?<=(?:^|[^\\w\\*\\\\])\\*[^\\s\\*](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n\\*\\\\`]){0,1024}[^\\s\\*])?\\*)|(?<=(?:^|[^\\w/\\\\])/[^\\s/](?:[^\\n/]{0,4096}[^\\s/])?/)|(?<=(?:^|[^\\w/\\\\])/[^\\s/](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n/\\\\`]){0,1024}[^\\s/])?/)|(?<=(?:^|[^\\w~\\\\])~[^\\s~](?:[^\\n~]{0,4096}[^\\s~])?~)|(?<=(?:^|[^\\w~\\\\])~[^\\s~](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n~\\\\`]){0,1024}[^\\s~])?~)|(?<=(?:^|[^\\w=\\\\])=[^\\s=>](?:[^\\n=]{0,4096}[^\\s=])?=)|(?<=(?:^|[^\\w=\\\\])=[^\\s=>](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n=\\\\`]){0,1024}[^\\s=])?=))(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<!^(?:\\A\\x{FEFF})?[ \\t]{0,64}:[ \\t]{1,64})(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}]+))?))*\\s*)(\\})",
+      "match": "(?:(?<![^`>}:\\]$<|\\s])|(?<=\\]\\([^()\\n]{0,2048}\\))|(?<=\\)[^()\\n]{0,2048}\\))|(?<=^[-+*]|[ \\t][-+*]|^\\d[.)]|[ \\t]\\d[.)]|\\d\\d[.)]|^[A-Za-z][.)]|[ \\t][A-Za-z][.)])|(?<=(?:^|[^\\w_/\\\\])_[^\\s_](?:[^\\n_]{0,4096}[^\\s_])?_)|(?<=(?:^|[^\\w_/\\\\])_[^\\s_](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n_\\\\`]){0,1024}[^\\s_])?_)|(?<=(?:^|[^\\w\\*\\\\])\\*[^\\s\\*](?:[^\\n\\*]{0,4096}[^\\s\\*])?\\*)|(?<=(?:^|[^\\w\\*\\\\])\\*[^\\s\\*](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n\\*\\\\`]){0,1024}[^\\s\\*])?\\*)|(?<=(?:^|[^\\w/\\\\])/[^\\s/](?:[^\\n/]{0,4096}[^\\s/])?/)|(?<=(?:^|[^\\w/\\\\])/[^\\s/](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n/\\\\`]){0,1024}[^\\s/])?/)|(?<=(?:^|[^\\w~\\\\])~[^\\s~](?:[^\\n~]{0,4096}[^\\s~])?~)|(?<=(?:^|[^\\w~\\\\])~[^\\s~](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n~\\\\`]){0,1024}[^\\s~])?~)|(?<=(?:^|[^\\w=\\\\])=[^\\s=>](?:[^\\n=]{0,4096}[^\\s=])?=)|(?<=(?:^|[^\\w=\\\\])=[^\\s=>](?:(?:\\\\.|`[^`\\n]{1,32}`|[^\\n=\\\\`]){0,1024}[^\\s=])?=))(?<!(?<!\\\\)(?:\\\\\\\\){0,15}\\\\[!-/:-@\\[-`{-~])(?<!^(?:\\A\\x{FEFF})?[ \\t]{0,64}:[ \\t]{1,64})(?<![^-+*.)\\]}:\\s][ \\t])(?:(?<=[^\\s])|(?=\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\}(?:[ \\t]*\\{(?:\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|[^{}\"'\\n])*\\})*[ \\t]*$))(\\{)(?!__\\})(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)(\\})",
       "captures": {
         "1": {
           "name": "punctuation.definition.attributes.carve"
@@ -14832,6 +14825,9 @@
           "include": "#attributes"
         },
         {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#autolink"
         },
         {
@@ -15047,6 +15043,9 @@
         },
         {
           "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
         },
         {
           "include": "#autolink"
@@ -15395,7 +15394,7 @@
       }
     },
     "line_bounded_openers": {
-      "comment": "Openers in a one-line block whose closer is not on the line, consumed as text: a `*`, and a `{` that would open an attribute block, a `{#` or `{%` comment. A heading or caption takes no attribute block, so `{#id}` stays text with its `#id` a tag (corpus 213). A `{` glued to an inline host is that host's attribute block, which a title takes (`# *a b*{.q}`, carve-grammars#882).",
+      "comment": "Openers in a one-line block whose closer is not on the line, consumed as text: a `*`, and a `{` that would open an attribute block, a `{#` or `{%` comment. A heading or caption takes no attribute block of its own; a valid one that attaches to nothing is consumed before this as one literal atom (C2-I-035). A `{` glued to an inline host is that host's attribute block, which a title takes (`# *a b*{.q}`, carve-grammars#882).",
       "patterns": [
         {
           "match": "(?<![\\w*])\\*(?![\\s*}])(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}]))"
@@ -15473,7 +15472,7 @@
       ]
     },
     "math_inline": {
-      "match": "(\\$\\$?)(`)(?!`)([^`\\n]*)(`)(?!`)",
+      "match": "(\\$\\$?)(`)(?!`)((?:[^`\\n]|``+)*?)(?<!`)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.math.carve"
@@ -15508,37 +15507,12 @@
       }
     },
     "math_inline_unpartnered": {
-      "comment": "An unclosed math run still renders as math, to the end of the paragraph (corpus 331).",
-      "begin": "(\\$\\$?)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,})",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "contentName": "markup.math.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)\\$\\$?`+"
     },
     "math_inline_unpartnered_line": {
-      "match": "(\\$\\$?)(`+)([^\\n]*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "3": {
-          "name": "markup.math.carve"
-        }
-      }
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)\\$\\$?`+"
     },
     "literal_inline_multi": {
       "comment": "A WHOLE RUN CLOSES IT, the guard #code_inline_multi carries and for the same reason (carve-grammars#601): without it a two-backtick literal closed on the first two characters of a three-backtick run, the leftover backtick opened an unpartnered span, and the trailing comment after it scoped as code. A `!` prefix on two or more backticks: an inline literal that may itself contain single backticks; closed by the same run length (\\2).",
@@ -15559,40 +15533,15 @@
       }
     },
     "literal_inline_unpartnered": {
-      "comment": "An unclosed literal run is still prose, to the end of the paragraph.",
-      "begin": "(!)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.literal.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,})",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "contentName": "markup.raw.inline.content.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)!`+"
     },
     "literal_inline_unpartnered_line": {
-      "match": "(!)(`+)([^\\n]*)$",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.literal.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.raw.carve"
-        },
-        "3": {
-          "name": "markup.raw.inline.content.carve"
-        }
-      }
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)!`+"
     },
     "literal_inline": {
-      "match": "(!)(`)(?!`)([^`\\n]*)(`)(?!`)",
+      "match": "(!)(`)(?!`)((?:[^`\\n]|``+)*?)(?<!`)(`)(?!`)",
       "captures": {
         "1": {
           "name": "punctuation.definition.literal.carve"
@@ -22203,6 +22152,12 @@
           "include": "#trailing_comment"
         },
         {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
           "include": "#heading_tag"
         },
         {
@@ -22220,9 +22175,18 @@
           "include": "#escape"
         },
         {
-          "begin": "(?:\\$\\$?|!)?(`+)(?!`)",
-          "end": "(?<!`)\\1(?!`)|(?=$)",
+          "comment": "A run closes on its line or is text (C2-I-017, carve-grammars#933).",
+          "match": "(?<!`)(?:\\$\\$?|!)?(`+)(?!`)(?:.*?)(?<!`)\\1(?!`)",
           "name": "markup.raw.inline.carve"
+        },
+        {
+          "include": "#math_inline_unpartnered"
+        },
+        {
+          "include": "#literal_inline_unpartnered"
+        },
+        {
+          "include": "#code_inline_unpartnered"
         },
         {
           "include": "#trailing_comment"
@@ -22945,9 +22909,6 @@
       "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
         {
-          "include": "#quoted_verbatim_span"
-        },
-        {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
           "captures": {
             "1": {
@@ -22964,193 +22925,17 @@
       ],
       "name": "markup.quote.carve"
     },
-    "quoted_verbatim_span": {
-      "comment": "A verbatim span left open on a plain quote line runs on over the next quote lines until its closer or the end of the paragraph. The span carries the quote prefix; after the closer the line ends the rule, so nothing else crosses into the next line.",
-      "begin": "^(?:\\A\\x{FEFF})?(>) (?![ \\t]*$)(?!(?:>|[-*]|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?: |\\{|$)|(?:#{1,6}|={1,6}) |[ \\t]*(?:`{3,}))(?=(?:[^`\\n\\\\]|\\\\.)*(?:\\$\\$?|!)?(`+)(?!`)(?![^\\n]*?(?<!`)\\2(?!`)))",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.quote.carve"
-        }
-      },
-      "end": "$",
-      "name": "markup.quote.carve",
-      "patterns": [
-        {
-          "begin": "(\\$\\$?)(`+)(?!`)",
-          "beginCaptures": {
-            "1": {
-              "name": "punctuation.definition.math.carve"
-            },
-            "2": {
-              "name": "punctuation.definition.math.carve"
-            }
-          },
-          "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|>[ \\t]*$|> ?>|(?!>)[ \\t]*(?:(?:#{1,6}|={1,6}) |`{3,}|:{3,}|[-*] |\\d+[.)] |\\||%%|>))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.math.carve"
-            }
-          },
-          "contentName": "markup.math.carve",
-          "patterns": [
-            {
-              "match": "^(>) ",
-              "captures": {
-                "1": {
-                  "name": "punctuation.definition.quote.carve"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "begin": "(!)(`+)(?!`)",
-          "beginCaptures": {
-            "1": {
-              "name": "punctuation.definition.literal.carve"
-            },
-            "2": {
-              "name": "punctuation.definition.raw.carve"
-            }
-          },
-          "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|>[ \\t]*$|> ?>|(?!>)[ \\t]*(?:(?:#{1,6}|={1,6}) |`{3,}|:{3,}|[-*] |\\d+[.)] |\\||%%|>))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.raw.carve"
-            }
-          },
-          "contentName": "markup.raw.inline.content.carve",
-          "patterns": [
-            {
-              "match": "^(>) ",
-              "captures": {
-                "1": {
-                  "name": "punctuation.definition.quote.carve"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "begin": "(`+)(?!`)",
-          "beginCaptures": {
-            "1": {
-              "name": "punctuation.definition.raw.carve"
-            }
-          },
-          "end": "(?<!`)(\\1)(?!`)|^(?=[ \\t]*$|>[ \\t]*$|> ?>|(?!>)[ \\t]*(?:(?:#{1,6}|={1,6}) |`{3,}|:{3,}|[-*] |\\d+[.)] |\\||%%|>))",
-          "endCaptures": {
-            "1": {
-              "name": "punctuation.definition.raw.carve"
-            }
-          },
-          "contentName": "markup.raw.inline.carve",
-          "patterns": [
-            {
-              "match": "^(>) ",
-              "captures": {
-                "1": {
-                  "name": "punctuation.definition.quote.carve"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "include": "#escape"
-        },
-        {
-          "include": "#raw_inline"
-        },
-        {
-          "include": "#math_inline_multi"
-        },
-        {
-          "include": "#math_inline"
-        },
-        {
-          "include": "#literal_inline_multi"
-        },
-        {
-          "include": "#literal_inline"
-        },
-        {
-          "include": "#code_inline_multi"
-        },
-        {
-          "include": "#code_inline"
-        },
-        {
-          "include": "#math_inline_unpartnered_line"
-        },
-        {
-          "include": "#literal_inline_unpartnered_line"
-        },
-        {
-          "include": "#code_inline_unpartnered_line"
-        },
-        {
-          "include": "#trailing_comment"
-        },
-        {
-          "include": "#line_bounded_openers"
-        },
-        {
-          "include": "#inline"
-        }
-      ]
-    },
     "literal_inline_unpartnered_in_quote_depth_3": {
-      "begin": "(!)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.literal.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "contentName": "markup.raw.inline.content.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)!`+"
     },
     "math_inline_unpartnered_in_quote_depth_3": {
-      "begin": "(\\$\\$?)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "contentName": "markup.math.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)\\$\\$?`+"
     },
     "code_inline_unpartnered_in_quote_depth_3": {
-      "begin": "(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\1)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "name": "markup.raw.inline.carve",
-      "contentName": "markup.raw.inline.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)`+"
     },
     "quoted_prose_continuation_depth_3": {
       "comment": "The quoted paragraph at depth 3: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
@@ -23165,9 +22950,6 @@
       },
       "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
-        {
-          "include": "#quoted_verbatim_span"
-        },
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
           "captures": {
@@ -23219,56 +23001,16 @@
       "name": "markup.quote.carve"
     },
     "literal_inline_unpartnered_in_quote_depth_2": {
-      "begin": "(!)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.literal.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "contentName": "markup.raw.inline.content.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)!`+"
     },
     "math_inline_unpartnered_in_quote_depth_2": {
-      "begin": "(\\$\\$?)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "contentName": "markup.math.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)\\$\\$?`+"
     },
     "code_inline_unpartnered_in_quote_depth_2": {
-      "begin": "(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\1)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> > >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "name": "markup.raw.inline.carve",
-      "contentName": "markup.raw.inline.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)`+"
     },
     "quoted_prose_continuation_depth_2": {
       "comment": "The quoted paragraph at depth 2: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
@@ -23283,9 +23025,6 @@
       },
       "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
-        {
-          "include": "#quoted_verbatim_span"
-        },
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
           "captures": {
@@ -23337,56 +23076,16 @@
       "name": "markup.quote.carve"
     },
     "literal_inline_unpartnered_in_quote_depth_1": {
-      "begin": "(!)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.literal.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "contentName": "markup.raw.inline.content.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)!`+"
     },
     "math_inline_unpartnered_in_quote_depth_1": {
-      "begin": "(\\$\\$?)(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        },
-        "2": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "end": "(?<!`)(\\2)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.math.carve"
-        }
-      },
-      "contentName": "markup.math.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)\\$\\$?`+"
     },
     "code_inline_unpartnered_in_quote_depth_1": {
-      "begin": "(`+)",
-      "beginCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "end": "(?<!`)(\\1)(?!`)|^(?=[ \\t]*$|[ \\t]*:{3,}|[ \\t]*>(?:[ \\t]*>)*[ \\t]*$|[ \\t]*> >|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$))",
-      "endCaptures": {
-        "1": {
-          "name": "punctuation.definition.raw.carve"
-        }
-      },
-      "name": "markup.raw.inline.carve",
-      "contentName": "markup.raw.inline.carve"
+      "comment": "Text, as `#code_inline_unpartnered` (C2-I-017).",
+      "match": "(?<!`)`+"
     },
     "quoted_prose_continuation_depth_1": {
       "comment": "The quoted paragraph at depth 1: its unpartnered verbatim spans end where it ends, at a deeper quote line too (carve-grammars#856).",
@@ -23401,9 +23100,6 @@
       },
       "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
-        {
-          "include": "#quoted_verbatim_span"
-        },
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
           "captures": {
@@ -25310,6 +25006,10 @@
     "region_marker": {
       "match": "^(?:\\A\\x{FEFF})?[ \\t]*%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$",
       "name": "comment.line.percent.carve"
+    },
+    "attributes_unattached": {
+      "comment": "A VALID ATTRIBUTE BLOCK THAT ATTACHES TO NOTHING IS ONE LITERAL ATOM (C2-I-035, C2-I-036, carve-grammars#935): tried after `#attributes`, so a glued block keeps its scopes, and nothing inside it is read as a tag, mention or emphasis.",
+      "match": "(?:\\{)(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)(?:\\})"
     }
   }
 }
