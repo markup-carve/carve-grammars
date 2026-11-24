@@ -284,9 +284,10 @@ function adaptGrammar(grammar, hljs) {
     // ordered and task markers, each optionally glued to an attribute block
     // (`- # T`, `1. - # T`, `-{.c} > x`, carve-grammars#947). An uppercase dot
     // marker needs two spaces (C2-B-040). Read through lookbehinds only.
+    const GLUED_ATTR_RUN = '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}';
     const MARKER_LINE_PREFIX = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.'
-        + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:\\{[^{}\\r\\n]{0,512}\\})? {2})|\\.)'
-        + '(?:\\{[^{}\\r\\n]{0,512}\\})? +(?:\\[[ xX\\-_>\\/!?]\\] +)?)+';
+        + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + GLUED_ATTR_RUN + ')? {2})|\\.)'
+        + '(?:' + GLUED_ATTR_RUN + ')? +(?:\\[[ xX\\-_>\\/!?]\\] +)?)+';
     // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
     // bracketed span. See the long note on Prism's `bracketText`, which this
     // mirrors; the short version is that the spec closes a label at the

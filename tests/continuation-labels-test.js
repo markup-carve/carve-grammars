@@ -151,6 +151,9 @@ for (const [source, construct, inside, outside] of [
     ['- - [ ] # T\n', 'heading', '#T', '['],
     ['-{.c} > x\n', 'quote', 'x', '{'],
     ['1. - > x\n', 'quote', 'x', '1.'],
+    ['-{title="a}b"} # T\n', 'heading', '#T', '{'],
+    ['-{title="a}b"} > x\n', 'quote', 'x', '{'],
+    ['-{+a+} # T\n', 'heading', '', ''],
     ['- {.c} # T\n', 'heading', '', ''],
     ['> A. # T\n', 'heading', '', ''],
 ]) {
