@@ -4181,7 +4181,9 @@ if (Prism?.languages.carve) {
     // Markers 'list' leaves (0.2 letter markers, C2-B-040) go first, so
     // `1. a. # T` and `> a. # T` reach it too (carve-grammars#947).
     {
-        const nestedMarkers = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|' + letterMarker + ') +)+(?=\\S)';
+        const glued = grammar.list[0].inside.attributes;
+        const nestedMarkers = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.'
+            + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + glued.pattern.source + ')? {2}))(?:' + glued.pattern.source + ')? +)+(?=\\S)';
         const titleOnMarkerLine = {
             pattern: /^(?<![\s\S])(?:#{1,6}|={1,6}) [ \t]*\S[^\r\n]*$/m,
             alias: ['title', 'important'],
@@ -4189,7 +4191,7 @@ if (Prism?.languages.carve) {
         };
         const entries = Object.entries(grammar);
         entries.splice(entries.findIndex(([key]) => key === 'list') + 1, 0,
-            ['nested-list', { pattern: RegExp('^(?<![\\s\\S])' + nestedMarkers, 'm'), alias: 'punctuation' }],
+            ['nested-list', { pattern: RegExp('^(?<![\\s\\S])' + nestedMarkers, 'm'), alias: 'punctuation', inside: { attributes: glued } }],
             ['title-on-marker-line', titleOnMarkerLine]);
         for (const key of Object.keys(grammar)) delete grammar[key];
         Object.assign(grammar, Object.fromEntries(entries));
@@ -4200,7 +4202,7 @@ if (Prism?.languages.carve) {
             if (!inside?.list || !inside.title) continue;
             const keys = Object.entries(inside);
             keys.splice(keys.findIndex(([key]) => key === 'list') + 1, 0,
-                ['nested-list', { pattern: RegExp('^(?<![\\s\\S])[ \\t]*' + nestedMarkers, 'm'), alias: 'punctuation' }],
+                ['nested-list', { pattern: RegExp('^(?<![\\s\\S])[ \\t]*' + nestedMarkers, 'm'), alias: 'punctuation', inside: { attributes: glued } }],
                 ['title-on-marker-line', titleOnMarkerLine],
                 ['quote-on-marker-line', { pattern: /^(?<![\s\S])>(?: >)*(?= |$(?![^\r\n]))/m, alias: 'punctuation' }]);
             for (const key of Object.keys(inside)) delete inside[key];
