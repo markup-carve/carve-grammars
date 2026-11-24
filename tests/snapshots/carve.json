@@ -1712,5 +1712,20 @@
         ""
       ]
     ]
+  },
+  "CC-011": {
+    "prism": [
+      [
+        "text",
+        ".  . a"
+      ]
+    ],
+    "highlightjs": ".  . a",
+    "textmate": [
+      [
+        "source.carve",
+        ".  . a"
+      ]
+    ]
   }
 }

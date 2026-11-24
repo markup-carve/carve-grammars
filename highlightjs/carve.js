@@ -278,7 +278,7 @@ function adaptGrammar(grammar, hljs) {
         '(?=\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}[ \\t]+[^ \\t\\n])';
     // A list marker glued to an attribute block, the block consumed.
     const GLUED_MARKER =
-        '(?:[-*] +)*(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)'
+        '(?:[-*] +)*(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))'
         + '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\} +';
     // The markers a block on a marker line may follow: any chain of bullet,
     // ordered and task markers, each optionally glued to an attribute block
@@ -286,7 +286,7 @@ function adaptGrammar(grammar, hljs) {
     // marker needs two spaces (C2-B-040). Read through lookbehinds only.
     const GLUED_ATTR_RUN = '\\{\\s*(?:' + ATTR_ITEM + '(?:\\s+' + ATTR_ITEM + ')*\\s*)?\\}';
     const MARKER_LINE_PREFIX = '(?:(?:[-*]|[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.'
-        + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + GLUED_ATTR_RUN + ')? {2})|\\.)'
+        + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?=(?:' + GLUED_ATTR_RUN + ')? {2})|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))'
         + '(?:' + GLUED_ATTR_RUN + ')? +(?:\\[[ xX\\-_>\\/!?]\\] +)?)+';
     // BALANCED BRACKET TEXT - the body of a link label, an image alt text and a
     // bracketed span. See the long note on Prism's `bracketText`, which this
@@ -588,8 +588,8 @@ function adaptGrammar(grammar, hljs) {
         begin: new RegExp(
             '(?:' + attrLineBlocks + ')' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?=\\{)(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
         // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
         // keeps its match and drops the scope, as `scopeUnless` does.
@@ -1196,7 +1196,7 @@ function adaptGrammar(grammar, hljs) {
     // blank line (corpus 25-definition-lists-7) scoped correctly.
     const OTHER_BLOCK_OPENER_SOURCE =
         '[ \\t]*(?:#{1,6} |-{3,}[ \\t]*$(?![^\\r\\n])|\\*{3,}[ \\t]*$(?![^\\r\\n])|_{3,}[ \\t]*$(?![^\\r\\n])|`{3,}|~{3,}|:{3,}|>(?: |$(?![^\\r\\n]))'
-        + '|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.[ \\t])';
+        + '|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))[ \\t]|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )[ \\t])';
 
     // The continuation marker at RELATIVE column 0 (markup-carve/carve#3445,
     // CARVE-P9-031). A lone `+` is the marker only where the lines around it
@@ -1206,7 +1206,7 @@ function adaptGrammar(grammar, hljs) {
     // group is captured on the `+` line before the lines above it are read;
     // the `(?=\+)` in front of each keeps them off every other position.
     function relativePlusSource(g) {
-        var item = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)';
+        var item = '(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))';
         var notItem = '(?!' + item + '(?:[ \\t]|\\r?$|\\{))';
         // A list item does not interrupt a paragraph, so one under prose opens nothing.
         var notUnderProse = '(?<!(?<![^\\n])[^ \\t\\r\\n>|#:`~*\\-+\\d[{%][^\\n]*\\n)';
@@ -1401,7 +1401,7 @@ function adaptGrammar(grammar, hljs) {
             // opens no list item: a column-0 list stays outside (carve#3482).
             {
                 className: 'punctuation',
-                begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n(?!(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.)(?:[ \t]|\r?$|\{))[^ \t\r\n])/,
+                begin: /(?=\+)(?<=^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?\[\^[^\]\r\n]+\]: +)\+[ \t]*(?=\r?\n(?!(?:[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2})))|\.(?! [ \t]*\. |\{[^}\r\n]{0,4096}\}[ \t]+\. ))(?:[ \t]|\r?$|\{))[^ \t\r\n])/,
             },
             bodyAttribute('\\[\\^[^\\]\\r\\n]+\\]:'),
         ],
@@ -1598,13 +1598,13 @@ function adaptGrammar(grammar, hljs) {
         { className: 'section', begin: RegExp('(?=[#=])' + QUOTED.slice(0, -1) + '(?:' + MARKER_LINE_PREFIX + ')?)(?:#{1,6}|={1,6})(?= )' + NO_EMPTY) },
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '[-*] \\[[ xX\\-_>\\/!?]\\](?= )' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
         { className: 'bullet', begin: RegExp('(?=[-*])' + QUOTED + '(?:[-*] +)*[-*](?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
-        { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
+        { className: 'bullet', begin: RegExp('(?=[\\dA-Za-z.])' + QUOTED + '(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:(?= )|' + GLUED_ATTR_BLOCK + ')' + NO_EMPTY), 'on:begin': (m) => { m.rule.scope = quotedMarkerIsParagraphText(m) ? undefined : 'bullet'; } },
         // The `+` continuation marker: after a quoted list marker always, and
         // a lone `+` in a quote where the lines around it prove it.
         {
             className: 'punctuation',
             begin: RegExp('(?=\\+)' + QUOTED.slice(0, -1)
-                + '(?:[-*] \\[[ xX\\-_>\\/!?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.) +|'
+                + '(?:[-*] \\[[ xX\\-_>\\/!?]\\] +|(?:[-*] +)+|(?:\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )) +|'
                 + GLUED_MARKER + '))\\+[ \\t]*$(?![^\\r\\n])'),
         },
         { className: 'punctuation', begin: RegExp(relativePlusSource(1)) },
@@ -1713,7 +1713,7 @@ function adaptGrammar(grammar, hljs) {
     const markerColumn = (input, index) => columnOf(/^\uFEFF?([ \t]*)/.exec(lineAt(input, lineStartBefore(input, index + 1)))[1]);
     // A line after which a new block starts: it ends any paragraph above.
     const BLOCK_BOUNDARY_LINE = /^\uFEFF?(?:[ \t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\*{3,}|_{3,})[ \t]*$|\|.*\|(?:\{[^{}]*\})?[ \t]*$|\{[^{}]*\}[ \t]*$|%%|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|:: )|\+[ \t]*$)/;
-    const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))|\.)(?: +[^ \t]|\{)/;
+    const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))|\.(?! [ \t]*\. |\{[^}\r\n]{0,4096}\}[ \t]+\. ))(?: +[^ \t]|\{)/;
     const lineKind = (line) => {
         if (/^\uFEFF?[ \t]*$/.test(line)) return 'blank';
         // So is one in a quote or a description (`> # h`, `:  [^n]: x`).
@@ -1868,7 +1868,7 @@ function adaptGrammar(grammar, hljs) {
     const LIST_NUMBER = {
         className: 'bullet',
         begin: RegExp(
-            '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.)(?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$(?![^\\r\\n]))',
+            '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(\\d+[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:(?= )|' + GLUED_ATTR_BLOCK + ')(?![ \\t]*$(?![^\\r\\n]))',
         ),
         'on:begin': scopeUnless('bullet', markerIsParagraphText),
         relevance: 0,
@@ -1891,7 +1891,7 @@ function adaptGrammar(grammar, hljs) {
         className: 'punctuation',
         begin: RegExp('(?=\\+)(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
             + GLUED_MARKER + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:(?:[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
-            + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\. +))+)\\+[ \\t]*$(?![^\\r\\n])'),
+            + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ) +))+)\\+[ \\t]*$(?![^\\r\\n])'),
         relevance: 0,
     };
 
@@ -1935,7 +1935,7 @@ function adaptGrammar(grammar, hljs) {
         var lineRe = /[^\r\n]*(?:\r\n|\r|\n)?/g;
         var start = text.charCodeAt(0) === 0xFEFF ? 1 : 0;
         lineRe.lastIndex = start;
-        var listMarker = /^(?:[-*.]|[0-9]+[.)]|[A-Za-z]+\)|[A-Za-z]+\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))( +(?=[^ \t])|$)/;
+        var listMarker = /^(?:[-*]|\.(?! [ \t]*\. |\{[^}\r\n]{0,4096}\}[ \t]+\. )|[0-9]+[.)]|[A-Za-z]+\)|[A-Za-z]+\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))( +(?=[^ \t])|$)/;
         var opener = /^(?:#{1,6}(?:[ \t]|$)|`{3,}|~{3,}|%{3,}|:{3,}|>|\[\^[^\]\r\n]+\]:|\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$|\^ |(?:-[ \t]*){3,}$|(?:\*[ \t]*){3,}$|(?:_[ \t]*){3,}$)/;
         // The lines that end a label even indented past its marker (C2-B-234).
         var labelEnd = /^(?:`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
@@ -2619,8 +2619,8 @@ function adaptGrammar(grammar, hljs) {
         MARKER_CODE_FORMS.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})\\) ', roman + 2]);
         MARKER_CODE_FORMS.push(['(?:[ivxlcdm]{' + roman + '}|[IVXLCDM]{' + roman + '})\\.  ', roman + 3]);
     }
-    MARKER_CODE_FORMS.push(['[A-Za-z]\\) ', 3], ['[A-Za-z]\\.  ', 4], ['\\. ', 2]);
-    const PLAIN_LINE_BEFORE_MARKER = '(?<![^\\n])(?!(?:[-*] +|[0-9]+[.)] +|(?:[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) +|[A-Za-z](?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) +|\\. +|> |#{1,6} |:{2,}|\\||[-*_]{3,}|[`~]{3,}|%%|\\+))[\\S][^\\n]*\\n';
+    MARKER_CODE_FORMS.push(['[A-Za-z]\\) ', 3], ['[A-Za-z]\\.  ', 4], ['\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ) ', 2]);
+    const PLAIN_LINE_BEFORE_MARKER = '(?<![^\\n])(?!(?:[-*] +|[0-9]+[.)] +|(?:[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) +|[A-Za-z](?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})) +|\\.(?! [ \\t]*\\. ) +|> |#{1,6} |:{2,}|\\||[-*_]{3,}|[`~]{3,}|%%|\\+))[\\S][^\\n]*\\n';
     const markerLineFence = (info, marker, width) => ({
         className: 'code',
         beginScope: 'keyword',
