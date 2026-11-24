@@ -12655,6 +12655,9 @@
           "include": "#quoted_prose_continuation"
         },
         {
+          "include": "#quoted_block_on_marker_line"
+        },
+        {
           "include": "#quoted_item_lazy_marker_line"
         },
         {
@@ -13322,7 +13325,7 @@
     },
     "task_item": {
       "comment": "A task item is a bullet whose content happens to start with a checkbox, and ITS CONTENT COLUMN IS TWO PAST THE INDENT WHATEVER THE SEPARATOR IS - the checkbox absorbs the rest. That is measured, not assumed: carve-php and carve-js agree that a body line two columns in belongs to the item for every separator width from one space to five, where the same widths under a plain bullet carry the column with them (`-   a` puts its body at column 4, `-   [x] a` keeps it at column 2). A definition two columns under `- [ ] a` is collected exactly as it is under `- a`, which is why the checkbox counts as CONTENT rather than as part of the marker, and why `while` asks for a fixed two columns here while `#list_item` reconstructs the separator width from the marker line. The rule is a container in its own right for the same reason: a one-line match would leave the following lines to the document level, where a definition must be flush-left, and `- [ ] a` would lose the indented definition that `- a` keeps.",
-      "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)",
+      "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
       "beginCaptures": {
         "2": {
           "name": "punctuation.definition.list.unnumbered.carve"
@@ -13353,6 +13356,13 @@
         },
         "11": {
           "name": "punctuation.definition.checkbox.carve"
+        },
+        "12": {
+          "patterns": [
+            {
+              "include": "#marker_chain"
+            }
+          ]
         }
       },
       "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2})",
@@ -13400,13 +13410,17 @@
       "comment": "A LIST ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94). It opens on its marker line, stays open across blank lines, and closes on the first nonblank line indented BELOW its content column - which is the marker's actual width, `indent + marker + separator`, not a fixed two columns. That column test is what lets the block rules inside it (`#container_blocks`) fire on an indented line without also firing on a top-level indented line that the language reads as text: `- a` followed by `  [r]: /u` keeps the definition, while `- - a` followed by ` [r]: /u` sits below every open content column and is item text, which is what carve-php does with both. THE TEST IS EXACT FOR A BULLET at any indent and any separator width, because a bullet marker is always one column wide and the separator is captured as whitespace, so `\\1[ \\t]\\3` reconstructs the column count from the marker line itself rather than assuming one. Its limits: a TAB counts as one column here rather than advancing to the next tab stop, and the continuation line must repeat the marker line's own indent characters - the pre-existing `\\1` convention, unchanged. The ATTRIBUTE-GLUED FORM (`-{#x} item`) is the one bullet shape whose content column this cannot count, since the block's width is not whitespace; it uses the MINIMUM content column (indent plus two) instead, which keeps the container open across a range where an exact test would have closed it - deliberately the over-coloring side, the same side every block rule in this file already takes. A marker line may carry several markers (`- - A` opens nested list structure), so the opener still scopes a run of same-line bullet markers, not only the line-anchored first, and the column test uses the OUTERMOST marker's column so a line at the outer item's column stays in the list. A BULLET MAY ALSO BE GLUED TO AN ATTRIBUTE BLOCK, and then the required space comes after the block, not after the marker - so `-{#x} item` and `*{.c} item` went uncoloured on a line that IS a list item, while the ordered rule beside it already had the branch (#126). The guard is that rule's, unchanged: content is still required past the block (`-{#x}` alone is a paragraph), and the block is spelled out rather than skipped with `\\{[^}]*\\}`, because a quoted value may hold a `}` and may escape its own quote. It is a LOOKAHEAD - consuming the block here would make this rule own those characters, so the attribute rule could no longer scope them. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence. A zero-width while condition checks the content column before child rules run, so an unclosed container cannot retain scopes over a sibling item.",
       "patterns": [
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*])( +)(?![ \\t]*$)((?:[-*] +)*)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*])( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.unnumbered.carve"
             },
             "4": {
-              "name": "punctuation.definition.list.unnumbered.carve"
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]\\3)",
@@ -13435,10 +13449,24 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)([-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})([ \\t]+)(?=[^ \\t\\n])((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "5": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2,})",
@@ -13463,15 +13491,8 @@
             },
             {
               "comment": "A glued attribute block keeps the task checkbox after it (`-{.c} [x] done`).",
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})( +)(\\[)([ xX\\-_>/!?])(\\])(?= +\\S)",
+              "match": "\\G()()(\\[)([ xX\\-_>/!?])(\\])(?= +\\S)",
               "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
                 "3": {
                   "name": "punctuation.definition.checkbox.carve"
                 },
@@ -13494,10 +13515,17 @@
       "comment": "AN ORDERED ITEM IS A CONTAINER, NOT A LINE (carve-grammars#94), on the same content-column rule as `#list_item`: it closes on the first nonblank line indented below `indent + marker + separator`. An ordered marker is not one column wide though, and Oniguruma cannot count the width of a captured run - vscode-textmate splices a begin capture into the `while` pattern as literal TEXT, so a backreference reproduces the marker's characters, never its length. The width is therefore spelled out: one variant per marker width, each consuming exactly that many characters and asking its `while` for exactly that many columns. EXACT for marker widths 1 to 5 - `.`, `1.`, `10.`, `iii.`, `1000.` - which covers every ordered marker in the corpus; the width-5 variant also accepts anything WIDER (`10000.`, `civil.`) and under-counts those by the extra characters, keeping the container open a column or two too long rather than closing it too early. APPROXIMATE for the attribute-glued form (`1.{#x} item`), whose block width is not whitespace either: it uses the minimum content column, indent plus two. Both approximations err toward over-coloring, the same side every block rule in this file already takes. Every ordered marker the language accepts is still here, not only `1.`: decimal, single-letter and roman, with `.` or `)`, plus the BARE DOT (carve#472) - `.` alone continues the ordered sequence, and is the only marker allowed to drop its value. The bare form is also recognised glued to an attribute block (`.{#x}`), which is how corpus 174-bare-dot-ordered-markers-3 writes it. MARKER REQUIRES CONTENT, AND SO DOES THE ATTRIBUTE FORM: `1.{#x}` with nothing after the block is a paragraph, so the glued-block branch spells the block out in full rather than skipping it - a quoted run may contain `}` (`{title=\"a}b\"} x` is a valid item) and may escape its own quote, so a `\\{[^}]*\\}` run stops in the wrong place. Anything less was tried and each attempt traded one broken shape for another (#85). A ROMAN RUN IS CASE-CONSISTENT: two classes, not one `[ivxlcdmIVXLCDM]`, which matched any mixture and coloured `Vim. text` and `Mix. text` as lists where carve-js renders paragraphs (#118). `mix.`, `civil.` and `did.` DO open lists, so the fix is the case split rather than rejecting multi-letter words. THE PAYLOAD MUST BE VALID, not merely brace-delimited: an invalid one means the `{` is literal content and the line is prose. `-{+a+} text` (corpus 90-list-item-attributes-6) and `1.{2=v} text` are paragraphs, while `-{} item` and `-{not attrs} item` are list items. A guard that accepted any brace run coloured the first two as lists. Identifiers are STRICT (PART 9 S14) and admit no colon, which is what carve-js does - Prism and highlight.js still admit one in their own attribute rules, a separate pre-existing divergence. A zero-width while condition checks the content column before child rules run, so an unclosed container cannot retain scopes over a sibling item.",
       "patterns": [
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\.)( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\.)( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]\\3)",
@@ -13526,10 +13554,17 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t]\\3)",
@@ -13558,10 +13593,17 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t]\\3)",
@@ -13590,10 +13632,17 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
@@ -13622,10 +13671,17 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
@@ -13654,10 +13710,24 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})([ \\t]+)(?=[^ \\t\\n])((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "5": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=(?:#{1,6}|={1,6})(?= )|\\[[^\\]\\n]*\\]:|\\*\\[|:{1,2}(?= )|\\1[ \\t]{2,})",
@@ -24733,10 +24803,17 @@
     "lazy_numbered_item": {
       "patterns": [
         {
-          "begin": "^()(\\.)( +)(?![ \\t]*$)",
+          "begin": "^()(\\.)( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t]\\3)",
@@ -24747,10 +24824,17 @@
           ]
         },
         {
-          "begin": "^()((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d[.)]|(?:(?:[A-Za-z])\\)|(?:[a-z])\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z])\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t]\\3)",
@@ -24761,10 +24845,17 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{2}[.)]|(?:(?:[ivxlcdm]{2}|[IVXLCDM]{2})\\)|(?:[ivxlcdm]{2})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{2})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t]\\3)",
@@ -24775,10 +24866,17 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{3}[.)]|(?:(?:[ivxlcdm]{3}|[IVXLCDM]{3})\\)|(?:[ivxlcdm]{3})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{3})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t][ \\t]\\3)",
@@ -24789,10 +24887,17 @@
           ]
         },
         {
-          "begin": "^()((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)",
+          "begin": "^()((?:\\d{4,}[.)]|(?:(?:[ivxlcdm]{4,}|[IVXLCDM]{4,})\\)|(?:[ivxlcdm]{4,})\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[IVXLCDM]{4,})\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))))( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t][ \\t][ \\t][ \\t][ \\t]\\3)",
@@ -24803,24 +24908,31 @@
           ]
         },
         {
-          "begin": "^()((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^()((?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.)(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})([ \\t]+)(?=[^ \\t\\n])((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.numbered.carve"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "5": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
             {
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "match": "\\G()()(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
               "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
                 "3": {},
                 "4": {},
                 "5": {},
@@ -24845,13 +24957,17 @@
     "lazy_list_item": {
       "patterns": [
         {
-          "begin": "^()([-*])( +)(?![ \\t]*$)((?:[-*] +)*)",
+          "begin": "^()([-*])( +)(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.unnumbered.carve"
             },
             "4": {
-              "name": "punctuation.definition.list.unnumbered.carve"
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t]\\3)",
@@ -24862,24 +24978,31 @@
           ]
         },
         {
-          "begin": "^()([-*])(?=\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\}[ \\t]+[^ \\t\\n])",
+          "begin": "^()([-*])(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})([ \\t]+)(?=[^ \\t\\n])((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
           "beginCaptures": {
             "2": {
               "name": "punctuation.definition.list.unnumbered.carve"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "include": "#attributes"
+                }
+              ]
+            },
+            "5": {
+              "patterns": [
+                {
+                  "include": "#marker_chain"
+                }
+              ]
             }
           },
           "while": "^(?=[ \\t]*$|\\1[ \\t]{2,})",
           "patterns": [
             {
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})( +)(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
+              "match": "\\G()()(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
               "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
                 "3": {},
                 "4": {},
                 "5": {},
@@ -24895,15 +25018,8 @@
               }
             },
             {
-              "match": "\\G(\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})( +)(\\[)([ xX\\-_>/!?])(\\])(?= +\\S)",
+              "match": "\\G()()(\\[)([ xX\\-_>/!?])(\\])(?= +\\S)",
               "captures": {
-                "1": {
-                  "patterns": [
-                    {
-                      "include": "#attributes"
-                    }
-                  ]
-                },
                 "3": {
                   "name": "punctuation.definition.checkbox.carve"
                 },
@@ -24923,7 +25039,7 @@
       ]
     },
     "lazy_task_item": {
-      "begin": "^()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)",
+      "begin": "^()([-*]) +(\\[)(?:([ _])|([/])|([!])|([xX])|([-])|([>])|([?]))(\\]) +(?![ \\t]*$)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)*)",
       "beginCaptures": {
         "2": {
           "name": "punctuation.definition.list.unnumbered.carve"
@@ -24954,6 +25070,13 @@
         },
         "11": {
           "name": "punctuation.definition.checkbox.carve"
+        },
+        "12": {
+          "patterns": [
+            {
+              "include": "#marker_chain"
+            }
+          ]
         }
       },
       "while": "^(?=[ \\t]*$|\\1[ \\t]{2})",
@@ -25197,6 +25320,71 @@
     "attributes_unattached": {
       "comment": "A VALID ATTRIBUTE BLOCK THAT ATTACHES TO NOTHING IS ONE LITERAL ATOM (C2-I-035, C2-I-036, carve-grammars#935): tried after `#attributes`, so a glued block keeps its scopes, and nothing inside it is read as a tag, mention or emphasis.",
       "match": "(?:\\{)(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)(?:\\})"
+    },
+    "marker_chain": {
+      "comment": "Nested markers on one marker line (`- - x`, `1. - # T`, `- -{.c} x`, `- - [ ] x`): carve-js opens one item per marker. The item rules consume them, so `\\G` stands at the content and every `*_on_marker_line` rule applies (carve-grammars#947).",
+      "patterns": [
+        {
+          "match": "(\\[)([ xX\\-_>/!?])(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.checkbox.carve"
+            },
+            "2": {
+              "name": "constant.language.checkbox.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.checkbox.carve"
+            }
+          }
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "match": "[-*](?:(?=\\{)| +)",
+          "name": "punctuation.definition.list.unnumbered.carve"
+        },
+        {
+          "match": "[^ {\\[]+(?:(?=\\{)| +)",
+          "name": "punctuation.definition.list.numbered.carve"
+        }
+      ]
+    },
+    "quoted_block_on_marker_line": {
+      "comment": "A heading or quote opened on a quoted item's marker line (`> - # T`, `> 1. - > x`, `> -{.c} # T`): the quote prefix and the marker chain are consumed, so `\\G` stands at the content and the shared marker-line rules apply (carve-grammars#947).",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(>)(?= |$) ?((?:>(?= |$) ?)*)((?:(?:[-*]|\\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?=(?:\\{[^}\\r\\n]{0,4096}\\})? {2})|\\.)(?:\\{\\s*(?:(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)?\\})? +(?:\\[[ xX\\-_>/!?]\\] +)?)+)(?=(?:#{1,6}|={1,6}) +(?![ \\t]*$)|>(?= |$))",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "2": {
+          "name": "punctuation.definition.quote.carve"
+        },
+        "3": {
+          "patterns": [
+            {
+              "include": "#marker_chain"
+            }
+          ]
+        }
+      },
+      "end": "$",
+      "name": "markup.quote.carve",
+      "patterns": [
+        {
+          "include": "#heading_on_marker_line"
+        },
+        {
+          "include": "#blockquote_on_marker_line"
+        },
+        {
+          "include": "#quoted_line_inline"
+        },
+        {
+          "include": "#inline"
+        }
+      ]
     }
   }
 }
