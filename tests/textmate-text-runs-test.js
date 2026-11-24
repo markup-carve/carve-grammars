@@ -88,4 +88,16 @@ for (const source of ['[a]{#id}', '`c`{#id}', '*b*{#id}', '{=m=}{#id}', '# A [a]
     count++;
 }
 
+// A raw-format span ends at its first closing run: `raw_inline` once tried every
+// later closer on the line for a `{=`, which was quadratic in the line length.
+assert.equal(covered(tokenize, 'a ``x`` b ``y``{=html}', 'markup.other.raw.inline.carve'), '``y``{=html}', 'raw span takes its own closer');
+{
+    const line = '`` a `` '.repeat(4000);
+    const started = process.hrtime.bigint();
+    tokenize(line);
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    assert.ok(ms < 2000, `32 KB line of closed double-backtick spans took ${ms.toFixed(0)} ms`);
+    count += 2;
+}
+
 console.log(`textmate text runs: ${count} assertion groups passed`);

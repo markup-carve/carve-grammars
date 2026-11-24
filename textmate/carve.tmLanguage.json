@@ -13779,7 +13779,7 @@
       "comment": "A code span glued to `{=format}` is raw output for that format (grammar.ebnf `raw_inline`).",
       "patterns": [
         {
-          "match": "(?<!`)(`{2,})(?!`)(.+?)(?<!`)(\\1)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
+          "match": "(?<!`)(`{2,})(?!`)((?:(?!(?<!`)\\1(?!`)).)+?)(?<!`)(\\1)(?!`)(\\{=)([A-Za-z_][\\w-]*)(\\})",
           "name": "markup.other.raw.inline.carve",
           "captures": {
             "1": {
