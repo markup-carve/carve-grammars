@@ -256,7 +256,7 @@ function adaptGrammar(grammar, hljs) {
     // attribute block, and one invalid name is enough to leave the whole run
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
-    const ATTR_ITEM = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    const ATTR_ITEM = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'{}|\\]+))?)/.source;
     // The parts of C2-I-029 to C2-I-032: an unquoted value holds no pipe or backslash.
     const STRICT_ATTR_ITEM = /(?::(?:[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)?|[.#][\w-]+|[A-Za-z_][\w-]*=(?:"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|[^\s"'\\|}]+)|[A-Za-z][\w-]*)/.source;
     // A valid block glued to no host is one literal atom (C2-I-035, C2-I-036).
@@ -3124,7 +3124,7 @@ function adaptGrammar(grammar, hljs) {
             { begin: [/\|/, /=(?= |\{)/], beginScope: { 1: 'table-boundary', 2: 'table-header' } },
             // Braced cell alignment leads the cell's attribute block (carve#5091 D3).
             {
-                begin: [/(?<=(?<!\\)(?:\\\\)*\|=?)\{/, /(?:[<>~][\^~v]?|\?[\^~v])/, /(?=(?:[ \t]+(?::[\w-]*|[.#]?[\w-]+(?:=(?:"(?:\\.|[^"\\\n]){0,256}"|'(?:\\.|[^'\\\n]){0,256}'|[^\s"'{}]{1,256}))?))*[ \t]*\})/],
+                begin: [/(?<=(?<!\\)(?:\\\\)*\|=?)\{/, /(?:[<>~][\^~v]?|\?[\^~v])/, /(?=(?:[ \t]+(?::[\w-]*|[.#]?[\w-]+(?:=(?:"(?:\\.|[^"\\\n]){0,256}"|'(?:\\.|[^'\\\n]){0,256}'|[^\s"'{}|\\]{1,256}))?))*[ \t]*\})/],
                 beginScope: { 2: 'table-alignment' },
             },
             { className: 'table-span', begin: /(?<=\|)[ \t]*[<^](?=[ \t]*\|)/ },
