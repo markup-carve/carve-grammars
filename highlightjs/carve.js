@@ -93,7 +93,9 @@ function adaptGrammar(grammar, hljs) {
     }
     adapt(grammar);
     const hashHeading = grammar.contains.find(mode => mode?.className === 'section' && mode.begin?.source.includes('#{1,6}'));
-    hashHeading['on:begin'] = (match) => {
+    const markerLineHeading = hashHeading['on:begin'];
+    hashHeading['on:begin'] = (match, response) => {
+        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return markerLineHeading(match, response);
         match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
     };
     grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
@@ -748,7 +750,18 @@ function adaptGrammar(grammar, hljs) {
         className: 'section',
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*#{1,6} (?![ \t]*$(?![^\r\n]))/,
+        // Or right after a list marker the list rules took (`- # T`, `1. = T`,
+        // carve-grammars#945); an uppercase dot marker needs two spaces (C2-B-040).
+        begin: RegExp('(?:^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*#{1,6}'
+            + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*'
+            + '(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
+            + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]{2,9})\\.|\\.) +'
+            + '|(?:[A-Z]|[IVXLCDM]{2,9})\\.  +))(?:#{1,6}|={1,6}))'
+            + ' (?![ \\t]*$(?![^\\r\\n]))'),
+        // A marker that continues a paragraph opens no heading.
+        'on:begin': (m) => {
+            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'section';
+        },
         end: /$(?![^\r\n])/,
         relevance: 10,
     };
@@ -3506,19 +3519,6 @@ function adaptGrammar(grammar, hljs) {
     ];
     // A block glued to an inline host is its attributes (`# *a b*{.q}`); a trailing `{#id}` stays text.
     HEADING.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, LINE_COMMENT, HEADING_TAG, ATTRIBUTE, ...LINE_INLINE];
-    // A heading on a list marker line (`- # T`, `1. ## T`, carve-grammars#945).
-    const HEADING_ON_MARKER_LINE = {
-        className: 'section',
-        // A lowercase letter or roman marker needs one space in 0.2 (C2-B-040).
-        begin: RegExp('(?=[#=])(?<=' + LIST_MARKER_BEFORE_BLOCK + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(?:[a-z]|[ivxlcdm]{2,9})\\. +)'
-            + '(?:#{1,6}|={1,6}) (?![ \\t]*$(?![^\\r\\n]))'),
-        'on:begin': (m) => {
-            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'section';
-        },
-        end: /$(?![^\r\n])/,
-        contains: HEADING.contains,
-        relevance: 0,
-    };
     // A CAPTION'S CONTENT IS AN INLINE RUN TOO, and it was flat for the same
     // reason: `^ cap %% hidden` renders `<figcaption>cap</figcaption>` and
     // `^ cap `x %% b` c` keeps the span. No `HEADING_TAG` here - a caption takes
@@ -3751,7 +3751,6 @@ function adaptGrammar(grammar, hljs) {
         LIST_BULLET,
         LIST_NUMBER,
         MARKER_LINE_CONTINUATION,
-        HEADING_ON_MARKER_LINE,
         DEFINITION_LIST_ENTRY,  // `:: term` / `:  definition` (carve-grammars#91)
         // A marker after a block inside the list (an item, a fence) ended the entry.
         DESCRIPTION_MARKER,

@@ -129,6 +129,8 @@ for (const [source, construct, inside, outside] of [
     ['- ###### T\n', 'heading', '######T', '-'],
     ['- # T\n  more\n', 'heading', '#T', 'more'],
     ['- # T\n- # U\n', 'heading', '#T#U', '-'],
+    ['- # \tT\n', 'heading', '#T', '-'],
+    ['# \tT\n', 'heading', '#T', ''],
     ['- #tag\n', 'heading', '', ''],
     ['- ####### T\n', 'heading', '', ''],
     ['p\n- # T\n', 'heading', '', ''],
