@@ -99,6 +99,8 @@
     // literal. A colon belongs to the VALUE grammar, not the key: an unquoted
     // value may contain dots and colons, so `{k=a:b}` is a real attribute block.
     var attrItem = /(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\w-]*|[A-Za-z_][\w-]*(?:=(?:"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*'|[^\s"'{}]+))?)/.source;
+    // The parts of C2-I-029 to C2-I-032: an unquoted value holds no pipe or backslash.
+    var strictAttrItem = /(?::(?:[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*)?|[.#][\w-]+|[A-Za-z_][\w-]*=(?:"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*'|[^\s"'\\|}]+)|[A-Za-z][\w-]*)/.source;
     // A LIST MARKER MAY BE GLUED TO AN ATTRIBUTE BLOCK (`-{#x} item`), so the
     // marker rule has to look past a whole block to decide it is a marker at
     // all. That lookahead spelled the item alternation out a second time, and
@@ -160,7 +162,7 @@
     var unescaped = function (opener) {
         return opener + '(?<!(?:^(?<![^\\r\\n])|[^\\\\])(?:\\\\\\\\)*\\\\' + opener + ')';
     };
-    // Not behind an odd backslash run (see the unpartnered-run note below).
+    // Not behind an odd backslash run: an even run is escaped backslashes. Bounded at 32 pairs.
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
@@ -410,8 +412,8 @@
      * won this on position; under a heading or caption the block rule wraps the
      * prefix into a token before `code` is reached, leaving the rewind nothing
      * to span. `commentAfterPrefix` walks the line forward instead, and a `%%`
-     * opens a comment only where the walk arrives outside every span - so an
-     * unpartnered run blocks it, which is the span-to-paragraph-end reading.
+     * opens a comment only where the walk arrives outside every span. A run with
+     * no closer on the line is text (C2-I-017), so the walk passes it.
      *
      * FORWARD, NOT A LOOKBEHIND: width needs a backreference and an escape
      * needs reading left to right, and a JS lookbehind matches right-to-left.
@@ -424,7 +426,9 @@
      * uses, so a wider run opens no span here either.
      */
     var codeSpanRun = '(?<!`)(`{1,16})(?!`)(?:[^\\r\\n`]|(?!(?<!`)\\2(?!`))`)*(?<!`)\\2(?!`)';
-    var outsideSpans = '(?:[^\\r\\n`\\\\]|\\\\[^\\r\\n]|' + codeSpanRun + ')*?';
+    // A run with no closer on the line is text (C2-I-017), so the walk passes it.
+    var unpartneredOnLine = '(?<!`)(`{1,16})(?!`)(?![^\\r\\n]*?(?<!`)\\3(?!`))';
+    var outsideSpans = '(?:[^\\r\\n`\\\\]|\\\\[^\\r\\n]|' + codeSpanRun + '|' + unpartneredOnLine + ')*?';
     var commentAfterPrefix = '^(?<![^\\r\\n])(' + outsideSpans + '[ \\t])%%(?!%)';
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
@@ -998,63 +1002,15 @@
         }, inline),
     };
 
-    /*
-     * THE PIECES OF AN UNPARTNERED VERBATIM RUN (carve-grammars#312).
-     *
-     * A backtick run with no closing partner still opens a verbatim span in
-     * the engine, and it reaches the end of its PARAGRAPH: `` a `x *b* y ``
-     * renders `<p>a <code>x *b* y</code></p>`, across soft line breaks and
-     * all. Written only as a paired pattern, none of that matched and the
-     * body stayed live markup.
-     *
-     * `notEscaped` is backslash PARITY, not "no backslash before it". An odd
-     * run of backslashes escapes the backtick and there is no span; an even
-     * one is escaped backslashes and the backtick opens as usual - the engine
-     * reads `` a \\`x `` as a literal backslash followed by a code span.
-     * Bounded at 32 pairs, past which the guard gives up and the run opens.
-     *
-     * The `\r` in the blank-line guards is for CRLF input, where a blank line
-     * is `\r\n\r\n` and a guard written on `\n` alone never sees one.
-     *
-     * `maximalRun` and `narrowRun` differ only in width, and the difference is
-     * where the fence ambiguity lives: a bare run of three or more cannot be
-     * told from an unterminated code fence without a container model, so the
-     * bare form takes one or two. Behind a `$`, `$$` or `!` sigil there is no
-     * such ambiguity - a fence never carries one - so those take any width.
-     *
-     * `unpartneredTail` is the rest of the paragraph: to a blank line, and to
-     * any line that opens or closes another block. That second bound is the
-     * one that matters. A span with no closer ahead that ran on would swallow
-     * its container's own closer and every block after it - the hazard
-     * `fencedVerbatim` states in the highlight.js grammar - so `::: note` /
-     * `` a `x `` / `:::` ends the span before the closer. `otherBlockOpener` is
-     * the same line test the definition-list rule below uses, so there is one
-     * answer in this file to "where does a paragraph stop". It is wider than
-     * the engine on one shape: a bullet does not interrupt an open run there
-     * and it does here, which is the span giving ground rather than taking a
-     * line it should not.
-     */
     // A backtick a quoted attribute value used up opens no code span
     // (carve#2074): `[a]{title="`"} and [n](u)` is a span, a text run and a
     // link. The attribute rules run after 'code', so the guard is here.
     var attrValueFree = '(?<!\\{[^{}\\r\\n]{0,512}=["\'][^"\'\\r\\n]{0,512})';
-    var maximalRun = '(?<!`)`+(?!`)';
-    var narrowRun = '(?<!`)`{1,2}(?!`)';
     // A quote line interrupts a paragraph, so a paired span does not reach it.
     var quoteOpener = '[ \\t]*>(?:[ \\t]|$(?![^\\r\\n]))';
-    var unpartneredTail =
-        '[^\\r\\n]{0,4096}(?:(?:\\r\\n?|\\n)(?![ \\t\\r]*$(?![^\\r\\n]))(?!' + otherBlockOpener + ')[^\\r\\n]{0,4096}){0,64}';
-
-    /**
-     * An unpartnered verbatim run behind `sigil`, to the end of its paragraph.
-     *
-     * @param {string} sigil - the construct's prefix, as regex source.
-     * @param {string} run - `maximalRun` or `narrowRun`.
-     * @returns {RegExp} the pattern.
-     */
-    function unpartneredRun(sigil, run) {
-        return RegExp(notEscaped + sigil + run + unpartneredTail, 'm');
-    }
+    // A sigil span opens on a maximal run and closes on a run of the same width in its
+    // paragraph. A run with no partner opens nothing, sigil included (C2-I-017).
+    var sigilSpan = '(`+)(?!`)(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + quoteOpener + '))*?[^`])(?<!`)\\1(?!`)';
 
     /**
      * One PART of an include directive - what sits between two spaces inside
@@ -1139,7 +1095,7 @@
         var opener = /^(?:#{1,6}(?:[ \t]|$)|`{3,}|~{3,}|%{3,}|:{3,}|>|\[\^[^\]\r\n]+\]:|\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$|\^ |(?:-[ \t]*){3,}$|(?:\*[ \t]*){3,}$|(?:_[ \t]*){3,}$)/;
         var line, at, end;
         // Closerless front matter runs to the end of the text.
-        var frontMatter = start === lineRe.lastIndex && /^---(?:[ \t][^\r\n]*)?(?:\r\n|\r|\n|$)/.test(text.slice(start));
+        var frontMatter = start === lineRe.lastIndex && /^\uFEFF?---(?: ?[A-Za-z0-9]+)?[ \t]*(?:\r\n|\r|\n|$)/.test(text.slice(start));
 
         function closeTo(depth) {
             while (frames.length - 1 > depth) frames.pop();
@@ -2156,10 +2112,10 @@
                 }),
             },
             {
-                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
+                pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9]+[ \t]*(?:(?:\r\n?|\n)|$(?![\s\S]))(?:(?:[\s\S]*?(?:\r\n?|\n))?---[ \t]*(?:(?:\r\n?|\n)|$(?![^\r\n]))|[\s\S]*)/,
                 alias: 'comment',
                 greedy: true,
-                inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9_-]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
+                inside: { 'frontmatter-delimiter': { pattern: /^(?<![^\r\n])\uFEFF?--- ?[A-Za-z0-9]+|^(?<![^\r\n])---[ \t]*$(?![^\r\n])/m, alias: 'punctuation' } },
             },
         ],
 
@@ -2906,25 +2862,12 @@
              * construction.
              */
             {
-                pattern: RegExp(notEscaped + /\$\$(`+)[\s\S]*?(?<!`)\1(?!`)/.source),
+                pattern: RegExp(notEscaped + '\\$\\$' + sigilSpan),
                 greedy: true,
                 alias: 'string',
             },
             {
-                pattern: RegExp(notEscaped + /\$(`+)[\s\S]*?(?<!`)\1(?!`)/.source),
-                greedy: true,
-                alias: 'string',
-            },
-            // ... and with no closing run at all, which is still math and not
-            // a stray `$` before a code span. Any width: the sigil is what
-            // opens it, so there is no fence to be confused with.
-            {
-                pattern: unpartneredRun('\\$\\$', maximalRun),
-                greedy: true,
-                alias: 'string',
-            },
-            {
-                pattern: unpartneredRun('\\$', maximalRun),
+                pattern: RegExp(notEscaped + '\\$' + sigilSpan),
                 greedy: true,
                 alias: 'string',
             },
@@ -2936,15 +2879,7 @@
         'literal': [
             {
                 // The closing run is the WHOLE run - see the note on `math` above.
-                pattern: /!(`+)[\s\S]*?(?<!`)\1(?!`)/,
-                greedy: true,
-                alias: 'string',
-            },
-            {
-                // ... and with no closing run, which is still a literal: the
-                // engine renders `` !`unclosed `` as `!<code>unclosed</code>`,
-                // so the `!` belongs to this token and not to the prose.
-                pattern: unpartneredRun('!', maximalRun),
+                pattern: RegExp(notEscaped + '!' + sigilSpan),
                 greedy: true,
                 alias: 'string',
             },
@@ -3005,55 +2940,6 @@
                 // A quote line ends the paragraph for both widths
                 // (carve-grammars#856).
                 pattern: RegExp(attrValueFree + notEscaped + '(?<!`)(`{3,16})(?:[^`]|[^`](?:[^\\r\\n]|(?:\\r\\n?|\\n)(?!' + quoteOpener + ')){0,4096}?[^`])\\1(?!`)'),
-                greedy: true,
-            },
-            {
-                /*
-                 * A BACKTICK RUN WITH NO PARTNER IS STILL A CODE SPAN, and it
-                 * runs to the end of its PARAGRAPH: `` a `x *b* y `` renders
-                 * `<p>a <code>x *b* y</code></p>`, and it keeps going across a
-                 * soft line break (`` a `x `` / `second line` is one code span
-                 * holding both). The pattern above requires a closing run, so
-                 * none of that matched and the body stayed live markup - the
-                 * carve-grammars#312 leak.
-                 *
-                 * NO CLOSER IS LOOKED FOR, because none is left to find: this
-                 * entry runs after the paired pattern in the same token and
-                 * Prism applies the entries of an array in order, so every run
-                 * that HAS a partner is already consumed. A
-                 * `(?![\s\S]*?\1)` lookahead would answer the same question
-                 * at O(n) per backtick, which is the quadratic shape
-                 * carve-grammars#298 and #300 took out of this file.
-                 *
-                 * THE SPAN STOPS WHERE THE BLOCK DOES - at a blank line, and
-                 * at any line that opens or closes another block. Both are
-                 * measured: `` a `x *b* y `` / `` / `next *c*` leaves the
-                 * second paragraph's bold live, and `::: note` / `` a `x *b* y ``
-                 * / `:::` ends the span before the closer rather than eating
-                 * it. That second bound is the one that matters, and it is the
-                 * hazard `fencedVerbatim` states next door: a span with no
-                 * closer ahead that ran on would swallow its container's own
-                 * closer and every block after it. `otherBlockOpener` is the
-                 * same line test the definition-list rule uses, so there is one
-                 * answer in this file to "where does a paragraph stop".
-                 *
-                 * It is wider than the engine on exactly one shape: a bullet
-                 * does NOT interrupt an open run there (`` a `x `` / `- item`
-                 * is one code span holding the bullet), and it does here. That
-                 * is the safe direction - the span gives ground rather than
-                 * taking a line it should not.
-                 *
-                 * `tests/unclosed-delimiter-test.js` pins that an unpartnered
-                 * opener never reaches past the break.
-                 *
-                 * The pieces, and why each is shaped the way it is, are on
-                 * `unpartneredRun` above `Prism.languages.carve`. The width
-                 * bound is the one that matters here: a bare run of three or
-                 * more cannot be told from an unterminated code fence, which
-                 * is a residual this grammar keeps on purpose rather than
-                 * guessing at (tests/opaque-payload-test.js).
-                 */
-                pattern: RegExp(attrValueFree + unpartneredRun('', narrowRun).source, 'm'),
                 greedy: true,
             },
         ],
@@ -3350,6 +3236,11 @@
                 ...Object.fromEntries(Object.entries(attributes.inside).filter(([name]) => name !== 'string')),
             },
         }, attributes],
+        // A valid block glued to no host is one literal atom (C2-I-035, C2-I-036).
+        'attributes-unattached': {
+            pattern: RegExp(notEscaped + '\\{[ \\t]*' + strictAttrItem + '(?:[ \\t]+' + strictAttrItem + ')*[ \\t]*\\}'),
+            greedy: true,
+        },
 
         // Inline emphasis family (must come after code/links/attributes)
         'bold-italic': inline['bold-italic'],
@@ -3556,23 +3447,13 @@
      *
      * The document level has no such problem because its `code` runs long before
      * its `escape`. So these entries carry the guard themselves - `notEscaped` is
-     * the odd-backslash test the unpartnered entries already use - and the set
+     * the odd-backslash test the sigil entries already use - and the set
      * goes back to the document's order, with `escape` after it.
-     *
-     * The tail is cut to one line in the same pass. `unpartneredTail` runs a span
-     * to the end of its PARAGRAPH, and a heading or caption ENDS with its line,
-     * so there is nothing for it to continue into. highlight.js and the TextMate
-     * grammar were given that bound in #600; Prism was not, because its tail is
-     * already bounded and looked cheap.
      */
-    var lineOnlyTail = '[^\\r\\n]{0,4096}';
     function blockVerbatim(token) {
         const bind = (entry) => {
             if (!(entry.pattern instanceof RegExp)) return entry;
             let source = entry.pattern.source;
-            if (source.includes(unpartneredTail)) {
-                source = source.replace(unpartneredTail, lineOnlyTail);
-            }
             if (!source.includes(notEscaped)) source = notEscaped + source;
             if (source === entry.pattern.source) return entry;
 
@@ -3672,7 +3553,7 @@
         const prefix = { 'punctuation': { pattern: /((?:\r\n?|\n))[ \t]*>(?: >)*/, lookbehind: true } };
         return ['math', 'literal', 'raw-inline', 'code'].reduce(function (set, name) {
             set[name] = [].concat(Prism.languages.carve[name]).map(function (entry) {
-                const source = entry.pattern.source.split(unpartneredTail).join('[\\s\\S]*').split('(?!' + quoteOpener + ')').join('');
+                const source = entry.pattern.source.split('(?!' + quoteOpener + ')').join('');
                 return Object.assign({}, entry, { pattern: RegExp(source, entry.pattern.flags), greedy: false, inside: prefix });
             });
 
@@ -4219,6 +4100,27 @@ if (Prism?.languages.carve) {
         'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },
         ...grammar,
     };
+    // Every inline set that reads a tag or emphasis reads an unattached block as one atom first.
+    {
+        const unattached = Prism.languages.carve['attributes-unattached'];
+        const ahead = ['bold-italic', 'bold', 'italic', 'underline', 'strike', 'highlight', 'superscript', 'subscript', 'mention', 'tag'];
+        const seen = new Set();
+        const visit = (set) => {
+            if (!set || typeof set !== 'object' || seen.has(set)) return;
+            seen.add(set);
+            for (const entry of Object.values(set)) {
+                for (const rule of [].concat(entry)) if (rule && typeof rule === 'object' && rule.inside) visit(rule.inside);
+            }
+            const keys = Object.keys(set);
+            const at = keys.findIndex((key) => ahead.includes(key));
+            if (at === -1 || 'attributes-unattached' in set) return;
+            const rest = keys.slice(at).map((key) => [key, set[key]]);
+            for (const [key] of rest) delete set[key];
+            set['attributes-unattached'] = unattached;
+            for (const [key, value] of rest) set[key] = value;
+        };
+        visit(Prism.languages.carve);
+    }
 }
 
 if (Prism?.languages.carve) {
