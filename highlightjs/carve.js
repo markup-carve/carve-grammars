@@ -1088,15 +1088,40 @@ function adaptGrammar(grammar, hljs) {
         relevance: 5,
     };
 
+    // A label or definition ends at its line break unless `on:end` hands it the
+    // next line; `returnEnd` leaves the break for the parent when it ends.
+    const LINE_BREAK_END = /\r\n|\r(?!\n)|\n|$(?![\s\S])/;
+
     // Reference definitions: [ref]: url "title". The destination and the
     // `link_title` are scoped apart, as TextMate does (#523).
     const REFERENCE_DEF = {
         className: 'symbol',
         // Anchored at end of line, so `[a]: /u zzz` stays prose (#533).
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\[(?!@|\^[^\]])(?!\^\]:[ \t]*$)[^\]]+\]:(?=(?: [^\S\n]*(?:\S|\uFEFF)+(?: (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?(?: \{[^{}\n]*\})?)?[ \t]*$(?![^\r\n]))/,
-        end: /$(?![^\r\n])/,
+        // The indented lines below it continue it while they hold the rest of
+        // its tail: a title, an attribute block, at most one of each, in that
+        // order (C2-B-083). `data.tail` holds the parts still open.
+        end: LINE_BREAK_END,
+        returnEnd: true,
+        'on:begin': (m, resp) => {
+            const line = lineAt(m.input, m.index);
+            const parts = /\]: [^\S\n]*(?:\S|\uFEFF)+( (?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'))?( \{[^{}\n]*\})?[ \t]*$/.exec(line);
+            resp.data.tail = !parts ? '' : parts[2] ? '' : parts[1] ? 'a' : 'ta';
+        },
+        'on:end': (m, resp) => {
+            const tail = resp.data.tail;
+            const next = m[0] ? lineAt(m.input, m.index + m[0].length) : '';
+            const shape = /^[ \t]+(?:("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')( \{[^{}\n]*\})?|\{[^{}\n]*\})[ \t]*$/.exec(next);
+            if (!shape || (shape[1] ? tail !== 'ta' : !tail)) return;
+            resp.data.tail = shape[1] && !shape[2] ? 'a' : '';
+            resp.ignoreMatch();
+        },
         relevance: 10,
         contains: [
+            {
+                className: 'string',
+                begin: /(?<=^(?<![^\r\n])[ \t]+)(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')(?=(?: \{[^\n]*\})?[ \t]*$(?![^\r\n]))/,
+            },
             // Only on a line that completes a definition; `[a]: /u zzz` is
             // prose (grammar.ebnf `reference_definition`, anchored at end of line).
             {
@@ -1135,7 +1160,12 @@ function adaptGrammar(grammar, hljs) {
     const DEFINITION_TERM = {
         className: 'title',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:: (?![ \t]*$(?![^\r\n]))/,
-        end: /$(?![^\r\n])/,
+        // The lines definitionListLines gave the term continue it (C2-B-069).
+        end: LINE_BREAK_END,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            if (m[0] && definitionListLines(m.input).termLines.has(m.index + m[0].length)) resp.ignoreMatch();
+        },
         relevance: 5,
     };
 
@@ -1371,7 +1401,17 @@ function adaptGrammar(grammar, hljs) {
         // Anchored `^[ \t]*` on purpose - no container model here, see the
         // indented-block-openers note in the module docblock (carve-grammars#138).
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\*\[[A-Za-z0-9]+\]:(?= +[^\r\n]*[^ \t\r\n])/,
-        end: /$(?![^\r\n])/,
+        // Every line below it indented past its `*` continues the expansion; a
+        // block line or a comment-only line ends it (C2-B-084).
+        end: LINE_BREAK_END,
+        returnEnd: true,
+        'on:begin': (m, resp) => {
+            resp.data.column = markerColumn(m.input, m.index);
+            resp.data.until = -1;
+        },
+        'on:end': (m, resp) => {
+            if (m[0] && labelContinues(m.input, m.index + m[0].length, resp.data, false)) resp.ignoreMatch();
+        },
         relevance: 10,
     };
 
@@ -1629,6 +1669,33 @@ function adaptGrammar(grammar, hljs) {
     const lineAt = (input, start) => input.slice(start, lineEndFrom(input, start));
     const previousLineStart = (input, start) => start === 0 ? -1
         : lineStartBefore(input, start - (input[start - 1] === '\n' && input[start - 2] === '\r' ? 2 : 1));
+    const columnOf = (lead) => {
+        let col = 0;
+        for (const ch of lead) col = ch === '\t' ? col + 4 - (col % 4) : col + 1;
+        return col;
+    };
+    // A fence, a table row, a `***` break or a block comment ends a label even when indented (C2-B-234).
+    const LABEL_END_LINE = /^[ \t]*(?:`{3,}|:{3,}|%|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
+    const COMMENT_ONLY_LINE = /^[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
+    // Whether the line starting at `at` continues a label whose marker stands at
+    // `column`: indented past it, after any comment-only lines when `comments`.
+    // `data.until` keeps the line found, so a run of comment lines is read once.
+    const labelContinues = (input, at, data, comments) => {
+        if (at <= data.until) return true;
+        while (at < input.length) {
+            const line = lineAt(input, at);
+            if (!(comments && COMMENT_ONLY_LINE.test(line))) {
+                const lead = /^[ \t]*/.exec(line)[0];
+                const held = lead.length < line.length && columnOf(lead) > data.column && !LABEL_END_LINE.test(line);
+                if (held) data.until = at;
+                return held;
+            }
+            at += line.length;
+            at += input[at] === '\r' && input[at + 1] === '\n' ? 2 : 1;
+        }
+        return false;
+    };
+    const markerColumn = (input, index) => columnOf(/^\uFEFF?([ \t]*)/.exec(lineAt(input, lineStartBefore(input, index + 1)))[1]);
     // A line after which a new block starts: it ends any paragraph above.
     const BLOCK_BOUNDARY_LINE = /^\uFEFF?(?:[ \t]*(?:#{1,6}(?: |$)|`{3,}|~{3,}|:{3,}|%{3,}|(?:-{3,}|\*{3,}|_{3,})[ \t]*$|\|.*\|(?:\{[^{}]*\})?[ \t]*$|\{[^{}]*\}[ \t]*$|%%|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|:: )|\+[ \t]*$)/;
     const LIST_ITEM_LINE = /^\uFEFF?[ \t]*(?:[-*]|\d{1,9}[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\)|\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))|\.)(?: +[^ \t]|\{)/;
@@ -1833,13 +1900,15 @@ function adaptGrammar(grammar, hljs) {
         for (var m = 0; m < definitionListMemo.length; m++) {
             if (definitionListMemo[m].text === text) return definitionListMemo[m];
         }
-        var result = { text: text, terms: new Set(), markers: new Set(), lists: [], fenced: new Set(), fences: [] };
+        var result = { text: text, terms: new Set(), markers: new Set(), termEnds: new Map(), termLines: new Set(), lists: [], fenced: new Set(), fences: [] };
         definitionListMemo.unshift(result);
         if (definitionListMemo.length > 4) definitionListMemo.pop();
 
         var frames = [{ kind: 'document', width: 0, list: null }];
         var para = -1;
         var fence = null;
+        // The open term: its frame, the column of its `::` and the offset of the mark.
+        var openTerm = null;
         // A line block's span pairing is not modeled here, so a fence after
         // one in the same frame is not reported in `fences`; nor is one in a
         // frame a `+` shifted.
@@ -1853,6 +1922,8 @@ function adaptGrammar(grammar, hljs) {
         lineRe.lastIndex = start;
         var listMarker = /^(?:[-*.]|[0-9]+[.)]|[A-Za-z]+\)|[A-Za-z]+\.(?= {2}|\{[^}\r\n]{0,4096}\} {2}))( +(?=[^ \t])|$)/;
         var opener = /^(?:#{1,6}(?:[ \t]|$)|`{3,}|~{3,}|%{3,}|:{3,}|>|\[\^[^\]\r\n]+\]:|\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$|\^ |(?:-[ \t]*){3,}$|(?:\*[ \t]*){3,}$|(?:_[ \t]*){3,}$)/;
+        // The lines that end a label even indented past its marker (C2-B-234).
+        var labelEnd = /^(?:`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
         var line, at, end;
         // Closerless front matter runs to the end of the text.
         var frontMatter = start === lineRe.lastIndex && /^---(?:[ \t][^\r\n]*)?(?:\r\n|\r|\n|$)/.test(text.slice(start));
@@ -1973,6 +2044,20 @@ function adaptGrammar(grammar, hljs) {
                 }
                 fence = null;
             }
+            // A term holds the lines indented past its `::`; a comment-only line between is not seen (C2-B-069, C2-B-234).
+            if (openTerm && /^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/.test(rest)) openTerm.comments.push(at);
+            else if (openTerm) {
+                if (!blank && rest && reached >= openTerm.depth && indent > openTerm.indent && !labelEnd.test(rest)) {
+                    result.termEnds.set(openTerm.at, end);
+                    openTerm.comments.push(at);
+                    openTerm.comments.forEach(function (line) { result.termLines.add(line); });
+                    openTerm.comments = [];
+                    blanks = 0;
+                    extend(end);
+                    continue;
+                }
+                openTerm = null;
+            }
             // S1: a line comment and a one-line link definition are erased.
             if (/^%%(?!%)/.test(rest) || /^\[(?!\^)[^\]\r\n]+\]:(?:[ \t]+[^ \t]+)?[ \t]*$/.test(rest)) {
                 blanks = 0;
@@ -2056,6 +2141,7 @@ function adaptGrammar(grammar, hljs) {
                 if (termMatch) {
                     openList(owner, restAt);
                     result.terms.add(restAt);
+                    openTerm = { depth: depth, indent: indent, at: restAt, comments: [] };
                     para = -1;
                     break;
                 }
@@ -3192,8 +3278,17 @@ function adaptGrammar(grammar, hljs) {
         className: 'title.caption',
         begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(?=\^ (?![ \t]*$(?![^\r\n])))/,
         // Without a host the line is paragraph text, inline runs and all.
-        'on:begin': scopeUnless('title.caption', (m) => !captionHost(m.input, m.index)),
-        end: /$(?![^\r\n])/,
+        'on:begin': (m, resp) => {
+            scopeUnless('title.caption', (m) => !captionHost(m.input, m.index))(m);
+            resp.data.column = markerColumn(m.input, m.index);
+            resp.data.until = -1;
+        },
+        // A caption is a label (C2-B-148, C2-B-234).
+        end: LINE_BREAK_END,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            if (m[0] && labelContinues(m.input, m.index + m[0].length, resp.data, true)) resp.ignoreMatch();
+        },
         relevance: 5,
     };
 

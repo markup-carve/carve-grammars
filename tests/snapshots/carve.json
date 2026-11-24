@@ -1349,16 +1349,8 @@
         "\n"
       ],
       [
-        "source.carve keyword.control.definition.carve punctuation.definition.list.definition.carve",
-        ":"
-      ],
-      [
         "source.carve",
-        " "
-      ],
-      [
-        "source.carve",
-        "first description"
+        ": first description"
       ],
       [
         "",
