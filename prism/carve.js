@@ -4123,6 +4123,7 @@ if (Prism?.languages.carve) {
         return column;
     };
     const labelLine = /(\r\n?|\n)([ \t]*)([^\r\n]*)/y;
+    const commentOnly = /^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
     titlePattern.exec = function (source) {
         titleScan.lastIndex = 0;
         let match;
@@ -4132,7 +4133,10 @@ if (Prism?.languages.carve) {
             let end = match.index + match[0].length;
             let line;
             labelLine.lastIndex = end;
-            while ((line = labelLine.exec(source)) && line[3] && columnOf(line[2]) > marker && !labelEnd.test(line[3])) {
+            while ((line = labelLine.exec(source)) && line[3]) {
+                // A comment-only line is not seen (C2-B-137).
+                if (commentOnly.test(line[3])) continue;
+                if (columnOf(line[2]) <= marker || labelEnd.test(line[3])) break;
                 end = labelLine.lastIndex;
             }
             if (end === match.index + match[0].length) return match;
@@ -4147,6 +4151,8 @@ if (Prism?.languages.carve) {
         ...grammar.title,
         pattern: titlePattern,
         inside: {
+            // A comment-only line inside the heading's lines.
+            'comment-line': { pattern: /((?:\r\n?|\n)[ \t]*)%%(?!%)[^\r\n]*/, lookbehind: true, alias: 'comment' },
             ...grammar.title.inside,
             punctuation: /^(?<![^\r\n])\uFEFF?(?:#{1,6}|={1,6})/,
         },
@@ -4240,6 +4246,9 @@ if (Prism?.languages.carve) {
     Prism.languages.carve = {
         'region-marker': region,
         'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },
+        // Ahead of the greedy comment rule, so a heading spans a comment-only
+        // line (C2-B-154); its own inside scopes the comment.
+        'title': grammar.title,
         ...grammar,
     };
     // A typed opener after line 1 opens a top-level metadata block when a blank

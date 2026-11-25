@@ -166,6 +166,7 @@ for (const [source, construct, inside, outside] of [
     ['= H\n  | t |\n', 'heading', '=H', 't'],
     ['= H\n  ***\n', 'heading', '=H', '***'],
     ['p\n= H\n  x\n', 'heading', '', ''],
+    ['= H\n%% note\n  continued\nx\n', 'heading', 'continued', 'x'],
     // A caret line directly below a caption is text (CC-1861, CC-2035,
     // C2-B-148, C2-B-149, carve-grammars#956).
     ['![a](a.png)\n^ one\n^ two\n', 'caption', '^one', 'two'],
