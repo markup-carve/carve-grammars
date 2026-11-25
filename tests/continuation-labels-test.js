@@ -182,6 +182,14 @@ for (const [source, construct, inside, outside] of [
     }
     groups++;
 }
+// A heading continuation is indented past the marker by column, tabs counted
+// to the next multiple of 4 (C2-B-004, C2-B-234). TextMate compares the
+// characters, so it is left out here.
+for (const engine of ['Prism', 'highlight.js']) {
+    assert.equal(covered(engine, '\t= H\n     x\n', 'heading'), '=Hx', `${engine} tab heading`);
+    assert.equal(covered(engine, '= H\n\tcont\nnext\n', 'heading'), '=Hcont', `${engine} tab continuation`);
+}
+groups++;
 // A title and an attribute block on their own tail lines. TextMate ends its rule
 // at the title line (a child rule cannot end its parent), so it is left out here.
 for (const engine of ['Prism', 'highlight.js']) {

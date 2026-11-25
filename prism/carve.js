@@ -4112,16 +4112,34 @@ if (Prism?.languages.carve) {
     const letterMarker = '(?:(?:[a-z]|[ivxlcdm]{2,9})\\.(?= \\S)|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?= {2}\\S))';
     grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
-    // A heading is a label: it holds every line below it indented past its
-    // marker, up to a blank line or an interrupter (C2-B-154, C2-B-234).
-    const labelLines = '(?:(?:\\r\\n?|\\n)\\1[ \\t]+(?!`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|\\|[^\\r\\n]*\\||\\*{3,}[ \\t]*$)\\S[^\\r\\n]*)*';
-    const titlePattern = new RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$' + labelLines, 'm');
+    const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$', 'm');
     const titleScan = new RegExp(titlePattern.source, 'gm');
+    // A heading is a label: it holds every line below it indented past its
+    // marker by column, up to a blank line or an interrupter (C2-B-154, C2-B-234).
+    const labelEnd = /^(?:`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
+    const columnOf = (lead) => {
+        let column = 0;
+        for (const ch of lead) column = ch === '\t' ? column + 4 - (column % 4) : column + 1;
+        return column;
+    };
+    const labelLine = /(\r\n?|\n)([ \t]*)([^\r\n]*)/y;
     titlePattern.exec = function (source) {
         titleScan.lastIndex = 0;
         let match;
         while ((match = titleScan.exec(source))) {
-            if (!inParagraph(source, match.index)) return match;
+            if (inParagraph(source, match.index)) continue;
+            const marker = columnOf(/^﻿?([ \t]*)/.exec(match[0])[1]);
+            let end = match.index + match[0].length;
+            let line;
+            labelLine.lastIndex = end;
+            while ((line = labelLine.exec(source)) && line[3] && columnOf(line[2]) > marker && !labelEnd.test(line[3])) {
+                end = labelLine.lastIndex;
+            }
+            if (end === match.index + match[0].length) return match;
+            const extended = [source.slice(match.index, end)];
+            extended.index = match.index;
+            extended.input = source;
+            return extended;
         }
         return null;
     };
