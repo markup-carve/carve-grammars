@@ -1444,16 +1444,8 @@
         "\n"
       ],
       [
-        "source.carve meta.caption.carve punctuation.definition.caption.carve",
-        "^"
-      ],
-      [
-        "source.carve meta.caption.carve",
-        " "
-      ],
-      [
-        "source.carve meta.caption.carve markup.caption.carve",
-        "second"
+        "source.carve",
+        "^ second"
       ],
       [
         "",

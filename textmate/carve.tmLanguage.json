@@ -12867,6 +12867,25 @@
       ]
     },
     "caption": {
+      "comment": "A caption is a label (C2-B-234): a caret line directly below it is a caption line of its own, which is text (C2-B-148, C2-B-149, carve-grammars#956). The wrapper holds the caption and then each such caret line as paragraph text; any other line ends it.",
+      "begin": "^(?=(?:\\A\\x{FEFF})?[ \\t]*\\^ +(?![ \\t]*$))",
+      "end": "^(?![ \\t]*\\^ +(?![ \\t]*$))",
+      "patterns": [
+        {
+          "begin": "^(?!\\G)(?=[ \\t]*\\^ +(?![ \\t]*$))",
+          "end": "^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{2,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)",
+          "patterns": [
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "include": "#caption_label"
+        }
+      ]
+    },
+    "caption_label": {
       "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\^) +(?![ \\t]*$)",
       "beginCaptures": {
         "2": {
