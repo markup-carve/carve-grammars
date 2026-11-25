@@ -243,6 +243,8 @@ for (const [source, construct, inside, outside] of [
     ['- # H\n    A.  item\n', 'heading', '#H', 'item'],
     ['- # H\n    . item\n', 'heading', '#H', 'item'],
     ['- # H\n    ii) item\n', 'heading', '#Hii)item', ''],
+    ['- # H\n    iv. item\n', 'heading', '#Hiv.item', ''],
+    ['- # H\n    1234567890. item\n', 'heading', '#H1234567890.item', ''],
     ['- # H\n    A. item\n', 'heading', '#HA.item', ''],
     ['- # H\n    . . x\n', 'heading', '#H..x', ''],
     ['- :: t\n     - item\n', 'term', 't-item', ''],
