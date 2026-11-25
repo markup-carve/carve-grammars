@@ -264,6 +264,7 @@ for (const [source, construct, inside, outside] of [
     ['> :: t\n> : d\n', 'description', ':', ''],
     ['> > :: t\n> : d\n', 'description', '', ':'],
     ['> -                  :: t\n>                    : d\n', 'description', ':', ''],
+    ['> -                  :: t\n> : d\n', 'description', '', ':'],
     ['> - :: a\n> - :: b\n>   : d\n', 'description', ':', ''],
     ['- # H\n    A. item\n', 'heading', '#HA.item', ''],
     ['- # H\n    . . x\n', 'heading', '#H..x', ''],
