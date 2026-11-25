@@ -4134,8 +4134,11 @@ if (Prism?.languages.carve) {
             let line;
             labelLine.lastIndex = end;
             while ((line = labelLine.exec(source)) && line[3]) {
-                // A comment-only line is not seen (C2-B-137).
-                if (commentOnly.test(line[3])) continue;
+                // A comment-only line is not seen, and is the heading's (C2-B-137, C2-B-138).
+                if (commentOnly.test(line[3])) {
+                    end = labelLine.lastIndex;
+                    continue;
+                }
                 if (columnOf(line[2]) <= marker || labelEnd.test(line[3])) break;
                 end = labelLine.lastIndex;
             }

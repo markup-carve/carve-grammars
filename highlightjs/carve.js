@@ -790,7 +790,9 @@ function adaptGrammar(grammar, hljs) {
         end: /\r\n?|\n/,
         returnEnd: true,
         'on:end': (m, resp) => {
-            if (labelContinues(m.input, m.index + m[0].length, resp.data.label, true)) resp.ignoreMatch();
+            // A comment-only line below is the heading's own (C2-B-138).
+            const next = m.index + m[0].length;
+            if (COMMENT_ONLY_LINE.test(lineAt(m.input, next)) || labelContinues(m.input, next, resp.data.label, true)) resp.ignoreMatch();
         },
         relevance: 10,
     };
