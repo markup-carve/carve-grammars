@@ -239,6 +239,12 @@ for (const [source, construct, inside, outside] of [
     ['- # H\n    - item\n', 'heading', '#H', 'item'],
     ['1. # H\n     1. item\n', 'heading', '#H', 'item'],
     ['> - # H\n>     - item\n', 'heading', 'H', 'item'],
+    ['- # H\n    a) item\n', 'heading', '#H', 'item'],
+    ['- # H\n    A.  item\n', 'heading', '#H', 'item'],
+    ['- # H\n    . item\n', 'heading', '#H', 'item'],
+    ['- # H\n    ii) item\n', 'heading', '#Hii)item', ''],
+    ['- # H\n    A. item\n', 'heading', '#HA.item', ''],
+    ['- # H\n    . . x\n', 'heading', '#H..x', ''],
     ['- :: t\n     - item\n', 'term', 't-item', ''],
     ['> - :: t\n>     1. item\n', 'term', 't1.item', ''],
     // Past marker column 24 a label still opens and ends with its line.
