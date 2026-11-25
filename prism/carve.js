@@ -479,9 +479,10 @@
 
 
     // A caption needs a host above it, past any blank lines: an image alone on
-    // its line, a table row, a code fence, a `$$` math line, a quote line, or
-    // the closer of a `::: figure` group or a `::: >` quote. 'caption' is
-    // greedy so this reads the real lines above it.
+    // its line (its reference label ends at the first `]`, C2-I-076, C2-B-197),
+    // a table row, a code fence, a `$$` math line, a quote line, or the closer
+    // of a `::: figure` group or a `::: >` quote. 'caption' is greedy so this
+    // reads the real lines above it.
     var captionNl = '(?:\\r\\n|\\r(?!\\n)|\\n)';
     // A fence, a table row, a `***` break or a block comment ends a label even when indented (C2-B-234).
     var labelEnd = '(?:`{3,}|:{3,}|%|\\|[^\\r\\n]*\\||\\*{3,}[ \\t]*$(?![^\\r\\n]))';
@@ -501,7 +502,7 @@
     // The image's alt text may span lines; its destination or label may not.
     var captionImage = '!\\[(?:[^\\[\\]\\r\\n]|\\[[^\\[\\]\\r\\n]*\\]|' + captionNl + '(?![ \\t]*' + captionNl + ')){0,1024}\\]'
         + '(?:\\([^\\r\\n)]*\\)|\\[[^\\]\\r\\n]*\\])(?:\\{[^\\r\\n]*\\})?[ \\t]*';
-    var captionHost = '(?<=(?:(?<![^\\r\\n])(?:' + listMarkerBeforeBlock + '|[ \\t]*)(?:!\\[[^\\r\\n]*[)\\]}][ \\t]*|' + captionImage + ')'
+    var captionHost = '(?<=(?:(?<![^\\r\\n])(?:' + listMarkerBeforeBlock + '|[ \\t]*)(?:!\\[[^\\r\\n]*\\](?:\\([^\\r\\n]*\\)|\\[[^\\]\\r\\n]*\\])(?:\\{[^\\r\\n]*\\})?[ \\t]*|' + captionImage + ')'
         + '|(?<![^\\r\\n])(?:[ \\t]*\\|[^\\r\\n]*|[ \\t]*\\+[^\\r\\n]*\\|[ \\t]*'
         + '|[ \\t]*(?:`{3,}|~{3,})[ \\t]*|[ \\t]*\\$\\$`[^\\r\\n]*`[ \\t]*|[ \\t]*>[^\\r\\n]*'
         + '|(?<=(?<![^\\r\\n])[ \\t]*:{3,} +(?:figure|>)[ \\t]*' + captionNl + '(?:[^\\r\\n]*' + captionNl + '){0,256}?)[ \\t]*:{3,}[ \\t]*))'
