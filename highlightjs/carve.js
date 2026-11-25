@@ -98,8 +98,11 @@ function adaptGrammar(grammar, hljs) {
         if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return markerLineHeading(match, response);
         match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
     };
-    grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
+    const horizontalRule = grammar.contains.find(mode => mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
+    grammar.contains = grammar.contains.filter(mode => mode !== horizontalRule);
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+    // A div body shares the mode: a thematic break is stars only (C2-B-159).
+    if (horizontalRule) horizontalRule.begin = new RegExp(lineStart + '\\*{3,}[ \\t]*$(?![^\\r\\n])');
     // C2-B-081: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
     function definitionAllowed(source, offset) {
@@ -725,16 +728,22 @@ function adaptGrammar(grammar, hljs) {
     // An opener with no closing dash line runs to the end of the document
     // (carve#5016), so no closer lookahead.
     const FRONT_MATTER_CLOSER = /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/;
-    const frontMatterOpener = (format) => new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])');
-    const frontMatter = (format) => ({
+    // A typed opener after line 1 also opens a top-level metadata block when a
+    // blank line, or attribute lines that follow one or start on line 1, stand
+    // directly above it (C2-B-232, C2-B-233); bare `---` stays line-1 only.
+    const LINE_ONE = '(?<![\\s\\S])\\uFEFF?';
+    const ATTRIBUTE_LINES = '(?:\\{[^{}\\r\\n]*\\}[ \\t]*)+(?:\\r\\n?|\\n)';
+    const LATER = '(?=---)(?<=(?:(?<![\\s\\S])|\\r\\n?|\\n)[ \\t]*(?:\\r\\n?|\\n)(?:' + ATTRIBUTE_LINES + ')*|(?<![\\s\\S])\\uFEFF?(?:' + ATTRIBUTE_LINES + ')+)';
+    const frontMatterOpener = (format, anchor = LINE_ONE) => new RegExp('^(?<![^\\r\\n])' + anchor + '---' + format + '[ \\t]*$(?![^\\r\\n])');
+    const frontMatter = (format, anchor) => ({
         className: 'meta',
-        begin: frontMatterOpener(format),
+        begin: frontMatterOpener(format, anchor),
         end: FRONT_MATTER_CLOSER,
         relevance: 10,
     });
-    const delegatedFrontMatter = (format, subLanguage) => ({
+    const delegatedFrontMatter = (format, subLanguage, anchor) => ({
         className: 'meta',
-        begin: frontMatterOpener(format),
+        begin: frontMatterOpener(format, anchor),
         end: /$(?![^\r\n])/,
         relevance: 10,
         starts: {
@@ -751,6 +760,13 @@ function adaptGrammar(grammar, hljs) {
         delegatedFrontMatter(' ?toml', 'ini'),
         delegatedFrontMatter('(?: ?(?:yaml|yml))?', 'yaml'),
         frontMatter(' ?[A-Za-z0-9]+'),
+    ];
+    // Top level only: a div body leaves the opener as text (C2-B-232).
+    const LATER_METADATA = [
+        delegatedFrontMatter(' ?json', 'json', LATER),
+        delegatedFrontMatter(' ?toml', 'ini', LATER),
+        delegatedFrontMatter(' ?(?:yaml|yml)', 'yaml', LATER),
+        frontMatter(' ?[A-Za-z0-9]+', LATER),
     ];
 
     // Headings: # to ######
@@ -3725,6 +3741,7 @@ function adaptGrammar(grammar, hljs) {
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)
         ...FRONT_MATTER,
+        ...LATER_METADATA,
         HEADING,
         CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
         RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string
@@ -3835,6 +3852,7 @@ function adaptGrammar(grammar, hljs) {
     // bare opener, which BARE_FENCE_LINE stands in for. DIV_BLOCK is in that
     // list, so a div nests in a div.
     const IN_CONTAINER = CONTAINS
+        .filter((mode) => !LATER_METADATA.includes(mode))
         .map((mode) => (mode === BARE_DIV_BLOCK ? BARE_FENCE_LINE : mode));
     DIV_BLOCK.contains = IN_CONTAINER;
     BARE_DIV_BLOCK.contains = IN_CONTAINER;

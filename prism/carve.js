@@ -4216,6 +4216,28 @@ if (Prism?.languages.carve) {
         'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },
         ...grammar,
     };
+    // A typed opener after line 1 opens a top-level metadata block when a blank
+    // line, or attribute lines that follow one or start on line 1, stand
+    // directly above it (C2-B-232, C2-B-233). Bare `---` stays line-1 only
+    // (C2-B-161). Ordered after the fence rules, whose greedy tokens keep an
+    // opener inside a fence or a div body as their own content.
+    {
+        const carve = Prism.languages.carve;
+        const attributes = String.raw`(?:\{[^{}\r\n]*\}[ \t]*)+(?:\r\n?|\n)`;
+        const later = String.raw`(?<![^\r\n])(?=---)(?<=(?:^|\r\n?|\n)[ \t]*(?:\r\n?|\n)(?:${attributes})*|^\uFEFF?(?:${attributes})+)`;
+        const lineOne = String.raw`^(?<![^\r\n])\uFEFF?`;
+        const metadata = carve['front-matter'].map((rule) => {
+            const source = rule.pattern.source;
+            if (!source.startsWith(lineOne)) throw new Error('front-matter opener anchor moved');
+            const format = source.slice(lineOne.length).replace(/^---\(\?: \?\(\?:yaml\|yml\)\)\?/, '--- ?(?:yaml|yml)');
+            return Object.assign({}, rule, { pattern: RegExp(later + format, rule.pattern.flags) });
+        });
+        const keys = Object.keys(carve);
+        const rest = keys.slice(keys.indexOf('code-block-in-container') + 1).map((key) => [key, carve[key]]);
+        for (const [key] of rest) delete carve[key];
+        carve['metadata-block'] = metadata;
+        for (const [key, value] of rest) carve[key] = value;
+    }
     // Every inline set that reads a tag or emphasis reads an unattached block as one atom first.
     {
         const unattached = Prism.languages.carve['attributes-unattached'];
