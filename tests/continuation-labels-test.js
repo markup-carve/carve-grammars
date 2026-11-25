@@ -186,6 +186,7 @@ for (const [source, construct, inside, outside] of [
     ['![a](i.png) %% c\n^ cap\n', 'caption', '', ''],
     ['![a](i.png)\n{.x}\n^ cap\n', 'caption', '', ''],
     ['![a][]\n^ cap\n', 'caption', '^cap', ''],
+    ['![a]\n^ cap\n', 'caption', '', ''],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
@@ -220,6 +221,9 @@ for (const [source, construct, inside, outside] of [
     ['1. # H\n    more\n', 'heading', '#Hmore', ''],
     ['1. # H\n   more\n', 'heading', '#H', 'more'],
     ['- # H\n  - x\n', 'heading', '#H', 'x'],
+    // Past marker column 24 a label still opens and ends with its line.
+    ['-                         # Long\n                            more\n', 'heading', '#Long', 'more'],
+    ['-                          :: Long\n- x\n', 'term', 'Long', 'x'],
     ['> | a |\n> ^ Quoted cap\n>   cap more\n', 'caption', '^Quotedcapcapmore', '>'],
     ['> ![a](i.png)\n> ^ cap\n>   more\n', 'caption', '^capmore', ''],
     ['> | a |\n> ^ cap\n> %% c\n>   more\n', 'caption', '^cap%%cmore', ''],
