@@ -3147,9 +3147,20 @@ function adaptGrammar(grammar, hljs) {
 
     // Mentions and tags: @name / #name (a heading `#` is line-anchored and is
     // matched earlier, so an inline `#tag` is unambiguous).
+    // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
+    // joined by single dots, holding a letter, not ending in a hyphen. A run
+    // directly followed by a Unicode letter, number or mark is text, which
+    // needs `u`, so 'on:begin' tests it.
+    const TAG_NAME = '(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-)';
+    const TAG_RUN_FOLLOWER = /[A-Za-z0-9_.-]*([\p{L}\p{N}\p{M}])?/uy;
+    const refuseGluedName = (m, resp) => {
+        TAG_RUN_FOLLOWER.lastIndex = m.index + 1;
+        if (TAG_RUN_FOLLOWER.exec(m.input)[1]) resp.ignoreMatch();
+    };
     const MENTION = {
         className: 'symbol',
-        begin: /(?<![\w@])@[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w@])@' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
     /*
@@ -3178,7 +3189,8 @@ function adaptGrammar(grammar, hljs) {
     };
     const TAG = {
         className: 'symbol',
-        begin: /(?<![\w#])#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w#])#' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
     // Used only inside HEADING (carve-grammars#125), not TAG itself: a
@@ -3189,7 +3201,8 @@ function adaptGrammar(grammar, hljs) {
     // corpus 118 (`# A </#a>`), which pins the whole thing staying unscoped.
     const HEADING_TAG = {
         className: 'symbol',
-        begin: /(?<![\w#])(?<!<\/)#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w#])(?<!<\\/)#' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
 

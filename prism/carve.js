@@ -164,6 +164,11 @@
     };
     // Not behind an odd backslash run: an even run is escaped backslashes. Bounded at 32 pairs.
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
+    // joined by single dots, holding a letter, not ending in a hyphen; a run
+    // directly followed by a Unicode letter, number or mark is text. Needs `u`.
+    var tagName = '(?!(?=(?<run>[A-Za-z0-9_.-]*))\\k<run>[\\p{L}\\p{N}\\p{M}])'
+        + '(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-)';
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -2328,7 +2333,7 @@
                 // trick, because the exclusion needs to see two characters
                 // back.
                 'tag': {
-                    pattern: RegExp(/(^(?<![^\r\n])|[^\w])(?<!<\/)/.source + notEscaped + /#[A-Za-z0-9_][\w-]*/.source),
+                    pattern: RegExp(/(^(?<![^\r\n])|[^\w])(?<!<\/)/.source + notEscaped + '#' + tagName, 'u'),
                     lookbehind: true,
                     alias: 'variable',
                 },
@@ -3333,12 +3338,12 @@
 
         // Mentions @name, tags #tag, symbols :name:
         'mention': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w.])/.source + notEscaped + /@[A-Za-z0-9_][\w-]*/.source),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w.])/.source + notEscaped + '@' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
         'tag': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + /#[A-Za-z0-9_][\w-]*/.source),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + '#' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },

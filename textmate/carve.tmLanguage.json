@@ -15505,7 +15505,7 @@
       ]
     },
     "mention": {
-      "match": "(?<![\\w])(@)([a-zA-Z][\\w-]*)",
+      "match": "(?<![\\w])(@)(?![A-Za-z0-9_.-]*+[\\p{L}\\p{N}\\p{M}])(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])([A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-))",
       "captures": {
         "1": {
           "name": "punctuation.definition.mention.carve"
@@ -15554,7 +15554,7 @@
       }
     },
     "tag": {
-      "match": "(?<![\\w])(#)([a-zA-Z][\\w-]*)",
+      "match": "(?<![\\w])(#)(?![A-Za-z0-9_.-]*+[\\p{L}\\p{N}\\p{M}])(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])([A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-))",
       "captures": {
         "1": {
           "name": "punctuation.definition.tag.carve"
@@ -15562,11 +15562,12 @@
         "2": {
           "name": "variable.other.tag.carve"
         }
-      }
+      },
+      "comment": "A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-` joined by single dots, holding a letter, not ending in a hyphen. A run directly followed by a Unicode letter, number or mark is text. The mention and heading_tag rules share the name."
     },
     "heading_tag": {
       "comment": "Used only inside `heading` (carve-grammars#125), not the shared `#tag` include: a heading's own inline set does not carry `#cross_ref`, so without this guard a heading cross-reference's `#id` (`</#id>`, grammar.ebnf `auto_text_link`) would be wrongly claimed as a tag - corpus 118 pins `# A </#a>` staying unscoped as a whole. `#cross_ref` is not added here instead because that would mean modeling the full cross-reference construct (and its `>` closer) inside headings, well past this ticket's scope; excluding the one shape that collides is the narrower fix.",
-      "match": "(?<![\\w])(?<!</)(#)([a-zA-Z][\\w-]*)",
+      "match": "(?<![\\w])(?<!</)(#)(?![A-Za-z0-9_.-]*+[\\p{L}\\p{N}\\p{M}])(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])([A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-))",
       "captures": {
         "1": {
           "name": "punctuation.definition.tag.carve"

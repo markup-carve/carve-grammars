@@ -5,6 +5,7 @@ for (const file of [
     'tests/textmate-text-runs-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/continuation-labels-test.js',
+    'tests/metadata-and-tag-names-test.js',
     'tests/attribute-value-class-test.js',
     'tests/closed-inline-time-test.js',
     'tests/prism-attribute-time-test.js',
