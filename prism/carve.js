@@ -4112,7 +4112,10 @@ if (Prism?.languages.carve) {
     const letterMarker = '(?:(?:[a-z]|[ivxlcdm]{2,9})\\.(?= \\S)|(?:[A-Z]|[IVXLCDM]{2,9})\\.(?= {2}\\S))';
     grammar['thematic-break'] = { pattern: new RegExp(lineStart + '\\*{3,}[ \\t]*$', 'm'), alias: 'punctuation' };
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
-    const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$', 'm');
+    // A heading is a label: it holds every line below it indented past its
+    // marker, up to a blank line or an interrupter (C2-B-154, C2-B-234).
+    const labelLines = '(?:(?:\\r\\n?|\\n)\\1[ \\t]+(?!`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|\\|[^\\r\\n]*\\||\\*{3,}[ \\t]*$)\\S[^\\r\\n]*)*';
+    const titlePattern = new RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*)(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$' + labelLines, 'm');
     const titleScan = new RegExp(titlePattern.source, 'gm');
     titlePattern.exec = function (source) {
         titleScan.lastIndex = 0;

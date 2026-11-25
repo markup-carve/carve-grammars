@@ -108,6 +108,7 @@ for (const [source, names] of [
     ['@josé and @jose', ['@jose']], // CC-1640
     ['x #größe y\nx @josé y\nx #tag-é\n#tag- x\n@a.b.\nx #a.b.\n', ['#tag', '@a.b', '#a.b']],
     ['x #-a #a-- #a..b #1 #1a #a.1', ['#-a', '#a', '#a', '#1a', '#a.1']],
+    ['= H #a.b. #größe\n', ['#a.b']],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         assert.deepEqual(runs(engine, source, NAMES[engine]), names, `${engine} names: ${JSON.stringify(source)}`);

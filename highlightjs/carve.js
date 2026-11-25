@@ -95,7 +95,8 @@ function adaptGrammar(grammar, hljs) {
     const hashHeading = grammar.contains.find(mode => mode?.className === 'section' && mode.begin?.source.includes('#{1,6}'));
     const markerLineHeading = hashHeading['on:begin'];
     hashHeading['on:begin'] = (match, response) => {
-        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return markerLineHeading(match, response);
+        markerLineHeading(match, response);
+        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return;
         match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
     };
     const horizontalRule = grammar.contains.find(mode => mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
@@ -150,9 +151,7 @@ function adaptGrammar(grammar, hljs) {
     grammar.contains.unshift(
         { className: 'comment', begin: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$') },
         { className: 'bullet', begin: new RegExp(lineStart + letterMarker) },
-        { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$'), 'on:begin': (match) => {
-            match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
-        } },
+        { ...hashHeading, begin: new RegExp(lineStart + '={1,6} +(?=\\S)') },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
     return grammar;
@@ -780,10 +779,19 @@ function adaptGrammar(grammar, hljs) {
             + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + MARKER_LINE_PREFIX + ')(?:#{1,6}|={1,6}))'
             + ' (?![ \\t]*$(?![^\\r\\n]))'),
         // A marker that continues a paragraph opens no heading.
-        'on:begin': (m) => {
-            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'section';
+        'on:begin': (m, resp) => {
+            const start = lineStartBefore(m.input, m.index);
+            m.rule.scope = markerIsParagraphText({ input: m.input, index: start }) ? undefined : 'section';
+            resp.data.label = { column: columnOf(m.input.slice(start, m.index + m[0].search(/[#=]/))), until: -1 };
         },
-        end: /$(?![^\r\n])/,
+        // A heading is a label: it holds every line below it indented past its
+        // marker, comment-only lines unseen (C2-B-154, C2-B-234). The end takes
+        // the line break, so an ignored end still advances.
+        end: /\r\n?|\n/,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            if (labelContinues(m.input, m.index + m[0].length, resp.data.label, true)) resp.ignoreMatch();
+        },
         relevance: 10,
     };
 

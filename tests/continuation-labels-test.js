@@ -158,6 +158,20 @@ for (const [source, construct, inside, outside] of [
     ['-{+a+} # T\n', 'heading', '', ''],
     ['- {.c} # T\n', 'heading', '', ''],
     ['> A. # T\n', 'heading', '', ''],
+    // Heading continuation (CC-699, C2-B-154, C2-B-234, carve-grammars#957).
+    ['= H\n  cont\nnext\n', 'heading', '=Hcont', 'next'],
+    ['# a\n b\n', 'heading', '#ab', ''],
+    ['## H\n   x\n   y\n\n  z\n', 'heading', '##Hxy', 'z'],
+    ['= H\n  - x\n', 'heading', '=H-x', ''],
+    ['= H\n  | t |\n', 'heading', '=H', 't'],
+    ['= H\n  ***\n', 'heading', '=H', '***'],
+    ['p\n= H\n  x\n', 'heading', '', ''],
+    // A caret line directly below a caption is text (CC-1861, CC-2035,
+    // C2-B-148, C2-B-149, carve-grammars#956).
+    ['![a](a.png)\n^ one\n^ two\n', 'caption', '^one', 'two'],
+    ['![i](u)\n^ c\n^ d\n', 'caption', '^c', 'd'],
+    ['| a | b |\n^ first\n^ second\n', 'caption', '^first', 'second'],
+    ['![a](a.png)\n^ one\n  two\n^ three\nnext\n', 'caption', '^onetwo', 'three'],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
