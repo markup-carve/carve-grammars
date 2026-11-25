@@ -221,6 +221,19 @@ for (const [source, construct, inside, outside] of [
     ['1. # H\n    more\n', 'heading', '#Hmore', ''],
     ['1. # H\n   more\n', 'heading', '#H', 'more'],
     ['- # H\n  - x\n', 'heading', '#H', 'x'],
+    // A heading on a quoted list marker line continues too (C2-B-003, C2-B-234).
+    ['> - # H\n>     more\n', 'heading', 'Hmore', '>'],
+    ['> - # H\n> x\n', 'heading', 'H', 'x'],
+    ['> - # H\n> %% c\n>     more\n', 'heading', 'H%%cmore', ''],
+    ['> 1. - # T\n>        more\n', 'heading', 'Tmore', '1.'],
+    // A tab reaches the next tab stop (C2-B-004), and a column-0 comment-only
+    // line ends neither the item nor its label (C2-B-137).
+    ['- # H\n\tmore\n', 'heading', '#Hmore', ''],
+    ['- # H\n%% c\n    more\n', 'heading', '#H%%cmore', ''],
+    ['- # H\n%% c\n    more\n', 'comment', '%%c', 'more'],
+    ['- :: t\n\tmore\n  : d\n', 'term', 'tmore', 'd'],
+    ['- :: t\n%% c\n     more\n  : d\n', 'term', 't%%cmore', 'd'],
+    ['- :: t\n%% c\n     more\n  : d\n', 'description', ':', ''],
     // Past marker column 24 a label still opens and ends with its line.
     ['-                         # Long\n                            more\n', 'heading', '#Long', 'more'],
     ['-                          :: Long\n- x\n', 'term', 'Long', 'x'],
