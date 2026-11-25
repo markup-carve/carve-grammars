@@ -22383,7 +22383,7 @@
           "name": "punctuation.definition.heading.carve"
         }
       },
-      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+      "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
       "name": "markup.heading.carve",
       "contentName": "entity.name.section.carve",
       "patterns": [
@@ -22443,7 +22443,7 @@
           "include": "#inline"
         }
       ],
-      "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138)."
+      "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138). Inside an item a list marker indented past the item's marker ends the heading (C2-B-234); carve-js keeps a roman, a ten-digit or a one-space `A.` marker as heading text."
     },
     "heading_on_marker_line": {
       "comment": "A heading may open on a list item's marker line (`- # Title`, `1. ## Sub`, `- [ ] # T`): carve-js next2 renders it as a heading inside the item (carve-grammars#945). `#heading_in_container` is anchored on ^ and cannot reach text after the marker, so this one is anchored on \\G after the marker's separator. A heading is a label (C2-B-234): it holds the lines below it indented past its marker. A capture per marker column (1 to 24) lets the end compare the indent; the next line at the item's content column is a new block. `- #tag` has no space after the hashes and stays a tag.",
@@ -22723,8 +22723,8 @@
           "name": "markup.quote.carve"
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
-          "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
+          "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))(?=([ \\t]*>(?= ) (?:>(?= ) )*)(?:(?=.{0}:: )(?=(.))|(?=.{1}:: )(?=(.))|(?=.{2}:: )(?=(.))|(?=.{3}:: )(?=(.))|(?=.{4}:: )(?=(.))|(?=.{5}:: )(?=(.))|(?=.{6}:: )(?=(.))|(?=.{7}:: )(?=(.))|(?=.{8}:: )(?=(.))|(?=.{9}:: )(?=(.))|(?=.{10}:: )(?=(.))|(?=.{11}:: )(?=(.))|(?=.{12}:: )(?=(.))|(?=.{13}:: )(?=(.))|(?=.{14}:: )(?=(.))|(?=.{15}:: )(?=(.))|(?=.{16}:: )(?=(.))|(?=.{17}:: )(?=(.))|(?=.{18}:: )(?=(.))|(?=.{19}:: )(?=(.))|(?=.{20}:: )(?=(.))|(?=.{21}:: )(?=(.))|(?=.{22}:: )(?=(.))|(?=.{23}:: )(?=(.))|(?=.{24}:: )(?=(.))|(?=.{25}:: )(?=(.))|(?=.{26}:: )(?=(.))|(?=.{27}:: )(?=(.))|(?=.{28}:: )(?=(.))|(?=.{29}:: )(?=(.))|(?=.{30}:: )(?=(.))|(?=.{31}:: )(?=(.))|(?=.{32}:: )(?=(.))|(?=.{33}:: )(?=(.))|(?=.{34}:: )(?=(.))|(?=.{35}:: )(?=(.))|(?=.{36}:: )(?=(.))|(?=.{37}:: )(?=(.))|(?=.{38}:: )(?=(.))|(?=.{39}:: )(?=(.))|(?=.{40}:: )(?=(.))|))",
+          "end": "^(?!\\1(?:(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)+:: +(?![ \\t]*$)|(?:(?!\\2)\\1[ \\t]{0}|(?!\\3)\\1[ \\t]{1}|(?!\\4)\\1[ \\t]{2}|(?!\\5)\\1[ \\t]{3}|(?!\\6)\\1[ \\t]{4}|(?!\\7)\\1[ \\t]{5}|(?!\\8)\\1[ \\t]{6}|(?!\\9)\\1[ \\t]{7}|(?!\\10)\\1[ \\t]{8}|(?!\\11)\\1[ \\t]{9}|(?!\\12)\\1[ \\t]{10}|(?!\\13)\\1[ \\t]{11}|(?!\\14)\\1[ \\t]{12}|(?!\\15)\\1[ \\t]{13}|(?!\\16)\\1[ \\t]{14}|(?!\\17)\\1[ \\t]{15}|(?!\\18)\\1[ \\t]{16}|(?!\\19)\\1[ \\t]{17}|(?!\\20)\\1[ \\t]{18}|(?!\\21)\\1[ \\t]{19}|(?!\\22)\\1[ \\t]{20}|(?!\\23)\\1[ \\t]{21}|(?!\\24)\\1[ \\t]{22}|(?!\\25)\\1[ \\t]{23}|(?!\\26)\\1[ \\t]{24}|(?!\\27)\\1[ \\t]{25}|(?!\\28)\\1[ \\t]{26}|(?!\\29)\\1[ \\t]{27}|(?!\\30)\\1[ \\t]{28}|(?!\\31)\\1[ \\t]{29}|(?!\\32)\\1[ \\t]{30}|(?!\\33)\\1[ \\t]{31}|(?!\\34)\\1[ \\t]{32}|(?!\\35)\\1[ \\t]{33}|(?!\\36)\\1[ \\t]{34}|(?!\\37)\\1[ \\t]{35}|(?!\\38)\\1[ \\t]{36}|(?!\\39)\\1[ \\t]{37}|(?!\\40)\\1[ \\t]{38}|(?!\\41)\\1[ \\t]{39}|(?!\\42)\\1[ \\t]{40}|(?=\\2\\3\\4\\5\\6\\7\\8\\9\\10\\11\\12\\13\\14\\15\\16\\17\\18\\19\\20\\21\\22\\23\\24\\25\\26\\27\\28\\29\\30\\31\\32\\33\\34\\35\\36\\37\\38\\39\\40\\41\\42)\\1)[ \\t]*:{1,2} +(?![ \\t]*$))",
           "patterns": [
             {
               "comment": "A term in a quote is a label (C2-B-234): a line with the same quote marks, indented past the `::` by the column behind the marks (C2-B-003), continues it. One capture per chain width records that column.",
@@ -22852,7 +22852,8 @@
               },
               "name": "markup.quote.carve"
             }
-          ]
+          ],
+          "comment": "A list behind a list marker belongs to that item: a term or description line left of the first term's column closes it (C2-B-071), as does a line with other quote marks. One capture per column records the term's."
         }
       ]
     },
