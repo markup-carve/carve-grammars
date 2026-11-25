@@ -56,6 +56,7 @@ const SCOPES = {
     description: { TextMate: 'punctuation.definition.list.definition.carve', Prism: 'punctuation', 'highlight.js': 'punctuation' },
     heading: { TextMate: 'markup.heading.carve', Prism: 'title', 'highlight.js': 'section' },
     quote: { TextMate: 'markup.quote.carve', Prism: 'blockquote', 'highlight.js': 'quote' },
+    comment: { TextMate: 'comment.line.percent.carve', Prism: 'comment', 'highlight.js': 'comment' },
 };
 function covered(engine, source, construct) {
     const scope = SCOPES[construct][engine];
@@ -175,6 +176,16 @@ for (const [source, construct, inside, outside] of [
     ['| a | b |\n^ first\n^ second\n', 'caption', '^first', 'second'],
     ['![a](a.png)\n^ one\n  two\n^ three\nnext\n', 'caption', '^onetwo', 'three'],
     ['![a](a.png)\n^ one\n^ two\n::: note\nx\n:::\n', 'caption', '^one', 'x'],
+    // A comment-only line in a term is a comment, and the term goes on below it (C2-B-137, C2-B-234).
+    [':: Comment term\n%% note\n   after comment\n: Desc.\n', 'term', 'Commentterm%%noteaftercomment', 'Desc'],
+    [':: Comment term\n%% note\n   after comment\n: Desc.\n', 'comment', '%%note', 'after'],
+    // A caret line with no host is text (CC-1371, CC-013, CC-116, C2-B-149).
+    ['{.x}\n^ cap\n', 'caption', '', ''],
+    ['![a][b[c]d]\n^ cap', 'caption', '', ''],
+    ['![a](i.png)\n%% #region x\n^ cap', 'caption', '', ''],
+    ['![a](i.png) %% c\n^ cap\n', 'caption', '', ''],
+    ['![a](i.png)\n{.x}\n^ cap\n', 'caption', '', ''],
+    ['![a][]\n^ cap\n', 'caption', '^cap', ''],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
@@ -188,6 +199,40 @@ for (const [source, construct, inside, outside] of [
 // A colon fence ends the text below a second caret line, so the div opens (C2-B-012).
 assert.ok(textmateLeaves('![a](a.png)\n^ one\n^ two\n::: note\nx\n:::\n').some(([scopes]) => scopes.includes('meta.admonition.carve')), 'TextMate div after a caret line');
 groups++;
+// A label in a list item or a quote continues on the lines indented past its
+// marker, the column counted behind the quote marks (C2-B-003, C2-B-234). Prism
+// and highlight.js read a quoted line or a marker line's rest on its own, so
+// only TextMate holds these.
+for (const [source, construct, inside, outside] of [
+    ['- :: Item term\n     item more\n  : Desc.\n', 'term', 'Itemtermitemmore', 'Desc'],
+    ['- :: Item term\n     item more\n  : Desc.\n', 'description', ':', ''],
+    ['- :: t\n  more\n', 'term', 't', 'more'],
+    ['- :: t\n  %% c\n     more\n  : d\n', 'term', 't%%cmore', 'd'],
+    ['> :: Quoted term\n>    quoted more\n> : Desc.\n', 'term', 'Quotedtermquotedmore', 'Desc'],
+    ['> :: Quoted term\n>    quoted more\n> : Desc.\n', 'description', ':', ''],
+    ['> :: t\n> x\n', 'term', 't', 'x'],
+    ['> - :: t\n>     more\n', 'term', 'tmore', ''],
+    ['> # Quoted head\n>   head more\n', 'heading', 'Quotedheadheadmore', '>'],
+    ['> # H\n> %% c\n>  more\n', 'heading', 'H%%cmore', ''],
+    ['> # H\n> text\n', 'heading', 'H', 'text'],
+    ['> # H\n>   ***\n', 'heading', 'H', '***'],
+    ['- # Item head\n    head more\n', 'heading', '#Itemheadheadmore', ''],
+    ['1. # H\n    more\n', 'heading', '#Hmore', ''],
+    ['1. # H\n   more\n', 'heading', '#H', 'more'],
+    ['- # H\n  - x\n', 'heading', '#H', 'x'],
+    ['> | a |\n> ^ Quoted cap\n>   cap more\n', 'caption', '^Quotedcapcapmore', '>'],
+    ['> ![a](i.png)\n> ^ cap\n>   more\n', 'caption', '^capmore', ''],
+    ['> | a |\n> ^ cap\n> %% c\n>   more\n', 'caption', '^cap%%cmore', ''],
+    ['> | a |\n> ^ one\n> ^ two\n', 'caption', '^one', 'two'],
+    ['> x\n> ^ cap\n', 'caption', '', ''],
+]) {
+    const text = covered('TextMate', source, construct);
+    const label = `TextMate ${construct}: ${JSON.stringify(source)} -> ${JSON.stringify(text)}`;
+    if (inside) assert.ok(text.includes(inside), `${label} holds ${JSON.stringify(inside)}`);
+    else assert.equal(text, '', `${label} is empty`);
+    if (outside) assert.ok(!text.includes(outside), `${label} leaves out ${JSON.stringify(outside)}`);
+    groups++;
+}
 // A heading continuation is indented past the marker by column, tabs counted
 // to the next multiple of 4 (C2-B-004, C2-B-234). TextMate compares the
 // characters, so it is left out here.
