@@ -158,6 +158,23 @@ for (const [source, construct, inside, outside] of [
     ['-{+a+} # T\n', 'heading', '', ''],
     ['- {.c} # T\n', 'heading', '', ''],
     ['> A. # T\n', 'heading', '', ''],
+    // Heading continuation (CC-699, C2-B-154, C2-B-234, carve-grammars#957).
+    ['= H\n  cont\nnext\n', 'heading', '=Hcont', 'next'],
+    ['# a\n b\n', 'heading', '#ab', ''],
+    ['## H\n   x\n   y\n\n  z\n', 'heading', '##Hxy', 'z'],
+    ['= H\n  - x\n', 'heading', '=H-x', ''],
+    ['= H\n  | t |\n', 'heading', '=H', 't'],
+    ['= H\n  ***\n', 'heading', '=H', '***'],
+    ['p\n= H\n  x\n', 'heading', '', ''],
+    ['= H\n%% note\n  continued\nx\n', 'heading', 'continued', 'x'],
+    ['= H\n%% note\nx\n', 'heading', '%%note', 'x'],
+    // A caret line directly below a caption is text (CC-1861, CC-2035,
+    // C2-B-148, C2-B-149, carve-grammars#956).
+    ['![a](a.png)\n^ one\n^ two\n', 'caption', '^one', 'two'],
+    ['![i](u)\n^ c\n^ d\n', 'caption', '^c', 'd'],
+    ['| a | b |\n^ first\n^ second\n', 'caption', '^first', 'second'],
+    ['![a](a.png)\n^ one\n  two\n^ three\nnext\n', 'caption', '^onetwo', 'three'],
+    ['![a](a.png)\n^ one\n^ two\n::: note\nx\n:::\n', 'caption', '^one', 'x'],
 ]) {
     for (const engine of Object.keys(ENGINES)) {
         const text = covered(engine, source, construct);
@@ -168,6 +185,17 @@ for (const [source, construct, inside, outside] of [
     }
     groups++;
 }
+// A colon fence ends the text below a second caret line, so the div opens (C2-B-012).
+assert.ok(textmateLeaves('![a](a.png)\n^ one\n^ two\n::: note\nx\n:::\n').some(([scopes]) => scopes.includes('meta.admonition.carve')), 'TextMate div after a caret line');
+groups++;
+// A heading continuation is indented past the marker by column, tabs counted
+// to the next multiple of 4 (C2-B-004, C2-B-234). TextMate compares the
+// characters, so it is left out here.
+for (const engine of ['Prism', 'highlight.js']) {
+    assert.equal(covered(engine, '\t= H\n     x\n', 'heading'), '=Hx', `${engine} tab heading`);
+    assert.equal(covered(engine, '= H\n\tcont\nnext\n', 'heading'), '=Hcont', `${engine} tab continuation`);
+}
+groups++;
 // A title and an attribute block on their own tail lines. TextMate ends its rule
 // at the title line (a child rule cannot end its parent), so it is left out here.
 for (const engine of ['Prism', 'highlight.js']) {

@@ -164,6 +164,11 @@
     };
     // Not behind an odd backslash run: an even run is escaped backslashes. Bounded at 32 pairs.
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
+    // joined by single dots, holding a letter, not ending in a hyphen; a run
+    // directly followed by a Unicode letter, number or mark is text. Needs `u`.
+    var tagName = '(?!(?=(?<run>[A-Za-z0-9_.-]*))\\k<run>[\\p{L}\\p{N}\\p{M}])'
+        + '(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-)';
     // An EMPTY block is valid only glued to a preceding `]` (`[x]{}` ->
     // <span>x</span>); a bare `{}` in prose is literal text (corpus 123).
     // An EMPTY attribute block is valid only where it is glued to a preceding
@@ -2328,7 +2333,7 @@
                 // trick, because the exclusion needs to see two characters
                 // back.
                 'tag': {
-                    pattern: RegExp(/(^(?<![^\r\n])|[^\w])(?<!<\/)/.source + notEscaped + /#[A-Za-z0-9_][\w-]*/.source),
+                    pattern: RegExp(/(^(?<![^\r\n])|[^\w])(?<!<\/)/.source + notEscaped + '#' + tagName, 'u'),
                     lookbehind: true,
                     alias: 'variable',
                 },
@@ -3333,12 +3338,12 @@
 
         // Mentions @name, tags #tag, symbols :name:
         'mention': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w.])/.source + notEscaped + /@[A-Za-z0-9_][\w-]*/.source),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w.])/.source + notEscaped + '@' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
         'tag': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + /#[A-Za-z0-9_][\w-]*/.source),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + '#' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
@@ -4109,11 +4114,39 @@ if (Prism?.languages.carve) {
     grammar.table.inside['table-header'].pattern = /\|=(?=[ \t\{|<>?~]|$)/;
     const titlePattern = new RegExp(lineStart + '(?:#{1,6}|={1,6}) [ \\t]*\\S[^\\r\\n]*$', 'm');
     const titleScan = new RegExp(titlePattern.source, 'gm');
+    // A heading is a label: it holds every line below it indented past its
+    // marker by column, up to a blank line or an interrupter (C2-B-154, C2-B-234).
+    const labelEnd = /^(?:`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|\|[^\r\n]*\||\*{3,}[ \t]*$)/;
+    const columnOf = (lead) => {
+        let column = 0;
+        for (const ch of lead) column = ch === '\t' ? column + 4 - (column % 4) : column + 1;
+        return column;
+    };
+    const labelLine = /(\r\n?|\n)([ \t]*)([^\r\n]*)/y;
+    const commentOnly = /^%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
     titlePattern.exec = function (source) {
         titleScan.lastIndex = 0;
         let match;
         while ((match = titleScan.exec(source))) {
-            if (!inParagraph(source, match.index)) return match;
+            if (inParagraph(source, match.index)) continue;
+            const marker = columnOf(/^﻿?([ \t]*)/.exec(match[0])[1]);
+            let end = match.index + match[0].length;
+            let line;
+            labelLine.lastIndex = end;
+            while ((line = labelLine.exec(source)) && line[3]) {
+                // A comment-only line is not seen, and is the heading's (C2-B-137, C2-B-138).
+                if (commentOnly.test(line[3])) {
+                    end = labelLine.lastIndex;
+                    continue;
+                }
+                if (columnOf(line[2]) <= marker || labelEnd.test(line[3])) break;
+                end = labelLine.lastIndex;
+            }
+            if (end === match.index + match[0].length) return match;
+            const extended = [source.slice(match.index, end)];
+            extended.index = match.index;
+            extended.input = source;
+            return extended;
         }
         return null;
     };
@@ -4121,6 +4154,8 @@ if (Prism?.languages.carve) {
         ...grammar.title,
         pattern: titlePattern,
         inside: {
+            // A comment-only line inside the heading's lines.
+            'comment-line': { pattern: /((?:\r\n?|\n)[ \t]*)%%(?!%)[^\r\n]*/, lookbehind: true, alias: 'comment' },
             ...grammar.title.inside,
             punctuation: /^(?<![^\r\n])\uFEFF?(?:#{1,6}|={1,6})/,
         },
@@ -4214,8 +4249,33 @@ if (Prism?.languages.carve) {
     Prism.languages.carve = {
         'region-marker': region,
         'letter-list-marker': { pattern: new RegExp(lineStart + letterMarker, 'm'), alias: 'bullet' },
+        // Ahead of the greedy comment rule, so a heading spans a comment-only
+        // line (C2-B-154); its own inside scopes the comment.
+        'title': grammar.title,
         ...grammar,
     };
+    // A typed opener after line 1 opens a top-level metadata block when a blank
+    // line, or attribute lines that follow one or start on line 1, stand
+    // directly above it (C2-B-232, C2-B-233). Bare `---` stays line-1 only
+    // (C2-B-161). Ordered after the fence rules, whose greedy tokens keep an
+    // opener inside a fence or a div body as their own content.
+    {
+        const carve = Prism.languages.carve;
+        const attributes = String.raw`(?:\{[^{}\r\n]*\}[ \t]*)+(?:\r\n?|\n)`;
+        const later = String.raw`(?<![^\r\n])(?=---)(?<=(?:^|\r\n?|\n)[ \t]*(?:\r\n?|\n)(?:${attributes})*|^\uFEFF?(?:${attributes})+)`;
+        const lineOne = String.raw`^(?<![^\r\n])\uFEFF?`;
+        const metadata = carve['front-matter'].map((rule) => {
+            const source = rule.pattern.source;
+            if (!source.startsWith(lineOne)) throw new Error('front-matter opener anchor moved');
+            const format = source.slice(lineOne.length).replace(/^---\(\?: \?\(\?:yaml\|yml\)\)\?/, '--- ?(?:yaml|yml)');
+            return Object.assign({}, rule, { pattern: RegExp(later + format, rule.pattern.flags) });
+        });
+        const keys = Object.keys(carve);
+        const rest = keys.slice(keys.indexOf('code-block-in-container') + 1).map((key) => [key, carve[key]]);
+        for (const [key] of rest) delete carve[key];
+        carve['metadata-block'] = metadata;
+        for (const [key, value] of rest) carve[key] = value;
+    }
     // Every inline set that reads a tag or emphasis reads an unattached block as one atom first.
     {
         const unattached = Prism.languages.carve['attributes-unattached'];

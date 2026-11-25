@@ -95,11 +95,15 @@ function adaptGrammar(grammar, hljs) {
     const hashHeading = grammar.contains.find(mode => mode?.className === 'section' && mode.begin?.source.includes('#{1,6}'));
     const markerLineHeading = hashHeading['on:begin'];
     hashHeading['on:begin'] = (match, response) => {
-        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return markerLineHeading(match, response);
+        markerLineHeading(match, response);
+        if (match.index > 0 && !/[\r\n]/.test(match.input[match.index - 1])) return;
         match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
     };
-    grammar.contains = grammar.contains.filter(mode => !mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
+    const horizontalRule = grammar.contains.find(mode => mode?.begin?.source?.includes('-{3,}|\\*{3,}|_{3,}'));
+    grammar.contains = grammar.contains.filter(mode => mode !== horizontalRule);
     const lineStart = '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*';
+    // A div body shares the mode: a thematic break is stars only (C2-B-159).
+    if (horizontalRule) horizontalRule.begin = new RegExp(lineStart + '\\*{3,}[ \\t]*$(?![^\\r\\n])');
     // C2-B-081: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
     function definitionAllowed(source, offset) {
@@ -147,9 +151,7 @@ function adaptGrammar(grammar, hljs) {
     grammar.contains.unshift(
         { className: 'comment', begin: new RegExp(lineStart + '%%[ \\t]*#(?:region[ \\t]+[A-Za-z_][A-Za-z_0-9-]*|endregion(?:[ \\t]+[A-Za-z_][A-Za-z_0-9-]*)?)[ \\t]*$') },
         { className: 'bullet', begin: new RegExp(lineStart + letterMarker) },
-        { className: 'section', begin: new RegExp(lineStart + '={1,6} +\\S[^\\r\\n]*$'), 'on:begin': (match) => {
-            match.rule.scope = inParagraph(match.input, match.index) ? undefined : 'section';
-        } },
+        { ...hashHeading, begin: new RegExp(lineStart + '={1,6} +(?=\\S)') },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
     return grammar;
@@ -725,16 +727,22 @@ function adaptGrammar(grammar, hljs) {
     // An opener with no closing dash line runs to the end of the document
     // (carve#5016), so no closer lookahead.
     const FRONT_MATTER_CLOSER = /^(?<![^\r\n])---[ \t]*$(?![^\r\n])/;
-    const frontMatterOpener = (format) => new RegExp('^(?<![^\\r\\n])(?<![\\s\\S])\\uFEFF?---' + format + '[ \\t]*$(?![^\\r\\n])');
-    const frontMatter = (format) => ({
+    // A typed opener after line 1 also opens a top-level metadata block when a
+    // blank line, or attribute lines that follow one or start on line 1, stand
+    // directly above it (C2-B-232, C2-B-233); bare `---` stays line-1 only.
+    const LINE_ONE = '(?<![\\s\\S])\\uFEFF?';
+    const ATTRIBUTE_LINES = '(?:\\{[^{}\\r\\n]*\\}[ \\t]*)+(?:\\r\\n?|\\n)';
+    const LATER = '(?=---)(?<=(?:(?<![\\s\\S])|\\r\\n?|\\n)[ \\t]*(?:\\r\\n?|\\n)(?:' + ATTRIBUTE_LINES + ')*|(?<![\\s\\S])\\uFEFF?(?:' + ATTRIBUTE_LINES + ')+)';
+    const frontMatterOpener = (format, anchor = LINE_ONE) => new RegExp('^(?<![^\\r\\n])' + anchor + '---' + format + '[ \\t]*$(?![^\\r\\n])');
+    const frontMatter = (format, anchor) => ({
         className: 'meta',
-        begin: frontMatterOpener(format),
+        begin: frontMatterOpener(format, anchor),
         end: FRONT_MATTER_CLOSER,
         relevance: 10,
     });
-    const delegatedFrontMatter = (format, subLanguage) => ({
+    const delegatedFrontMatter = (format, subLanguage, anchor) => ({
         className: 'meta',
-        begin: frontMatterOpener(format),
+        begin: frontMatterOpener(format, anchor),
         end: /$(?![^\r\n])/,
         relevance: 10,
         starts: {
@@ -752,6 +760,13 @@ function adaptGrammar(grammar, hljs) {
         delegatedFrontMatter('(?: ?(?:yaml|yml))?', 'yaml'),
         frontMatter(' ?[A-Za-z0-9]+'),
     ];
+    // Top level only: a div body leaves the opener as text (C2-B-232).
+    const LATER_METADATA = [
+        delegatedFrontMatter(' ?json', 'json', LATER),
+        delegatedFrontMatter(' ?toml', 'ini', LATER),
+        delegatedFrontMatter(' ?(?:yaml|yml)', 'yaml', LATER),
+        frontMatter(' ?[A-Za-z0-9]+', LATER),
+    ];
 
     // Headings: # to ######
     const HEADING = {
@@ -764,10 +779,21 @@ function adaptGrammar(grammar, hljs) {
             + '|(?=[#=])(?<=^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*' + MARKER_LINE_PREFIX + ')(?:#{1,6}|={1,6}))'
             + ' (?![ \\t]*$(?![^\\r\\n]))'),
         // A marker that continues a paragraph opens no heading.
-        'on:begin': (m) => {
-            m.rule.scope = markerIsParagraphText({ input: m.input, index: lineStartBefore(m.input, m.index) }) ? undefined : 'section';
+        'on:begin': (m, resp) => {
+            const start = lineStartBefore(m.input, m.index);
+            m.rule.scope = markerIsParagraphText({ input: m.input, index: start }) ? undefined : 'section';
+            resp.data.label = { column: columnOf(m.input.slice(start, m.index + m[0].search(/[#=]/))), until: -1 };
         },
-        end: /$(?![^\r\n])/,
+        // A heading is a label: it holds every line below it indented past its
+        // marker, comment-only lines unseen (C2-B-154, C2-B-234). The end takes
+        // the line break, so an ignored end still advances.
+        end: /\r\n?|\n/,
+        returnEnd: true,
+        'on:end': (m, resp) => {
+            // A comment-only line below is the heading's own (C2-B-138).
+            const next = m.index + m[0].length;
+            if (COMMENT_ONLY_LINE.test(lineAt(m.input, next)) || labelContinues(m.input, next, resp.data.label, true)) resp.ignoreMatch();
+        },
         relevance: 10,
     };
 
@@ -3131,9 +3157,20 @@ function adaptGrammar(grammar, hljs) {
 
     // Mentions and tags: @name / #name (a heading `#` is line-anchored and is
     // matched earlier, so an inline `#tag` is unambiguous).
+    // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
+    // joined by single dots, holding a letter, not ending in a hyphen. A run
+    // directly followed by a Unicode letter, number or mark is text, which
+    // needs `u`, so 'on:begin' tests it.
+    const TAG_NAME = '(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-)';
+    const TAG_RUN_FOLLOWER = /[A-Za-z0-9_.-]*([\p{L}\p{N}\p{M}])?/uy;
+    const refuseGluedName = (m, resp) => {
+        TAG_RUN_FOLLOWER.lastIndex = m.index + 1;
+        if (TAG_RUN_FOLLOWER.exec(m.input)[1]) resp.ignoreMatch();
+    };
     const MENTION = {
         className: 'symbol',
-        begin: /(?<![\w@])@[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w@])@' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
     /*
@@ -3162,7 +3199,8 @@ function adaptGrammar(grammar, hljs) {
     };
     const TAG = {
         className: 'symbol',
-        begin: /(?<![\w#])#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w#])#' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
     // Used only inside HEADING (carve-grammars#125), not TAG itself: a
@@ -3173,7 +3211,8 @@ function adaptGrammar(grammar, hljs) {
     // corpus 118 (`# A </#a>`), which pins the whole thing staying unscoped.
     const HEADING_TAG = {
         className: 'symbol',
-        begin: /(?<![\w#])(?<!<\/)#[A-Za-z0-9][\w-]*(?:\.[\w-]+)*/,
+        begin: new RegExp('(?<![\\w#])(?<!<\\/)#' + TAG_NAME),
+        'on:begin': refuseGluedName,
         relevance: 5,
     };
 
@@ -3725,6 +3764,7 @@ function adaptGrammar(grammar, hljs) {
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)
         ...FRONT_MATTER,
+        ...LATER_METADATA,
         HEADING,
         CODE_BLOCK,        // ``` ... ``` - before the delimiter-only fallback
         RAW_BLOCK,         // ```=html ... ``` - same, with the raw info string
@@ -3835,6 +3875,7 @@ function adaptGrammar(grammar, hljs) {
     // bare opener, which BARE_FENCE_LINE stands in for. DIV_BLOCK is in that
     // list, so a div nests in a div.
     const IN_CONTAINER = CONTAINS
+        .filter((mode) => !LATER_METADATA.includes(mode))
         .map((mode) => (mode === BARE_DIV_BLOCK ? BARE_FENCE_LINE : mode));
     DIV_BLOCK.contains = IN_CONTAINER;
     BARE_DIV_BLOCK.contains = IN_CONTAINER;
