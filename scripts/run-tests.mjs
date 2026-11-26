@@ -3,6 +3,7 @@ for (const file of [
     'tests/carve-grammar-test.js',
     'tests/textmate-metadata-block-test.js',
     'tests/textmate-text-runs-test.js',
+    'tests/textmate-differential-gaps-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/continuation-labels-test.js',
     'tests/metadata-and-tag-names-test.js',
