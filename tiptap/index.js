@@ -1,69 +1,26 @@
 /**
- * Carve Grammars - Tiptap Integration
+ * Carve 0.2 editor kit for Tiptap: the extensions for the 0.2 tree, a loader from the tree to
+ * ProseMirror and a serializer back. The host passes the carve-js engine, so this entry never
+ * bundles it.
  *
- * Provides Carve markup support for Tiptap editors.
- *
- * @example Basic usage with CarveKit
+ * @example
  * ```js
  * import { Editor } from '@tiptap/core'
- * import { CarveKit, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
+ * import * as carve from '@markup-carve/carve'
+ * import { CarveKit, carveToProseMirror, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
  *
- * const editor = new Editor({
- *   element: document.getElementById('editor'),
- *   extensions: [CarveKit],
- *   onUpdate: ({ editor }) => {
- *     const carve = serializeToCarve(editor.getJSON())
- *     console.log(carve)
- *   },
- * })
- * ```
- *
- * @example Using individual extensions
- * ```js
- * import { Editor } from '@tiptap/core'
- * import StarterKit from '@tiptap/starter-kit'
- * import { CarveInsert, CarveDelete, CarveDiv, serializeToCarve } from '@markup-carve/carve-grammars/tiptap'
- *
- * const editor = new Editor({
- *   extensions: [
- *     StarterKit,
- *     CarveInsert,
- *     CarveDelete,
- *     CarveDiv,
- *   ],
- * })
+ * const editor = new Editor({ extensions: [CarveKit], content: carveToProseMirror(source, { engine: carve }) })
+ * const next = serializeToCarve(editor.getJSON(), { engine: carve, source })
  * ```
  *
  * @module @markup-carve/carve-grammars/tiptap
  */
-
-// Main kit
-export { CarveKit } from './carve-kit.js';
-
-// Individual extensions
-export { CarveInsert } from './extensions/carve-insert.js';
-export { CarveDelete } from './extensions/carve-delete.js';
-export { CarveCriticComment } from './extensions/carve-critic-comment.js';
-export { CarveDiv } from './extensions/carve-div.js';
-export { CarveMath } from './extensions/carve-math.js';
-export { CarveFootnoteDefinition } from './extensions/carve-footnote-definition.js';
-export { CarveAbbreviation } from './extensions/carve-abbreviation.js';
-export { CarveAbbreviationDefinition } from './extensions/carve-abbreviation-definition.js';
-export { CarveKeymap } from './extensions/carve-keymap.js';
-export { CarveMention, CarveTag } from './extensions/carve-mention.js';
-export { CarveInlineExtension } from './extensions/carve-inline-extension.js';
-export { CarveUnsupported } from './extensions/carve-unsupported.js';
-export { CarveUnsupportedInline } from './extensions/carve-unsupported-inline.js';
-export { CarveEmptyMark } from './extensions/carve-empty-mark.js';
-export { CarveFigure, CarveFigureGroup, CarveCaption } from './extensions/carve-figure.js';
-export { CarveRawBlock } from './extensions/carve-raw-block.js';
-export { CarveComment, CarveCommentInline } from './extensions/carve-comment.js';
-export { CarveSourcePreservation } from './extensions/carve-source-preservation.js';
-export { CarveLineBlock } from './extensions/carve-line-block.js';
-export { CarveHeading } from './extensions/carve-heading.js';
-
-// Serializer
-export { serializeToCarve, serializeToCarveWithReport, escapeCarve, carveMediaDirective } from './serializer.js';
-
-// Loader
-export { carveToProseMirror, carveToProseMirrorWithReport, astToProseMirror, UnsupportedNodeError } from './carve-to-pm.js';
+export { proseMirrorPointer, proseMirrorToTree, proseMirrorToTreeWithOrigins, treeToProseMirror } from './tree.js';
+export { carveToProseMirror, serializeToCarve } from './source.js';
+export {
+    CARVE_MARKS, CARVE_NODES, CarveAdmonition, CarveAttributes, CarveBlock, CarveBlockExtension, CarveCaption,
+    CarveCaptioned, CarveCitationDefinition, CarveComment, CarveDefinitionDescription, CarveDefinitionList,
+    CarveDefinitionTerm, CarveDelete, CarveDirective, CarveDiv, CarveFigureGroup, CarveFootnote, CarveFootnoteRef,
+    CarveFrontmatter, CarveInline, CarveInlineExtension, CarveInlineFootnote, CarveInsert, CarveKit, CarveLine,
+    CarveLineBlock, CarveMath, CarveRawBlock, CarveSection, CarveSmallCaps, CarveSoftBreak, CarveSpan, CarveTitle,
+} from './extensions.js';

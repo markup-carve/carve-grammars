@@ -21,7 +21,7 @@
 import { createRequire } from 'node:module'
 import githubLight from '@shikijs/themes/github-light'
 import githubDark from '@shikijs/themes/github-dark'
-import { carveLightExtras, carveDarkExtras, extendTheme, carveStylingTransformer } from './themes.js'
+import { carveLightExtras, carveDarkExtras, extendTheme, carveStylingTransformer, carveBlankLineTransformer } from './themes.js'
 
 const require = createRequire(import.meta.url)
 
@@ -51,6 +51,8 @@ export {
     carveDarkTheme,
     carvePalette,
     carveStylingTransformer,
+    carveBlankLineTransformer,
+    sourceForShiki,
 } from './themes.js'
 export { diffCodeTransformer } from './diff.js'
 
@@ -71,6 +73,6 @@ export function carveMarkdown(options = {}) {
     return {
         languages: [carveGrammar, carveCsvGrammar, carveTsvGrammar, ...(options.languages ?? [])],
         theme: { light, dark },
-        codeTransformers: [carveStylingTransformer],
+        codeTransformers: [carveStylingTransformer, carveBlankLineTransformer],
     }
 }

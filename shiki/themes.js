@@ -149,6 +149,26 @@ export const carveDarkTheme = extendTheme(githubDark, carveDarkExtras)
 
 const FontStyle = { Italic: 1, Bold: 2, Underline: 4, Strikethrough: 8 }
 
+/** Feed Shiki a character on empty lines so TextMate can end block scopes. */
+export function sourceForShiki(source) {
+    return source.split(/(\r\n|\r|\n)/).map((part, index) => index % 2 === 0 && part === '' ? ' ' : part).join('')
+}
+
+/** Keep the synthetic character out of rendered code and copied snippets. */
+export const carveBlankLineTransformer = {
+    name: 'carve-blank-lines',
+    preprocess(code, options) {
+        if (!['carve', 'crv'].includes(options.lang?.toLowerCase())) return
+        options.carveBlankLines = code.split(/\r\n|\r|\n/).map((line, index) => line === '' ? index : -1).filter(index => index >= 0)
+        return sourceForShiki(code)
+    },
+    tokens(tokens) {
+        for (const index of this.options.carveBlankLines ?? []) {
+            if (tokens[index]) tokens[index] = []
+        }
+    },
+}
+
 /**
  * Shiki code transformer that tags tokens the HTML emitter cannot style
  * directly. Pair with `@markup-carve/carve-grammars/shiki/carve.css`, which styles the

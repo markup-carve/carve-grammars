@@ -2,137 +2,23 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, next2]
   pull_request:
 
-# A new push to a PR supersedes its running checks; main keeps every run.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
-# Every job declares timeout-minutes so a hung step fails in minutes
-# rather than inheriting the 360-minute GitHub default.
-
 jobs:
-  test:
+  grammars:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        # Node 18 and 20 are EOL; 20 still runs nightly in legacy-node.yml.
-        node-version: ['22']
     steps:
-      - name: Checkout (with carve corpus submodule)
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
-          submodules: recursive
-
-      - name: Set up Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
-
-      # Installs prismjs, highlight.js and the @markup-carve/carve parser
-      # (a git dependency whose `prepare` script builds its dist on install).
-      - name: Install dependencies
-        run: npm ci
-      - name: Validate spec citations
-        run: npm run test:citations
-
-      # Coverage matrix first (fails fast if a corpus category is unclassified
-      # for any grammar), then the golden snapshot and round-trip suites, then
-      # the existing structural grammar and serializer tests.
-      # braced-scan-equivalence runs once, in its own job below.
-      - name: Run tests
-        run: npm test -- --exclude braced-scan-equivalence-test.js
-
-  # The regex language sweep over Prism and highlight.js patterns is ~530 CPU
-  # seconds and independent of Node, Tiptap and Shiki versions, so it runs once
-  # here instead of in every leg: eight weighted slices, four per shard.
-  braced-scan:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [0, 1]
-    steps:
-      - name: Checkout (with carve corpus submodule)
-        uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Set up Node
-        uses: actions/setup-node@v7
+          # The Tiptap kit test reads the 0.2 conformance corpus from the spec submodule.
+          submodules: true
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run braced-scan-equivalence (shard ${{ matrix.shard }} of 2)
-        run: node scripts/run-tests.mjs braced-scan-equivalence-test.js --shard ${{ matrix.shard }}/2
-
-  # The Tiptap peer range is `^2 || ^3` and devDependencies pin 3.x, so the job
-  # above only ever proves the newer major. Re-run the suite against 2.x on one
-  # Node version so the lower bound of the advertised range stays honest.
-  tiptap-2:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout (with carve corpus submodule)
-        uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Set up Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      # --no-save keeps package.json/lock untouched: this downgrade is a test
-      # fixture, not a dependency change.
-      - name: Downgrade Tiptap to 2.x
-        run: |
-          npm install --no-save --no-audit --no-fund \
-            $(node -p "Object.keys(require('./package.json').devDependencies).filter(d => d.startsWith('@tiptap/')).map(d => d + '@^2').join(' ')")
-          # Read the manifest by path: Tiptap's exports map does not expose
-          # ./package.json, so the package-subpath form throws.
-          node -p "'tiptap core: ' + require('./node_modules/@tiptap/core/package.json').version"
-
-      - name: Run tests
-        run: npm test -- --exclude braced-scan-equivalence-test.js
-
-  # Same idea for Shiki: devDependencies pin 4.x, the peer range still accepts 3.
-  shiki-3:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout (with carve corpus submodule)
-        uses: actions/checkout@v6
-        with:
-          submodules: recursive
-
-      - name: Set up Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Downgrade Shiki to 3.x
-        run: |
-          npm install --no-save --no-audit --no-fund shiki@^3 @shikijs/themes@^3 @shikijs/types@^3
-          node -p "'shiki: ' + require('./node_modules/shiki/package.json').version"
-
-      - name: Run tests
-        run: npm test -- --exclude braced-scan-equivalence-test.js
+      - run: npm ci
+      - run: npm run syntax-palette:check
+      - run: npm test
+      - run: npm pack --dry-run
