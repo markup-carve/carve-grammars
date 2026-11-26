@@ -220,10 +220,6 @@
         var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
         var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
         var lineBreak = /\r\n?|\n/g;
-        var criticSubstitution = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
-        var lineBefore = function (source, at) {
-            return source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
-        };
         // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
         var blockOpener = function (source, close) {
             var open = source.lastIndexOf('{', close - 1);
@@ -337,7 +333,7 @@
                 var host = probe.exec(source);
                 if (host && brace + host[0].length === at) return valid(source, host) ? hostOf(source, brace) : null;
             }
-            return /[*\/_~=^,+-]/.test(source.charAt(at - 2)) && !criticSubstitution.test(lineBefore(source, at)) ? 'other' : null;
+            return /[*\/_~=^,+-]/.test(source.charAt(at - 2)) ? 'other' : null;
         };
         var valid = function (source, match) {
             if (match[1] === undefined) return hostOf(source, match.index) !== null;
@@ -693,18 +689,6 @@
         + '|<' + emailClass('0-9\\-_.+') + '{1,512}@(?:' + emailClass('0-9\\-_') + '{1,512}\\.){1,64}' + emailClass('') + '{1,512}>'
         + ')';
 
-    // A substitution splits at its first top-level arrow: code, a comment and
-    // an escape are opaque (markup-carve/carve#2092).
-    var substitutionAtom = '\\\\[^\\r\\n]'
-        + '|```(?:[^`\\r\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\r\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\r\\n]{1,4096}`(?!`)'
-        + '|\\{#(?:[^#\\r\\n]|#(?!\\})){0,4096}#\\}|\\{%(?:[^%\\r\\n]|%(?!\\})){0,4096}%\\}';
-    function substitutionHalf(notAfterTilde) {
-        var closedComment = '#(?:[^#\\r\\n]|#(?!\\})){0,4096}#\\}|%(?:[^%\\r\\n]|%(?!\\})){0,4096}%\\}';
-        // A code span still open at the closer ends there.
-        var openCode = notAfterTilde === '}' ? '|`+(?![^`\\r\\n]{0,4096}`)' : '';
-        return '(?:' + substitutionAtom + openCode + '|\\{(?!' + closedComment + ')|[^\\\\`{~\\r\\n]|~(?![' + notAfterTilde + '])){0,4096}?';
-    }
-
     // The bare run as markup-carve/vscode-carve#258 reads it: a closed code span
     // and a braced span of ANOTHER kind are atoms, and a delimiter of its own
     // kind is body text where it cannot close. Built with the `u` flag.
@@ -767,12 +751,6 @@
     // Shared inline emphasis/markup, referenced from block tokens that contain
     // running text (headings, list items, table cells, quotes).
     var inline = {
-        // No top-level arrow: forced-strike.
-        'changed': {
-            pattern: RegExp(notEscaped + '\\{~' + substitutionHalf('>}') + '~>' + substitutionHalf('}') + '~\\}'),
-            greedy: true,
-            alias: 'important',
-        },
         // BOTH NESTING ORDERS. The engine renders `/*both*/` and `*/both/*`
         // identically - each is <strong><em>both</em></strong> - and only the
         // canonical order had a branch, so the mirrored one fell through to
@@ -2978,7 +2956,7 @@
         },
 
         // Inline code spans
-        // CriticMarkup: {+ins+} {-del-} {~old~>new~} {#comment#}
+        // CriticMarkup: {+ins+} {-del-} {#comment#}
         //
         // WORSE THAN THE LINE-SCANNING FAMILY ABOVE, WHICH IS WHY THESE TWO WERE
         // THE SLOWEST ROWS IN THE SWEEP. `[^}]*` excludes neither the closer's
@@ -3000,7 +2978,6 @@
             pattern: RegExp(notEscaped + '\\{-(?!-\\})' + forcedBody('-', []) + '-\\}'),
             alias: 'deleted',
         },
-        'changed': inline['changed'],
 
         'code': [
             {
@@ -3414,13 +3391,12 @@
     // delimiter-specific 'div-delimiter' entry already on 'div'.inside is
     // spread first, so it still wins over the body patterns for the
     // opener/closer lines themselves.
-    // Each half of a substitution is inline content.
-    var substitutionContent = { 'comment': { pattern: bracedCommentPattern, greedy: true } };
+    var inlineContent = { 'comment': { pattern: bracedCommentPattern, greedy: true } };
     ['math', 'literal', 'raw-inline', 'code', 'image', 'reference-image', 'inline-footnote',
         'footnote', 'cross-ref', 'url', 'span', 'critic-comment', 'forced-bold', 'forced-italic',
         'forced-underline', 'forced-strike', 'bold-italic', 'bold', 'italic', 'underline', 'strike',
         'highlight', 'superscript', 'subscript', 'inserted', 'deleted', 'mention', 'tag', 'escape', 'typography',
-    ].forEach(function (name) { substitutionContent[name] = Prism.languages.carve[name]; });
+    ].forEach(function (name) { inlineContent[name] = Prism.languages.carve[name]; });
     // A bare or braced run's content is inline content too. Its own rules are
     // left out, or the run would match itself again, and inside a braced span
     // its own bare delimiter is text. A braced span of its own kind nests
@@ -3445,7 +3421,7 @@
         // A deletion's own `-` delimiters would read as a dash.
         ['subscript', ['subscript'], 'subscript', ','], ['inserted', ['inserted']], ['deleted', ['deleted', 'typography']],
     ].forEach(function (pair) {
-        var base = Object.assign({ 'changed': inline['changed'] }, substitutionContent);
+        var base = inlineContent;
         var content = {};
         Object.keys(base).forEach(function (name) {
             if (name === pair[2]) {
@@ -3460,20 +3436,6 @@
     Object.keys(nestedRules).forEach(function (name) {
         nestedRules[name].inside = inline[name].inside;
     });
-    inline['changed'].inside = {
-        'deleted': {
-            pattern: RegExp('^(?<![^\\r\\n])(\\{~)(?!~>)' + substitutionHalf('>}') + '(?=~>)'),
-            lookbehind: true,
-            inside: substitutionContent,
-        },
-        'inserted': {
-            pattern: /(~>)[\s\S]+(?=~\}$(?![^\r\n]))/,
-            lookbehind: true,
-            inside: substitutionContent,
-        },
-        'punctuation': /\{~|~>|~\}/,
-    };
-
     var divDelimiterOnly = Prism.languages.carve.div.inside;
     var figureGroupDelimiterOnly = Prism.languages.carve['figure-group'].inside;
     var divBody = Object.assign({}, Prism.languages.carve);
@@ -3552,7 +3514,7 @@
 
     // The inline constructs beyond emphasis that a title or caption holds too.
     var linkFamily = ['image', 'reference-image', 'inline-footnote', 'footnote', 'citation', 'cross-ref', 'url',
-        'span-empty-attrs', 'extension', 'span', 'critic-comment', 'inserted', 'deleted', 'changed'];
+        'span-empty-attrs', 'extension', 'span', 'critic-comment', 'inserted', 'deleted'];
     for (const block of ['title', 'caption']) {
         const own = Prism.languages.carve[block].inside;
         /*
@@ -4042,7 +4004,7 @@ if (Prism?.languages.carve) {
     }
     const grammar = Prism.util.clone(Prism.languages.carve);
     const visited = new WeakSet();
-    const removed = new Set(['underline', 'strike', 'changed', 'table-separator', 'table-alignment', 'continuation-marker']);
+    const removed = new Set(['underline', 'strike', 'table-separator', 'table-alignment', 'continuation-marker']);
     function visit(node) {
         if (!node || typeof node !== 'object' || visited.has(node)) return;
         visited.add(node);
