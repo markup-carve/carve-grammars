@@ -1058,7 +1058,8 @@ function adaptGrammar(grammar, hljs) {
     // Autolinks: <https://...> or <mailto:...>
     const AUTOLINK = {
         className: 'link',
-        begin: /<(?:https?:\/\/|mailto:)[^>]{1,2048}>/,
+        // Any scheme (C2-I-073): a letter, then letters, digits, `+`, `-` and `.`.
+        begin: RegExp(String.raw`<[a-zA-Z][a-zA-Z0-9+.\-]{0,2047}:` + URL_CHAR + '{1,2048}>'),
         relevance: 5,
     };
 
@@ -3042,7 +3043,8 @@ function adaptGrammar(grammar, hljs) {
         // direction and the one this whole rule is about: a run that opens
         // nothing leaves the text below it VISIBLE, where the failure being
         // fixed here hid it.
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*$(?![^\r\n])(?=[\s\S]{0,8000}?\n[ \t]*\1(?!%)[^\n]*$(?![^\r\n]))/,
+        // C2-B-109, C2-B-110: the closer is a bare run of at least the opener's width.
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(%{3,})(?!%)[^\n]*$(?![^\r\n])(?=[\s\S]{0,8000}?\n[ \t]*\1%*[ \t]*$(?![^\r\n]))/,
         'on:begin': (m, resp) => {
             resp.data._fenceWidth = m[1].length;
         },
@@ -3051,11 +3053,28 @@ function adaptGrammar(grammar, hljs) {
         // §24 C3 - a comment is recognized at any column, carve#624/#634).
         // Anchored at column 0 the fence never closed for an indented closer,
         // so the comment swallowed the rest of the document.
-        end: /^(?<![^\r\n])[ \t]*(%{3,})[^\n]*$(?![^\r\n])/,
+        end: /^(?<![^\r\n])[ \t]*(%{3,})[ \t]*$(?![^\r\n])/,
         'on:end': (m, resp) => {
-            if (m[1].length !== resp.data._fenceWidth) resp.ignoreMatch();
+            if (m[1].length < resp.data._fenceWidth) resp.ignoreMatch();
         },
         relevance: 10,
+    };
+    // C2-B-111: an unclosed comment block at column 0 runs to the end of the
+    // document; a bare colon fence stands in for the end of an enclosing div.
+    const UNCLOSED_BLOCK_COMMENT = {
+        className: 'comment',
+        // A run under a marker line that opened one closes that comment instead;
+        // `[:]` keeps the hook at the top from reading this mode as a definition.
+        begin: /^(?<![^\r\n])(?=\uFEFF?%%%)(?<!^(?<![^\r\n])[ \t]*(?:[-*+]|[0-9]+[.)]|:|\[\^[^\]\r\n]+\][:]|(?:> ?)+)[ \t]+%{3,}[ \t]*(?:\r\n?|\n))(?:(?<![\s\S])\uFEFF)?(%{3,})(?!%)[^\n]*$(?![^\r\n])(?![\s\S]*?\n[ \t]*\1%*[ \t]*$(?![^\r\n]))/,
+        end: /(?=\n[ \t]*:{3,}[ \t]*$(?![^\r\n]))|$(?![\s\S])/,
+        relevance: 5,
+    };
+    // A `%%%` run behind text on its line is a line comment (C2-B-133).
+    const TRAILING_PERCENT_RUN = {
+        className: 'comment',
+        begin: /(?=%%%)(?<=[^ \t\r\n][^\r\n]*[ \t])%{3,}/,
+        end: /$(?![^\r\n])/,
+        relevance: 0,
     };
     // A fence may also open on a list item's MARKER LINE (`- %%%`), and then
     // the body is hidden exactly as it is anywhere else - §24 S2 and §28 make a
@@ -3555,6 +3574,8 @@ function adaptGrammar(grammar, hljs) {
     ];
     for (const row of [TABLE_HEADER_ROW, TABLE_ROW, TABLE_CONTINUATION_ROW]) {
         row.contains.splice(row.contains.length - 1, 0, ...CELL_INLINE);
+        // Math and literal sigils ahead of the cell's code span (C2-B-169).
+        row.contains.unshift(...ONE_LINE_VERBATIM.filter((mode) => mode !== ONE_LINE_VERBATIM.at(-1)));
     }
     // A LABEL IS AN INLINE RUN TOO (link and span text, an extension's content,
     // an inline footnote), ending at its own `]`. A nested bracket pair is
@@ -3786,10 +3807,12 @@ function adaptGrammar(grammar, hljs) {
         DELETE,            // {-text-}
         BLOCK_COMMENT,     // %%% fence - before LINE_COMMENT
         BLOCK_COMMENT_ON_MARKER_LINE,  // `- %%%` - the marker is left to the list rules
+        UNCLOSED_BLOCK_COMMENT,        // a column-0 `%%%` run with no closer: to the end
         CONTAINER_COMMENT_FENCE,       // an unclosed `%%%` run in a container: to the end of it
         UNTERMINATED_BLOCK_COMMENT,    // a `%%%` run with no closer - AFTER both fences
         DELIMITED_COMMENT, // {% ... %}
         LINE_COMMENT,      // %% to end of line
+        TRAILING_PERCENT_RUN,
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
         MENTION,
         CROSS_REF,         // </#id> - before TAG, which claims the `#id`
@@ -3830,7 +3853,10 @@ function adaptGrammar(grammar, hljs) {
     // A description body collects abbreviation definitions, on its `: ` line too (carve-grammars#842).
     DEFINITION_LIST_ENTRY.contains.push(ABBREVIATION_DEF, abbreviationOnDescription('[ \\t]*'), FOOTNOTE_DEF, REFERENCE_DEF, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
     FOOTNOTE_DEF.contains.push(...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE)));
-    LINE_BLOCK.contains = CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE));
+    // A comment block hides line-block lines too (C2-B-109, C2-B-111), but a
+    // line comment there is text (C2-B-135).
+    LINE_BLOCK.contains = [BLOCK_COMMENT, UNCLOSED_BLOCK_COMMENT, ...CONTAINS.slice(CONTAINS.indexOf(INLINE_FOOTNOTE))
+        .filter((mode) => !(mode.className === 'comment' && /%%(?!%)|%\{3,\}/.test(mode.begin?.source ?? '') && !mode.begin.source.includes('\\{%')))];
     LINE_BLOCK_ON_MARKER_LINE.contains = [LINE_BLOCK_MARKER_LINE_CLOSER, ...LINE_BLOCK.contains];
 
     // A div's body holds the full top-level mode list, abbreviation definitions
@@ -3896,6 +3922,143 @@ function adaptGrammar(grammar, hljs) {
         CONTAINS.forEach(visit);
         visit({ contains: CONTAINS });
     }
+    // C2-I-024: a line comment takes every closer on its line, so a form whose
+    // closing line holds a comment ahead of the closer stays open there.
+    {
+        const span = '(?<!`)(`{1,16})(?!`)(?:[^\\n`]|(?!(?<!`)\\1(?!`))`)*(?<!`)\\1(?!`)';
+        const lone = '(?<!`)(`{1,16})(?!`)(?![^\\n]*?(?<!`)\\2(?!`))';
+        const commentOnLine = RegExp('^(?:[ \\t>]*%%|(?:[^\\n`\\\\]|\\\\[^\\n]|' + span + '|' + lone + ')*?[ \\t]%%)');
+        const takenByComment = (input, from, to) => {
+            const head = input.slice(from, to);
+            return commentOnLine.test(head.slice(head.lastIndexOf('\n') + 1));
+        };
+        const labelEnd = (input, from) => {
+            let depth = 0;
+            // Bounded like the label patterns, so a run of open brackets stays linear.
+            for (let i = from, stop = Math.min(input.length, from + 2048); i < stop && input[i] !== '\n'; i++) {
+                if (input[i] === '\\') i++;
+                else if (input[i] === '[') depth++;
+                else if (input[i] === ']' && --depth === 0) return i;
+            }
+            return -1;
+        };
+        // A link's or span's label is inline content, an image's alt text is not;
+        // a reference label behind either is (C2-I-077).
+        const labelTaken = (input, index, altText) => {
+            const open = input.indexOf('[', index);
+            const close = open < 0 ? -1 : labelEnd(input, open);
+            if (close < 0) return false;
+            if (!altText && takenByComment(input, open, close)) return true;
+            if (input[close + 1] !== '[') return false;
+            const second = labelEnd(input, close + 1);
+            return second >= 0 && takenByComment(input, close + 1, second);
+        };
+        const gate = (mode, label) => {
+            const before = mode['on:begin'];
+            const end = mode.end && new RegExp(mode.end.source, 'gm');
+            mode['on:begin'] = (m, resp) => {
+                let taken;
+                if (label) taken = labelTaken(m.input, m.index, label === 'alt');
+                else if (!end) taken = takenByComment(m.input, m.index, m.index + m[0].length);
+                else {
+                    end.lastIndex = m.index + m[0].length;
+                    const closer = end.exec(m.input);
+                    taken = takenByComment(m.input, m.index, closer ? closer.index : m.index);
+                }
+                if (taken) return resp.ignoreMatch();
+                return before?.(m, resp);
+            };
+        };
+        [STRONG, EMPHASIS, UNDERLINE, BOLD_ITALIC, HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, STRIKETHROUGH, INSERT, DELETE,
+            FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, INLINE_FOOTNOTE].forEach((mode) => gate(mode));
+        [LINK, REFERENCE_LINK, SPAN, INLINE_EXTENSION].forEach((mode) => gate(mode, 'label'));
+        [IMAGE, REFERENCE_IMAGE].forEach((mode) => gate(mode, 'alt'));
+    }
+    // C2-B-024: a quote marker, a term, an attribute line or an include directive
+    // directly under paragraph text is a lazy line of that paragraph.
+    {
+        const previousLine = (input, at) => (at === 0 ? -1 : lineStartBefore(input, at - 1));
+        const blank = /^\uFEFF?[ \t]*(?:>[ \t]*)*$/;
+        const commentOnly = /^\uFEFF?[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
+        const boundary = /^\uFEFF?[ \t]*(?:#{1,6}(?: |$)|={1,6} |`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|(?:\*{3,}|-{3,}|_{3,})[ \t]*$|\|.*\||\{[^{}]*\}[ \t]*$|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|\^ |:: |\+[ \t]*$)/;
+        // The first line of the paragraph that the line at `at` would continue, or null.
+        const paragraphHead = (input, at) => {
+            let head = null;
+            for (let line = previousLine(input, at), n = 0; line !== -1 && n < 64; line = previousLine(input, line), n++) {
+                const text = lineAt(input, line);
+                if (commentOnly.test(text)) continue;
+                if (blank.test(text) || boundary.test(text)) {
+                    // An indented line under a heading, caption or term continues that label (C2-B-234).
+                    if (head !== null && /^[ \t]/.test(head) && /^\uFEFF?[ \t]*(?:#{1,6} |={1,6} |\^ |:: )/.test(text)) return null;
+                    break;
+                }
+                // Only an indented line can continue a label, so a column-0 one settles it.
+                if (!/^[ \t]/.test(text)) return text;
+                head = text;
+            }
+            return head;
+        };
+        const lazy = (input, index) => {
+            const at = lineStartBefore(input, index);
+            if (input.slice(at, index).trim() !== '') return false;
+            const text = lineAt(input, at);
+            if (/^\uFEFF?: /.test(text)) {
+                // A description line follows its term's reading.
+                for (let line = previousLine(input, at), n = 0; line !== -1 && n < 64; line = previousLine(input, line), n++) {
+                    const above = lineAt(input, line);
+                    if (blank.test(above)) return false;
+                    if (/^\uFEFF?:: /.test(above)) return lazy(input, line);
+                }
+                return false;
+            }
+            const head = paragraphHead(input, at);
+            // A term under a description starts the next entry.
+            if (head === null || (/^\uFEFF?:: /.test(text) && /^\uFEFF?: /.test(head))) return false;
+            if (/^\uFEFF?[ \t]*>/.test(text)) return !/^\uFEFF?[ \t]*>/.test(head);
+            return true;
+        };
+        const quoteBegin = BLOCKQUOTE['on:begin'];
+        BLOCKQUOTE['on:begin'] = (m, resp) => {
+            quoteBegin(m, resp);
+            if (lazy(m.input, m.index)) m.rule.scope = undefined;
+        };
+        const ATTRIBUTE_LINE = CONTAINS.find((mode) => mode.className === 'attr' && mode.begin?.source?.startsWith('(?:(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n))'));
+        const LOOSE_DESCRIPTION = CONTAINS.find((mode) => mode.className === 'punctuation' && mode.begin?.source === '^(?<![^\\r\\n])([ \\t]*)(?=:):(?= +(?![ \\t]*$(?![^\\r\\n])))');
+        // The common shape, a column-0 text line right above, is refused in the
+        // regex: every ignoreMatch makes highlight.js build another matcher.
+        // `[:]` keeps the definition filter at the top from dropping these modes.
+        const TEXT_ABOVE = '^(?!\\uFEFF?(?:#{1,6}(?: |$)|={1,6} |`{3,}|(?:\\*{3,}|-{3,}|_{3,})[ \\t]*$|\\[\\^?[^\\]\\r\\n]+\\][:]|\\*\\[|\\^ |\\+[ \\t]*$))'
+            + '(?!\\uFEFF?(?:>[ \\t]*)+\\r?$)\\uFEFF?[^ \\t\\r\\n:%|{][^\\r\\n]*\\r?\\n';
+        const refuse = (mode, ahead, above) => {
+            mode.begin = RegExp('(?=' + ahead + ')(?<!' + above + ')(?:' + mode.begin.source + ')');
+        };
+        refuse(ATTRIBUTE_LINE, '\\{', TEXT_ABOVE);
+        refuse(INCLUDE_DIRECTIVE, '\\{\\{', TEXT_ABOVE + '[ \\t]*');
+        refuse(DEFINITION_LIST_ENTRY, '[ \\t]*::', TEXT_ABOVE);
+        refuse(LOOSE_DESCRIPTION, '[ \\t]*:', TEXT_ABOVE + '::[^\\r\\n]*\\r?\\n');
+        for (const mode of [DEFINITION_LIST_ENTRY, INCLUDE_DIRECTIVE, ATTRIBUTE_LINE, LOOSE_DESCRIPTION]) {
+            const before = mode['on:begin'];
+            mode['on:begin'] = (m, resp) => {
+                if (lazy(m.input, m.index)) return resp.ignoreMatch();
+                return before?.(m, resp);
+            };
+        }
+    }
+    // A quoted line holds the inline set a heading does (C2-B-147). Each mode
+    // ends with the quote line, so no span carries the next line's `>` (C2-B-001).
+    {
+        const lineBound = (mode) => (mode.end ? { ...mode, endsWithParent: true } : mode);
+        const inline = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, DELIMITED_COMMENT, LINE_COMMENT, ATTRIBUTE_EMPTY,
+            SPAN_ATTRIBUTE, ATTRIBUTE, ATTRIBUTE_UNATTACHED, CROSS_REF, TAG, SYMBOL, ...LINE_INLINE].map(lineBound);
+        const sink = BLOCKQUOTE.contains.findIndex((mode) => !mode.className && mode.begin === ESCAPE.begin);
+        BLOCKQUOTE.contains.splice(sink, 0, ...inline);
+        const content = BLOCKQUOTE.contains.find((mode) => mode.contains?.some((child) => child.begin?.source === '(?<=[ \\t])%%'));
+        content.contains.push(...inline.slice(ONE_LINE_VERBATIM.length + 4));
+    }
+
+    // A refused begin resumes on the rules after it, which may find nothing for
+    // the rest of the document; a line break stops that scan at the line.
+    CONTAINS.push({ begin: /\n/, relevance: 0 });
 
     return {
         // `crv` is the canonical file extension, and every surface this package
