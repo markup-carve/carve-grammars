@@ -448,19 +448,7 @@
     "prism": [
       [
         "comment",
-        "%%%"
-      ],
-      [
-        "text",
-        "\nhidden\n"
-      ],
-      [
-        "comment",
-        "%%% visible?"
-      ],
-      [
-        "text",
-        "\nafter\n"
+        "%%%\nhidden\n%%% visible?\nafter\n"
       ]
     ],
     "highlightjs": "<span class=\"hljs-comment\">%%%\nhidden\n%%% visible?\nafter\n</span>",
@@ -534,7 +522,7 @@
         "|"
       ],
       [
-        "table",
+        "table>typography",
         "---"
       ],
       [

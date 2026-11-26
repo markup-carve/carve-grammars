@@ -4066,7 +4066,21 @@ if (Prism?.languages.carve) {
     };
     grammar.attributes[1].pattern = singleLineAttributes;
     for (const commentFence of grammar.comment.slice(1, 4)) {
-        commentFence.pattern = new RegExp(commentFence.pattern.source.replace('[^\\r\\n]*$', '[ \\t]*$'), commentFence.pattern.flags);
+        // C2-B-109, C2-B-110: the closer is a bare run of at least the opener's width.
+        commentFence.pattern = new RegExp(commentFence.pattern.source.replace('[^\\r\\n]*$', '[ \\t]*$').replace('(?!%)[ \\t]*$', '%*[ \\t]*$'), commentFence.pattern.flags);
+    }
+    // A line comment in a line block is text (C2-B-135).
+    for (const rule of [].concat(grammar['line-block'])) {
+        rule.inside = { ...rule.inside, comment: rule.inside.comment.filter((entry) => !/%%\(\?!%\)/.test((entry.pattern || entry).source)) };
+    }
+    // C2-B-111: an unclosed comment block at column 0 runs to the end of the
+    // document; a bare colon fence stands in for the end of an enclosing div.
+    {
+        const unterminated = grammar.comment.find((rule) => rule.pattern.source === '^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*%{3,}[^\\r\\n]*$(?![^\\r\\n])');
+        // A run under a marker line that opened one closes that comment instead.
+        unterminated.pattern = RegExp('^(?<![^\\r\\n])(?=\\uFEFF?%%%)(?<!^(?<![^\\r\\n])[ \\t]*(?:[-*+]|[0-9]+[.)]|:|\\[\\^[^\\]\\r\\n]+\\]:|(?:> ?)+)[ \\t]+%{3,}[ \\t]*(?:\\r\\n?|\\n))(?:(?<![\\s\\S])\\uFEFF)?(%{3,})(?!%)[^\\r\\n]*'
+            + '(?![\\s\\S]*?(?:\\r\\n?|\\n)[ \\t]*\\1%*[ \\t]*$(?![^\\r\\n]))(?:(?:\\r\\n?|\\n)(?![ \\t]*:{3,}[ \\t]*$)[^\\r\\n]*)*'
+            + '|' + unterminated.pattern.source, 'm');
     }
 
     // C2-B-152, C2-B-108, C2-B-171, C2-I-046.
@@ -4238,6 +4252,185 @@ if (Prism?.languages.carve) {
         for (const [key] of rest) delete carve[key];
         carve['metadata-block'] = metadata;
         for (const [key, value] of rest) carve[key] = value;
+    }
+    // Retries a rule's match one character on while `reject` refuses it.
+    const gateRule = (rule, reject) => {
+        const pattern = rule.pattern;
+        const plain = !Object.hasOwn(pattern, 'exec');
+        const gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        gated.exec = function (source) {
+            const runner = plain ? this : pattern;
+            if (!plain) pattern.lastIndex = this.lastIndex;
+            let match;
+            while ((match = (plain ? RegExp.prototype.exec : pattern.exec).call(runner, source))) {
+                const start = match.index + (rule.lookbehind && match[1] ? match[1].length : 0);
+                if (!reject(source, start, match.index + match[0].length)) break;
+                runner.lastIndex = match.index + 1;
+            }
+            if (!plain) this.lastIndex = pattern.lastIndex;
+            return match;
+        };
+        rule.pattern = gated;
+    };
+    const visitRules = (grammar, names, apply) => {
+        const seen = new Set();
+        const visit = (set) => {
+            if (!set || typeof set !== 'object' || seen.has(set)) return;
+            seen.add(set);
+            for (const [name, entry] of Object.entries(set)) {
+                for (const rule of [].concat(entry)) {
+                    if (!rule || typeof rule !== 'object') continue;
+                    if (names.has(name) && rule.pattern instanceof RegExp && !seen.has(rule)) {
+                        seen.add(rule);
+                        apply(rule, name);
+                    }
+                    visit(rule.inside);
+                }
+            }
+        };
+        visit(grammar);
+    };
+    // C2-I-024: a line comment takes every closer on its line, so a form whose
+    // closing line holds a comment ahead of the closer stays open there.
+    {
+        const span = '(?<!`)(`{1,16})(?!`)(?:[^\\r\\n`]|(?!(?<!`)\\1(?!`))`)*(?<!`)\\1(?!`)';
+        const lone = '(?<!`)(`{1,16})(?!`)(?![^\\r\\n]*?(?<!`)\\2(?!`))';
+        const commentOnLine = RegExp('^(?:[ \\t>]*%%|(?:[^\\r\\n`\\\\]|\\\\[^\\r\\n]|' + span + '|' + lone + ')*?[ \\t]%%)');
+        const bracketEnd = (text, from) => {
+            let depth = 0;
+            for (let i = from; i < text.length; i++) {
+                if (text[i] === '\\') i++;
+                else if (text[i] === '[') depth++;
+                else if (text[i] === ']' && --depth === 0) return i;
+            }
+            return text.length;
+        };
+        const takenOnLastLine = (text) => commentOnLine.test(text.slice(Math.max(text.lastIndexOf('\n'), text.lastIndexOf('\r')) + 1));
+        // The label of a link or span is inline content; an image's alt text and a link's destination are not.
+        const labelled = { url: true, span: true, extension: true, image: false, 'reference-image': false };
+        const taken = (text, name) => {
+            if (!(name in labelled)) return takenOnLastLine(text);
+            const first = bracketEnd(text, text.indexOf('['));
+            if (labelled[name] && takenOnLastLine(text.slice(0, first))) return true;
+            return text[first + 1] === '[' && takenOnLastLine(text.slice(first + 1, bracketEnd(text, first + 1)));
+        };
+        const names = new Set([...Object.keys(labelled), 'bold', 'italic', 'bold-italic', 'forced-bold', 'forced-italic',
+            'forced-underline', 'forced-strike', 'underline', 'strike', 'highlight', 'superscript', 'subscript', 'inline-footnote',
+            'inserted', 'deleted']);
+        // A comment on an earlier line of a form that closes later stays inside it.
+        const lineComment = { pattern: /((?:\r\n?|\n)[ \t>]*|[ \t])%%[^\r\n]*/, lookbehind: true, alias: 'comment' };
+        const withLineComment = (set) => {
+            if ('line-comment' in set) return;
+            const entries = Object.entries(set);
+            const at = entries.findIndex(([key]) => key === 'code');
+            entries.splice(at === -1 ? entries.length : at + 1, 0, ['line-comment', lineComment]);
+            for (const key of Object.keys(set)) delete set[key];
+            Object.assign(set, Object.fromEntries(entries));
+        };
+        visitRules(Prism.languages.carve, names, (rule, name) => {
+            gateRule(rule, (source, start, end) => taken(source.slice(start, end), name));
+            if (rule.inside && name !== 'image' && name !== 'reference-image') withLineComment(rule.inside);
+        });
+    }
+    // C2-B-024: a quote marker, a term, an attribute line or an include directive
+    // directly under paragraph text is a lazy line of that paragraph.
+    {
+        const lineStart = (source, at) => {
+            while (at > 0 && source[at - 1] !== '\n' && source[at - 1] !== '\r') at--;
+            return at;
+        };
+        const previousLine = (source, at) => (at === 0 ? -1 : lineStart(source, at - (source[at - 1] === '\n' && source[at - 2] === '\r' ? 2 : 1)));
+        const lineText = (source, at) => {
+            const end = /\r|\n|$/g;
+            end.lastIndex = at;
+            return source.slice(at, end.exec(source).index);
+        };
+        const blank = /^\uFEFF?[ \t]*(?:>[ \t]*)*$/;
+        const commentOnly = /^\uFEFF?[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
+        const boundary = /^\uFEFF?[ \t]*(?:#{1,6}(?: |$)|={1,6} |`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|(?:\*{3,}|-{3,}|_{3,})[ \t]*$|\|.*\||\{[^{}]*\}[ \t]*$|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|\^ |:: |\+[ \t]*$)/;
+        // The first line of the paragraph that the line at `at` would continue, or null.
+        const paragraphHead = (source, at) => {
+            let head = null;
+            for (let line = previousLine(source, at), n = 0; line !== -1 && n < 64; line = previousLine(source, line), n++) {
+                const text = lineText(source, line);
+                if (commentOnly.test(text)) continue;
+                if (blank.test(text) || boundary.test(text)) {
+                    // An indented line under a heading, caption or term continues that label (C2-B-234).
+                    if (head !== null && /^[ \t]/.test(head) && /^\uFEFF?[ \t]*(?:#{1,6} |={1,6} |\^ |:: )/.test(text)) return null;
+                    break;
+                }
+                // Only an indented line can continue a label, so a column-0 one settles it.
+                if (!/^[ \t]/.test(text)) return text;
+                head = text;
+            }
+            return head;
+        };
+        // C2-B-024 lists the lines that never interrupt a paragraph.
+        const lazy = (source, at, text) => {
+            if (/^\uFEFF?: /.test(text)) {
+                // A description line follows its term's reading.
+                for (let line = previousLine(source, at), n = 0; line !== -1 && n < 64; line = previousLine(source, line), n++) {
+                    const above = lineText(source, line);
+                    if (blank.test(above)) return false;
+                    if (/^\uFEFF?:: /.test(above)) return lazy(source, line, above);
+                }
+                return false;
+            }
+            const head = paragraphHead(source, at);
+            // A term under a description starts the next entry.
+            if (head === null || (/^\uFEFF?:: /.test(text) && /^\uFEFF?: /.test(head))) return false;
+            if (/^\uFEFF?[ \t]*>/.test(text)) return !/^\uFEFF?[ \t]*>/.test(head);
+            return true;
+        };
+        const lazyPattern = (candidate) => {
+            const pattern = /(?:)/g;
+            pattern.exec = function (source) {
+                candidate.lastIndex = this.lastIndex;
+                for (let match; (match = candidate.exec(source));) {
+                    if (lazy(source, match.index, match[0])) {
+                        this.lastIndex = candidate.lastIndex;
+                        return match;
+                    }
+                }
+                return null;
+            };
+            return pattern;
+        };
+        const carve = Prism.languages.carve;
+        const inline = {
+            'line-comment': { pattern: /(^|[ \t])%%[^\r\n]*/, lookbehind: true, alias: 'comment' },
+            ...Object.fromEntries(Object.entries(carve.title.inside).filter(([key]) => key !== 'punctuation' && key !== 'comment-line')),
+        };
+        const entries = Object.entries(carve);
+        entries.splice(entries.findIndex(([key]) => key === 'blockquote'), 0, ['lazy-line', [
+            // An attribute line stays plain text: no block or span takes it.
+            { pattern: lazyPattern(/^\uFEFF?[ \t]*\{(?=[ \t]*[.#:A-Za-z])[^{}\r\n]*\}[ \t]*$/gm), greedy: true },
+            { pattern: lazyPattern(/^\uFEFF?[ \t]*(?:>(?= |$)|:: ?(?=\S)|: (?=\S)|\{\{ )[^\r\n]*/gm), greedy: true, inside: inline },
+        ]]);
+        for (const key of Object.keys(carve)) delete carve[key];
+        Object.assign(carve, Object.fromEntries(entries));
+    }
+    // A quoted line and a table row hold the whole inline set a heading does (C2-B-147, C2-B-169).
+    {
+        const carve = Prism.languages.carve;
+        const canon = Object.keys(carve.title.inside);
+        const added = ['math', 'literal', 'raw-inline', 'image', 'reference-image', 'inline-footnote', 'footnote', 'citation',
+            'cross-ref', 'url', 'span-empty-attrs', 'extension', 'span', 'critic-comment', 'inserted', 'deleted', 'tag',
+            'mention', 'symbol', 'typography'];
+        const complete = (set) => {
+            if (!set || !('bold' in set)) return;
+            const keys = Object.keys(set);
+            for (const name of added) {
+                if (keys.includes(name)) continue;
+                const next = canon.slice(canon.indexOf(name) + 1).find((key) => keys.includes(key));
+                keys.splice(next === undefined ? keys.length : keys.indexOf(next), 0, name);
+            }
+            const entries = keys.map((key) => [key, key in set ? set[key] : carve.title.inside[key]]);
+            for (const key of Object.keys(set)) delete set[key];
+            Object.assign(set, Object.fromEntries(entries));
+        };
+        for (const rule of carve.blockquote) complete(rule.inside);
+        for (const rule of [].concat(carve.table, carve['table-continuation'])) complete(rule?.inside);
     }
     // Every inline set that reads a tag or emphasis reads an unattached block as one atom first.
     {
