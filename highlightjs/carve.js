@@ -40,9 +40,7 @@ function adaptGrammar(grammar, hljs) {
         const source = mode?.begin?.source || '';
         return mode?.className === 'table-alignment'
             || (mode?.className === 'punctuation' && source.includes('(?=\\+)'))
-            || source.startsWith('(?<![\\w~])~')
-            || source.startsWith('(?<![\\w/])_')
-            || source.startsWith('(?<![=\\w])=')
+            || mode?.bareSpanOf01 === true
             || source.includes('(?=[-:| ]+\\|');
     };
     function adapt(node) {
@@ -373,9 +371,11 @@ function adaptGrammar(grammar, hljs) {
     const LETTER_OR_DIGIT = '[A-Za-z0-9\\u0080-\\uFFFF]';
     // A delimiter before one of these is part of a larger character, not a delimiter.
     const GRAPHEME_EXTENDER = '[\\u0300-\\u036F\\u1AB0-\\u1AFF\\u1DC0-\\u1DFF\\u200D\\u20D0-\\u20FF\\uFE00-\\uFE0F\\uFE20-\\uFE2F]';
+    // C2-I-026: the characters on the two sides of braced comments are tested as if glued.
+    const BRACED_COMMENTS = '(?:\\{%(?:[^%]|%(?!\\})){0,4096}?%\\})*';
     const BARE_CODE = '```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)';
     // The `=` of a comparison neither opens nor closes (PART 9 §9).
-    const bareCloser = (d) => `(?<=\\S)${d === '=' ? '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}[>!])(?:(?<!(?<!\\\\)(?:\\\\\\\\){0,32}<)=|=(?=[=>]))' : d}(?!${LETTER_OR_DIGIT})`;
+    const bareCloser = (d) => `(?<=\\S)(?<!\\s(?=\\{%)${BRACED_COMMENTS})${d === '=' ? '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}[>!])(?:(?<!(?<!\\\\)(?:\\\\\\\\){0,32}<)=|=(?=[=>]))' : d}(?!${BRACED_COMMENTS}${LETTER_OR_DIGIT})`;
     // A braced span's body: a braced span of another kind, a closed code span
     // and a link destination or autolink are atoms, so the closer is the first
     // one outside all three. An insertion or deletion (`atoms` false) closes at
@@ -396,23 +396,31 @@ function adaptGrammar(grammar, hljs) {
     };
     // A whole bare run per delimiter, for a block glued to its closer (carve-grammars#867).
     const BARE_RUNS = [];
+    const SPACE_BEFORE_COMMENTS = /\s(?:\{%(?:[^%]|%(?!\}))*%\})+$/;
     const bare = (d, opener) => {
         const opaque = OPAQUE_INLINE_SOURCE.replace(OPAQUE_BRACED_SOURCE, sameKindAtoms(d) + '|' + bracedSource(BRACED_KINDS.filter((kind) => kind !== d)));
         // Keep the whitespace and letter cases disjoint for repeated `*a`.
         // An own delimiter between two word characters ends the run (PART 9 §9 R2).
-        const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s)${d}(?!${LETTER_OR_DIGIT})|(?<!${LETTER_OR_DIGIT})${d}(?=${LETTER_OR_DIGIT})|(?<=${LETTER_OR_DIGIT})${d}(?=${GRAPHEME_EXTENDER})`
+        const atom = `(?:\\\\(?:[^\\n]|\\n(?![ \\t]*\\n))|${BARE_CODE}|${opaque}|(?<=\\s${BRACED_COMMENTS})${d}(?!${BRACED_COMMENTS}${LETTER_OR_DIGIT})|(?<!${LETTER_OR_DIGIT}${BRACED_COMMENTS})${d}(?=${BRACED_COMMENTS}${LETTER_OR_DIGIT})|(?<=${LETTER_OR_DIGIT})${d}(?=${GRAPHEME_EXTENDER})`
             + `${d === '=' ? '|[>!]=|<=(?![=>])' : ''}|(?!${opaque})[^${d}\\\\\\n\`]|\\n(?![ \\t]*\\n))`;
         // A plain scan for any closer runs first: the atom scan re-reads every
         // braced span from each opener, so openers with no closer went cubic.
         // Tempered on disjoint non-closer cases, so a failure costs one pass.
-        const precheck = `(?:[^${d}\\n]|${d === '=' ? '[>!]=|<=(?![=>])|' : ''}\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})){0,4096}${bareCloser(d)}`;
-        opener = new RegExp(`${opener.source}(?=${precheck})`);
+        const precheck = `(?:[^${d}\\n]|${d === '=' ? '[>!]=|<=(?![=>])|' : ''}\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})|(?<=%\\})${d}|${d}(?=\\{%)){0,4096}${bareCloser(d)}`;
+        // A word before the opener, or a space after it, counts through braced comments.
+        opener = new RegExp(`(?<![\\w${d}](?=\\{%)${BRACED_COMMENTS})${opener.source}(?!(?=\\{%)${BRACED_COMMENTS}\\s)(?=${precheck})`);
         BARE_RUNS.push([d.replace('\\', ''), new RegExp(`${opener.source}${atom}{1,4096}?${bareCloser(d)}`, 'g')]);
         return {
+            // 0.2 has no bare underline, strike or highlight; the 0.2 wrapper drops these.
+            ...(['_', '~', '='].includes(d) ? { bareSpanOf01: true } : {}),
             begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?${bareCloser(d)})`),
             // A lookbehind in `end` never matches in highlight.js, so a delimiter
             // after whitespace is consumed by a content mode instead.
-            end: new RegExp(`${d}(?!${LETTER_OR_DIGIT})`),
+            end: new RegExp(`${d}(?!${BRACED_COMMENTS}${LETTER_OR_DIGIT})`),
+            // A space before braced comments makes the delimiter no closer; an end cannot look behind.
+            'on:end': (m, resp) => {
+                if (m.input[m.index - 1] === '}' && SPACE_BEFORE_COMMENTS.test(m.input.slice(Math.max(0, m.index - 4096), m.index))) resp.ignoreMatch();
+            },
         };
     };
     /**
@@ -2789,7 +2797,7 @@ function adaptGrammar(grammar, hljs) {
 
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\r\n])/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| +"(?:\\.|[^"\\\n])*"[^\r\n]*| *\[[^\]\n]*\])[ \t]*$(?![^\r\n])/,
         'on:begin': openColonFence,
         endScope: 'keyword',
         end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
@@ -2979,7 +2987,7 @@ function adaptGrammar(grammar, hljs) {
     // comment whether the opener holds or folds into the item as text.
     const MARKER_LINE_TAIL_COMMENT = '[ \\t]+%%|[ \\t]*\\{%';
     const DIV_ON_MARKER_LINE_OPENER =
-        '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| *\\[[^\\]\\n]*\\])?'
+        '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| +"(?:\\\\.|[^"\\\\\\n])*"(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| *\\[[^\\]\\n]*\\])?'
         + '(?=(?:' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n]*$(?![^\\r\\n])|[ \\t]*$(?![^\\r\\n]))';
     const [DIV_ON_MARKER_LINE, DIV_MARKER_LINE_CLOSER] = markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
     // Inside a group, like DIV_BLOCK_IN_GROUP: its body must not offer a group.
@@ -3181,7 +3189,7 @@ function adaptGrammar(grammar, hljs) {
     const TAG_NAME = '(?=(?:[A-Za-z0-9_-]|\\.(?=[A-Za-z0-9_-]))*[A-Za-z])[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*(?<!-)';
     // The common letters outside ASCII refuse in the regex; `refuseGluedName` catches the rest.
     const LATIN_GREEK_CYRILLIC = '\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02AF\\u0370-\\u03FF\\u0400-\\u04FF';
-    const glued = (sigil) => '(?<![\\w' + sigil + LATIN_GREEK_CYRILLIC + '])' + sigil + TAG_NAME + '(?![A-Za-z0-9_.-]*[' + LATIN_GREEK_CYRILLIC + '])';
+    const glued = (sigil) => '(?<![\\w' + sigil + LATIN_GREEK_CYRILLIC + '](?:' + BRACED_COMMENTS + '))' + sigil + TAG_NAME + '(?![A-Za-z0-9_.-]*[' + LATIN_GREEK_CYRILLIC + '])';
     const TAG_RUN_FOLLOWER = /[A-Za-z0-9_.-]*([\p{L}\p{N}\p{M}])?/uy;
     const refuseGluedName = (m, resp) => {
         // A letter or digit outside ASCII before the sigil glues it to the word too.

@@ -164,6 +164,8 @@
     };
     // Not behind an odd backslash run: an even run is escaped backslashes. Bounded at 32 pairs.
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // C2-I-026: the characters on the two sides of braced comments are tested as if glued.
+    var bracedComments = '(?:\\{%(?:[^%]|%(?!\\})){0,4096}?%\\})*';
     // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
     // joined by single dots, holding a letter, not ending in a hyphen; a run
     // directly followed by a Unicode letter, number or mark is text. Needs `u`.
@@ -730,7 +732,7 @@
         // An own delimiter between two word characters ends the run: no span
         // forms (PART 9 §9 R2), so `*a*b*` and `_my_var_` stay text.
         var atom = '(?:\\\\[^\\r\\n]|' + bareCode + '|' + opaque
-            + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}]\\p{M}*)' + delimiter + '(?=[\\p{L}\\p{N}])';
+            + '|(?<=\\s' + bracedComments + ')' + delimiter + '(?!' + bracedComments + '[\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}]\\p{M}*' + bracedComments + ')' + delimiter + '(?=' + bracedComments + '[\\p{L}\\p{N}])';
         // One soft break, never a blank line or a line opening another block.
         var softBreak = '(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))(?!' + otherBlockOpener + ')';
         // A cheap scan for a possible closer in the paragraph, so an
@@ -845,14 +847,14 @@
         },
         'bold': {
             // A `*` glued to a closer opens nothing: `*a**b* c` bolds only `a`.
-            pattern: new RegExp('(?<![\\w*])' + notEscaped + '\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)\\*(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<![\\w*]' + bracedComments + ')' + notEscaped + '\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')\\*(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
             alias: 'bold',
         },
         'italic': {
             // The leading guard avoids URLs and paths.
             // A lookbehind, not a captured character: a capture would start the
             // match inside the token before it, which Prism then drops.
-            pattern: new RegExp('(?<=^(?<![^\\r\\n])|[^\\w/])' + notEscaped + '/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<=^(?<![^\\r\\n])|[^\\w/])(?<![\\w/]' + bracedComments + ')' + notEscaped + '/(?![\\s/])' + bareRun('/') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')/(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
             alias: 'italic',
         },
         'underline': {
@@ -2432,7 +2434,7 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\r\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
+                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*| *\\[[^\\]\\r\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
             inside: {
@@ -2452,10 +2454,10 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| *\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| +"(?:\\.|[^"\\\r\n])*"(?: +\[[^\]\r\n]*\])?| *\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
-                            'string': /"[^"\r\n]*"/,
+                            'string': /"(?:\\.|[^"\\\r\n])*"/,
                             'symbol': /\[[^\]\r\n]*\]/,
                             'class-name': /[a-zA-Z0-9_][\w-]*|\||\\|>/,
                         },
@@ -2470,6 +2472,14 @@
                             },
                             'punctuation': /:{3,}/,
                             'class-name': /[a-zA-Z0-9_][\w-]*/,
+                        },
+                    },
+                    {
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +"(?:\\.|[^"\\\r\n])*"[^\r\n]*$(?![^\r\n])/m,
+                        inside: {
+                            'invalid-metadata': { pattern: /(^[^"]*"(?:\\.|[^"\\\r\n])*")[^\r\n]*\S[^\r\n]*/, lookbehind: true, alias: 'error' },
+                            'string': /"(?:\\.|[^"\\\r\n])*"/,
+                            'punctuation': /:{3,}/,
                         },
                     },
                 ],
@@ -3592,8 +3602,9 @@
     delete Prism.languages.carve['inline-footnote'].inside['inline-footnote'];
     delete Prism.languages.carve['inline-footnote'].inside['footnote'];
     var delimiterInside = Prism.languages.carve['div'].inside['div-delimiter'][0].inside;
-    delimiterInside['string'] = { pattern: /"[^"\r\n]*"/, inside: { 'title-text': runBetween('^"', '"$'), 'punctuation': /"/ } };
+    delimiterInside['string'] = { pattern: /"(?:\\.|[^"\\\r\n])*"/, inside: { 'title-text': runBetween('^"', '"$'), 'punctuation': /"/ } };
     delimiterInside['symbol'] = { pattern: /\[[^\]\r\n]*\]/, inside: { 'label-text': runBetween('^\\[', '\\]$'), 'punctuation': /\[|\]/ } };
+    Prism.languages.carve['div'].inside['div-delimiter'][2].inside['string'] = delimiterInside['string'];
 
     // A quoted line's code, math and literal spans stay verbatim
     // (carve-grammars#858), ahead of the inline rules.
@@ -3717,7 +3728,7 @@
                 inside: Prism.languages.carve.table.inside,
             },
         }, own);
-        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| *\\[[^\\]\\r\\n]*\\])?[ \\t]*';
+        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| +"(?:\\\\.|[^"\\\\\\r\\n])*"(?: +\\[[^\\]\\r\\n]*\\])?| *\\[[^\\]\\r\\n]*\\])?[ \\t]*';
         Prism.languages.carve.blockquote.splice(1, 0, {
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceLine
                 // An unclosed run ends with the quote.
@@ -4459,6 +4470,42 @@ if (Prism?.languages.carve) {
         };
         visit(Prism.languages.carve);
     }
+}
+
+// C2-I-026: a braced comment counts as nothing for its neighbors. A bare
+// delimiter glued through one to word characters on both sides, or a sigil
+// glued to a word before it, forms nothing. The comment rule splits the text
+// before the non-greedy emphasis rules run, so this greedy rule takes the
+// delimiter first.
+if (Prism?.languages.carve) {
+    const comment = '\\{%(?:[^%]|%(?!\\})){0,4096}?%\\}';
+    const word = '[\\p{L}\\p{N}\\p{M}_]';
+    const glued = {
+        // Each branch starts on the delimiter: a greedy match cannot start in the comment token.
+        pattern: RegExp('(?<=' + word + '(?:' + comment + ')+)(?:[*/_~=](?:' + comment + ')*(?=[\\p{L}\\p{N}])|[#@])'
+            + '|(?<=' + word + ')[*/_~=](?:' + comment + ')+(?=[\\p{L}\\p{N}])', 'u'),
+        greedy: true,
+        inside: {},
+    };
+    const seen = new WeakSet();
+    const visit = (grammar) => {
+        if (!grammar || typeof grammar !== 'object' || seen.has(grammar)) return;
+        seen.add(grammar);
+        const entries = Object.entries(grammar);
+        for (const [, rules] of entries) {
+            for (const rule of [].concat(rules)) {
+                if (rule && rule.inside) visit(rule.inside);
+            }
+        }
+        const braced = [].concat(grammar.comment ?? []).find((rule) => rule?.pattern?.source.includes('\\{%'));
+        if (!braced || 'glued-delimiter' in grammar) return;
+        glued.inside.comment = braced;
+        const inline = entries.findIndex(([key]) => ['bold-italic', 'bold', 'italic', 'underline', 'strike', 'highlight', 'mention', 'tag'].includes(key));
+        entries.splice(inline === -1 ? entries.findIndex(([key]) => key === 'comment') : inline, 0, ['glued-delimiter', glued]);
+        for (const key of Object.keys(grammar)) delete grammar[key];
+        Object.assign(grammar, Object.fromEntries(entries));
+    };
+    visit(Prism.languages.carve);
 }
 
 if (Prism?.languages.carve) {
