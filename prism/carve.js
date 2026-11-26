@@ -733,7 +733,7 @@
             + '|(?<=\\s)' + delimiter + '(?![\\p{L}\\p{N}])|(?<![\\p{L}\\p{N}]\\p{M}*)' + delimiter + '(?=[\\p{L}\\p{N}])';
         // One soft break, never a blank line or a line opening another block.
         var softBreak = '(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))(?!' + otherBlockOpener + ')';
-        // A cheap scan for a possible closer on this line or the next, so an
+        // A cheap scan for a possible closer in the paragraph, so an
         // opener with none fails without walking the atoms (each braced one
         // scans its line).
         // Escapes, code spans, links and autolinks are stepped over whole, so
