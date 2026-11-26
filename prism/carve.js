@@ -738,14 +738,17 @@
         // scans its line).
         // Escapes, code spans, links and autolinks are stepped over whole, so
         // a delimiter inside one is not taken for a closer the run can reach.
-        var step = '(?:\\\\[^\\r\\n]|\\\\(?![^\\r\\n])|`[^`\\r\\n]*`|`(?![^`\\r\\n]*`)'
-            + '|\\[[^\\]\\r\\n]*\\]\\([^\\s)]*\\)|\\[(?![^\\]\\r\\n]*\\]\\([^\\s)]*\\))'
-            + '|<[a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>|<(?![a-zA-Z][a-zA-Z0-9+.\\-]*:[^\\s<>]*>)|[^\\r\\n\\\\`\\[<])';
-        var closerAhead = '(?=' + step + '{0,8192}?(?:(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))' + step + '{0,8192}?)?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
+        // Every inner scan is bounded and stops at the next bracket: unbounded,
+        // each `[` or backtick rescanned the rest of the line for every opener.
+        var step = '(?:\\\\[^\\r\\n]|\\\\(?![^\\r\\n])|`[^`\\r\\n]{0,4096}`|`(?![^`\\r\\n]{0,4096}`)'
+            + '|\\[[^\\[\\]\\r\\n]{0,512}\\]\\([^\\s)]{0,2048}\\)|\\[(?![^\\[\\]\\r\\n]{0,512}\\]\\([^\\s)]{0,2048}\\))'
+            + '|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:[^\\s<>]{0,2048}>|<(?![a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:[^\\s<>]{0,2048}>)|[^\\r\\n\\\\`\\[<])';
+        var closerAhead = '(?=(?:' + step + '|(?:\\r\\n?|\\n)(?![ \\t\\r]*(?:(?:\\r\\n?|\\n)|$))){0,8192}?(?<=\\S)' + delimiter + '(?![\\p{L}\\p{N}]))';
         // The `=` of a comparison neither opens nor closes (PART 9 §9).
         if (delimiter === '=') atom += '|[>!]=|<=(?![=>])';
         var line = atom + '|(?!' + opaque + ')[^' + delimiter + '\\\\\\r\\n`]){1,4096}?';
-        return closerAhead + line + '(?:' + softBreak + line + ')??';
+        // A span runs over the lines of its paragraph, comment-only lines included (C2-I-024).
+        return closerAhead + line + '(?:' + softBreak + line + '){0,31}?';
     }
 
     // Shared inline emphasis/markup, referenced from block tokens that contain
@@ -842,22 +845,23 @@
         },
         'bold': {
             // A `*` glued to a closer opens nothing: `*a**b* c` bolds only `a`.
-            pattern: new RegExp('(?<![\\w*])\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)\\*(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<![\\w*])' + notEscaped + '\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)\\*(?![\\p{L}\\p{N}])', 'u'),
             alias: 'bold',
         },
         'italic': {
             // The leading guard avoids URLs and paths.
-            pattern: new RegExp('(^(?<![^\\r\\n])|[^\\w/])/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
-            lookbehind: true,
+            // A lookbehind, not a captured character: a capture would start the
+            // match inside the token before it, which Prism then drops.
+            pattern: new RegExp('(?<=^(?<![^\\r\\n])|[^\\w/])' + notEscaped + '/(?![\\s/])' + bareRun('/') + '(?<=\\S)/(?![\\p{L}\\p{N}])', 'u'),
             alias: 'italic',
         },
         'underline': {
-            pattern: new RegExp('(^(?<![^\\r\\n])|[^\\w_/])_(?![\\s_])' + bareRun('_') + '(?<=\\S)_(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(^(?<![^\\r\\n])|[^\\w_/])' + notEscaped + '_(?![\\s_])' + bareRun('_') + '(?<=\\S)_(?![\\p{L}\\p{N}])', 'u'),
             lookbehind: true,
             alias: 'underline',
         },
         'strike': {
-            pattern: new RegExp('(?<![\\w~])~(?![\\s~])' + bareRun('~') + '(?<=\\S)~(?![\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<![\\w~])' + notEscaped + '~(?![\\s~])' + bareRun('~') + '(?<=\\S)~(?![\\p{L}\\p{N}])', 'u'),
             alias: 'deleted',
         },
         'highlight': {
@@ -2354,9 +2358,9 @@
         // at the first unindented line, with the item.
         'line-block': {
             pattern: RegExp(
-                '^(?<![^\\r\\n])' + notParagraphContinuation + '((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+                '^(?<![^\\r\\n])' + notParagraphContinuation + '((?:(?<![\\s\\S])\\uFEFF)?' + listMarkerBeforeBlock + '(?=:))(:{3,}) +\\|[^\\r\\n]*$(?![^\\r\\n])'
                 + '(?:(?:\\r\\n?|\\n)(?![ \\t]*\\2[ \\t]*$(?![^\\r\\n]))(?:[ \\t][^\\r\\n]*)?(?![^\\r\\n]))*(?:(?:\\r\\n?|\\n)[ \\t]+\\2[ \\t]*$(?![^\\r\\n]))?'
-                + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+                + '|^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*(:{3,}) +\\|[^\\r\\n]*$(?![^\\r\\n])'
                 + '(?:(?:\\r\\n?|\\n)(?![ \\t]*\\3[ \\t]*$(?![^\\r\\n]))[^\\r\\n]*)*(?:(?:\\r\\n?|\\n)[ \\t]*\\3[ \\t]*$(?![^\\r\\n]))?',
                 'm',
             ),
@@ -2365,7 +2369,7 @@
             alias: 'div',
             inside: Object.assign({
                 'div-delimiter': {
-                    pattern: /^\uFEFF?[ \t]*:{3,} +\|[ \t]*(?=[\r\n]|$)|(?<=[\r\n])[ \t]*:{3,}[ \t]*$/,
+                    pattern: /^\uFEFF?[ \t]*:{3,} +\|[^\r\n]*(?=[\r\n]|$)|(?<=[\r\n])[ \t]*:{3,}[ \t]*$/,
                     inside: {
                         'punctuation': /:{3,}/,
                         'class-name': /\|/,
@@ -2428,7 +2432,7 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\r\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
+                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| *\\[[^\\]\\r\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
             inside: {
@@ -2448,7 +2452,7 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| *\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| *\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
                             'string': /"[^"\r\n]*"/,
@@ -2504,10 +2508,12 @@
 
         // Table rows: | a | b |   (plus header `|=`, caption `^`, span markers)
         'table': {
-            // A row ends at its closing pipe, or at a row attribute block glued to it.
-            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|[^\r\n]*\|(?:\{[^{}\r\n]*\})?[ \t]*$(?![^\r\n])/m,
+            // A row ends at its closing pipe, or at a row attribute block behind it.
+            pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*\|[^\r\n]*\|(?:[ \t]*\{[^{}\r\n]*\})?[ \t]*$(?![^\r\n])/m,
             greedy: true,
             inside: Object.assign({
+                // A row attribute block may stand a space after the closing pipe.
+                'row-attributes': { pattern: /(\|[ \t]+)\{[^{}\r\n]*\}(?=[ \t]*$)/, lookbehind: true, alias: 'attr-value', inside: attributes.inside },
                 'code': /(?!)/,
                 'escape': /(?!)/,
                 // rowspan `^` / colspan `<` markers - must precede `punctuation`
@@ -2849,7 +2855,7 @@
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*\\[(?!@|\\^[^\\]])(?!\\^\\]:[ \\t]*$)[^\\]]+\\]:(?:'
                 + refDestination + '[ \\t]*$(?![^\\r\\n])(?:' + refTail(refTitle) + refTail(refAttrs) + '?|' + refTail(refTitle + ' ' + refAttrs + '|' + refAttrs) + ')?'
                 + '|' + refDestination + ' ' + refTitle + '[ \\t]*$(?![^\\r\\n])' + refTail(refAttrs) + '?'
-                + '|(?:' + refDestination + '(?: ' + refTitle + ')?(?: ' + refAttrs + ')?)?[ \\t]*$(?![^\\r\\n]))', 'm'),
+                + '|' + refDestination + '(?: ' + refTitle + ')?(?: ' + refAttrs + ')?[ \\t]*$(?![^\\r\\n]))', 'm'),
             alias: 'url',
             inside: {
                 'constant': /^(?<![^\r\n])\uFEFF?[ \t]*\[[^\]]+\]:/,
@@ -3132,7 +3138,7 @@
         // text may be empty too, so it uses `bracketText` rather than the
         // non-empty body: `![][r]` is an image, where `[][r]` is not a link.
         'reference-image': {
-            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\[[^\\]\\r\\n]{0,512}\\]'),
+            pattern: new RegExp(unescaped('!') + '\\[' + bracketText + '\\]\\[(?![ \\t]+\\]|\\^)[^\\]\\r\\n]{0,512}\\]'),
             greedy: true,
             alias: 'url',
             inside: {
@@ -3159,7 +3165,7 @@
 
         // Footnote references: [^label]
         'footnote': {
-            pattern: new RegExp(unescaped('\\[') + /\^[^\]]{1,512}\]/.source),
+            pattern: new RegExp(unescaped('\\[') + /\^(?![ \t\r\n]+\])[^\[\]]{1,512}\]/.source),
             alias: 'symbol',
         },
 
@@ -3223,7 +3229,7 @@
                 },
             },
             {
-                pattern: new RegExp(unescaped('\\[') + bracketTextNonEmpty + '\\]\\[[^\\]]{0,512}\\]'),
+                pattern: new RegExp(unescaped('\\[') + bracketTextNonEmpty + '\\]\\[(?![ \\t\\r\\n]+\\]|\\^)[^\\]]{0,512}\\]'),
                 greedy: true,
                 inside: {
                     'punctuation': /\[|\]\[|\]/,
@@ -3316,12 +3322,12 @@
 
         // Mentions @name, tags #tag, symbols :name:
         'mention': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w.])/.source + notEscaped + '@' + tagName, 'u'),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w.\p{L}\p{N}\p{M}])/.source + notEscaped + '@' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
         'tag': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w])/.source + notEscaped + '#' + tagName, 'u'),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\w\p{L}\p{N}\p{M}])/.source + notEscaped + '#' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
@@ -3711,7 +3717,7 @@
                 inside: Prism.languages.carve.table.inside,
             },
         }, own);
-        const fenceLine = '(?: +(?:\\||\\\\|>)| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| *\\[[^\\]\\r\\n]*\\])?[ \\t]*';
+        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| *\\[[^\\]\\r\\n]*\\])?[ \\t]*';
         Prism.languages.carve.blockquote.splice(1, 0, {
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceLine
                 // An unclosed run ends with the quote.
@@ -3762,7 +3768,7 @@
     {
         const quote = Prism.languages.carve.blockquote;
         Prism.languages.carve.blockquote.splice(1, 0, {
-            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*((?:> )*>) (:{3,}) +\\|[ \\t]*$(?![^\\r\\n])'
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?[ \\t]*((?:> )*>) (:{3,}) +\\|[^\\r\\n]*$(?![^\\r\\n])'
                 + '(?:(?:\\r\\n?|\\n)[ \\t]*\\1(?! \\2[ \\t]*$(?![^\\r\\n]))(?: [^\\r\\n]*)?(?![^\\r\\n]))*'
                 + '(?:(?:\\r\\n?|\\n)[ \\t]*\\1 \\2[ \\t]*$(?![^\\r\\n]))?', 'm'),
             greedy: true,
