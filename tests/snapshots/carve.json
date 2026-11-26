@@ -1176,8 +1176,36 @@
   "U-104": {
     "prism": [
       [
-        "text",
-        "::: > \"T\"\nquoted\n"
+        "div>div-delimiter>punctuation",
+        ":::"
+      ],
+      [
+        "div>div-delimiter",
+        " "
+      ],
+      [
+        "div>div-delimiter>class-name",
+        ">"
+      ],
+      [
+        "div>div-delimiter",
+        " "
+      ],
+      [
+        "div>div-delimiter>string>punctuation",
+        "\""
+      ],
+      [
+        "div>div-delimiter>string>title-text",
+        "T"
+      ],
+      [
+        "div>div-delimiter>string>punctuation",
+        "\""
+      ],
+      [
+        "div",
+        "\nquoted\n"
       ],
       [
         "div>div-delimiter>punctuation",
@@ -1188,7 +1216,7 @@
         "\n"
       ]
     ],
-    "highlightjs": "::: &gt; &quot;T&quot;\nquoted\n<span class=\"hljs-keyword\">:::</span>\n",
+    "highlightjs": "<span class=\"hljs-keyword\">::: &gt; &quot;T&quot;</span>\nquoted\n<span class=\"hljs-keyword\">:::</span>\n",
     "textmate": [
       [
         "source.carve",

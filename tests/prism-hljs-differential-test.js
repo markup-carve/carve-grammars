@@ -12,6 +12,14 @@
  * - A quote, a term, an attribute line or an include directive under
  *   paragraph text is a lazy line (C2-B-024).
  * - A line comment in a line block is text (C2-B-135).
+ * - A definition needs a destination, a footnote definition a body; a label
+ *   of blanks and a reference label opening with `^` are text (C2-B-081,
+ *   C2-I-089); an inline footnote's brackets pair up.
+ * - A name after a letter outside ASCII is text (C2-I-092); an escaped
+ *   delimiter opens nothing; a span opens right behind another token.
+ * - A sigil fence opens with further words behind the sigil (C2-B-122); a row
+ *   attribute block may stand a space after the closing pipe.
+ * - A span runs over a comment line of its paragraph (C2-I-024).
  */
 import assert from 'node:assert/strict';
 
@@ -32,6 +40,11 @@ const KINDS = {
     attribute: { prism: ['attributes'], hljs: ['attr'] },
     term: { prism: ['definition-term', 'punctuation'], hljs: ['title', 'punctuation'] },
     include: { prism: ['include-directive'], hljs: ['meta'] },
+    note: { prism: ['footnote', 'inline-footnote', 'reference-definition'], hljs: ['symbol'] },
+    name: { prism: ['mention', 'tag'], hljs: ['symbol'] },
+    emphasis: { prism: ['italic', 'forced-italic'], hljs: ['emphasis'] },
+    fence: { prism: ['div-delimiter'], hljs: ['keyword'] },
+    rowAttribute: { prism: ['row-attributes', 'attributes'], hljs: ['meta'] },
 };
 
 // The text a grammar wraps in one of `kinds`, nested tokens included.
@@ -131,6 +144,40 @@ check([
 check([
     ['::: |\na %% b\n%% c\n:::', 'comment', ''],
     ['::: |\na\n%%%\nh\n%%%\n:::', 'comment', '%%%\nh\n%%%'],
+]);
+
+// Empty and blank labels, footnote brackets.
+check([
+    ['[a]:\n', 'note', ''],
+    ['[ ]:\n', 'note', ''],
+    ['[a]: /u\n', 'note', '[a]: /u'],
+    ['[^n]:   \n', 'note', '[^n]'],
+    ['a[^ ]', 'note', ''],
+    ['[x][^n]', 'note', '[^n]'],
+    ['[x][^n]', 'link', ''],
+    ['![a][ ]', 'link', ''],
+    ['[a][ ]', 'link', ''],
+    ['[a][]', 'link', '[a][]'],
+    ['x ^[a ^[b] c', 'note', '^[b]'],
+    ['^[a [b] c]', 'note', '^[a [b] c]'],
+    ['^[a [^1]\n\nb', 'note', '[^1]'],
+]);
+
+// Names, escapes, spans behind a token, sigil fences, row attributes.
+check([
+    ['ü@bob', 'name', ''],
+    ['ü#1a', 'name', ''],
+    ['x“@bob', 'name', '@bob'],
+    ['\\/a/', 'emphasis', ''],
+    ['\\*\\*b**', 'strong', ''],
+    ['{/ a/}/b/', 'emphasis', '{/ a/}/b/'],
+    ['`c`/a/', 'emphasis', '/a/'],
+    ['::: > "T"\nq\n:::', 'fence', '::: > "T":::'],
+    ['::: | "T"\nl\n:::', 'fence', '::: | "T":::'],
+    ['| a | b | {.r}', 'rowAttribute', '{.r}'],
+    ['*a\n%% b\nc*', 'strong', '*a%% bc*'],
+    ['*a\nb\nc*', 'strong', '*abc*'],
+    ['- %%%\n  x\n\nb', 'comment', '%%%x'],
 ]);
 
 console.log(`Prism and highlight.js differential classes: ${count} assertions passed`);

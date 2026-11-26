@@ -7,6 +7,7 @@ for (const file of [
     'tests/textmate-bracket-time-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/prism-hljs-differential-test.js',
+    'tests/prism-hljs-long-line-time-test.js',
     'tests/continuation-labels-test.js',
     'tests/metadata-and-tag-names-test.js',
     'tests/attribute-value-class-test.js',
