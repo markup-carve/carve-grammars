@@ -269,7 +269,7 @@ for (const [source, construct, inside, outside] of [
     ['- # H\n    A. item\n', 'heading', '#HA.item', ''],
     ['- # H\n    . . x\n', 'heading', '#H..x', ''],
     ['- :: t\n     - item\n', 'term', 't', 'item'],
-    ['> - :: t\n>     1. item\n', 'term', 't1.item', ''],
+    ['> - :: t\n>     1. item\n', 'term', 't', 'item'],
     // Past marker column 24 a label still opens and ends with its line.
     ['-                         # Long\n                            more\n', 'heading', '#Long', 'more'],
     ['-                          :: Long\n- x\n', 'term', 'Long', 'x'],

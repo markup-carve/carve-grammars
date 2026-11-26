@@ -13886,6 +13886,9 @@
           "include": "#image_ref"
         },
         {
+          "include": "#footnote_ref"
+        },
+        {
           "include": "#citation"
         },
         {
@@ -13977,9 +13980,6 @@
         },
         {
           "include": "#autolink"
-        },
-        {
-          "include": "#footnote_ref"
         },
         {
           "include": "#smart_typography"
@@ -14150,102 +14150,194 @@
       }
     },
     "link_inline_empty": {
-      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()()(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')))?[ \\t]*(\\))",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "2": {
-          "name": "string.other.link.title.carve",
-          "patterns": [
-            {
-              "include": "#inline"
+      "patterns": [
+        {
+          "match": "(?=\\[(?!\\^)(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))*\\]\\()(\\[)((?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()()(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')))?[ \\t]*(\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "7": {
+              "name": "string.other.link.description.carve"
+            },
+            "8": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "10": {
+              "name": "string.other.link.description.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "12": {
+              "name": "punctuation.definition.link.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "3": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "5": {
-          "name": "markup.underline.link.carve"
-        },
-        "6": {
-          "name": "punctuation.definition.string.begin.carve"
-        },
-        "7": {
-          "name": "string.other.link.description.carve"
-        },
-        "8": {
-          "name": "punctuation.definition.string.end.carve"
-        },
-        "9": {
-          "name": "punctuation.definition.string.begin.carve"
-        },
-        "10": {
-          "name": "string.other.link.description.carve"
-        },
-        "11": {
-          "name": "punctuation.definition.string.end.carve"
-        },
-        "12": {
-          "name": "punctuation.definition.link.carve"
+        {
+          "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+          "match": "(\\[)((?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()()(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')))?[ \\t]*(\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "7": {
+              "name": "string.other.link.description.carve"
+            },
+            "8": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "10": {
+              "name": "string.other.link.description.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "12": {
+              "name": "punctuation.definition.link.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "link_inline": {
-      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')) *)?(\\))",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "2": {
-          "name": "string.other.link.title.carve",
-          "patterns": [
-            {
-              "include": "#inline"
+      "patterns": [
+        {
+          "match": "(?=\\[(?!\\^)(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))*\\]\\()(\\[)((?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')) *)?(\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "7": {
+              "name": "string.other.link.description.carve"
+            },
+            "8": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "10": {
+              "name": "string.other.link.description.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "12": {
+              "name": "punctuation.definition.link.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "3": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "5": {
-          "name": "markup.underline.link.carve"
-        },
-        "6": {
-          "name": "punctuation.definition.string.begin.carve"
-        },
-        "7": {
-          "name": "string.other.link.description.carve"
-        },
-        "8": {
-          "name": "punctuation.definition.string.end.carve"
-        },
-        "9": {
-          "name": "punctuation.definition.string.begin.carve"
-        },
-        "10": {
-          "name": "string.other.link.description.carve"
-        },
-        "11": {
-          "name": "punctuation.definition.string.end.carve"
-        },
-        "12": {
-          "name": "punctuation.definition.link.carve"
+        {
+          "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+          "match": "(\\[)((?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\()((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){1,2048})(?: (?:(\")((?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512})(\")|(')((?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512})(')) *)?(\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "markup.underline.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "7": {
+              "name": "string.other.link.description.carve"
+            },
+            "8": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "9": {
+              "name": "punctuation.definition.string.begin.carve"
+            },
+            "10": {
+              "name": "string.other.link.description.carve"
+            },
+            "11": {
+              "name": "punctuation.definition.string.end.carve"
+            },
+            "12": {
+              "name": "punctuation.definition.link.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "image_ref": {
       "comment": "THE OTHER TWO IMAGE SPELLINGS. The spec gives an image the same three forms a link has (grammar.ebnf `reference_image`, `collapsed_reference_image`) and says only the leading `!` and the `<img src>` output differ. This file had a rule for the inline form alone, so `![alt][ref]` and `![alt][]` fell through to `#link_ref`, which matched from the `[` and scoped them as a reference LINK with the `!` left as prose - the alt text carrying `string.other.link.title.carve`. That is worse than leaving them unscoped: a reader is told the document holds a link where it holds an image. Tried BEFORE `#link_ref` for that reason. The label body is the same four-level unroll `#link_ref` and `#image` carry, and the second bracket's star is what makes the collapsed form the same rule as the full one - the fold vim-carve and sublime-carve make for the link (carve-grammars#318). The alt text may be EMPTY, so it has no `(?!\\])` guard: `![][r]` is an image with no alt text, where `[][r]` is not a link.",
-      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
+      "match": "(!\\[)((?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)((?:\\\\.|(?![ \\t]%%)[^\\]\\\\\\n]){0,512})(\\])",
       "captures": {
         "1": {
           "name": "punctuation.definition.image.carve"
@@ -14268,36 +14360,64 @@
       }
     },
     "link_ref": {
-      "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
-      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)([^\\]]*)(\\])",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "2": {
-          "name": "string.other.link.title.carve",
-          "patterns": [
-            {
-              "include": "#inline"
+      "patterns": [
+        {
+          "match": "(?=\\[(?!\\^)(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))*\\]\\[)(\\[)((?!\\])(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)((?:\\\\.|(?![ \\t]%%)[^\\]\\\\\\n]){0,512})(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.link.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "3": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.link.carve"
-        },
-        "5": {
-          "name": "constant.other.reference.link.carve"
-        },
-        "6": {
-          "name": "punctuation.definition.link.carve"
+        {
+          "comment": "BALANCED LABEL BODY. The spec closes a link label or an image alt text at the MATCHING `]` (grammar.ebnf `link_text`), and the scan is escape-aware. A `[^\\\\]]*` body closed at the FIRST `]`, so a nested bracket run left the whole construct unscoped - `![t[z]](/i.png)` is an image - and an UNBALANCED opener matched from the outer `[`, where the engine reads `[t` in `[t[z](/u)` as prose (carve-grammars#226). A regex cannot count, so the nesting is unrolled to four levels; deeper stays unscoped, which is what every depth did before.",
+          "match": "(\\[)((?!\\])(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\[)((?:\\\\.|(?![ \\t]%%)[^\\]\\\\\\n]){0,512})(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "2": {
+              "name": "string.other.link.title.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.link.carve"
+            },
+            "5": {
+              "name": "constant.other.reference.link.carve"
+            },
+            "6": {
+              "name": "punctuation.definition.link.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "extension_inline": {
-      "match": "(:)([a-zA-Z][\\w-]*)(\\[)([^\\]]*)(\\])(\\{[^}]*\\})?",
+      "match": "(:)([a-zA-Z][\\w-]*)(\\[)((?:\\\\.|(?![ \\t]%%)[^\\]\\\\\\n]){0,1024})(\\])(\\{[^}]*\\})?",
       "captures": {
         "1": {
           "name": "punctuation.definition.extension.carve"
@@ -14344,69 +14464,109 @@
       }
     },
     "critic_add": {
-      "name": "markup.inserted.carve",
-      "match": "(\\{\\+)(?!\\+\\})(?=(?:[^\\n\\+]++|\\+(?!\\})){0,256}?\\+\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(\\+\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.critic.carve"
-        },
-        "2": {
+      "patterns": [
+        {
           "name": "markup.inserted.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+          "match": "(?=\\{\\+(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+\\+\\})(\\{\\+)(?!\\+\\})(?=(?:[^\\n\\+]++|\\+(?!\\})){0,256}?\\+\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\+\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.critic.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.inserted.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.critic.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.critic.carve"
+        {
+          "name": "markup.inserted.carve",
+          "match": "(\\{\\+)(?!\\+\\})(?=(?:[^\\n\\+]++|\\+(?!\\})){0,256}?\\+\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\+\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.critic.carve"
+            },
+            "2": {
+              "name": "markup.inserted.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.critic.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "critic_del": {
-      "comment": "THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty deletion - grammar.ebnf gives `braced_en_dash = \"{--}\"` and the clause is normative (markup-carve/carve#1447); carve 0.1.5 renders `a {--} b` as `a – b`. This rule read it as `{-` plus nothing plus `-}` and coloured it a deletion, which is a colour that says the document holds something it does not, and no sweep could see it because the run WAS coloured (carve-grammars#378). One character of body is enough: `{- -}` deletes a space, `{---}` deletes a hyphen and `{----}` deletes an en dash, all measured against the engine.",
-      "name": "markup.deleted.carve",
-      "match": "(\\{-)(?!-\\})(?=(?:[^\\n-]++|-(?!\\})){0,256}?-\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(-\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.critic.carve"
-        },
-        "2": {
+      "patterns": [
+        {
           "name": "markup.deleted.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+          "match": "(?=\\{-(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+-\\})(\\{-)(?!-\\})(?=(?:[^\\n-]++|-(?!\\})){0,256}?-\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(-\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.critic.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.deleted.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.critic.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.critic.carve"
+        {
+          "comment": "THE BODY IS NOT EMPTY. `{--}` is a braced EN DASH, not an empty deletion - grammar.ebnf gives `braced_en_dash = \"{--}\"` and the clause is normative (markup-carve/carve#1447); carve 0.1.5 renders `a {--} b` as `a – b`. This rule read it as `{-` plus nothing plus `-}` and coloured it a deletion, which is a colour that says the document holds something it does not, and no sweep could see it because the run WAS coloured (carve-grammars#378). One character of body is enough: `{- -}` deletes a space, `{---}` deletes a hyphen and `{----}` deletes an en dash, all measured against the engine.",
+          "name": "markup.deleted.carve",
+          "match": "(\\{-)(?!-\\})(?=(?:[^\\n-]++|-(?!\\})){0,256}?-\\})((?>(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(-\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.critic.carve"
+            },
+            "2": {
+              "name": "markup.deleted.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.critic.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "critic_comment": {
       "comment": "THE PAYLOAD IS LITERAL AND MAY SPAN A LINE BREAK. The spec says nothing inside an editorial comment is parsed as markup and no escape is resolved. This was a single-line `match` whose body also excluded `}`, so `{# a } b #}` was not scoped at all and a comment across a break coloured the markup inside it - 87 of 286 generated documents. Same shape and same fix as `braced_comment`. A BLANK LINE ENDS IT, which is the bound Prism already uses for this construct - its pattern spells the body as a newline that is not followed by a blank line. A TextMate begin cannot look ahead for its own closer, because the regex sees one line, so without a bound an unclosed opener would scope the rest of the document: the failure the seven recorded unterminated runs in tests/lib/unterminated-fences.js describe. One paragraph is where the engine stops reading this construct too. AN ATTRIBUTE BLOCK OPENS THE SAME TWO CHARACTERS: `{#id .c key=value}` is an id plus classes, and a begin of `\\{#` alone claimed it and every line after it. The guard rejects the opener when a `}` NOT preceded by `#` closes on the same line, which is what separates an attribute block from a comment whose closer is `#}` - and leaves a multi-line comment, whose first line holds no `}` at all, opening as it should. A `{#` FOLLOWED BY A SPACE names no id, so it is never an attribute block and opens the comment whatever its first line holds (`{# *b*}` then ` #}` on the next line).",
@@ -14415,144 +14575,220 @@
       "name": "comment.block.critic.carve"
     },
     "forced_strong": {
-      "comment": "Forced intraword bold (PART 9 S22). Content may contain the delimiter; the span ends at the closing `\\*}`.",
-      "match": "(\\{\\*)(?!\\*\\})(?=(?:[^\\n\\*]++|\\*(?!\\})){0,256}?\\*\\})((?>\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(\\*\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.bold.carve"
-        },
-        "2": {
-          "name": "markup.bold.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+      "patterns": [
+        {
+          "match": "(?=\\{\\*(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+\\*\\})(\\{\\*)(?!\\*\\})(?=(?:[^\\n\\*]++|\\*(?!\\})){0,256}?\\*\\})((?>\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\*\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.bold.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.bold.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "match": "\\*"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.bold.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.bold.carve"
+        {
+          "comment": "Forced intraword bold (PART 9 S22). Content may contain the delimiter; the span ends at the closing `\\*}`.",
+          "match": "(\\{\\*)(?!\\*\\})(?=(?:[^\\n\\*]++|\\*(?!\\})){0,256}?\\*\\})((?>\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|(?![ \\t]%%)[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\*\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\*\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.bold.carve"
+            },
+            "2": {
+              "name": "markup.bold.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "match": "\\*"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.bold.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "forced_italic": {
-      "comment": "Forced intraword italic (PART 9 S22). Content may contain the delimiter; the span ends at the closing `/}`.",
-      "match": "(\\{/)(?!/\\})(?=(?:[^\\n/]++|/(?!\\})){0,256}?/\\})((?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(/\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.italic.carve"
-        },
-        "2": {
-          "name": "markup.italic.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+      "patterns": [
+        {
+          "match": "(?=\\{/(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+/\\})(\\{/)(?!/\\})(?=(?:[^\\n/]++|/(?!\\})){0,256}?/\\})((?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(/\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.italic.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.italic.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "match": "/"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.italic.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.italic.carve"
+        {
+          "comment": "Forced intraword italic (PART 9 S22). Content may contain the delimiter; the span ends at the closing `/}`.",
+          "match": "(\\{/)(?!/\\})(?=(?:[^\\n/]++|/(?!\\})){0,256}?/\\})((?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!/\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(/\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.italic.carve"
+            },
+            "2": {
+              "name": "markup.italic.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "match": "/"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.italic.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "forced_underline": {
-      "comment": "Forced intraword underline (PART 9 S22). Content may contain the delimiter; the span ends at the closing `_}`.",
-      "match": "(\\{_)(?!_\\})(?=(?:[^\\n_]++|_(?!\\})){0,256}?_\\})((?>\\{__\\}|\\{_(?!_\\})(?:\\\\.|[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(_\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.underline.carve"
-        },
-        "2": {
-          "name": "markup.underline.text.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+      "patterns": [
+        {
+          "match": "(?=\\{_(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+_\\})(\\{_)(?!_\\})(?=(?:[^\\n_]++|_(?!\\})){0,256}?_\\})((?>\\{__\\}|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?/\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(_\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.underline.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.underline.text.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "match": "_"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.underline.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.underline.carve"
+        {
+          "comment": "Forced intraword underline (PART 9 S22). Content may contain the delimiter; the span ends at the closing `_}`.",
+          "match": "(\\{_)(?!_\\})(?=(?:[^\\n_]++|_(?!\\})){0,256}?_\\})((?>\\{__\\}|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)|\\{_(?!_\\})(?:\\\\.|(?![ \\t]%%)[^_\\n{\\\\]|_(?!\\})|\\{__\\}|\\{(?!_)){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}){1,4096}_\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?/\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!_\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(_\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.underline.carve"
+            },
+            "2": {
+              "name": "markup.underline.text.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "match": "_"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.underline.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "forced_strike": {
-      "comment": "Forced intraword strikethrough (PART 9 S22). Content may contain the delimiter or consist only of whitespace; the empty `{~~}` stays literal. The span ends at the closing `~}`.",
-      "match": "(\\{~)(?!~\\})(?=(?:[^\\n~]++|~(?!\\})){0,256}?~\\})((?>\\{~~\\}|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(~\\})",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.strike.carve"
-        },
-        "2": {
-          "name": "markup.strikethrough.carve",
-          "patterns": [
-            {
-              "name": "constant.character.escape.carve",
-              "match": "\\\\."
+      "patterns": [
+        {
+          "match": "(?=\\{~(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+~\\})(\\{~)(?!~\\})(?=(?:[^\\n~]++|~(?!\\})){0,256}?~\\})((?>\\{~~\\}|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?_\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(~\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.strike.carve"
             },
-            {
-              "name": "comment.block.critic.carve",
-              "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+            "2": {
+              "name": "markup.strikethrough.carve"
             },
-            {
-              "name": "comment.block.inline.carve",
-              "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
-            },
-            {
-              "match": "~"
-            },
-            {
-              "include": "#forced_span_content"
+            "4": {
+              "name": "punctuation.definition.strike.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "4": {
-          "name": "punctuation.definition.strike.carve"
+        {
+          "comment": "Forced intraword strikethrough (PART 9 S22). Content may contain the delimiter or consist only of whitespace; the empty `{~~}` stays literal. The span ends at the closing `~}`.",
+          "match": "(\\{~)(?!~\\})(?=(?:[^\\n~]++|~(?!\\})){0,256}?~\\})((?>\\{~~\\}|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)|\\{~(?!~\\})(?:\\\\.|(?![ \\t]%%)[^~\\n{\\\\]|~(?!\\})|\\{~~\\}|\\{(?!~)){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}){1,4096}~\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?_\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!~\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(~\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.strike.carve"
+            },
+            "2": {
+              "name": "markup.strikethrough.carve",
+              "patterns": [
+                {
+                  "name": "constant.character.escape.carve",
+                  "match": "\\\\."
+                },
+                {
+                  "name": "comment.block.critic.carve",
+                  "match": "\\{#(?:[^#\\n]|#(?!\\}))*#\\}"
+                },
+                {
+                  "name": "comment.block.inline.carve",
+                  "match": "\\{%(?:[^%\\n]|%(?!\\}))*%\\}"
+                },
+                {
+                  "match": "~"
+                },
+                {
+                  "include": "#forced_span_content"
+                }
+              ]
+            },
+            "4": {
+              "name": "punctuation.definition.strike.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "attributes_empty": {
       "comment": "An empty attribute block is only valid glued to a preceding `]` (`[x]{}` -> <span>x</span>); a bare `{}` in prose is literal text (corpus 123).",
@@ -14669,7 +14905,7 @@
     },
     "span": {
       "comment": "Balanced bracketed span text followed by a valid attribute block. Kept ahead of links so its text receives a stable span scope rather than only the trailing attributes being visible.",
-      "match": "(\\[)((?!\\])(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:(?:[^\\[\\]\\\\]|\\\\[\\s\\S])|\\[(?:[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)(\\})",
+      "match": "(\\[)((?!\\])(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S]|\\[(?>(?<!`)(?:```(?:[^`]|`(?!``))+```(?!`)|``(?:[^`]|`(?!`))+``(?!`)|`[^`]+`(?!`))|(?![ \\t]%%)[^\\[\\]\\\\]|\\\\[\\s\\S])*\\])*\\])*\\])*)(\\])(\\{)(\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)(\\})",
       "captures": {
         "1": {
           "name": "punctuation.definition.span.carve"
@@ -14900,7 +15136,7 @@
       "contentName": "comment.block.inline.carve"
     },
     "strong": {
-      "begin": "(?<![\\w*])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|(?!(?<=\\S)\\*(?![\\p{L}\\p{N}]))[^\\n\\\\`])*?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=[\\p{L}\\p{N}]))(?!(?:(?!(?<=\\S)\\*(?![\\p{L}\\p{N}]))[^\\n])*?(?<=[ \\t])%%)",
+      "begin": "(?<![\\w*{])(\\*)(?![\\s*])(?!\\}(?!.*?(?<=\\S)\\*(?![\\p{L}\\p{N}])))(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|(?!(?<=\\S)\\*(?![\\p{L}\\p{N}]))[^\\n\\\\`])*?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=[\\p{L}\\p{N}]))(?!(?:(?!(?<=\\S)\\*(?![\\p{L}\\p{N}]))[^\\n])*?(?<=[ \\t])%%)",
       "end": "(?<=\\S)(\\*)(?![\\p{L}\\p{N}])|^[ \\t]*$|^(?=[ \\t]*:{3,}[ \\t]*$)",
       "beginCaptures": {
         "1": {
@@ -14985,6 +15221,10 @@
         },
         {
           "include": "#footnote_ref"
+        },
+        {
+          "comment": "A strong closer inside a later braced form closes the strong span and leaves that opener text: `*a {/b*/} c` is strong `a {/b`.",
+          "match": "\\{([/_~=^,+\\-])(?!\\1\\})(?=(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?!\\*\\})[^\\n])){0,512}?\\*\\}|(?!\\1\\})[^\\n])){0,512}?(?<=\\S)\\*(?![\\p{L}\\p{N}]))"
         },
         {
           "include": "#critic_add"
@@ -15089,7 +15329,7 @@
       "comment": "ONE `match` AND NOT `begin`/`end`, DELIBERATELY, and the trade was measured rather than assumed (carve-grammars#397). A TextMate `match` cannot cross a line break, so this rule does not see `a /b` over `c/ d` as one run the way the engine does, and it cannot hold a delimiter standing after a space either. `begin`/`end` buys both - and opens eagerly, because `begin` cannot see whether a closer exists on a later line, so an opener with no closer colours to the end of its paragraph the way `strong` still does. Converted and swept over the 1,545-document corpus, all four bare rules at once: documents holding a run this grammar MISSES fell from 13 to 9, and documents where it claims a run the document does NOT hold rose from 3 to 35. The whole corpus contains two runs that span a line break. A false run is the worse direction - carve-grammars#324 and #325 both turned on that - so the `match` spelling stays and the missed multi-line run is the price. Narrowing the openers first (`(?<![\\\\w:/])` for the URL, `(?!_)` for the dunder, `(?!>)` for the arrow) took the false count from 40 to 35 and no further. The closer probe groups each non-slash run with its following slash and consumes the run possessively. The older alternative revisited the remaining line on every closed span; the grouping keeps repeated short spans linear while retaining the 256-delimiter bound. A plain letter or digit body takes a direct fast path with no nested inline scan, because that body contains no nested syntax; complex bodies retain the existing recursive rule.",
       "patterns": [
         {
-          "match": "(?<![\\w/])(/)(?=\\S)(?!/)([\\p{L}\\p{N}]+)(?<=\\S)(/)(?![\\p{L}\\p{N}])",
+          "match": "(?<![\\w/{])(/)(?=\\S)(?!/)([\\p{L}\\p{N}]+)(?<=\\S)(/)(?![\\p{L}\\p{N}])",
           "captures": {
             "1": {
               "name": "punctuation.definition.italic.carve"
@@ -15103,7 +15343,22 @@
           }
         },
         {
-          "match": "(?!(?<![\\w/])/(?=\\S)(?!/)[\\p{L}\\p{N}]+(?<=\\S)/(?![\\p{L}\\p{N}]))(?<![\\w/])(/)(?=\\S)(?!/)(?=(?:[^\\n/]*+/){0,255}?[^\\n/]*+(?<=\\S)/(?![\\p{L}\\p{N}]))((?:(?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|(?<=\\s)/|(?<![\\p{L}\\p{N}\\p{M}])/(?=[\\p{L}\\p{N}])|[^/\\n\\\\`]))+?)(?<=\\S)(/)(?![\\p{L}\\p{N}])",
+          "match": "(?=/(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+(?<=\\S)/(?![\\p{L}\\p{N}]))(?!(?<![\\w/])/(?=\\S)(?!/)[\\p{L}\\p{N}]+(?<=\\S)/(?![\\p{L}\\p{N}]))(?<![\\w/{])(/)(?=\\S)(?!/)(?=(?:[^\\n/]*+/){0,255}?[^\\n/]*+(?<=\\S)/(?![\\p{L}\\p{N}]))((?:(?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?%\\}|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|(?<=\\s)/|(?<![\\p{L}\\p{N}\\p{M}])/(?=[\\p{L}\\p{N}])|(?![ \\t]%%)[^/\\n\\\\`]))+?)(?<=\\S)(/)(?![\\p{L}\\p{N}])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.italic.carve"
+            },
+            "2": {
+              "name": "markup.italic.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.italic.carve"
+            }
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
+        },
+        {
+          "match": "(?!(?<![\\w/])/(?=\\S)(?!/)[\\p{L}\\p{N}]+(?<=\\S)/(?![\\p{L}\\p{N}]))(?<![\\w/{])(/)(?=\\S)(?!/)(?=(?:[^\\n/]*+/){0,255}?[^\\n/]*+(?<=\\S)/(?![\\p{L}\\p{N}]))((?:(?>\\{//\\}|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)|\\{/(?!/\\})(?:\\\\.|(?![ \\t]%%)[^/\\n{\\\\]|/(?!\\})|\\{//\\}|\\{(?!/)){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}){1,4096}/\\}|\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\*\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!(?<=\\S)/(?![\\p{L}\\p{N}]))[^\\n]))*?%\\}|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|(?<=\\s)/|(?<![\\p{L}\\p{N}\\p{M}])/(?=[\\p{L}\\p{N}])|(?![ \\t]%%)[^/\\n\\\\`]))+?)(?<=\\S)(/)(?![\\p{L}\\p{N}])",
           "captures": {
             "1": {
               "name": "punctuation.definition.italic.carve"
@@ -15203,7 +15458,22 @@
       "comment": "A BARE `=` THAT BEGINS OR ENDS A SMART-TYPOGRAPHY PATTERN IS NOT A HIGHLIGHT OPENER (grammar.ebnf, Inline parsing precedence: \"a delimiter that begins a multi-char smart-typography pattern: `=>` is the arrow, never a highlight opener - the pattern is consumed first\"). Corpus 386's third paragraph is the shape it costs: `Not an arrow: key => value stays literal, and p <= q is a comparison.` renders with NO mark, and the opener `=` of `=>` reaching the closer `=` of `<=` scoped the whole 68-character sentence as a highlight (carve-grammars#325). That is worse than leaving a run uncoloured, because the output then claims the document holds a construct it does not - the same reason carve-grammars#324 gave for the arrows. THE GUARD IS ONLY WHAT THIS GRAMMAR MEASURABLY NEEDS. The opener may not be FOLLOWED by `>`, which is `=>` and the tail of `==>`. It needs no guard against `<`, `>` or `!` behind it, and carried one for each until it was reverted and measured: vscode-textmate resolves by POSITION, so on `a <=b c= d` the typography rule's `<=` starts one column before the highlight rule's `=` and takes it. `!` was the last of the three to go, and it went in carve-grammars#374 rather than with the other two: while the typography alternation carried no `!=`, nothing reached `a !=b c= d` before this rule and removing the guard scoped `b c` as a highlight. The alternation carries `!=` now, so the comparison starts one column early like the other two and the guard stops changing any answer. What holds the shape is the pair that measures it - the `!=` row in tests/lib/constructs.js and `a !=b c= d` in tests/highlight-opener-test.js - rather than a lookbehind nobody can see working. Removing it also stopped an under-colouring a lookbehind cannot avoid: `a \\!=b c= d` escapes the `!`, so the `=` after it is an ordinary opener and the engine marks `b c`; this grammar refused it while the guard was here. The Prism grammar still does, and still needs its own guard because Prism applies tokens IN ORDER rather than by position - carve-grammars#380. A leading `=` needs no guard either - the content class already refuses one. THE CLOSER IS DELIBERATELY NOT GUARDED AGAINST SMART TYPOGRAPHY, and the asymmetry is the engine's: once a highlight is OPEN the closer wins over the pattern, so `x =y z<= w` marks `y z<` and `x =y z=> w` marks `y z`. Measured against the pinned engine, both. AN ESCAPE IS A DIFFERENT QUESTION (carve-grammars#385): an escaped `=` is not a delimiter at all, so `x =\\= y` renders `x == y` with no mark and this rule closed on it. THE BODY CONSUMES AN ESCAPE AS A PAIR (`\\\\.`) and refuses a bare backslash, which settles both directions at once - the escaped `=` is eaten before the closer can see it, and a body that could not hold one would stop there and never reach the real closer past it, so `a =b c\\= d= e`, which the engine marks, would have gone from wrongly-coloured to uncoloured. The closer needs no guard of its own, and that is a consequence rather than a simplification: the body can only get past a backslash by taking the pair, so the position immediately before an escaped `=` is never a body end. #385 COUNTED THE BACKSLASH RUN IN A LOOKBEHIND INSTEAD, and carve-grammars#390 replaced it for two measured reasons. The IDE's TextMate engine refuses a variable-length lookbehind by not matching ANYTHING - no error, the rule simply goes inert and `x =b= y` loses its mark too (markup-carve/intellij-carve#117), which made this file unusable in a TextMate engine Carve ships a plugin for. And every bound is reachable: at `{0,32}` the guard stopped seeing the run at 66 backslashes and refused a highlight the engine marks. A pair has no bound. THREE SHAPES STAY WRONG, pinned in tests/highlight-escape-test.js - `x =<== y`, `x =!== y` and `x =a== y`, a closer followed by another `=`, which the engine marks and `(?![=\\w])` refuses; widening that guard means letting the body hold its own delimiter. ONE SHAPE IT COSTS: an autolink or a cross-reference glued straight to a highlight (`<https://e.example>=hi=`) really does mark, because there the `>` closes the link rather than opening a comparison - a flat token map cannot tell the two apart within a fixed-width lookbehind, and this takes the under-colouring side of that trade on the ticket's own reasoning. ONE `match` AND NOT `begin`/`end`, deliberately: converting all four bare rules took corpus documents carrying a FALSE run from 3 to 35 to recover 4 missed ones. The measurement and the reasoning are on `italic` (carve-grammars#397).",
       "patterns": [
         {
-          "match": "(\\{=)(?!=\\})(?=(?:[^\\n=]++|=(?!\\})){0,256}?=\\})((?>\\{==\\}|\\{=(?!=\\})(?:\\\\.|[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(=\\})",
+          "match": "(?=\\{=(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+=\\})(\\{=)(?!=\\})(?=(?:[^\\n=]++|=(?!\\})){0,256}?=\\})((?>\\{==\\}|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?~\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(=\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.highlight.carve"
+            },
+            "2": {
+              "name": "markup.highlight.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.highlight.carve"
+            }
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
+        },
+        {
+          "match": "(\\{=)(?!=\\})(?=(?:[^\\n=]++|=(?!\\})){0,256}?=\\})((?>\\{==\\}|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)|\\{=(?!=\\})(?:\\\\.|(?![ \\t]%%)[^=\\n{\\\\]|=(?!\\})|\\{==\\}|\\{(?!=)){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}){1,4096}=\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?~\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\^\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!=\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(=\\})",
           "captures": {
             "1": {
               "name": "punctuation.definition.highlight.carve"
@@ -15241,7 +15511,22 @@
     "superscript": {
       "patterns": [
         {
-          "match": "(\\{\\^)(?!\\^\\})(?=(?:[^\\n\\^]++|\\^(?!\\})){0,256}?\\^\\})((?>\\{\\^\\^\\}|\\{\\^(?!\\^\\})(?:\\\\.|[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(\\^\\})",
+          "match": "(?=\\{\\^(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))+\\^\\})(\\{\\^)(?!\\^\\})(?=(?:[^\\n\\^]++|\\^(?!\\})){0,256}?\\^\\})((?>\\{\\^\\^\\}|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?=\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\^\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.superscript.carve"
+            },
+            "2": {
+              "name": "markup.superscript.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.superscript.carve"
+            }
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
+        },
+        {
+          "match": "(\\{\\^)(?!\\^\\})(?=(?:[^\\n\\^]++|\\^(?!\\})){0,256}?\\^\\})((?>\\{\\^\\^\\}|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)|\\{\\^(?!\\^\\})(?:\\\\.|(?![ \\t]%%)[^\\^\\n{\\\\]|\\^(?!\\})|\\{\\^\\^\\}|\\{(?!\\^)){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}){1,4096}\\^\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?=\\}|\\{,(?!,\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?,\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!\\^\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(\\^\\})",
           "captures": {
             "1": {
               "name": "punctuation.definition.superscript.carve"
@@ -15276,7 +15561,22 @@
     "subscript": {
       "patterns": [
         {
-          "match": "(\\{,)(?!,\\})(?=(?:[^\\n,]++|,(?!\\})){0,256}?,\\})((?>\\{,,\\}|\\{,(?!,\\})(?:\\\\.|[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)){1,4096},\\}){1,4096},\\}){1,4096},\\}){1,4096},\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\^\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|[^\\n])*?)(,\\})",
+          "match": "(?=\\{,(?:[\\p{L}\\p{N}\\p{M} ;?]|\\.(?!\\.))+,\\})(\\{,)(?!,\\})(?=(?:[^\\n,]++|,(?!\\})){0,256}?,\\})((?>\\{,,\\}|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)){1,4096},\\}){1,4096},\\}){1,4096},\\}){1,4096},\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\^\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(,\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.subscript.carve"
+            },
+            "2": {
+              "name": "markup.subscript.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.subscript.carve"
+            }
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
+        },
+        {
+          "match": "(\\{,)(?!,\\})(?=(?:[^\\n,]++|,(?!\\})){0,256}?,\\})((?>\\{,,\\}|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)|\\{,(?!,\\})(?:\\\\.|(?![ \\t]%%)[^,\\n{\\\\]|,(?!\\})|\\{,,\\}|\\{(?!,)){1,4096},\\}){1,4096},\\}){1,4096},\\}){1,4096},\\}|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\*\\}|\\{/(?!/\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?/\\}|\\{_(?!_\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?_\\}|\\{~(?!~\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?~\\}|\\{=(?!=\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?=\\}|\\{\\^(?!\\^\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\^\\}|\\{\\+(?!\\+\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?\\+\\}|\\{-(?!-\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?-\\}|\\{#(?!#\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?#\\}|\\{%(?!%\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?![ \\t]%%)(?!,\\})[^\\n]))*?%\\}|(`+)(?:[^`\\n]|(?!\\3)`+)+?\\3(?!`)|(?:\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)|\\[(?:\\\\(?:(?![ \\t]%%)[^\\n]|(?=\\n))|```(?:[^`\\n]|`(?!``)|\\n(?![ \\t]*\\n)){1,512}```(?!`)|``(?:[^`\\n]|`(?!`)|\\n(?![ \\t]*\\n)){1,512}``(?!`)|`(?:[^`\\n]|\\n(?![ \\t]*\\n)){1,512}`(?!`)|\\{#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\}|\\{(?!#(?:[^#\\n]|#(?!\\})|\\n(?![ \\t]*\\n)){1,512}#\\})|(?![ \\t]%%)[^\\[\\]\\\\`{\\n]|\\n(?![ \\t]*\\n)){0,512}\\]){0,512}\\]){0,512}\\]){0,512}\\]\\((?:(?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]|\\((?:\\\\[()\\\\]|\\\\(?![()\\\\])|[^ \\t\\r\\n()\\\\]){0,256}\\)){0,256}\\)){0,2048}(?: (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}'))?|[ \\t]*(?=\\))| (?:\"(?:\\\\\"|\\\\(?!\")|[^\"\\\\\\r\\n]){0,512}\"|'(?:\\\\'|\\\\(?!')|[^'\\\\\\r\\n]){0,512}')[ \\t]*)\\)|<[a-zA-Z][a-zA-Z0-9+.\\-]{0,2047}:(?:[A-Za-z0-9\\-._~:/?#\\[\\]@!$&'()*+,;=%]|[^\\x{00}-\\x{A0}\\x{AD}\\x{600}-\\x{605}\\x{61C}\\x{6DD}\\x{70F}\\x{890}\\x{891}\\x{8E2}\\x{1680}\\x{180E}\\x{2000}-\\x{200F}\\x{2028}-\\x{202F}\\x{205F}-\\x{2064}\\x{2066}-\\x{206F}\\x{3000}\\x{FEFF}\\x{FFF9}-\\x{FFFB}\\x{110BD}\\x{110CD}\\x{13430}-\\x{1343F}\\x{1BCA0}-\\x{1BCA3}\\x{1D173}-\\x{1D17A}\\x{E0001}\\x{E0020}-\\x{E007F}]){1,2048}>|<[\\p{L}0-9\\-_.+]{1,512}@(?:[\\p{L}0-9\\-_]{1,512}\\.){1,64}[\\p{L}]{1,512}>)|\\\\.|(?![ \\t]%%)[^\\n])*?)(,\\})",
           "captures": {
             "1": {
               "name": "punctuation.definition.subscript.carve"
@@ -15431,21 +15731,30 @@
       ]
     },
     "footnote_ref": {
-      "match": "(\\[)(\\^)([^\\]]+)(\\])",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.footnote.carve"
+      "comment": "",
+      "patterns": [
+        {
+          "match": "(\\[)(\\^)(?![ \\t]*\\])((?:\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]){1,512})(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.footnote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.footnote.carve"
+            },
+            "3": {
+              "name": "constant.other.footnote.carve"
+            },
+            "4": {
+              "name": "punctuation.definition.footnote.carve"
+            }
+          }
         },
-        "2": {
-          "name": "punctuation.definition.footnote.carve"
-        },
-        "3": {
-          "name": "constant.other.footnote.carve"
-        },
-        "4": {
-          "name": "punctuation.definition.footnote.carve"
+        {
+          "comment": "A label that is none leaves the bracket text, and no span or link opens at it (C2-I-079, C2-I-087).",
+          "match": "\\[\\^[ \\t]*\\]"
         }
-      }
+      ]
     },
     "smart_typography": {
       "patterns": [
@@ -15546,23 +15855,42 @@
       }
     },
     "footnote_inline": {
-      "match": "(\\^\\[)((?>\\\\.|`[^`\\n]*`|[^\\[\\]\\\\\\n]|\\[(?>\\\\.|[^\\[\\]\\\\\\n]|\\[(?>\\\\.|[^\\[\\]\\\\\\n])*+\\])*+\\])*+)(\\])",
-      "captures": {
-        "1": {
-          "name": "punctuation.definition.footnote.carve"
-        },
-        "2": {
-          "name": "string.other.footnote.inline.carve",
-          "patterns": [
-            {
-              "include": "#inline"
+      "patterns": [
+        {
+          "match": "(?=\\^\\[(?:[\\p{L}\\p{N}\\p{M} ,;?]|\\.(?!\\.))*\\])(\\^\\[)((?>\\\\.|`[^`\\n]*`|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n])*+\\])*+\\])*+)(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.footnote.carve"
+            },
+            "2": {
+              "name": "string.other.footnote.inline.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.footnote.carve"
             }
-          ]
+          },
+          "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
-        "3": {
-          "name": "punctuation.definition.footnote.carve"
+        {
+          "match": "(\\^\\[)((?>\\\\.|`[^`\\n]*`|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n])*+\\])*+\\])*+)(\\])",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.footnote.carve"
+            },
+            "2": {
+              "name": "string.other.footnote.inline.carve",
+              "patterns": [
+                {
+                  "include": "#inline_in_footnote"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.footnote.carve"
+            }
+          }
         }
-      }
+      ]
     },
     "cross_ref": {
       "match": "(</#)([^>\\s]+)(>)",
@@ -15641,6 +15969,9 @@
               "end": "^(?=[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )[ \\t]))|^(?![ \\t]*$)(?!\\1 \\3)",
               "patterns": [
                 {
+                  "include": "#description_marker_line_blocks"
+                },
+                {
                   "begin": "\\G(?=[ \\t]*\\S)|^[ \\t]*(?=\\S)",
                   "end": "^(?=[ \\t]*$|[ \\t]*(?::: +(?![ \\t]*$)|: )|[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )[ \\t]))",
                   "patterns": [
@@ -15708,7 +16039,7 @@
         {
           "name": "markup.citation.carve",
           "comment": "Match the whole citation bracket [+?...@key...] that is NOT followed by (, [, or { (which would make it a link, ref-link, or span). A lookahead for @ inside the brackets discriminates from plain spans and footnote refs.",
-          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\]\\n]*@[A-Za-z0-9_][^\\]\\n]*\\](?!\\(|\\[|\\{))",
+          "begin": "(?<!!)(?<![\\\\])(\\[)(\\+)?(?=[^\\[\\]\\n]*@[A-Za-z0-9_][^\\[\\]\\n]*\\](?!\\(|\\[|\\{))",
           "beginCaptures": {
             "1": {
               "name": "punctuation.definition.citation.begin.carve"
@@ -22089,6 +22420,9 @@
       "end": "^(?![ \\t]*$)(?![ \\t]{2})",
       "patterns": [
         {
+          "include": "#footnote_marker_line_blocks"
+        },
+        {
           "include": "#container_blocks"
         }
       ]
@@ -22471,7 +22805,7 @@
                   ]
                 }
               },
-              "end": "^(?!\\1(?:[ \\t]*%%(?!%)(?![ \\t]*#(?:region|endregion)\\b)|(?:(?!\\4)(?: {0,0}\\t|[ \\t]{1})|(?!\\5)(?: {0,1}\\t|[ \\t]{2})|(?!\\6)(?: {0,2}\\t|[ \\t]{3})|(?!\\7)(?: {0,3}\\t|[ \\t]{4})|(?!\\8)(?: {0,4}\\t|[ \\t]{5})|(?!\\9)(?: {0,5}\\t|[ \\t]{6})|(?!\\10)(?: {0,6}\\t|[ \\t]{7})|(?!\\11)(?: {0,7}\\t|[ \\t]{8})|(?!\\12)(?: {0,8}\\t|[ \\t]{9})|(?!\\13)(?: {0,9}\\t|[ \\t]{10})|(?!\\14)(?: {0,10}\\t|[ \\t]{11})|(?!\\15)(?: {0,11}\\t|[ \\t]{12})|(?!\\16)(?: {0,12}\\t|[ \\t]{13})|(?!\\17)(?: {0,13}\\t|[ \\t]{14})|(?!\\18)(?: {0,14}\\t|[ \\t]{15})|(?!\\19)(?: {0,15}\\t|[ \\t]{16})|(?!\\20)(?: {0,16}\\t|[ \\t]{17}))(?![ \\t]*(?:\\*{3,}[ \\t]*$|`{3,}|:{3,}|\\|[^\\n]*\\||%{3,}|%%[ \\t]*#(?:region|endregion)\\b))[ \\t]*\\S))",
+              "end": "^(?!\\1(?:[ \\t]*%%(?!%)(?![ \\t]*#(?:region|endregion)\\b)|(?:(?!\\4)(?: {0,0}\\t|[ \\t]{1})|(?!\\5)(?: {0,1}\\t|[ \\t]{2})|(?!\\6)(?: {0,2}\\t|[ \\t]{3})|(?!\\7)(?: {0,3}\\t|[ \\t]{4})|(?!\\8)(?: {0,4}\\t|[ \\t]{5})|(?!\\9)(?: {0,5}\\t|[ \\t]{6})|(?!\\10)(?: {0,6}\\t|[ \\t]{7})|(?!\\11)(?: {0,7}\\t|[ \\t]{8})|(?!\\12)(?: {0,8}\\t|[ \\t]{9})|(?!\\13)(?: {0,9}\\t|[ \\t]{10})|(?!\\14)(?: {0,10}\\t|[ \\t]{11})|(?!\\15)(?: {0,11}\\t|[ \\t]{12})|(?!\\16)(?: {0,12}\\t|[ \\t]{13})|(?!\\17)(?: {0,13}\\t|[ \\t]{14})|(?!\\18)(?: {0,14}\\t|[ \\t]{15})|(?!\\19)(?: {0,15}\\t|[ \\t]{16})|(?!\\20)(?: {0,16}\\t|[ \\t]{17}))(?![ \\t]*(?:\\*{3,}[ \\t]*$|`{3,}|:{3,}|\\|[^\\n]*\\||%{3,}|%%[ \\t]*#(?:region|endregion)\\b|(?=[^\\n]*+(?!\\21))(?:[-*]|0*1[.)]|[aAiI]\\)|[ai]\\.|[AI]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S))[ \\t]*\\S))",
               "name": "markup.quote.carve",
               "patterns": [
                 {
@@ -25650,6 +25984,400 @@
         },
         {
           "include": "#footnote_ref"
+        },
+        {
+          "include": "#smart_typography"
+        },
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#hard_break"
+        }
+      ]
+    },
+    "footnote_marker_line_blocks": {
+      "comment": "A footnote marker line may start any block (C2-B-087): a fence, a heading or a term opened there. The heading and the term end with their line, the fence at its closer or where the note ends.",
+      "patterns": [
+        {
+          "comment": "An indented line continues the fence; it closes at an indented run or where an unindented line ends the note.",
+          "begin": "\\G +(`{3,})(?![^\\n]*`) ?(=[A-Za-z][\\w-]*|[#+\\-./\\w]*)(?![#+\\-./\\w])(?:(?:(?<=[#+\\-./\\w])[ ]+|(?<=`|` ))(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?:(?:(?<=[#+\\-./\\w\"])[ ]+|(?<=`|` ))(\\[[^\\]\\n]*\\]))?[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.fenced.carve"
+            },
+            "2": {
+              "name": "fenced_code.block.language.carve"
+            },
+            "3": {
+              "name": "string.quoted.double.fenced.title.carve"
+            },
+            "4": {
+              "name": "constant.other.label.fenced.carve"
+            }
+          },
+          "end": "^[ \\t]+\\1(?:(?<=`)`)*\\s*$|^(?![ \\t]*$)(?![ \\t])",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.fenced.carve"
+            }
+          },
+          "name": "markup.fenced_code.block.carve",
+          "contentName": "markup.raw.code.carve",
+          "patterns": [
+            {
+              "include": "#callout_marker"
+            }
+          ]
+        },
+        {
+          "begin": "\\G +(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "$",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "match": "\\G +(::)( +)(?![ \\t]*$)(.*)$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            },
+            "3": {
+              "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "description_marker_line_blocks": {
+      "comment": "A description marker line may start any block, like a list item's (C2-B-057): the fence closes at an indented run or ends at an unindented line; a heading and a term end with their line.",
+      "patterns": [
+        {
+          "begin": "\\G(`{3,})(?![^\\n]*`) ?(=[A-Za-z][\\w-]*|[#+\\-./\\w]*)(?![#+\\-./\\w])(?:(?:(?<=[#+\\-./\\w])[ ]+|(?<=`|` ))(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?:(?:(?<=[#+\\-./\\w\"])[ ]+|(?<=`|` ))(\\[[^\\]\\n]*\\]))?[^\\n]*$",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.fenced.carve"
+            },
+            "2": {
+              "name": "fenced_code.block.language.carve"
+            },
+            "3": {
+              "name": "string.quoted.double.fenced.title.carve"
+            },
+            "4": {
+              "name": "constant.other.label.fenced.carve"
+            }
+          },
+          "end": "^[ \\t]+\\1(?:(?<=`)`)*\\s*$|^(?![ \\t]*$)(?![ \\t])",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.fenced.carve"
+            }
+          },
+          "name": "markup.fenced_code.block.carve",
+          "contentName": "markup.raw.code.carve",
+          "patterns": [
+            {
+              "include": "#callout_marker"
+            }
+          ]
+        },
+        {
+          "begin": "\\G(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "$",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
+        },
+        {
+          "match": "\\G(::)( +)(?![ \\t]*$)(.*)$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+            },
+            "3": {
+              "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "include": "#inline"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "inline_in_footnote": {
+      "comment": "The content of an inline note: `[^` and `^[` open nothing there (C2-I-089).",
+      "patterns": [
+        {
+          "include": "#math_inline_multi"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#math_inline_unpartnered"
+        },
+        {
+          "include": "#literal_inline_unpartnered"
+        },
+        {
+          "include": "#code_inline_unpartnered"
+        },
+        {
+          "include": "#braced_comment"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
+          "include": "#include_directive"
+        },
+        {
+          "include": "#image_empty"
+        },
+        {
+          "include": "#image"
+        },
+        {
+          "include": "#image_ref"
+        },
+        {
+          "include": "#citation"
+        },
+        {
+          "include": "#span"
+        },
+        {
+          "include": "#link_inline_empty"
+        },
+        {
+          "include": "#link_inline"
+        },
+        {
+          "include": "#link_ref"
+        },
+        {
+          "include": "#extension_inline"
+        },
+        {
+          "include": "#symbol"
+        },
+        {
+          "include": "#critic_add"
+        },
+        {
+          "include": "#critic_del"
+        },
+        {
+          "include": "#critic_comment"
+        },
+        {
+          "include": "#highlight"
+        },
+        {
+          "include": "#subscript"
+        },
+        {
+          "include": "#superscript"
+        },
+        {
+          "include": "#forced_strong"
+        },
+        {
+          "include": "#forced_italic"
+        },
+        {
+          "include": "#forced_underline"
+        },
+        {
+          "include": "#forced_strike"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
+        },
+        {
+          "include": "#attributes_empty"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
+          "include": "#bold_italic"
+        },
+        {
+          "include": "#strong"
+        },
+        {
+          "include": "#italic"
+        },
+        {
+          "include": "#mention"
+        },
+        {
+          "include": "#tag"
+        },
+        {
+          "include": "#cross_ref"
+        },
+        {
+          "include": "#autolink"
         },
         {
           "include": "#smart_typography"
