@@ -9,6 +9,7 @@ for (const file of [
     'tests/prism-hljs-differential-test.js',
     'tests/prism-hljs-long-line-time-test.js',
     'tests/titled-div-braced-comment-test.js',
+    'tests/word-characters-and-div-openers-test.js',
     'tests/continuation-labels-test.js',
     'tests/metadata-and-tag-names-test.js',
     'tests/attribute-value-class-test.js',

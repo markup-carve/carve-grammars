@@ -804,7 +804,7 @@
         // is `<em>*b *</em>` and not a combined run; the old `[^*]+` body,
         // guarded only at the opener, read it as one.
         'bold-italic': {
-            pattern: /\/\*(?=\S)(?:[^*\r\n]|\*(?!\/)|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<=\S)\*\/|(?<![\w*/])\*\/(?=\S)(?!\*[\s*])(?:[^/\r\n]|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<![\s*])\/\*(?!\w)/,
+            pattern: /\/\*(?=\S)(?:[^*\r\n]|\*(?!\/)|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<=\S)\*\/|(?<![\p{L}\p{N}*/])\*\/(?=\S)(?!\*[\s*])(?:[^/\r\n]|(?:\r\n?|\n)(?!\s*(?:\r\n?|\n))){1,4096}(?<![\s*])\/\*(?![\p{L}\p{N}])/u,
             alias: 'important',
         },
         // Bare runs require non-space flanks. Forced runs do not: braces make
@@ -847,14 +847,14 @@
         },
         'bold': {
             // A `*` glued to a closer opens nothing: `*a**b* c` bolds only `a`.
-            pattern: new RegExp('(?<![\\w*]' + bracedComments + ')' + notEscaped + '\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')\\*(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<![\\p{L}\\p{N}*]' + bracedComments + ')' + notEscaped + '\\*(?![\\s*])' + bareRun('\\*') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')\\*(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
             alias: 'bold',
         },
         'italic': {
             // The leading guard avoids URLs and paths.
             // A lookbehind, not a captured character: a capture would start the
             // match inside the token before it, which Prism then drops.
-            pattern: new RegExp('(?<=^(?<![^\\r\\n])|[^\\w/])(?<![\\w/]' + bracedComments + ')' + notEscaped + '/(?![\\s/])' + bareRun('/') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')/(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
+            pattern: new RegExp('(?<=^(?<![^\\r\\n])|[^\\p{L}\\p{N}/])(?<![\\p{L}\\p{N}/]' + bracedComments + ')' + notEscaped + '/(?![\\s/])' + bareRun('/') + '(?<=\\S)(?<!\\s(?=\\{%)' + bracedComments + ')/(?!' + bracedComments + '[\\p{L}\\p{N}])', 'u'),
             alias: 'italic',
         },
         'underline': {
@@ -1703,7 +1703,7 @@
     // run is made atomic (lookahead plus backreference) so it never re-splits.
     // An inner body past 512 lines leaves the outer unclosed; unbounded, a run
     // of unclosable inner openers goes quadratic.
-    var colonFenceLine = '[ \\t]*(:{3,})(?=[ \\t]*$(?![^\\r\\n])| +[^ \\t\\r\\n]| *\\[)';
+    var colonFenceLine = '[ \\t]*(:{3,})(?=[ \\t]*$(?![^\\r\\n])| +[^ \\t\\r\\n])';
     // A column-0 code fence in a body is skipped whole through its own closer, so
     // a colon line inside it neither nests nor closes. An unclosed one takes the
     // rest of the document (PART 0 S1), so its container never reaches a closer.
@@ -2318,7 +2318,7 @@
                 // trick, because the exclusion needs to see two characters
                 // back.
                 'tag': {
-                    pattern: RegExp(/(^(?<![^\r\n])|[^\w])(?<!<\/)/.source + notEscaped + '#' + tagName, 'u'),
+                    pattern: RegExp(/(^(?<![^\r\n])|[^\p{L}\p{N}])(?<!<\/)/.source + notEscaped + '#' + tagName, 'u'),
                     lookbehind: true,
                     alias: 'variable',
                 },
@@ -2434,7 +2434,7 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*| *\\[[^\\]\\r\\n]*\\])?[ \\t]*$(?![^\\r\\n])',
+                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*| +\\[[^\\]\\r\\n]*\\]| +\\S[^\\r\\n]*)?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
             inside: {
@@ -2454,7 +2454,7 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| +"(?:\\.|[^"\\\r\n])*"(?: +\[[^\]\r\n]*\])?| *\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| +"(?:\\.|[^"\\\r\n])*"(?: +\[[^\]\r\n]*\])?| +\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
                             'string': /"(?:\\.|[^"\\\r\n])*"/,
@@ -3332,12 +3332,12 @@
 
         // Mentions @name, tags #tag, symbols :name:
         'mention': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w.\p{L}\p{N}\p{M}])/.source + notEscaped + '@' + tagName, 'u'),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\p{L}\p{N}])/.source + notEscaped + '@' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
         'tag': {
-            pattern: RegExp(/(^(?<![^\r\n])|[^\w\p{L}\p{N}\p{M}])/.source + notEscaped + '#' + tagName, 'u'),
+            pattern: RegExp(/(^(?<![^\r\n])|[^\p{L}\p{N}])/.source + notEscaped + '#' + tagName, 'u'),
             lookbehind: true,
             alias: 'variable',
         },
@@ -3373,17 +3373,12 @@
         // followed by a stray `>`. `=>` alone is no longer an arrow and is gone
         // from the set; `<=` stays, as the comparison it always was.
         //
-        // A hyphen run that OPENS a word after whitespace is a command-line
-        // flag and stays literal (carve#1443), so `--oneline` is not an en dash
-        // while `1--10`, `Mon--Fri` and `a -- b` still are. Both neighbors are
-        // read through the closed `typography_flank` class (CARVE-P3-021), so
-        // `a --. b` stays text too (carve-grammars#833). An opening `(` `"` `'`
-        // after a flank counts as one.
+        // A hyphen run becomes dashes wherever it stands, `--oneline` included (C2-I-111).
         // An arrow needs its exact hyphen run (CARVE-P3-022). Prism matches each
         // remaining fragment on its own, so `(?<!-)` cannot see a hyphen an
         // earlier token took: `-{3,}(?=>)` keeps the run whole instead.
         'typography': {
-            pattern: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|(?<!-)(?<!(?:^|[ \t\r\n\u00A0])["'(]?)-{3,}(?=>)|<=>|<==|==>|(?<!-)(?:(?<!(?:^|[ \t\r\n\u00A0])["'(]?)(?:---|--)|(?:---|--)(?=-*(?:[ \t\r\n\u00A0]|\\(?:[ \r\n]|$)|$|[*/_~=^+]+(?:[ \t\r\n\u00A0}.,;:!?)\]]|$))))|!=|<=|>=|\+-|\(tm\)/,
+            pattern: /\{--\}|\.\.\.|<-->|<--(?!-)|(?<!-)-->|(?<!-)-{3,}(?=>)|<=>|<==|==>|(?<!-)(?:---|--)|!=|<=|>=|\+-|\(tm\)/,
             alias: 'constant',
         },
     };
@@ -3605,6 +3600,14 @@
     delimiterInside['string'] = { pattern: /"(?:\\.|[^"\\\r\n])*"/, inside: { 'title-text': runBetween('^"', '"$'), 'punctuation': /"/ } };
     delimiterInside['symbol'] = { pattern: /\[[^\]\r\n]*\]/, inside: { 'label-text': runBetween('^\\[', '\\]$'), 'punctuation': /\[|\]/ } };
     Prism.languages.carve['div'].inside['div-delimiter'][2].inside['string'] = delimiterInside['string'];
+    // No name, sigil, title or label: an anonymous div, and the rest is further words (C2-B-119, C2-B-122).
+    Prism.languages.carve['div'].inside['div-delimiter'].push({
+        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +\S[^\r\n]*$(?![^\r\n])/m,
+        inside: {
+            'invalid-metadata': { pattern: /(^[^:]*:{3,} +)\S[^\r\n]*/, lookbehind: true, alias: 'error' },
+            'punctuation': /:{3,}/,
+        },
+    });
 
     // A quoted line's code, math and literal spans stay verbatim
     // (carve-grammars#858), ahead of the inline rules.
@@ -3728,19 +3731,23 @@
                 inside: Prism.languages.carve.table.inside,
             },
         }, own);
-        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| +"(?:\\\\.|[^"\\\\\\r\\n])*"(?: +\\[[^\\]\\r\\n]*\\])?| *\\[[^\\]\\r\\n]*\\])?[ \\t]*';
+        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| +"(?:\\\\.|[^"\\\\\\r\\n])*"(?: +\\[[^\\]\\r\\n]*\\])?| +\\[[^\\]\\r\\n]*\\])?[ \\t]*';
+        // Further words after a name or a title (C2-B-122), as the top-level div reads them.
+        const fenceWords = [' +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*', ' +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*', ' +\\S[^\\r\\n]*'];
+        const fenceOpener = '(?:' + fenceLine + '|' + fenceWords.join('|') + ')';
         Prism.languages.carve.blockquote.splice(1, 0, {
-            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceLine
+            pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceOpener + '$(?![^\\r\\n])'
                 // An unclosed run ends with the quote.
                 + '(?:(?:\\r\\n?|\\n)\\1(?: [^\\r\\n]*)?)*?(?:(?:\\r\\n?|\\n)\\1 \\2[ \\t]*$(?![^\\r\\n])|$(?![^\\r\\n])(?!(?:\\r\\n?|\\n)\\1(?: |$)))', 'm'),
             greedy: true,
             inside: Object.assign({
                 'punctuation': own.punctuation,
-                'div-delimiter': {
-                    pattern: RegExp('(^ ):{3,}' + fenceLine + '$(?![^\\r\\n])', 'm'),
-                    lookbehind: true,
-                    inside: delimiterInside,
-                },
+                'div-delimiter': [delimiterInside].concat(Prism.languages.carve['div'].inside['div-delimiter'].slice(1).map((rule) => rule.inside))
+                    .map((inside, i) => ({
+                        pattern: RegExp('(^ ):{3,}' + [fenceLine].concat(fenceWords)[i] + '$(?![^\\r\\n])', 'm'),
+                        lookbehind: true,
+                        inside,
+                    })),
             }, quoteLine.inside),
         });
         // A quoted term or description marker line, as definitionListLines reads it.
@@ -4479,7 +4486,7 @@ if (Prism?.languages.carve) {
 // delimiter first.
 if (Prism?.languages.carve) {
     const comment = '\\{%(?:[^%]|%(?!\\})){0,4096}?%\\}';
-    const word = '[\\p{L}\\p{N}\\p{M}_]';
+    const word = '[\\p{L}\\p{N}]';
     const glued = {
         // Each branch starts on the delimiter: a greedy match cannot start in the comment token.
         pattern: RegExp('(?<=' + word + '(?:' + comment + ')+)(?:[*/_~=](?:' + comment + ')*(?=[\\p{L}\\p{N}])|[#@])'
@@ -4487,6 +4494,14 @@ if (Prism?.languages.carve) {
         greedy: true,
         inside: {},
     };
+    // A quoted line holds its braced comments, also one running over a line break, so the comment does not end the quote.
+    const quote = Prism.languages.carve.blockquote;
+    const line = quote[quote.length - 1];
+    quote.splice(quote.length - 1, 0, {
+        pattern: RegExp(line.pattern.source.replace('>(?: [^\\r\\n]*)?$', '>(?= [^\\r\\n]*\\{%)(?: (?:' + comment + '|[^\\r\\n])*)?$'), 'm'),
+        greedy: true,
+        inside: Object.assign({ 'punctuation': line.inside.punctuation, 'comment': Prism.languages.carve.comment }, line.inside),
+    });
     const seen = new WeakSet();
     const visit = (grammar) => {
         if (!grammar || typeof grammar !== 'object' || seen.has(grammar)) return;
