@@ -43,7 +43,6 @@ function adaptGrammar(grammar, hljs) {
             || source.startsWith('(?<![\\w~])~')
             || source.startsWith('(?<![\\w/])_')
             || source.startsWith('(?<![=\\w])=')
-            || (source.startsWith('\\{~') && source.includes('~>'))
             || source.includes('(?=[-:| ]+\\|');
     };
     function adapt(node) {
@@ -490,17 +489,6 @@ function adaptGrammar(grammar, hljs) {
     const FORCED_STRONG = { className: 'strong', ...braced('\\*', /\{\*(?!\*\})/), relevance: 5 };
     const FORCED_EMPHASIS = { className: 'emphasis', ...braced('/', /\{\/(?!\/\})/), relevance: 5 };
     const FORCED_UNDERLINE = { className: 'emphasis', ...braced('_', /\{_(?!_\})/), relevance: 5 };
-    // A substitution splits at its first top-level arrow: code, a comment and
-    // an escape are opaque (markup-carve/carve#2092). A code span still open
-    // at the closer ends there.
-    const SUBSTITUTION_ATOM = '\\\\[^\\n]'
-        + '|```(?:[^`\\n]|`(?!``)){1,4096}```(?!`)|``(?:[^`\\n]|`(?!`)){1,4096}``(?!`)|`[^`\\n]{1,4096}`(?!`)'
-        + '|\\{#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|\\{%(?:[^%\\n]|%(?!\\})){0,4096}%\\}';
-    const substitutionHalf = (notAfterTilde) => '(?:' + SUBSTITUTION_ATOM
-        + (notAfterTilde === '}' ? '|`+(?![^`\\n]{0,4096}`)' : '')
-        + '|\\{(?!#(?:[^#\\n]|#(?!\\})){0,4096}#\\}|%(?:[^%\\n]|%(?!\\})){0,4096}%\\})'
-        + '|[^\\\\`{~\\n]|~(?![' + notAfterTilde + '])){0,4096}?';
-    const SUBSTITUTION_AHEAD = substitutionHalf('>}') + '~>' + substitutionHalf('}') + '~\\}';
     const FORCED_STRIKE = {
         className: 'deletion',
         // Forced content may be whitespace, but the empty `{~~}` is literal.
@@ -605,8 +593,6 @@ function adaptGrammar(grammar, hljs) {
     // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
     // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
     const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
-    const CRITIC_SUBSTITUTION = /\{~(?:[^~}\r\n]|~(?![>}])){0,4096}~>(?:[^~}\r\n]|~(?!\})){0,4096}~\}$/;
-    const lineBefore = (source, at) => source.slice(Math.max(source.lastIndexOf('\n', at - 1) + 1, at - 4096), at);
     // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
     const blockOpener = (source, close) => {
         let open = source.lastIndexOf('{', close - 1);
@@ -710,7 +696,7 @@ function adaptGrammar(grammar, hljs) {
             const host = ATTRIBUTE_PROBE.exec(source);
             if (host && brace + host[0].length === at) return attachedAttribute(source, host) ? attributeHost(source, brace) : null;
         }
-        return /[*/_~=^,+-]/.test(source[at - 2] ?? '') && !CRITIC_SUBSTITUTION.test(lineBefore(source, at)) ? 'other' : null;
+        return /[*/_~=^,+-]/.test(source[at - 2] ?? '') ? 'other' : null;
     };
     const attachedAttribute = (source, m) => {
         if (m[1] === undefined) return attributeHost(source, m.index) !== null;
@@ -3124,14 +3110,6 @@ function adaptGrammar(grammar, hljs) {
         },
         relevance: 10,
     };
-    // The deleted half is this mode's own text; the arrow starts the inserted
-    // half. Both hold inline content, given below once every mode exists.
-    const CRITIC_SUB = {
-        className: 'deletion',
-        begin: new RegExp(`\\{~(?=${SUBSTITUTION_AHEAD})`),
-        end: /~\}/,
-        relevance: 10,
-    };
     const CRITIC_COMMENT = {
         className: 'comment',
         // The closing `#}` is required, or this would swallow an attribute
@@ -3554,7 +3532,7 @@ function adaptGrammar(grammar, hljs) {
         // Only the brace: a heading's `{#id}` is text whose `#id` is still a tag (corpus 213).
         { begin: /\{(?=([*/_~=^,+\-#%])(?![^\n]*?\1\}))/, relevance: 0 },
         INLINE_FOOTNOTE, FOOTNOTE_REF, IMAGE, REFERENCE_IMAGE, SPAN, REFERENCE_LINK, CITATION, INLINE_EXTENSION,
-        LINK, AUTOLINK, EMAIL_AUTOLINK, INSERT, DELETE, CRITIC_SUB, CRITIC_COMMENT, MENTION, CROSS_REF,
+        LINK, AUTOLINK, EMAIL_AUTOLINK, INSERT, DELETE, CRITIC_COMMENT, MENTION, CROSS_REF,
         HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, BOLD_ITALIC, STRONG, EMPHASIS, UNDERLINE, STRIKETHROUGH,
         FORCED_STRONG, FORCED_EMPHASIS, FORCED_UNDERLINE, FORCED_STRIKE, FORCED_HIGHLIGHT, TYPOGRAPHY_FLAG, TYPOGRAPHY,
     ];
@@ -3633,7 +3611,7 @@ function adaptGrammar(grammar, hljs) {
     );
 
 
-    const substitutionContent = (boundary, openCode) => [
+    const inlineContent = (boundary, openCode) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT, MATH_DISPLAY, MATH_INLINE, LITERAL_INLINE,
         ...openCode, INLINE_CODE, IMAGE, REFERENCE_IMAGE, INLINE_FOOTNOTE, FOOTNOTE_REF, SPAN,
         REFERENCE_LINK, LINK, AUTOLINK, EMAIL_AUTOLINK, MENTION, CROSS_REF, TAG, INSERT, DELETE,
@@ -3652,7 +3630,7 @@ function adaptGrammar(grammar, hljs) {
     const bareContent = (d, own) => [
         ESCAPE, CRITIC_COMMENT, DELIMITED_COMMENT,
         { begin: new RegExp(`\\{${d}${d}\\}`), relevance: 0 },
-        ...substitutionContent('(?!)', []).slice(3).filter((mode) => mode !== own
+        ...inlineContent('(?!)', []).slice(3).filter((mode) => mode !== own
             && !(d === '=' && mode === TYPOGRAPHY)
             && mode.begin?.source !== '([*/_=])(?!(?:(?!(?!)).){0,4096}?\\1)'),
         OPAQUE_DESTINATION,
@@ -3694,29 +3672,15 @@ function adaptGrammar(grammar, hljs) {
             ...(nests ? [{ begin: new RegExp(`\\{${d}${d}\\}`), relevance: 0 }] : []),
             { begin: new RegExp(`${d}(?!\\})`), relevance: 0 },
             { className: 'code', begin: /(?:\$\$?|!)?`+(?![^`\n]{0,4096}`)/, end: new RegExp(`(?=${closer})`) },
-            CRITIC_SUB,
             {
                 begin: new RegExp(`([${['\\*', '/', '_', '~', '='].filter((c) => c !== d).join('')}])(?=[^\\n]*?${bareCloser('\\1')})(?=(?:${skip}(?!${bareCloser('\\1')})[^\\n])*?${closer})`),
                 relevance: 0,
             },
-            ...substitutionContent('(?!)', []).slice(3).filter((m) => (nests || m !== mode) && !own.includes(m)
+            ...inlineContent('(?!)', []).slice(3).filter((m) => (nests || m !== mode) && !own.includes(m)
                 && m.begin?.source !== '([*/_=])(?!(?:(?!(?!)).){0,4096}?\\1)'),
             OPAQUE_DESTINATION,
         ];
     }
-
-    CRITIC_SUB.contains = [
-        {
-            className: 'punctuation',
-            begin: /~>/,
-            starts: {
-                className: 'addition',
-                end: /(?=~\})/,
-                contains: substitutionContent('~\\}', [{ className: 'code', begin: /`+(?![^`\n]{0,4096}`)/, end: /(?=~\})/ }]),
-            },
-        },
-        ...substitutionContent('~>', []),
-    ];
 
     /*
      * A fence inside a container (an item, a description, a footnote or a
@@ -3826,7 +3790,6 @@ function adaptGrammar(grammar, hljs) {
         UNTERMINATED_BLOCK_COMMENT,    // a `%%%` run with no closer - AFTER both fences
         DELIMITED_COMMENT, // {% ... %}
         LINE_COMMENT,      // %% to end of line
-        CRITIC_SUB,        // {~old~>new~} - before FORCED_STRIKE
         CRITIC_COMMENT,    // {# ... #} - must be before ATTRIBUTE
         MENTION,
         CROSS_REF,         // </#id> - before TAG, which claims the `#id`
