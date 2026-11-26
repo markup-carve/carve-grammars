@@ -507,7 +507,7 @@
         + captionNl + '(?:[ \\t]*' + captionNl + ')*)';
 
     var namedContainerRanges = { source: null, ranges: [] };
-    var namedContainerPrefix = ':{3,} +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[\\u201C\\u201D])';
+    var namedContainerPrefix = ':{3,} +[-0-9A-Za-z_]+';
     var namedContainerLine = RegExp('^(?<![^\\r\\n])\\uFEFF?[ \\t]*' + namedContainerPrefix);
     var markerNamedContainerLine = RegExp('^\\uFEFF?' + listMarkerBeforeBlock + namedContainerPrefix);
 
@@ -544,7 +544,7 @@
      * quadratic on a line of many `%%` runs; here the prefix is read once per
      * line. A line holding a bare `\r` keeps the exact per-candidate test.
      */
-    var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))|\\||\\^)';
+    var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[-0-9A-Za-z_]+)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))|\\||\\^)';
     function toLineEndOutsideBlockOpeners(head) {
         var opener = RegExp(BLOCK_OPENER_PREFIX, 'y');
         var exact = RegExp('(?<!^(?<![^\\r\\n])' + BLOCK_OPENER_PREFIX + '[^\\r\\n]*)', 'my');
@@ -2083,7 +2083,7 @@
                 // the run - so the tab form is untouched.
                 pattern: outsideContainerMetadata(RegExp(
                     commentAfterPrefix
-                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )) %%)'
+                    + '(?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[-0-9A-Za-z_]+)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )) %%)'
                     + '[^\\r\\n]*$(?![^\\r\\n])',
                     'm',
                 )),
@@ -2108,7 +2108,7 @@
                  * `> # a` behind the same marker opens a block.
                  */
                 pattern: outsideContainerMetadata(toLineEndOutsideBlockOpeners(RegExp(
-                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[a-zA-Z0-9_][\\w-]*)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))) |\\t)%%(?!%)',
+                    '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[-0-9A-Za-z_]+)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))) |\\t)%%(?!%)',
                     'm',
                 ))),
                 lookbehind: true,
@@ -2434,7 +2434,7 @@
         // while suppressing only the one construct this fix targets.
         'div': {
             pattern: containerPattern(
-                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*| +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*| +\\[[^\\]\\r\\n]*\\]| +\\S[^\\r\\n]*)?[ \\t]*$(?![^\\r\\n])',
+                '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[-0-9A-Za-z_]+[^\\r\\n]*| +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*| +\\[[^\\]\\r\\n]*\\]| +\\S[^\\r\\n]*)?[ \\t]*$(?![^\\r\\n])',
             ),
             lookbehind: true,
             inside: {
@@ -2454,24 +2454,24 @@
                 // line closes that gap.
                 'div-delimiter': [
                     {
-                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| +"(?:\\.|[^"\\\r\n])*"(?: +\[[^\]\r\n]*\])?| +\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,}(?: +(?:\||\\|>)[^\r\n]*| +[-0-9A-Za-z_]+(?: +"[^"\r\n]*")?(?: +\[[^\]\r\n]*\])?| +"(?:\\.|[^"\\\r\n])*"(?: +\[[^\]\r\n]*\])?| +\[[^\]\r\n]*\])?[ \t]*$(?![^\r\n])/m,
                         inside: {
                             'punctuation': /:{3,}/,
                             'string': /"(?:\\.|[^"\\\r\n])*"/,
                             'symbol': /\[[^\]\r\n]*\]/,
-                            'class-name': /[a-zA-Z0-9_][\w-]*|\||\\|>/,
+                            'class-name': /[-0-9A-Za-z_]+|\||\\|>/,
                         },
                     },
                     {
-                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*$(?![^\r\n])/m,
+                        pattern: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*:{3,} +[-0-9A-Za-z_]+[^\r\n]*$(?![^\r\n])/m,
                         inside: {
                             'invalid-metadata': {
-                                pattern: /(^(?<![^\r\n])\uFEFF?[ \t]*:{3,} +[a-zA-Z0-9_][\w-]*)(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]+/,
+                                pattern: /(^(?<![^\r\n])\uFEFF?[ \t]*:{3,} +[-0-9A-Za-z_]+)(?![-0-9A-Za-z_])[^\r\n]+/,
                                 lookbehind: true,
                                 alias: 'error',
                             },
                             'punctuation': /:{3,}/,
-                            'class-name': /[a-zA-Z0-9_][\w-]*/,
+                            'class-name': /[-0-9A-Za-z_]+/,
                         },
                     },
                     {
@@ -3731,9 +3731,9 @@
                 inside: Prism.languages.carve.table.inside,
             },
         }, own);
-        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| +"(?:\\\\.|[^"\\\\\\r\\n])*"(?: +\\[[^\\]\\r\\n]*\\])?| +\\[[^\\]\\r\\n]*\\])?[ \\t]*';
+        const fenceLine = '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[-0-9A-Za-z_]+(?: +"[^"\\r\\n]*")?(?: +\\[[^\\]\\r\\n]*\\])?| +"(?:\\\\.|[^"\\\\\\r\\n])*"(?: +\\[[^\\]\\r\\n]*\\])?| +\\[[^\\]\\r\\n]*\\])?[ \\t]*';
         // Further words after a name or a title (C2-B-122), as the top-level div reads them.
-        const fenceWords = [' +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])[^\\r\\n]*', ' +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*', ' +\\S[^\\r\\n]*'];
+        const fenceWords = [' +[-0-9A-Za-z_]+[^\\r\\n]*', ' +"(?:\\\\.|[^"\\\\\\r\\n])*"[^\\r\\n]*', ' +\\S[^\\r\\n]*'];
         const fenceOpener = '(?:' + fenceLine + '|' + fenceWords.join('|') + ')';
         Prism.languages.carve.blockquote.splice(1, 0, {
             pattern: RegExp('^(?<![^\\r\\n])(?:(?<![\\s\\S])\\uFEFF)?([ \\t]*(?:> )*>) (:{3,})' + fenceOpener + '$(?![^\\r\\n])'
