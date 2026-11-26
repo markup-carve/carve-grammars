@@ -1,4 +1,4 @@
-// Long bracket runs and lines of many links tokenize in linear time in TextMate.
+// Long bracket runs and lines of many links and spans tokenize in linear time in TextMate.
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
 
@@ -21,6 +21,11 @@ for (const [name, shape] of [
     ['links', run('word [l](u) ')],
     ['reference links', run('[x]')],
     ['braced underlines', run('word {_u_} ')],
+    ['links with markup in their text', run('a [*b*](u) ')],
+    ['links with code and a title', run('a [`c` d](u "t") ')],
+    ['reference links with markup', run('a [*b*][r] ')],
+    ['spans', run('[a]{.c} ')],
+    ['spans with markup and quoted values', run('a [*b*]{k="v"} ')],
 ]) {
     const short = shape(4000);
     const long = shape(32000);
