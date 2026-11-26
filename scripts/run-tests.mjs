@@ -4,6 +4,7 @@ for (const file of [
     'tests/textmate-metadata-block-test.js',
     'tests/textmate-text-runs-test.js',
     'tests/textmate-differential-gaps-test.js',
+    'tests/textmate-bracket-time-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/prism-hljs-differential-test.js',
     'tests/continuation-labels-test.js',
