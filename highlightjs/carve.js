@@ -2789,7 +2789,7 @@ function adaptGrammar(grammar, hljs) {
 
     const DIV_BLOCK = {
         beginScope: 'keyword',
-        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)[^\r\n]*| +[a-zA-Z0-9_][\w-]*(?=$(?![^\r\n])|[\s\u0085"{\[“”])[^\r\n]*| +"(?:\\.|[^"\\\n])*"[^\r\n]*| +\[[^\]\n]*\]| +\S[^\r\n]*)[ \t]*$(?![^\r\n])/,
+        begin: /^(?<![^\r\n])(?:(?<![\s\S])\uFEFF)?[ \t]*(:{3,})(?: +(?:\||\\|>)[^\r\n]*| +[-0-9A-Za-z_]+[^\r\n]*| +"(?:\\.|[^"\\\n])*"[^\r\n]*| +\[[^\]\n]*\]| +\S[^\r\n]*)[ \t]*$(?![^\r\n])/,
         'on:begin': openColonFence,
         endScope: 'keyword',
         end: /^(?<![^\r\n])[ \t]*(:{3,})[ \t]*$(?![^\r\n])/,
@@ -2979,7 +2979,7 @@ function adaptGrammar(grammar, hljs) {
     // comment whether the opener holds or folds into the item as text.
     const MARKER_LINE_TAIL_COMMENT = '[ \\t]+%%|[ \\t]*\\{%';
     const DIV_ON_MARKER_LINE_OPENER =
-        '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[a-zA-Z0-9_][\\w-]*(?=$(?![^\\r\\n])|[\\s\\u0085"{\\[“”])(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| +"(?:\\\\.|[^"\\\\\\n])*"(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| +\\[[^\\]\\n]*\\]| +(?!' + MARKER_LINE_TAIL_COMMENT + ')\\S(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*)?'
+        '(?: +(?:\\||\\\\|>)[^\\r\\n]*| +[-0-9A-Za-z_]+(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| +"(?:\\\\.|[^"\\\\\\n])*"(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*| +\\[[^\\]\\n]*\\]| +(?!' + MARKER_LINE_TAIL_COMMENT + ')\\S(?:(?!' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n])*)?'
         + '(?=(?:' + MARKER_LINE_TAIL_COMMENT + ')[^\\r\\n]*$(?![^\\r\\n])|[ \\t]*$(?![^\\r\\n]))';
     const [DIV_ON_MARKER_LINE, DIV_MARKER_LINE_CLOSER] = markerLineContainer('keyword', DIV_ON_MARKER_LINE_OPENER);
     // Inside a group, like DIV_BLOCK_IN_GROUP: its body must not offer a group.

@@ -12063,7 +12063,7 @@
     },
     "admonition": {
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set. The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus the column-0 `#abbreviation`, whose in-container form reads the body (markup-carve/carve#4874, carve-grammars#852); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -12296,7 +12296,7 @@
     },
     "admonition_in_group": {
       "comment": "The generic container, reached only from INSIDE a composite figure group. Identical to `#admonition` except that its body offers `#admonition_in_group` and never `#figure_group`, so a bare `::: figure` at any depth inside an open group scopes as the generic container the clause says it degrades to (PART 9 §4c, GROUPS DO NOT NEST; corpus 318-composite-figures-9). Scope names are deliberately unchanged - it IS an admonition, and a consumer selecting `meta.admonition.carve` must keep seeing it.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -16546,6 +16546,157 @@
           ]
         },
         {
+          "match": "\\G(?<=[ \\t])(>)(?= ) ((?:>(?= ) )*)(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "2": {
+              "name": "punctuation.definition.quote.carve"
+            },
+            "3": {
+              "name": "punctuation.definition.admonition.carve"
+            },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "5": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "6": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "7": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "8": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "9": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "10": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "11": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "12": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "13": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "14": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "15": {
+              "name": "invalid.illegal.container-metadata.carve"
+            }
+          },
+          "name": "markup.quote.carve"
+        },
+        {
           "comment": "A definition list in a quote opened on a list item's marker line (`- > :: t`, carve-grammars#850).",
           "begin": "\\G(?<=[ \\t])(?=>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*:: +(?![ \\t]*$))",
           "end": "^(?![ \\t]*>(?= ) (?:>(?= ) |(?:[-*](?: +\\[[ xX\\-_>/!?]\\])?|\\d+[.)]|(?:(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= )|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))) +)*[ \\t]*:{1,2} +(?![ \\t]*$))",
@@ -16816,7 +16967,7 @@
       ]
     },
     "admonition_on_marker_line": {
-      "begin": "\\G(?<=[ \\t])(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "\\G(?<=[ \\t])(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -17036,7 +17187,7 @@
       "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
     },
     "admonition_in_list": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -17255,7 +17406,7 @@
       ]
     },
     "admonition_in_group_in_list": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -23217,7 +23368,7 @@
           ]
         },
         {
-          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(:{3,})(?:( +)(\\||\\\\|>|[A-Za-z0-9_][\\w-]*))?(?=[ \\t]|$).*$",
+          "match": "^(?:\\A\\x{FEFF})?(>)(?= ) ((?:>(?= ) )*)(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -23228,8 +23379,141 @@
             "3": {
               "name": "punctuation.definition.admonition.carve"
             },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            },
             "5": {
               "name": "entity.name.tag.admonition.carve"
+            },
+            "6": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "7": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "8": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "9": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "10": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "11": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "12": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "13": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "14": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "15": {
+              "name": "invalid.illegal.container-metadata.carve"
             }
           },
           "name": "markup.quote.carve"
@@ -23536,7 +23820,7 @@
           ]
         },
         {
-          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:{3,})(?:( +)(\\||\\\\|>|[A-Za-z0-9_][\\w-]*))?(?=[ \\t]|$).*$",
+          "match": "^[ \\t]*(>)(?= ) ((?:>(?= ) )*)(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
           "captures": {
             "1": {
               "name": "punctuation.definition.quote.carve"
@@ -23547,8 +23831,141 @@
             "3": {
               "name": "punctuation.definition.admonition.carve"
             },
+            "4": {
+              "name": "entity.name.tag.admonition.carve"
+            },
             "5": {
               "name": "entity.name.tag.admonition.carve"
+            },
+            "6": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "7": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "8": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "9": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "10": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "11": {
+              "name": "string.quoted.double.admonition.title.carve",
+              "patterns": [
+                {
+                  "match": "(\")(.*)(\")$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.string.begin.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.string.end.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "12": {
+              "name": "constant.other.label.admonition.carve",
+              "patterns": [
+                {
+                  "match": "(\\[)(.*)(\\])$",
+                  "captures": {
+                    "1": {
+                      "name": "punctuation.definition.label.carve"
+                    },
+                    "2": {
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    },
+                    "3": {
+                      "name": "punctuation.definition.label.carve"
+                    }
+                  }
+                }
+              ]
+            },
+            "13": {
+              "name": "invalid.illegal.container-metadata.carve"
+            },
+            "14": {
+              "name": "entity.name.tag.admonition.carve"
+            },
+            "15": {
+              "name": "invalid.illegal.container-metadata.carve"
             }
           },
           "name": "markup.quote.carve"
@@ -23767,7 +24184,7 @@
     },
     "caption_literal_after_container": {
       "comment": "The same after the closer of a `:::` container, except a `::: >` quote, whose closer does take a caption.",
-      "begin": "^(?=(?:\\A\\x{FEFF})?(?![ \\t]*:{3,} +>[ \\t]*$)[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([a-zA-Z0-9_][\\w-]*)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([a-zA-Z0-9_][\\w-]*)(?=$|[\\s\\x{0085}\\x{FEFF}\"{\\[“”])([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$)",
+      "begin": "^(?=(?:\\A\\x{FEFF})?(?![ \\t]*:{3,} +>[ \\t]*$)[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$)",
       "end": "^(?!\\G)(?![ \\t]*$|\\^(?:[ \\t]|$))",
       "patterns": [
         {
