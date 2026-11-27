@@ -259,6 +259,7 @@ function guardLeadingLookbehinds(grammar) {
  * and a resume after a full-matcher fallback counts from that matcher's rule.
  * Any other matcher shape is left alone.
  */
+const NEVER = /(?!)/;
 function isolateResumeMatchers(mode) {
     let matcher;
     Object.defineProperty(mode, 'matcher', {
@@ -272,7 +273,8 @@ function isolateResumeMatchers(mode) {
             value.getMatcher = function (index) {
                 if (this.multiRegexes[index]) return this.multiRegexes[index];
                 const rules = this.rules;
-                this.rules = rules.map(([re, opts]) => [re, { ...opts }]);
+                // The line-break stop only bounds resumed scans (see CONTAINS).
+                this.rules = rules.map(([re, opts]) => [index === 0 && opts.rule?.resumeStop ? NEVER : re, { ...opts }]);
                 try {
                     return build.call(this, index);
                 } finally {
@@ -4358,8 +4360,10 @@ function isolateResumeMatchers(mode) {
     }
 
     // A refused begin resumes on the rules after it, which may find nothing for
-    // the rest of the document; a line break stops that scan at the line.
-    CONTAINS.push({ begin: /\n/, relevance: 0 });
+    // the rest of the document; a line break stops that scan at the line. Only
+    // resume matchers carry it: in the full matcher it would end every scan at
+    // the line and cost one more scan per line (isolateResumeMatchers).
+    CONTAINS.push({ begin: /\n/, relevance: 0, resumeStop: true });
 
     return {
         // `crv` is the canonical file extension, and every surface this package
