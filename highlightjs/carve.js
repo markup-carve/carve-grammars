@@ -1104,7 +1104,41 @@ function isolateResumeMatchers(mode) {
         }
         return /[*/_~=^,+-]/.test(source[at - 2] ?? '') ? 'other' : null;
     };
+    // A block snippet use takes no attribute line (C2-B-096, carve#6896): a run
+    // of attribute lines right above one stays a paragraph of text.
+    const ATTRIBUTE_ONLY_LINE = RegExp('^\\uFEFF?[ \\t]*(?:\\{[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}[ \\t]*)+$');
+    let useRunInput = null;
+    let useRunVerdicts = null;
+    let plainLines = null;
+    const aboveBlockUse = (source, at) => {
+        if (source !== useRunInput) {
+            useRunInput = source;
+            useRunVerdicts = new Map();
+            plainLines = new Set();
+        }
+        const run = [];
+        let start = lineStartBefore(source, at);
+        let refused = false;
+        for (;;) {
+            if (useRunVerdicts.has(start)) {
+                refused = useRunVerdicts.get(start);
+                break;
+            }
+            if (plainLines.has(start) || !ATTRIBUTE_ONLY_LINE.test(lineAt(source, start))) {
+                plainLines.add(start);
+                refused = run.length > 0 && BLOCK_USE_LINE.test(lineAt(source, start));
+                break;
+            }
+            run.push(start);
+            const end = lineEndFrom(source, start);
+            if (end >= source.length) break;
+            start = nextLineStart(source, end);
+        }
+        for (const line of run) useRunVerdicts.set(line, refused);
+        return refused;
+    };
     const attachedAttribute = (source, m) => {
+        if (aboveBlockUse(source, m.index)) return false;
         if (m[1] === undefined) return attributeHost(source, m.index) !== null;
         const opener = indentColumn(m[1], 0);
         for (let at = m[0].indexOf('\n'); at !== -1; at = m[0].indexOf('\n', at + 1)) {
@@ -4257,6 +4291,7 @@ function isolateResumeMatchers(mode) {
         contains: [{ className: 'variable', begin: RegExp('\\$' + SNIPPET_NAME) }],
         relevance: 0,
     };
+    const BLOCK_USE_LINE = RegExp('^[ \\t]*\\{\\{ +\\$' + SNIPPET_NAME + ' +\\}\\}[ \\t]*$');
     // A use carries no attributes: valid blocks glued after it are text. A
     // braced or critic comment there is no valid block and keeps its scope.
     const SNIPPET_USE_BLOCKS = {

@@ -227,6 +227,39 @@
     // close an attached block: `a}{.b}`, `x {.a}{.b}` and a refused `{.a` + `}`
     // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
     // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
+    // A block snippet use takes no attribute line (C2-B-096, carve#6896): a run
+    // of attribute lines right above one stays a paragraph of text.
+    var attributeOnlyLine = RegExp('^\\uFEFF?[ \\t]*(?:\\{[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}[ \\t]*)+$');
+    var blockUseLine = RegExp('^[ \\t]*\\{\\{ +\\$' + snippetName + ' +\\}\\}[ \\t]*$');
+    var useRuns = { source: null, verdicts: null, plain: null };
+    var lineFrom = function (source, start) {
+        var end = start;
+        while (end < source.length && source.charAt(end) !== '\r' && source.charAt(end) !== '\n') end++;
+        return end;
+    };
+    var aboveBlockUse = function (source, at) {
+        if (useRuns.source !== source) useRuns = { source: source, verdicts: new Map(), plain: new Set() };
+        var start = Math.max(source.lastIndexOf('\n', at - 1), source.lastIndexOf('\r', at - 1)) + 1;
+        var run = [];
+        var refused = false;
+        for (;;) {
+            if (useRuns.verdicts.has(start)) {
+                refused = useRuns.verdicts.get(start);
+                break;
+            }
+            var end = lineFrom(source, start);
+            if (useRuns.plain.has(start) || !attributeOnlyLine.test(source.slice(start, end))) {
+                useRuns.plain.add(start);
+                refused = run.length > 0 && blockUseLine.test(source.slice(start, end));
+                break;
+            }
+            run.push(start);
+            if (end >= source.length) break;
+            start = end + (source.charAt(end) === '\r' && source.charAt(end + 1) === '\n' ? 2 : 1);
+        }
+        run.forEach(function (line) { useRuns.verdicts.set(line, refused); });
+        return refused;
+    };
     function pastOpenerColumn(pattern) {
         var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
         var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
@@ -347,6 +380,7 @@
             return /[*\/_~=^,+-]/.test(source.charAt(at - 2)) ? 'other' : null;
         };
         var valid = function (source, match) {
+            if (aboveBlockUse(source, match.index)) return false;
             if (match[1] === undefined) return hostOf(source, match.index) !== null;
             var opener = indentColumn(match[1], 0);
             var end = match.index + match[0].length;
