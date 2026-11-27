@@ -11,6 +11,7 @@ for (const file of [
     'tests/textmate-oniguruma-compile-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/prism-hljs-differential-test.js',
+    'tests/prism-quoted-comment-test.js',
     'tests/prism-hljs-long-line-time-test.js',
     'tests/prism-hljs-snippet-test.js',
     'tests/hljs-call-order-test.js',
