@@ -16539,8 +16539,9 @@
       ]
     },
     "extension_inline": {
-      "match": "(:)([a-zA-Z][\\w-]*)(\\[)((?:\\\\.|(?![ \\t]%%)[^\\]\\\\\\n]){0,1024})(\\])(\\{[^}]*\\})?",
-      "captures": {
+      "comment": "Read a complete bracket body in place. A capture with inline patterns copies the prefix of every repeated extension. Nested bracket rules keep an inner ] from ending this extension.",
+      "begin": "(:)([a-zA-Z][\\w-]*)(\\[)(?=((?>\\\\.|`[^`\\n]*`|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n])*+\\])*+\\])*+)\\])",
+      "beginCaptures": {
         "1": {
           "name": "punctuation.definition.extension.carve"
         },
@@ -16549,19 +16550,14 @@
         },
         "3": {
           "name": "punctuation.definition.extension.carve"
-        },
-        "4": {
-          "name": "string.unquoted.extension.carve",
-          "patterns": [
-            {
-              "include": "#inline"
-            }
-          ]
-        },
-        "5": {
+        }
+      },
+      "end": "(\\])(\\{[^}]*\\})?",
+      "endCaptures": {
+        "1": {
           "name": "punctuation.definition.extension.carve"
         },
-        "6": {
+        "2": {
           "name": "meta.attributes.carve",
           "patterns": [
             {
@@ -16569,7 +16565,17 @@
             }
           ]
         }
-      }
+      },
+      "contentName": "string.unquoted.extension.carve",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#inline"
+        },
+        {
+          "include": "#extension_nested_bracket"
+        }
+      ]
     },
     "symbol": {
       "match": "(?<!\\w)(:)([a-zA-Z0-9+-][\\w+-]*)(:)",
@@ -17991,23 +17997,29 @@
           "comment": "Content of only letters, digits, spaces and plain punctuation holds no inline construct, so this copy drops the content patterns: the engine copies the line up to every capture that has patterns, which made a line of many links quadratic."
         },
         {
-          "match": "(\\^\\[)((?>\\\\.|`[^`\\n]*`|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n])*+\\])*+\\])*+)(\\])",
-          "captures": {
+          "comment": "The lookahead confirms a matching outer bracket before the in-place rule opens.",
+          "begin": "(\\^\\[)(?=((?>\\\\.|`[^`\\n]*`|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n]|\\[(?>\\\\.|(?![ \\t]%%)[^\\[\\]\\\\\\n])*+\\])*+\\])*+)(\\]))",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.footnote.carve"
-            },
-            "2": {
-              "name": "string.other.footnote.inline.carve",
-              "patterns": [
-                {
-                  "include": "#inline_in_footnote"
-                }
-              ]
-            },
-            "3": {
+            }
+          },
+          "end": "\\]",
+          "endCaptures": {
+            "0": {
               "name": "punctuation.definition.footnote.carve"
             }
-          }
+          },
+          "contentName": "string.other.footnote.inline.carve",
+          "applyEndPatternLast": true,
+          "patterns": [
+            {
+              "include": "#inline_in_footnote"
+            },
+            {
+              "include": "#note_nested_bracket"
+            }
+          ]
         }
       ]
     },
@@ -34838,6 +34850,34 @@
         }
       ],
       "comment": "A copy of the content rules of the braced forms and of every rule they reach: each negated class, `.`, `$` and trailing negative lookahead stops at a braced closer, no match ends inside one, and an open begin/end rule ends there, as the captured run's line did."
+    },
+    "note_nested_bracket": {
+      "comment": "An ordinary bracket pair inside an inline note owns its closing bracket before the note does.",
+      "begin": "\\[",
+      "end": "\\]",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#inline_in_footnote"
+        },
+        {
+          "include": "#note_nested_bracket"
+        }
+      ]
+    },
+    "extension_nested_bracket": {
+      "comment": "An ordinary bracket pair inside an extension owns its closing bracket before the extension does.",
+      "begin": "\\[",
+      "end": "\\]",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#inline"
+        },
+        {
+          "include": "#extension_nested_bracket"
+        }
+      ]
     }
   }
 }
