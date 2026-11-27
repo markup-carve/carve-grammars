@@ -30,4 +30,11 @@ const quotedHeader = tokenize('> |={colspan=2} H |\n> | a | b |');
 assert.equal(quotedHeader.some(({ scope, text }) => text === 'colspan' && scope.includes('meta.attributes.carve')), true);
 const continuation = tokenize('|= H |\n|={.x} ^ |\n| a |');
 assert.equal(continuation.some(({ scope, text }) => text === '.x' && scope.includes('meta.attributes.carve')), false);
+for (const source of ['[a](u){.c}[a](u)[a][r]\n', '![a](u){.c}![a](u)[a][r]\n']) {
+    assert.equal(tokenize(source).some(({ scope }) => scope.includes('constant.other.reference.link.carve')), true, source);
+}
+for (const source of ['~`a`~{.c}\n', '~[a](u)~{.c}\n']) {
+    assert.equal(tokenize(source).some(({ scope }) => scope.includes('markup.raw.inline.carve') || scope.includes('markup.underline.link.carve')), true, source);
+}
+assert.equal(tokenize('*a * b*{.c}\n').some(({ scope, text }) => text === '.c' && scope.includes('meta.attributes.carve')), true);
 console.log(`TextMate Phiki attributes: ${count} host variants match prior scopes`);
