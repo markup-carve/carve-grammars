@@ -143,9 +143,12 @@ function adaptGrammar(grammar, hljs) {
             // Columns count from the last quote marker.
             const column = item[1].replace(/^.*>/, '').length;
             const ordinal = item[2] ?? item[3] ?? item[4];
+            let indent = Infinity;
             for (let above = at; above > 0;) {
                 const [previous, text] = lineBefore(above);
                 const marker = DEFINITION_MARKER_LINE.exec(text);
+                // Lines short of the marker's content column left its item.
+                if (marker && indent < definitionColumn(text, marker[0].length - 1)) return null;
                 if (marker) {
                     if (marker[1].split('>').length !== item[1].split('>').length) return null;
                     const markerColumn = marker[1].replace(/^.*>/, '').length;
@@ -156,6 +159,7 @@ function adaptGrammar(grammar, hljs) {
                     // content; one in no item is a sibling.
                     if (!parentItem(previous, marker)) return [previous, marker];
                 } else if (!/^[ \t]+\S/.test(text)) return null;
+                else indent = Math.min(indent, definitionColumn(text, text.search(/\S/)));
                 above = previous;
             }
             return null;
@@ -206,6 +210,7 @@ function adaptGrammar(grammar, hljs) {
             // The least indent of the lines between that term and the next
             // one up, which holds them only when they reach past its `::`.
             let between = Infinity;
+            let description = Infinity;
             while (entry > 0) {
                 const [previous, line] = lineBefore(entry);
                 const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
@@ -234,11 +239,13 @@ function adaptGrammar(grammar, hljs) {
                         entry = previous;
                         continue;
                     }
-                    if (term && between <= definitionColumn(line, line.indexOf('::'))) return termStart;
+                    const colons = definitionColumn(line, line.indexOf('::'));
+                    if (term && (between <= colons || description < colons)) return termStart;
                     term = true;
                     termStart = previous;
                     orphan = false;
                     between = Infinity;
+                    description = Infinity;
                     // A term on a marker line opens an item: under item content
                     // the item stands, so nothing above holds the run; else the
                     // line holds the run as the lines above would (#990).
@@ -247,8 +254,15 @@ function adaptGrammar(grammar, hljs) {
                         start = previous;
                         continue read;
                     }
-                } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) orphan = true;
-                else if (!/^[ \t]+\S/.test(line)) break;
+                } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) {
+                    orphan = true;
+                    description = Math.min(description, definitionColumn(line, line.search(/\S/)));
+                } else if (term && (DEFINITION_HEADING_LINE.test(line) || DEFINITION_SKIP.test(line))) {
+                    // A heading or comment between two terms is a block: the
+                    // run reads as it would right under it.
+                    start = previous;
+                    continue read;
+                } else if (!/^[ \t]+\S/.test(line)) break;
                 else if (term) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
                 else {
                     indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
