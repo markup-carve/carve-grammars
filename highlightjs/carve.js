@@ -113,6 +113,7 @@ function adaptGrammar(grammar, hljs) {
     const DEFINITION_TASK = '(?:[ \\t]+\\[[ xX\\-_>\\/!?]\\])?';
     const DEFINITION_TERM_LINE = RegExp('^\\uFEFF?[ \\t]*(?:(?:>|' + DEFINITION_MARKER + DEFINITION_TASK + ')[ \\t]+)*:: +\\S');
     const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    const DEFINITION_HEADING_START = /^\uFEFF?(?:#{1,6}|={1,6}) +\S/;
     const DEFINITION_HEADING_LINE = /^\uFEFF?(?:[ \t]*>)*[ \t]+(?:#{1,6}|={1,6}) +\S/;
     // A list marker line: group 1 its prefix up to the marker, groups 2-4 an ordinal.
     const DEFINITION_ITEM = '^(\\uFEFF?(?:[ \\t]*>)*[ \\t]*)(?:[-*+]|(\\d{1,9}|[a-z]|[ivxlcdm]+)[.)]|([A-Z]|[IVXLCDM]+)\\)|([A-Z]|[IVXLCDM]+)\\.(?= {2}))';
@@ -247,13 +248,8 @@ function adaptGrammar(grammar, hljs) {
                     between = Infinity;
                     description = Infinity;
                     // A term on a marker line opens an item: under item content
-                    // the item stands, so nothing above holds the run; else the
-                    // line holds the run as the lines above would (#990).
-                    if (item?.[5]) {
-                        if (opensItemUnder(previous, item)) return 0;
-                        start = previous;
-                        continue read;
-                    }
+                    // the item stands, so nothing above holds the run (#990).
+                    if (item?.[5] && opensItemUnder(previous, item)) return 0;
                 } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) {
                     orphan = true;
                     description = Math.min(description, definitionColumn(line, line.search(/\S/)));
@@ -262,8 +258,12 @@ function adaptGrammar(grammar, hljs) {
                     // run reads as it would right under it.
                     start = previous;
                     continue read;
-                } else if (!/^[ \t]+\S/.test(line)) break;
-                else if (term) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
+                } else if (!/^[ \t]+\S/.test(line)) {
+                    // Indented lines no term holds are paragraph text, unless
+                    // they continue a heading.
+                    if (term && between !== Infinity && !DEFINITION_HEADING_START.test(line)) return termStart;
+                    break;
+                } else if (term && !item && !/^[ \t]*>/.test(line)) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
                 else {
                     indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
                     const marker = DEFINITION_MARKER_LINE.exec(line);
@@ -272,6 +272,7 @@ function adaptGrammar(grammar, hljs) {
                 }
                 entry = previous;
             }
+            if (term && between !== Infinity && entry === 0) return termStart;
             return orphan ? termStart : term ? entry : top;
         }
     }
