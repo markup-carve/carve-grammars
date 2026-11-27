@@ -27,6 +27,10 @@ assert.deepEqual([...document.querySelectorAll('.line')].map((line) => line.text
 assert.deepEqual([...document.querySelectorAll('.line .token')].map((token) => token.textContent), ['a', 'b'])
 assert.equal(document.querySelector('.line .other').textContent, 'c')
 
+document.body.innerHTML = '<figure><pre class="line-numbers" data-line-start="7" data-highlight="2"><code>x\ny\n</code></pre><figcaption>Sample</figcaption></figure>'
+applyLineOptions(document.querySelector('figure pre'))
+assert.equal(document.querySelector('figure .highlighted-line').getAttribute('data-line-number'), '8')
+
 const attrs = { classes: ['line-numbers'], keyValues: [['data-line-start', '42'], ['data-highlight', '1,3-5']] }
 const transformer = lineOptionsTransformer(attrs)
 transformer.preprocess('a\nb\nc')
