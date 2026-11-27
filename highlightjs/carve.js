@@ -404,14 +404,14 @@ function guardLeadingLookbehinds(grammar) {
  * a line break that takes the CR with it and a `$` that does not stop inside a
  * CRLF. Input without a CR matches exactly as before; a lone CR reads as it did.
  */
-// `\r?\n` costs V8 far more to compile and run than this alternation.
-const LINE_BREAK = '(?:\\r\\n|\\n)';
-// Read right to left, the LF alone could match and leave its CR to the atom before.
-const LOOKBEHIND_LINE_BREAK = '(?:\\r\\n|(?<!\\r)\\n)';
+// `\r?\n` costs V8 far more to compile and run than this alternation. The LF
+// alone never follows a CR: a class that takes the CR would otherwise split
+// each CRLF two ways, and a bounded run that fails backtracked through every
+// split (carve-grammars#1002). In a lookbehind it would leave the CR to the atom before.
+const LINE_BREAK = '(?:\\r\\n|(?<!\\r)\\n)';
 function crlfSource(source) {
     let out = '';
     let afterCR = false;
-    const lookbehinds = [];
     for (let at = 0; at < source.length; at++) {
         const c = source[at];
         const wasAfterCR = afterCR;
@@ -422,14 +422,12 @@ function crlfSource(source) {
             for (at++; at < source.length && source[at] !== ']'; at++) if (source[at] === '\\') at++;
             out += source.slice(start, at + 1);
         } else if (c !== '\\') {
-            if (c === '(') lookbehinds.push(source.startsWith('(?<=', at) || source.startsWith('(?<!', at));
-            else if (c === ')') lookbehinds.pop();
             afterCR = wasAfterCR && c === '?';
             out += c === '$' ? '$(?!(?<=\\r)\\n)' : c;
         } else if ((source.startsWith('\\r?\\n', at) && !/[*+?{]/.test(source[at + 5] ?? '')) || (source[at + 1] === 'n' && !wasAfterCR)) {
             // A `\n` after a bare `\r` (`\r\n?`) and a quantified `\r?\n` stay as written.
             const end = source[at + 1] === 'n' ? at + 2 : at + 5;
-            out += lookbehinds.includes(true) ? LOOKBEHIND_LINE_BREAK : LINE_BREAK;
+            out += LINE_BREAK;
             at = end - 1;
         } else {
             out += source.slice(at, at + 2);
@@ -478,7 +476,11 @@ function isolateResumeMatchers(mode) {
                 // The line-break stop only bounds resumed scans (see CONTAINS).
                 this.rules = rules.map(([re, opts]) => [index === 0 && opts.rule?.resumeStop ? NEVER : re, { ...opts }]);
                 try {
-                    return build.call(this, index);
+                    const built = build.call(this, index);
+                    // exec keeps a resumed match only at the resumed position, so a
+                    // resumed scan stops there instead of reading on (carve-grammars#1002).
+                    if (index !== 0 && built.matcherRe) built.matcherRe = new RegExp(built.matcherRe.source, built.matcherRe.flags + 'y');
+                    return built;
                 } finally {
                     this.rules = rules;
                 }
@@ -756,12 +758,22 @@ function isolateResumeMatchers(mode) {
         // Tempered on disjoint non-closer cases, so a failure costs one pass.
         const precheck = `(?:[^${d}\\n]|${d === '=' ? '[>!]=|<=(?![=>])|' : ''}\\n(?![ \\t]*\\n)|(?<=\\s)${d}|(?<!\\s)${d}(?=${LETTER_OR_DIGIT})|(?<=%\\})${d}|${d}(?=\\{%)){0,4096}${bareCloser(d)}`;
         // A word before the opener, or a space after it, counts through braced comments.
-        opener = new RegExp(`(?<!(?:${LETTER_OR_DIGIT}|${d})(?=\\{%)${BRACED_COMMENTS})${opener.source}(?!(?=\\{%)${BRACED_COMMENTS}\\s)(?=${precheck})`);
-        BARE_RUNS.push([d.replace('\\', ''), new RegExp(`${opener.source}${atom}{1,4096}?${bareCloser(d)}`, 'g')]);
+        opener = new RegExp(`(?<!(?:${LETTER_OR_DIGIT}|${d})(?=\\{%)${BRACED_COMMENTS})${opener.source}(?!(?=\\{%)${BRACED_COMMENTS}\\s)`);
+        BARE_RUNS.push([d.replace('\\', ''), new RegExp(`${opener.source}(?=${precheck})${atom}{1,4096}?${bareCloser(d)}`, 'g')]);
         return {
             // 0.2 has no bare underline, strike or highlight; the 0.2 wrapper drops these.
             ...(['_', '~', '='].includes(d) ? { bareSpanOf01: true } : {}),
-            begin: new RegExp(`${opener.source}(?=${atom}{1,4096}?${bareCloser(d)})`),
+            // The closer lookaheads run in 'on:begin', behind a per-document
+            // closer index: in the begin they scanned up to 4096 characters
+            // from every opener with no closer (carve-grammars#1002). Kept on
+            // the mode so the grammar-wide regex rewrites reach them.
+            begin: opener,
+            bareDelimiter: d.replace('\\', ''),
+            bareCloser: new RegExp(bareCloser(d), 'y'),
+            bareRunAhead: new RegExp(`(?=${precheck})(?=${atom}{1,4096}?${bareCloser(d)})`, 'y'),
+            'on:begin': (m, resp) => {
+                if (!bareRunCloses(m.rule, m.input, m.index + m[0].length)) resp.ignoreMatch();
+            },
             // A lookbehind in `end` never matches in highlight.js, so a delimiter
             // after whitespace is consumed by a content mode instead.
             end: new RegExp(`${d}(?!${BRACED_COMMENTS}${LETTER_OR_DIGIT})`),
@@ -1021,6 +1033,41 @@ function isolateResumeMatchers(mode) {
         blank.lastIndex = at;
         const found = blank.exec(source);
         return Math.min(found ? found.index : source.length, at + 8192);
+    };
+    // The run scan cannot pass a line break into a blank line, and covers at
+    // most 4096 steps of up to two characters, so a closer past either needs
+    // no regex (carve-grammars#1002).
+    let bareClosers = { source: null, stops: null, closers: null };
+    const firstFrom = (list, at) => {
+        let low = 0;
+        let high = list.length;
+        while (low < high) {
+            const mid = (low + high) >> 1;
+            if (list[mid] < at) low = mid + 1;
+            else high = mid;
+        }
+        return low < list.length ? list[low] : Infinity;
+    };
+    const bareRunCloses = (rule, source, at) => {
+        if (bareClosers.source !== source) bareClosers = { source, stops: null, closers: new Map() };
+        if (!bareClosers.stops) {
+            bareClosers.stops = [];
+            for (const stop of source.matchAll(/\n(?=[ \t]*\r?\n)/g)) bareClosers.stops.push(stop.index);
+        }
+        const key = rule.bareCloser.source;
+        let closers = bareClosers.closers.get(key);
+        if (!closers) {
+            closers = [];
+            for (let i = source.indexOf(rule.bareDelimiter); i !== -1; i = source.indexOf(rule.bareDelimiter, i + 1)) {
+                rule.bareCloser.lastIndex = i;
+                if (rule.bareCloser.test(source)) closers.push(i);
+            }
+            bareClosers.closers.set(key, closers);
+        }
+        const closer = firstFrom(closers, at);
+        if (closer - at > 8192 || firstFrom(bareClosers.stops, at) < closer) return false;
+        rule.bareRunAhead.lastIndex = at;
+        return rule.bareRunAhead.test(source);
     };
     let runEnds = { source: null, windows: null };
     const closesBareRun = (source, at) => {
@@ -4430,6 +4477,9 @@ function isolateResumeMatchers(mode) {
             const before = mode['on:begin'];
             const end = mode.end && new RegExp(mode.end.source, 'gm');
             mode['on:begin'] = (m, resp) => {
+                // The mode's own check first: the comment check below scans to the closer.
+                before?.(m, resp);
+                if (resp.isMatchIgnored) return;
                 let taken;
                 if (label) taken = labelTaken(m.input, m.index, label === 'alt');
                 else if (!end) taken = takenByComment(m.input, m.index, m.index + m[0].length);
@@ -4438,8 +4488,7 @@ function isolateResumeMatchers(mode) {
                     const closer = end.exec(m.input);
                     taken = takenByComment(m.input, m.index, closer ? closer.index : m.index);
                 }
-                if (taken) return resp.ignoreMatch();
-                return before?.(m, resp);
+                if (taken) resp.ignoreMatch();
             };
         };
         [STRONG, EMPHASIS, UNDERLINE, BOLD_ITALIC, HIGHLIGHT, SUBSCRIPT, SUPERSCRIPT, STRIKETHROUGH, INSERT, DELETE,
