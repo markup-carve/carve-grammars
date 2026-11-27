@@ -41,6 +41,16 @@ for (const open of ['^[', ':x[']) {
         const strongBody = `*a ${comment} b*`;
         assert.equal(covered(tokenize, `${open}${strongBody}] z\nnext\n`, scope), strongBody, `closed comment in strong: ${comment}`);
     }
+    for (const comment of ['{# \\[b #}', '{% [b %}']) {
+        const source = `${open}a ${comment} c]\nnext\n`;
+        assert.equal(covered(tokenize, source, scope).includes('next'), false, `comment bracket: ${comment}`);
+    }
+    for (const destination of ['u', 'u]v']) {
+        const source = `${open}*a [b](${destination}) c*]\nnext\n`;
+        const tokens = tokenize(source);
+        assert.equal(tokens.some(({ scope: tokenScope }) => tokenScope.includes('string.other.link.title.carve')), true, `strong link: ${destination}`);
+        assert.equal(covered(tokenize, source, scope).includes('next'), false, `strong link boundary: ${destination}`);
+    }
     for (const atom of ['<https://a]b>', '{k="]"}', '[c](u]v)', '[c](u(v]w))', '[c](u "v]w")', "[c](u 'v]w')"]) {
         const body = `a [b ${atom} c]`;
         assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${atom}`);

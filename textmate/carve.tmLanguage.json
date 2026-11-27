@@ -34895,11 +34895,7 @@
       "end": "#\\}|^(?=[ \\t]*$)|(?=\\](?![^\\n]*#\\}))",
       "name": "comment.block.critic.carve",
       "applyEndPatternLast": true,
-      "patterns": [
-        {
-          "include": "#literal_nested_bracket_in_outer"
-        }
-      ]
+      "patterns": []
     },
     "note_body_braced_comment": {
       "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
@@ -34917,11 +34913,7 @@
       },
       "contentName": "comment.block.inline.carve",
       "applyEndPatternLast": true,
-      "patterns": [
-        {
-          "include": "#literal_nested_bracket_in_outer"
-        }
-      ]
+      "patterns": []
     },
     "note_body_strong_content": {
       "patterns": [
@@ -35104,10 +35096,10 @@
       "contentName": "markup.bold.carve",
       "patterns": [
         {
-          "include": "#note_nested_bracket"
+          "include": "#note_body_strong_content"
         },
         {
-          "include": "#note_body_strong_content"
+          "include": "#note_nested_bracket"
         }
       ]
     },
@@ -35117,11 +35109,7 @@
       "end": "#\\}|^(?=[ \\t]*$)|(?=\\](?![^\\n]*#\\}))",
       "name": "comment.block.critic.carve",
       "applyEndPatternLast": true,
-      "patterns": [
-        {
-          "include": "#literal_nested_bracket_in_outer"
-        }
-      ]
+      "patterns": []
     },
     "extension_body_braced_comment": {
       "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
@@ -35139,11 +35127,7 @@
       },
       "contentName": "comment.block.inline.carve",
       "applyEndPatternLast": true,
-      "patterns": [
-        {
-          "include": "#literal_nested_bracket_in_outer"
-        }
-      ]
+      "patterns": []
     },
     "extension_body_strong_content": {
       "patterns": [
@@ -35326,10 +35310,10 @@
       "contentName": "markup.bold.carve",
       "patterns": [
         {
-          "include": "#extension_nested_bracket"
+          "include": "#extension_body_strong_content"
         },
         {
-          "include": "#extension_body_strong_content"
+          "include": "#extension_nested_bracket"
         }
       ]
     },
