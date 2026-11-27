@@ -133,7 +133,8 @@ function adaptGrammar(grammar, hljs) {
     function definitionReadAbove(source, start) {
         const lineBefore = (at) => {
             const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
-            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            let previous = end;
+            while (previous > 0 && source[previous - 1] !== '\n' && source[previous - 1] !== '\r') previous--;
             return [previous, source.slice(previous, end)];
         };
         // The marker line holding the marker line read as `item` at `at` as a
