@@ -4,10 +4,27 @@ All notable changes to `carve-grammars` are documented here.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-27
+
+The grammars and the Tiptap kit read Carve 0.2. Prism, highlight.js, TextMate and Shiki keep their `carve` and `crv` names and now highlight the 0.2 syntax; the Tiptap kit maps the 0.2 document tree.
+
 ### Breaking changes
 
-- Carve 0.2 replaces the 0.1 grammars at the `carve` and `crv` names. The `prism/carve2.js`, `highlightjs/carve2.mjs`, and `textmate/carve2.tmLanguage.json` entries move to their `carve` paths; TextMate uses `source.carve`.
-- Remove the 0.1 Tiptap editor kit (`tiptap`, `editor`, `editor.css`, `schema-map.json`), its serializer, tests, and build scripts. The package root now exports the Shiki setup. `diagrams`, `diff`, `shiki/diff` and `fence-languages.json` stay at their paths. See `docs/migration-0.2.md`.
+- Carve 0.2 replaces the 0.1 grammars at the `carve` and `crv` names. The `prism/carve2.js`, `highlightjs/carve2.mjs`, and `textmate/carve2.tmLanguage.json` entries move to their `carve` paths; TextMate uses `source.carve` (#895, #903, #908). The exports that do not depend on the grammar (`diagrams`, `diff`, `shiki/diff`, `fence-languages.json`) stay at their paths (#907).
+- The 0.1 Tiptap editor kit, its serializer, `editor`, `editor.css` and `schema-map.json` are gone. `tiptap` is now the Carve 0.2 kit: `CarveKit`, `carveToProseMirror` and `serializeToCarve` keep their names, and the loader and serializer take the carve-js engine as `{ engine }`. The package root exports the Shiki setup. See `docs/migration-0.2.md` (#903, #913).
+- The 0.1 substitution forms are gone from all three grammars: `~>` is text and a braced tilde is always strike (#965).
+
+### Fixes
+
+- The TextMate grammar compiles under Oniguruma 6.9.9 (PHP mbstring, as Phiki and Torchlight use it) again, so `*bold*` keeps its scope there (#980).
+- Long lines tokenize in linear time: a long attribute block in Prism (#952, #953), closed inline runs (#915), unclosed openers and comment-ended table rows (#912), long lines in Prism and highlight.js (#971), and links, spans and bracket runs with markup in TextMate (#968, #969).
+- Shiki keeps the blank lines between Carve blocks (#897).
+
+### Improvements
+
+- Prism, highlight.js and TextMate follow the 0.2 block and inline readings: definitions, item breaks and uppercase markers (#899), star breaks behind a quote prefix and nested footnote definitions (#901, #902), later typed metadata blocks, tag names, caption caret lines and heading continuation (#932, #958), unpartnered runs, front matter format words and unattached attribute blocks as text (#937, #939), unquoted attribute values without a pipe or backslash (#940), continuation lines of definitions, captions, terms and labels (#942, #961), blocks on quoted, attribute-glued and nested marker lines and headings on list marker lines (#946, #948, #962, #963), a heading that ends at an indented fence or block comment (#944), a bare dot before a spaced dot (#950), titled, anonymous and quoted div openers, Unicode word characters, dashes and comments in quotes (#973, #974, #975), and the gaps a differential against the 0.2 tree found (#966, #967, #968, #971).
+- TextMate scopes snippet definitions (`{$name}: value`) and uses (`{{ $name }}`); a use no longer reads as an include path (#983).
+- The Tiptap kit reads stock Tiptap spans, header rows, block images and foreign attributes (#926), loads a soft break as an editable `carveSoftBreak` leaf (#929), keeps code newlines (#928), shows a footnote reference as a superscript label (#921), keeps denied link and image destinations out of live attributes (#919), reports the doc node's own ignored attributes (#927), maps application nodes through a table with editor pointers for findings (#930), and keeps a mapped host block's place in the source (#931).
 
 ## [0.1.24] - 2026-11-12
 
