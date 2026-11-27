@@ -125,6 +125,7 @@ for (const g of grammars) {
         ['{.c}\n{$v}: X\n', 'v'],
         ['{$a}: x\n{.c}\n{$v}: X\n', 'av'],
         ['{$a}: x\n{#i}\n{$v}: X\n', 'a'],
+        ['{$a}: x\r\n{.c}\r\n{$v}: X\r\n', 'av'],
     ]) {
         assert.equal(innermost(g.leaves(source), 'variable'), marker, at(source));
         assert.notEqual(g.definition(source), '', at(source));
@@ -156,6 +157,7 @@ for (const g of grammars) {
         '- a\n{$v}: X\n',
         // A run under paragraph text stays text; an id above makes a paragraph (#6865).
         'text\n{$v}: X\n{$w}: Y\n', '{$v #i}: X\n{$w}: Y\n', '{#x}\n{$w}: Y\n', '{.c #x}\n{$w}: Y\n',
+        'text\r\n{$v}: X\r\n{$w}: Y\r\n', '{#x}\r\n{$w}: Y\r\n',
     ]) {
         assert.equal(g.definition(source), '', `no definition in ${at(source)}`);
         count++;

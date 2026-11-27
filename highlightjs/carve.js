@@ -3823,7 +3823,7 @@ function adaptGrammar(grammar, hljs) {
                 allowed = true;
                 break;
             }
-            const above = lineStartBefore(input, start - 1);
+            const above = previousLineStart(input, start);
             const text = lineAt(input, above);
             if (!snippetRunLine.test(text)) {
                 allowed = snippetAboveLine.test(text);
