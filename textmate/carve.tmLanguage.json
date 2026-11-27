@@ -11935,73 +11935,893 @@
       ]
     },
     "heading": {
-      "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
-      "beginCaptures": {
-        "2": {
-          "name": "punctuation.definition.heading.carve"
-        }
-      },
-      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
-      "name": "markup.heading.carve",
-      "contentName": "entity.name.section.carve",
       "patterns": [
         {
-          "include": "#comment_only_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ],
+          "comment": "A heading opens at COLUMN 0 at document level. Leading whitespace used to be allowed here (carve-grammars#71) because a line-based grammar could not tell an opener at a list item's content column from an indented one at the top level - it over-coloured the rare invalid case rather than under-colour the common valid one. The container split (carve-grammars#137) removed that constraint: `#heading_in_container` is the permissive variant, reachable only through `#container_blocks`, so the document-level rule can be strict. Corpus 178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6 pins the case this fixes: ` # H` below a nested item's content column is paragraph text, and this grammar coloured it a heading (carve-grammars#138). One variant per marker column 0 to 11: a line continues the label when its indent reaches past the marker's column, a tab advancing to the next multiple of 4 (C2-B-004, C2-B-234). The ends hold no back-reference, so the engine compiles each once; past column 11 the last variant compares the indent characters."
         },
         {
-          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
-          "include": "#escape"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#raw_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4})(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2})",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){3})",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#trailing_comment"
-        },
-        {
-          "include": "#attributes"
-        },
-        {
-          "include": "#attributes_unattached"
-        },
-        {
-          "include": "#heading_tag"
-        },
-        {
-          "include": "#line_bounded_openers"
-        },
-        {
-          "include": "#inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){3})([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         }
-      ],
-      "comment": "A heading opens at COLUMN 0 at document level. Leading whitespace used to be allowed here (carve-grammars#71) because a line-based grammar could not tell an opener at a list item's content column from an indented one at the top level - it over-coloured the rare invalid case rather than under-colour the common valid one. The container split (carve-grammars#137) removed that constraint: `#heading_in_container` is the permissive variant, reachable only through `#container_blocks`, so the document-level rule can be strict. Corpus 178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6 pins the case this fixes: ` # H` below a nested item's content column is paragraph text, and this grammar coloured it a heading (carve-grammars#138)."
+      ]
     },
     "hr": {
       "match": "^(?:\\A\\x{FEFF})?[ \\t]*\\*{3,}[ \\t]*$",
@@ -13046,67 +13866,815 @@
       ]
     },
     "caption_label": {
-      "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(\\^) +(?![ \\t]*$)",
-      "beginCaptures": {
-        "2": {
-          "name": "punctuation.definition.caption.carve"
-        }
-      },
-      "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
-      "name": "meta.caption.carve",
-      "contentName": "markup.caption.carve",
       "patterns": [
         {
-          "include": "#comment_only_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {1}|\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ],
+          "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision. A caption is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it. One variant per marker column 0 to 11: a line continues the label when its indent reaches past the marker's column, a tab advancing to the next multiple of 4 (C2-B-004, C2-B-234). The ends hold no back-reference, so the engine compiles each once; past column 11 the last variant compares the indent characters."
         },
         {
-          "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
-          "include": "#escape"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {1}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {2}| {0,1}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#raw_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {2}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {3}| {0,2}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?= {3}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4})(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {1}|\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {1}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {2}| {0,1}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {2}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {3}| {0,2}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_multi"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {3}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2})",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {1}|\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {1}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {2}| {0,1}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {2}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {3}| {0,2}\\t))",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_unpartnered_line"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {3}(?![ \\t]))([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){3})",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#trailing_comment"
-        },
-        {
-          "include": "#attributes_unattached"
-        },
-        {
-          "include": "#line_bounded_openers"
-        },
-        {
-          "include": "#inline"
+          "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){3})([ \\t]*)(\\^) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.caption.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+          "name": "meta.caption.carve",
+          "contentName": "markup.caption.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A CAPTION'S CONTENT IS AN INLINE RUN, the same reading and the same repair as `#heading` (carve-grammars#601, markup-carve/carve#2682). This rule was one `match` whose capture 2 took the whole content, and a capture cannot nest patterns - so a real trailing `%%` stayed caption text although the engines strip it (`^ cap %% hidden` renders `<figcaption>cap</figcaption>`) and a code span went unscoped. It is a begin/end rule now, with `contentName` carrying what capture 2 used to. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         }
-      ],
-      "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. A line-based grammar cannot tell those two apart; that needs block context, which only tree-sitter-carve has (its #38). So the choice is over-coloring the rare invalid case or under-coloring the common valid one, and every block rule here picks the same side - the asymmetry this used to have was an accident of anchoring, not a decision. A caption is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
+      ]
     },
     "abbreviation": {
       "begin": "^(?:\\A\\x{FEFF})?(\\*)(\\[)([A-Za-z0-9]+)(\\])(:) +(?![ \\t]*$)(.*)$",
@@ -13175,31 +14743,347 @@
           ]
         },
         {
-          "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
-          "beginCaptures": {
-            "2": {
-              "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
-            },
-            "4": {
-              "name": "entity.name.tag.definition.term.carve",
+          "patterns": [
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {1}|\\t))",
               "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
                 {
                   "include": "#inline"
                 }
-              ]
-            }
-          },
-          "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
-          "patterns": [
-            {
-              "include": "#comment_only_line"
+              ],
+              "contentName": "entity.name.tag.definition.term.carve",
+              "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it. One variant per marker column 0 to 11: a line continues the label when its indent reaches past the marker's column, a tab advancing to the next multiple of 4 (C2-B-004, C2-B-234). The ends hold no back-reference, so the engine compiles each once; past column 11 the last variant compares the indent characters."
             },
             {
-              "include": "#inline"
+              "begin": "^(?:\\A\\x{FEFF})?(?= {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {2}| {0,1}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?= {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {3}| {0,2}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?= {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4})(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {1}|\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {2}| {0,1}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {3}| {0,2}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2})",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {1}|\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {2}| {0,1}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {3}| {0,2}\\t))",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){3})",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
+            },
+            {
+              "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){3})([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+              "beginCaptures": {
+                "2": {
+                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                },
+                "4": {
+                  "name": "entity.name.tag.definition.term.carve",
+                  "patterns": [
+                    {
+                      "include": "#inline"
+                    }
+                  ]
+                }
+              },
+              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+              "patterns": [
+                {
+                  "include": "#comment_only_line"
+                },
+                {
+                  "include": "#inline"
+                }
+              ],
+              "contentName": "entity.name.tag.definition.term.carve"
             }
-          ],
-          "contentName": "entity.name.tag.definition.term.carve",
-          "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
+          ]
         },
         {
           "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
@@ -16233,31 +18117,347 @@
           "end": "^(?=[ \\t]*: )(?!\\1(?::|  +:)|(?!\\3)(?:\\2(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\4)(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\6)(?: {0,3}\\t| {4})(?:\\5(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\7)(?: {0,3}\\t| {4})(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\9)(?: {0,3}\\t| {4}){2}(?:\\8(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\10)(?: {0,3}\\t| {4}){2}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\12)(?: {0,3}\\t| {4}){3}(?:\\11(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\13)(?: {0,3}\\t| {4}){3}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\15)(?: {0,3}\\t| {4}){4}(?:\\14(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\16)(?: {0,3}\\t| {4}){4}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\18)(?: {0,3}\\t| {4}){5}(?:\\17(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\19)(?: {0,3}\\t| {4}){5}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\21)(?: {0,3}\\t| {4}){6}(?:\\20(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\22)(?: {0,3}\\t| {4}){6}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\24)(?: {0,3}\\t| {4}){7}(?:\\23(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\25)(?: {0,3}\\t| {4}){7}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):|(?!\\27)(?: {0,3}\\t| {4}){8}(?:\\26(?:  +[ \\t]*)?|[ \\t]*\\t[ \\t]*):|(?!\\28)(?: {0,3}\\t| {4}){8}(?:   | {5,}[ \\t]*| {4,}\\t[ \\t]*|[ \\t]*\\t[ \\t]+):)|^(?=[ \\t]*(?:(?:#{1,6}|={1,6}) |-{3,}[ \\t]*$|\\*{3,}[ \\t]*$|_{3,}[ \\t]*$|`{3,}|:{3,}|>(?: |$)|\\^ |\\||[-*][ \\t]|[-*]\\{|\\d+[.)][ \\t]|[A-Za-z]+(?:\\)|\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +))[ \\t]|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )[ \\t]))|^(?![ \\t]*$)(?!(?:\\A\\x{FEFF})?[ \\t]*(?::: +(?![ \\t]*$)|: ))",
           "patterns": [
             {
-              "begin": "^(?:\\A\\x{FEFF})?([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
-              "beginCaptures": {
-                "2": {
-                  "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
-                },
-                "4": {
-                  "name": "entity.name.tag.definition.term.carve",
+              "patterns": [
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {1}|\\t))",
                   "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
                     {
                       "include": "#inline"
                     }
-                  ]
-                }
-              },
-              "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
-              "patterns": [
-                {
-                  "include": "#comment_only_line"
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve",
+                  "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it. One variant per marker column 0 to 11: a line continues the label when its indent reaches past the marker's column, a tab advancing to the next multiple of 4 (C2-B-004, C2-B-234). The ends hold no back-reference, so the engine compiles each once; past column 11 the last variant compares the indent characters."
                 },
                 {
-                  "include": "#inline"
+                  "begin": "^(?:\\A\\x{FEFF})?(?= {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {2}| {0,1}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?= {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {3}| {0,2}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?= {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4})(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {1}|\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {2}| {0,1}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {3}| {0,2}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}) {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2})",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {1}|\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {1}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {2}| {0,1}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {2}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {3}| {0,2}\\t))",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){2} {3}(?![ \\t]))([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){3})",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
+                },
+                {
+                  "begin": "^(?:\\A\\x{FEFF})?(?=(?: {0,3}\\t| {4}){3})([ \\t]*)(::)( +)(?![ \\t]*$)(.*)$",
+                  "beginCaptures": {
+                    "2": {
+                      "name": "keyword.control.definition.carve punctuation.definition.list.definition.carve"
+                    },
+                    "4": {
+                      "name": "entity.name.tag.definition.term.carve",
+                      "patterns": [
+                        {
+                          "include": "#inline"
+                        }
+                      ]
+                    }
+                  },
+                  "end": "^(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+                  "patterns": [
+                    {
+                      "include": "#comment_only_line"
+                    },
+                    {
+                      "include": "#inline"
+                    }
+                  ],
+                  "contentName": "entity.name.tag.definition.term.carve"
                 }
-              ],
-              "contentName": "entity.name.tag.definition.term.carve",
-              "comment": "A term is a label. A label (C2-B-234, carve#6508): it holds the lines indented past its marker, ends at a blank line, a fence, a table row, a `***` break, a block comment, a region marker or a line not indented past the marker, and a comment-only line between does not end it."
+              ]
             },
             {
               "match": "^([ \\t]*)(:)( +)(\\+)[ \\t]*$",
@@ -23059,73 +25259,893 @@
       ]
     },
     "heading_in_container": {
-      "begin": "^([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
-      "beginCaptures": {
-        "2": {
-          "name": "punctuation.definition.heading.carve"
-        }
-      },
-      "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
-      "name": "markup.heading.carve",
-      "contentName": "entity.name.section.carve",
       "patterns": [
         {
-          "include": "#comment_only_line"
+          "begin": "^(?=(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ],
+          "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138). Inside an item a list marker indented past the item's marker ends the heading (C2-B-234); carve-js keeps a roman, a ten-digit or a one-space `A.` marker as heading text. One variant per marker column 0 to 11: a line continues the label when its indent reaches past the marker's column, a tab advancing to the next multiple of 4 (C2-B-004, C2-B-234). The ends hold no back-reference, so the engine compiles each once; past column 11 the last variant compares the indent characters."
         },
         {
-          "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
-          "include": "#escape"
+          "begin": "^(?= {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#raw_inline"
+          "begin": "^(?= {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_multi"
+          "begin": "^(?= {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline"
+          "begin": "^(?=(?: {0,3}\\t| {4})(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_multi"
+          "begin": "^(?=(?: {0,3}\\t| {4}) {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline"
+          "begin": "^(?=(?: {0,3}\\t| {4}) {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4})(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_multi"
+          "begin": "^(?=(?: {0,3}\\t| {4}) {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2})",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline"
+          "begin": "^(?=(?: {0,3}\\t| {4}){2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {1}|\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#math_inline_unpartnered_line"
+          "begin": "^(?=(?: {0,3}\\t| {4}){2} {1}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {2}| {0,1}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#literal_inline_unpartnered_line"
+          "begin": "^(?=(?: {0,3}\\t| {4}){2} {2}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){2}(?: {3}| {0,2}\\t))",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#code_inline_unpartnered_line"
+          "begin": "^(?=(?: {0,3}\\t| {4}){2} {3}(?![ \\t]))([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!(?: {0,3}\\t| {4}){3})",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         },
         {
-          "include": "#trailing_comment"
-        },
-        {
-          "include": "#attributes"
-        },
-        {
-          "include": "#attributes_unattached"
-        },
-        {
-          "include": "#heading_tag"
-        },
-        {
-          "include": "#line_bounded_openers"
-        },
-        {
-          "include": "#inline"
+          "begin": "^(?=(?: {0,3}\\t| {4}){3})([ \\t]*)(#{1,6}|={1,6}) +(?![ \\t]*$)",
+          "beginCaptures": {
+            "2": {
+              "name": "punctuation.definition.heading.carve"
+            }
+          },
+          "end": "^(?=[ \\t]*$|[ \\t]*(?:[-*]|\\d{1,9}[.)]|[A-Za-z]\\)|[a-z]\\.|[A-Z]\\.(?= {2})|\\.(?! [ \\t]*\\. ))[ \\t]+\\S|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*:{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)|^(?![ \\t]*%%(?!%))(?!\\1[ \\t]+)",
+          "name": "markup.heading.carve",
+          "contentName": "entity.name.section.carve",
+          "patterns": [
+            {
+              "include": "#comment_only_line"
+            },
+            {
+              "comment": "A HEADING'S TITLE IS AN INLINE RUN, so a `%%` between backticks is code content and a trailing `%%` is a comment - `# a `x %% b` c` renders `<h1>a <code>x %% b</code> c</h1>` and `# a %% hidden` renders `<h1>a</h1>` (carve-grammars#601, markup-carve/carve#2682). The title carried one flat `entity.name.section` capture, so no inline rule ran inside it and the stripped bytes were painted as title. `#escape` leads: a backslashed backtick is a literal and opens no span, so a rule that read it as one turned `a \\`x\\` z` into a code span. The sigil forms come next, as they do in `#inline`: a `$` or `!` prefix owns the backtick run after it, so `#code_inline` alone would take the run and leave the sigil painted as title text. The verbatim rules sit BEFORE `#trailing_comment`: the earliest match wins, so a backtick run opening first claims the `%%` inside it, and a `%%` that opens first claims the backticks after it - the reading the engines give both ways. The full inline set follows, behind `#line_bounded_openers`, since the engine renders every inline construct in a title or caption.",
+              "include": "#escape"
+            },
+            {
+              "include": "#raw_inline"
+            },
+            {
+              "include": "#math_inline_multi"
+            },
+            {
+              "include": "#math_inline"
+            },
+            {
+              "include": "#literal_inline_multi"
+            },
+            {
+              "include": "#literal_inline"
+            },
+            {
+              "include": "#code_inline_multi"
+            },
+            {
+              "include": "#code_inline"
+            },
+            {
+              "include": "#math_inline_unpartnered_line"
+            },
+            {
+              "include": "#literal_inline_unpartnered_line"
+            },
+            {
+              "include": "#code_inline_unpartnered_line"
+            },
+            {
+              "include": "#trailing_comment"
+            },
+            {
+              "include": "#attributes"
+            },
+            {
+              "include": "#attributes_unattached"
+            },
+            {
+              "include": "#heading_tag"
+            },
+            {
+              "include": "#line_bounded_openers"
+            },
+            {
+              "include": "#inline"
+            }
+          ]
         }
-      ],
-      "comment": "The in-container heading: leading whitespace is the container's own indent, so it is allowed here and only here. `#container_blocks` reaches this; the document-level `#heading` stays anchored at column 0 (carve-grammars#138). Inside an item a list marker indented past the item's marker ends the heading (C2-B-234); carve-js keeps a roman, a ten-digit or a one-space `A.` marker as heading text."
+      ]
     },
     "heading_on_marker_line": {
       "comment": "A heading may open on a list item's marker line (`- # Title`, `1. ## Sub`, `- [ ] # T`): carve-js next2 renders it as a heading inside the item (carve-grammars#945). `#heading_in_container` is anchored on ^ and cannot reach text after the marker, so this one is anchored on \\G after the marker's separator. A heading is a label (C2-B-234): it holds the lines below it indented past its marker. A capture per marker column (1 to 24) lets the end compare the indent; the next line at the item's content column is a new block. `- #tag` has no space after the hashes and stays a tag.",

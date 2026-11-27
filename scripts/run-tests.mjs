@@ -25,6 +25,7 @@ for (const file of [
     'tests/word-characters-and-div-openers-test.js',
     'tests/div-names-and-quoted-fences-test.js',
     'tests/continuation-labels-test.js',
+    'tests/label-column-continuation-test.js',
     'tests/metadata-and-tag-names-test.js',
     'tests/attribute-value-class-test.js',
     'tests/strike-arrow-test.js',
