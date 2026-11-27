@@ -491,17 +491,18 @@ function readStarts(source) {
             const item = atom();
             const end = at;
             const optional = quantifier();
+            if (optional && item.assert) item.assert = null;
             const zeroWidth = (item.skip || item.assert) && source[from] === '(' && at === end;
             if (leading && zeroWidth) {
                 chain += source.slice(from, end);
                 behind ||= item.behind === true;
             }
-            if (item.assert && source[from] === '^' && leading) {
+            if (item.assert && source[from] === '^' && leading && at === end) {
                 anchored = true;
                 continue;
             }
             if (leading && !zeroWidth) leading = false;
-            if (!open || item.skip) continue;
+            if (!open || item.skip || item.assert === null) continue;
             if (item.assert) {
                 starts.push(...item.assert);
                 open = false;
@@ -634,6 +635,8 @@ function matchByStarts(built, rules, index) {
     };
     const offsets = Object.keys(built.matchIndexes).map(Number).sort((x, y) => x - y);
     if (offsets.length !== own.length) return false;
+    // Each rule's group count, its own group included.
+    const widths = new Map(offsets.map((offset, i) => [offset, (offsets[i + 1] ?? offset + new RegExp((sources[i] ?? '(?!)') + '|').exec('').length) - offset]));
     const isLineEnd = (code) => code === 10 || code === 13 || code === 0x2028 || code === 0x2029;
     const matchers = new Map();
     const subsets = new Map();
@@ -663,7 +666,7 @@ function matchByStarts(built, rules, index) {
                 const moves = new Map();
                 own.forEach(([rule, opts], i) => {
                     if (!only[i]) return;
-                    moves.set(multi.matchAt, built.matchIndexes[offsets[i]]);
+                    moves.set(multi.matchAt, [built.matchIndexes[offsets[i]], widths.get(offsets[i])]);
                     multi.addRule(rule, { ...opts });
                 });
                 multi.compile();
@@ -676,30 +679,62 @@ function matchByStarts(built, rules, index) {
     }
     const sticky = new RegExp(built.matcherRe.source, flags + 'y');
     // Returns what MultiRegex.exec returns: the match from the rule's own group on.
+    const full = built.matcherRe;
+    // The match from the rule's own group on, as MultiRegex.exec returns it;
+    // the later rules' groups, all unset, are left off.
+    const trim = (match, data, group, width) => {
+        const found = match.slice(group, group + width);
+        found.index = match.index;
+        found.input = match.input;
+        found.groups = match.groups;
+        return Object.assign(found, data);
+    };
+    const firstGroup = (match) => {
+        let group = 1;
+        while (match[group] === undefined) group++;
+        return group;
+    };
     built.exec = function (text) {
-        for (let from = this.lastIndex; from <= text.length; from++) {
+        let from = this.lastIndex;
+        // Missed starts in a row, each next to the one before.
+        let run = 0;
+        for (; ; from++) {
             if (finder) {
-                finder.lastIndex = from;
-                const start = finder.exec(text);
-                if (!start) return null;
-                from = start.index;
-            }
-            const matcher = from === 0 || isLineEnd(text.charCodeAt(from - 1)) ? matcherAt(text, from) : sticky;
-            const re = matcher === sticky ? sticky : matcher?.re;
-            if (re) {
+                // Where every position is a start and none matches (a long run
+                // of one marker), one scan of the full matcher is cheaper.
+                const re = run === 8 ? full : finder;
                 re.lastIndex = from;
-                const match = re.exec(text);
+                const found = re.exec(text);
+                if (!found) return null;
+                if (re === full) {
+                    const group = firstGroup(found);
+                    return trim(found, this.matchIndexes[group], group, widths.get(group));
+                }
+                run = found.index === from ? run + 1 : 1;
+                from = found.index;
+            }
+            if (from !== 0 && !isLineEnd(text.charCodeAt(from - 1))) {
+                sticky.lastIndex = from;
+                const match = sticky.exec(text);
                 if (match) {
-                    const group = match.findIndex((value, n) => n > 0 && value !== undefined);
-                    const result = match.slice(group);
-                    result.index = match.index;
-                    result.input = match.input;
-                    return Object.assign(result, matcher === sticky ? this.matchIndexes[group] : matcher.moves.get(group));
+                    const group = firstGroup(match);
+                    return trim(match, this.matchIndexes[group], group, widths.get(group));
+                }
+            } else {
+                const matcher = matcherAt(text, from);
+                const re = matcher === sticky ? sticky : matcher?.re;
+                if (re) {
+                    re.lastIndex = from;
+                    const match = re.exec(text);
+                    if (match) {
+                        const group = firstGroup(match);
+                        const [data, width] = matcher === sticky ? [this.matchIndexes[group], widths.get(group)] : matcher.moves.get(group);
+                        return trim(match, data, group, width);
+                    }
                 }
             }
-            if (!finder) return null;
+            if (!finder || from >= text.length) return null;
         }
-        return null;
     };
     return true;
 }
