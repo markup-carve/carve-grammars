@@ -71,12 +71,13 @@ export const carveLightExtras = [
     { scope: ['punctuation.definition.bold', 'punctuation.definition.italic', 'punctuation.definition.bold-italic', 'punctuation.definition.underline', 'punctuation.definition.strike', 'punctuation.definition.superscript', 'punctuation.definition.subscript', 'punctuation.definition.highlight'], settings: { foreground: '#959da5' } },
     // Structural punctuation recedes too; the content it delimits carries the color.
     // Shared names are qualified with `.carve` so embedded languages keep their own colors.
-    { scope: ['punctuation.definition.footnote', 'punctuation.definition.span', 'punctuation.definition.abbreviation', 'punctuation.separator.carve', 'punctuation.separator.citation', 'punctuation.separator.include', 'punctuation.definition.directive.begin.carve', 'punctuation.definition.directive.end.carve', 'punctuation.definition.extension', 'punctuation.definition.citation', 'punctuation.definition.literal', 'punctuation.definition.callout', 'punctuation.definition.label.carve', 'punctuation.definition.frontmatter'], settings: { foreground: '#959da5' } },
+    { scope: ['punctuation.definition.footnote', 'punctuation.definition.span', 'punctuation.definition.abbreviation', 'punctuation.separator.carve', 'punctuation.separator.citation', 'punctuation.separator.include', 'punctuation.definition.directive.begin.carve', 'punctuation.definition.directive.end.carve', 'punctuation.definition.snippet', 'punctuation.definition.extension', 'punctuation.definition.citation', 'punctuation.definition.literal', 'punctuation.definition.callout', 'punctuation.definition.label.carve', 'punctuation.definition.frontmatter'], settings: { foreground: '#959da5' } },
     // A figure group is a container fence, colored like an admonition's.
     { scope: 'punctuation.definition.figure-group', settings: { foreground: '#d73a49', fontStyle: 'bold' } },
     { scope: 'entity.name.tag.figure-group', settings: { foreground: '#22863a', fontStyle: 'bold' } },
     // A citation key resolves against the bibliography the way a reference label resolves against its definition.
     { scope: 'variable.other.citation.key', settings: { foreground: '#005cc5', fontStyle: 'bold' } },
+    { scope: 'variable.other.snippet', settings: { foreground: '#005cc5', fontStyle: 'bold' } },
     // A raw format names the output language, like a fence's language word.
     { scope: 'constant.other.raw.format', settings: { foreground: carvePalette.light.language, fontStyle: 'bold' } },
 ]
@@ -131,10 +132,11 @@ export const carveDarkExtras = [
     { scope: 'markup.math', settings: { foreground: '#b392f0' } },
     { scope: 'punctuation.definition.math', settings: { foreground: '#6a737d' } },
     { scope: ['punctuation.definition.bold', 'punctuation.definition.italic', 'punctuation.definition.bold-italic', 'punctuation.definition.underline', 'punctuation.definition.strike', 'punctuation.definition.superscript', 'punctuation.definition.subscript', 'punctuation.definition.highlight'], settings: { foreground: '#6a737d' } },
-    { scope: ['punctuation.definition.footnote', 'punctuation.definition.span', 'punctuation.definition.abbreviation', 'punctuation.separator.carve', 'punctuation.separator.citation', 'punctuation.separator.include', 'punctuation.definition.directive.begin.carve', 'punctuation.definition.directive.end.carve', 'punctuation.definition.extension', 'punctuation.definition.citation', 'punctuation.definition.literal', 'punctuation.definition.callout', 'punctuation.definition.label.carve', 'punctuation.definition.frontmatter'], settings: { foreground: '#6a737d' } },
+    { scope: ['punctuation.definition.footnote', 'punctuation.definition.span', 'punctuation.definition.abbreviation', 'punctuation.separator.carve', 'punctuation.separator.citation', 'punctuation.separator.include', 'punctuation.definition.directive.begin.carve', 'punctuation.definition.directive.end.carve', 'punctuation.definition.snippet', 'punctuation.definition.extension', 'punctuation.definition.citation', 'punctuation.definition.literal', 'punctuation.definition.callout', 'punctuation.definition.label.carve', 'punctuation.definition.frontmatter'], settings: { foreground: '#6a737d' } },
     { scope: 'punctuation.definition.figure-group', settings: { foreground: '#f97583', fontStyle: 'bold' } },
     { scope: 'entity.name.tag.figure-group', settings: { foreground: '#85e89d', fontStyle: 'bold' } },
     { scope: 'variable.other.citation.key', settings: { foreground: '#79b8ff', fontStyle: 'bold' } },
+    { scope: 'variable.other.snippet', settings: { foreground: '#79b8ff', fontStyle: 'bold' } },
     { scope: 'constant.other.raw.format', settings: { foreground: carvePalette.dark.language, fontStyle: 'bold' } },
 ]
 
