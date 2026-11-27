@@ -6,11 +6,9 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
-// Refused before #979; a separate ticket tracks them. Counts may only go down.
+// Attribute hosts after links and spans need an unbounded lookbehind; a
+// separate ticket tracks them. Counts may only go down.
 const KNOWN = {
-    fenced_code_languages_on_marker_line_common: 70,
-    fenced_code_on_marker_line_common: 1,
-    marker_line_continuation: 1,
     attributes: 1,
     attributes_in_bracket_text: 1,
     description_attributes: 1,
