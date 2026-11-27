@@ -4263,13 +4263,38 @@ if (Prism?.languages.carve) {
     // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
     // `> :: t` and `- :: t`.
     const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
-    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_MARKER = '(?:[-*+]|\\d{1,9}[.)]|(?:[a-z]|[ivxlcdm]+)[.)]|(?:[A-Z]|[IVXLCDM]+)\\)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))';
+    const DEFINITION_TASK = '(?:[ \\t]+\\[[ xX\\-_>\\/!?]\\])?';
+    const DEFINITION_TERM_LINE = RegExp('^\\uFEFF?[ \\t]*(?:(?:>|' + DEFINITION_MARKER + DEFINITION_TASK + ')[ \\t]+)*:: +\\S');
     const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    // A list marker line: group 1 its prefix up to the marker, groups 2-4 an ordinal.
+    const DEFINITION_ITEM = '^(\\uFEFF?(?:[ \\t]*>)*[ \\t]*)(?:[-*+]|(\\d{1,9}|[a-z]|[ivxlcdm]+)[.)]|([A-Z]|[IVXLCDM]+)\\)|([A-Z]|[IVXLCDM]+)\\.(?= {2}))';
+    const DEFINITION_MARKER_LINE = RegExp(DEFINITION_ITEM + '[ \\t]+\\S');
+    // A marker line whose item opens with a term (group 5), a heading or a
+    // comment-only line: no paragraph text.
+    const DEFINITION_MARKER_BLOCK_LINE = RegExp(DEFINITION_ITEM + DEFINITION_TASK + '[ \\t]+(?:' + DEFINITION_MARKER + DEFINITION_TASK
+        + '[ \\t]+)*(?:(::) +\\S|(?:#{1,6}|={1,6}) +\\S|%%(?!%)(?![ \\t]*#(?:region|endregion)\\b))');
     function definitionReadAbove(source, start) {
         const lineBefore = (at) => {
             const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
             return [previous, source.slice(previous, end)];
+        };
+        // Whether the marker line read as `item` at `at` is an item of a list
+        // above: the nearest unindented line above is a marker line, and a
+        // nested ordered marker is a first one, the only kind that interrupts
+        // a paragraph.
+        const opensItemUnder = (at, item) => {
+            const column = item[1].length;
+            const ordinal = item[2] ?? item[3] ?? item[4];
+            for (let above = at; above > 0;) {
+                const [previous, text] = lineBefore(above);
+                const marker = DEFINITION_MARKER_LINE.exec(text);
+                if (marker) return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal);
+                if (!/^[ \t]+\S/.test(text)) return false;
+                above = previous;
+            }
+            return false;
         };
         let top = start;
         while (top > 0) {
@@ -4279,11 +4304,26 @@ if (Prism?.languages.carve) {
         }
         let entry = top;
         let term = false;
+        // The least indent of the lines between the run and its nearest term.
+        let indent = Infinity;
         while (entry > 0) {
             const [previous, line] = lineBefore(entry);
             // A description directly above takes the run as its lazy line.
-            if (DEFINITION_TERM_LINE.test(line)) term = true;
-            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            if (!term && DEFINITION_DESCRIPTION_LINE.test(line)) return top;
+            const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
+            // A heading or comment-only line opening an item right above: the
+            // run stands under an item, else the line reads as it would alone.
+            if (!term && item && item[5] === undefined && indent === Infinity) return opensItemUnder(previous, item) ? 0 : previous;
+            if (DEFINITION_TERM_LINE.test(line)) {
+                // A term holds only the lines indented past its `::`; a line
+                // short of it is paragraph text of the item (#990).
+                if (!term && indent <= line.indexOf('::')) return top;
+                term = true;
+                // A term on a marker line opens an item; under item content
+                // that item stands, so nothing above holds the run (#990).
+                if (item?.[5] && opensItemUnder(previous, item)) return 0;
+            } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            else if (!term) indent = Math.min(indent, line.search(/\S/));
             entry = previous;
         }
         return term ? entry : top;

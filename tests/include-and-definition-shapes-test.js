@@ -76,8 +76,6 @@ const definition = {
     hljs: (source) => hljsCovered(source, 'symbol'),
     textmate: (source) => covered(textmate, source, 'meta.link.reference.def.carve') + covered(textmate, source, 'meta.abbreviation.carve'),
 };
-// carve-grammars#990 tracks the TextMate rows that still differ.
-const textmateGaps = new Set(['- :: t\n[a]: /u']);
 for (const [source, expected] of [
     [':: t\n[a]: /u', '[a]: /u'],
     [':: t\n*[A]: x', '*[A]: x'],
@@ -97,7 +95,6 @@ for (const [source, expected] of [
     ['p\n[a]: /u', ''],
 ]) {
     for (const [name, read] of Object.entries(definition)) {
-        if (name === 'textmate' && textmateGaps.has(source)) continue;
         assert.equal(read(source), expected, `${name}: definition in ${JSON.stringify(source)}`);
     }
 }

@@ -18,6 +18,7 @@ for (const file of [
     'tests/hljs-crlf-line-ends-test.js',
     'tests/include-and-definition-shapes-test.js',
     'tests/include-and-definition-time-test.js',
+    'tests/definition-under-list-item-test.js',
     'tests/titled-div-braced-comment-test.js',
     'tests/word-characters-and-div-openers-test.js',
     'tests/div-names-and-quoted-fences-test.js',
