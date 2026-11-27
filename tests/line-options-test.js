@@ -43,6 +43,13 @@ lines.forEach((line, i) => transformer.line.call(context, line, i + 1))
 assert.deepEqual(lines.map((line) => line.properties.dataLineNumber), ['42', '43', '44'])
 assert.deepEqual(lines.map((line) => line.properties.class?.includes('highlighted-line') ?? false), [true, false, true])
 
+const mixed = lineOptionsTransformer({ classes: ['line-numbers'], keyValues: [['data-Line-Start', '7'], ['data-Highlight', '2']] })
+mixed.preprocess('a\nb')
+const mixedLine = { properties: {} }
+mixed.line.call(context, mixedLine, 2)
+assert.equal(mixedLine.properties.dataLineNumber, '8')
+assert.ok(mixedLine.properties.class.includes('highlighted-line'))
+
 const shiki = await createHighlighter({ themes: ['github-dark'], langs: ['js'] })
 const output = shiki.codeToHtml('a\nb\nc', {
   lang: 'js', theme: 'github-dark', transformers: [lineOptionsTransformer(attrs)],
