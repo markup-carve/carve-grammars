@@ -608,8 +608,10 @@ function adaptGrammar(grammar, hljs) {
         begin: new RegExp(
             '(?:' + attrLineBlocks + ')' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?=\\{)(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
+            // Inside a lookbehind the engine reads right to left, so the `(?<=\.)` after
+            // each marker lookahead tests the `.` before its 4096-character scan (#988).
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.)))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.))(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
         // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
         // keeps its match and drops the scope, as `scopeUnless` does.
@@ -3402,9 +3404,9 @@ function adaptGrammar(grammar, hljs) {
     };
 
     /* One unit of a part, as Prism's `includePart`: a terminated run, a lone
-     * quote that opens none, or an ordinary character other than space or `}`. */
+     * quote that opens none, or an ordinary character other than space, `}` or `@`. */
     const INCLUDE_PART_UNIT =
-        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^\\s}"'])`;
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^\\s}"'@])`;
 
     /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
@@ -3440,16 +3442,13 @@ function adaptGrammar(grammar, hljs) {
         // The lookahead is Prism's outer pattern, so a path is required and no
         // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
         begin: RegExp(
-            `\\{\\{(?= +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)`
-            + `(?:#[A-Za-z0-9_][\\w-]*)?`
-            // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@` (spec
-            // `include_options`): the bare path stops at `@` and a section
-            // name holds none, so an option may butt onto either slot. Its own
-            // optional run, gated on a `@` lookahead, so the separator stays a
-            // required whitespace run and two adjacent runs cannot split a
-            // part in more than one way.
-            + `(?:(?=@)${INCLUDE_PART_UNIT}+)?`
-            + `(?: +${INCLUDE_PART_UNIT}+)* +\\}\\})`,
+            `\\{\\{(?= +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n"]*)`
+            + `(?: *#[A-Za-z0-9_][\\w-]*)?`
+            // EACH OPTION OPENS ON ITS `@` (C2-B-156, C2-B-204), glued or after
+            // spaces, and an unquoted value holds no `@`, so the runs split one
+            // way only. A word that is no option ends the scan: on a line of
+            // unclosed `{{`, each opener reads one word, not the line (#988).
+            + `(?: *@${INCLUDE_PART_UNIT}+)* +\\}\\})`,
         ),
         end: /\}\}|$(?![^\r\n])/,
         relevance: 10,
@@ -4145,8 +4144,14 @@ function adaptGrammar(grammar, hljs) {
             return head;
         };
         const lazy = (input, index) => {
-            const at = lineStartBefore(input, index);
-            if (input.slice(at, index).trim() !== '') return false;
+            // Only white space may stand before it on its line. Reading back to
+            // the first other character, not slicing from the line start,
+            // keeps a long line of directives linear (#988).
+            let at = index;
+            while (at > 0 && input[at - 1] !== '\n' && input[at - 1] !== '\r') {
+                if (input[at - 1].trim() !== '') return false;
+                at--;
+            }
             const text = lineAt(input, at);
             if (/^\uFEFF?: /.test(text)) {
                 // A description line follows its term's reading.

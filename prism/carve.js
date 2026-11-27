@@ -387,8 +387,10 @@
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
             '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))([ \\t]*))\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+            // Inside a lookbehind the engine reads right to left, so the `(?<=\.)` after
+            // each marker lookahead tests the `.` before its 4096-character scan (#988).
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.)))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.))(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
         )),
         greedy: true,
         alias: 'attr-value',
@@ -1092,7 +1094,7 @@
     }
 
     var includePart =
-        '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'])';
+        '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'@])';
 
     /*
      * DEFINITION-LIST LINES BY OWNER (PART 0 CARVE-P0-003, CARVE-P0-024 S2/S3).
@@ -3107,18 +3109,14 @@
 
         'include-directive': {
             pattern: RegExp(
-                notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
-                + '(?:#[A-Za-z0-9_][\\w-]*)?'
-                // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@`, in every
-                // position (spec `include_options`): the bare path stops at
-                // `@` and a section name holds none, so an option may butt
-                // onto either slot. Spelled as its OWN optional run, gated on
-                // a `@` lookahead, rather than relaxing the run separator to
-                // `[ \\t]*`: that would let two adjacent runs split a part in
-                // more than one way and make the scan backtrack
-                // exponentially on a line with no closer.
-                + '(?:(?=@)' + includePart + '+)?'
-                + '(?: +' + includePart + '+)*'
+                notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n"]*)'
+                + '(?: *#[A-Za-z0-9_][\\w-]*)?'
+                // EACH OPTION OPENS ON ITS `@` (C2-B-156, C2-B-204), glued or
+                // after spaces, and an unquoted value holds no `@`, so the
+                // runs split one way only. A word that is no option ends the
+                // scan: on a line of unclosed `{{`, each opener reads one word
+                // rather than the rest of the line (#988).
+                + '(?: *@' + includePart + '+)*'
                 + ' +\\}\\}',
             ),
             greedy: true,
