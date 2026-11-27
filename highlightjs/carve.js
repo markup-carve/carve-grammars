@@ -606,12 +606,12 @@ const NEVER = /(?!)/;
  * A matcher joins every rule into one alternation and tries each alternative
  * at each position it scans, a few microseconds a position (carve-grammars#1002).
  * A scan now stops only where some rule can start. At a line start, where most
- * rules are anchored, it runs a matcher of just the rules that can start there,
- * built once per character, line end and lookaround result. Elsewhere it runs
- * the full matcher at that one position. Either way the match is the one the
- * full scan finds, returned with the full matcher's group numbers and rule.
+ * rules are anchored, and inside a quote, which has several inline tokens per
+ * line, it runs a matcher of just the rules that can start there. Elsewhere it
+ * runs the full matcher at that one position. Either way the match keeps the
+ * full matcher's group numbers and rule.
  */
-function matchByStarts(built, rules, index) {
+function matchByStarts(built, rules, index, allPositions = false) {
     const own = rules.slice(index);
     const sources = own.map(([rule]) => (rule === NEVER ? null : typeof rule === 'string' ? rule : rule.source));
     const starts = sources.map((source) => (source === null ? [] : matchStarts(source)));
@@ -736,6 +736,40 @@ function matchByStarts(built, rules, index) {
             if (!finder || from >= text.length) return null;
         }
     };
+    if (allPositions) {
+        // Keep the ordinary matcher loop unchanged for modes without inline
+        // quote spans; only quotes use a candidate subset after each token.
+        built.exec = function (text) {
+            let from = this.lastIndex;
+            let run = 0;
+            for (; ; from++) {
+                if (finder) {
+                    const re = run === 8 ? full : finder;
+                    re.lastIndex = from;
+                    const found = re.exec(text);
+                    if (!found) return null;
+                    if (re === full) {
+                        const group = firstGroup(found);
+                        return trim(found, this.matchIndexes[group], group, widths.get(group));
+                    }
+                    run = found.index === from ? run + 1 : 1;
+                    from = found.index;
+                }
+                const matcher = matcherAt(text, from);
+                const re = matcher === sticky ? sticky : matcher?.re;
+                if (re) {
+                    re.lastIndex = from;
+                    const match = re.exec(text);
+                    if (match) {
+                        const group = firstGroup(match);
+                        const [data, width] = matcher === sticky ? [this.matchIndexes[group], widths.get(group)] : matcher.moves.get(group);
+                        return trim(match, data, group, width);
+                    }
+                }
+                if (!finder || from >= text.length) return null;
+            }
+        };
+    }
     return true;
 }
 function isolateResumeMatchers(mode) {
@@ -757,7 +791,7 @@ function isolateResumeMatchers(mode) {
                     const built = build.call(this, index);
                     // exec keeps a resumed match only at the resumed position, so a
                     // resumed scan stops there instead of reading on (carve-grammars#1002).
-                    if (built.matcherRe && !matchByStarts(built, this.rules, index) && index !== 0) built.matcherRe = new RegExp(built.matcherRe.source, built.matcherRe.flags + 'y');
+                    if (built.matcherRe && !matchByStarts(built, this.rules, index, mode.scope === 'quote') && index !== 0) built.matcherRe = new RegExp(built.matcherRe.source, built.matcherRe.flags + 'y');
                     return built;
                 } finally {
                     this.rules = rules;
@@ -4893,8 +4927,10 @@ function isolateResumeMatchers(mode) {
     // ends with the quote line, so no span carries the next line's `>` (C2-B-001).
     {
         const lineBound = (mode) => (mode.end ? { ...mode, endsWithParent: true } : mode);
+        // An unpaired delimiter stays in the quote buffer without a flush.
         const inline = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, DELIMITED_COMMENT, LINE_COMMENT, ATTRIBUTE_EMPTY,
-            SPAN_ATTRIBUTE, ATTRIBUTE, ATTRIBUTE_UNATTACHED, CROSS_REF, TAG, SYMBOL, ...LINE_INLINE].map(lineBound);
+            SPAN_ATTRIBUTE, ATTRIBUTE, ATTRIBUTE_UNATTACHED, CROSS_REF, TAG, SYMBOL, ...LINE_INLINE]
+            .map((mode) => mode === LINE_INLINE[0] ? { ...mode, skip: true } : lineBound(mode));
         const sink = BLOCKQUOTE.contains.findIndex((mode) => !mode.className && mode.begin === ESCAPE.begin);
         BLOCKQUOTE.contains.splice(sink, 0, ...inline);
         const content = BLOCKQUOTE.contains.find((mode) => mode.contains?.some((child) => child.begin?.source === '(?<=[ \\t])%%'));
@@ -4928,6 +4964,19 @@ function isolateResumeMatchers(mode) {
     // resume matchers carry it: in the full matcher it would end every scan at
     // the line and cost one more scan per line (isolateResumeMatchers).
     CONTAINS.push({ begin: /\n/, relevance: 0, resumeStop: true });
+
+    // A word-only bare span in a quote has no child mode to enter. Match it
+    // as one token before its general begin/end mode, which handles nesting.
+    for (let i = BLOCKQUOTE.contains.length - 1; i >= 0; i--) {
+        const mode = BLOCKQUOTE.contains[i];
+        if (!mode?.bareDelimiter) continue;
+        BLOCKQUOTE.contains.splice(i, 0, {
+            className: mode.className,
+            match: new RegExp(mode.begin.source + '[A-Za-z0-9]{1,4096}' + mode.bareCloser.source),
+            relevance: mode.relevance,
+            ...(mode.bareSpanOf01 ? { bareSpanOf01: true } : {}),
+        });
+    }
 
     return {
         // `crv` is the canonical file extension, and every surface this package
