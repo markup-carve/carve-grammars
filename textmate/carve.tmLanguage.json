@@ -12889,7 +12889,7 @@
     },
     "admonition": {
       "comment": "Leading whitespace is ALLOWED, deliberately (carve-grammars#71). The strict column-0 rule makes an indented opener literal text at the top level, but the same opener indented INSIDE a list item is valid and common - verified against carve-rs: at the top level every one of these renders as a paragraph, and at a list item's content column every one opens its real block. List items now provide the block context needed for that distinction: their begin/end rules keep container-only block patterns reachable at the item's content column and close them before a below-content-column line falls back to document text. Restructured from a flat `match` into `begin`/`end` (carve-grammars#125): a div/admonition's opener and closer are on their own lines, so a per-line `match` left the body wide open to the full top-level pattern set. The closer backreferences the opener's captured colon run (`\\1`), so it closes on an EXACT length match, matching PART 9's colon-fence depth rule (a longer or shorter run does not close it, which is what lets equal-length fences nest and `::::` hold `:::`) - mirrors the `fenced_code` begin/end precedent in this same file. `patterns` is the top-level pattern list minus `#frontmatter` (document-start only) and minus the column-0 `#abbreviation`, whose in-container form reads the body (markup-carve/carve#4874, carve-grammars#852); everything else - headings (corpus 170), nested admonitions/divs via the `#admonition` self-include, lists, blockquotes, tables - keeps working inside a div exactly as before.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?![ \\t]*:{3,} +(?:\\*[ \\t]*$|\"(?:\\\\.|[^\"\\\\])*\"[ \\t]*$))(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -13122,7 +13122,7 @@
     },
     "admonition_in_group": {
       "comment": "The generic container, reached only from INSIDE a composite figure group. Identical to `#admonition` except that its body offers `#admonition_in_group` and never `#figure_group`, so a bare `::: figure` at any depth inside an open group scopes as the generic container the clause says it degrades to (PART 9 §4c, GROUPS DO NOT NEST; corpus 318-composite-figures-9). Scope names are deliberately unchanged - it IS an admonition, and a consumer selecting `meta.admonition.carve` must keep seeing it.",
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?![ \\t]*:{3,} +(?:\\*[ \\t]*$|\"(?:\\\\.|[^\"\\\\])*\"[ \\t]*$))(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -19061,7 +19061,7 @@
       "comment": "Recognize the container at the scan position after a list marker. A flush-left line ends an unclosed container with its list item."
     },
     "admonition_in_list": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?![ \\t]*:{3,} +(?:\\*[ \\t]*$|\"(?:\\\\.|[^\"\\\\])*\"[ \\t]*$))(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
@@ -19280,7 +19280,7 @@
       ]
     },
     "admonition_in_group_in_list": {
-      "begin": "^(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
+      "begin": "^(?![ \\t]*:{3,} +(?:\\*[ \\t]*$|\"(?:\\\\.|[^\"\\\\])*\"[ \\t]*$))(?:\\A\\x{FEFF})?[ \\t]*(:{3,})(?: +(\\||\\\\|>)| +([-0-9A-Za-z_]++)(?: +(\"(?:\\\\.|[^\"\\\\\\n])*\"))?(?: +(\\[[^\\]\\n]*\\]))?| +(\\[[^\\]\\n]*\\])| +([-0-9A-Za-z_]++)([^\\r\\n]*)| +(\"(?:\\\\.|[^\"\\\\\\n])*\")(?: +(\\[[^\\]\\n]*\\]))?([^\\r\\n]*)| +(?:(\\||\\\\|>) *)?(\\S[^\\r\\n]*))?[ \\t]*$",
       "beginCaptures": {
         "1": {
           "name": "punctuation.definition.admonition.carve"
