@@ -3789,11 +3789,12 @@ function adaptGrammar(grammar, hljs) {
     const SNIPPET_DEFINITION_PART = '(?:\\.[A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
     const SNIPPET_USE_PART = '(?:[.#][A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
     const snippetBlock = (part) => '\\{ *' + part + '(?: +' + part + ')* *\\}';
-    // Only below a blank line, a block line or another definition: under
-    // paragraph text or a quote line it is a lazy line (C2-B-024). Refused in
+    // Only below a blank line, a block line, an attribute line or another
+    // definition: under paragraph text, a quote line or an item it is a lazy
+    // line (C2-B-024), as a reference definition there is. Refused in
     // the regex, since each ignoreMatch builds highlight.js a new matcher.
     const SNIPPET_ABOVE = '\\uFEFF?(?:[ \\t]*\\r?$|[ \\t]*%%|#{1,6} |={1,6} |`{3,}|~{3,}|:{3,}|(?:\\*{3,}|-{3,}|_{3,})[ \\t]*\\r?$'
-        + '|\\||\\{|(?:[-*+]|\\d{1,9}[.)])[ \\t])';
+        + '|\\||\\{[^{}\\r\\n]*\\}[ \\t]*\\r?$|\\{\\$[^\\r\\n]*?\\}: |\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:)';
     const SNIPPET_DEFINITION = {
         begin: [
             RegExp('(?=\\uFEFF?\\{\\$)^(?<![^\\r\\n])(?<!(?<![^\\r\\n])(?!' + SNIPPET_ABOVE + ')[^\\r\\n]*\\r?\\n)(?:(?<![\\s\\S])\\uFEFF)?\\{\\$'),

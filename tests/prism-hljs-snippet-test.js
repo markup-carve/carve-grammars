@@ -116,7 +116,12 @@ for (const g of grammars) {
         ['{.k}\n{$v .c}: X\n', 'v'],
         ['{$a}: x\n{$v}: X\n', 'av'],
         ['# H\n{$v}: X\n', 'v'],
-        ['- a\n{$v}: X\n', 'v'],
+        ['| a |\n{$v}: X\n', 'v'],
+        ['%% c\n{$v}: X\n', 'v'],
+        ['[a]: /u\n{$v}: X\n', 'v'],
+        ['*[A]: x\n{$v}: X\n', 'v'],
+        ['[^n]: x\n{$v}: X\n', 'v'],
+        ['a\n\n{$v}: X\n', 'v'],
     ]) {
         assert.equal(innermost(g.leaves(source), 'variable'), marker, at(source));
         assert.notEqual(g.definition(source), '', at(source));
@@ -143,7 +148,9 @@ for (const g of grammars) {
         '{$v _k}: X\n', '{$v %x}: X\n', '{$-v}: X\n', '{$v.x}: X\n', '{$vé}: X\n',
         '{$brand .badge}{#x .q}: x\n', '{#intro}: text\n', '{.c #v}: x\n',
         ' {$v}: X\n', 'text\n{$v}: X\n', 'a *b\n{$v}: X\n', '> a\n{$v}: X\n', '> {$v}: X\n', '- {$v}: X\n',
-        '::: d\n{$v}: X\n:::\n', '```\n{$v}: X\n```\n',
+        '::: d\n{$v}: X\n:::\n', '::: d\n{$v}: X\n', '```\n{$v}: X\n```\n',
+        // A lazy line of an item's paragraph, as a reference definition there is.
+        '- a\n{$v}: X\n',
     ]) {
         assert.equal(g.definition(source), '', `no definition in ${at(source)}`);
         count++;
@@ -208,7 +215,8 @@ for (const g of grammars) {
     count += 3;
 }
 
-// One long line of uses, glued blocks and near misses stays linear.
+// One long line of uses, glued blocks and near misses, and a long run of
+// definitions, stay linear.
 const cpuMs = (run, source) => {
     const start = process.cpuUsage();
     run(source);
@@ -220,7 +228,7 @@ const highlighters = {
     hljs: (source) => hljs.highlight(source, { language: 'carve', ignoreIllegals: true }),
 };
 for (const [name, run] of Object.entries(highlighters)) {
-    for (const unit of ['a {{ $v }} ', '{{ $v }}{.c}{#d} ', '{$v}: {{ $v }} ', '{{  $v{.c} ']) {
+    for (const unit of ['a {{ $v }} ', '{{ $v }}{.c}{#d} ', '{$v}: {{ $v }} ', '{{  $v{.c} ', '{$v .c}: x *b*\n']) {
         const short = unit.repeat(1000);
         const long = short.repeat(4);
         run(short);

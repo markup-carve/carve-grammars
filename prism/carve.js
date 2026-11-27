@@ -4249,28 +4249,53 @@ if (Prism?.languages.carve) {
     }
     dropNestedDefinitions(grammar);
     delete grammar['glued-abbreviation-definition'];
-    function definitionAllowed(source, offset) {
+    // The lines a definition may stand under without continuing a paragraph:
+    // other definitions and, above a snippet, an attribute line (C2-B-095).
+    const definitionLines = /^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/;
+    const snippetDefinitionLines = /^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:|\{\$[^\r\n]*?\}: |\{[^{}\r\n]*\}[ \t]*$)/;
+    // Every line of a run of definitions shares the run's verdict, kept per
+    // source so a long run is read once rather than once per line.
+    let allowedSource = null;
+    let allowedRuns = null;
+    function definitionAllowed(source, offset, above = definitionLines) {
+        if (source !== allowedSource) {
+            allowedSource = source;
+            allowedRuns = new Map();
+        }
+        if (!allowedRuns.has(above)) allowedRuns.set(above, new Map());
+        const known = allowedRuns.get(above);
+        const run = [];
         let start = offset;
-        while (start > 0) {
+        let allowed;
+        for (;;) {
+            if (known.has(start)) {
+                allowed = known.get(start);
+                break;
+            }
+            run.push(start);
+            if (start === 0) break;
             const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
-            if (!/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) break;
+            if (!above.test(source.slice(previous, end))) break;
             start = previous;
         }
-        return !inParagraph(source, start);
+        if (allowed === undefined) allowed = !inParagraph(source, start);
+        for (const line of run) known.set(line, allowed);
+        return allowed;
     }
-    for (const name of ['reference-definition', 'abbreviation-definition']) {
+    for (const name of ['reference-definition', 'abbreviation-definition', 'snippet-definition']) {
         const pattern = grammar[name].pattern;
         const flags = pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g';
         const scan = new RegExp(pattern.source, flags);
         const atColumnZero = new RegExp(pattern.source, flags);
+        const above = name === 'snippet-definition' ? snippetDefinitionLines : definitionLines;
         // Greedy, so Prism scans the whole text and a marker before the
         // definition stays visible.
         atColumnZero.exec = function (source) {
             scan.lastIndex = this.lastIndex;
             let match;
             while ((match = scan.exec(source))) {
-                if (/^\uFEFF?[^ \t]/.test(match[0]) && definitionAllowed(source, match.index)) {
+                if (/^\uFEFF?[^ \t]/.test(match[0]) && definitionAllowed(source, match.index, above)) {
                     this.lastIndex = scan.lastIndex;
                     return match;
                 }
