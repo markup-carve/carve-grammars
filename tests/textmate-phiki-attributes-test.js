@@ -35,7 +35,10 @@ for (const source of ['[a](u){.c}[a](u)[a][r]\n', '![a](u){.c}![a](u)[a][r]\n'])
 }
 for (const source of ['~`a`~{.c}\n', '~[a](u)~{.c}\n']) {
     assert.equal(tokenize(source).some(({ scope }) => scope.includes('markup.raw.inline.carve') || scope.includes('markup.underline.link.carve')), true, source);
+    assert.equal(tokenize(source).some(({ scope }) => scope.includes('meta.attributes.carve')), false, source);
 }
+assert.equal(tokenize('_a{.x}b_{.c}\n').some(({ scope }) => scope.includes('meta.attributes.carve')), false);
+assert.equal(tokenize('_a\\_b_{.c}\n').filter(({ scope }) => scope.includes('meta.attributes.carve')).map(({ text }) => text).join(''), '{.c}');
 assert.equal(tokenize('*a * b*{.c}\n').some(({ scope, text }) => text === '.c' && scope.includes('meta.attributes.carve')), true);
 for (const source of [
     '[a[b[c[d]]]](u){.x}\n', '[a `]` b](u){.x}\n', '![a[b[c[d]]]](u){.x}\n',
