@@ -120,6 +120,12 @@ function adaptGrammar(grammar, hljs) {
     // comment-only line: no paragraph text.
     const DEFINITION_MARKER_BLOCK_LINE = RegExp(DEFINITION_ITEM + DEFINITION_TASK + '[ \\t]+(?:' + DEFINITION_MARKER + DEFINITION_TASK
         + '[ \\t]+)*(?:(::) +\\S|(?:#{1,6}|={1,6}) +\\S|%%(?!%)(?![ \\t]*#(?:region|endregion)\\b))');
+    // The column of `line[index]`, a tab advancing to the next multiple of four.
+    const definitionColumn = (line, index) => {
+        let column = 0;
+        for (let i = 0; i < index; i++) column = line[i] === '\t' ? column + 4 - column % 4 : column + 1;
+        return column;
+    };
     let definitionItemSource = null;
     const definitionItemVerdicts = new Map();
     function definitionReadAbove(source, start) {
@@ -182,12 +188,12 @@ function adaptGrammar(grammar, hljs) {
             }
             let entry = top;
             let term = false;
-            // The least indent of the lines between the run and its nearest term.
+            // The least indent of the lines between the run and its nearest
+            // term, and whether one of them opens a list item.
             let indent = Infinity;
+            let nested = false;
             while (entry > 0) {
                 const [previous, line] = lineBefore(entry);
-                // A description directly above takes the run as its lazy line.
-                if (!term && DEFINITION_DESCRIPTION_LINE.test(line)) return top;
                 const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
                 // A heading or comment-only line opening an item right above: the
                 // run stands under an item.
@@ -199,14 +205,24 @@ function adaptGrammar(grammar, hljs) {
                 }
                 if (DEFINITION_TERM_LINE.test(line)) {
                     // A term holds only the lines indented past its `::`; a line
-                    // short of it is paragraph text of the item (#990).
-                    if (!term && indent <= line.indexOf('::')) return top;
+                    // short of it, a description too, takes the run as its
+                    // lazy line (#990).
+                    if (!term && indent <= definitionColumn(line, line.indexOf('::'))) return top;
+                    // Under a term on a marker line, an indented marker that
+                    // can interrupt it opens a nested list, whose paragraph
+                    // takes the run.
+                    if (!term && nested && item?.[5]) return top;
                     term = true;
                     // A term on a marker line opens an item; under item content
                     // that item stands, so nothing above holds the run (#990).
                     if (item?.[5] && opensItemUnder(previous, item)) return 0;
                 } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
-                else if (!term) indent = Math.min(indent, line.search(/\S/));
+                else if (!term) {
+                    indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
+                    const marker = DEFINITION_MARKER_LINE.exec(line);
+                    const ordinal = marker && (marker[2] ?? marker[3] ?? marker[4]);
+                    if (marker && (ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal))) nested = true;
+                }
                 entry = previous;
             }
             return term ? entry : top;
