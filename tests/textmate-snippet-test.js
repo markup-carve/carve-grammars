@@ -91,6 +91,10 @@ assert.equal(covered(tokenize, after, 'meta.attributes.carve'), '', 'a block glu
 assert.ok(scopeOf(after, 'b').includes('markup.bold.carve'));
 assert.ok(scopeOf(after, 'u').includes('markup.underline.link.carve'));
 assert.ok(!scopeOf(after, 'b').includes(use), 'the use scope ends at its closer');
+assert.equal(covered(tokenize, 'a {{ $v }}{#i .c k="}"} b\n', 'meta.attributes.carve'), '', 'a block with an id or a quoted brace is text too');
+for (const comment of ['{# note #}', '{% note %}']) {
+    assert.ok(tokenize(`a {{ $v }}${comment} b\n`).some((leaf) => leaf.text.includes('note') && leaf.scope.includes('comment')), `${comment} after a use stays a comment`);
+}
 assert.ok(scopeOf('{{ $v }}\n\n# Next\n', 'Next').includes('markup.heading.carve'), 'a block use leaves the next block alone');
 
 console.log('TextMate snippet scopes passed');

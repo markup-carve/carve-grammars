@@ -29730,8 +29730,8 @@
       }
     },
     "snippet_use": {
-      "comment": "A snippet use `{{ $name }}` (C2-I-128; alone on its line, C2-B-237, it reads the same). Tried before `#include_directive`, which would read `$name` as a path. A name of another shape (`{{ $a.crv }}`), no space (`{{$v}}`), a tab, or an option (`{{ $v @shift:1 }}`) makes no use and stays with the include rule. A use carries no attributes, so attribute blocks glued after it are consumed here without a scope instead of being read as `#attributes`.",
-      "match": "((\\{\\{) +(\\$[A-Za-z0-9_][A-Za-z0-9_-]*) +(\\}\\}))((?:\\{(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^{}\"'\\n])*\\})*)",
+      "comment": "A snippet use `{{ $name }}` (C2-I-128; alone on its line, C2-B-237, it reads the same). Tried before `#include_directive`, which would read `$name` as a path. A name of another shape (`{{ $a.crv }}`), no space (`{{$v}}`), a tab, or an option (`{{ $v @shift:1 }}`) makes no use and stays with the include rule. A use carries no attributes, so valid attribute blocks glued after it are consumed here without a scope instead of being read as `#attributes`; a braced or critic comment there keeps its comment scope.",
+      "match": "((\\{\\{) +(\\$[A-Za-z0-9_][A-Za-z0-9_-]*) +(\\}\\}))((?:\\{ *(?:[.#][A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*)(?: +(?:[.#][A-Za-z0-9_-]+|:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+)|[A-Za-z][A-Za-z0-9_-]*))* *\\})*)",
       "captures": {
         "1": {
           "name": "meta.snippet.use.carve"
