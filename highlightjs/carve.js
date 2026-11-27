@@ -3789,12 +3789,51 @@ function adaptGrammar(grammar, hljs) {
     const SNIPPET_DEFINITION_PART = '(?:\\.[A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
     const SNIPPET_USE_PART = '(?:[.#][A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
     const snippetBlock = (part) => '\\{ *' + part + '(?: +' + part + ')* *\\}';
-    // Only below a blank line, a block line, an attribute line or another
-    // definition: under paragraph text, a quote line or an item it is a lazy
-    // line (C2-B-024), as a reference definition there is. Refused in
-    // the regex, since each ignoreMatch builds highlight.js a new matcher.
+    // Only below a blank line, a block line, an attribute line with no id or
+    // another definition: under paragraph text, a quote line or an item it is
+    // a lazy line (C2-B-024), as a reference definition there is, and under an
+    // attribute line with an id it is a paragraph (#6865). The line above is
+    // refused in the regex, since each ignoreMatch builds highlight.js a new
+    // matcher; a run of definition lines is traced to its first line once.
+    const SNIPPET_HEAD = '\\{\\$' + SNIPPET_NAME + '(?:(?: +' + SNIPPET_DEFINITION_PART + ')+ *)?\\}(?:'
+        + snippetBlock(SNIPPET_DEFINITION_PART) + ')*: (?=[ \\t]*[^ \\t\\r\\n])';
+    const SNIPPET_RUN = '\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:|' + SNIPPET_HEAD
+        + '|\\{(?:"[^"\\r\\n]*"|\'[^\'\\r\\n]*\'|[^{}#"\'\\r\\n])*\\}[ \\t]*\\r?$';
     const SNIPPET_ABOVE = '\\uFEFF?(?:[ \\t]*\\r?$|[ \\t]*%%|#{1,6} |={1,6} |`{3,}|~{3,}|:{3,}|(?:\\*{3,}|-{3,}|_{3,})[ \\t]*\\r?$'
-        + '|\\||\\{[^{}\\r\\n]*\\}[ \\t]*\\r?$|\\{\\$[^\\r\\n]*?\\}: |\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:)';
+        + '|\\||' + SNIPPET_RUN + ')';
+    const snippetRunLine = RegExp('^\\uFEFF?(?:' + SNIPPET_RUN + ')');
+    const snippetAboveLine = RegExp('^(?:' + SNIPPET_ABOVE + ')');
+    let snippetInput = null;
+    let snippetVerdicts = null;
+    const snippetRunAllowed = (input, at) => {
+        if (input !== snippetInput) {
+            snippetInput = input;
+            snippetVerdicts = new Map();
+        }
+        const run = [];
+        let start = at;
+        let allowed;
+        for (;;) {
+            if (snippetVerdicts.has(start)) {
+                allowed = snippetVerdicts.get(start);
+                break;
+            }
+            run.push(start);
+            if (start === 0) {
+                allowed = true;
+                break;
+            }
+            const above = lineStartBefore(input, start - 1);
+            const text = lineAt(input, above);
+            if (!snippetRunLine.test(text)) {
+                allowed = snippetAboveLine.test(text);
+                break;
+            }
+            start = above;
+        }
+        for (const line of run) snippetVerdicts.set(line, allowed);
+        return allowed;
+    };
     const SNIPPET_DEFINITION = {
         begin: [
             RegExp('(?=\\uFEFF?\\{\\$)^(?<![^\\r\\n])(?<!(?<![^\\r\\n])(?!' + SNIPPET_ABOVE + ')[^\\r\\n]*\\r?\\n)(?:(?<![\\s\\S])\\uFEFF)?\\{\\$'),
@@ -3805,6 +3844,9 @@ function adaptGrammar(grammar, hljs) {
             /:(?= (?=[ \t]*[^ \t\r\n]))/,
         ],
         beginScope: { 1: 'punctuation', 2: 'variable', 3: 'attr', 4: 'punctuation', 5: 'attr', 6: 'punctuation' },
+        'on:begin': (m, resp) => {
+            if (!snippetRunAllowed(m.input, lineStartBefore(m.input, m.index))) resp.ignoreMatch();
+        },
         end: /(?=\r\n|\r|\n)|$(?![\s\S])/,
         relevance: 0,
     };

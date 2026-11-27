@@ -2872,6 +2872,8 @@
             pattern: RegExp('(?<![^\\r\\n])' + notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?' + snippetDefinitionHead
                 + ' (?=[ \\t]*[^ \\t\\r\\n])[^\\r\\n]*', 'm'),
             greedy: true,
+            // The marker alone, for the run check below the grammar.
+            head: snippetDefinitionHead + ' (?=[ \\t]*[^ \\t\\r\\n])',
             inside: {
                 'snippet-value': {
                     pattern: RegExp('(^\\uFEFF?' + snippetDefinitionHead + ' )[^]+'),
@@ -4251,8 +4253,12 @@ if (Prism?.languages.carve) {
     delete grammar['glued-abbreviation-definition'];
     // The lines a definition may stand under without continuing a paragraph:
     // other definitions and, above a snippet, an attribute line (C2-B-095).
+    // A snippet run takes only valid markers and attribute lines with no id;
+    // an attribute line with an id makes the line below a paragraph (#6865).
     const definitionLines = /^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/;
-    const snippetDefinitionLines = /^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:|\{\$[^\r\n]*?\}: |\{[^{}\r\n]*\}[ \t]*$)/;
+    const snippetDefinitionLines = RegExp('^\\uFEFF?(?:\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:|' + grammar['snippet-definition'].head
+        + '|\\{(?:"[^"\\r\\n]*"|\'[^\'\\r\\n]*\'|[^{}#"\'\\r\\n])*\\}[ \\t]*$)');
+    const attributeLine = /^\uFEFF?\{[^\r\n]*\}[ \t]*$/;
     // Every line of a run of definitions shares the run's verdict, kept per
     // source so a long run is read once rather than once per line.
     let allowedSource = null;
@@ -4276,7 +4282,11 @@ if (Prism?.languages.carve) {
             if (start === 0) break;
             const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
-            if (!above.test(source.slice(previous, end))) break;
+            const line = source.slice(previous, end);
+            if (!above.test(line)) {
+                if (above === snippetDefinitionLines && attributeLine.test(line)) allowed = false;
+                break;
+            }
             start = previous;
         }
         if (allowed === undefined) allowed = !inParagraph(source, start);
