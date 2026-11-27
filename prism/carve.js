@@ -479,7 +479,6 @@
     // A run with no closer on the line is text (C2-I-017), so the walk passes it.
     var unpartneredOnLine = '(?<!`)(`{1,16})(?!`)(?![^\\r\\n]*?(?<!`)\\3(?!`))';
     var outsideSpans = '(?:[^\\r\\n`\\\\]|\\\\[^\\r\\n]|' + codeSpanRun + '|' + unpartneredOnLine + ')*?';
-    var commentAfterPrefix = '^(?<![^\\r\\n])(' + outsideSpans + '[ \\t])%%(?!%)';
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
         + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ) +)';
@@ -519,6 +518,10 @@
         + '|' + deeperThanQuotedItem + ')'
         + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + '|' + quotedItemLine + ')(?<![^\\r\\n])[^\\r\\n]+(?:\\r\\n?|\\n)'
         + '(?:(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n)){0,16})';
+    var quoteLineStart = '(?:(?<![\\s\\S])\\uFEFF)?(?:[ \\t]*>(?= |$)|'
+        + notParagraphContinuation + listMarkerBeforeBlock + '>(?= |$))';
+    var commentAfterPrefix = '^(?<![^\\r\\n])(?!' + quoteLineStart + ')('
+        + outsideSpans + '[ \\t])%%(?!%)';
 
 
     // A caption needs a host above it, past any blank lines: an image alone on
@@ -590,10 +593,13 @@
      * line. A line holding a bare `\r` keeps the exact per-candidate test.
      */
     var BLOCK_OPENER_PREFIX = '[ \\t]*(?:> )*(?:(?::{3,}(?: +[-0-9A-Za-z_]+)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))|\\||\\^)';
-    function toLineEndOutsideBlockOpeners(head) {
+    // The fallback comment rule uses skipQuotedLines; those lines belong to
+    // the quote grammar, including when an item marker precedes the quote.
+    function toLineEndOutsideBlockOpeners(head, skipQuotedLines) {
         var opener = RegExp(BLOCK_OPENER_PREFIX, 'y');
         var exact = RegExp('(?<!^(?<![^\\r\\n])' + BLOCK_OPENER_PREFIX + '[^\\r\\n]*)', 'my');
-        var line = { source: null, start: 0, end: -1, stop: -1, bareReturn: false, openerEnd: -1 };
+        var quote = skipQuotedLines && RegExp(quoteLineStart, 'my');
+        var line = { source: null, start: 0, end: -1, stop: -1, bareReturn: false, openerEnd: -1, quoted: false };
         var gated = RegExp(head.source, head.flags.includes('g') ? head.flags : head.flags + 'g');
         gated.exec = function (source) {
             var match;
@@ -607,9 +613,21 @@
                     var breakMatch = nextBreak.exec(source);
                     line.end = breakMatch ? breakMatch.index : source.length;
                     line.stop = line.end;
+                    if (quote) {
+                        quote.lastIndex = line.start;
+                        line.quoted = quote.test(source);
+                    }
+                    if (line.quoted) {
+                        this.lastIndex = line.end;
+                        continue;
+                    }
                     line.bareReturn = source.slice(line.start, line.stop).indexOf('\r') !== -1;
                     opener.lastIndex = line.start;
                     line.openerEnd = opener.test(source) ? opener.lastIndex : -1;
+                }
+                if (line.quoted) {
+                    this.lastIndex = Math.max(match.index + 1, line.end);
+                    continue;
                 }
                 var blocked;
                 if (!line.bareReturn && line.openerEnd === -1) blocked = false;
@@ -2155,7 +2173,7 @@
                 pattern: outsideContainerMetadata(toLineEndOutsideBlockOpeners(RegExp(
                     '((?<!^(?<![^\\r\\n])[ \\t]*(?::{3,}(?: +[-0-9A-Za-z_]+)?|#{1,6}|[-*]|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))) |\\t)%%(?!%)',
                     'm',
-                ))),
+                ), true)),
                 lookbehind: true,
                 greedy: true,
             },
@@ -3769,6 +3787,16 @@
                 },
             ],
         }, rest);
+        // Block markers and verbatim spans take their text before a quoted
+        // line comment. The short local rule can then start at `%%` even when
+        // an earlier inline token has split the quote's prefix.
+        var quotedEntries = Object.entries(quoteLine.inside);
+        quotedEntries.splice(quotedEntries.findIndex(function (entry) { return entry[0] === 'bold-italic'; }), 0,
+            ['comment', [
+                { pattern: bracedCommentPattern, greedy: true },
+                { pattern: /(^|[ \t])%%(?!%)[^\r\n]*/, lookbehind: true },
+            ]]);
+        quoteLine.inside = Object.fromEntries(quotedEntries);
     }
 
     // Reuse the full code and escape rules before looking for cell pipes.
