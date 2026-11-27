@@ -4257,6 +4257,37 @@ if (Prism?.languages.carve) {
     const snippetDefinitionLines = RegExp('^\\uFEFF?(?:\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:|' + grammar['snippet-definition'].head
         + '|\\{(?:"[^"\\r\\n]*"|\'[^\'\\r\\n]*\'|[^{}#"\'\\r\\n])*\\}[ \\t]*$)');
     const attributeLine = /^\uFEFF?\{[^\r\n]*\}[ \t]*$/;
+    // The line a definition run is read under (C2-B-081). Comment-only and
+    // attribute lines are passed over; a term line, with the description and
+    // indented lines of its entry, is no paragraph text, so the paragraph check
+    // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
+    // `> :: t` and `- :: t`.
+    const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
+    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    function definitionReadAbove(source, start) {
+        const lineBefore = (at) => {
+            const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            return [previous, source.slice(previous, end)];
+        };
+        let top = start;
+        while (top > 0) {
+            const [previous, line] = lineBefore(top);
+            if (!DEFINITION_SKIP.test(line)) break;
+            top = previous;
+        }
+        let entry = top;
+        let term = false;
+        while (entry > 0) {
+            const [previous, line] = lineBefore(entry);
+            // A description directly above takes the run as its lazy line.
+            if (DEFINITION_TERM_LINE.test(line)) term = true;
+            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            entry = previous;
+        }
+        return term ? entry : top;
+    }
     // Every line of a run of definitions shares the run's verdict, kept per
     // source so a long run is read once rather than once per line.
     let allowedSource = null;
@@ -4287,7 +4318,7 @@ if (Prism?.languages.carve) {
             }
             start = previous;
         }
-        if (allowed === undefined) allowed = !inParagraph(source, start);
+        if (allowed === undefined) allowed = !inParagraph(source, above === definitionLines ? definitionReadAbove(source, start) : start);
         for (const line of run) known.set(line, allowed);
         return allowed;
     }

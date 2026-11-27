@@ -12,6 +12,7 @@ for (const file of [
     'tests/prism-hljs-differential-test.js',
     'tests/prism-hljs-long-line-time-test.js',
     'tests/prism-hljs-snippet-test.js',
+    'tests/include-and-definition-shapes-test.js',
     'tests/include-and-definition-time-test.js',
     'tests/titled-div-braced-comment-test.js',
     'tests/word-characters-and-div-openers-test.js',

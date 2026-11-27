@@ -103,6 +103,37 @@ function adaptGrammar(grammar, hljs) {
     if (horizontalRule) horizontalRule.begin = new RegExp(lineStart + '\\*{3,}[ \\t]*$(?![^\\r\\n])');
     // C2-B-081: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
+    // The line a definition run is read under (C2-B-081). Comment-only and
+    // attribute lines are passed over; a term line, with the description and
+    // indented lines of its entry, is no paragraph text, so the paragraph check
+    // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
+    // `> :: t` and `- :: t`.
+    const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
+    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    function definitionReadAbove(source, start) {
+        const lineBefore = (at) => {
+            const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            return [previous, source.slice(previous, end)];
+        };
+        let top = start;
+        while (top > 0) {
+            const [previous, line] = lineBefore(top);
+            if (!DEFINITION_SKIP.test(line)) break;
+            top = previous;
+        }
+        let entry = top;
+        let term = false;
+        while (entry > 0) {
+            const [previous, line] = lineBefore(entry);
+            // A description directly above takes the run as its lazy line.
+            if (DEFINITION_TERM_LINE.test(line)) term = true;
+            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            entry = previous;
+        }
+        return term ? entry : top;
+    }
     // Every line of a definition run shares its first line's verdict, kept per
     // input: walking back over the run from each line was quadratic (#989).
     let definitionSource = null;
@@ -124,7 +155,7 @@ function adaptGrammar(grammar, hljs) {
             const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
             if (start === 0 || !/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) {
-                allowed = !inParagraph(source, start);
+                allowed = !inParagraph(source, definitionReadAbove(source, start));
                 break;
             }
             start = previous;
@@ -2375,12 +2406,18 @@ function adaptGrammar(grammar, hljs) {
         end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
             + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'
             // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
-            + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
+            + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'
+            // A definition under a term, not under a description, stands on its
+            // own (C2-B-081); `on:end` reads which came last, since highlight.js
+            // checks an end again on the remainder, where a lookbehind sees nothing.
+            + '|\\n(?=(\\uFEFF?(?:\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:)))'),
         'on:begin': () => {
             descriptionColumn = Infinity;
         },
         'on:end': (match, response) => {
             if (match[1] !== undefined && match[1].length >= descriptionColumn) response.ignoreMatch();
+            // A term resets the column to Infinity, a description sets it.
+            if (match[2] !== undefined && descriptionColumn !== Infinity) response.ignoreMatch();
         },
         relevance: 0,
         // The inline modes are appended once CONTAINS exists.
