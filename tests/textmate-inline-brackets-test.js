@@ -27,5 +27,22 @@ for (const open of ['^[', ':x[']) {
         assert.equal(covered(tokenize, source, 'string.other.footnote.inline.carve').includes('next'), false, JSON.stringify(source));
         assert.equal(covered(tokenize, source, 'string.unquoted.extension.carve').includes('next'), false, JSON.stringify(source));
     }
+    const scope = open === '^[' ? 'string.other.footnote.inline.carve' : 'string.unquoted.extension.carve';
+    for (const width of [1, 2, 3, 4, 8, 16]) {
+        const ticks = '`'.repeat(width);
+        const body = `a [b ${ticks}]${ticks} c]`;
+        assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${ticks}`);
+        assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${ticks}`);
+    }
+    for (const comment of ['{# ] #}', '{% ] %}']) {
+        const body = `a [b ${comment} c]`;
+        assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${comment}`);
+        assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${comment}`);
+    }
+    for (const atom of ['<https://a]b>', '{k="]"}', '[c](u]v)']) {
+        const body = `a [b ${atom} c]`;
+        assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${atom}`);
+        assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${atom}`);
+    }
 }
 console.log(`TextMate inline bracket bodies: ${count} cases passed`);
