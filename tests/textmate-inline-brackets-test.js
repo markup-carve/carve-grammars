@@ -21,4 +21,11 @@ for (const [open, scope] of [
     }
 }
 assert.equal(count, 1000);
+for (const open of ['^[', ':x[']) {
+    for (const body of ['*a', '{#a', '{%a']) {
+        const source = `${open}${body}] z\nnext\n`;
+        assert.equal(covered(tokenize, source, 'string.other.footnote.inline.carve').includes('next'), false, JSON.stringify(source));
+        assert.equal(covered(tokenize, source, 'string.unquoted.extension.carve').includes('next'), false, JSON.stringify(source));
+    }
+}
 console.log(`TextMate inline bracket bodies: ${count} cases passed`);

@@ -16570,7 +16570,7 @@
       "applyEndPatternLast": true,
       "patterns": [
         {
-          "include": "#inline"
+          "include": "#inline_in_extension"
         },
         {
           "include": "#extension_nested_bracket"
@@ -30183,7 +30183,7 @@
           "include": "#glued_through_comment"
         },
         {
-          "include": "#braced_comment"
+          "include": "#note_body_braced_comment"
         },
         {
           "include": "#trailing_comment"
@@ -30231,7 +30231,7 @@
           "include": "#critic_del"
         },
         {
-          "include": "#critic_comment"
+          "include": "#note_body_critic_comment"
         },
         {
           "include": "#highlight"
@@ -30279,7 +30279,7 @@
           "include": "#bold_italic"
         },
         {
-          "include": "#strong"
+          "include": "#note_body_strong"
         },
         {
           "include": "#italic"
@@ -34872,10 +34872,630 @@
       "applyEndPatternLast": true,
       "patterns": [
         {
-          "include": "#inline"
+          "include": "#inline_in_extension"
         },
         {
           "include": "#extension_nested_bracket"
+        }
+      ]
+    },
+    "literal_nested_bracket_in_outer": {
+      "begin": "\\[",
+      "end": "\\]",
+      "patterns": [
+        {
+          "include": "#literal_nested_bracket_in_outer"
+        }
+      ],
+      "comment": "A balanced bracket pair remains literal inside a comment."
+    },
+    "note_body_critic_comment": {
+      "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
+      "begin": "\\{#(?!#\\})(?:(?=(?:[^\\n#]++|#(?!\\})){0,256}?#\\})(?<![^\\s\\w\\\"']\\{#)|(?<![^\\s\\w\\\"']\\{#)(?=[ \\t])|(?![^}\\n]*(?<!#)\\}))",
+      "end": "#\\}|^(?=[ \\t]*$)|(?=\\])",
+      "name": "comment.block.critic.carve",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#literal_nested_bracket_in_outer"
+        }
+      ]
+    },
+    "note_body_braced_comment": {
+      "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
+      "begin": "\\{%",
+      "end": "(%\\})([ \\t]*(?:\\{(?!_[^{}\\n]*_\\})(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)\\})+)?|^(?=[ \\t]*$)|(?=\\])",
+      "beginCaptures": {
+        "0": {
+          "name": "comment.block.inline.carve"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "comment.block.inline.carve"
+        }
+      },
+      "contentName": "comment.block.inline.carve",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#literal_nested_bracket_in_outer"
+        }
+      ]
+    },
+    "note_body_strong_content": {
+      "patterns": [
+        {
+          "comment": "A star after whitespace and braced comments cannot close the run (#974). Oniguruma 6.9.9 (PHP mbstring, Phiki) refuses a variable-length lookbehind, so the run is consumed here instead of guarded in `end`; a star glued to `}` may still open a nested run.",
+          "begin": "(?<=\\s)(?=(?:\\{%(?:[^%\\n]|%+[^%}\\n])*%+\\})+\\*)",
+          "end": "\\*(?!\\})|(?<=\\*)",
+          "patterns": [
+            {
+              "include": "#braced_comment_in_strong"
+            },
+            {
+              "include": "#strong_glued_brace"
+            }
+          ]
+        },
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#snippet_use"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
+          "include": "#link_inline_empty"
+        },
+        {
+          "include": "#link_inline"
+        },
+        {
+          "include": "#link_ref"
+        },
+        {
+          "include": "#image_empty"
+        },
+        {
+          "include": "#image"
+        },
+        {
+          "include": "#image_ref"
+        },
+        {
+          "include": "#opaque_destination"
+        },
+        {
+          "include": "#braced_comment_in_strong"
+        },
+        {
+          "include": "#critic_comment_in_strong"
+        },
+        {
+          "comment": "The empty `{**}`, a comment opener the rule above refused and an opener-shaped star are text, so the run closes at its first closer. A same-kind braced span nests through `#forced_strong` below (carve#2904).",
+          "match": "\\{\\*\\*\\}|\\{[#%]|(?<![\\p{L}\\p{N}*])\\*(?![\\s*}])"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#math_inline_multi"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#footnote_inline"
+        },
+        {
+          "include": "#footnote_ref"
+        },
+        {
+          "comment": "A strong closer inside a later braced form closes the strong span and leaves that opener text: `*a {/b*/} c` is strong `a {/b`.",
+          "match": "\\{([/_~=^,+\\-])(?!\\1\\})(?=(?:(?>\\s(?:\\{%(?:(?!\\1\\})(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?!\\*\\})[^\\n])){0,512}?\\*\\}|(?!\\1\\})[^\\n])){0,512}?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))"
+        },
+        {
+          "include": "#critic_add"
+        },
+        {
+          "include": "#critic_del"
+        },
+        {
+          "include": "#note_body_critic_comment"
+        },
+        {
+          "include": "#forced_strong"
+        },
+        {
+          "include": "#forced_italic"
+        },
+        {
+          "include": "#forced_underline"
+        },
+        {
+          "include": "#forced_strike"
+        },
+        {
+          "include": "#superscript"
+        },
+        {
+          "include": "#subscript"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
+        },
+        {
+          "include": "#attributes_empty"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "comment": "A bare run whose own closer lies only past the bold closer is text. A nested `{*...*}` holds its own closer, so the scan skips it.",
+          "match": "([/_~=])(?=(?:[^/_~=\\n]++|[/_~=]){0,256}?(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))(?=(?>\\s(?:\\{%(?:(?!(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}|(?!\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\})(?!(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])).)*?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))"
+        },
+        {
+          "include": "#bold_italic"
+        },
+        {
+          "include": "#strong_glued_brace"
+        },
+        {
+          "include": "#italic"
+        },
+        {
+          "include": "#highlight"
+        },
+        {
+          "include": "#mention"
+        },
+        {
+          "include": "#tag"
+        },
+        {
+          "include": "#smart_typography"
+        }
+      ]
+    },
+    "note_body_strong": {
+      "begin": "(?<![\\p{L}\\p{N}*{])(\\*)(?![\\s*])(?!\\}(?!(?>\\s(?:\\{%(?:(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|.)*?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))(?:(?=\\})(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|\\s(?:\\{%(?:[^%{}\\n]|%+[^%{}\\n])*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n\\\\`]){0,1024}?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))|(?!\\})(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|\\s(?:\\{%(?:[^%{}\\n]|%+[^%{}\\n])*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n\\\\`])*?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))(?!(?>\\s(?:\\{%(?:(?![ \\t]%%)(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n])*?(?<=[ \\t])%%)",
+      "end": "(?<=\\S)(\\*)(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])|^[ \\t]*$|^(?=[ \\t]*:{3,}[ \\t]*$)|(?=\\])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.bold.carve"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.bold.carve"
+        }
+      },
+      "comment": "Inside a bracket form, the outer closing bracket ends an unclosed strong span. Balanced inner brackets take their own closer first.",
+      "contentName": "markup.bold.carve",
+      "patterns": [
+        {
+          "include": "#note_nested_bracket"
+        },
+        {
+          "include": "#note_body_strong_content"
+        }
+      ]
+    },
+    "extension_body_critic_comment": {
+      "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
+      "begin": "\\{#(?!#\\})(?:(?=(?:[^\\n#]++|#(?!\\})){0,256}?#\\})(?<![^\\s\\w\\\"']\\{#)|(?<![^\\s\\w\\\"']\\{#)(?=[ \\t])|(?![^}\\n]*(?<!#)\\}))",
+      "end": "#\\}|^(?=[ \\t]*$)|(?=\\])",
+      "name": "comment.block.critic.carve",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#literal_nested_bracket_in_outer"
+        }
+      ]
+    },
+    "extension_body_braced_comment": {
+      "comment": "Inside a bracket form, the outer closing bracket also ends an unclosed comment.",
+      "begin": "\\{%",
+      "end": "(%\\})([ \\t]*(?:\\{(?!_[^{}\\n]*_\\})(?!__\\})(?:\\s*(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?)(?:\\s+(?::(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[.#][A-Za-z0-9_][\\w-]*|[A-Za-z_][\\w-]*(?:=(?:\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)*'|[^\\s\"'{}|\\\\]+))?))*\\s*)\\})+)?|^(?=[ \\t]*$)|(?=\\])",
+      "beginCaptures": {
+        "0": {
+          "name": "comment.block.inline.carve"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "comment.block.inline.carve"
+        }
+      },
+      "contentName": "comment.block.inline.carve",
+      "applyEndPatternLast": true,
+      "patterns": [
+        {
+          "include": "#literal_nested_bracket_in_outer"
+        }
+      ]
+    },
+    "extension_body_strong_content": {
+      "patterns": [
+        {
+          "comment": "A star after whitespace and braced comments cannot close the run (#974). Oniguruma 6.9.9 (PHP mbstring, Phiki) refuses a variable-length lookbehind, so the run is consumed here instead of guarded in `end`; a star glued to `}` may still open a nested run.",
+          "begin": "(?<=\\s)(?=(?:\\{%(?:[^%\\n]|%+[^%}\\n])*%+\\})+\\*)",
+          "end": "\\*(?!\\})|(?<=\\*)",
+          "patterns": [
+            {
+              "include": "#braced_comment_in_strong"
+            },
+            {
+              "include": "#strong_glued_brace"
+            }
+          ]
+        },
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#snippet_use"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
+          "include": "#link_inline_empty"
+        },
+        {
+          "include": "#link_inline"
+        },
+        {
+          "include": "#link_ref"
+        },
+        {
+          "include": "#image_empty"
+        },
+        {
+          "include": "#image"
+        },
+        {
+          "include": "#image_ref"
+        },
+        {
+          "include": "#opaque_destination"
+        },
+        {
+          "include": "#braced_comment_in_strong"
+        },
+        {
+          "include": "#critic_comment_in_strong"
+        },
+        {
+          "comment": "The empty `{**}`, a comment opener the rule above refused and an opener-shaped star are text, so the run closes at its first closer. A same-kind braced span nests through `#forced_strong` below (carve#2904).",
+          "match": "\\{\\*\\*\\}|\\{[#%]|(?<![\\p{L}\\p{N}*])\\*(?![\\s*}])"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#math_inline_multi"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#footnote_inline"
+        },
+        {
+          "include": "#footnote_ref"
+        },
+        {
+          "comment": "A strong closer inside a later braced form closes the strong span and leaves that opener text: `*a {/b*/} c` is strong `a {/b`.",
+          "match": "\\{([/_~=^,+\\-])(?!\\1\\})(?=(?:(?>\\s(?:\\{%(?:(?!\\1\\})(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|\\{\\*(?!\\*\\})(?:(?>\\\\.|```(?:[^`\\n]|`(?!``))+```(?!`)|``(?:[^`\\n]|`(?!`))+``(?!`)|`[^`\\n]+`(?!`)|(?!\\*\\})[^\\n])){0,512}?\\*\\}|(?!\\1\\})[^\\n])){0,512}?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))"
+        },
+        {
+          "include": "#critic_add"
+        },
+        {
+          "include": "#critic_del"
+        },
+        {
+          "include": "#extension_body_critic_comment"
+        },
+        {
+          "include": "#forced_strong"
+        },
+        {
+          "include": "#forced_italic"
+        },
+        {
+          "include": "#forced_underline"
+        },
+        {
+          "include": "#forced_strike"
+        },
+        {
+          "include": "#superscript"
+        },
+        {
+          "include": "#subscript"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
+        },
+        {
+          "include": "#attributes_empty"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "comment": "A bare run whose own closer lies only past the bold closer is text. A nested `{*...*}` holds its own closer, so the scan skips it.",
+          "match": "([/_~=])(?=(?:[^/_~=\\n]++|[/_~=]){0,256}?(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))(?=(?>\\s(?:\\{%(?:(?!(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}|(?!\\{\\*\\*\\}|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)|\\{\\*(?!\\*\\})(?:\\\\.|[^\\*\\n{\\\\]|\\*(?!\\})|\\{\\*\\*\\}|\\{(?!\\*)){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\}){1,4096}\\*\\})(?!(?<=\\S)\\1(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])).)*?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))"
+        },
+        {
+          "include": "#bold_italic"
+        },
+        {
+          "include": "#strong_glued_brace"
+        },
+        {
+          "include": "#italic"
+        },
+        {
+          "include": "#highlight"
+        },
+        {
+          "include": "#mention"
+        },
+        {
+          "include": "#tag"
+        },
+        {
+          "include": "#smart_typography"
+        }
+      ]
+    },
+    "extension_body_strong": {
+      "begin": "(?<![\\p{L}\\p{N}*{])(\\*)(?![\\s*])(?!\\}(?!(?>\\s(?:\\{%(?:(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|.)*?(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))(?:(?=\\})(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|\\s(?:\\{%(?:[^%{}\\n]|%+[^%{}\\n])*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n\\\\`]){0,1024}?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))|(?!\\})(?!(?>\\\\.|`[^`\\n]*`|`(?![^`\\n]*`)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\](?:\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|\\[(?:\\\\.|[^\\[\\]\\n\\\\])*\\])|\\]\\((?:\\\\.|[^()\\n\\\\]|\\((?:\\\\.|[^()\\n\\\\])*\\))*\\)|<[^<>\\s]+>|\\{[^{}\\n]*\\}|\\s(?:\\{%(?:[^%{}\\n]|%+[^%{}\\n])*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n\\\\`])*?(?<=[\\p{L}\\p{N}\\p{M}])\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))(?!(?>\\s(?:\\{%(?:(?![ \\t]%%)(?:[^%*\\n]|%+[^%}*\\n]|(?<=\\s)\\*|%*\\*(?=(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])))*%+\\})+\\*|(?!(?<=\\S)\\*(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}]))[^\\n])*?(?<=[ \\t])%%)",
+      "end": "(?<=\\S)(\\*)(?!(?:\\{%(?:[^%\\n]|%(?!\\}))*+%\\})*+[\\p{L}\\p{N}])|^[ \\t]*$|^(?=[ \\t]*:{3,}[ \\t]*$)|(?=\\])",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.bold.carve"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.bold.carve"
+        }
+      },
+      "comment": "Inside a bracket form, the outer closing bracket ends an unclosed strong span. Balanced inner brackets take their own closer first.",
+      "contentName": "markup.bold.carve",
+      "patterns": [
+        {
+          "include": "#extension_nested_bracket"
+        },
+        {
+          "include": "#extension_body_strong_content"
+        }
+      ]
+    },
+    "inline_in_extension": {
+      "patterns": [
+        {
+          "include": "#math_inline_multi"
+        },
+        {
+          "include": "#math_inline"
+        },
+        {
+          "include": "#literal_inline_multi"
+        },
+        {
+          "include": "#literal_inline"
+        },
+        {
+          "include": "#footnote_inline"
+        },
+        {
+          "include": "#raw_inline"
+        },
+        {
+          "include": "#code_inline_multi"
+        },
+        {
+          "include": "#code_inline"
+        },
+        {
+          "include": "#math_inline_unpartnered"
+        },
+        {
+          "include": "#literal_inline_unpartnered"
+        },
+        {
+          "include": "#code_inline_unpartnered"
+        },
+        {
+          "include": "#glued_through_comment"
+        },
+        {
+          "include": "#extension_body_braced_comment"
+        },
+        {
+          "include": "#trailing_comment"
+        },
+        {
+          "include": "#snippet_use"
+        },
+        {
+          "include": "#include_directive"
+        },
+        {
+          "include": "#image_empty"
+        },
+        {
+          "include": "#image"
+        },
+        {
+          "include": "#image_ref"
+        },
+        {
+          "include": "#footnote_ref"
+        },
+        {
+          "include": "#citation"
+        },
+        {
+          "include": "#span"
+        },
+        {
+          "include": "#link_inline_empty"
+        },
+        {
+          "include": "#link_inline"
+        },
+        {
+          "include": "#link_ref"
+        },
+        {
+          "include": "#extension_inline"
+        },
+        {
+          "include": "#symbol"
+        },
+        {
+          "include": "#critic_add"
+        },
+        {
+          "include": "#critic_del"
+        },
+        {
+          "include": "#extension_body_critic_comment"
+        },
+        {
+          "include": "#highlight"
+        },
+        {
+          "include": "#subscript"
+        },
+        {
+          "include": "#superscript"
+        },
+        {
+          "include": "#forced_strong"
+        },
+        {
+          "include": "#forced_italic"
+        },
+        {
+          "include": "#forced_underline"
+        },
+        {
+          "include": "#forced_strike"
+        },
+        {
+          "include": "#escaped_bracket_attributes"
+        },
+        {
+          "include": "#escaped_closing_link_attributes"
+        },
+        {
+          "include": "#escaped_destination_closer_attributes"
+        },
+        {
+          "include": "#non_link_paren_attributes"
+        },
+        {
+          "include": "#attributes_empty"
+        },
+        {
+          "include": "#attributes"
+        },
+        {
+          "include": "#attributes_unattached"
+        },
+        {
+          "include": "#bold_italic"
+        },
+        {
+          "include": "#extension_body_strong"
+        },
+        {
+          "include": "#italic"
+        },
+        {
+          "include": "#mention"
+        },
+        {
+          "include": "#tag"
+        },
+        {
+          "include": "#cross_ref"
+        },
+        {
+          "include": "#autolink"
+        },
+        {
+          "include": "#smart_typography"
+        },
+        {
+          "include": "#escape"
+        },
+        {
+          "include": "#hard_break"
         }
       ]
     }
