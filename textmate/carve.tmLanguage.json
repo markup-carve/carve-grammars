@@ -112,28 +112,6 @@
       "include": "#inline"
     }
   ],
-  "injections": {
-    "L:meta.diff.carve": {
-      "patterns": [
-        {
-          "match": "^(\\+)",
-          "captures": {
-            "1": {
-              "name": "markup.inserted.diff.carve"
-            }
-          }
-        },
-        {
-          "match": "^(-)",
-          "captures": {
-            "1": {
-              "name": "markup.deleted.diff.carve"
-            }
-          }
-        }
-      ]
-    }
-  },
   "repository": {
     "frontmatter": {
       "patterns": [
@@ -768,6 +746,9 @@
               "contentName": "markup.raw.code.carve meta.embedded.block.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "include": "#callout_marker"
                 },
                 {
@@ -800,6 +781,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -841,6 +825,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.javascriptreact",
@@ -880,6 +867,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -921,6 +911,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.typescriptreact",
@@ -960,6 +953,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1001,6 +997,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.jsonc",
@@ -1040,6 +1039,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1081,6 +1083,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.yaml",
@@ -1120,6 +1125,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1161,6 +1169,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.csv",
@@ -1200,6 +1211,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1241,6 +1255,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.html",
@@ -1280,6 +1297,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1321,6 +1341,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.xsl",
@@ -1360,6 +1383,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1401,6 +1427,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.scss",
@@ -1441,6 +1470,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.less",
@@ -1480,6 +1512,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1524,6 +1559,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.python",
@@ -1563,6 +1601,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1604,6 +1645,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.rust",
@@ -1643,6 +1687,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1684,6 +1731,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.java",
@@ -1723,6 +1773,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1764,6 +1817,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.swift",
@@ -1803,6 +1859,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1844,6 +1903,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.c",
@@ -1883,6 +1945,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -1924,6 +1989,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.cuda-cpp",
@@ -1963,6 +2031,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2004,6 +2075,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.fsharp",
@@ -2043,6 +2117,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2084,6 +2161,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.razor",
@@ -2123,6 +2203,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2164,6 +2247,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.objective-cpp",
@@ -2203,6 +2289,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2244,6 +2333,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.powershell",
@@ -2283,6 +2375,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2324,6 +2419,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.dotenv",
@@ -2363,6 +2461,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2404,6 +2505,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.lua",
@@ -2443,6 +2547,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2484,6 +2591,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.raku",
@@ -2523,6 +2633,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2564,6 +2677,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.julia",
@@ -2603,6 +2719,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2644,6 +2763,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.coffeescript",
@@ -2683,6 +2805,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2724,6 +2849,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.hlsl",
@@ -2763,6 +2891,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2804,6 +2935,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.wat",
@@ -2843,6 +2977,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2884,6 +3021,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.restructuredtext",
@@ -2923,6 +3063,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -2964,6 +3107,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.bibtex",
@@ -3003,6 +3149,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3044,6 +3193,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.handlebars",
@@ -3083,6 +3235,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3124,6 +3279,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.dockerfile",
@@ -3163,6 +3321,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3204,6 +3365,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.ini",
@@ -3243,6 +3407,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3284,6 +3451,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.blade",
@@ -3323,6 +3493,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3364,6 +3537,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.vue",
@@ -3404,6 +3580,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.svelte",
@@ -3443,6 +3622,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3524,6 +3706,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "include": "#callout_marker"
                 }
               ]
@@ -3573,6 +3758,9 @@
               "contentName": "markup.raw.code.carve meta.embedded.block.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "include": "#callout_marker"
                 },
                 {
@@ -3605,6 +3793,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3646,6 +3837,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.javascriptreact",
@@ -3685,6 +3879,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3726,6 +3923,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.typescriptreact",
@@ -3765,6 +3965,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3806,6 +4009,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.jsonc",
@@ -3845,6 +4051,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3886,6 +4095,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.yaml",
@@ -3925,6 +4137,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -3966,6 +4181,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.csv",
@@ -4005,6 +4223,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4046,6 +4267,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.html",
@@ -4085,6 +4309,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4126,6 +4353,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.xsl",
@@ -4165,6 +4395,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4206,6 +4439,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.scss",
@@ -4246,6 +4482,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.less",
@@ -4285,6 +4524,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4329,6 +4571,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.python",
@@ -4368,6 +4613,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4409,6 +4657,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.rust",
@@ -4448,6 +4699,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4489,6 +4743,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.java",
@@ -4528,6 +4785,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4569,6 +4829,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.swift",
@@ -4608,6 +4871,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4649,6 +4915,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.c",
@@ -4688,6 +4957,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4729,6 +5001,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.cuda-cpp",
@@ -4768,6 +5043,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4809,6 +5087,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.fsharp",
@@ -4848,6 +5129,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4889,6 +5173,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.razor",
@@ -4928,6 +5215,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -4969,6 +5259,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.objective-cpp",
@@ -5008,6 +5301,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5049,6 +5345,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.powershell",
@@ -5088,6 +5387,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5129,6 +5431,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.dotenv",
@@ -5168,6 +5473,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5209,6 +5517,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.lua",
@@ -5248,6 +5559,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5289,6 +5603,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.raku",
@@ -5328,6 +5645,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5369,6 +5689,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.julia",
@@ -5408,6 +5731,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5449,6 +5775,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.coffeescript",
@@ -5488,6 +5817,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5529,6 +5861,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.hlsl",
@@ -5568,6 +5903,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5609,6 +5947,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.wat",
@@ -5648,6 +5989,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5689,6 +6033,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.restructuredtext",
@@ -5728,6 +6075,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5769,6 +6119,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.bibtex",
@@ -5808,6 +6161,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5849,6 +6205,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.handlebars",
@@ -5888,6 +6247,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -5929,6 +6291,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.dockerfile",
@@ -5968,6 +6333,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -6009,6 +6377,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.ini",
@@ -6048,6 +6419,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -6089,6 +6463,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.blade",
@@ -6128,6 +6505,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -6169,6 +6549,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.vue",
@@ -6209,6 +6592,9 @@
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
                 {
+                  "include": "#diff_signs"
+                },
+                {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
                   "contentName": "meta.embedded.block.svelte",
@@ -6248,6 +6634,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "begin": "\\G",
                   "while": "(^|\\G)(?![ \\t]*`{3,}[ \\t]*$)",
@@ -6328,6 +6717,9 @@
               "name": "markup.fenced_code.block.carve",
               "contentName": "markup.raw.code.carve meta.diff.carve",
               "patterns": [
+                {
+                  "include": "#diff_signs"
+                },
                 {
                   "include": "#callout_marker"
                 }
@@ -36098,6 +36490,27 @@
           ],
           "name": "meta.attributes.carve",
           "comment": "Only a host carries a glued block: after any other character than a closer, a bracket, a backtick, an autolink or a symbol it is text (`*a*,{.q}`, carve-grammars#882). Strict identifier (spec PART 9 S14): a class/id/key may not start with a digit, so `{2=v}` stays literal text instead of scoping as an attribute block. An unquoted value may contain dots and colons. Spelled begin/end so the parts run in place: a capture with patterns makes the engine copy the line up to it, which made a run of glued blocks quadratic."
+        }
+      ]
+    },
+    "diff_signs": {
+      "comment": "Diff markers run only in diff fence bodies. A global injection expands the scope stack on every line, including lines inside nested divs.",
+      "patterns": [
+        {
+          "match": "^(\\+)",
+          "captures": {
+            "1": {
+              "name": "markup.inserted.diff.carve"
+            }
+          }
+        },
+        {
+          "match": "^(-)",
+          "captures": {
+            "1": {
+              "name": "markup.deleted.diff.carve"
+            }
+          }
         }
       ]
     }
