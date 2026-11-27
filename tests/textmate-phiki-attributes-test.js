@@ -43,6 +43,7 @@ assert.equal(tokenize('*a * b*{.c}\n').some(({ scope, text }) => text === '.c' &
 for (const source of [
     '[a[b[c[d]]]](u){.x}\n', '[a `]` b](u){.x}\n', '![a[b[c[d]]]](u){.x}\n',
     '[a](){.x}\n', '![a](){.x}\n',
+    '[a`b](u){.x}\n', '![a`b](u){.x}\n',
 ]) {
     assert.equal(tokenize(source).filter(({ scope }) => scope.includes('meta.attributes.carve')).map(({ text }) => text).join(''), '{.x}', source);
 }
