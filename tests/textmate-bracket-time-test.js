@@ -1,4 +1,4 @@
-// Long bracket runs and lines of many links, spans and glued attribute blocks tokenize in linear time in TextMate.
+// Long bracket runs and lines of many links, spans, glued attribute blocks and braced forms tokenize in linear time in TextMate.
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
 
@@ -30,6 +30,7 @@ for (const [name, shape] of [
     ['glued attribute blocks after a span', (size) => `*a*${'{.c}'.repeat(size / 4)}\n`],
     ['glued attribute blocks with quoted values', (size) => `[a](u)${'{k="v}"}'.repeat(size / 8)}\n`],
     ['snippet definition with glued blocks', (size) => `{$v}${'{.c}'.repeat(size / 4)}: X\n`],
+    ['braced forms holding markup', run('a {*b /c/*} ')],
 ]) {
     const short = shape(4000);
     const long = shape(32000);
@@ -71,3 +72,40 @@ assert.deepEqual(scoped('*a*{#i k="v}"}\n'), [
 const snippet = scoped('{$v}{.c}: X\n').map((line) => line.replace('meta.snippet.definition.carve ', ''));
 assert.deepEqual(snippet.slice(3, 6), [open, '.c meta.attributes.carve entity.other.attribute-name.class.carve', close]);
 console.log('TextMate glued attribute blocks: scopes unchanged');
+
+// Braced forms spelled begin/end keep the scopes of the old match rules (carve-grammars#970).
+const merged = (source) => tokenize(source).reduce((out, token) => {
+    const last = out[out.length - 1];
+    if (last && last.scope === token.scope) last.text += token.text;
+    else out.push({ ...token });
+    return out;
+}, []).filter((token) => token.text.trim()).map((token) => `${token.text.trim()} ${token.scope.replace(/^source\.carve ?/, '')}`.trim());
+assert.deepEqual(merged('{-<---}\n'), [
+    '{- markup.deleted.carve punctuation.definition.critic.carve',
+    '<-- markup.deleted.carve markup.deleted.carve constant.other.smart_typography.carve',
+    '-} markup.deleted.carve punctuation.definition.critic.carve',
+]);
+assert.deepEqual(merged('{^a{^^}b^}\n'), [
+    '{^ punctuation.definition.superscript.carve',
+    'a{^^}b markup.superscript.carve',
+    '^} punctuation.definition.superscript.carve',
+]);
+assert.deepEqual(merged('{*a \\*} b*}\n'), [
+    '{* punctuation.definition.bold.carve',
+    'a markup.bold.carve',
+    '\\* markup.bold.carve constant.character.escape.carve',
+    '} b markup.bold.carve',
+    '*} punctuation.definition.bold.carve',
+]);
+assert.deepEqual(merged('{*[a *} b](u)*}\n')[2], 'a *} b markup.bold.carve string.other.link.title.carve');
+assert.deepEqual(merged('{*a @alice_} b*}\n')[3], 'alice_ markup.bold.carve variable.other.mention.carve');
+assert.deepEqual(merged('{*a x--} z*}\n')[2], '-- markup.bold.carve constant.other.smart_typography.carve');
+assert.deepEqual(merged('{+a {*b+} c*}\n'), [
+    '{+ markup.inserted.carve punctuation.definition.critic.carve',
+    'a {*b markup.inserted.carve markup.inserted.carve',
+    '+} markup.inserted.carve punctuation.definition.critic.carve',
+    'c*}',
+]);
+// The bound on the intraword check holds only before a `}`: far from the opener, `*a ... *b` still refuses it.
+assert.deepEqual(merged(`*a${'x'.repeat(1100)}*b\n`).length, 1);
+console.log('TextMate braced forms: scopes unchanged');
