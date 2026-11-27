@@ -39,7 +39,7 @@ for (const open of ['^[', ':x[']) {
         assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${comment}`);
         assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${comment}`);
     }
-    for (const atom of ['<https://a]b>', '{k="]"}', '[c](u]v)']) {
+    for (const atom of ['<https://a]b>', '{k="]"}', '[c](u]v)', '[c](u(v]w))', '[c](u "v]w")', "[c](u 'v]w')"]) {
         const body = `a [b ${atom} c]`;
         assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${atom}`);
         assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${atom}`);
