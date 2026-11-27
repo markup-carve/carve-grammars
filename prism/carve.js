@@ -4378,6 +4378,59 @@ if (Prism?.languages.carve) {
         carve['metadata-block'] = metadata;
         for (const [key, value] of rest) carve[key] = value;
     }
+    /*
+     * A bare run's opener is tried only when a possible closer follows it in
+     * its paragraph. `closerAhead` asks the same, but from every opener: a
+     * paragraph of openers with no closer, such as a run of `[a]: /u`
+     * definitions, paid a scan of up to 8192 characters per `/` (#989). Here
+     * one pass per input lists the candidates: the delimiter after a
+     * non-space character, or before a `}`. No atom of a run crosses a blank
+     * line, so a candidate past one cannot close it.
+     */
+    function withCloserInParagraph(pattern, delimiter) {
+        var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
+        var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        var memo = { source: null, next: null };
+        // next[i]: the first candidate closer at or after i in i's paragraph, or -1.
+        var candidates = function (source) {
+            if (memo.source === source) return memo.next;
+            var next = new Int32Array(source.length + 1).fill(-1);
+            var lineEnd = source.length;
+            var pending = -1;
+            for (var i = source.length - 1; i >= 0; i--) {
+                var c = source.charAt(i);
+                if (c === '\n' || c === '\r') {
+                    if (/^[ \t]*$/.test(source.slice(i + 1, lineEnd))) pending = -1;
+                    lineEnd = i;
+                } else if (c === delimiter && (/\S/.test(source.charAt(i - 1)) || source.charAt(i + 1) === '}')) {
+                    pending = i;
+                }
+                next[i] = pending;
+            }
+            memo = { source: source, next: next };
+            return next;
+        };
+        gated.exec = function (source) {
+            var next = candidates(source);
+            var from = this.lastIndex;
+            for (var at = source.indexOf(delimiter, from); at !== -1; at = source.indexOf(delimiter, at + 1)) {
+                // A braced form (`{=x=}`) has no flank rule; try it as it stands.
+                if (source.charAt(at - 1) !== '{' && (at + 1 > source.length || next[at + 1] === -1)) continue;
+                // A match starts at its first delimiter or one character before it.
+                for (var start = Math.max(from, at - 1); start <= at; start++) {
+                    probe.lastIndex = start;
+                    var match = probe.exec(source);
+                    if (match) {
+                        this.lastIndex = match.index + match[0].length;
+                        return match;
+                    }
+                }
+            }
+            this.lastIndex = 0;
+            return null;
+        };
+        return gated;
+    }
     // Retries a rule's match one character on while `reject` refuses it.
     const gateRule = (rule, reject) => {
         const pattern = rule.pattern;
@@ -4452,6 +4505,11 @@ if (Prism?.languages.carve) {
             for (const key of Object.keys(set)) delete set[key];
             Object.assign(set, Object.fromEntries(entries));
         };
+        // After the 0.2 pass above, which rebuilds these patterns.
+        const bareDelimiters = { bold: '*', italic: '/' };
+        visitRules(Prism.languages.carve, new Set(Object.keys(bareDelimiters)), (rule, name) => {
+            if (!Object.hasOwn(rule.pattern, 'exec')) rule.pattern = withCloserInParagraph(rule.pattern, bareDelimiters[name]);
+        });
         visitRules(Prism.languages.carve, names, (rule, name) => {
             gateRule(rule, (source, start, end) => taken(source.slice(start, end), name));
             if (rule.inside && name !== 'image' && name !== 'reference-image') withLineComment(rule.inside);

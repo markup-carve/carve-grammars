@@ -103,15 +103,34 @@ function adaptGrammar(grammar, hljs) {
     if (horizontalRule) horizontalRule.begin = new RegExp(lineStart + '\\*{3,}[ \\t]*$(?![^\\r\\n])');
     // C2-B-081: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
+    // Every line of a definition run shares its first line's verdict, kept per
+    // input: walking back over the run from each line was quadratic (#989).
+    let definitionSource = null;
+    const definitionVerdicts = new Map();
     function definitionAllowed(source, offset) {
+        if (source !== definitionSource) {
+            definitionSource = source;
+            definitionVerdicts.clear();
+        }
+        const run = [];
         let start = offset;
-        while (start > 0) {
+        let allowed;
+        for (;;) {
+            if (definitionVerdicts.has(start)) {
+                allowed = definitionVerdicts.get(start);
+                break;
+            }
+            run.push(start);
             const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
-            if (!/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) break;
+            if (start === 0 || !/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) {
+                allowed = !inParagraph(source, start);
+                break;
+            }
             start = previous;
         }
-        return !inParagraph(source, start);
+        for (const line of run) definitionVerdicts.set(line, allowed);
+        return allowed;
     }
     // Definition modes carry `definition: true` where they are declared.
     const isDefinition = mode => mode?.definition === true;
