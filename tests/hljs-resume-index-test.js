@@ -19,7 +19,7 @@ const cases = [
     ['x _\n[\n[^n]: x', 'x _\n[\n<span class="hljs-symbol">[^n]</span>: x', ['\n', '\r\n']],
     // The attribute rules still refuse `{#m}` inside the paragraph, so the tag
     // rule does not claim `#m`.
-    ['{\n%% c\n{{ a.crv }}  \n{#m}\nthree', '{\n<span class="hljs-comment">%% c</span>\n{{ a.crv }}  \n{#m}\nthree', ['\n']],
+    ['{\n%% c\n{{ a.crv }}  \n{#m}\nthree', '{\n<span class="hljs-comment">%% c</span>\n{{ a.crv }}  \n{#m}\nthree', ['\n', '\r\n']],
 ];
 let checked = 0;
 for (const [source, expected, endings] of cases) {

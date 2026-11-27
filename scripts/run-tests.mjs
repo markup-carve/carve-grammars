@@ -14,6 +14,7 @@ for (const file of [
     'tests/prism-hljs-snippet-test.js',
     'tests/hljs-call-order-test.js',
     'tests/hljs-resume-index-test.js',
+    'tests/hljs-crlf-lazy-line-test.js',
     'tests/include-and-definition-shapes-test.js',
     'tests/include-and-definition-time-test.js',
     'tests/titled-div-braced-comment-test.js',

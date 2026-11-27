@@ -4253,7 +4253,7 @@ function isolateResumeMatchers(mode) {
     // C2-B-024: a quote marker, a term, an attribute line or an include directive
     // directly under paragraph text is a lazy line of that paragraph.
     {
-        const previousLine = (input, at) => (at === 0 ? -1 : lineStartBefore(input, at - 1));
+        const previousLine = previousLineStart;
         const blank = /^\uFEFF?[ \t]*(?:>[ \t]*)*$/;
         const commentOnly = /^\uFEFF?[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
         const boundary = /^\uFEFF?[ \t]*(?:#{1,6}(?: |$)|={1,6} |`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|(?:\*{3,}|-{3,}|_{3,})[ \t]*$|\|.*\||\{[^{}]*\}[ \t]*$|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|\^ |:: |\+[ \t]*$)/;
