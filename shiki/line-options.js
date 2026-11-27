@@ -3,7 +3,7 @@ import { parseHighlight, lineStart } from '../diff/line-options.js'
 /** Create a fresh Shiki transformer for one Carve code block. */
 export function lineOptionsTransformer(attrs) {
   const numbered = attrs?.classes?.includes('line-numbers') ?? false
-  const values = new Map(attrs?.keyValues ?? [])
+  const values = new Map((attrs?.keyValues ?? []).map(([key, value]) => [key.toLowerCase(), value]))
   const highlight = values.get('data-highlight')
   const start = lineStart(values.get('data-line-start'))
   let selected = new Set()
