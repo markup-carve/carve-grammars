@@ -34931,7 +34931,7 @@
           "end": "\\*(?!\\})|(?<=\\*)",
           "patterns": [
             {
-              "include": "#braced_comment_in_strong"
+              "include": "#note_body_braced_comment"
             },
             {
               "include": "#strong_glued_brace"
@@ -34969,10 +34969,10 @@
           "include": "#opaque_destination"
         },
         {
-          "include": "#braced_comment_in_strong"
+          "include": "#note_body_braced_comment"
         },
         {
-          "include": "#critic_comment_in_strong"
+          "include": "#note_body_critic_comment"
         },
         {
           "comment": "The empty `{**}`, a comment opener the rule above refused and an opener-shaped star are text, so the run closes at its first closer. A same-kind braced span nests through `#forced_strong` below (carve#2904).",
@@ -35153,7 +35153,7 @@
           "end": "\\*(?!\\})|(?<=\\*)",
           "patterns": [
             {
-              "include": "#braced_comment_in_strong"
+              "include": "#extension_body_braced_comment"
             },
             {
               "include": "#strong_glued_brace"
@@ -35191,10 +35191,10 @@
           "include": "#opaque_destination"
         },
         {
-          "include": "#braced_comment_in_strong"
+          "include": "#extension_body_braced_comment"
         },
         {
-          "include": "#critic_comment_in_strong"
+          "include": "#extension_body_critic_comment"
         },
         {
           "comment": "The empty `{**}`, a comment opener the rule above refused and an opener-shaped star are text, so the run closes at its first closer. A same-kind braced span nests through `#forced_strong` below (carve#2904).",

@@ -22,7 +22,7 @@ for (const [open, scope] of [
 }
 assert.equal(count, 1000);
 for (const open of ['^[', ':x[']) {
-    for (const body of ['*a', '{#a', '{%a']) {
+    for (const body of ['*a', '{#a', '{%a', '*a {#b', '*a {%b']) {
         const source = `${open}${body}] z\nnext\n`;
         assert.equal(covered(tokenize, source, 'string.other.footnote.inline.carve').includes('next'), false, JSON.stringify(source));
         assert.equal(covered(tokenize, source, 'string.unquoted.extension.carve').includes('next'), false, JSON.stringify(source));
@@ -38,6 +38,8 @@ for (const open of ['^[', ':x[']) {
         const body = `a [b ${comment} c]`;
         assert.equal(covered(tokenize, `${open}${body} z\nnext\n`, scope), '', `missing outer closer: ${comment}`);
         assert.equal(covered(tokenize, `${open}${body}] z\nnext\n`, scope), body, `closed outer bracket: ${comment}`);
+        const strongBody = `*a ${comment} b*`;
+        assert.equal(covered(tokenize, `${open}${strongBody}] z\nnext\n`, scope), strongBody, `closed comment in strong: ${comment}`);
     }
     for (const atom of ['<https://a]b>', '{k="]"}', '[c](u]v)', '[c](u(v]w))', '[c](u "v]w")', "[c](u 'v]w')"]) {
         const body = `a [b ${atom} c]`;
