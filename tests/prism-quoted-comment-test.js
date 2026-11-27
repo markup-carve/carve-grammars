@@ -11,6 +11,10 @@ const textmate = await textmateLineTokenizer('textmate/carve.tmLanguage.json');
 
 assert.equal(Prism.highlight('> %% c', Prism.languages.carve, 'carve'),
     '<span class="token blockquote"><span class="token punctuation">></span> <span class="token comment">%% c</span></span>');
+for (const source of ['plain\n- > %% c', 'plain\n- > x %% c', 'plain\n- > `x` %% c']) {
+    assert.ok(Prism.highlight(source, Prism.languages.carve, 'carve').includes('<span class="token comment">%% c</span>'),
+        `a list-shaped paragraph continuation retains its comment in ${JSON.stringify(source)}`);
+}
 
 function prismQuotedComment(source) {
     let found = false;

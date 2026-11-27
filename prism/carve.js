@@ -482,9 +482,6 @@
     var listMarkerBeforeBlock =
         '[ \\t]*(?:(?:[-*] +)*[-*] +(?:\\[[ xX\\-_>\\/!?]\\] +)?'
         + '|(?:[0-9]+[.)]|(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))) +|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ) +)';
-    var quoteLineStart = '(?:(?<![\\s\\S])\\uFEFF)?(?:[ \\t]*>(?= |$)|' + listMarkerBeforeBlock + '>(?= |$))';
-    var commentAfterPrefix = '^(?<![^\\r\\n])(?!' + quoteLineStart + ')('
-        + outsideSpans + '[ \\t])%%(?!%)';
     var markerCodeForms = [];
     for (var depth = 1; depth <= 8; depth++) {
         markerCodeForms.push([Array(depth).fill('[-*] ').join(''), depth * 2]);
@@ -521,6 +518,10 @@
         + '|' + deeperThanQuotedItem + ')'
         + '(?![ \\t\\r]|' + markerLine + '|' + oneLineBlock + '|' + quotedItemLine + ')(?<![^\\r\\n])[^\\r\\n]+(?:\\r\\n?|\\n)'
         + '(?:(?![ \\t\\r]*(?:\\r\\n?|\\n))(?!' + oneLineBlock + ')(?<![^\\r\\n])[^\\r\\n]*(?:\\r\\n?|\\n)){0,16})';
+    var quoteLineStart = '(?:(?<![\\s\\S])\\uFEFF)?(?:[ \\t]*>(?= |$)|'
+        + notParagraphContinuation + listMarkerBeforeBlock + '>(?= |$))';
+    var commentAfterPrefix = '^(?<![^\\r\\n])(?!' + quoteLineStart + ')('
+        + outsideSpans + '[ \\t])%%(?!%)';
 
 
     // A caption needs a host above it, past any blank lines: an image alone on
