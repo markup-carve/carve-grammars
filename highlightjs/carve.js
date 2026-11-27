@@ -120,30 +120,58 @@ function adaptGrammar(grammar, hljs) {
     // comment-only line: no paragraph text.
     const DEFINITION_MARKER_BLOCK_LINE = RegExp(DEFINITION_ITEM + DEFINITION_TASK + '[ \\t]+(?:' + DEFINITION_MARKER + DEFINITION_TASK
         + '[ \\t]+)*(?:(::) +\\S|(?:#{1,6}|={1,6}) +\\S|%%(?!%)(?![ \\t]*#(?:region|endregion)\\b))');
+    let definitionItemSource = null;
+    const definitionItemVerdicts = new Map();
     function definitionReadAbove(source, start) {
         const lineBefore = (at) => {
             const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
             return [previous, source.slice(previous, end)];
         };
-        // Whether the marker line read as `item` at `at` is an item of a list
-        // above: the nearest unindented line above is a marker line at the
-        // same quote depth, and a nested ordered marker is a first one, the
-        // only kind that interrupts a paragraph.
-        const opensItemUnder = (at, item) => {
+        // The marker line holding the marker line read as `item` at `at` as a
+        // sibling or child: the nearest unindented line above, at the same
+        // quote depth. A nested ordered marker must be a first one, the only
+        // kind that interrupts a paragraph.
+        const parentItem = (at, item) => {
             const column = item[1].length;
             const ordinal = item[2] ?? item[3] ?? item[4];
             for (let above = at; above > 0;) {
                 const [previous, text] = lineBefore(above);
                 const marker = DEFINITION_MARKER_LINE.exec(text);
                 if (marker) {
-                    if (marker[1].split('>').length !== item[1].split('>').length) return false;
-                    return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal);
+                    if (marker[1].split('>').length !== item[1].split('>').length) return null;
+                    return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal) ? [previous, marker] : null;
                 }
-                if (!/^[ \t]+\S/.test(text)) return false;
+                if (!/^[ \t]+\S/.test(text)) return null;
                 above = previous;
             }
-            return false;
+            return null;
+        };
+        // Whether that marker line opens an item: its list holds it, and the
+        // list's first item is no lazy text of a paragraph above (`p` over
+        // `- a` over `  - :: t`). Verdicts are kept per input, so a long
+        // list is read once.
+        const opensItemUnder = (at, item) => {
+            if (definitionItemSource !== source) {
+                definitionItemSource = source;
+                definitionItemVerdicts.clear();
+            }
+            const chain = [];
+            let verdict = false;
+            for (let parent = parentItem(at, item); parent; parent = parentItem(...parent)) {
+                const [start] = parent;
+                if (definitionItemVerdicts.has(start)) {
+                    verdict = definitionItemVerdicts.get(start);
+                    break;
+                }
+                chain.push(start);
+                if (!inParagraph(source, start)) {
+                    verdict = true;
+                    break;
+                }
+            }
+            for (const start of chain) definitionItemVerdicts.set(start, verdict);
+            return verdict;
         };
         read: for (;;) {
             let top = start;
