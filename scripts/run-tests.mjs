@@ -24,6 +24,7 @@ for (const file of [
     'tests/hljs-crlf-run-time-test.js',
     'tests/include-and-definition-shapes-test.js',
     'tests/include-and-definition-time-test.js',
+    'tests/prism-definition-run-time-test.js',
     'tests/definition-under-list-item-test.js',
     'tests/quote-lazy-definition-test.js',
     'tests/titled-div-braced-comment-test.js',
