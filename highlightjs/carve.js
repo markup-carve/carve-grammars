@@ -202,8 +202,51 @@ function adaptGrammar(grammar, hljs) {
         { ...hashHeading, begin: new RegExp(lineStart + '={1,6} +(?=\\S)') },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
+    guardLeadingLookbehinds(grammar);
     (grammar.compilerExtensions ??= []).push(isolateResumeMatchers);
     return grammar;
+}
+
+/*
+ * A mode's matcher joins every begin into one alternation, far past the size
+ * V8 still optimizes, so each alternative is tried at every position. A begin
+ * that opens on a lookbehind (often over the Unicode word class) pays for that
+ * lookbehind everywhere before its first character can fail. A lookahead on
+ * that character, which the begin consumes next anyway, fails first.
+ */
+function leadingLiteral(source) {
+    let at = 0;
+    while (source.startsWith('(?<!', at) || source.startsWith('(?<=', at)) {
+        let depth = 0;
+        let inClass = false;
+        for (; at < source.length; at++) {
+            const c = source[at];
+            if (c === '\\') at++;
+            else if (inClass) inClass = c !== ']';
+            else if (c === '[') inClass = true;
+            else if (c === '(') depth++;
+            else if (c === ')' && --depth === 0) break;
+        }
+        if (depth !== 0) return null;
+        at++;
+    }
+    if (at === 0) return null;
+    const c = source[at];
+    if (c === '\\') return /[^\w\s]/.test(source[at + 1] ?? '') && !/[*+?{]/.test(source[at + 2] ?? '') ? source.slice(at, at + 2) : null;
+    if (c === undefined || /[\w\s^$.|?*+()[\]{}]/.test(c) || /[*+?{]/.test(source[at + 1] ?? '')) return null;
+    return c;
+}
+function guardLeadingLookbehinds(grammar) {
+    const seen = new WeakSet();
+    (function walk(node) {
+        if (!node || typeof node !== 'object' || seen.has(node) || node instanceof RegExp) return;
+        seen.add(node);
+        if (node.begin instanceof RegExp) {
+            const literal = leadingLiteral(node.begin.source);
+            if (literal) node.begin = new RegExp('(?=' + literal + ')' + node.begin.source, node.begin.flags);
+        }
+        for (const value of Object.values(node)) walk(value);
+    })(grammar);
 }
 
 /*
@@ -212,9 +255,11 @@ function adaptGrammar(grammar, hljs) {
  * objects (`opts.position`), so the last one built renumbers the rules for all
  * the others. The matchers live on the compiled mode, so which rules a resumed
  * scan skips depended on what earlier highlight() calls had refused
- * (carve-grammars#992). Each resume matcher gets its own copies of the rules.
+ * (carve-grammars#992). Each resume matcher gets its own copies of the rules,
+ * and a resume after a full-matcher fallback counts from that matcher's rule.
  * Any other matcher shape is left alone.
  */
+const NEVER = /(?!)/;
 function isolateResumeMatchers(mode) {
     let matcher;
     Object.defineProperty(mode, 'matcher', {
@@ -228,12 +273,27 @@ function isolateResumeMatchers(mode) {
             value.getMatcher = function (index) {
                 if (this.multiRegexes[index]) return this.multiRegexes[index];
                 const rules = this.rules;
-                this.rules = rules.map(([re, opts]) => [re, { ...opts }]);
+                // The line-break stop only bounds resumed scans (see CONTAINS).
+                this.rules = rules.map(([re, opts]) => [index === 0 && opts.rule?.resumeStop ? NEVER : re, { ...opts }]);
                 try {
                     return build.call(this, index);
                 } finally {
                     this.rules = rules;
                 }
+            };
+            // When nothing matches at the resumed position, exec falls back to
+            // the full matcher one character on, then adds that match's number
+            // (counted from rule 0) to the old resume index. A refusal of that
+            // match then resumed past rules never tried there (carve-grammars#994).
+            const exec = value.exec;
+            if (typeof exec !== 'function' || typeof value.count !== 'number') return;
+            value.exec = function (source) {
+                const resumedAt = this.regexIndex !== 0 ? this.lastIndex : -1;
+                const result = exec.call(this, source);
+                if (resumedAt !== -1 && result && result.index !== resumedAt) {
+                    this.regexIndex = result.position + 1 === this.count ? 0 : result.position + 1;
+                }
+                return result;
             };
         },
     });
@@ -4193,7 +4253,7 @@ function isolateResumeMatchers(mode) {
     // C2-B-024: a quote marker, a term, an attribute line or an include directive
     // directly under paragraph text is a lazy line of that paragraph.
     {
-        const previousLine = (input, at) => (at === 0 ? -1 : lineStartBefore(input, at - 1));
+        const previousLine = previousLineStart;
         const blank = /^\uFEFF?[ \t]*(?:>[ \t]*)*$/;
         const commentOnly = /^\uFEFF?[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)/;
         const boundary = /^\uFEFF?[ \t]*(?:#{1,6}(?: |$)|={1,6} |`{3,}|:{3,}|%{3,}|%%[ \t]*#(?:region|endregion)\b|(?:\*{3,}|-{3,}|_{3,})[ \t]*$|\|.*\||\{[^{}]*\}[ \t]*$|\[\^?[^\]]+\]:(?: |$)|\*\[[A-Za-z0-9]+\]:|\^ |:: |\+[ \t]*$)/;
@@ -4300,8 +4360,10 @@ function isolateResumeMatchers(mode) {
     }
 
     // A refused begin resumes on the rules after it, which may find nothing for
-    // the rest of the document; a line break stops that scan at the line.
-    CONTAINS.push({ begin: /\n/, relevance: 0 });
+    // the rest of the document; a line break stops that scan at the line. Only
+    // resume matchers carry it: in the full matcher it would end every scan at
+    // the line and cost one more scan per line (isolateResumeMatchers).
+    CONTAINS.push({ begin: /\n/, relevance: 0, resumeStop: true });
 
     return {
         // `crv` is the canonical file extension, and every surface this package
