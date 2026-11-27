@@ -255,7 +255,8 @@ function guardLeadingLookbehinds(grammar) {
  * objects (`opts.position`), so the last one built renumbers the rules for all
  * the others. The matchers live on the compiled mode, so which rules a resumed
  * scan skips depended on what earlier highlight() calls had refused
- * (carve-grammars#992). Each resume matcher gets its own copies of the rules.
+ * (carve-grammars#992). Each resume matcher gets its own copies of the rules,
+ * and a resume after a full-matcher fallback counts from that matcher's rule.
  * Any other matcher shape is left alone.
  */
 function isolateResumeMatchers(mode) {
@@ -277,6 +278,20 @@ function isolateResumeMatchers(mode) {
                 } finally {
                     this.rules = rules;
                 }
+            };
+            // When nothing matches at the resumed position, exec falls back to
+            // the full matcher one character on, then adds that match's number
+            // (counted from rule 0) to the old resume index. A refusal of that
+            // match then resumed past rules never tried there (carve-grammars#994).
+            const exec = value.exec;
+            if (typeof exec !== 'function' || typeof value.count !== 'number') return;
+            value.exec = function (source) {
+                const resumedAt = this.regexIndex !== 0 ? this.lastIndex : -1;
+                const result = exec.call(this, source);
+                if (resumedAt !== -1 && result && result.index !== resumedAt) {
+                    this.regexIndex = result.position + 1 === this.count ? 0 : result.position + 1;
+                }
+                return result;
             };
         },
     });
