@@ -203,6 +203,7 @@ function adaptGrammar(grammar, hljs) {
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
     guardLeadingLookbehinds(grammar);
+    crlfLineEnds(grammar);
     (grammar.compilerExtensions ??= []).push(isolateResumeMatchers);
     return grammar;
 }
@@ -246,6 +247,61 @@ function guardLeadingLookbehinds(grammar) {
             if (literal) node.begin = new RegExp('(?=' + literal + ')' + node.begin.source, node.begin.flags);
         }
         for (const value of Object.values(node)) walk(value);
+    })(grammar);
+}
+
+/*
+ * A CR before an LF is part of the line ending (C2-B-010), so a CRLF document
+ * reads like its LF copy (carve-grammars#995). The rules are written for LF:
+ * `\n` matched the LF alone and `$` held between the CR and the LF, which left
+ * the CR inside a scope or read one CRLF as two line ends. Each mode regex gets
+ * a line break that takes the CR with it and a `$` that does not stop inside a
+ * CRLF. Input without a CR matches exactly as before; a lone CR reads as it did.
+ */
+// `\r?\n` costs V8 far more to compile and run than this alternation.
+const LINE_BREAK = '(?:\\r\\n|\\n)';
+// Read right to left, the LF alone could match and leave its CR to the atom before.
+const LOOKBEHIND_LINE_BREAK = '(?:\\r\\n|(?<!\\r)\\n)';
+function crlfSource(source) {
+    let out = '';
+    let afterCR = false;
+    const lookbehinds = [];
+    for (let at = 0; at < source.length; at++) {
+        const c = source[at];
+        const wasAfterCR = afterCR;
+        afterCR = false;
+        if (c === '[') {
+            const start = at;
+            if (source[at + 1] === '^') at++;
+            for (at++; at < source.length && source[at] !== ']'; at++) if (source[at] === '\\') at++;
+            out += source.slice(start, at + 1);
+        } else if (c !== '\\') {
+            if (c === '(') lookbehinds.push(source.startsWith('(?<=', at) || source.startsWith('(?<!', at));
+            else if (c === ')') lookbehinds.pop();
+            afterCR = wasAfterCR && c === '?';
+            out += c === '$' ? '$(?!(?<=\\r)\\n)' : c;
+        } else if ((source.startsWith('\\r?\\n', at) && !/[*+?{]/.test(source[at + 5] ?? '')) || (source[at + 1] === 'n' && !wasAfterCR)) {
+            // A `\n` after a bare `\r` (`\r\n?`) and a quantified `\r?\n` stay as written.
+            const end = source[at + 1] === 'n' ? at + 2 : at + 5;
+            out += lookbehinds.includes(true) ? LOOKBEHIND_LINE_BREAK : LINE_BREAK;
+            at = end - 1;
+        } else {
+            out += source.slice(at, at + 2);
+            afterCR = source[at + 1] === 'r';
+            at++;
+        }
+    }
+    return out;
+}
+function crlfLineEnds(grammar) {
+    const seen = new WeakSet();
+    (function walk(node) {
+        if (!node || typeof node !== 'object' || seen.has(node) || node instanceof RegExp) return;
+        seen.add(node);
+        for (const [key, value] of Object.entries(node)) {
+            if (!(value instanceof RegExp)) walk(value);
+            else if (crlfSource(value.source) !== value.source) node[key] = new RegExp(crlfSource(value.source), value.flags);
+        }
     })(grammar);
 }
 
@@ -749,7 +805,7 @@ function isolateResumeMatchers(mode) {
     // close an attached block: `a}{.b}`, `x {.a}{.b}` and a refused `{.a` + `}`
     // run are text (carve-grammars#847). An empty `{}` joins only a bracketed
     // span's run (`[a]{}{.b}`; `*x*{}{.b}` is text).
-    const ATTRIBUTE_PROBE = new RegExp(ATTRIBUTE.begin.source, 'y');
+    const ATTRIBUTE_PROBE = new RegExp(crlfSource(ATTRIBUTE.begin.source), 'y');
     // The `{` that opens the block a `}` at `close` ends: quoted values are skipped, -1 when none.
     const blockOpener = (source, close) => {
         let open = source.lastIndexOf('{', close - 1);
@@ -1745,7 +1801,7 @@ function isolateResumeMatchers(mode) {
         end: /\n|^(?<![^\r\n])[ \t]*>((?: >)*) (:{3,})[ \t]*$(?![^\r\n])/,
         'on:end': (m, resp) => {
             if (m[2] === undefined) {
-                if (!resp.data.refused && /^[ \t]*>/.test(m.input.slice(m.index + 1))) resp.ignoreMatch();
+                if (!resp.data.refused && /^[ \t]*>/.test(m.input.slice(m.index + m[0].length))) resp.ignoreMatch();
             } else if (m[1] !== resp.data.prefix || m[2].length !== resp.data.width) resp.ignoreMatch();
         },
         contains: [BLOCK_COMMENT_ON_QUOTE_MARKER_LINE, UNTERMINATED_BLOCK_COMMENT],
@@ -3113,7 +3169,7 @@ function isolateResumeMatchers(mode) {
             returnEnd: true,
             'on:end': (m, resp) => {
                 const open = fencesOf(data, m);
-                const next = m.input[m.index + 1];
+                const next = m.input[m.index + m[0].length];
                 if (!open[open.length - 1]?.folds && (next === undefined || /[ \t\r\n]/.test(next))) {
                     resp.ignoreMatch();
                     return;
