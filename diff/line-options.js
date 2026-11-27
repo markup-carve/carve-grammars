@@ -26,6 +26,28 @@ export function lineStart(value) {
   return typeof value === 'string' && positive(value) ? BigInt(value) : 1n
 }
 
+// Split at text newlines while cloning token wrappers into each affected line.
+function splitNodes(nodes, document) {
+  const lines = [[]]
+  for (const node of nodes) {
+    let pieces
+    if (node.nodeType === 3) {
+      pieces = node.textContent.split('\n').map((text) => text ? [document.createTextNode(text)] : [])
+    } else if (node.nodeType === 1) {
+      pieces = splitNodes([...node.childNodes], document).map((children) => {
+        const copy = node.cloneNode(false)
+        copy.append(...children)
+        return [copy]
+      })
+    } else {
+      pieces = [[node.cloneNode(true)]]
+    }
+    lines.at(-1).push(...pieces[0])
+    for (const piece of pieces.slice(1)) lines.push(piece)
+  }
+  return lines
+}
+
 /** Decorate a rendered `<pre><code>` from either a plain or captioned block. */
 export function applyLineOptions(preElement) {
   const code = preElement?.querySelector(':scope > code')
@@ -35,11 +57,12 @@ export function applyLineOptions(preElement) {
   if (!numbered && highlight === null) return
   let lines = [...code.children].filter((child) => child.classList.contains('line'))
   if (!lines.length) {
-    const source = code.textContent.replace(/\n$/, '')
-    code.replaceChildren(...source.split('\n').flatMap((value, index) => {
+    const pieces = splitNodes([...code.childNodes], code.ownerDocument)
+    if (code.textContent.endsWith('\n')) pieces.pop()
+    code.replaceChildren(...pieces.flatMap((children, index) => {
       const line = code.ownerDocument.createElement('span')
       line.className = 'line'
-      line.textContent = value
+      line.append(...children)
       return index ? [code.ownerDocument.createTextNode('\n'), line] : [line]
     }))
     lines = [...code.children]

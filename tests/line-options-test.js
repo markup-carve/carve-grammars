@@ -21,6 +21,12 @@ assert.deepEqual([...pre.querySelectorAll('.highlighted-line')].map((line) => li
 applyLineOptions(pre)
 assert.equal(pre.querySelectorAll('.line').length, 3)
 
+document.body.innerHTML = '<pre class="line-numbers"><code><span class="token">a\nb</span>\n<span class="other">c</span></code></pre>'
+applyLineOptions(document.querySelector('pre'))
+assert.deepEqual([...document.querySelectorAll('.line')].map((line) => line.textContent), ['a', 'b', 'c'])
+assert.deepEqual([...document.querySelectorAll('.line .token')].map((token) => token.textContent), ['a', 'b'])
+assert.equal(document.querySelector('.line .other').textContent, 'c')
+
 const attrs = { classes: ['line-numbers'], keyValues: [['data-line-start', '42'], ['data-highlight', '1,3-5']] }
 const transformer = lineOptionsTransformer(attrs)
 transformer.preprocess('a\nb\nc')
