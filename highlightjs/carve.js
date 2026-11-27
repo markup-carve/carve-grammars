@@ -3776,6 +3776,96 @@ function adaptGrammar(grammar, hljs) {
     const CONTAINER_COMMENT_FENCE = containerFence(false, '%{3,}');
     BLOCKQUOTE.contains.splice(BLOCKQUOTE.contains.indexOf(UNTERMINATED_BLOCK_COMMENT), 0, containerFence(true, CONTAINER_FENCE_LINE));
 
+    /*
+     * Snippets (C2-B-236, C2-I-128), the TextMate rules' spelling. A definition
+     * `{$name}: value` stands at column 0 outside every container; its marker
+     * parts and glued blocks hold no id, and its value is inline content of
+     * that line. A use `{{ $name }}` goes ahead of INCLUDE_DIRECTIVE, which
+     * would read `$name` as a path; a name of another shape, no space, a tab
+     * or an option makes no use and stays with the include rule.
+     */
+    const SNIPPET_NAME = '[A-Za-z0-9_][A-Za-z0-9_-]*';
+    const SNIPPET_PART_TAIL = /:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*'|[^\s"'{}|\\]+)|[A-Za-z][A-Za-z0-9_-]*/.source;
+    const SNIPPET_DEFINITION_PART = '(?:\\.[A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
+    const SNIPPET_USE_PART = '(?:[.#][A-Za-z0-9_-]+|' + SNIPPET_PART_TAIL + ')';
+    const snippetBlock = (part) => '\\{ *' + part + '(?: +' + part + ')* *\\}';
+    // Only below a blank line, a block line, an attribute line with no id or
+    // another definition: under paragraph text, a quote line or an item it is
+    // a lazy line (C2-B-024), as a reference definition there is, and under an
+    // attribute line with an id it is a paragraph (#6865). The line above is
+    // refused in the regex, since each ignoreMatch builds highlight.js a new
+    // matcher; a run of definition lines is traced to its first line once.
+    const SNIPPET_HEAD = '\\{\\$' + SNIPPET_NAME + '(?:(?: +' + SNIPPET_DEFINITION_PART + ')+ *)?\\}(?:'
+        + snippetBlock(SNIPPET_DEFINITION_PART) + ')*: (?=[ \\t]*[^ \\t\\r\\n])';
+    const SNIPPET_RUN = '\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:|' + SNIPPET_HEAD
+        + '|\\{(?:"[^"\\r\\n]*"|\'[^\'\\r\\n]*\'|[^{}#"\'\\r\\n])*\\}[ \\t]*\\r?$';
+    const SNIPPET_ABOVE = '\\uFEFF?(?:[ \\t]*\\r?$|[ \\t]*%%|#{1,6} |={1,6} |`{3,}|~{3,}|:{3,}|(?:\\*{3,}|-{3,}|_{3,})[ \\t]*\\r?$'
+        + '|\\||' + SNIPPET_RUN + ')';
+    const snippetRunLine = RegExp('^\\uFEFF?(?:' + SNIPPET_RUN + ')');
+    const snippetAboveLine = RegExp('^(?:' + SNIPPET_ABOVE + ')');
+    let snippetInput = null;
+    let snippetVerdicts = null;
+    const snippetRunAllowed = (input, at) => {
+        if (input !== snippetInput) {
+            snippetInput = input;
+            snippetVerdicts = new Map();
+        }
+        const run = [];
+        let start = at;
+        let allowed;
+        for (;;) {
+            if (snippetVerdicts.has(start)) {
+                allowed = snippetVerdicts.get(start);
+                break;
+            }
+            run.push(start);
+            if (start === 0) {
+                allowed = true;
+                break;
+            }
+            const above = previousLineStart(input, start);
+            const text = lineAt(input, above);
+            if (!snippetRunLine.test(text)) {
+                allowed = snippetAboveLine.test(text);
+                break;
+            }
+            start = above;
+        }
+        for (const line of run) snippetVerdicts.set(line, allowed);
+        return allowed;
+    };
+    const SNIPPET_DEFINITION = {
+        begin: [
+            RegExp('(?=\\uFEFF?\\{\\$)^(?<![^\\r\\n])(?<!(?<![^\\r\\n])(?!' + SNIPPET_ABOVE + ')[^\\r\\n]*\\r?\\n)(?:(?<![\\s\\S])\\uFEFF)?\\{\\$'),
+            RegExp(SNIPPET_NAME),
+            RegExp('(?:(?: +' + SNIPPET_DEFINITION_PART + ')+ *)?'),
+            /\}/,
+            RegExp('(?:' + snippetBlock(SNIPPET_DEFINITION_PART) + ')*'),
+            /:(?= (?=[ \t]*[^ \t\r\n]))/,
+        ],
+        beginScope: { 1: 'punctuation', 2: 'variable', 3: 'attr', 4: 'punctuation', 5: 'attr', 6: 'punctuation' },
+        'on:begin': (m, resp) => {
+            if (!snippetRunAllowed(m.input, lineStartBefore(m.input, m.index))) resp.ignoreMatch();
+        },
+        end: /(?=\r\n|\r|\n)|$(?![\s\S])/,
+        relevance: 0,
+    };
+    const SNIPPET_USE = {
+        className: 'template-variable',
+        begin: RegExp('\\{\\{(?= +\\$' + SNIPPET_NAME + ' +\\}\\})'),
+        beginScope: 'punctuation',
+        end: /\}\}/,
+        endScope: 'punctuation',
+        contains: [{ className: 'variable', begin: RegExp('\\$' + SNIPPET_NAME) }],
+        relevance: 0,
+    };
+    // A use carries no attributes: valid blocks glued after it are text. A
+    // braced or critic comment there is no valid block and keeps its scope.
+    const SNIPPET_USE_BLOCKS = {
+        begin: RegExp('(?<=\\{\\{ +\\$' + SNIPPET_NAME + ' +\\}\\})(?:' + snippetBlock(SNIPPET_USE_PART) + ')+'),
+        relevance: 0,
+    };
+
     const CONTAINS = [
         // Block-level elements (order matters - more specific first)
         ...FRONT_MATTER,
@@ -3812,6 +3902,7 @@ function adaptGrammar(grammar, hljs) {
         // A marker after a block inside the list (an item, a fence) ended the entry.
         DESCRIPTION_MARKER,
         abbreviationOnDescription('[ \\t]+'),
+        SNIPPET_DEFINITION, // {$name}: value - column 0, top level only
         FOOTNOTE_DEF,      // Must be before REFERENCE_DEF
         ABBREVIATION_DEF,  // Must be before REFERENCE_DEF (*[ABBR]: vs [ref]:)
         ABBREVIATION_ON_MARKER_LINE,
@@ -3895,7 +3986,7 @@ function adaptGrammar(grammar, hljs) {
     // bare opener, which BARE_FENCE_LINE stands in for. DIV_BLOCK is in that
     // list, so a div nests in a div.
     const IN_CONTAINER = CONTAINS
-        .filter((mode) => !LATER_METADATA.includes(mode))
+        .filter((mode) => !LATER_METADATA.includes(mode) && mode !== SNIPPET_DEFINITION)
         .map((mode) => (mode === BARE_DIV_BLOCK ? BARE_FENCE_LINE : mode));
     DIV_BLOCK.contains = IN_CONTAINER;
     BARE_DIV_BLOCK.contains = IN_CONTAINER;
@@ -4089,6 +4180,28 @@ function adaptGrammar(grammar, hljs) {
         BLOCKQUOTE.contains.splice(sink, 0, ...inline);
         const content = BLOCKQUOTE.contains.find((mode) => mode.contains?.some((child) => child.begin?.source === '(?<=[ \\t])%%'));
         content.contains.push(...inline.slice(ONE_LINE_VERBATIM.length + 4));
+    }
+
+    // A definition's value reads as a quoted line's text does, bounded by its
+    // line. Every inline list reads a use: ahead of the include directive, or
+    // first where there is none (no other rule opens on `{{`).
+    {
+        const lineBound = (mode) => (mode.end ? { ...mode, endsWithParent: true } : mode);
+        SNIPPET_DEFINITION.contains = [ESCAPE, ...ONE_LINE_VERBATIM, RAW_FORMAT, DELIMITED_COMMENT, LINE_COMMENT, ATTRIBUTE_EMPTY,
+            SPAN_ATTRIBUTE, ATTRIBUTE, ATTRIBUTE_UNATTACHED, CROSS_REF, TAG, SYMBOL, ...LINE_INLINE].map(lineBound);
+        const inline = [INCLUDE_DIRECTIVE, STRONG, EMPHASIS, INLINE_CODE, LINK];
+        const isInline = (mode) => inline.some((known) => mode === known || (mode.begin && mode.begin === known.begin));
+        const seen = new Set();
+        const visit = (mode) => {
+            if (!mode || typeof mode !== 'object' || seen.has(mode)) return;
+            seen.add(mode);
+            for (const child of [].concat(mode.contains ?? [], mode.variants ?? [], mode.starts ?? [])) visit(child);
+            const list = mode.contains;
+            if (!Array.isArray(list) || list.includes(SNIPPET_USE) || !list.some((child) => child && typeof child === 'object' && isInline(child))) return;
+            const at = list.findIndex((child) => child === INCLUDE_DIRECTIVE || child?.begin === INCLUDE_DIRECTIVE.begin);
+            list.splice(at === -1 ? 0 : at, 0, SNIPPET_USE, SNIPPET_USE_BLOCKS);
+        };
+        visit({ contains: CONTAINS });
     }
 
     // A refused begin resumes on the rules after it, which may find nothing for
