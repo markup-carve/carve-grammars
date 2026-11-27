@@ -4281,52 +4281,62 @@ if (Prism?.languages.carve) {
             return [previous, source.slice(previous, end)];
         };
         // Whether the marker line read as `item` at `at` is an item of a list
-        // above: the nearest unindented line above is a marker line, and a
-        // nested ordered marker is a first one, the only kind that interrupts
-        // a paragraph.
+        // above: the nearest unindented line above is a marker line at the
+        // same quote depth, and a nested ordered marker is a first one, the
+        // only kind that interrupts a paragraph.
         const opensItemUnder = (at, item) => {
             const column = item[1].length;
             const ordinal = item[2] ?? item[3] ?? item[4];
             for (let above = at; above > 0;) {
                 const [previous, text] = lineBefore(above);
                 const marker = DEFINITION_MARKER_LINE.exec(text);
-                if (marker) return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal);
+                if (marker) {
+                    if (marker[1].split('>').length !== item[1].split('>').length) return false;
+                    return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal);
+                }
                 if (!/^[ \t]+\S/.test(text)) return false;
                 above = previous;
             }
             return false;
         };
-        let top = start;
-        while (top > 0) {
-            const [previous, line] = lineBefore(top);
-            if (!DEFINITION_SKIP.test(line)) break;
-            top = previous;
+        read: for (;;) {
+            let top = start;
+            while (top > 0) {
+                const [previous, line] = lineBefore(top);
+                if (!DEFINITION_SKIP.test(line)) break;
+                top = previous;
+            }
+            let entry = top;
+            let term = false;
+            // The least indent of the lines between the run and its nearest term.
+            let indent = Infinity;
+            while (entry > 0) {
+                const [previous, line] = lineBefore(entry);
+                // A description directly above takes the run as its lazy line.
+                if (!term && DEFINITION_DESCRIPTION_LINE.test(line)) return top;
+                const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
+                // A heading or comment-only line opening an item right above: the
+                // run stands under an item.
+                if (!term && item && item[5] === undefined && indent === Infinity) {
+                    if (opensItemUnder(previous, item)) return 0;
+                    // Otherwise the line holds the run as the lines above would.
+                    start = previous;
+                    continue read;
+                }
+                if (DEFINITION_TERM_LINE.test(line)) {
+                    // A term holds only the lines indented past its `::`; a line
+                    // short of it is paragraph text of the item (#990).
+                    if (!term && indent <= line.indexOf('::')) return top;
+                    term = true;
+                    // A term on a marker line opens an item; under item content
+                    // that item stands, so nothing above holds the run (#990).
+                    if (item?.[5] && opensItemUnder(previous, item)) return 0;
+                } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+                else if (!term) indent = Math.min(indent, line.search(/\S/));
+                entry = previous;
+            }
+            return term ? entry : top;
         }
-        let entry = top;
-        let term = false;
-        // The least indent of the lines between the run and its nearest term.
-        let indent = Infinity;
-        while (entry > 0) {
-            const [previous, line] = lineBefore(entry);
-            // A description directly above takes the run as its lazy line.
-            if (!term && DEFINITION_DESCRIPTION_LINE.test(line)) return top;
-            const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
-            // A heading or comment-only line opening an item right above: the
-            // run stands under an item, else the line reads as it would alone.
-            if (!term && item && item[5] === undefined && indent === Infinity) return opensItemUnder(previous, item) ? 0 : previous;
-            if (DEFINITION_TERM_LINE.test(line)) {
-                // A term holds only the lines indented past its `::`; a line
-                // short of it is paragraph text of the item (#990).
-                if (!term && indent <= line.indexOf('::')) return top;
-                term = true;
-                // A term on a marker line opens an item; under item content
-                // that item stands, so nothing above holds the run (#990).
-                if (item?.[5] && opensItemUnder(previous, item)) return 0;
-            } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
-            else if (!term) indent = Math.min(indent, line.search(/\S/));
-            entry = previous;
-        }
-        return term ? entry : top;
     }
     // Every line of a run of definitions shares the run's verdict, kept per
     // source so a long run is read once rather than once per line.
