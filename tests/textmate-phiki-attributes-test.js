@@ -37,4 +37,10 @@ for (const source of ['~`a`~{.c}\n', '~[a](u)~{.c}\n']) {
     assert.equal(tokenize(source).some(({ scope }) => scope.includes('markup.raw.inline.carve') || scope.includes('markup.underline.link.carve')), true, source);
 }
 assert.equal(tokenize('*a * b*{.c}\n').some(({ scope, text }) => text === '.c' && scope.includes('meta.attributes.carve')), true);
+for (const source of [
+    '[a[b[c[d]]]](u){.x}\n', '[a `]` b](u){.x}\n', '![a[b[c[d]]]](u){.x}\n',
+    '[a](){.x}\n', '![a](){.x}\n',
+]) {
+    assert.equal(tokenize(source).filter(({ scope }) => scope.includes('meta.attributes.carve')).map(({ text }) => text).join(''), '{.x}', source);
+}
 console.log(`TextMate Phiki attributes: ${count} host variants match prior scopes`);
