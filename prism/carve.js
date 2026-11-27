@@ -4429,7 +4429,8 @@ if (Prism?.languages.carve) {
             for (var i = source.length - 1; i >= 0; i--) {
                 var c = source.charAt(i);
                 if (c === '\n' || c === '\r') {
-                    if (/^[ \t]*$/.test(source.slice(i + 1, lineEnd))) pending = -1;
+                    // The `\r` of a CRLF ends the line its `\n` already read.
+                    if (!(c === '\r' && source.charAt(i + 1) === '\n') && /^[ \t]*$/.test(source.slice(i + 1, lineEnd))) pending = -1;
                     lineEnd = i;
                 } else if (c === delimiter && (/\S/.test(source.charAt(i - 1)) || source.charAt(i + 1) === '}')) {
                     pending = i;

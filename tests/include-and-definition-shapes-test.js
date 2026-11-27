@@ -101,4 +101,8 @@ for (const [source, expected] of [
         assert.equal(read(source), expected, `${name}: definition in ${JSON.stringify(source)}`);
     }
 }
+// Prism's closer filter reads a CRLF as one line break, not as a blank line.
+for (const [source, type] of [['*abc\r\ndef*', 'bold'], ['/abc\r\ndef/', 'italic'], ['*abc\r\n\r\ndef*', null]]) {
+    assert.equal(prismCovered(source, ['bold', 'italic']), type ? source : '', `prism: ${JSON.stringify(source)}`);
+}
 console.log('include directives and definitions: Prism, highlight.js and TextMate agree with carve-js');
