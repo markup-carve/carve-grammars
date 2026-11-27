@@ -4359,17 +4359,25 @@ if (Prism?.languages.carve) {
                 }
                 if (DEFINITION_TERM_LINE.test(line)) {
                     // A term holds only the lines indented past its `::`; a line
-                    // short of it, a description too, takes the run as its
-                    // lazy line (#990).
-                    if (!term && indent <= definitionColumn(line, line.indexOf('::'))) return top;
+                    // short of it, a description too, is no part of it (#990).
                     // Under a term on a marker line, an indented marker that
-                    // can interrupt it opens a nested list, whose paragraph
-                    // takes the run.
-                    if (!term && nested && item?.[5]) return top;
+                    // can interrupt it opens a nested list instead. An indented
+                    // term that holds neither may sit in an enclosing one.
+                    if (!term && (indent <= definitionColumn(line, line.indexOf('::')) || (nested && item?.[5]))) {
+                        if (!/^[ \t]+\S/.test(line)) return top;
+                        indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
+                        entry = previous;
+                        continue;
+                    }
                     term = true;
-                    // A term on a marker line opens an item; under item content
-                    // that item stands, so nothing above holds the run (#990).
-                    if (item?.[5] && opensItemUnder(previous, item)) return 0;
+                    // A term on a marker line opens an item: under item content
+                    // the item stands, so nothing above holds the run; else the
+                    // line holds the run as the lines above would (#990).
+                    if (item?.[5]) {
+                        if (opensItemUnder(previous, item)) return 0;
+                        start = previous;
+                        continue read;
+                    }
                 } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
                 else if (!term) {
                     indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));

@@ -67,6 +67,11 @@ const rows = [
     ['- :: t\n   1. x', false, ['prism', 'hljs']],
     ['- :: t\n   2. x', true, ['prism', 'hljs']],
     [':: t\n  - x', true, ['prism', 'hljs']],
+    [':: t\n  - :: t\n  more', true, ['prism', 'hljs']],
+    ['- :: t\n  - :: u\n  more', false, ['prism', 'hljs']],
+    ['  x\na. :: t', false, ['prism', 'hljs']],
+    ['  x\n- :: t', false, ['prism', 'hljs']],
+    ['- :: s\n> - :: t', true, ['prism', 'hljs']],
     ['- # h\n  more', false, all],
     ['- %% c\n  more', false, all],
 ];
