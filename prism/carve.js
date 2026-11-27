@@ -4293,21 +4293,27 @@ if (Prism?.languages.carve) {
         // sibling or child: the nearest unindented line above, at the same
         // quote depth. A nested ordered marker must be a first one, the only
         // kind that interrupts a paragraph.
-        const parentItem = (at, item) => {
-            const column = item[1].length;
+        function parentItem(at, item) {
+            // Columns count from the last quote marker.
+            const column = item[1].replace(/^.*>/, '').length;
             const ordinal = item[2] ?? item[3] ?? item[4];
             for (let above = at; above > 0;) {
                 const [previous, text] = lineBefore(above);
                 const marker = DEFINITION_MARKER_LINE.exec(text);
                 if (marker) {
                     if (marker[1].split('>').length !== item[1].split('>').length) return null;
-                    return column <= marker[1].length || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal) ? [previous, marker] : null;
-                }
-                if (!/^[ \t]+\S/.test(text)) return null;
+                    const markerColumn = marker[1].replace(/^.*>/, '').length;
+                    if (column >= markerColumn) {
+                        return column === markerColumn || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal) ? [previous, marker] : null;
+                    }
+                    // A deeper marker in an item further up is that item's
+                    // content; one in no item is a sibling.
+                    if (!parentItem(previous, marker)) return [previous, marker];
+                } else if (!/^[ \t]+\S/.test(text)) return null;
                 above = previous;
             }
             return null;
-        };
+        }
         // Whether that marker line opens an item: its list holds it, and the
         // list's first item is no lazy text of a paragraph above (`p` over
         // `- a` over `  - :: t`). Verdicts are kept per input, so a long
@@ -4351,6 +4357,9 @@ if (Prism?.languages.carve) {
             // a description no term holds is paragraph text.
             let termStart = -1;
             let orphan = false;
+            // The least indent of the lines between that term and the next
+            // one up, which holds them only when they reach past its `::`.
+            let between = Infinity;
             while (entry > 0) {
                 const [previous, line] = lineBefore(entry);
                 const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
@@ -4379,9 +4388,11 @@ if (Prism?.languages.carve) {
                         entry = previous;
                         continue;
                     }
+                    if (term && between <= definitionColumn(line, line.indexOf('::'))) return termStart;
                     term = true;
                     termStart = previous;
                     orphan = false;
+                    between = Infinity;
                     // A term on a marker line opens an item: under item content
                     // the item stands, so nothing above holds the run; else the
                     // line holds the run as the lines above would (#990).
@@ -4392,7 +4403,8 @@ if (Prism?.languages.carve) {
                     }
                 } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) orphan = true;
                 else if (!/^[ \t]+\S/.test(line)) break;
-                else if (!term) {
+                else if (term) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
+                else {
                     indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
                     const marker = DEFINITION_MARKER_LINE.exec(line);
                     const ordinal = marker && (marker[2] ?? marker[3] ?? marker[4]);
