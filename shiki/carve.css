@@ -45,6 +45,29 @@ html.dark .vp-code span[data-carve-highlight] {
   background: rgba(255, 213, 0, 0.18);
 }
 
+/* Code line options from C2-H-211. */
+.shiki.has-line-options .line,
+pre.has-line-options > code > .line {
+  display: inline-block;
+  width: 100%;
+}
+
+.shiki.has-line-numbers .line::before,
+pre.has-line-numbers > code > .line::before {
+  content: attr(data-line-number);
+  display: inline-block;
+  min-width: 3ch;
+  padding-right: 1ch;
+  color: var(--carve-line-number-color, #6e7781);
+  text-align: right;
+  user-select: none;
+}
+
+.shiki.has-line-options .line.highlighted-line,
+pre.has-line-options > code > .line.highlighted-line {
+  background: var(--carve-highlighted-line-background, rgb(255 213 0 / 18%));
+}
+
 /* Opt-in `{.diff}` presentation for output from diffCodeTransformer().
    Hosts may override these variables without depending on a site framework. */
 .shiki.has-diff {

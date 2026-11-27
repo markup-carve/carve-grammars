@@ -68,6 +68,10 @@
       "types": "./shiki/diff.d.ts",
       "default": "./shiki/diff.js"
     },
+    "./shiki/line-options": {
+      "types": "./shiki/line-options.d.ts",
+      "default": "./shiki/line-options.js"
+    },
     "./shiki/themes": {
       "types": "./shiki/themes.d.ts",
       "default": "./shiki/themes.js"

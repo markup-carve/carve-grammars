@@ -101,3 +101,5 @@ export function applyLanguageDiff(codeElement, highlightLine) {
   codeElement.innerHTML = renderLanguageDiff(codeElement.textContent || '', highlightLine);
   if (pre) pre.classList.add('has-diff');
 }
+
+export { applyLineOptions, parseHighlight, lineStart } from './line-options.js'

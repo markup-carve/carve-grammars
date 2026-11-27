@@ -41,6 +41,7 @@ for (const file of [
     'tests/package-exports-test.js',
     'tests/fence-languages-test.js',
     'tests/diff-test.js',
+    'tests/line-options-test.js',
     'tests/shiki-diff-test.js',
     'tests/client-diagram-test.js',
     'tests/kroki-test.js',
