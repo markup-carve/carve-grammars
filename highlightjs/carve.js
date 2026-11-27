@@ -202,8 +202,51 @@ function adaptGrammar(grammar, hljs) {
         { ...hashHeading, begin: new RegExp(lineStart + '={1,6} +(?=\\S)') },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
+    guardLeadingLookbehinds(grammar);
     (grammar.compilerExtensions ??= []).push(isolateResumeMatchers);
     return grammar;
+}
+
+/*
+ * A mode's matcher joins every begin into one alternation, far past the size
+ * V8 still optimizes, so each alternative is tried at every position. A begin
+ * that opens on a lookbehind (often over the Unicode word class) pays for that
+ * lookbehind everywhere before its first character can fail. A lookahead on
+ * that character, which the begin consumes next anyway, fails first.
+ */
+function leadingLiteral(source) {
+    let at = 0;
+    while (source.startsWith('(?<!', at) || source.startsWith('(?<=', at)) {
+        let depth = 0;
+        let inClass = false;
+        for (; at < source.length; at++) {
+            const c = source[at];
+            if (c === '\\') at++;
+            else if (inClass) inClass = c !== ']';
+            else if (c === '[') inClass = true;
+            else if (c === '(') depth++;
+            else if (c === ')' && --depth === 0) break;
+        }
+        if (depth !== 0) return null;
+        at++;
+    }
+    if (at === 0) return null;
+    const c = source[at];
+    if (c === '\\') return /[^\w\s]/.test(source[at + 1] ?? '') && !/[*+?{]/.test(source[at + 2] ?? '') ? source.slice(at, at + 2) : null;
+    if (c === undefined || /[\w\s^$.|?*+()[\]{}]/.test(c) || /[*+?{]/.test(source[at + 1] ?? '')) return null;
+    return c;
+}
+function guardLeadingLookbehinds(grammar) {
+    const seen = new WeakSet();
+    (function walk(node) {
+        if (!node || typeof node !== 'object' || seen.has(node) || node instanceof RegExp) return;
+        seen.add(node);
+        if (node.begin instanceof RegExp) {
+            const literal = leadingLiteral(node.begin.source);
+            if (literal) node.begin = new RegExp('(?=' + literal + ')' + node.begin.source, node.begin.flags);
+        }
+        for (const value of Object.values(node)) walk(value);
+    })(grammar);
 }
 
 /*
