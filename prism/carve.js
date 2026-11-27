@@ -4536,13 +4536,24 @@ if (Prism?.languages.carve) {
         const scan = new RegExp(pattern.source, flags);
         const atColumnZero = new RegExp(pattern.source, flags);
         const above = name === 'snippet-definition' ? snippetDefinitionLines : definitionLines;
+        // An adjacent definition remains in the same accepted run.
+        let acceptedSource = null;
+        let acceptedEnd = -1;
         // Greedy, so Prism scans the whole text and a marker before the
         // definition stays visible.
         atColumnZero.exec = function (source) {
             scan.lastIndex = this.lastIndex;
             let match;
             while ((match = scan.exec(source))) {
-                if (/^\uFEFF?[^ \t]/.test(match[0]) && definitionAllowed(source, match.index, above)) {
+                const breakLength = match.index - acceptedEnd;
+                const followsAccepted = source === acceptedSource && (
+                    (breakLength === 1 && (source[acceptedEnd] === '\n' || source[acceptedEnd] === '\r'))
+                    || (breakLength === 2 && source[acceptedEnd] === '\r' && source[acceptedEnd + 1] === '\n')
+                );
+                const first = source.charCodeAt(match.index);
+                if (first !== 32 && first !== 9 && (followsAccepted || definitionAllowed(source, match.index, above))) {
+                    acceptedSource = source;
+                    acceptedEnd = scan.lastIndex;
                     this.lastIndex = scan.lastIndex;
                     return match;
                 }
