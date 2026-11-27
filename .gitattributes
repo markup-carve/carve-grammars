@@ -1,1 +1,15 @@
 * text=auto eol=lf
+
+# Keep out of the GitHub archive (Composer dist). npm installs from that
+# archive too, so never ignore a path listed in package.json "files".
+/.github export-ignore
+/docs export-ignore
+/scripts export-ignore
+/tests export-ignore
+/spec export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.gitmodules export-ignore
+/CHANGELOG.md export-ignore
+/package-lock.json export-ignore
+/renovate.json export-ignore
