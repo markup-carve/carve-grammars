@@ -5,6 +5,7 @@ for (const file of [
     'tests/textmate-snippet-test.js',
     'tests/textmate-text-runs-test.js',
     'tests/textmate-differential-gaps-test.js',
+    'tests/textmate-continuation-columns-test.js',
     'tests/textmate-bracket-time-test.js',
     'tests/textmate-inline-brackets-test.js',
     'tests/textmate-nested-div-time-test.js',
