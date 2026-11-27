@@ -103,15 +103,65 @@ function adaptGrammar(grammar, hljs) {
     if (horizontalRule) horizontalRule.begin = new RegExp(lineStart + '\\*{3,}[ \\t]*$(?![^\\r\\n])');
     // C2-B-081: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
+    // The line a definition run is read under (C2-B-081). Comment-only and
+    // attribute lines are passed over; a term line, with the description and
+    // indented lines of its entry, is no paragraph text, so the paragraph check
+    // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
+    // `> :: t` and `- :: t`.
+    const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
+    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    function definitionReadAbove(source, start) {
+        const lineBefore = (at) => {
+            const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            return [previous, source.slice(previous, end)];
+        };
+        let top = start;
+        while (top > 0) {
+            const [previous, line] = lineBefore(top);
+            if (!DEFINITION_SKIP.test(line)) break;
+            top = previous;
+        }
+        let entry = top;
+        let term = false;
+        while (entry > 0) {
+            const [previous, line] = lineBefore(entry);
+            // A description directly above takes the run as its lazy line.
+            if (DEFINITION_TERM_LINE.test(line)) term = true;
+            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            entry = previous;
+        }
+        return term ? entry : top;
+    }
+    // Every line of a definition run shares its first line's verdict, kept per
+    // input: walking back over the run from each line was quadratic (#989).
+    let definitionSource = null;
+    const definitionVerdicts = new Map();
     function definitionAllowed(source, offset) {
+        if (source !== definitionSource) {
+            definitionSource = source;
+            definitionVerdicts.clear();
+        }
+        const run = [];
         let start = offset;
-        while (start > 0) {
+        let allowed;
+        for (;;) {
+            if (definitionVerdicts.has(start)) {
+                allowed = definitionVerdicts.get(start);
+                break;
+            }
+            run.push(start);
             const end = source[start - 1] === '\n' && source[start - 2] === '\r' ? start - 2 : start - 1;
             const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
-            if (!/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) break;
+            if (start === 0 || !/^\uFEFF?(?:\[[^\]\r\n]+\]:|\*\[[A-Za-z0-9]+\]:)/.test(source.slice(previous, end))) {
+                allowed = !inParagraph(source, definitionReadAbove(source, start));
+                break;
+            }
             start = previous;
         }
-        return !inParagraph(source, start);
+        for (const line of run) definitionVerdicts.set(line, allowed);
+        return allowed;
     }
     // Definition modes carry `definition: true` where they are declared.
     const isDefinition = mode => mode?.definition === true;
@@ -589,8 +639,10 @@ function adaptGrammar(grammar, hljs) {
         begin: new RegExp(
             '(?:' + attrLineBlocks + ')' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\n])*\\})*[ \\t]*(?:\\n|$(?![^\\r\\n])))'
             + '|(?=\\{)(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
-            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
+            // Inside a lookbehind the engine reads right to left, so the `(?<=\.)` after
+            // each marker lookahead tests the `.` before its 4096-character scan (#988).
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.)))' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}'
+            + '|(?=\\{)(?<=(?:^(?<![^\\r\\n])|\\n)[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.))(?:\\{[^{}\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})[ \\t]*' + ATTR_ITEM + '(?:[ \\t]+' + ATTR_ITEM + ')*[ \\t]*\\}' + '(?=[ \\t]*(?:\\n|$(?![^\\r\\n])))',
         ),
         // Group 1 is set only on a `{` past ATTR_LINE_COLUMNS. A refused block
         // keeps its match and drops the scope, as `scopeUnless` does.
@@ -2354,12 +2406,18 @@ function adaptGrammar(grammar, hljs) {
         end: new RegExp('^(?<![^\\r\\n])(?=' + OTHER_BLOCK_OPENER_SOURCE + ')'
             + '|\\n(?:[ \\t\\r]*\\n)+(?![ \\t]*::? +(?![ \\t]*$(?![^\\r\\n])))(?=([ \\t]*)[^\\s])'
             // An inline rule takes `---` or `{.c}` at the line start first, so the entry ends on the newline before it.
-            + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'),
+            + '|\\n(?=(?:-{3,}|\\*{3,}|_{3,}|\\{[^\\n]*\\})[ \\t]*\\r?$(?![^\\r\\n]))'
+            // A definition under a term, not under a description, stands on its
+            // own (C2-B-081); `on:end` reads which came last, since highlight.js
+            // checks an end again on the remainder, where a lookbehind sees nothing.
+            + '|\\n(?=(\\uFEFF?(?:\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:)))'),
         'on:begin': () => {
             descriptionColumn = Infinity;
         },
         'on:end': (match, response) => {
             if (match[1] !== undefined && match[1].length >= descriptionColumn) response.ignoreMatch();
+            // A term resets the column to Infinity, a description sets it.
+            if (match[2] !== undefined && descriptionColumn !== Infinity) response.ignoreMatch();
         },
         relevance: 0,
         // The inline modes are appended once CONTAINS exists.
@@ -3383,9 +3441,9 @@ function adaptGrammar(grammar, hljs) {
     };
 
     /* One unit of a part, as Prism's `includePart`: a terminated run, a lone
-     * quote that opens none, or an ordinary character other than space or `}`. */
+     * quote that opens none, or an ordinary character other than space, `}` or `@`. */
     const INCLUDE_PART_UNIT =
-        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^\\s}"'])`;
+        `(?:${includeQuotedPart('"')}|${includeQuotedPart("'")}|[^\\s}"'@])`;
 
     /*
      * Reserved processor syntax: `{{ path #section @key:value }}` (PART 9
@@ -3421,16 +3479,13 @@ function adaptGrammar(grammar, hljs) {
         // The lookahead is Prism's outer pattern, so a path is required and no
         // part holds an unquoted `}` (#434). `end` keeps `|$` as the line bound.
         begin: RegExp(
-            `\\{\\{(?= +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)`
-            + `(?:#[A-Za-z0-9_][\\w-]*)?`
-            // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@` (spec
-            // `include_options`): the bare path stops at `@` and a section
-            // name holds none, so an option may butt onto either slot. Its own
-            // optional run, gated on a `@` lookahead, so the separator stays a
-            // required whitespace run and two adjacent runs cannot split a
-            // part in more than one way.
-            + `(?:(?=@)${INCLUDE_PART_UNIT}+)?`
-            + `(?: +${INCLUDE_PART_UNIT}+)* +\\}\\})`,
+            `\\{\\{(?= +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n"]*)`
+            + `(?: *#[A-Za-z0-9_][\\w-]*)?`
+            // EACH OPTION OPENS ON ITS `@` (C2-B-156, C2-B-204), glued or after
+            // spaces, and an unquoted value holds no `@`, so the runs split one
+            // way only. A word that is no option ends the scan: on a line of
+            // unclosed `{{`, each opener reads one word, not the line (#988).
+            + `(?: *@${INCLUDE_PART_UNIT}+)* +\\}\\})`,
         ),
         end: /\}\}|$(?![^\r\n])/,
         relevance: 10,
@@ -4126,8 +4181,14 @@ function adaptGrammar(grammar, hljs) {
             return head;
         };
         const lazy = (input, index) => {
-            const at = lineStartBefore(input, index);
-            if (input.slice(at, index).trim() !== '') return false;
+            // Only white space may stand before it on its line. Reading back to
+            // the first other character, not slicing from the line start,
+            // keeps a long line of directives linear (#988).
+            let at = index;
+            while (at > 0 && input[at - 1] !== '\n' && input[at - 1] !== '\r') {
+                if (input[at - 1].trim() !== '') return false;
+                at--;
+            }
             const text = lineAt(input, at);
             if (/^\uFEFF?: /.test(text)) {
                 // A description line follows its term's reading.

@@ -387,8 +387,10 @@
             // A block at a line start must fill its line: `{.c} para` and `- {.c} text` are text.
             '(?=\\{)(?:(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))([ \\t]*))\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=(?:[ \\t]*\\{(?:"(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|[^{}"\'\\r\\n])*\\})*[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))'
             + '|(?:(?<=[*/_~=`>}:\\]$<|])|' + linkDestinationBeforeAttr + ')' + afterEscape + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}' + noCommentRun
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
-            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2}))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. ))(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
+            // Inside a lookbehind the engine reads right to left, so the `(?<=\.)` after
+            // each marker lookahead tests the `.` before its 4096-character scan (#988).
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.)))' + '\\{(?!__\\})[ \\t]*' + attrItem + '(?:[ \\t]+' + attrItem + ')*[ \\t]*\\}'
+            + '|(?<=(?:^(?<![^\\r\\n])|(?:\\r\\n?|\\n))[ \\t]*(?:[-+*]|\\d{1,9}[.)]|[A-Za-z]{1,8}(?:\\)|\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})(?<=\\.))|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?<=\\.))(?:\\{[^{}\\r\\n]*\\})?(?:[ \\t]+\\[[ xX]\\])?[ \\t]+)' + '\\{(?!__\\})' + attrLinePad + attrItem + '(?:' + attrLineSep + attrItem + ')*' + attrLinePad + '\\}' + '(?=[ \\t]*(?:(?:\\r\\n?|\\n)|$(?![^\\r\\n])))' + ')',
         )),
         greedy: true,
         alias: 'attr-value',
@@ -1092,7 +1094,7 @@
     }
 
     var includePart =
-        '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'])';
+        '(?:' + includeQuotedPart('"') + '|' + includeQuotedPart("'") + '|[^\\s}"\'@])';
 
     /*
      * DEFINITION-LIST LINES BY OWNER (PART 0 CARVE-P0-003, CARVE-P0-024 S2/S3).
@@ -3107,18 +3109,14 @@
 
         'include-directive': {
             pattern: RegExp(
-                notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
-                + '(?:#[A-Za-z0-9_][\\w-]*)?'
-                // AN OPTION NEEDS NO WHITESPACE BEFORE ITS `@`, in every
-                // position (spec `include_options`): the bare path stops at
-                // `@` and a section name holds none, so an option may butt
-                // onto either slot. Spelled as its OWN optional run, gated on
-                // a `@` lookahead, rather than relaxing the run separator to
-                // `[ \\t]*`: that would let two adjacent runs split a part in
-                // more than one way and make the scan backtrack
-                // exponentially on a line with no closer.
-                + '(?:(?=@)' + includePart + '+)?'
-                + '(?: +' + includePart + '+)*'
+                notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n"]*)'
+                + '(?: *#[A-Za-z0-9_][\\w-]*)?'
+                // EACH OPTION OPENS ON ITS `@` (C2-B-156, C2-B-204), glued or
+                // after spaces, and an unquoted value holds no `@`, so the
+                // runs split one way only. A word that is no option ends the
+                // scan: on a line of unclosed `{{`, each opener reads one word
+                // rather than the rest of the line (#988).
+                + '(?: *@' + includePart + '+)*'
                 + ' +\\}\\}',
             ),
             greedy: true,
@@ -4259,6 +4257,37 @@ if (Prism?.languages.carve) {
     const snippetDefinitionLines = RegExp('^\\uFEFF?(?:\\[[^\\]\\r\\n]+\\]:|\\*\\[[A-Za-z0-9]+\\]:|' + grammar['snippet-definition'].head
         + '|\\{(?:"[^"\\r\\n]*"|\'[^\'\\r\\n]*\'|[^{}#"\'\\r\\n])*\\}[ \\t]*$)');
     const attributeLine = /^\uFEFF?\{[^\r\n]*\}[ \t]*$/;
+    // The line a definition run is read under (C2-B-081). Comment-only and
+    // attribute lines are passed over; a term line, with the description and
+    // indented lines of its entry, is no paragraph text, so the paragraph check
+    // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
+    // `> :: t` and `- :: t`.
+    const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
+    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    function definitionReadAbove(source, start) {
+        const lineBefore = (at) => {
+            const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
+            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            return [previous, source.slice(previous, end)];
+        };
+        let top = start;
+        while (top > 0) {
+            const [previous, line] = lineBefore(top);
+            if (!DEFINITION_SKIP.test(line)) break;
+            top = previous;
+        }
+        let entry = top;
+        let term = false;
+        while (entry > 0) {
+            const [previous, line] = lineBefore(entry);
+            // A description directly above takes the run as its lazy line.
+            if (DEFINITION_TERM_LINE.test(line)) term = true;
+            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+            entry = previous;
+        }
+        return term ? entry : top;
+    }
     // Every line of a run of definitions shares the run's verdict, kept per
     // source so a long run is read once rather than once per line.
     let allowedSource = null;
@@ -4289,7 +4318,7 @@ if (Prism?.languages.carve) {
             }
             start = previous;
         }
-        if (allowed === undefined) allowed = !inParagraph(source, start);
+        if (allowed === undefined) allowed = !inParagraph(source, above === definitionLines ? definitionReadAbove(source, start) : start);
         for (const line of run) known.set(line, allowed);
         return allowed;
     }
@@ -4378,6 +4407,60 @@ if (Prism?.languages.carve) {
         carve['metadata-block'] = metadata;
         for (const [key, value] of rest) carve[key] = value;
     }
+    /*
+     * A bare run's opener is tried only when a possible closer follows it in
+     * its paragraph. `closerAhead` asks the same, but from every opener: a
+     * paragraph of openers with no closer, such as a run of `[a]: /u`
+     * definitions, paid a scan of up to 8192 characters per `/` (#989). Here
+     * one pass per input lists the candidates: the delimiter after a
+     * non-space character, or before a `}`. No atom of a run crosses a blank
+     * line, so a candidate past one cannot close it.
+     */
+    function withCloserInParagraph(pattern, delimiter) {
+        var probe = RegExp(pattern.source, pattern.flags.replace('g', '') + 'y');
+        var gated = RegExp(pattern.source, pattern.flags.includes('g') ? pattern.flags : pattern.flags + 'g');
+        var memo = { source: null, next: null };
+        // next[i]: the first candidate closer at or after i in i's paragraph, or -1.
+        var candidates = function (source) {
+            if (memo.source === source) return memo.next;
+            var next = new Int32Array(source.length + 1).fill(-1);
+            var lineEnd = source.length;
+            var pending = -1;
+            for (var i = source.length - 1; i >= 0; i--) {
+                var c = source.charAt(i);
+                if (c === '\n' || c === '\r') {
+                    // The `\r` of a CRLF ends the line its `\n` already read.
+                    if (!(c === '\r' && source.charAt(i + 1) === '\n') && /^[ \t]*$/.test(source.slice(i + 1, lineEnd))) pending = -1;
+                    lineEnd = i;
+                } else if (c === delimiter && (/\S/.test(source.charAt(i - 1)) || source.charAt(i + 1) === '}')) {
+                    pending = i;
+                }
+                next[i] = pending;
+            }
+            memo = { source: source, next: next };
+            return next;
+        };
+        gated.exec = function (source) {
+            var next = candidates(source);
+            var from = this.lastIndex;
+            for (var at = source.indexOf(delimiter, from); at !== -1; at = source.indexOf(delimiter, at + 1)) {
+                // A braced form (`{=x=}`) has no flank rule; try it as it stands.
+                if (source.charAt(at - 1) !== '{' && (at + 1 > source.length || next[at + 1] === -1)) continue;
+                // A match starts at its first delimiter or one character before it.
+                for (var start = Math.max(from, at - 1); start <= at; start++) {
+                    probe.lastIndex = start;
+                    var match = probe.exec(source);
+                    if (match) {
+                        this.lastIndex = match.index + match[0].length;
+                        return match;
+                    }
+                }
+            }
+            this.lastIndex = 0;
+            return null;
+        };
+        return gated;
+    }
     // Retries a rule's match one character on while `reject` refuses it.
     const gateRule = (rule, reject) => {
         const pattern = rule.pattern;
@@ -4452,6 +4535,11 @@ if (Prism?.languages.carve) {
             for (const key of Object.keys(set)) delete set[key];
             Object.assign(set, Object.fromEntries(entries));
         };
+        // After the 0.2 pass above, which rebuilds these patterns.
+        const bareDelimiters = { bold: '*', italic: '/' };
+        visitRules(Prism.languages.carve, new Set(Object.keys(bareDelimiters)), (rule, name) => {
+            if (!Object.hasOwn(rule.pattern, 'exec')) rule.pattern = withCloserInParagraph(rule.pattern, bareDelimiters[name]);
+        });
         visitRules(Prism.languages.carve, names, (rule, name) => {
             gateRule(rule, (source, start, end) => taken(source.slice(start, end), name));
             if (rule.inside && name !== 'image' && name !== 'reference-image') withLineComment(rule.inside);
