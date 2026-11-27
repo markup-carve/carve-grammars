@@ -164,6 +164,15 @@
     };
     // Not behind an odd backslash run: an even run is escaped backslashes. Bounded at 32 pairs.
     var notEscaped = '(?<!(?<!\\\\)(?:\\\\\\\\){0,32}\\\\)';
+    // Snippets (C2-B-236, C2-I-128), the TextMate rules' spelling. A
+    // definition's marker parts and glued blocks take no id; the blocks glued
+    // after a use may.
+    var snippetName = '[A-Za-z0-9_][A-Za-z0-9_-]*';
+    var snippetPartTail = /:(?:[A-Za-z0-9]{1,8}(?:-[A-Za-z0-9]{1,8})*)?|[A-Za-z_][A-Za-z0-9_-]*=(?:"(?:[^"\\\r\n]|\\.)*"|'(?:[^'\\\r\n]|\\.)*'|[^\s"'{}|\\]+)|[A-Za-z][A-Za-z0-9_-]*/.source;
+    var snippetDefinitionPart = '(?:\\.[A-Za-z0-9_-]+|' + snippetPartTail + ')';
+    var snippetUsePart = '(?:[.#][A-Za-z0-9_-]+|' + snippetPartTail + ')';
+    var snippetDefinitionHead = '\\{\\$' + snippetName + '(?:(?: +' + snippetDefinitionPart + ')+ *)?\\}'
+        + '(?:\\{ *' + snippetDefinitionPart + '(?: +' + snippetDefinitionPart + ')* *\\})*:';
     // C2-I-026: the characters on the two sides of braced comments are tested as if glued.
     var bracedComments = '(?:\\{%(?:[^%]|%(?!\\})){0,4096}?%\\})*';
     // A mention or tag name (C2-I-092): runs of letters, digits, `_` and `-`
@@ -2855,6 +2864,42 @@
             },
         },
 
+        // A snippet definition `{$name}: value` (C2-B-236), as TextMate's
+        // `snippet_definition`: column 0 and no lazy line of an open
+        // paragraph. A marker part or glued block holds no id. The value is
+        // inline content of this line only; its set is filled in below.
+        'snippet-definition': {
+            pattern: RegExp('(?<![^\\r\\n])' + notParagraphContinuation + '(?:(?<![\\s\\S])\\uFEFF)?' + snippetDefinitionHead
+                + ' (?=[ \\t]*[^ \\t\\r\\n])[^\\r\\n]*', 'm'),
+            greedy: true,
+            inside: {
+                'snippet-value': {
+                    pattern: RegExp('(^\\uFEFF?' + snippetDefinitionHead + ' )[^]+'),
+                    lookbehind: true,
+                    inside: null,
+                },
+                // Before 'variable': the marker parts are found behind the name.
+                'attributes': [
+                    {
+                        pattern: RegExp('(^\\uFEFF?\\{\\$' + snippetName + ')(?: +' + snippetDefinitionPart + ')+'),
+                        lookbehind: true,
+                        alias: 'attr-value',
+                        inside: null,
+                    },
+                    {
+                        pattern: RegExp('\\{ *' + snippetDefinitionPart + '(?: +' + snippetDefinitionPart + ')* *\\}'),
+                        alias: 'attr-value',
+                        inside: null,
+                    },
+                ],
+                'variable': {
+                    pattern: RegExp('(^\\uFEFF?\\{\\$)' + snippetName),
+                    lookbehind: true,
+                },
+                'punctuation': /^\uFEFF?\{\$|[}:]/,
+            },
+        },
+
         // Reference link / abbreviation definitions
         // Anchored at end of line (grammar.ebnf `reference_definition`):
         // `[a]: /u zzz` is prose, not a definition (#533).
@@ -3038,6 +3083,26 @@
          * verbatim, and BEFORE 'attributes', 'mention' and 'tag', which would
          * otherwise claim parts of it.
          */
+        // A snippet use `{{ $name }}` (C2-I-128), as TextMate's `snippet_use`:
+        // ahead of 'include-directive', which would read `$name` as a path. A
+        // name of another shape, no space, a tab or an option makes no use and
+        // stays with the include rule. Every inline set gets both rules below.
+        'snippet-use': {
+            pattern: RegExp(notEscaped + '\\{\\{ +\\$' + snippetName + ' +\\}\\}'),
+            greedy: true,
+            inside: {
+                'punctuation': /^\{\{|\}\}$/,
+                'variable': /\$[A-Za-z0-9_][A-Za-z0-9_-]*/,
+            },
+        },
+        // A use carries no attributes: valid blocks glued after it are text,
+        // taken here so 'attributes' does not claim them. A braced or critic
+        // comment there is no valid block and keeps its comment token.
+        'snippet-use-blocks': {
+            pattern: RegExp('(?<=' + notEscaped + '\\{\\{ +\\$' + snippetName + ' +\\}\\})(?:\\{ *' + snippetUsePart + '(?: +' + snippetUsePart + ')* *\\})+'),
+            greedy: true,
+        },
+
         'include-directive': {
             pattern: RegExp(
                 notEscaped + '\\{\\{ +(?:"(?:\\\\.|[^"\\\\\\n])*"|[^#@} \\r\\n"][^#@} \\r\\n]*)'
@@ -4166,7 +4231,7 @@ if (Prism?.languages.carve) {
         greedy: true,
         alias: 'comment',
     };
-    // C2-B-081: a definition stands at column 0 outside every container and
+    // C2-B-081, C2-B-236: a definition stands at column 0 outside every container and
     // is text below a paragraph line.
     const nested = new WeakSet();
     function dropNestedDefinitions(node) {
@@ -4177,6 +4242,7 @@ if (Prism?.languages.carve) {
                 delete value['reference-definition'];
                 delete value['abbreviation-definition'];
                 delete value['glued-abbreviation-definition'];
+                delete value['snippet-definition'];
             }
             dropNestedDefinitions(value);
         }
@@ -4521,6 +4587,45 @@ if (Prism?.languages.carve) {
         Object.assign(grammar, Object.fromEntries(entries));
     };
     visit(Prism.languages.carve);
+}
+
+// Snippets (C2-B-236, C2-I-128): a definition's value is paragraph inline
+// content, and every inline set reads a use ahead of the include directive or,
+// without one, right after its verbatim and comment rules.
+if (Prism?.languages.carve) {
+    const carve = Prism.languages.carve;
+    const definition = carve['snippet-definition'].inside;
+    const paragraph = [].concat(carve['lazy-line']).find((rule) => rule.inside && 'bold' in rule.inside).inside;
+    definition['snippet-value'].inside = paragraph;
+    const blocks = [].concat(carve.attributes);
+    for (const rule of definition.attributes) rule.inside = blocks[blocks.length - 1].inside;
+    const verbatim = ['comment-line', 'line-comment', 'comment', 'math', 'literal', 'raw-inline', 'code'];
+    const claimers = ['image', 'reference-image', 'inline-footnote', 'footnote', 'citation', 'cross-ref', 'url', 'span-empty-attrs',
+        'extension', 'span', 'critic-comment', 'inserted', 'deleted', 'attributes', 'attributes-unattached', 'glued-delimiter', 'tag',
+        'bold-italic', 'forced-bold', 'forced-italic', 'forced-underline', 'forced-strike', 'bold', 'italic', 'underline', 'strike',
+        'highlight', 'superscript', 'subscript', 'mention', 'symbol', 'typography'];
+    const rules = [['snippet-use', carve['snippet-use']], ['snippet-use-blocks', carve['snippet-use-blocks']]];
+    const seen = new Set();
+    const visit = (set) => {
+        if (!set || typeof set !== 'object' || seen.has(set)) return;
+        seen.add(set);
+        for (const entry of Object.values(set)) {
+            for (const rule of [].concat(entry)) if (rule && typeof rule === 'object' && rule.inside) visit(rule.inside);
+        }
+        if ('snippet-use' in set || !['include-directive', 'bold', 'code', 'url'].some((key) => key in set)) return;
+        const keys = Object.keys(set);
+        let at = keys.indexOf('include-directive');
+        if (at === -1) {
+            const first = keys.findIndex((key) => claimers.includes(key));
+            const last = keys.reduce((found, key, i) => (verbatim.includes(key) ? i : found), -1);
+            at = Math.max(first === -1 ? keys.length : first, last + 1);
+        }
+        const entries = keys.map((key) => [key, set[key]]);
+        entries.splice(at, 0, ...rules);
+        for (const key of keys) delete set[key];
+        Object.assign(set, Object.fromEntries(entries));
+    };
+    visit(carve);
 }
 
 if (Prism?.languages.carve) {

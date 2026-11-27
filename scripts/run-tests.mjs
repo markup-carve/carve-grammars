@@ -11,6 +11,7 @@ for (const file of [
     'tests/prism-hljs-text-runs-test.js',
     'tests/prism-hljs-differential-test.js',
     'tests/prism-hljs-long-line-time-test.js',
+    'tests/prism-hljs-snippet-test.js',
     'tests/titled-div-braced-comment-test.js',
     'tests/word-characters-and-div-openers-test.js',
     'tests/div-names-and-quoted-fences-test.js',
