@@ -6,6 +6,7 @@ for (const file of [
     'tests/textmate-text-runs-test.js',
     'tests/textmate-differential-gaps-test.js',
     'tests/textmate-bracket-time-test.js',
+    'tests/textmate-inline-brackets-test.js',
     'tests/textmate-nested-div-time-test.js',
     'tests/textmate-oniguruma-compile-test.js',
     'tests/prism-hljs-text-runs-test.js',
