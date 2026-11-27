@@ -450,6 +450,148 @@ function crlfLineEnds(grammar) {
 }
 
 /*
+ * The places a regex can start a match, or null when the source cannot be
+ * read: patterns of which one holds wherever a match starts. A pattern is a
+ * one-character class or escape, `$`, `^` alone or `^` before a pattern (a line
+ * start where that pattern holds), or `(?:...)`, the leading lookarounds of a
+ * rule whose first character could be almost anything. A lookahead on the first
+ * character counts as that character; other assertions are skipped.
+ */
+const startsBySource = new Map();
+function matchStarts(source) {
+    if (!startsBySource.has(source)) startsBySource.set(source, readStarts(source));
+    return startsBySource.get(source);
+}
+function readStarts(source) {
+    let at = 0;
+    const fail = () => { throw new Error('unreadable'); };
+    function alternation() {
+        let starts = [];
+        let empty = false;
+        do {
+            const branch = sequence();
+            if (!branch) starts = null;
+            else if (starts) starts.push(...branch.starts);
+            empty ||= branch?.empty;
+        } while (source[at] === '|' && ++at);
+        return starts && { starts, empty };
+    }
+    function sequence() {
+        const starts = [];
+        let open = true;
+        let known = true;
+        // The zero-width groups the sequence opens with, while they last.
+        let chain = '';
+        let behind = false;
+        let leading = true;
+        // A leading `^` holds only where the rest can start too.
+        let anchored = false;
+        while (at < source.length && source[at] !== '|' && source[at] !== ')') {
+            const from = at;
+            const item = atom();
+            const end = at;
+            const optional = quantifier();
+            if (optional && item.assert) item.assert = null;
+            const zeroWidth = (item.skip || item.assert) && source[from] === '(' && at === end;
+            if (leading && zeroWidth) {
+                chain += source.slice(from, end);
+                behind ||= item.behind === true;
+            }
+            if (item.assert && source[from] === '^' && leading && at === end) {
+                anchored = true;
+                continue;
+            }
+            if (leading && !zeroWidth) leading = false;
+            if (!open || item.skip || item.assert === null) continue;
+            if (item.assert) {
+                starts.push(...item.assert);
+                open = false;
+            } else if (!item.first) {
+                known = open = false;
+            } else {
+                starts.push(...item.first.starts);
+                open = item.first.empty || optional;
+            }
+        }
+        if (anchored) return { starts: known && !open && starts.length ? starts.map((start) => '^' + start) : ['^'], empty: false };
+        if (known && behind && starts.length && starts.every((start) => start === '.' || /^\[\^|^\\[SWDw]$|^\[.*(?:a-z|A-Z|\\d|\\w)/.test(start)) && !/\\[1-9k]|\(\?<[A-Za-z_$]/.test(chain)) {
+            return { starts: ['(?:' + chain + '(?=' + starts.join('|') + '))'], empty: open };
+        }
+        return known ? { starts, empty: open } : null;
+    }
+    function quantifier() {
+        const quantified = /^(?:[*?]|\+|\{(\d+)(?:,\d*)?\})\??/.exec(source.slice(at, at + 24));
+        if (!quantified) return false;
+        at += quantified[0].length;
+        return quantified[0][0] === '*' || quantified[0][0] === '?' || quantified[1] === '0';
+    }
+    function atom() {
+        const c = source[at];
+        if (c === '(') {
+            const head = /^\((\?(?::|=|!|<=|<!|<[A-Za-z_$][\w$]*>))?/.exec(source.slice(at, at + 40))[1] ?? '';
+            if (head.startsWith('?') && !/^\?(?::|=|!|<=|<!|<[A-Za-z_$])/.test(head)) fail();
+            at += 1 + head.length;
+            const inner = alternation();
+            if (source[at++] !== ')') fail();
+            if (head === '?<=' || head === '?<!') return { skip: true, behind: true };
+            if (head === '?!') return { skip: true };
+            if (head === '?=') return inner && !inner.empty ? { assert: inner.starts } : { skip: true };
+            return { first: inner };
+        }
+        if (c === '^' || c === '$') {
+            at++;
+            return { assert: [c] };
+        }
+        if (c === '[') {
+            const set = /^\[\^?\]?(?:\\[\s\S]|[^\]\\])*\]/.exec(source.slice(at)) ?? fail();
+            at += set[0].length;
+            return { first: { starts: [set[0]], empty: false } };
+        }
+        if (c === '\\') {
+            const escape = /^\\(?:[bB]|[1-9]\d*|k<[^>]+>|u\{[0-9A-Fa-f]+\}|u[0-9A-Fa-f]{4}|x[0-9A-Fa-f]{2}|[pP]\{[^}]+\}|[^cu0-9xpPk])/.exec(source.slice(at, at + 40));
+            if (!escape) fail();
+            at += escape[0].length;
+            if (/^\\[bB]$/.test(escape[0])) return { skip: true };
+            if (/^\\(?:\d|k)/.test(escape[0])) return {};
+            return { first: { starts: [escape[0]], empty: false } };
+        }
+        if (c === undefined || '*+?'.includes(c)) fail();
+        at++;
+        return { first: { starts: [c === '.' ? '.' : /[\w\s]/.test(c) ? c : '\\' + c], empty: false } };
+    }
+    try {
+        const result = alternation();
+        return result && at === source.length && !result.empty ? result.starts : null;
+    } catch {
+        return null;
+    }
+}
+
+/*
+ * One regex that finds every place where one of the given regexes can start a
+ * match, or null when some rule's starts cannot be read.
+ */
+function startFinder(sources, flags) {
+    const classes = new Set();
+    const others = new Set();
+    for (const source of sources) {
+        const starts = matchStarts(source);
+        if (!starts) return null;
+        for (const start of starts.map((one) => (one[0] === '^' ? '^' : one))) {
+            if (start === '^' || start === '$' || start === '.' || start.startsWith('[^') || start.startsWith('(?:')) others.add(start);
+            else classes.add(start.startsWith('[') ? start.slice(1, -1) : start);
+        }
+    }
+    const parts = [...others];
+    if (classes.size) parts.push('[' + [...classes].map((part) => part.replace(/^[-^]/, '\\$&').replace(/(?<!\\)-$/, '\\-')).join('') + ']');
+    try {
+        return new RegExp(parts.join('|') || '(?!)', flags.replace(/[gy]/g, '') + 'g');
+    } catch {
+        return null;
+    }
+}
+
+/*
  * highlight.js 11 resumes a refused begin (`ignoreMatch()`) with a matcher
  * built from the rules after it, and every such matcher numbers the SAME rule
  * objects (`opts.position`), so the last one built renumbers the rules for all
@@ -460,6 +602,142 @@ function crlfLineEnds(grammar) {
  * Any other matcher shape is left alone.
  */
 const NEVER = /(?!)/;
+/*
+ * A matcher joins every rule into one alternation and tries each alternative
+ * at each position it scans, a few microseconds a position (carve-grammars#1002).
+ * A scan now stops only where some rule can start. At a line start, where most
+ * rules are anchored, it runs a matcher of just the rules that can start there,
+ * built once per character, line end and lookaround result. Elsewhere it runs
+ * the full matcher at that one position. Either way the match is the one the
+ * full scan finds, returned with the full matcher's group numbers and rule.
+ */
+function matchByStarts(built, rules, index) {
+    const own = rules.slice(index);
+    const sources = own.map(([rule]) => (rule === NEVER ? null : typeof rule === 'string' ? rule : rule.source));
+    const starts = sources.map((source) => (source === null ? [] : matchStarts(source)));
+    if (starts.includes(null)) return false;
+    const flags = built.matcherRe.flags.replace(/[gy]/g, '');
+    const finder = index === 0 ? startFinder(sources.filter((source) => source !== null), flags) : null;
+    if (index === 0 && !finder) return false;
+    const unicode = flags.includes('u');
+    const contexts = [...new Set(starts.flat().map((start) => start.replace(/^\^+/, '')).filter((start) => start.startsWith('(?:')))];
+    if (contexts.length > 16) return false;
+    const contextTests = contexts.map((start) => new RegExp(start, flags + 'y'));
+    const tests = new Map();
+    // `state` holds the line start, the line end and one bit per context.
+    const fits = (start, char, state) => {
+        if (start[0] === '^') return (state & 1) !== 0 && (start.length === 1 || fits(start.slice(1), char, state));
+        if (start === '$') return (state & 2) !== 0;
+        if (start.startsWith('(?:')) return (state & (4 << contexts.indexOf(start))) !== 0;
+        if (!char) return false;
+        if (!tests.has(start)) tests.set(start, new RegExp('^(?:' + start + ')$', flags.replace('m', '')));
+        return tests.get(start).test(char);
+    };
+    const offsets = Object.keys(built.matchIndexes).map(Number).sort((x, y) => x - y);
+    if (offsets.length !== own.length) return false;
+    // Each rule's group count, its own group included.
+    const widths = new Map(offsets.map((offset, i) => [offset, (offsets[i + 1] ?? offset + new RegExp((sources[i] ?? '(?!)') + '|').exec('').length) - offset]));
+    const isLineEnd = (code) => code === 10 || code === 13 || code === 0x2028 || code === 0x2029;
+    const matchers = new Map();
+    const subsets = new Map();
+    const visits = new Map();
+    function matcherAt(text, at) {
+        const code = at >= text.length ? -1 : unicode ? text.codePointAt(at) : text.charCodeAt(at);
+        let state = (at === 0 || isLineEnd(text.charCodeAt(at - 1)) ? 1 : 0) | (code === -1 || isLineEnd(code) ? 2 : 0);
+        for (let n = 0; n < contextTests.length; n++) {
+            contextTests[n].lastIndex = at;
+            if (contextTests[n].test(text)) state |= 4 << n;
+        }
+        const key = (code + 1) * 2 ** (2 + contexts.length) + state;
+        let matcher = matchers.get(key);
+        if (matcher === undefined) {
+            const char = code === -1 ? '' : String.fromCodePoint(code);
+            const only = starts.map((list) => list.some((start) => fits(start, char, state)));
+            const subset = only.map(Number).join('');
+            if (!only.includes(true)) matcher = null;
+            else if (subsets.has(subset)) matcher = subsets.get(subset);
+            else if (subsets.size >= 64) return sticky;
+            else if ((visits.get(subset) ?? 0) < 2) {
+                // A start seen once or twice is not worth compiling a matcher for.
+                visits.set(subset, (visits.get(subset) ?? 0) + 1);
+                return sticky;
+            } else {
+                const multi = new built.constructor();
+                const moves = new Map();
+                own.forEach(([rule, opts], i) => {
+                    if (!only[i]) return;
+                    moves.set(multi.matchAt, [built.matchIndexes[offsets[i]], widths.get(offsets[i])]);
+                    multi.addRule(rule, { ...opts });
+                });
+                multi.compile();
+                matcher = { re: new RegExp(multi.matcherRe.source, flags + 'y'), moves };
+                subsets.set(subset, matcher);
+            }
+            matchers.set(key, matcher);
+        }
+        return matcher;
+    }
+    const sticky = new RegExp(built.matcherRe.source, flags + 'y');
+    // Returns what MultiRegex.exec returns: the match from the rule's own group on.
+    const full = built.matcherRe;
+    // The match from the rule's own group on, as MultiRegex.exec returns it;
+    // the later rules' groups, all unset, are left off.
+    const trim = (match, data, group, width) => {
+        const found = match.slice(group, group + width);
+        found.index = match.index;
+        found.input = match.input;
+        found.groups = match.groups;
+        return Object.assign(found, data);
+    };
+    const firstGroup = (match) => {
+        let group = 1;
+        while (match[group] === undefined) group++;
+        return group;
+    };
+    built.exec = function (text) {
+        let from = this.lastIndex;
+        // Missed starts in a row, each next to the one before.
+        let run = 0;
+        for (; ; from++) {
+            if (finder) {
+                // Where every position is a start and none matches (a long run
+                // of one marker), one scan of the full matcher is cheaper.
+                const re = run === 8 ? full : finder;
+                re.lastIndex = from;
+                const found = re.exec(text);
+                if (!found) return null;
+                if (re === full) {
+                    const group = firstGroup(found);
+                    return trim(found, this.matchIndexes[group], group, widths.get(group));
+                }
+                run = found.index === from ? run + 1 : 1;
+                from = found.index;
+            }
+            if (from !== 0 && !isLineEnd(text.charCodeAt(from - 1))) {
+                sticky.lastIndex = from;
+                const match = sticky.exec(text);
+                if (match) {
+                    const group = firstGroup(match);
+                    return trim(match, this.matchIndexes[group], group, widths.get(group));
+                }
+            } else {
+                const matcher = matcherAt(text, from);
+                const re = matcher === sticky ? sticky : matcher?.re;
+                if (re) {
+                    re.lastIndex = from;
+                    const match = re.exec(text);
+                    if (match) {
+                        const group = firstGroup(match);
+                        const [data, width] = matcher === sticky ? [this.matchIndexes[group], widths.get(group)] : matcher.moves.get(group);
+                        return trim(match, data, group, width);
+                    }
+                }
+            }
+            if (!finder || from >= text.length) return null;
+        }
+    };
+    return true;
+}
 function isolateResumeMatchers(mode) {
     let matcher;
     Object.defineProperty(mode, 'matcher', {
@@ -479,7 +757,7 @@ function isolateResumeMatchers(mode) {
                     const built = build.call(this, index);
                     // exec keeps a resumed match only at the resumed position, so a
                     // resumed scan stops there instead of reading on (carve-grammars#1002).
-                    if (index !== 0 && built.matcherRe) built.matcherRe = new RegExp(built.matcherRe.source, built.matcherRe.flags + 'y');
+                    if (built.matcherRe && !matchByStarts(built, this.rules, index) && index !== 0) built.matcherRe = new RegExp(built.matcherRe.source, built.matcherRe.flags + 'y');
                     return built;
                 } finally {
                     this.rules = rules;
