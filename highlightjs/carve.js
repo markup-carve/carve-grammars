@@ -109,30 +109,176 @@ function adaptGrammar(grammar, hljs) {
     // reads above the entry: `:: t` then `[a]: /u` holds a definition, as do
     // `> :: t` and `- :: t`.
     const DEFINITION_SKIP = /^\uFEFF?(?:[ \t]*%%(?!%)(?![ \t]*#(?:region|endregion)\b)|\{[^\r\n]*\}[ \t]*$)/;
-    const DEFINITION_TERM_LINE = /^\uFEFF?[ \t]*(?:(?:>|(?:[-*+]|\d{1,9}[.)])(?:[ \t]+\[[ xX\-_>\/!?]\])?)[ \t]+)*:: +\S/;
+    const DEFINITION_MARKER = '(?:[-*+]|\\d{1,9}[.)]|(?:[a-z]|[ivxlcdm]+)[.)]|(?:[A-Z]|[IVXLCDM]+)\\)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}))';
+    const DEFINITION_TASK = '(?:[ \\t]+\\[[ xX\\-_>\\/!?]\\])?';
+    const DEFINITION_TERM_LINE = RegExp('^\\uFEFF?[ \\t]*(?:(?:>|' + DEFINITION_MARKER + DEFINITION_TASK + ')[ \\t]+)*:: +\\S');
     const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    const DEFINITION_HEADING_START = /^\uFEFF?(?:#{1,6}|={1,6}) +\S/;
+    const DEFINITION_HEADING_LINE = /^\uFEFF?(?:[ \t]*>)*[ \t]+(?:#{1,6}|={1,6}) +\S/;
+    // A list marker line: group 1 its prefix up to the marker, groups 2-4 an ordinal.
+    const DEFINITION_ITEM = '^(\\uFEFF?(?:[ \\t]*>)*[ \\t]*)(?:[-*+]|(\\d{1,9}|[a-z]|[ivxlcdm]+)[.)]|([A-Z]|[IVXLCDM]+)\\)|([A-Z]|[IVXLCDM]+)\\.(?= {2}))';
+    const DEFINITION_MARKER_LINE = RegExp(DEFINITION_ITEM + '[ \\t]+\\S');
+    // A marker line whose item opens with a term (group 5), a heading or a
+    // comment-only line: no paragraph text.
+    const DEFINITION_MARKER_BLOCK_LINE = RegExp(DEFINITION_ITEM + DEFINITION_TASK + '[ \\t]+(?:' + DEFINITION_MARKER + DEFINITION_TASK
+        + '[ \\t]+)*(?:(::) +\\S|(?:#{1,6}|={1,6}) +\\S|%%(?!%)(?![ \\t]*#(?:region|endregion)\\b))');
+    // The column of `line[index]`, a tab advancing to the next multiple of four.
+    const definitionColumn = (line, index) => {
+        let column = 0;
+        for (let i = 0; i < index; i++) column = line[i] === '\t' ? column + 4 - column % 4 : column + 1;
+        return column;
+    };
+    let definitionItemSource = null;
+    const definitionItemVerdicts = new Map();
     function definitionReadAbove(source, start) {
         const lineBefore = (at) => {
             const end = source[at - 1] === '\n' && source[at - 2] === '\r' ? at - 2 : at - 1;
-            const previous = Math.max(source.lastIndexOf('\n', end - 1), source.lastIndexOf('\r', end - 1)) + 1;
+            let previous = end;
+            while (previous > 0 && source[previous - 1] !== '\n' && source[previous - 1] !== '\r') previous--;
             return [previous, source.slice(previous, end)];
         };
-        let top = start;
-        while (top > 0) {
-            const [previous, line] = lineBefore(top);
-            if (!DEFINITION_SKIP.test(line)) break;
-            top = previous;
+        // The marker line holding the marker line read as `item` at `at` as a
+        // sibling or child: the nearest unindented line above, at the same
+        // quote depth. A nested ordered marker must be a first one, the only
+        // kind that interrupts a paragraph.
+        function parentItem(at, item) {
+            // Columns count from the last quote marker.
+            const column = item[1].replace(/^.*>/, '').length;
+            const ordinal = item[2] ?? item[3] ?? item[4];
+            let indent = Infinity;
+            for (let above = at; above > 0;) {
+                const [previous, text] = lineBefore(above);
+                const marker = DEFINITION_MARKER_LINE.exec(text);
+                // Lines short of the marker's content column left its item.
+                if (marker && indent < definitionColumn(text, marker[0].length - 1)) return null;
+                if (marker) {
+                    if (marker[1].split('>').length !== item[1].split('>').length) return null;
+                    const markerColumn = marker[1].replace(/^.*>/, '').length;
+                    if (column >= markerColumn) {
+                        return column === markerColumn || ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal) ? [previous, marker] : null;
+                    }
+                    // A deeper marker in an item further up is that item's
+                    // content; one in no item is a sibling.
+                    if (!parentItem(previous, marker)) return [previous, marker];
+                } else if (!/^[ \t]+\S/.test(text)) return null;
+                else indent = Math.min(indent, definitionColumn(text, text.search(/\S/)));
+                above = previous;
+            }
+            return null;
         }
-        let entry = top;
-        let term = false;
-        while (entry > 0) {
-            const [previous, line] = lineBefore(entry);
-            // A description directly above takes the run as its lazy line.
-            if (DEFINITION_TERM_LINE.test(line)) term = true;
-            else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
-            entry = previous;
+        // Whether that marker line opens an item: its list holds it, and the
+        // list's first item is no lazy text of a paragraph above (`p` over
+        // `- a` over `  - :: t`). Verdicts are kept per input, so a long
+        // list is read once.
+        const opensItemUnder = (at, item) => {
+            if (definitionItemSource !== source) {
+                definitionItemSource = source;
+                definitionItemVerdicts.clear();
+            }
+            const chain = [];
+            let verdict = false;
+            for (let parent = parentItem(at, item); parent; parent = parentItem(...parent)) {
+                const [start] = parent;
+                if (definitionItemVerdicts.has(start)) {
+                    verdict = definitionItemVerdicts.get(start);
+                    break;
+                }
+                chain.push(start);
+                if (!inParagraph(source, start)) {
+                    verdict = true;
+                    break;
+                }
+            }
+            for (const start of chain) definitionItemVerdicts.set(start, verdict);
+            return verdict;
+        };
+        read: for (;;) {
+            let top = start;
+            while (top > 0) {
+                const [previous, line] = lineBefore(top);
+                if (!DEFINITION_SKIP.test(line)) break;
+                top = previous;
+            }
+            let entry = top;
+            let term = false;
+            // The least indent of the lines between the run and its nearest
+            // term, and whether one of them opens a list item.
+            let indent = Infinity;
+            let nested = false;
+            // The topmost term line, and whether a description sits above it:
+            // a description no term holds is paragraph text.
+            let termStart = -1;
+            let orphan = false;
+            // The least indent of the lines between that term and the next
+            // one up, which holds them only when they reach past its `::`.
+            let between = Infinity;
+            let description = Infinity;
+            while (entry > 0) {
+                const [previous, line] = lineBefore(entry);
+                const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
+                // A heading or comment-only line opening an item right above: the
+                // run stands under an item.
+                if (!term && item && item[5] === undefined && indent === Infinity) {
+                    if (opensItemUnder(previous, item)) return 0;
+                    // Otherwise the line holds the run as the lines above would.
+                    start = previous;
+                    continue read;
+                }
+                if (!term && indent === Infinity && !item && DEFINITION_HEADING_LINE.test(line)) {
+                    // An indented heading, a block of the item above, reads the same.
+                    start = previous;
+                    continue read;
+                }
+                if (DEFINITION_TERM_LINE.test(line)) {
+                    // A term holds only the lines indented past its `::`; a line
+                    // short of it, a description too, is no part of it (#990).
+                    // Under a term on a marker line, an indented marker that
+                    // can interrupt it opens a nested list instead. An indented
+                    // term that holds neither may sit in an enclosing one.
+                    if (!term && (indent <= definitionColumn(line, line.indexOf('::')) || (nested && item?.[5]))) {
+                        if (!/^[ \t]+\S/.test(line)) return top;
+                        indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
+                        entry = previous;
+                        continue;
+                    }
+                    const colons = definitionColumn(line, line.indexOf('::'));
+                    if (term && (between <= colons || description < colons)) return termStart;
+                    term = true;
+                    termStart = previous;
+                    orphan = false;
+                    between = Infinity;
+                    description = Infinity;
+                    // A term on a marker line opens an item: under item content
+                    // the item stands, so nothing above holds the run (#990).
+                    if (item?.[5] && opensItemUnder(previous, item)) return 0;
+                    // A marker line right under a description is its lazy text.
+                    if (item?.[5] && previous > 0 && DEFINITION_DESCRIPTION_LINE.test(lineBefore(previous)[1])) return previous;
+                } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) {
+                    orphan = true;
+                    description = Math.min(description, definitionColumn(line, line.search(/\S/)));
+                } else if (term && (DEFINITION_HEADING_LINE.test(line) || DEFINITION_SKIP.test(line))) {
+                    // A heading or comment between two terms is a block: the
+                    // run reads as it would right under it.
+                    start = previous;
+                    continue read;
+                } else if (!/^[ \t]+\S/.test(line)) {
+                    // Indented lines no term holds are paragraph text, unless
+                    // they continue a heading.
+                    if (DEFINITION_HEADING_START.test(line)) orphan = false;
+                    else if (term && between !== Infinity) return termStart;
+                    break;
+                } else if (term && !item && !/^[ \t]*>/.test(line)) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
+                else {
+                    indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
+                    const marker = DEFINITION_MARKER_LINE.exec(line);
+                    const ordinal = marker && (marker[2] ?? marker[3] ?? marker[4]);
+                    if (marker && (ordinal === undefined || /^(?:0*1|[aAiI])$/.test(ordinal))) nested = true;
+                }
+                entry = previous;
+            }
+            if (term && between !== Infinity && entry === 0) return termStart;
+            return orphan ? termStart : term ? entry : top;
         }
-        return term ? entry : top;
     }
     // Every line of a definition run shares its first line's verdict, kept per
     // input: walking back over the run from each line was quadratic (#989).
