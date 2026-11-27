@@ -193,6 +193,10 @@ function adaptGrammar(grammar, hljs) {
             // term, and whether one of them opens a list item.
             let indent = Infinity;
             let nested = false;
+            // The topmost term line, and whether a description sits above it:
+            // a description no term holds is paragraph text.
+            let termStart = -1;
+            let orphan = false;
             while (entry > 0) {
                 const [previous, line] = lineBefore(entry);
                 const item = DEFINITION_MARKER_BLOCK_LINE.exec(line);
@@ -222,6 +226,8 @@ function adaptGrammar(grammar, hljs) {
                         continue;
                     }
                     term = true;
+                    termStart = previous;
+                    orphan = false;
                     // A term on a marker line opens an item: under item content
                     // the item stands, so nothing above holds the run; else the
                     // line holds the run as the lines above would (#990).
@@ -230,7 +236,8 @@ function adaptGrammar(grammar, hljs) {
                         start = previous;
                         continue read;
                     }
-                } else if (!(term && DEFINITION_DESCRIPTION_LINE.test(line)) && !/^[ \t]+\S/.test(line)) break;
+                } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) orphan = true;
+                else if (!/^[ \t]+\S/.test(line)) break;
                 else if (!term) {
                     indent = Math.min(indent, definitionColumn(line, line.search(/\S/)));
                     const marker = DEFINITION_MARKER_LINE.exec(line);
@@ -239,7 +246,7 @@ function adaptGrammar(grammar, hljs) {
                 }
                 entry = previous;
             }
-            return term ? entry : top;
+            return orphan ? termStart : term ? entry : top;
         }
     }
     // Every line of a definition run shares its first line's verdict, kept per
