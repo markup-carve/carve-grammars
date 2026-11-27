@@ -93,6 +93,9 @@ const rows = [
     ['  x\n:: t\n- # h', false, ['prism', 'hljs']],
     ['# h\n  x\n- :: t', true, ['prism', 'hljs']],
     ['  x\n:: t', false, ['prism', 'hljs']],
+    [':: t\n: d\na. :: t', false, ['prism', 'hljs']],
+    [':: t\n: d\n- :: t', false, ['prism', 'hljs']],
+    ['# h\n  : d\n:: t', true, ['prism', 'hljs']],
     ['- # h\n  more', false, all],
     ['- %% c\n  more', false, all],
 ];

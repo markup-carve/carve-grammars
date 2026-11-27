@@ -4404,6 +4404,8 @@ if (Prism?.languages.carve) {
                     // A term on a marker line opens an item: under item content
                     // the item stands, so nothing above holds the run (#990).
                     if (item?.[5] && opensItemUnder(previous, item)) return 0;
+                    // A marker line right under a description is its lazy text.
+                    if (item?.[5] && previous > 0 && DEFINITION_DESCRIPTION_LINE.test(lineBefore(previous)[1])) return previous;
                 } else if (term && DEFINITION_DESCRIPTION_LINE.test(line)) {
                     orphan = true;
                     description = Math.min(description, definitionColumn(line, line.search(/\S/)));
@@ -4415,7 +4417,8 @@ if (Prism?.languages.carve) {
                 } else if (!/^[ \t]+\S/.test(line)) {
                     // Indented lines no term holds are paragraph text, unless
                     // they continue a heading.
-                    if (term && between !== Infinity && !DEFINITION_HEADING_START.test(line)) return termStart;
+                    if (DEFINITION_HEADING_START.test(line)) orphan = false;
+                    else if (term && between !== Infinity) return termStart;
                     break;
                 } else if (term && !item && !/^[ \t]*>/.test(line)) between = Math.min(between, definitionColumn(line, line.search(/\S/)));
                 else {
