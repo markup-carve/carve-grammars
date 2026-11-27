@@ -16,6 +16,8 @@ for (const file of [
     'tests/hljs-resume-index-test.js',
     'tests/hljs-crlf-lazy-line-test.js',
     'tests/hljs-crlf-line-ends-test.js',
+    'tests/hljs-unclosed-opener-time-test.js',
+    'tests/hljs-crlf-run-time-test.js',
     'tests/include-and-definition-shapes-test.js',
     'tests/include-and-definition-time-test.js',
     'tests/definition-under-list-item-test.js',
