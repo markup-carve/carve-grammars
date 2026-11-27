@@ -72,6 +72,8 @@ const rows = [
     ['  x\na. :: t', false, ['prism', 'hljs']],
     ['  x\n- :: t', false, ['prism', 'hljs']],
     ['- :: s\n> - :: t', true, ['prism', 'hljs']],
+    ['- :: s\n  # h', true, ['prism', 'hljs']],
+    ['- a\n  # h', false, ['prism', 'hljs']],
     ['- # h\n  more', false, all],
     ['- %% c\n  more', false, all],
 ];

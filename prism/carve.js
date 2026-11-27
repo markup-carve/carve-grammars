@@ -4267,6 +4267,7 @@ if (Prism?.languages.carve) {
     const DEFINITION_TASK = '(?:[ \\t]+\\[[ xX\\-_>\\/!?]\\])?';
     const DEFINITION_TERM_LINE = RegExp('^\\uFEFF?[ \\t]*(?:(?:>|' + DEFINITION_MARKER + DEFINITION_TASK + ')[ \\t]+)*:: +\\S');
     const DEFINITION_DESCRIPTION_LINE = /^\uFEFF?[ \t]*(?:>[ \t]*)*: +\S/;
+    const DEFINITION_HEADING_LINE = /^\uFEFF?(?:[ \t]*>)*[ \t]+(?:#{1,6}|={1,6}) +\S/;
     // A list marker line: group 1 its prefix up to the marker, groups 2-4 an ordinal.
     const DEFINITION_ITEM = '^(\\uFEFF?(?:[ \\t]*>)*[ \\t]*)(?:[-*+]|(\\d{1,9}|[a-z]|[ivxlcdm]+)[.)]|([A-Z]|[IVXLCDM]+)\\)|([A-Z]|[IVXLCDM]+)\\.(?= {2}))';
     const DEFINITION_MARKER_LINE = RegExp(DEFINITION_ITEM + '[ \\t]+\\S');
@@ -4354,6 +4355,11 @@ if (Prism?.languages.carve) {
                 if (!term && item && item[5] === undefined && indent === Infinity) {
                     if (opensItemUnder(previous, item)) return 0;
                     // Otherwise the line holds the run as the lines above would.
+                    start = previous;
+                    continue read;
+                }
+                if (!term && indent === Infinity && !item && DEFINITION_HEADING_LINE.test(line)) {
+                    // An indented heading, a block of the item above, reads the same.
                     start = previous;
                     continue read;
                 }
