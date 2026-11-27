@@ -6,14 +6,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
-// Attribute hosts after links and spans need an unbounded lookbehind; a
-// separate ticket tracks them. Counts may only go down.
-const KNOWN = {
-    attributes: 1,
-    attributes_in_bracket_text: 1,
-    description_attributes: 1,
-    line_bounded_openers: 1,
-};
+const KNOWN = {};
 
 // Prepares each pattern the way Phiki's Support\Regex does before mb_ereg_search_pos().
 const php = String.raw`<?php

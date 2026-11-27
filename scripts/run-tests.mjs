@@ -9,6 +9,7 @@ for (const file of [
     'tests/textmate-inline-brackets-test.js',
     'tests/textmate-nested-div-time-test.js',
     'tests/textmate-oniguruma-compile-test.js',
+    'tests/textmate-phiki-attributes-test.js',
     'tests/prism-hljs-text-runs-test.js',
     'tests/prism-hljs-differential-test.js',
     'tests/prism-quoted-comment-test.js',
