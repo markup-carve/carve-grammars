@@ -202,7 +202,41 @@ function adaptGrammar(grammar, hljs) {
         { ...hashHeading, begin: new RegExp(lineStart + '={1,6} +(?=\\S)') },
         { className: 'meta', begin: new RegExp(lineStart + '\\*{3,}[ \\t]*$') },
     );
+    (grammar.compilerExtensions ??= []).push(isolateResumeMatchers);
     return grammar;
+}
+
+/*
+ * highlight.js 11 resumes a refused begin (`ignoreMatch()`) with a matcher
+ * built from the rules after it, and every such matcher numbers the SAME rule
+ * objects (`opts.position`), so the last one built renumbers the rules for all
+ * the others. The matchers live on the compiled mode, so which rules a resumed
+ * scan skips depended on what earlier highlight() calls had refused
+ * (carve-grammars#992). Each resume matcher gets its own copies of the rules.
+ * Any other matcher shape is left alone.
+ */
+function isolateResumeMatchers(mode) {
+    let matcher;
+    Object.defineProperty(mode, 'matcher', {
+        configurable: true,
+        enumerable: true,
+        get: () => matcher,
+        set(value) {
+            matcher = value;
+            const build = value?.getMatcher;
+            if (typeof build !== 'function' || !Array.isArray(value.rules) || !Array.isArray(value.multiRegexes)) return;
+            value.getMatcher = function (index) {
+                if (this.multiRegexes[index]) return this.multiRegexes[index];
+                const rules = this.rules;
+                this.rules = rules.map(([re, opts]) => [re, { ...opts }]);
+                try {
+                    return build.call(this, index);
+                } finally {
+                    this.rules = rules;
+                }
+            };
+        },
+    });
 }
 
 /**
