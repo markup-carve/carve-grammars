@@ -67,6 +67,9 @@
       "include": "#empty_quote_after_break"
     },
     {
+      "include": "#quoted_item_lazy_lines"
+    },
+    {
       "include": "#quoted_item_context"
     },
     {
@@ -27176,10 +27179,13 @@
       ]
     },
     "prose_continuation": {
-      "comment": "A list marker or a `^ ` caption marker does not interrupt a paragraph, so a paragraph holds such lines as text; every other line ends it and is read again from the top. A block image line (C2-B-197) or display math or holding only an attribute block opens no paragraph, so a caption or a list can still follow it.",
+      "comment": "A list marker or a `^ ` caption marker does not interrupt a paragraph, so a paragraph holds such lines as text; every other line ends it and is read again from the top. A block image line (C2-B-197) or display math or holding only an attribute block opens no paragraph, so a caption or a list can still follow it. A comment-only line is not seen and does not end it (C2-B-137), so a definition line below the comment is still a lazy line (C2-B-024).",
       "begin": "^(?=[ \\t]*\\S)(?![ \\t]*(?:!\\[(?>[^\\[\\]\\\\\\n]|\\\\.|\\[(?>[^\\[\\]\\\\\\n]|\\\\.)*\\])*\\](?:\\((?>[^()\\\\\\n]|\\\\.|\\((?>[^()\\\\\\n]|\\\\.)*\\))*\\)|\\[(?>[^\\]\\\\\\n]|\\\\.)*\\])(?:\\{[^{}\\n]*\\})*[ \\t]*$|\\$\\$`|\\{[^\\n]*\\}[ \\t]*$))",
-      "end": "^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{2,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)",
+      "end": "^(?!\\G)(?=[ \\t]*$|[ \\t]*\\*{3,}[ \\t]*$|[ \\t]*`{3,}|[ \\t]*\\|[^\\n]*\\||[ \\t]*%{3,}|[ \\t]*%%[ \\t]*#(?:region|endregion)\\b)",
       "patterns": [
+        {
+          "include": "#comment_only_line"
+        },
         {
           "include": "#inline"
         }
@@ -27284,7 +27290,7 @@
       ]
     },
     "quoted_prose_continuation": {
-      "comment": "A quoted paragraph runs on over the lines that continue it, quoted at its depth or shallower or lazy, so the list-marker and caption lines among them are text: a list item does not interrupt a paragraph inside a quote either (carve-grammars#851). A blank line, a deeper quote or a line that opens a block ends it and is read again.",
+      "comment": "A quoted paragraph runs on over the lines that continue it, quoted at its depth or shallower or lazy, so the list-marker and caption lines among them are text: a list item does not interrupt a paragraph inside a quote either (carve-grammars#851). A blank line, a deeper quote or a line that opens a block ends it and is read again. A definition line, a term-shaped line and a comment-only line are lazy text of it, quoted or not (C2-B-024, C2-B-081, C2-B-137).",
       "begin": "^(?=(?:\\A\\x{FEFF})?([ \\t]*)>(?= ) ((?:>(?= ) )*)[ \\t]*[^ \\t\\n>])(?!(?:\\A\\x{FEFF})?[ \\t]*>(?= ) (?:>(?= ) )*[ \\t]*(?:(?:[-*](?:[ \\t]|\\{|$)|(?:\\d+[.)]|(?:(?:[A-Za-z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.(?= +|\\{[^}\\r\\n]{0,4096}\\} +)|(?:[A-Z]|[IVXLCDM]+)\\.(?= {2}|\\{[^}\\r\\n]{0,4096}\\} {2})))(?:[ \\t]|\\{|$)|\\.(?! [ \\t]*\\. |\\{[^}\\r\\n]{0,4096}\\}[ \\t]+\\. )(?:[ \\t]|\\{|$))|\\^(?:[ \\t]|$)|(?:#{1,6}|={1,6})(?: |$)|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|::? |\\+[ \\t]*$|!\\[|\\$\\$`))(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
       "beginCaptures": {
         "3": {
@@ -27294,7 +27300,7 @@
           "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
+      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
@@ -27306,6 +27312,9 @@
               "name": "punctuation.definition.quote.carve"
             }
           }
+        },
+        {
+          "include": "#comment_only_line"
         },
         {
           "include": "#inline"
@@ -27336,7 +27345,7 @@
           "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
+      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
@@ -27348,6 +27357,9 @@
               "name": "punctuation.definition.quote.carve"
             }
           }
+        },
+        {
+          "include": "#comment_only_line"
         },
         {
           "include": "#math_inline_multi"
@@ -27411,7 +27423,7 @@
           "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
+      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
@@ -27423,6 +27435,9 @@
               "name": "punctuation.definition.quote.carve"
             }
           }
+        },
+        {
+          "include": "#comment_only_line"
         },
         {
           "include": "#math_inline_multi"
@@ -27486,7 +27501,7 @@
           "name": "punctuation.definition.quote.carve"
         }
       },
-      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|%%|\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:|:: |\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
+      "end": "^(?=[ \\t]*(?:>[ \\t]*)?$|[ \\t]*> \\2>|(?:[ \\t]*>(?= ) (?:>(?= ) )*)?[ \\t]*(?:`{3,}|:{3,}|%{3,}|%%[ \\t]*#(?:region|endregion)\\b|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\{[^{}\\n]*\\}[ \\t]*$|\\+[ \\t]*$)|(?![ \\t]*>)[ \\t]*\\^(?:[ \\t]|$))",
       "patterns": [
         {
           "match": "^(?:\\A\\x{FEFF})?[ \\t]*(>) ?((?:>(?= ) ?)*)",
@@ -27498,6 +27513,9 @@
               "name": "punctuation.definition.quote.carve"
             }
           }
+        },
+        {
+          "include": "#comment_only_line"
         },
         {
           "include": "#math_inline_multi"
@@ -32796,6 +32814,26 @@
           "name": "punctuation.definition.snippet.end.carve"
         }
       }
+    },
+    "quoted_item_lazy_lines": {
+      "comment": "A quoted list item whose open block is paragraph text takes a lazy definition line or comment-only line below it as text of that paragraph (C2-B-024, C2-B-081, C2-B-137); a single-line quoted rule keeps no state for that line, so this zero-width rule holds it.",
+      "begin": "^(?:\\A\\x{FEFF})?(?=[ \\t]*>(?= ) ?(?:>(?= ) ?)*[ \\t]*(?>(?:(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?= ))(?:[ \\t]+\\[[ xX\\-_>/!?]\\])?[ \\t]+)+)(?!(?:#{1,6}|={1,6})(?: |$)|::? |%%|\\{[^{}\\n]*\\}[ \\t]*$|`{3,}|:{3,}|%{3,}|(?:-{3,}|\\*{3,}|_{3,})[ \\t]*$|\\||\\+[ \\t]*$|!\\[|\\$\\$`|>)[^ \\t\\n]|[ \\t]*>(?= ) ?(?:>(?= ) ?)*[ \\t]*(?:(?:[-*]|\\d{1,9}[.)]|(?:[a-zA-Z]|[ivxlcdm]+|[IVXLCDM]+)\\)|(?:[a-z]|[ivxlcdm]+)\\.|(?:[A-Z]|[IVXLCDM]+)\\.(?= ))(?:[ \\t]+\\[[ xX\\-_>/!?]\\])?[ \\t]+)*(?:\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:))",
+      "end": "^(?!\\G)(?![ \\t]*(?:(?:\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:)|%%(?!%)(?![ \\t]*#(?:region|endregion)\\b)|::? )|[ \\t]*>(?= ) ?(?:>(?= ) ?)*[ \\t]*(?:%%(?!%)(?![ \\t]*#(?:region|endregion)\\b)|::? ))",
+      "patterns": [
+        {
+          "match": "^[ \\t]*(?:\\[\\^?[^\\]\\n]+\\]:(?: |$)|\\*\\[[A-Za-z0-9]+\\]:).*$",
+          "name": "markup.quote.carve"
+        },
+        {
+          "include": "#comment_only_line"
+        },
+        {
+          "include": "#quoted_item_context"
+        },
+        {
+          "include": "#blockquote"
+        }
+      ]
     }
   }
 }
