@@ -220,6 +220,18 @@ for (const g of grammars) {
     const next = '{{ $v }}\n\n# Next\n';
     assert.ok(!pathOf(g.leaves(next), ' Next').includes('template-variable') && !pathOf(g.leaves(next), ' Next').includes('snippet-use'), at(next));
     count += 3;
+
+    // A block use takes no attribute line (C2-B-096, carve#6896): the run above it is text.
+    for (const source of ['{.x}\n{{ $v }}\n', '{.k :en}\n{{ $v }}\n', '{.a}\n{.b}{#c}\n{{ $v }}\n', '{.a}\r\n{.b}\r\n{{ $v }}\r\n', '- i\n\n  {.x}\n  {{ $v }}\n', '{$v}: X\n\n{.x}\n{{ $v }}  \n']) {
+        assert.ok(!g.leaves(source).some((leaf) => leaf.path.includes(g.attributes)), `no attribute line above a block use, ${at(source)}`);
+        assert.equal(g.use(source).replace(/\s/g, ''), '{{$v}}', at(source));
+        count++;
+    }
+    // An inline use, an include or a glued block below keeps the line attached.
+    for (const source of ['{.x}\n{{ $v }} tail\n', '{.x}\n{{ $v }}{.c}\n', '{.x}\n{{ a.crv }}\n', '{.x}\nPara\n']) {
+        assert.ok(g.leaves(source).some((leaf) => leaf.path.includes(g.attributes) && leaf.text.includes('.x')), `attribute line kept, ${at(source)}`);
+        count++;
+    }
 }
 
 // One long line of uses, glued blocks and near misses, and a long run of
@@ -235,7 +247,7 @@ const highlighters = {
     hljs: (source) => hljs.highlight(source, { language: 'carve', ignoreIllegals: true }),
 };
 for (const [name, run] of Object.entries(highlighters)) {
-    for (const unit of ['a {{ $v }} ', '{{ $v }}{.c}{#d} ', '{$v}: {{ $v }} ', '{{  $v{.c} ', '{$v .c}: x *b*\n']) {
+    for (const unit of ['a {{ $v }} ', '{{ $v }}{.c}{#d} ', '{$v}: {{ $v }} ', '{{  $v{.c} ', '{$v .c}: x *b*\n', '{.a}{.b}\n', '{.a} {#b}\n{{ $v }}\n']) {
         const short = unit.repeat(1000);
         const long = short.repeat(4);
         run(short);
