@@ -55,6 +55,7 @@ export {
     sourceForShiki,
 } from './themes.js'
 export { diffCodeTransformer } from './diff.js'
+export { lineOptionsTransformer } from './line-options.js'
 
 /**
  * Everything a VitePress `markdown` config needs, in one spreadable

@@ -34,3 +34,10 @@ export function renderLanguageDiff(code: string, highlightLine?: HighlightLine):
  * DOM: replace the code's content with per-line diff spans and mark the `<pre>`.
  */
 export function applyLanguageDiff(codeElement: Element, highlightLine?: HighlightLine): void
+
+/** Parse a complete C2-H-212 range value into 1-based indexes within the block. */
+export function parseHighlight(value: string | null, lineCount: number): Set<number>
+/** Read a valid decimal start, or return 1. */
+export function lineStart(value: string | null): bigint
+/** Decorate the lines of a rendered code block from its pre attributes. */
+export function applyLineOptions(preElement: Element): void
