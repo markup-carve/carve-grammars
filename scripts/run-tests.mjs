@@ -26,6 +26,7 @@ for (const file of [
     'tests/include-and-definition-time-test.js',
     'tests/prism-definition-run-time-test.js',
     'tests/definition-under-list-item-test.js',
+    'tests/abbreviation-container-scope-test.js',
     'tests/quote-lazy-definition-test.js',
     'tests/titled-div-braced-comment-test.js',
     'tests/word-characters-and-div-openers-test.js',
